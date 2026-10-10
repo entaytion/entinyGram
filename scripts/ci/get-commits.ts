@@ -1,29 +1,25 @@
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
 
 const base = process.argv[2]
 const head = process.argv[3]
-const range = base && base !== head ? `${base}..${head}` : `-1 ${head}`
 
-// %H is full commit hash, %an is author name, %B is raw body (subject and body)
-// We use \0 to separate fields, and \0\0 to separate commits
-const log = execSync(`git log --first-parent ${range} --pretty=format:%H%x00%an%x00%B%x00%x00`, { encoding: 'utf8' })
+const args = ['log', '--first-parent']
+if (base && base !== head) args.push(`${base}..${head}`)
+else args.push('-1', head)
+
+// %ae is the stable identity; author names have several spellings per person.
+args.push('--pretty=format:%H%x00%ae%x00%an%x00%B%x00%x00')
+
+const log = execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
 
 const commits = log.split('\0\0').filter(Boolean).map(c => {
-  const first = c.indexOf('\0')
-  if (first === -1) return null
-  const second = c.indexOf('\0', first + 1)
-  if (second === -1) {
-    return {
-      sha: c.slice(0, first).trim(),
-      author: '',
-      message: c.slice(first + 1).trim()
-    }
-  }
+  const [sha, email, author, ...body] = c.split('\0')
   return {
-    sha: c.slice(0, first).trim(),
-    author: c.slice(first + 1, second).trim(),
-    message: c.slice(second + 1).trim()
+    sha: (sha ?? '').trim(),
+    author: (author ?? '').trim(),
+    email: (email ?? '').trim(),
+    message: body.join('\0').trim()
   }
-}).filter(Boolean)
+}).filter(c => c.sha)
 
 console.log(JSON.stringify(commits))

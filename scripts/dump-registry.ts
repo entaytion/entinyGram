@@ -6,7 +6,7 @@
  * R.string.* titleRes values from src/res/values/strings_inu.xml.
  *
  * Writes `<artifactDir>/settings-registry.json`:
- *   [{ "slug": "appearance", "label": "Appearance" }, ...]
+ *   [{ "slug": "appearance", "label": "Appearance", "labelUk": "Вигляд" }, ...]
  *
  * Used by release-notes.ts to give the AI a mapping of feature slugs → English labels
  * so it can embed tg://entinySettings/<slug> deep links in changelog bullets.
@@ -24,23 +24,32 @@ const root = resolve(dirname(__filename), '..')
 
 // ── 1. Parse strings_inu.xml (English values only) ──────────────────────────
 
-const stringsXml = await fs.readFile(
-  join(root, 'src/res/values/strings_inu.xml'),
-  'utf8',
-)
+/** Map R.string.Foo → its text in one locale. */
+function readStrings(xml: string): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const m of xml.matchAll(/<string name="([^"]+)">([^<]*)<\/string>/g)) {
+    // Unescape basic XML entities and Android escape sequences
+    out[m[1]] = m[2]
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/\\'/g, "'")
+      .replace(/\\n/g, ' ')
+      .trim()
+  }
+  return out
+}
 
-/** Map from R.string.Foo → its English text */
-const strings: Record<string, string> = {}
-for (const m of stringsXml.matchAll(/<string name="([^"]+)">([^<]*)<\/string>/g)) {
-  // Unescape basic XML entities and Android escape sequences
-  strings[m[1]] = m[2]
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/\\'/g, "'")
-    .replace(/\\n/g, ' ')
-    .trim()
+const strings = readStrings(await fs.readFile(join(root, 'src/res/values/strings_inu.xml'), 'utf8'))
+
+// Ukrainian labels are what the deep-link injector wraps in the uk post; an entry with no uk
+// translation is left unlinked there rather than shown with an English phrase.
+let stringsUk: Record<string, string> = {}
+try {
+  stringsUk = readStrings(await fs.readFile(join(root, 'src/res/values-uk/strings_inu.xml'), 'utf8'))
+} catch {
+  console.warn('dump-registry: values-uk/strings_inu.xml not found; ukrainian labels disabled')
 }
 
 // ── 2. Collect all *SettingsActivity.kt source files ────────────────────────
@@ -117,7 +126,7 @@ for (const file of ktFiles) {
 
 // ── 4. Resolve string keys → labels and deduplicate ─────────────────────────
 
-interface RegistryEntry { slug: string; label: string }
+interface RegistryEntry { slug: string; label: string; labelUk?: string }
 
 const seen = new Set<string>()
 const registry: RegistryEntry[] = []
@@ -130,7 +139,8 @@ for (const { slug, stringKey } of rawEntries) {
     console.warn(`dump-registry: no string for ${stringKey} (slug: ${slug})`)
     continue
   }
-  registry.push({ slug, label })
+  const labelUk = stringsUk[stringKey]
+  registry.push(labelUk ? { slug, label, labelUk } : { slug, label })
 }
 
 registry.sort((a, b) => a.slug.localeCompare(b.slug))

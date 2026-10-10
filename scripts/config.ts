@@ -13,6 +13,8 @@ export const upstreamCommitFile = join(rootDir, 'upstream-commit')
 export const assetsDir = join(rootDir, 'src/res/assets')
 
 export const debugAppId = 'ua.entaytion.entinygram'
+// commit authorship that counts as entinyGram's own; anything else came in through inugram
+export const forkAuthorEmails = ['entaytion@gmail.com']
 // nested submodules we never build, skipped by the recursive update. lsplant's test deps are
 // private repos behind ssh urls
 export const skippedSubmodules = [

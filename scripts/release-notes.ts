@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import { join, resolve } from 'node:path'
+import { forkAuthorEmails } from './config'
 
 /**
  * Generates bilingual (en + uk) release notes for a build.
@@ -16,13 +17,16 @@ import { join, resolve } from 'node:path'
  * Config:
  *   GEMINI_API_KEY  - tried first; available models are fetched live, newest flash first.
  *   GEMINI_BASE_URL - optional; OpenAI-compatible chat/completions endpoint.
- * Each model gets one attempt, the whole AI stage is capped at ~3 minutes, then the rule-based fallback.
+ *   PRE_RELEASE     - "true" on beta builds: no AI call at all, only the commit list for the CI channel.
+ * Each model gets one attempt (429 waits out its minute on the same model), the whole AI stage is
+ * capped at ~3 minutes, then the rule-based fallback. A post that misses the Telegram budget gets one
+ * extra pass that rewrites only the two posts - without the commits, so it costs ~1k tokens.
  *   artifactDir     - argv[2], defaults to `out`.
  *
  * If no key is present — or the API call fails — a rule-based fallback is used.
  */
 
-interface Commit { sha: string, author?: string, message: string }
+interface Commit { sha: string, author?: string, email?: string, message: string }
 interface BuildInfo {
   verName: string
   repo: string
@@ -38,7 +42,7 @@ interface SiteNotes {
 interface SiteBundle { en: SiteNotes, uk: SiteNotes }
 
 /** One entry from settings-registry.json (produced by dump-registry.ts). */
-interface RegistryEntry { slug: string; label: string }
+interface RegistryEntry { slug: string; label: string; labelUk?: string }
 
 const artifactDir = resolve(process.argv[2] ?? 'out')
 const infoPath = join(artifactDir, 'build-info.json')
@@ -67,11 +71,15 @@ async function geminiModels(key: string): Promise<string[]> {
 async function buildCandidates(): Promise<Candidate[]> {
   // GEMINI_API_KEYS may hold several keys (comma/space/newline separated); GEMINI_API_KEY is still honoured.
   const keys = [...new Set([...(process.env.GEMINI_API_KEYS ?? '').split(/[\s,]+/), process.env.GEMINI_API_KEY ?? ''].filter(Boolean))]
+  const pin = (process.env.GEMINI_MODEL ?? '').trim()
   const perKey: Candidate[][] = []
   for (const key of keys) {
     try {
-      const models = await geminiModels(key)
-      console.log(`release-notes: gemini models (key ${perKey.length + 1}): ${models.join(', ')}`)
+      const found = await geminiModels(key)
+      // The live list is newest first, and the newest flashes are the flaky ones right now (45s timeouts,
+      // 503 "high demand", truncated answers because they think). A pinned model is one we measured.
+      const models = pin && found.includes(pin) ? [pin, ...found.filter(m => m !== pin)] : found
+      console.log(`release-notes: gemini models (key ${perKey.length + 1}): ${models.slice(0, 6).join(', ')}${pin ? ` [pinned ${pin}]` : ''}`)
       perKey.push(models.slice(0, 6).map(model => ({ url: geminiUrl, key, model })))
     } catch (e) {
       console.warn(`release-notes: gemini model list failed for key ${perKey.length + 1}: ${e}`)
@@ -120,14 +128,116 @@ function cleanCommits(commits: Commit[]): Commit[] {
     .reverse()
 }
 
-function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry[]): string {
+const forkEmails = new Set(
+  [...forkAuthorEmails, ...(process.env.ENTINY_AUTHOR_EMAILS ?? '').split(/[\s,]+/)]
+    .map(e => e.toLowerCase())
+    .filter(Boolean)
+)
+
+/** No email recorded means we cannot tell, so it stays ours - an unknown email really is inugram's. */
+const isOurs = (c: Commit) => !c.email || forkEmails.has(c.email.toLowerCase())
+
+const subject = (c: Commit) => c.message.split('\n')[0]
+
+/** A sync commit already credits inugram for everything it carried in. */
+const mentionsSync = (c: Commit) => /((sync with|merge) .*inugram|rebase (to|onto))/i.test(subject(c))
+
+/** Upstream work gets one line, built here: a model listing cherry-picked inugram commits invents versions. */
+function upstreamLine(theirs: Commit[]): { en: string, uk: string } | null {
+  if (theirs.length === 0) return null
+  const version = theirs.map(c => subject(c).match(/rebase to (\d+\.\d+\.\d+)/i)?.[1]).find(v => v)
+  return version
+    ? { en: `Updated to Telegram ${version} (via inugram)`, uk: `Оновлено до Telegram ${version} (через inugram)` }
+    : { en: 'Synced with the latest inugram code', uk: 'Синхронізовано з останнім кодом inugram' }
+}
+
+const append = (text: string, bullet: string, line: string) =>
+  text.trim() ? `${text.trimEnd()}\n${bullet} ${line}` : `${bullet} ${line}`
+
+const REG_MAX = Number(process.env.RELEASE_NOTES_ROWS ?? 30)
+const LINK_MAX = Number(process.env.RELEASE_NOTES_LINKS ?? 5)
+const POST_CHARS = Number(process.env.RELEASE_NOTES_CHARS ?? 1000)
+const POST_LINES = Number(process.env.RELEASE_NOTES_LINES ?? 12)
+
+const norm = (s: string) => s.toLowerCase().replace(/[’‘`"]/g, '').replace(/\s+/g, ' ').trim()
+
+// Only labels that are rare in the registry are good search keys: "show"/"hide" appear in a hundred
+// entries, "clown" in one. Bigrams keep multi-word features from matching a single common word.
+const GRAM_STOP = new Set('show hide use the and for with you your from this that are was will can get have has make makes more other about when without toggle option settings'.split(' '))
+const grams = (s: string) => {
+  const w = norm(s).split(' ').filter(x => x.length > 2 && !GRAM_STOP.has(x))
+  return [...w, ...w.slice(0, -1).map((x, i) => `${x}_${w[i + 1]}`)]
+}
+
+function offerRegistry(registry: RegistryEntry[], commits: Commit[]): RegistryEntry[] {
+  const docFreq = new Map<string, number>()
+  for (const e of registry) for (const g of new Set(grams(e.label))) docFreq.set(g, (docFreq.get(g) ?? 0) + 1)
+  const idf = (g: string) => Math.log((registry.length + 1) / ((docFreq.get(g) ?? 0) + 1))
+  const hay = new Set(grams(commits.map(c => c.message).join('\n')))
+  return registry
+    .map(e => ({ e, score: [...new Set(grams(e.label))].reduce((s, g) => (hay.has(g) ? s + idf(g) : s), 0) }))
+    .filter(x => x.score > 0 && x.e.labelUk)
+    .sort((a, b) => b.score - a.score || a.e.slug.localeCompare(b.e.slug))
+    .slice(0, REG_MAX)
+    .map(x => x.e)
+}
+
+/** The model emits {{slug}}; the link text and the url are built here, so a bad slug is impossible. */
+function expandAnchors(tg: string, entries: RegistryEntry[], field: 'label' | 'labelUk') {
+  const bySlug = new Map(entries.map(e => [e.slug, e]))
+  const slugs: string[] = []
+  const text = tg.replace(/\{\{\s*([\w-]+)\s*\}\}/g, (_m, slug: string) => {
+    const e = bySlug.get(slug)
+    if (!e) return ''
+    const label = (field === 'labelUk' ? e.labelUk : e.label) ?? e.label
+    if (slugs.includes(slug) || slugs.length >= LINK_MAX) return label
+    slugs.push(slug)
+    return `[${label}](tg://entinySettings/${slug})`
+  })
+  return { text: text.replace(/[ \t]{2,}/g, ' ').replace(/\s+$/g, '').trim(), slugs }
+}
+
+/** Visible length: Telegram does not count the url inside a markdown link toward the caption budget. */
+const visibleLength = (t: string) => t.replace(/\]\(tg:\/\/[^)]*\)/g, '](…)').length
+
+function postProblems(name: string, text: string): string[] {
+  const lines = text.split('\n').filter(l => l.trim())
+  const problems: string[] = []
+  if (visibleLength(text) > POST_CHARS) problems.push(`${name} is ${visibleLength(text)} characters, the limit is ${POST_CHARS}`)
+  if (lines.length > POST_LINES) problems.push(`${name} has ${lines.length} lines, the limit is ${POST_LINES}`)
+  if (lines.some(l => !/^\s*–\s/.test(l))) problems.push(`${name} has a line that does not start with "\u2013 "`)
+  return problems
+}
+
+/** Runs only when a post misses the budget: no commits in the prompt, so a retry costs ~1k tokens. */
+function fitPrompt(tgEn: string, tgUk: string, problems: string[]): string {
+  return [
+    'Tighten two entinyGram Telegram posts. Keep every fact, change nothing else.',
+    ...problems.map(p => `- PROBLEM: ${p}.`),
+    '',
+    'Both posts: at most ' + POST_LINES + ' lines and ' + POST_CHARS + ' characters of visible text',
+    '(the url inside a link does not count). Merge lines about the same area into one line that still',
+    'says what the user gets; never drop a flagship feature. Every line starts with "\u2013 " (en dash and a space).',
+    'Keep every {{slug}} token exactly as written, same token in the same line of both posts.',
+    'Add no tokens, add no links, add no facts, no headers, no bold.',
+    '',
+    'TG_EN:',
+    tgEn,
+    '',
+    'TG_UK:',
+    tgUk,
+    '',
+    'Reply with JSON only: {"tg_en": "...", "tg_uk": "..."}',
+  ].join('\n')
+}
+
+function buildPrompt(info: BuildInfo, commits: Commit[], offered: RegistryEntry[]): string {
   const list = commits.map(c => {
     // A "[*] ..." subject is already the finished bullet; the body only invites the model to embellish it.
     const msgLines = c.message.split('\n')
     const shown = /^\[[+*\-=]\]\s/.test(msgLines[0]) ? msgLines.slice(0, 1) : msgLines
     const indented = shown.map(l => `  ${l}`).join('\n')
-    const authorTag = c.author ? ` (Author: ${c.author})` : ''
-    return `Commit ${c.sha.slice(0, 7)}${authorTag}:\n${indented}`
+    return `Commit ${c.sha.slice(0, 7)}:\n${indented}`
   }).join('\n\n')
 
   // Deliberately short. The previous version was a sixty-line rulebook that told the model both
@@ -138,7 +248,7 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
     'You write release notes for entinyGram, a fork of Telegram for Android.',
     `Release v${info.verName}, repo ${info.repo}.`,
     '',
-    'COMMITS:',
+    'COMMITS (entinyGram\'s own work; anything merged from inugram arrives as a single sync commit):',
     list || '(no commits)',
     '',
     'Write ONLY what these commits say. If a detail is not in the commits, leave it out -',
@@ -157,8 +267,8 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
     'bullet; never list its internal patches.',
     'A Telegram version bump is exactly one line: "Rebase to X.Y.Z (ported by entinyGram)" for our own',
     'rebase onto stock Telegram (a commit like "rebase to X.Y.Z"), or "Updated to Telegram X.Y.Z (via',
-    'inugram)" for an inugram sync that brings the new base. The "(ported by entinyGram)" / "(via inugram)"',
-    'tag stays in English in every language. Never credit inugram for a base update we ported ourselves.',
+    'inugram)" for an inugram sync that brings the new base. In Ukrainian the tags are "(ported by',
+    'entinyGram)" and "(через inugram)". Never credit inugram for a base update we ported ourselves.',
     'NEVER state a Telegram version number unless a commit subject spells it out as X.Y.Z; a bare build number',
     'like "7112" is not a version, and a commit that only says "rebase onto ..." gets no version line at all.',
     '',
@@ -184,62 +294,37 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
     '- Removals: one plain line saying what went away and, if the commits say, why.',
     '- Upstream sync: only when a commit in COMMITS actually says so, one line. Never add it speculatively.',
     '- Each post is roughly 6 to 12 lines and MUST stay under 1000 characters (link URLs do not count).',
+    '- Count the lines and characters before you answer; posts over the budget are thrown away.',
   ]
 
-  // ── Deep-link injection ─────────────────────────────────────────────────────
-  // The AI already reads the commits and knows what changed. What it lacks is the
-  // list of *valid* slugs — without it, any link it generates would be guessed and
-  // potentially broken. So we give it the registry, but pre-filtered: only entries
-  // whose label shares at least one meaningful keyword with the commit messages.
-  // This typically shrinks the table from ~200 entries to <20, keeping the prompt
-  // focused and the AI accurate.
-  if (registry.length > 0) {
-    // 1. Extract meaningful words from all commit messages (lower-case, 4+ chars,
-    //    no stop-words, no conventional-commit prefixes).
-    const STOP = new Set([
-      'with', 'from', 'that', 'this', 'when', 'will', 'have', 'been', 'were',
-      'into', 'more', 'some', 'also', 'only', 'after', 'before', 'their',
-      'feat', 'feature', 'chore', 'sync', 'entiny', 'inugram', 'telegram',
-      'upstream', 'patch', 'patches', 'build', 'release', 'update',
-    ])
-    const commitWords = new Set<string>()
-    for (const c of commits) {
-      for (const word of c.message.toLowerCase().split(/[\s\W]+/)) {
-        if (word.length >= 4 && !STOP.has(word)) commitWords.add(word)
-      }
-    }
-
-    // 2. Keep only registry entries whose label contains at least one commit keyword,
-    //    and which have 2+ words (single-word labels like "Additional" are too generic).
-    const relevant = registry.filter(e => {
-      if (e.label.split(/\s+/).length < 2) return false
-      const labelWords = e.label.toLowerCase().split(/\s+/)
-      return labelWords.some(w => {
-        // partial match: commit word starts with label word or vice versa (handles
-        // "recording" matching "record", "fps" matching "fps", etc.)
-        return commitWords.has(w) || [...commitWords].some(cw => cw.startsWith(w) || w.startsWith(cw))
-      })
-    })
-
-    if (relevant.length > 0) {
-      const table = relevant.map(e => `  ${e.slug} → "${e.label}"`).join('\n')
-      lines.push(
-        '',
-        'SETTINGS DEEP LINKS (optional):',
-        'entinyGram has in-app deep links of the form tg://entinySettings/<slug>.',
-        'When a new-capability line in "tg_uk" or "tg_en" mentions a feature whose label closely matches one',
-        'of the entries below, put the deep link on the feature name itself: "– [Wide posts](tg://entinySettings/<slug>) in',
-        'channels and the feed, ...". Link the name phrase, never a verb. Use the same slug in every language.',
-        'Linking is REQUIRED, not optional: every new-capability line in "tg_uk"/"tg_en" whose feature appears in the',
-        'list below MUST carry its link, exactly like in "en"/"uk". A post without any tg:// link is wrong when matches exist.',
-        'Never link inside fix lines or removals - links are only for new capabilities the reader might want to turn on.',
-        'Plain text everywhere else, including "en"/"uk".',
-        'Only link when the match is unambiguous. Never invent slugs not in this list.',
-        '',
-        'SLUG → LABEL:',
-        table,
-      )
-    }
+  // Deep links: the model only ever writes {{slug}} tokens it copied from this table, and the build
+  // script turns each token into "[label](tg://entinySettings/slug)" per language. That keeps the
+  // Ukrainian link text native, keeps both posts pointing at the same settings screen, and makes an
+  // invented slug impossible. The table is the idf-scored top rows, not every label that shares a
+  // word with a commit - the old filter sent 380 rows (~8k tokens) and the model picked wrong ones.
+  const table = offered.map(e => `  ${e.slug} | ${e.label} | ${e.labelUk}`).join('\n')
+  if (offered.length > 0) {
+    lines.push(
+      '',
+      'SETTINGS DEEP LINKS:',
+      'entinyGram has in-app deep links of the form tg://entinySettings/<slug>. In "tg_en" and "tg_uk" only,',
+      'when a line is exactly about one entry from the list below, put the token {{slug}} where its name',
+      'belongs and say what the user gets without repeating that name again in the same line. The token',
+      'stands for the name; the build script renders it as a link. Rules for tokens:',
+      '- 2 to 5 tokens in the whole post; most lines need none',
+      '- only when the entry IS that feature; a related or nearby setting is NOT a match',
+      '- if no listed entry is the feature, write plain prose - never pick a slug by guesswork',
+      '- use the SAME token in the same line of "tg_en" and "tg_uk"',
+      '- never write markdown, brackets, a url or a tg:// link yourself; "en" and "uk" stay plain text',
+      '',
+      'Example shapes (placeholders, not real slugs):',
+      '  \u2013 You can now search settings for paranoia, logs and {{slug-one}}.',
+      '  \u2013 {{slug-two}} replaces the photo of users you blocked.',
+      'Never write "Clown avatar for [Clown avatar for blocked users]" - the name appears once.',
+      '',
+      'SLUG | ENGLISH NAME | UKRAINIAN NAME:',
+      table,
+    )
   }
 
   lines.push(
@@ -260,32 +345,42 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
   return lines.join('\n')
 }
 
-async function callChat(c: Candidate, prompt: string): Promise<string> {
+async function callChat(c: Candidate, prompt: string, maxTokens = 3000, deadline = Infinity): Promise<string> {
   const { url, key, model } = c
-  const res = await fetch(url, {
-    signal: AbortSignal.timeout(45000),
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${key}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant. Always reply with valid JSON only.' },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0,
-      max_tokens: 16000,
-    }),
-  })
-  if (!res.ok) {
-    throw new Error(`${model} -> ${res.status}: ${(await res.text()).slice(0, 300)}`)
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(45000),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant. Always reply with valid JSON only.' },
+          { role: 'user', content: prompt },
+        ],
+        temperature: 0,
+        max_tokens: maxTokens,
+      }),
+    })
+    const text = await res.text()
+    if (res.ok) {
+      const data = JSON.parse(text) as { choices?: { message?: { content?: string } }[] }
+      const out = data?.choices?.[0]?.message?.content
+      if (!out) throw new Error(`${model}: empty response`)
+      return out
+    }
+    // Free tier is 15 requests per minute per model and the body says how long to wait; that is a
+    // per-minute window, so waiting it out beats burning the remaining candidates on the same prompt.
+    const wait = res.status === 429 ? Number(/retry in ([\d.]+)/i.exec(text)?.[1] ?? '') : NaN
+    if (!wait || attempt >= 2 || wait * 1000 > deadline - Date.now()) {
+      throw new Error(`${model} -> ${res.status}: ${text.slice(0, 300)}`)
+    }
+    console.warn(`release-notes: ${model} is quota limited, retrying in ${Math.ceil(wait)}s`)
+    await new Promise(r => setTimeout(r, Math.ceil(wait) * 1000))
   }
-  const data = await res.json() as { choices?: { message?: { content?: string } }[] }
-  const text = data?.choices?.[0]?.message?.content
-  if (!text) throw new Error(`${model}: empty response`)
-  return text
 }
 
 /**
@@ -344,41 +439,82 @@ function ciList(commits: Commit[], repo: string): string {
   }).join('\n')
 }
 
-function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string, site: SiteBundle } {
+const joinTg = (uk: string, en: string) => uk && en ? `🇺🇦 UK:\n${uk}\n\n🇺🇸 EN:\n${en}` : ''
+const slugLinks = (t: string) => [...t.matchAll(/tg:\/\/entinySettings\/([\w-]+)/gi)].map(m => m[1]).sort().join(',')
+
+function parseNotes(raw: string, offered: RegistryEntry[]) {
   const cleaned = raw.trim().replace(/^```(?:json)?/m, '').replace(/```$/m, '').trim()
   // Some models wrap the JSON in prose or reasoning; take the outermost object.
   const parsed = JSON.parse(cleaned.slice(cleaned.indexOf('{'), cleaned.lastIndexOf('}') + 1))
-  const tgUk = dropMetaBullets(String(parsed.tg_uk ?? '').trim())
-  const tgEn = dropMetaBullets(String(parsed.tg_en ?? '').trim())
-  const tgCombined = tgUk && tgEn ? `🇺🇦 UK:\n${tgUk}\n\n🇺🇸 EN:\n${tgEn}` : String(parsed.tg ?? '').trim()
+  const anchored = {
+    en: String(parsed.tg_en ?? '').trim(),
+    uk: String(parsed.tg_uk ?? '').trim(),
+  }
+  const known = new Set(offered.map(e => e.slug))
+  for (const t of [anchored.en, anchored.uk]) {
+    for (const m of t.matchAll(/\{\{\s*([\w-]+)\s*\}\}/g)) {
+      if (!known.has(m[1])) console.warn(`release-notes: unknown slug "${m[1]}" requested; token dropped`)
+    }
+  }
+  const tgEn = dropMetaBullets(expandAnchors(anchored.en, offered, 'label').text)
+  const tgUk = dropMetaBullets(expandAnchors(anchored.uk, offered, 'labelUk').text)
+  const stripTokens = (t: string) => t.replace(/\{\{\s*[\w-]+\s*\}\}/g, '').replace(/[ \t]{2,}/g, ' ').trim()
   return {
-    en: dropMetaBullets(String(parsed.en ?? '').trim()),
-    uk: dropMetaBullets(String(parsed.uk ?? '').trim()),
+    en: dropMetaBullets(stripTokens(String(parsed.en ?? ''))),
+    uk: dropMetaBullets(stripTokens(String(parsed.uk ?? ''))),
     tg_uk: tgUk,
     tg_en: tgEn,
-    tg: tgCombined,
+    tg: joinTg(tgUk, tgEn) || String(parsed.tg ?? '').trim(),
     site: { en: parseSite(parsed.site_en), uk: parseSite(parsed.site_uk) },
+    anchored,
   }
 }
 
 async function aiNotes(candidates: Candidate[], info: BuildInfo, commits: Commit[], registry: RegistryEntry[]) {
-  const prompt = buildPrompt(info, commits, registry)
+  const offered = offerRegistry(registry, commits)
+  if (offered.length > 0) console.log(`release-notes: ${offered.length} of ${registry.length} registry entries offered for deep links`)
+  const prompt = buildPrompt(info, commits, offered)
   let lastErr: unknown = new Error('no AI providers configured')
   const deadline = Date.now() + 300_000
   // A model that timed out or is overloaded is slow for every key, so it is skipped on the remaining keys;
-  // a quota error (429) is per key and the next key still gets its turn.
+  // a quota error (429) is a per-minute window and callChat waits it out on the same model instead of
+  // paying the whole commit prompt again for the next candidate.
   const skipped = new Set<string>()
   for (const c of candidates) {
     if (Date.now() > deadline) break
     if (skipped.has(c.model)) continue
     try {
       console.log(`==> release-notes: calling ${c.model}`)
-      const notes = parseNotes(await callChat(c, prompt))
+      const notes = parseNotes(await callChat(c, prompt, 3000, deadline), offered)
       if (!notes.en && !notes.uk && !notes.tg_uk) throw new Error('empty ai notes')
       // A weak model sometimes answers every language in English; reject it so the next model gets a turn.
       const cyrillic = (t: string) => (t.match(/[а-щьюяіїєґ]/gi) ?? []).length / Math.max(1, (t.match(/\p{L}/gu) ?? []).length)
       if (notes.tg_uk && cyrillic(notes.tg_uk) < 0.4) throw new Error('tg_uk is not Ukrainian')
       if (notes.uk && cyrillic(notes.uk) < 0.4) throw new Error('uk is not Ukrainian')
+      const problems = [...postProblems('tg_en', notes.tg_en), ...postProblems('tg_uk', notes.tg_uk)]
+      if (problems.length === 0) {
+        console.log(`release-notes: links tg_en [${slugLinks(notes.tg_en)}] tg_uk [${slugLinks(notes.tg_uk)}], ${visibleLength(notes.tg_uk)} visible chars`)
+        return notes
+      }
+      // Only the posts miss the budget, so re-run just them without the commits (~1k tokens instead of
+      // the whole prompt). Any doubt at all - links moved, nothing shorter, call failed - keeps the draft.
+      console.warn(`release-notes: over budget (${problems.join('; ')}); tightening the posts only`)
+      try {
+        const fit = parseNotes(await callChat(c, fitPrompt(notes.anchored.en, notes.anchored.uk, problems), 1500, deadline), offered)
+        const stillBad = [...postProblems('tg_en', fit.tg_en), ...postProblems('tg_uk', fit.tg_uk)]
+        const movedLinks = slugLinks(fit.tg_en) !== slugLinks(notes.tg_en) || slugLinks(fit.tg_uk) !== slugLinks(notes.tg_uk)
+        const noBetter = visibleLength(fit.tg_uk) >= visibleLength(notes.tg_uk) && visibleLength(fit.tg_en) >= visibleLength(notes.tg_en)
+        if (!fit.tg_en || !fit.tg_uk || movedLinks || (stillBad.length > 0 && noBetter)) {
+          console.warn(`release-notes: keeping the draft (${movedLinks ? 'deep links moved' : stillBad.join('; ') || 'no shorter'})`)
+        } else {
+          notes.tg_en = fit.tg_en
+          notes.tg_uk = fit.tg_uk
+          notes.tg = joinTg(fit.tg_uk, fit.tg_en) || notes.tg
+          console.log(`release-notes: tightened to ${visibleLength(fit.tg_en)}/${visibleLength(fit.tg_uk)} visible chars`)
+        }
+      } catch (e) {
+        console.warn(`release-notes: tightening pass failed (${e}); keeping the draft`)
+      }
       return notes
     } catch (e) {
       lastErr = e
@@ -446,6 +582,9 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
 
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
 const commits = cleanCommits(info.commits ?? [])
+const ours = commits.filter(isOurs)
+const theirs = commits.filter(c => !isOurs(c))
+if (theirs.length > 0) console.log(`release-notes: ${ours.length} ours / ${theirs.length} from inugram authors`)
 
 // Load settings registry produced by dump-registry.ts (best-effort — absent in dev or if the
 // dump step was skipped). When present, the registry gives the AI a list of known setting slugs
@@ -458,18 +597,31 @@ try {
   console.warn('release-notes: settings-registry.json not found; deep links disabled')
 }
 
-let notes: { en: string, uk: string, tg: string, tg_ci?: string, site: SiteBundle }
-const candidates = commits.length > 0 ? await buildCandidates() : []
+let notes: { en: string, uk: string, tg_uk: string, tg_en: string, tg: string, tg_ci?: string, site: SiteBundle }
+// On a pre-release nothing reads the AI text: the GitHub release step, the website publish and the
+// main-channel post are all skipped, and the CI channel gets the commit list this script also writes.
+const skipAi = process.env.PRE_RELEASE === 'true'
+const candidates = ours.length > 0 && !skipAi ? await buildCandidates() : []
 if (candidates.length > 0) {
   try {
-    notes = await aiNotes(candidates, info, commits, registry)
+    notes = await aiNotes(candidates, info, ours, registry)
   } catch (e) {
     console.warn(`release-notes: AI failed (${e}); using rule-based fallback`)
-    notes = ruleFallback(commits)
+    notes = ruleFallback(ours)
   }
 } else {
-  if (commits.length > 0) console.warn('release-notes: GEMINI_API_KEY not set; using rule-based fallback')
-  notes = ruleFallback(commits)
+  if (ours.length > 0) console.warn(skipAi ? 'release-notes: pre-release build; AI skipped, commit list only' : 'release-notes: GEMINI_API_KEY not set; using rule-based fallback')
+  notes = ruleFallback(ours)
+}
+
+// Upstream commits are deliberately kept away from the model, so their credit line is written here.
+const sync = ours.some(mentionsSync) ? null : upstreamLine(theirs)
+if (sync) {
+  notes.en = append(notes.en, '-', sync.en)
+  notes.uk = append(notes.uk, '-', sync.uk)
+  notes.tg_en = append(notes.tg_en, '–', sync.en)
+  notes.tg_uk = append(notes.tg_uk, '–', sync.uk)
+  console.log(`release-notes: upstream line -> ${sync.en}`)
 }
 
 notes.tg_ci = ciList(commits, info.repo)

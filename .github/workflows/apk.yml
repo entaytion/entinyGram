@@ -307,6 +307,9 @@ jobs:
           GEMINI_API_KEY:  ${{ secrets.GEMINI_API_KEY }}
           GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
           GEMINI_BASE_URL: ${{ vars.GEMINI_BASE_URL }}
+          GEMINI_MODEL:    ${{ vars.GEMINI_MODEL }}
+          # Boolean input quirk: `== 'true'` never matches a real boolean, so accept both shapes.
+          PRE_RELEASE:     ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
         run: bun run tsx scripts/release-notes.ts out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
