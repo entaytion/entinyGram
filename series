@@ -524,4 +524,5 @@ entiny/proxy/proxy-menu.patch
 entiny/notifications/notifications-channel-scope.patch
 entiny/ui/topics-panel-redraw-storm.patch
 entiny/tabs/folder-empty-on-switch.patch
+entiny/chat/chat-header-pill-width.patch
 entiny/tabs/movable-chats-tab.patch
