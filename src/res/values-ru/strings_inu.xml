@@ -66,6 +66,10 @@
     <string name="InuUnifiedPushGatewayInfo">Прокси перезаписи для дистрибьюторов, требующих WebPush POST и VAPID (например, gCompat-UP, Sunup, Prism).</string>
     <string name="InuUnifiedPushGatewayDirect">Напрямую (без шлюза)</string>
     <string name="InuUnifiedPushGatewayDefault">По умолчанию</string>
+    <string name="InuNotifChannelSync">Канал в системе глушит чаты</string>
+    <string name="InuNotifChannelSyncInfo">Выключение уведомлений для канала в системных настройках также глушит эти чаты в приложении и на сервере. Если выключить, заглушка останется только в системных настройках.</string>
+    <string name="InuPerChatNotifChannels">Отдельный канал для каждого чата</string>
+    <string name="InuPerChatNotifChannelsInfo">Создаёт индивидуальный системный канал для каждого чата вместо одного общего на тип, поэтому отключение одного канала или темы не заглушает остальные. Существующие каналы пересоздаются.</string>
     <string name="InuUpdatesIncludeBetaInfo">Также предлагать пре-релизные и бета-сборки.</string>
     <string name="InuVersionBetaSuffix">(Бета)</string>
     <string name="InuPerformanceClass">Класс производительности</string>

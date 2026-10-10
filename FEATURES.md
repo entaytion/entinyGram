@@ -150,6 +150,9 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **export chat** as JSON or HTML
 - 📡 **UnifiedPush** notifications without Google Play - *ported from [Forkgram](https://github.com/forkgram/TelegramAndroid) & [Mercurygram](https://github.com/mercurygram/mercurygram)*
 - 📡 **background service**: optional always-on connection so notifications arrive on time, at the cost of battery - *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
+- 📡 **fix notifications dying everywhere**: muting one topic or system notification channel no longer mutes the whole chat list, no server-side mute either
+- 📡 **system channel mute**: optional — keep a channel muted only in system settings, without the app muting those chats too
+- 📡 **per-chat notification channels**: own system channel for every chat, so muting one channel or topic can't silence the rest
 - 📡 **fix stuck playback on pause** (MIUI and certain DSPs)
 - 📡 **fix in-app vibration setting ignored**: turning in-app notification vibration on or off now takes effect
 - 📡 **disable all vibration**: haptics, in-app, call and notification vibration off, whatever Telegram's own settings say

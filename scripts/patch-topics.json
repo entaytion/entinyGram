@@ -121,6 +121,7 @@
   "no-forward-selection-cap": "restrictions",
   "no-vibration": "notifications",
   "non-island-shared-media-scroll": "ui",
+  "notifications-channel-scope": "notifications",
   "open-by-user-id": "misc",
   "osmdroid-provider-wiring": "misc",
   "parallel-account-init": "accounts",

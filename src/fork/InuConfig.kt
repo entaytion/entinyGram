@@ -1650,6 +1650,12 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val NOTIFICATION_ICON = NotificationIconItem()
 
+    @JvmField
+    val NOTIF_CHANNEL_SYNC = BoolItem("notif_channel_sync", true)
+
+    @JvmField
+    val PER_CHAT_NOTIF_CHANNELS = BoolItem("per_chat_notif_channels", false)
+
     class MapProviderItem : IntItem("map_provider", OSM_LITE) {
         // entiny: a plugin's tile source only exists on the osmdroid map, the stored choice stays untouched
         override var value: Int

@@ -16,6 +16,7 @@ import desu.inugram.helpers.badges.BadgeRegistry
 import desu.inugram.helpers.CrashReporter
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LogsHelper
+import desu.inugram.helpers.NotificationsHelper
 import desu.inugram.helpers.SystemInfo
 import desu.inugram.helpers.push.UnifiedPushHelper
 import desu.inugram.ui.DonateBottomSheet
@@ -169,6 +170,22 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 )
             )
         }
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_NOTIF_CHANNEL_SYNC,
+                R.string.InuNotifChannelSync,
+                R.string.InuNotifChannelSyncInfo,
+                InuConfig.NOTIF_CHANNEL_SYNC.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_PER_CHAT_NOTIF_CHANNELS,
+                R.string.InuPerChatNotifChannels,
+                R.string.InuPerChatNotifChannelsInfo,
+                InuConfig.PER_CHAT_NOTIF_CHANNELS.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
@@ -345,6 +362,16 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             BUTTON_UNIFIED_PUSH_DISTRIBUTOR -> pickDistributor(view)
 
             BUTTON_UNIFIED_PUSH_GATEWAY -> editGateway()
+
+            TOGGLE_NOTIF_CHANNEL_SYNC -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.NOTIF_CHANNEL_SYNC.toggle()
+            }
+
+            TOGGLE_PER_CHAT_NOTIF_CHANNELS -> {
+                val new = InuConfig.PER_CHAT_NOTIF_CHANNELS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                NotificationsHelper.resetDefaultNotificationChannels()
+            }
 
             TOGGLE_AUTO_UPDATE_CHECK -> {
                 val new = InuConfig.UPDATES_ENABLED.toggle()
@@ -651,6 +678,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val BUTTON_BACKGROUND_SERVICE_CHANNEL = InuUtils.generateId()
         private val BUTTON_UNIFIED_PUSH_DISTRIBUTOR = InuUtils.generateId()
         private val BUTTON_UNIFIED_PUSH_GATEWAY = InuUtils.generateId()
+        private val TOGGLE_NOTIF_CHANNEL_SYNC = InuUtils.generateId()
+        private val TOGGLE_PER_CHAT_NOTIF_CHANNELS = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -670,6 +699,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 SearchRegistry.Entry("additional-unified-push", R.string.InuUnifiedPush, TOGGLE_UNIFIED_PUSH),
                 SearchRegistry.Entry("additional-background-service", R.string.InuBackgroundService, TOGGLE_BACKGROUND_SERVICE),
                 SearchRegistry.Entry("additional-unified-push-gateway", R.string.InuUnifiedPushGateway, BUTTON_UNIFIED_PUSH_GATEWAY),
+                SearchRegistry.Entry("notif-channel-sync", R.string.InuNotifChannelSync, TOGGLE_NOTIF_CHANNEL_SYNC),
+                SearchRegistry.Entry("per-chat-notif-channels", R.string.InuPerChatNotifChannels, TOGGLE_PER_CHAT_NOTIF_CHANNELS),
             ),
         )
     }

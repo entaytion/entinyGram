@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 10 Oct 2026 10:46:17 +0300
+Subject: [*] scope system notification channel mutes
+
+---
+ .../messenger/NotificationsController.java      | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+@@ -3983,7 +3983,7 @@ public class NotificationsController extends BaseController implements Notificat
+                         shouldOverwrite = true;
+                     } else if (!newSettingsHash.equals(settings)) {
+                         SharedPreferences.Editor editor = null;
+-                        if (channelImportance == NotificationManager.IMPORTANCE_NONE) {
++                        if (channelImportance == NotificationManager.IMPORTANCE_NONE && desu.inugram.helpers.NotificationsHelper.syncSystemChannelMute()) {
+                             editor = preferences.edit();
+                             if (isDefault) {
+                                 if (!isInApp) {
+@@ -4001,12 +4001,12 @@ public class NotificationsController extends BaseController implements Notificat
+                                 if (type == TYPE_STORIES) {
+                                     editor.putBoolean("stories_" + NotificationsController.getSharedPrefKey(dialogId, 0), false);
+                                 } else {
+-                                    editor.putInt("notify2_" + NotificationsController.getSharedPrefKey(dialogId, 0), 2);
++                                    editor.putInt("notify2_" + NotificationsController.getSharedPrefKey(dialogId, topicId), 2);
+                                 }
+-                                updateServerNotificationsSettings(dialogId, 0, true);
++                                updateServerNotificationsSettings(dialogId, topicId, true);
+                             }
+                             edited = true;
+-                        } else if (channelImportance != importance) {
++                        } else if (channelImportance != importance && channelImportance != NotificationManager.IMPORTANCE_NONE) {
+                             if (!isInApp) {
+                                 editor = preferences.edit();
+                                 int priority;
+@@ -4043,9 +4043,10 @@ public class NotificationsController extends BaseController implements Notificat
+                                     if (type == TYPE_STORIES) {
+                                         editor.putBoolean("stories_" + dialogId, true);
+                                     } else {
+-                                        editor.putInt("notify2_" + dialogId, 0);
+-                                        editor.remove("notifyuntil_" + dialogId);
+-                                        editor.putInt("priority_" + dialogId, priority);
++                                        String inu_unmuteKey = NotificationsController.getSharedPrefKey(dialogId, topicId);
++                                        editor.putInt("notify2_" + inu_unmuteKey, 0);
++                                        editor.remove("notifyuntil_" + inu_unmuteKey);
++                                        editor.putInt("priority_" + inu_unmuteKey, priority);
+                                     }
+                                 }
+                             }
+@@ -4209,7 +4210,7 @@ public class NotificationsController extends BaseController implements Notificat
+ 
+         String defaultPath = Settings.System.DEFAULT_NOTIFICATION_URI.getPath();
+ 
+-        boolean isDefault = true;
++        boolean isDefault = !desu.inugram.helpers.NotificationsHelper.perChatChannelsEnabled(systemNotificationManager);
+         boolean isInApp = !ApplicationLoader.mainInterfacePaused;
+         int chatType = TYPE_PRIVATE;
+ 

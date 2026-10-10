@@ -117,6 +117,10 @@
     <string name="InuUnifiedPushGatewayInfo">Rewrite proxy for distributors that require WebPush POST and VAPID (e.g. gCompat-UP, Sunup, Prism).</string>
     <string name="InuUnifiedPushGatewayDirect">Direct (no gateway)</string>
     <string name="InuUnifiedPushGatewayDefault">Default</string>
+    <string name="InuNotifChannelSync">System channel mutes chats</string>
+    <string name="InuNotifChannelSyncInfo">Turning notifications off for a channel in the system settings also mutes those chats inside the app and on the server. When off, the mute stays in the system settings only.</string>
+    <string name="InuPerChatNotifChannels">Separate channel for every chat</string>
+    <string name="InuPerChatNotifChannelsInfo">Creates an individual system notification channel per chat instead of one shared channel per type, so muting one channel or topic cannot silence the others. Existing channels are recreated.</string>
     <string name="InuUpdatesIncludeBetaInfo">Also offer pre-release/beta builds.</string>
     <string name="InuVersionBetaSuffix">(Beta)</string>
     <string name="InuPerformanceClass">Performance class</string>
