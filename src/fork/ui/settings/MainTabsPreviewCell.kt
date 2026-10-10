@@ -61,7 +61,6 @@ class MainTabsPreviewCell(
 
     private fun render() {
         row.removeAllViews()
-        addChip(null, true)
         visibleOrder().forEach { item -> addChip(item, item in enabledItems) }
         if (separateSearch) {
             val search = Chip(context).apply {
@@ -75,15 +74,13 @@ class MainTabsPreviewCell(
         requestLayout()
     }
 
-    private fun addChip(item: MainTabsMenuConfig.Item?, enabled: Boolean) {
+    private fun addChip(item: MainTabsMenuConfig.Item, enabled: Boolean) {
         val chip = Chip(context).apply {
-            bind(item?.iconRes ?: R.drawable.msg_viewchats, item?.labelRes ?: R.string.InuChats, enabled)
-            if (item != null) {
-                tag = item
-                isClickable = true
-                background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
-                setOnTouchListener { _, event -> handleTouch(item, event) }
-            }
+            bind(item.iconRes, item.labelRes, enabled)
+            tag = item
+            isClickable = true
+            background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
+            setOnTouchListener { _, event -> handleTouch(item, event) }
         }
         row.addView(chip, chipLayoutParams())
     }
@@ -118,7 +115,7 @@ class MainTabsPreviewCell(
                     if (newOrder != visibleOrder()) onReorder(newOrder)
                 } else {
                     draggedItem = null
-                    if (dragStartIndex >= 0) onToggle(item)
+                    if (dragStartIndex >= 0 && item != MainTabsMenuConfig.Item.CHATS) onToggle(item)
                 }
             }
             MotionEvent.ACTION_CANCEL -> {
@@ -139,7 +136,7 @@ class MainTabsPreviewCell(
         row.getLocationOnScreen(location)
         var target = 0
         for (index in 0 until dragStartOrder.size) {
-            val view = row.getChildAt(index + 1) ?: continue
+            val view = row.getChildAt(index) ?: continue
             val center = location[0] + view.left + view.width / 2f
             if (rawX >= center) target = index
         }

@@ -1,0 +1,93 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 10 Oct 2026 14:44:13 +0300
+Subject: [+] movable chats tab in bottom tabs
+
+---
+ .../org/telegram/ui/MainTabsActivity.java     | 25 +++++++++----------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -95,7 +95,6 @@ import me.vkryl.android.animator.FactorAnimator;
+ public class MainTabsActivity extends ViewPagerActivity implements NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target {
+ 
+     public static final int TABS_COUNT = 4;
+-    private static final int POSITION_CHATS = 0;
+ 
+     private static final int INDEX_CHATS = 0;
+     private static final int INDEX_CONTACTS = 1;
+@@ -395,9 +394,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+                         searchLongPressHandled[0] = false;
+                         return;
+                     }
+-                    if (viewPager.getCurrentPosition() != POSITION_CHATS) {
+-                        selectTab(POSITION_CHATS, true);
+-                        viewPager.scrollToPosition(POSITION_CHATS);
++                    if (viewPager.getCurrentPosition() != MainTabsHelper.chatsPosition()) {
++                        selectTab(MainTabsHelper.chatsPosition(), true);
++                        viewPager.scrollToPosition(MainTabsHelper.chatsPosition());
+                     }
+                     if (dialogsActivity != null && dialogsActivity.searchItem != null) {
+                         dialogsActivity.searchItem.performClick();
+@@ -692,15 +691,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     }
+ 
+     private void openFolder(int folderId) {
+-        if (viewPager.getCurrentPosition() == POSITION_CHATS && dialogsActivity != null) {
++        if (viewPager.getCurrentPosition() == MainTabsHelper.chatsPosition() && dialogsActivity != null) {
+             dialogsActivity.scrollToFolder(folderId);
+         } else {
+             if (dialogsActivity == null) {
+                 prepareDialogsActivity(null);
+             }
+             pendingFolderId = folderId;
+-            selectTab(POSITION_CHATS, true);
+-            viewPager.scrollToPosition(POSITION_CHATS);
++            selectTab(MainTabsHelper.chatsPosition(), true);
++            viewPager.scrollToPosition(MainTabsHelper.chatsPosition());
+         }
+     }
+ 
+@@ -826,7 +825,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             if (currentPosition != profile) {
+                 dropFragmentAtPosition(profile);
+             }
+-            if (pendingFolderId != null && currentPosition == POSITION_CHATS && dialogsActivity != null) {
++            if (pendingFolderId != null && currentPosition == MainTabsHelper.chatsPosition() && dialogsActivity != null) {
+                 dialogsActivity.scrollToFolder(pendingFolderId);
+                 pendingFolderId = null;
+             }
+@@ -859,7 +858,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+     @Override
+     protected int getStartPosition() {
+-        return POSITION_CHATS;
++        return MainTabsHelper.chatsPosition();
+     }
+ 
+     private DialogsActivity dialogsActivity;
+@@ -887,7 +886,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         bundle.putBoolean("hasMainTabs", true);
+         dialogsActivity = new DialogsActivity(bundle);
+         dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
+-        putFragmentAtPosition(POSITION_CHATS, dialogsActivity);
++        putFragmentAtPosition(MainTabsHelper.chatsPosition(), dialogsActivity);
+         return dialogsActivity;
+     }
+ 
+@@ -944,9 +943,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     }
+ 
+     public void inu_openChatsAtFilter(int filterIndex) {
+-        if (viewPager.getCurrentPosition() != POSITION_CHATS) {
+-            selectTab(POSITION_CHATS, true);
+-            viewPager.scrollToPosition(POSITION_CHATS);
++        if (viewPager.getCurrentPosition() != MainTabsHelper.chatsPosition()) {
++            selectTab(MainTabsHelper.chatsPosition(), true);
++            viewPager.scrollToPosition(MainTabsHelper.chatsPosition());
+         }
+         if (dialogsActivity != null) {
+             dialogsActivity.inu_setActiveFilter(filterIndex);

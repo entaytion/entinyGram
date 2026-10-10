@@ -81,7 +81,7 @@ object MainTabsHelper {
 
     // entiny: snapshot order for process lifetime so mid-session toggle preview does not desync ViewPager and crash
     private val cachedEnabledOrder: List<MainTabsMenuConfig.Item> by lazy {
-        InuConfig.BOTTOM_TABS_ORDER.value.filter { it.enabled && (it.item != MainTabsMenuConfig.Item.FEED || FeedHelper.isEnabled()) }.map { it.item }.distinct()
+        InuConfig.BOTTOM_TABS_ORDER.value.filter { (it.enabled || it.item == MainTabsMenuConfig.Item.CHATS) && (it.item != MainTabsMenuConfig.Item.FEED || FeedHelper.isEnabled()) }.map { it.item }.distinct()
     }
 
     @JvmStatic
@@ -95,39 +95,40 @@ object MainTabsHelper {
 
     @JvmStatic
     fun setEnabled(index: Int, enabled: Boolean) {
-        val type = MainTabsMenuConfig.Item.forIndex(index) ?: return // Chats can't be disabled
+        val type = MainTabsMenuConfig.Item.forIndex(index) ?: return
+        if (type == MainTabsMenuConfig.Item.CHATS) return
         val entries = InuConfig.BOTTOM_TABS_ORDER.value
         InuConfig.BOTTOM_TABS_ORDER.value = entries.map { if (it.item == type) it.copy(enabled = enabled) else it }
     }
 
     @JvmStatic
     fun isEnabled(index: Int): Boolean {
-        val type = MainTabsMenuConfig.Item.forIndex(index) ?: return true // Chats (index 0) is always enabled
+        val type = MainTabsMenuConfig.Item.forIndex(index) ?: return true
         return enabledOrder().contains(type)
     }
 
     @JvmStatic
+    fun chatsPosition(): Int = indexToPosition(MainTabsMenuConfig.Item.CHATS.index)
+
+    @JvmStatic
     fun indexToPosition(index: Int): Int {
-        if (index == 0) return 0
         val type = MainTabsMenuConfig.Item.forIndex(index) ?: return -1
         if (type == MainTabsMenuConfig.Item.SEARCH) return -1
         val pos = enabledOrder().filterNot { it == MainTabsMenuConfig.Item.SEARCH }.indexOf(type)
-        return if (pos < 0) -1 else pos + 1
+        return pos
     }
 
     @JvmStatic
     fun indexAtPosition(position: Int): Int {
-        if (position == 0) return 0
         val order = enabledOrder().filterNot { it == MainTabsMenuConfig.Item.SEARCH }
-        val i = position - 1
-        return if (i in order.indices) order[i].index else -1
+        return if (position in order.indices) order[position].index else -1
     }
 
     @JvmStatic
     fun visualOrder(): IntArray {
         val enabled = enabledOrder()
         val disabled = MainTabsMenuConfig.Item.entries.filterNot { it in enabled }
-        return (listOf(0) + enabled.map { it.index } + disabled.map { it.index }).toIntArray()
+        return (enabled.map { it.index } + disabled.map { it.index }).toIntArray()
     }
 
     @JvmStatic
@@ -168,7 +169,7 @@ object MainTabsHelper {
 
     @JvmStatic
     val fragmentsCount: Int
-        get() = 1 + enabledOrder().count { it != MainTabsMenuConfig.Item.SEARCH }
+        get() = enabledOrder().count { it != MainTabsMenuConfig.Item.SEARCH }
 
     @JvmStatic
     val tabWidth: Int

@@ -216,6 +216,7 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
         override val labelRes: Int,
         override val iconRes: Int,
     ) : MenuOrderItem {
+        CHATS("chats", 0, R.string.InuChats, R.drawable.msg_viewchats),
         CONTACTS("contacts", 1, R.string.MainTabsContacts, R.drawable.msg_contacts),
         SETTINGS("settings", 2, R.string.Settings, R.drawable.msg_settings),
         CALLS("calls", 3, R.string.MainTabsCalls, R.drawable.msg_calls),
@@ -233,6 +234,14 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
     }
 
     override fun itemByKey(key: String): Item? = Item.forKey(key)
+
+    override fun read(prefs: SharedPreferences): List<MenuOrderEntry<Item>> {
+        val entries = super.read(prefs)
+        val saved = prefs.getString(this.key, "") ?: ""
+        if (saved.isEmpty() || saved.contains("\"chats\"")) return entries
+        val chats = entries.firstOrNull { it.item == Item.CHATS } ?: return entries
+        return listOf(chats) + entries.filter { it !== chats }
+    }
 
     companion object {
         private val OFF_BY_DEFAULT = setOf(Item.CALLS, Item.FEED, Item.SEARCH)

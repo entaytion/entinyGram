@@ -539,6 +539,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
     }
 
     private fun toggleMainTab(item: MainTabsMenuConfig.Item) {
+        if (item == MainTabsMenuConfig.Item.CHATS) return
         val idx = mainTabsEntries.indexOfFirst { it.item == item }
         if (idx < 0) return
         mainTabsEntries[idx] = mainTabsEntries[idx].copy(enabled = !mainTabsEntries[idx].enabled)
@@ -576,7 +577,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         val shown = mainTabsEntries.filter { it.item != MainTabsMenuConfig.Item.FEED || FeedHelper.isEnabled() }
         cell.setState(
             shown.map { it.item },
-            shown.filter { it.enabled }.map { it.item }.toSet(),
+            shown.filter { it.enabled || it.item == MainTabsMenuConfig.Item.CHATS }.map { it.item }.toSet(),
             InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value,
         )
     }
