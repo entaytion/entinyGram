@@ -324,4 +324,13 @@ object FolderHelper {
         val baseOffset = additionFloatingButtonOffset - AndroidUtilities.dp(bottomReservedHeightDp().toFloat())
         return -navigationBarHeight - baseOffset - floatingButtonPanOffset
     }
+
+    // entiny: entering a folder can skip the list rebuild, leaving the tab empty until the next switch
+    @JvmStatic
+    fun resortEmptyFolder(controller: MessagesController, filter: MessagesController.DialogFilter?) {
+        if (filter == null || filter.isDefault || filter.dialogs.isNotEmpty() || controller.allDialogs.isEmpty()) {
+            return
+        }
+        controller.sortDialogs(null)
+    }
 }

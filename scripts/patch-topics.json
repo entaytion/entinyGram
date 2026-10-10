@@ -60,6 +60,7 @@
   "feed-media-channel-name": "feed",
   "feed-menu-entry": "feed",
   "fix-url-parsing": "misc",
+  "folder-empty-on-switch": "tabs",
   "folder-icons": "tabs",
   "folder-tabs-customization": "tabs",
   "folder-tags-local-premium": "tabs",

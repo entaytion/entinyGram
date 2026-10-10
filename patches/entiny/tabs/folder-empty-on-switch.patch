@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 10 Oct 2026 11:46:02 +0300
+Subject: [*] fix folders opening empty
+
+---
+ .../main/java/org/telegram/ui/DialogsActivity.java   | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -7039,6 +7039,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             }
+             viewPages[a].listView.setScrollEnabled(true);
+             getMessagesController().selectDialogFilter(filter, viewPages[a].dialogsType == 8 ? 1 : 0);
++            desu.inugram.helpers.dialogs.FolderHelper.resortEmptyFolder(getMessagesController(), filter);
+         }
+ 
+         if (viewPages.length > 1) {
+@@ -11290,10 +11291,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         dialogsListFrozen = frozen;
+         viewPages[0].dialogsAdapter.setDialogsListFrozen(frozen);
+         if (!frozen && notify) {
+-            if (viewPages[0].listView.isComputingLayout()) {
+-                viewPages[0].listView.post(() -> viewPages[0].dialogsAdapter.notifyDataSetChanged());
+-            } else {
+-                viewPages[0].dialogsAdapter.notifyDataSetChanged();
++            for (int a = 0; a < viewPages.length; a++) {
++                final ViewPage viewPage = viewPages[a];
++                if (viewPage.listView.isComputingLayout()) {
++                    viewPage.listView.post(() -> viewPage.dialogsAdapter.notifyDataSetChanged());
++                } else {
++                    viewPage.dialogsAdapter.notifyDataSetChanged();
++                }
+             }
+         }
+     }
