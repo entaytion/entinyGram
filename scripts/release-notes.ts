@@ -263,7 +263,7 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
 async function callChat(c: Candidate, prompt: string): Promise<string> {
   const { url, key, model } = c
   const res = await fetch(url, {
-    signal: AbortSignal.timeout(60000),
+    signal: AbortSignal.timeout(45000),
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -333,9 +333,14 @@ function combineTg(uk: string, en: string): string {
 
 /** CI channel post: one line per commit, short hash linked to the commit, marker stripped, no AI involved. */
 function ciList(commits: Commit[], repo: string): string {
-  return commits.map((c) => {
-    const subject = c.message.split('\n')[0].trim().replace(/^\[[+*\-=]\]\s*/, '')
-    return `[${c.sha.slice(0, 7)}](https://github.com/${repo}/commit/${c.sha}): ${subject}`
+  // Syncs, merges, translation uploads and debug-only commits say nothing to someone reading the build list.
+  const noise = /^(crowdin|docs:|export patches|merge |sync with|temporary debug|debug )/i
+  return commits.flatMap((c) => {
+    const first = c.message.split('\n')[0].trim()
+    if (/^\[=\]/.test(first)) return []
+    const subject = first.replace(/^\[[+*\-=]\]\s*/, '')
+    if (noise.test(subject)) return []
+    return [`[${c.sha.slice(0, 7)}](https://github.com/${repo}/commit/${c.sha}): ${subject}`]
   }).join('\n')
 }
 
@@ -360,8 +365,12 @@ async function aiNotes(candidates: Candidate[], info: BuildInfo, commits: Commit
   const prompt = buildPrompt(info, commits, registry)
   let lastErr: unknown = new Error('no AI providers configured')
   const deadline = Date.now() + 300_000
+  // A model that timed out or is overloaded is slow for every key, so it is skipped on the remaining keys;
+  // a quota error (429) is per key and the next key still gets its turn.
+  const skipped = new Set<string>()
   for (const c of candidates) {
     if (Date.now() > deadline) break
+    if (skipped.has(c.model)) continue
     try {
       console.log(`==> release-notes: calling ${c.model}`)
       const notes = parseNotes(await callChat(c, prompt))
@@ -374,6 +383,7 @@ async function aiNotes(candidates: Candidate[], info: BuildInfo, commits: Commit
     } catch (e) {
       lastErr = e
       console.warn(`release-notes: ${c.model} failed: ${e}`)
+      if (/timeout|timed out|aborted|503|UNAVAILABLE|404|NOT_FOUND/i.test(String(e))) skipped.add(c.model)
     }
   }
   throw lastErr

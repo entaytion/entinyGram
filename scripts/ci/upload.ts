@@ -257,16 +257,21 @@ try {
 
     // The full changelog: a commit list, split into messages that fit the 4096-character limit.
     const changelogSource = tgCi || postEn || postUk
+    // Telegram counts only the visible text, so a link's URL must not count toward the message limit.
+    const visible = (line: string) => line.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').length
     const chunks: string[] = []
-    let current = ''
+    let current: string[] = []
+    let used = 0
     for (const line of changelogSource.split('\n').map(l => l.trim()).filter(Boolean)) {
-      if (current.length + line.length + 1 > 3500) {
-        chunks.push(current)
-        current = ''
+      if (used + visible(line) + 1 > 3800 && current.length) {
+        chunks.push(current.join('\n'))
+        current = []
+        used = 0
       }
-      current += `${current ? '\n' : ''}${line}`
+      current.push(line)
+      used += visible(line) + 1
     }
-    if (current) chunks.push(current)
+    if (current.length) chunks.push(current.join('\n'))
     let replyTo = album[0].id
     for (const [i, chunk] of chunks.entries()) {
       const tail = i === chunks.length - 1 && compareHtml ? html`\n\n${compareHtml}` : html``
