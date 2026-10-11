@@ -64,7 +64,8 @@
     <string name="InuAnnoyances">烦人项</string>
     <string name="InuAnnoyancesStories">动态</string>
     <string name="InuAnnoyancesProfile">个人资料</string>
-    <string name="InuAnnoyancesGifts">礼物与高级会员</string>
+    <string name="InuAnnoyancesGifts">礼物</string>
+    <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">聊天与界面</string>
     <string name="InuAnnoyancesChannels">频道与推荐</string>
     <string name="InuAnnoyancesMedia">媒体</string>
@@ -118,6 +119,13 @@
     <string name="InuMemoryTrimInfo">应用进入后台后不久，清理图片缓存并压缩内存</string>
     <string name="InuHideChannelShareButton">隐藏频道分享按钮</string>
     <string name="InuHideChannelShareButtonInfo">隐藏频道帖子旁的分享图标；仍可从菜单转发。</string>
+    <string name="InuCustomizeMessages">消息</string>
+    <string name="InuHideReplyBackground">隐藏回复背景</string>
+    <string name="InuHideReplyBackgroundInfo">使用透明背景绘制回复和引用</string>
+    <string name="InuDisableReplyCustomColors">禁用回复自定义颜色</string>
+    <string name="InuDisableReplyCustomColorsInfo">使用默认回复颜色代替发送者的自定义颜色</string>
+    <string name="InuHideReplyBackgroundEmoji">隐藏回复中的表情</string>
+    <string name="InuHideReplyBackgroundEmojiInfo">隐藏回复和引用中的背景表情图案</string>
     <string name="InuDisableChatBackgrounds">禁用自定义聊天背景</string>
     <string name="InuDisableChatThemes">禁用自定义聊天主题</string>
     <string name="InuDisableBgParallax">禁用背景视差</string>

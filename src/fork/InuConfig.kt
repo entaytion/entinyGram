@@ -240,6 +240,15 @@ object InuConfig {
     val SHOW_SECONDS = BoolItem("show_seconds", false)
 
     @JvmField
+    val HIDE_REPLY_BACKGROUND = BoolItem("hide_reply_background", false)
+
+    @JvmField
+    val DISABLE_REPLY_CUSTOM_COLORS = BoolItem("disable_reply_custom_colors", false)
+
+    @JvmField
+    val HIDE_REPLY_BACKGROUND_EMOJI = BoolItem("hide_reply_background_emoji", false)
+
+    @JvmField
     val DISABLE_ROUNDING = BoolItem("disable_rounding", false)
 
     @JvmField

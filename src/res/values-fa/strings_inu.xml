@@ -81,7 +81,8 @@
     <string name="InuAnnoyances">مزاحمت‌ها</string>
     <string name="InuAnnoyancesStories">استوری‌ها</string>
     <string name="InuAnnoyancesProfile">نمایه</string>
-    <string name="InuAnnoyancesGifts">هدیه‌ها و پریمیوم</string>
+    <string name="InuAnnoyancesGifts">هدیه‌ها</string>
+    <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">گفتگوها و رابط کاربری</string>
     <string name="InuAnnoyancesChannels">کانال‌ها و پیشنهادها</string>
     <string name="InuAnnoyancesMedia">رسانه</string>
@@ -242,6 +243,13 @@
     <string name="InuHideGiftCardsInChatInfo">پیام‌های سرویس هدیه (ستاره، TON، پریمیوم) را از گفتگوها پنهان کن. برای اعمال، گفتگو را دوباره باز کنید.</string>
     <string name="InuHideGiveaways">پنهان کردن قرعه‌کشی‌ها</string>
     <string name="InuHideGroupStickerPack">پنهان کردن راهنمای بسته ایموجی گروه</string>
+    <string name="InuCustomizeMessages">پیام‌ها</string>
+    <string name="InuHideReplyBackground">پنهان کردن پس‌زمینه پاسخ‌ها</string>
+    <string name="InuHideReplyBackgroundInfo">نمایش پاسخ‌ها و نقل‌قول‌ها با پس‌زمینه شفاف</string>
+    <string name="InuDisableReplyCustomColors">غیرفعال کردن رنگ‌های سفارشی در پاسخ‌ها</string>
+    <string name="InuDisableReplyCustomColorsInfo">استفاده از رنگ‌های پیش‌فرض پاسخ به جای رنگ سفارشی فرستنده</string>
+    <string name="InuHideReplyBackgroundEmoji">پنهان کردن ایموجی در پاسخ‌ها</string>
+    <string name="InuHideReplyBackgroundEmojiInfo">پنهان کردن الگوی ایموجی پس‌زمینه در پاسخ‌ها و نقل‌قول‌ها</string>
     <string name="InuDisableChatBackgrounds">غیرفعال کردن پس‌زمینه‌های سفارشی گفتگو</string>
     <string name="InuDisableChatThemes">غیرفعال کردن تم‌های سفارشی گفتگو</string>
     <string name="InuDisableBgParallax">غیرفعال کردن پارالاکس پس‌زمینه</string>

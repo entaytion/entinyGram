@@ -64,7 +64,8 @@
     <string name="InuAnnoyances">煩わしい要素</string>
     <string name="InuAnnoyancesStories">ストーリー</string>
     <string name="InuAnnoyancesProfile">プロフィール</string>
-    <string name="InuAnnoyancesGifts">ギフトとプレミアム</string>
+    <string name="InuAnnoyancesGifts">ギフト</string>
+    <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">チャットとインターフェース</string>
     <string name="InuAnnoyancesChannels">チャンネルとおすすめ</string>
     <string name="InuAnnoyancesMedia">メディア</string>
@@ -118,6 +119,13 @@
     <string name="InuMemoryTrimInfo">アプリがバックグラウンドに移った直後に、画像キャッシュを消去してメモリを圧縮します</string>
     <string name="InuHideChannelShareButton">チャンネルの共有ボタンを非表示</string>
     <string name="InuHideChannelShareButtonInfo">チャンネル投稿の横の共有アイコンを非表示にします。メニューからの転送は引き続き可能です。</string>
+    <string name="InuCustomizeMessages">メッセージ</string>
+    <string name="InuHideReplyBackground">返信の背景を非表示</string>
+    <string name="InuHideReplyBackgroundInfo">返信と引用を透明な背景で描画します</string>
+    <string name="InuDisableReplyCustomColors">返信のカスタム色を無効化</string>
+    <string name="InuDisableReplyCustomColorsInfo">送信者のカスタム色の代わりに標準の返信色を使用します</string>
+    <string name="InuHideReplyBackgroundEmoji">返信の絵文字を非表示</string>
+    <string name="InuHideReplyBackgroundEmojiInfo">返信や引用の背景にある絵文字パターンを非表示にします</string>
     <string name="InuDisableChatBackgrounds">カスタムチャット背景を無効化</string>
     <string name="InuDisableChatThemes">カスタムチャットテーマを無効化</string>
     <string name="InuDisableBgParallax">背景パララックスを無効化</string>

@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 10 Oct 2026 20:55:17 +0300
+Subject: [+] customize reply quote background and colors
+
+---
+ .../telegram/ui/Components/ReplyMessageLine.java | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReplyMessageLine.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReplyMessageLine.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReplyMessageLine.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReplyMessageLine.java
+@@ -144,6 +144,9 @@ public class ReplyMessageLine {
+             wasColorId = colorId;
+             wasMessageId = msgId;
+         }
++        if (!desu.inugram.helpers.chat.ReplyBackgroundHelper.shouldAllowCustomColors() && colorId >= 7) {
++            colorId = colorId % 7;
++        }
+         if (colorId < 7) {
+             color1 = color2 = color3 = Theme.getColor(Theme.keys_avatar_nameInMessage[colorId], resourcesProvider);
+             hasColor2 = hasColor3 = false;
+@@ -178,6 +181,15 @@ public class ReplyMessageLine {
+             return 0;
+         }
+ 
++        if (!desu.inugram.helpers.chat.ReplyBackgroundHelper.shouldAllowCustomColors()) {
++            hasColor2 = hasColor3 = false;
++            color1 = color2 = color3 = Theme.getColor(messageObject != null && messageObject.isOutOwner() ? Theme.key_chat_outReplyLine : Theme.key_chat_inReplyLine, resourcesProvider);
++            nameColor = color1;
++            backgroundColor = Theme.multAlpha(color1, dark ? 0.12f : 0.10f);
++            emojiColor = color1;
++            return nameColorAnimated.set(nameColor);
++        }
++
+         if (wasCollectionId != p.collectible_id) {
+             final int msgId = messageObject != null ? messageObject.getId() : 0;
+             if (msgId == wasMessageId) {
+@@ -652,7 +664,7 @@ public class ReplyMessageLine {
+     }
+ 
+     public void drawBackground(Canvas canvas, RectF rect, float alpha, boolean hasQuote, boolean emojiOnly) {
+-        if (!emojiOnly) {
++        if (!emojiOnly && desu.inugram.helpers.chat.ReplyBackgroundHelper.shouldDrawBackground()) {
+             backgroundPaint.setColor(Theme.multAlpha(backgroundColorAnimated.set(backgroundColor), alpha));
+             if (RadiiUtils.radiiAreSame(radii)) {
+                 canvas.drawRoundRect(rect, radii[0], radii[0], backgroundPaint);
+@@ -663,7 +675,7 @@ public class ReplyMessageLine {
+             }
+         }
+ 
+-        if (emoji != null) {
++        if (emoji != null && desu.inugram.helpers.chat.ReplyBackgroundHelper.shouldDrawEmoji()) {
+             final float loadedScale = emojiLoadedT.set(isEmojiLoaded());
+ 
+             if (loadedScale > 0 && emojiAlpha > 0) {

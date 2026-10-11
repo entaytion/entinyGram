@@ -86,7 +86,8 @@
     <string name="InuAnnoyancesChats">Чати</string>
     <string name="InuAnnoyancesStories">Історії</string>
     <string name="InuAnnoyancesProfile">Профіль</string>
-    <string name="InuAnnoyancesGifts">Подарунки та Преміум</string>
+    <string name="InuAnnoyancesGifts">Подарунки</string>
+    <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">Чати та інтерфейс</string>
     <string name="InuAnnoyancesChannels">Канали та рекомендації</string>
     <string name="InuAnnoyancesMedia">Медіа</string>
@@ -188,6 +189,13 @@
     <string name="InuLocalNamePremium">Значок Premium</string>
     <string name="InuHideChannelShareButton">Приховати кнопку поширення в каналах</string>
     <string name="InuHideChannelShareButtonInfo">Приховує іконку поширення біля постів каналів; пересилання через меню досі працює.</string>
+    <string name="InuCustomizeMessages">Повідомлення</string>
+    <string name="InuHideReplyBackground">Сховати фон у відповідях</string>
+    <string name="InuHideReplyBackgroundInfo">Відображає відповіді та цитати з прозорим фоном</string>
+    <string name="InuDisableReplyCustomColors">Вимкнути власні кольори у відповідях</string>
+    <string name="InuDisableReplyCustomColorsInfo">Використовує стандартні кольори відповідей замість кольорів відправника</string>
+    <string name="InuHideReplyBackgroundEmoji">Сховати емодзі у відповідях</string>
+    <string name="InuHideReplyBackgroundEmojiInfo">Ховає візерунок із емодзі на фоні відповідей та цитат</string>
     <string name="InuDisableChatBackgrounds">Вимкнути кастомні фони чатів</string>
     <string name="InuDisableChatThemes">Вимкнути кастомні теми чатів</string>
     <string name="InuDisableBgParallax">Вимкнути паралакс фону</string>

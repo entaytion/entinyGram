@@ -133,7 +133,8 @@
     <string name="InuAnnoyancesChats">Chats</string>
     <string name="InuAnnoyancesStories">Stories</string>
     <string name="InuAnnoyancesProfile">Profile</string>
-    <string name="InuAnnoyancesGifts">Gifts &amp; Premium</string>
+    <string name="InuAnnoyancesGifts">Gifts</string>
+    <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">Chats &amp; Interface</string>
     <string name="InuAnnoyancesChannels">Channels &amp; Recommendations</string>
     <string name="InuAnnoyancesMedia">Media</string>
@@ -325,6 +326,13 @@
     <string name="InuHideGiftCardsInChatInfo">Hide gift service messages (Stars, TON, Premium) from chats. Reopen the chat to apply.</string>
     <string name="InuHideGiveaways">Hide giveaways</string>
     <string name="InuHideGroupStickerPack">Hide group emoji pack hint</string>
+    <string name="InuCustomizeMessages">Messages</string>
+    <string name="InuHideReplyBackground">Hide reply background</string>
+    <string name="InuHideReplyBackgroundInfo">Draws replies and quotes with a transparent background</string>
+    <string name="InuDisableReplyCustomColors">Disable custom reply colors</string>
+    <string name="InuDisableReplyCustomColorsInfo">Uses standard reply colors instead of the sender\'s custom color</string>
+    <string name="InuHideReplyBackgroundEmoji">Hide emoji in replies</string>
+    <string name="InuHideReplyBackgroundEmojiInfo">Hides custom background emoji pattern in replies and quotes</string>
     <string name="InuDisableChatBackgrounds">Disable custom chat backgrounds</string>
     <string name="InuDisableChatThemes">Disable custom chat themes</string>
     <string name="InuDisableBgParallax">Disable background parallax</string>

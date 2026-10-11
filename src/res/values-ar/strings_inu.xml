@@ -81,7 +81,8 @@
     <string name="InuAnnoyances">المزعجات</string>
     <string name="InuAnnoyancesStories">القصص</string>
     <string name="InuAnnoyancesProfile">الملف الشخصي</string>
-    <string name="InuAnnoyancesGifts">الهدايا &amp; Premium</string>
+    <string name="InuAnnoyancesGifts">الهدايا</string>
+    <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">المحادثات &amp; الواجهة</string>
     <string name="InuAnnoyancesChannels">القنوات &amp; التوصيات</string>
     <string name="InuAnnoyancesMedia">الوسائط</string>
@@ -242,6 +243,13 @@
     <string name="InuHideGiftCardsInChatInfo">إخفاء رسائل الخدمة الخاصة بالهدايا (النجوم وTON وPremium) من المحادثات. أعد فتح المحادثة للتطبيق.</string>
     <string name="InuHideGiveaways">إخفاء المسابقات</string>
     <string name="InuHideGroupStickerPack">إخفاء تلميح حزمة إيموجي المجموعة</string>
+    <string name="InuCustomizeMessages">الرسائل</string>
+    <string name="InuHideReplyBackground">إخفاء خلفية الردود</string>
+    <string name="InuHideReplyBackgroundInfo">عرض الردود والاقتباسات بخلفية شفافة</string>
+    <string name="InuDisableReplyCustomColors">تعطيل الألوان المخصصة في الردود</string>
+    <string name="InuDisableReplyCustomColorsInfo">استخدام ألوان الرد الافتراضية بدلاً من لون المرسل المخصص</string>
+    <string name="InuHideReplyBackgroundEmoji">إخفاء الرموز التعبيرية في الردود</string>
+    <string name="InuHideReplyBackgroundEmojiInfo">إخفاء نمط الرموز التعبيرية في خلفية الردود والاقتباسات</string>
     <string name="InuDisableChatBackgrounds">تعطيل خلفيات المحادثة المخصصة</string>
     <string name="InuDisableChatThemes">تعطيل سمات المحادثة المخصصة</string>
     <string name="InuDisableBgParallax">تعطيل تأثير عمق الخلفية</string>

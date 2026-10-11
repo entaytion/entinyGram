@@ -110,6 +110,33 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCustomizeMessages)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_REPLY_BACKGROUND,
+                R.string.InuHideReplyBackground,
+                R.string.InuHideReplyBackgroundInfo,
+                InuConfig.HIDE_REPLY_BACKGROUND.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_DISABLE_REPLY_CUSTOM_COLORS,
+                R.string.InuDisableReplyCustomColors,
+                R.string.InuDisableReplyCustomColorsInfo,
+                InuConfig.DISABLE_REPLY_CUSTOM_COLORS.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_REPLY_BACKGROUND_EMOJI,
+                R.string.InuHideReplyBackgroundEmoji,
+                R.string.InuHideReplyBackgroundEmojiInfo,
+                InuConfig.HIDE_REPLY_BACKGROUND_EMOJI.value
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesStories)))
         items.add(
             mkTwoLineCheckItem(
@@ -140,20 +167,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesProfile)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_HIDE_PREMIUM_BADGE,
-                LocaleController.getString(R.string.InuHidePremiumBadge),
-            ).setChecked(InuConfig.HIDE_PREMIUM_BADGE.value)
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_COLLECTIBLE_STATUS,
-                R.string.InuHideCollectibleStatus,
-                R.string.InuHideCollectibleStatusInfo,
-                InuConfig.HIDE_COLLECTIBLE_STATUS.value
-            )
-        )
         items.add(
             UItem.asCheck(
                 TOGGLE_HIDE_STARS_RATING,
@@ -247,15 +260,26 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             UItem.asCheck(
-                TOGGLE_HIDE_PAID_REACTION_UPSELL,
-                LocaleController.getString(R.string.InuHidePaidReactionUpsell),
-            ).setChecked(InuConfig.HIDE_PAID_REACTION_UPSELL.value)
-        )
-        items.add(
-            UItem.asCheck(
                 TOGGLE_HIDE_GIVEAWAYS,
                 LocaleController.getString(R.string.InuHideGiveaways),
             ).setChecked(InuConfig.HIDE_GIVEAWAYS.value)
+        )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesPremium)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_HIDE_PREMIUM_BADGE,
+                LocaleController.getString(R.string.InuHidePremiumBadge),
+            ).setChecked(InuConfig.HIDE_PREMIUM_BADGE.value)
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_COLLECTIBLE_STATUS,
+                R.string.InuHideCollectibleStatus,
+                R.string.InuHideCollectibleStatusInfo,
+                InuConfig.HIDE_COLLECTIBLE_STATUS.value
+            )
         )
         items.add(
             UItem.asCheck(
@@ -276,6 +300,12 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 R.string.InuHideCaptionLimitUpsellInfo,
                 InuConfig.HIDE_CAPTION_LIMIT_UPSELL.value
             )
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_HIDE_PAID_REACTION_UPSELL,
+                LocaleController.getString(R.string.InuHidePaidReactionUpsell),
+            ).setChecked(InuConfig.HIDE_PAID_REACTION_UPSELL.value)
         )
         items.add(UItem.asShadow(null))
 
@@ -534,6 +564,9 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             TOGGLE_HIDE_SEND_AS_PICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_SEND_AS_PICKER.toggle()
             TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
             TOGGLE_HIDE_REACTION_ENTRY -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REACTIONS_ENTRY.toggle()
+            TOGGLE_HIDE_REPLY_BACKGROUND -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REPLY_BACKGROUND.toggle()
+            TOGGLE_DISABLE_REPLY_CUSTOM_COLORS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_REPLY_CUSTOM_COLORS.toggle()
+            TOGGLE_HIDE_REPLY_BACKGROUND_EMOJI -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REPLY_BACKGROUND_EMOJI.toggle()
             TOGGLE_HIDE_VERIFICATION_BADGE -> {
                 val new = InuConfig.HIDE_VERIFICATION_BADGE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -659,6 +692,9 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_CHANNEL_SHARE_BUTTON = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY = InuUtils.generateId()
         private val BUTTON_CLEAR_HINTS = InuUtils.generateId()
+        private val TOGGLE_HIDE_REPLY_BACKGROUND = InuUtils.generateId()
+        private val TOGGLE_DISABLE_REPLY_CUSTOM_COLORS = InuUtils.generateId()
+        private val TOGGLE_HIDE_REPLY_BACKGROUND_EMOJI = InuUtils.generateId()
         private val TOGGLE_HIDE_GIFT_AUCTIONS_HINT = InuUtils.generateId()
         private val TOGGLE_HIDE_CACHE_HINT = InuUtils.generateId()
         private val TOGGLE_HIDE_PSA_PROMO_CHAT = InuUtils.generateId()
@@ -737,6 +773,9 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-profile-live-actions-button", R.string.InuHideProfileLiveActionsButton, TOGGLE_HIDE_PROFILE_LIVE_ACTIONS_BUTTON),
                 SearchRegistry.Entry("hide-profile-menu-send-gift", R.string.InuHideProfileMenuSendGift, TOGGLE_HIDE_PROFILE_MENU_SEND_GIFT),
                 SearchRegistry.Entry("hide-profile-menu-archived-stories", R.string.InuHideProfileMenuArchivedStories, TOGGLE_HIDE_PROFILE_MENU_ARCHIVED_STORIES),
+                SearchRegistry.Entry("hide-reply-background", R.string.InuHideReplyBackground, TOGGLE_HIDE_REPLY_BACKGROUND),
+                SearchRegistry.Entry("disable-reply-custom-colors", R.string.InuDisableReplyCustomColors, TOGGLE_DISABLE_REPLY_CUSTOM_COLORS),
+                SearchRegistry.Entry("hide-reply-background-emoji", R.string.InuHideReplyBackgroundEmoji, TOGGLE_HIDE_REPLY_BACKGROUND_EMOJI),
                 SearchRegistry.Entry("hide-premium-badge", R.string.InuHidePremiumBadge, TOGGLE_HIDE_PREMIUM_BADGE),
                 SearchRegistry.Entry("hide-collectible-status", R.string.InuHideCollectibleStatus, TOGGLE_HIDE_COLLECTIBLE_STATUS),
                 SearchRegistry.Entry("hide-stars-rating", R.string.InuHideStarsRating, TOGGLE_HIDE_STARS_RATING),

@@ -74,7 +74,8 @@
     <string name="InuAnnoyances">Rahatsız Edici Ögeler</string>
     <string name="InuAnnoyancesStories">Hikayeler</string>
     <string name="InuAnnoyancesProfile">Profil</string>
-    <string name="InuAnnoyancesGifts">Hediyeler ve Premium</string>
+    <string name="InuAnnoyancesGifts">Hediyeler</string>
+    <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">Sohbetler ve Arayüz</string>
     <string name="InuAnnoyancesChannels">Kanallar ve Öneriler</string>
     <string name="InuAnnoyancesMedia">Medya</string>
@@ -195,6 +196,13 @@
     <string name="InuHideChannelShareButtonInfo">Kanal gönderilerinin yanındaki paylaşma simgesini gizler; menüden iletme çalışmaya devam eder.</string>
     <string name="InuDisableProfileMusicAutoplay">Profil müziğinin otomatik oynatılmasını devre dışı bırak</string>
     <string name="InuDisableProfileMusicAutoplayInfo">Bir profildeki sabitlenmiş müzik oynatıcı açıldığında oynatmayı otomatik olarak başlatmaz</string>
+    <string name="InuCustomizeMessages">Mesajlar</string>
+    <string name="InuHideReplyBackground">Yanıtlarda arka planı gizle</string>
+    <string name="InuHideReplyBackgroundInfo">Yanıtları ve alıntıları şeffaf bir arka planla çizer</string>
+    <string name="InuDisableReplyCustomColors">Yanıtlarda özel renkleri devre dışı bırak</string>
+    <string name="InuDisableReplyCustomColorsInfo">Gönderenin özel rengi yerine standart yanıt renklerini kullanır</string>
+    <string name="InuHideReplyBackgroundEmoji">Yanıtlarda emojileri gizle</string>
+    <string name="InuHideReplyBackgroundEmojiInfo">Yanıtlarda ve alıntılarda arka plan emoji desenini gizler</string>
     <string name="InuDisableChatBackgrounds">Özel sohbet arka planlarını devre dışı bırak</string>
     <string name="InuDisableChatThemes">Özel sohbet temalarını devre dışı bırak</string>
     <string name="InuDisableBgParallax">Arka plan paralaks efektini devre dışı bırak</string>

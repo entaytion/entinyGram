@@ -82,7 +82,8 @@
     <string name="InuAnnoyancesChats">Чаты</string>
     <string name="InuAnnoyancesStories">Истории</string>
     <string name="InuAnnoyancesProfile">Профиль</string>
-    <string name="InuAnnoyancesGifts">Подарки и Premium</string>
+    <string name="InuAnnoyancesGifts">Подарки</string>
+    <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">Чаты и интерфейс</string>
     <string name="InuAnnoyancesChannels">Каналы и рекомендации</string>
     <string name="InuAnnoyancesMedia">Медиа</string>
@@ -135,6 +136,13 @@
     <string name="InuDisableSensitive">Отключить фильтр чувствительного контента</string>
     <string name="InuHideChannelShareButton">Скрыть кнопку «Поделиться» в каналах</string>
     <string name="InuHideChannelShareButtonInfo">Скрывает иконку «Поделиться» рядом с постами каналов; пересылка через меню сообщения работает.</string>
+    <string name="InuCustomizeMessages">Сообщения</string>
+    <string name="InuHideReplyBackground">Скрыть фон в ответах</string>
+    <string name="InuHideReplyBackgroundInfo">Отображает ответы и цитаты с прозрачным фоном</string>
+    <string name="InuDisableReplyCustomColors">Отключить кастомные цвета в ответах</string>
+    <string name="InuDisableReplyCustomColorsInfo">Использует стандартные цвета ответов вместо цветов отправителя</string>
+    <string name="InuHideReplyBackgroundEmoji">Скрыть эмодзи в ответах</string>
+    <string name="InuHideReplyBackgroundEmojiInfo">Скрывает узор из эмодзи на фоне ответов и цитат</string>
     <string name="InuDisableChatBackgrounds">Отключить пользовательские фоны чатов</string>
     <string name="InuDisableChatThemes">Отключить пользовательские темы чатов</string>
     <string name="InuDisableBgParallax">Отключить параллакс фона</string>
