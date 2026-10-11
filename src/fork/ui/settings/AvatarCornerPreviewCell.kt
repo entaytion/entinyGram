@@ -12,6 +12,7 @@ import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.graphics.Region
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.ShapeDrawable
 import android.os.Build
 import android.view.Gravity
 import desu.inugram.helpers.vibration.HapticFeedbackConstants
@@ -274,6 +275,12 @@ class AvatarCornerPreviewCell(
         private val rightTextView: TextView
         val seekBarView: SeekBarView
 
+        // entiny: kept as a field so updateColors() can re-tint it after a live theme switch
+        private val headerValueBackground: ShapeDrawable = Theme.createRoundRectDrawable(
+            AndroidUtilities.dp(4.0f),
+            Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader), 0.15f)
+        )
+
         private var currentValue: Float = 0f
         private var roundedValue: Int = -1
         private var vibro: Int = -1
@@ -296,20 +303,15 @@ class AvatarCornerPreviewCell(
             )
 
             headerValue = object : AnimatedTextView(context, false, true, true) {
-                private val backgroundDrawable = Theme.createRoundRectDrawable(
-                    AndroidUtilities.dp(4.0f),
-                    Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader), 0.15f)
-                )
-
                 override fun onDraw(canvas: Canvas) {
                     val w = getDrawable().currentWidth
-                    backgroundDrawable.setBounds(
+                    headerValueBackground.setBounds(
                         0,
                         0,
                         (paddingLeft + w + paddingRight).toInt(),
                         measuredHeight
                     )
-                    backgroundDrawable.draw(canvas)
+                    headerValueBackground.draw(canvas)
                     super.onDraw(canvas)
                 }
             }.apply {
@@ -432,9 +434,15 @@ class AvatarCornerPreviewCell(
         }
 
         fun updateColors() {
-            headerTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader))
-            headerValue.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader))
+            val accent = Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader)
+            headerTextView.setTextColor(accent)
+            headerValue.setTextColor(accent)
+            Theme.setDrawableColor(headerValueBackground, Theme.multAlpha(accent, 0.15f))
             headerValue.invalidate()
+            // entiny: SeekBarView caches its themed paints at construction, so a theme switch leaves the track/handle stale until re-applied
+            val trackColor = Theme.getColor(Theme.key_player_progress)
+            seekBarView.setColors(trackColor, trackColor)
+            seekBarView.invalidate()
             updateValues()
         }
 

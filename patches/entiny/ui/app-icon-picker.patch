@@ -4,19 +4,47 @@ Date: Fri, 9 Oct 2026 12:16:28 +0300
 Subject: [+] app icon picker
 
 ---
- TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../main/java/org/telegram/ui/ThemeActivity.java  | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
-@@ -2464,7 +2464,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -671,9 +671,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+             chatListRow = rowCount++;
+             chatListInfoRow = rowCount++;
+ 
+-            appIconHeaderRow = rowCount++;
++            appIconHeaderRow = -1;
+             appIconSelectorRow = rowCount++;
+-            appIconShadowRow = rowCount++;
++            appIconShadowRow = -1;
+ 
+             swipeGestureHeaderRow = rowCount++;
+             swipeGestureRow = rowCount++;
+@@ -892,8 +892,12 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+                 listAdapter.notifyItemChanged(themeAccentListRow, new Object());
+             }
+         } else if (id == NotificationCenter.showBulletin) {
+-            if (args.length > 0 && Integer.valueOf(org.telegram.ui.Components.Bulletin.TYPE_APP_ICON).equals(args[0]) && listAdapter != null && appIconShadowRow != -1) {
+-                listAdapter.notifyItemChanged(appIconShadowRow);
++            if (args.length > 0 && Integer.valueOf(org.telegram.ui.Components.Bulletin.TYPE_APP_ICON).equals(args[0]) && listAdapter != null) {
++                if (appIconSelectorRow != -1) {
++                    listAdapter.notifyItemChanged(appIconSelectorRow);
++                } else if (appIconShadowRow != -1) {
++                    listAdapter.notifyItemChanged(appIconShadowRow);
++                }
+             }
+         } else if (id == NotificationCenter.themeListUpdated) {
+             updateRows(true);
+@@ -2464,7 +2468,8 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                      view = new RadioButtonCell(mContext);
                      break;
                  case TYPE_APP_ICON:
 -                    view = new AppIconsSelectorCell(mContext, ThemeActivity.this, currentAccount);
 +                    view = new desu.inugram.ui.appicons.AppIconRowCell(mContext, ThemeActivity.this);
++                    view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                      break;
                  case TYPE_CHOOSE_COLOR:
                      view = new PeerColorActivity.ChangeNameColorCell(currentAccount, 0, mContext, getResourceProvider());
