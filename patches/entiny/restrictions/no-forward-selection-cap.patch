@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -2477,9 +2477,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -2479,9 +2479,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                      if (messageObject == null) return false;
                      final int loadIndex = messageObject.getDialogId() == dialog_id ? 0 : 1;
                      if (selectedFiles[loadIndex].indexOfKey(messageObject.getId()) < 0) {
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
                          selectedFiles[loadIndex].put(messageObject.getId(), messageObject);
                          if (!messageObject.canDeleteMessage(false, null)) {
                              cantDeleteMessagesCount++;
-@@ -7907,9 +7904,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -7912,9 +7909,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                      cantDeleteMessagesCount--;
                  }
              } else {

@@ -61,7 +61,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -2277,6 +2277,15 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -2278,6 +2278,15 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                  actionModeLayout.addView(forwardItem, new LinearLayout.LayoutParams(dp(54), ViewGroup.LayoutParams.MATCH_PARENT));
                  actionModeViews.add(forwardItem);
                  forwardItem.setOnClickListener(v -> onActionBarItemClick(v, forward));

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1318,6 +1318,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1324,6 +1324,9 @@ public class MessagesController extends BaseController implements NotificationCe
              if (desu.inugram.helpers.dialogs.FolderMembershipHelper.isLocallyIncluded(accountInstance.getCurrentAccount(), id, dialogId)) {
                  return true;
              }
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
              if (d.folder_id != 0 && (flags & DIALOG_FILTER_FLAG_EXCLUDE_ARCHIVED) != 0) {
                  return false;
              }
-@@ -2247,6 +2250,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2253,6 +2256,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      putUsers(users, true);
                      putChats(chats, true);
                      dialogFiltersLoaded = true;

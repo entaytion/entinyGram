@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                      }
                      if (isVotes) {
                          getMessagesStorage().markMessagePollVotesAsRead(dialogId, topicId, messageId);
-@@ -14512,6 +14512,60 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14572,6 +14572,60 @@ public class MessagesController extends BaseController implements NotificationCe
          }
      }
  
@@ -82,15 +82,15 @@ index 0000000..0000000 100644
      public long createDeleteShowOnceTask(long dialogId, int mid) {
          NativeByteBuffer data = null;
          try {
-@@ -19598,6 +19652,7 @@ public class MessagesController extends BaseController implements NotificationCe
-                 ImageLoader.saveMessageThumbs(message);
-                 AndroidUtilities.runOnUIThread(()-> getSendMessagesHelper().onMessageEdited(message));
+@@ -19658,6 +19712,7 @@ public class MessagesController extends BaseController implements NotificationCe
+ 
+                 desu.inugram.helpers.chat.SavedMessagesHelper.handleMessageEdited(currentAccount, message, dialogMessagesByIds.get(message.id));
  
 +                inu_ignorePendingReadReactions(message.dialog_id, message.id, message.reactions);
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -19672,6 +19727,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19732,6 +19787,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      FileLog.d("InuRx update reactions did=" + dialogId + " mid=" + update.msg_id + " top=" + update.top_msg_id + " updateUnread=" + update.updateUnreadState + " " + desu.inugram.helpers.chat.ReactionDebugHelper.describe(update.reactions) + " from " + desu.inugram.helpers.chat.ReactionDebugHelper.caller());
                  }
  
@@ -102,7 +102,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -16324,7 +16324,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16351,7 +16351,7 @@ public class ChatActivity extends BaseFragment implements
                  if (messageObject != null && fragmentOpened && openAnimationEnded && !inPreviewMode && (chatListItemAnimator == null || !chatListItemAnimator.isRunning()) && messageCell.checkUnreadReactions(clipTop, chatListView.getMeasuredHeight() - blurredViewBottomOffset)) {
                      desu.inugram.helpers.chat.ReactionDebugHelper.onVisibleRead(classGuid, messageCell, reactionsMentionCount);
                      reactionsMentionCount--;
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
                      if (reactionsMentionCount <= 0) {
                          getMessagesController().markReactionsAsRead(dialog_id, getTopicId());
                      }
-@@ -16360,7 +16360,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16387,7 +16387,7 @@ public class ChatActivity extends BaseFragment implements
                  if (messageObject != null && fragmentOpened && openAnimationEnded && !inPreviewMode && (chatListItemAnimator == null || !chatListItemAnimator.isRunning()) && cell.checkUnreadReactions(clipTop, chatListView.getMeasuredHeight() - blurredViewBottomOffset)) {
                      desu.inugram.helpers.chat.ReactionDebugHelper.onVisibleRead(classGuid, cell, reactionsMentionCount);
                      reactionsMentionCount--;
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
                      if (reactionsMentionCount <= 0) {
                          getMessagesController().markReactionsAsRead(dialog_id, getTopicId());
                      }
-@@ -24527,7 +24527,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24564,7 +24564,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                          if (cell != null && reactionsMentionCount > 0) {
                              reactionsMentionCount--;
