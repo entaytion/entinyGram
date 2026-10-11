@@ -113,6 +113,28 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        items.add(
+            mkIconCheckItem(
+                TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON,
+                R.drawable.inu_tabler_arrow_bar_to_right,
+                R.string.InuUnreadBadgeOnBackButton,
+                R.string.InuUnreadBadgeOnBackButtonInfo,
+                InuConfig.UNREAD_BADGE_ON_BACK_BUTTON.value,
+            )
+        )
+        if (InuConfig.UNREAD_BADGE_ON_BACK_BUTTON.value) {
+            items.add(
+                mkIconCheckItem(
+                    TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON_IOS,
+                    R.drawable.inu_tabler_circle,
+                    R.string.InuUnreadBadgeOnBackButtonIos,
+                    0,
+                    InuConfig.UNREAD_BADGE_ON_BACK_BUTTON_IOS.value,
+                )
+            )
+        }
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuCenteringSection))))
         items.add(
             mkIconCheckItem(
@@ -173,6 +195,16 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_TITLE_MARQUEE.toggle()
                 refreshAll()
             }
+
+            TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.UNREAD_BADGE_ON_BACK_BUTTON.toggle()
+                refreshAll()
+            }
+
+            TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON_IOS -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.UNREAD_BADGE_ON_BACK_BUTTON_IOS.toggle()
+                refreshAll()
+            }
         }
     }
 
@@ -190,6 +222,8 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC = InuUtils.generateId()
         private val TOGGLE_CHAT_HEADER_NO_PILL = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
+        private val TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON = InuUtils.generateId()
+        private val TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON_IOS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
 
         @JvmField
@@ -208,6 +242,8 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ios-chat-header-avatar-static", R.string.InuIosChatHeaderAvatarStatic, TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC),
                 SearchRegistry.Entry("chat-header-no-pill", R.string.InuChatHeaderNoPill, TOGGLE_CHAT_HEADER_NO_PILL),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
+                SearchRegistry.Entry("unread-badge-on-back-button", R.string.InuUnreadBadgeOnBackButton, TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON),
+                SearchRegistry.Entry("unread-badge-on-back-button-ios", R.string.InuUnreadBadgeOnBackButtonIos, TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON_IOS),
                 SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
             ),
         )

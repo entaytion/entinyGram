@@ -96,6 +96,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **compact pill & profile transition fixes**
 - 📡 **fix topics side panel flicker**: no more constant jitter/smearing after using search inside the panel
 - 📡 **auto marquee** for long titles - *inspired by auto_marquee plugin (@chestertech)*
+- 📡 **unread counter on the chat header back button**, with an iOS-styled variant and a live preview in chat header settings - *ported from [Finegram](https://github.com/Th3Nekit/Finegram)*
 - 📡 **Material 3 music player**: full-screen player with cover-based colors, wavy seek bar, morphing controls, queue, synced lyrics and a mini player - *ported from [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **show spoilers directly**
 - 📡 **customizable bottom tabs**, with an optional separate Search button; the Chats tab can be moved too - *button layout ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*

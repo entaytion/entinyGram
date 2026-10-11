@@ -1226,7 +1226,6 @@
     <string name="InuCenterTitleMainInfo">عنوان نوار کنش را بیرون از گفتگوها وسط‌چین می‌کند. گفتگوها کلید جداگانه خود را در پایین دارند.</string>
     <string name="InuChatHeaderSettings">سرصفحه گفتگو</string>
     <string name="InuChatHeaderSettingsInfo">پیش‌نمایش زنده بالا با تغییر گزینه‌های پایین بی‌درنگ به‌روز می‌شود.</string>
-    <string name="InuChatHeaderPreviewName">علی</string>
     <string name="InuCenterTitleChats">وسط‌چین در گفتگوها/کانال‌ها</string>
     <string name="InuCenterTitleChatsInfo">عنوان و زیرعنوان گفتگو را وسط‌چین می‌کند؛ آواتار در جای خود می‌ماند. به‌تنهایی کار می‌کند.</string>
     <string name="InuCenterTitleRightAvatar">نمایش آواتار در طرف دیگر</string>
@@ -1898,4 +1897,7 @@
     <string name="InuHideMessage">پنهان کردن</string>
     <string name="InuSideMenu">منوی کناری</string>
     <string name="InuSideMenuInfo">منوی کشویی، بخش‌ها، حساب‌ها و موارد منو.</string>
+    <string name="InuUnreadBadgeOnBackButton">نمایش شمارنده چت‌های خوانده‌نشده</string>
+    <string name="InuUnreadBadgeOnBackButtonInfo">تعداد چت‌های خوانده‌نشده را روی دکمه بازگشت در چت نمایش می‌دهد</string>
+    <string name="InuUnreadBadgeOnBackButtonIos">شمارنده به سبک iOS</string>
 </resources>

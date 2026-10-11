@@ -1753,7 +1753,6 @@
     <string name="InuDatacenterStatusAbout">Проверка доступности и задержки к дата-центрам Telegram.</string>
     <string name="InuDatacenterYourDc">Ваш DC</string>
     <string name="InuDatacenterLeakGuardBlocked">Отключено защитой от утечек</string>
-    <string name="InuChatHeaderPreviewName">Алекс</string>
     <string name="InuChatHeaderSettings">Заголовок чата</string>
     <string name="InuChatHeaderSettingsInfo">Предпросмотр выше обновляется сразу, как только вы меняете настройки ниже.</string>
     <string name="InuConnectProxyImmediately">Подключиться сразу</string>
@@ -2027,4 +2026,7 @@
     <string name="InuAppIconDescOsu">Розовый low-poly hit-circle</string>
     <string name="InuAppIconDescAmongUs">Член экипажа на ярко-жёлтом</string>
     <string name="InuAppIconDescCrimson">Кровавая луна над сумерками сакуры</string>
+    <string name="InuUnreadBadgeOnBackButton">Показать счётчик непрочитанных чатов</string>
+    <string name="InuUnreadBadgeOnBackButtonInfo">Показывает число непрочитанных чатов на кнопке «назад» в чате.</string>
+    <string name="InuUnreadBadgeOnBackButtonIos">Счётчик в стиле iOS</string>
 </resources>

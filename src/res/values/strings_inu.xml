@@ -1344,7 +1344,6 @@
     <string name="InuCenterTitleMainInfo">Centers action bar titles outside chats. Chats have their own toggle below.</string>
     <string name="InuChatHeaderSettings">Chat header</string>
     <string name="InuChatHeaderSettingsInfo">Live preview above updates instantly as you change the options below.</string>
-    <string name="InuChatHeaderPreviewName">Alex</string>
     <string name="InuCenterTitleChats">Center in chats/channels</string>
     <string name="InuCenterTitleChatsInfo">Centers the chat title and subtitle; the avatar stays left. Works on its own.</string>
     <string name="InuCenterTitleRightAvatar">Show avatar on the right</string>
@@ -2021,4 +2020,7 @@
     <string name="InuAppIconDescOsu">Low-poly hit-circle pink</string>
     <string name="InuAppIconDescAmongUs">A crewmate on bright yellow</string>
     <string name="InuAppIconDescCrimson">A blood moon over a sakura dusk</string>
+    <string name="InuUnreadBadgeOnBackButton">Show unread chats counter</string>
+    <string name="InuUnreadBadgeOnBackButtonInfo">Show the number of unread chats on the back button in a chat.</string>
+    <string name="InuUnreadBadgeOnBackButtonIos">iOS-styled counter</string>
 </resources>

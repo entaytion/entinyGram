@@ -1,0 +1,959 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 10 Oct 2026 23:09:49 +0300
+Subject: [+] unread counter on chat header back button
+
+---
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 294 +++++++++++++++++-
+ .../telegram/ui/ActionBar/BackDrawable.java   | 112 ++++++-
+ .../java/org/telegram/ui/ChatActivity.java    |  12 +-
+ .../telegram/ui/Components/CounterView.java   | 175 +++++++----
+ 4 files changed, 528 insertions(+), 65 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -61,6 +61,7 @@ import org.telegram.ui.Adapters.FiltersView;
+ import org.telegram.ui.Components.AnimatedEmojiDrawable;
+ import org.telegram.ui.Components.BackupImageView;
+ import org.telegram.ui.Components.ChatAvatarContainer;
++import org.telegram.ui.Components.CounterView;
+ import org.telegram.ui.Components.CubicBezierInterpolator;
+ import org.telegram.ui.Components.EllipsizeSpanAnimator;
+ import org.telegram.ui.Components.FireworksEffect;
+@@ -97,7 +98,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     private Drawable glassDrawableAvatar;
+     public boolean inu_nonIsland;
+     private INavigationLayout.BackButtonState backButtonState = INavigationLayout.BackButtonState.BACK;
+-    public ImageView backButtonImageView;
++    public UnreadImageView backButtonImageView;
+     private BackupImageView avatarSearchImageView;
+     private Drawable backButtonDrawable;
+     private final SimpleTextView[] titleTextView = new SimpleTextView[2];
+@@ -205,6 +206,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     public int inu_glassTop;
+     public int inu_glassBottom;
+ 
++    // entiny: unread counter on the back button (ported from Finegram)
++    public CounterView countLayout;
++    private boolean countLayoutIsVisible;
++    private boolean isIOSUnreadBadgeAvailable;
++    private AnimatorSet countLayoutAnimator;
++    private final FactorAnimator animatorBackPillWidth = new FactorAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 380);
++    private static final int BACK_COUNTER_LEFT_OFFSET_DP = 30;
++    private static final int BACK_COUNTER_MAX_EXTRA_DP = 35;
++
+     public void setGlassOnlyBack() {
+         glassOnlyBack = true;
+     }
+@@ -317,7 +327,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         if (backButtonImageView != null) {
+             return;
+         }
+-        backButtonImageView = new ImageView(getContext());
++        backButtonImageView = new UnreadImageView(getContext());
+         backButtonImageView.setScaleType(ImageView.ScaleType.CENTER);
+         backButtonImageView.setBackgroundDrawable(Theme.createSelectorDrawable(itemsBackgroundColor));
+         backButtonImageView.setPadding(dp(1), 0, 0, 0);
+@@ -945,6 +955,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         }
+         actionModeVisible = true;
+         checkMenuItemsWidth();
++        if (iOSUnreadBadgeAvailable()) {
++            updateBackPillWidth(true);
++        }
+         if (animated) {
+             ArrayList<Animator> animators = new ArrayList<>();
+             animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f, 1.0f));
+@@ -1116,6 +1129,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         actionMode.hideAllPopupMenus();
+         actionModeVisible = false;
+         checkMenuItemsWidth();
++        if (iOSUnreadBadgeAvailable()) {
++            updateBackPillWidth(true);
++        }
+         ArrayList<Animator> animators = new ArrayList<>();
+         animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f));
+         if (actionModeHidingViews != null) {
+@@ -1519,6 +1535,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
+             backButtonImageView.measure(MeasureSpec.makeMeasureSpec(dp(54), MeasureSpec.EXACTLY), actionBarHeightSpec);
+             textLeft = dp(AndroidUtilities.isTablet() ? 80 : 72);
++
++            if (countLayout != null) {
++                countLayout.measure(MeasureSpec.makeMeasureSpec(dp(100), MeasureSpec.EXACTLY), actionBarHeightSpec);
++                updateBackPillWidth(true);
++            }
+         } else {
+             textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
+         }
+@@ -1618,7 +1639,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         int childCount = getChildCount();
+         for (int i = 0; i < childCount; i++) {
+             View child = getChildAt(i);
+-            if (child.getVisibility() == GONE || child == titleTextView[0] || child == titleTextView[1] || child == additionalSubTitleOverlayContainer || child == subtitleTextView || child == menu || child == backButtonImageView || child == additionalSubtitleTextView || child == avatarSearchImageView) {
++            if (child.getVisibility() == GONE || child == titleTextView[0] || child == titleTextView[1] || child == additionalSubTitleOverlayContainer || child == subtitleTextView || child == menu || child == backButtonImageView || child == additionalSubtitleTextView || child == avatarSearchImageView || countLayout != null && child == countLayout) {
+                 continue;
+             }
+             measureChildWithMargins(child, widthMeasureSpec, 0, MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY), 0);
+@@ -1647,6 +1668,18 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
+             backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
+             textLeft = glassMode ? dp(76) : dp(AndroidUtilities.isTablet() ? 80 : 72);
++
++            if (countLayout != null) {
++                if (iOSUnreadBadgeAvailable()) {
++                    final int inu_cw = countLayout.getMeasuredWidth();
++                    final int inu_ch = countLayout.getMeasuredHeight();
++                    final int inu_cl = dp(BACK_COUNTER_LEFT_OFFSET_DP);
++                    final int inu_ct = additionalTop + (backButtonImageView.getMeasuredHeight() - inu_ch) / 2;
++                    countLayout.layout(inu_cl, inu_ct, inu_cl + inu_cw, inu_ct + inu_ch);
++                } else {
++                    countLayout.layout(dp(30), additionalTop - dp(15), countLayout.getMeasuredWidth(), additionalTop + countLayout.getMeasuredHeight());
++                }
++            }
+         } else {
+             textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
+         }
+@@ -1743,7 +1776,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         int childCount = getChildCount();
+         for (int i = 0; i < childCount; i++) {
+             View child = getChildAt(i);
+-            if (child.getVisibility() == GONE || child == titleTextView[0] || child == titleTextView[1] || child == additionalSubTitleOverlayContainer || child == subtitleTextView || child == menu || child == backButtonImageView || child == additionalSubtitleTextView || child == avatarSearchImageView) {
++            if (child.getVisibility() == GONE || child == titleTextView[0] || child == titleTextView[1] || child == additionalSubTitleOverlayContainer || child == subtitleTextView || child == menu || child == backButtonImageView || child == additionalSubtitleTextView || child == avatarSearchImageView || countLayout != null && child == countLayout) {
+                 continue;
+             }
+ 
+@@ -2429,7 +2462,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         // entiny: back button's own slot; both the symmetric room and the placement clamp derive from it.
+         final int baseLeft = hasBackButton ? s + p : 0;
+         // entiny: static avatar only needs the placement clamp, not the symmetric room -- it implies the compact pill, so clamping is enough to keep clear of it.
+-        final int leftLimit = Math.max(baseLeft,
++        final int inu_backPillLeft = hasBackButton ? inu_getBackPillWidth() - p : 0;
++        final int leftLimit = Math.max(Math.max(baseLeft, inu_backPillLeft),
+                 chatAvatarContainer == null ? 0 : chatAvatarContainer.inu_getStaticAvatarReserve());
+         int leftDefault = leftLimit;
+         int rightDefault = width - rightOffset;
+@@ -2478,7 +2512,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         } else {
+             // entiny: not centered -- pill spans the full back-button-to-menu room, container stays at its own margins (left-aligned), unlike stock's shrink-then-recenter.
+             final int stockRightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+-            final int stockLeft = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
++            final int stockLeft = lerp(hasBackButton ? inu_backPillLeft : 0, hasBackButton ? inu_backPillLeft : s + p, chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+             leftDefault = stockLeft;
+             rightDefault = width - stockRightOffset;
+             if (chatAvatarContainer != null && chatAvatarContainer.getLayoutParams() instanceof MarginLayoutParams) {
+@@ -2555,7 +2589,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                 || (animatorMenuItemsWidth != null && animatorMenuItemsWidth.isAnimating())
+                 || (animatorHasMenuItems != null && animatorHasMenuItems.isAnimating())
+                 || (animatorAvatarContainerWidth != null && animatorAvatarContainerWidth.isAnimating())
+-                || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
++                || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating())
++                || (animatorBackPillWidth != null && animatorBackPillWidth.isAnimating());
+     }
+ 
+     public boolean inu_hideChatPill() {
+@@ -2597,7 +2632,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             glassDrawable.draw(canvas);
+         }
+         if (glassDrawableBack != null && hasBackButton && !inu_nonIsland) {
+-            glassDrawableBack.setBounds(0, t, s + p * 2, b);
++            if (iOSUnreadBadgeAvailable() && countLayout != null) {
++                final int inu_extra = inu_getBackPillCounterExtraWidth();
++                final int inu_counterWidth = Math.max(1, inu_getBackPillCounterTargetWidth());
++                countLayout.setAlpha(Math.min(1f, inu_extra / (float) inu_counterWidth));
++            }
++            glassDrawableBack.setBounds(0, t, inu_getBackPillWidth(), b);
+             glassDrawableBack.draw(canvas);
+         }
+         if (glassDrawableMenu != null && menuWidth > 0 && !glassOnlyBack && !doNotDrawGlassMenu && !inu_nonIsland) {
+@@ -2811,4 +2851,242 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             invalidate();
+         }
+     }
++
++    // entiny: unread-badge-on-back-button geometry, ported from Finegram
++    private int inu_getBackPillCounterTargetWidth() {
++        if (countLayout == null) {
++            return 0;
++        }
++        return Math.min(dp(BACK_COUNTER_MAX_EXTRA_DP), Math.max(0, countLayout.getMeasuredWidth()));
++    }
++
++    public void updateBackPillWidth(boolean animated) {
++        boolean show = iOSUnreadBadgeAvailable()
++                && countLayout != null
++                && backButtonImageView != null
++                && backButtonImageView.getUnreadCount() > 0
++                && !isActionModeShowed()
++                && !isSearchFieldVisible;
++
++        int target = show ? inu_getBackPillCounterTargetWidth() : 0;
++
++        if (countLayout != null) {
++            if (countLayoutIsVisible != show) {
++                countLayoutIsVisible = show;
++
++                if (countLayoutAnimator != null) {
++                    countLayoutAnimator.cancel();
++                }
++
++                if (animated) {
++                    countLayoutAnimator = new AnimatorSet();
++                    ArrayList<Animator> animators = new ArrayList<>();
++
++                    ValueAnimator progressAnimator = ValueAnimator.ofFloat(show ? 0.0f : 1.0f, show ? 1.0f : 0.0f);
++
++                    final boolean[] iconTriggered = {false};
++
++                    progressAnimator.addUpdateListener(animation -> {
++                        float progress = (float) animation.getAnimatedValue();
++
++                        countLayout.setScaleX(progress);
++                        countLayout.setScaleY(progress);
++                        countLayout.setAlpha(progress);
++
++                        float fraction = animation.getAnimatedFraction();
++
++                        if (show && fraction >= 0.5f && !iconTriggered[0]) {
++                            iconTriggered[0] = true;
++                            inu_updateMoveBackIconState(true);
++                        }
++                    });
++
++                    animators.add(progressAnimator);
++
++                    countLayoutAnimator.playTogether(animators);
++                    countLayoutAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
++                    countLayoutAnimator.setDuration(380);
++
++                    countLayoutAnimator.addListener(new AnimatorListenerAdapter() {
++                        @Override
++                        public void onAnimationStart(Animator animation) {
++                            if (!show) {
++                                inu_updateMoveBackIconState(false);
++                            }
++                        }
++                    });
++
++                    countLayoutAnimator.start();
++                } else {
++                    countLayout.setScaleX(show ? 1.0f : 0.0f);
++                    countLayout.setScaleY(show ? 1.0f : 0.0f);
++                    countLayout.setAlpha(show ? 1.0f : 0.0f);
++                    inu_updateMoveBackIconState(show);
++                }
++            }
++        }
++
++        if (animated) {
++            if (animatorBackPillWidth.getToFactor() != target) {
++                animatorBackPillWidth.animateTo(target);
++            }
++        } else {
++            animatorBackPillWidth.forceFactor(target);
++        }
++    }
++
++    private void inu_updateMoveBackIconState(boolean show) {
++        if (backButtonImageView != null) {
++            Drawable drawable = backButtonImageView.getDrawable();
++            if (drawable instanceof BackDrawable) {
++                ((BackDrawable) drawable).setMoveBackIcon(show && !isSearchFieldVisible);
++            }
++        }
++    }
++
++    private int inu_getBackPillCounterExtraWidth() {
++        if (!iOSUnreadBadgeAvailable() || countLayout == null) {
++            return 0;
++        }
++        return Math.max(0, (int) animatorBackPillWidth.getFactor());
++    }
++
++    public int inu_getBackPillWidth() {
++        final int p = dp(6);
++        final int s = dp(46);
++        int width = s + p * 2;
++        int extra = inu_getBackPillCounterExtraWidth();
++        if (extra > 0) {
++            width = Math.max(width, dp(BACK_COUNTER_LEFT_OFFSET_DP) + extra + inu_getBackPillCounterRightPadding());
++        }
++        return width;
++    }
++
++    public int inu_getBackPillCounterRightPadding() {
++        int count = backButtonImageView != null ? backButtonImageView.getUnreadCount() : 0;
++
++        if (count <= 0) {
++            return 0;
++        }
++
++        String countStr = String.valueOf(Math.min(999, count));
++        int length = countStr.length();
++
++        if (length == 1) {
++            return dp(3.5f);
++        } else if (length == 2) {
++            return dp(7.5f);
++        } else {
++            return dp(13.5f);
++        }
++    }
++
++    public int inu_getBackPillGrowth() {
++        return Math.max(0, inu_getBackPillWidth() - (dp(46) + dp(6) * 2));
++    }
++
++    public void setIOSUnreadBadgeAvailable(boolean available) {
++        this.isIOSUnreadBadgeAvailable = available;
++        if (countLayout != null) {
++            countLayout.setIOSUnreadBadgeAvailable(available);
++        }
++    }
++
++    public boolean iOSUnreadBadgeAvailable() {
++        return desu.inugram.InuConfig.UNREAD_BADGE_ON_BACK_BUTTON_IOS.getValue() && isIOSUnreadBadgeAvailable;
++    }
++
++    public class UnreadImageView extends ImageView {
++        private int unreadCount = -1;
++
++        public UnreadImageView(Context context) {
++            super(context);
++        }
++
++        public void createUnreadView(int count) {
++            if (countLayout != null) {
++                return;
++            }
++            countLayout = new CounterView(getContext(), resourcesProvider) {
++                @Override
++                public void invalidate() {
++                    super.invalidate();
++                    if (iOSUnreadBadgeAvailable()) {
++                        updateBackPillWidth(true);
++                    }
++                }
++            };
++
++            countLayout.setReverse(!iOSUnreadBadgeAvailable());
++            countLayout.setGravity(Gravity.LEFT);
++
++            if (iOSUnreadBadgeAvailable()) {
++                countLayout.setColors(Theme.key_actionBarActionModeDefault, Theme.key_actionBarActionModeDefaultIcon);
++                countLayout.setTextSize(12f);
++            }
++
++            addView(countLayout, LayoutHelper.createFrame(
++                    iOSUnreadBadgeAvailable() ? LayoutHelper.WRAP_CONTENT : 54,
++                    iOSUnreadBadgeAvailable() ? 24 : 54,
++                    Gravity.LEFT | Gravity.TOP
++            ));
++
++            setUnread(count);
++        }
++
++        public void checkUnreadView(int count) {
++            if (!desu.inugram.InuConfig.UNREAD_BADGE_ON_BACK_BUTTON.getValue() || (parentFragment != null && parentFragment.isInPreviewMode())) {
++                return;
++            }
++            if (countLayout == null) {
++                createUnreadView(count);
++            } else {
++                setUnread(count);
++            }
++        }
++
++        public int getUnreadCount() {
++            return unreadCount;
++        }
++
++        public void setUnread(int count) {
++            count = Math.max(0, count);
++
++            if (count > 999) {
++                count = 999;
++            }
++
++            if (countLayout == null) {
++                return;
++            }
++
++            if (count != unreadCount) {
++                unreadCount = count;
++                if (iOSUnreadBadgeAvailable()) {
++                    countLayout.setColors(Theme.key_actionBarActionModeDefault, Theme.key_actionBarActionModeDefaultIcon);
++                    countLayout.setTextSize(12f);
++
++                    String countStr = String.valueOf(count);
++
++                    float badgeWidthDp;
++                    if (countStr.length() == 1) {
++                        badgeWidthDp = 18f;
++                    } else if (countStr.length() == 2) {
++                        badgeWidthDp = 24f;
++                    } else {
++                        badgeWidthDp = 30f;
++                    }
++                    countLayout.setBackgroundSize(badgeWidthDp, 16f);
++
++                    countLayout.setCount(count, true);
++                } else {
++                    countLayout.setCount(count, true);
++                }
++            }
++
++            if (iOSUnreadBadgeAvailable()) {
++                updateBackPillWidth(true);
++            }
++        }
++    }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BackDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BackDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BackDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BackDrawable.java
+@@ -8,18 +8,23 @@
+ 
+ package org.telegram.ui.ActionBar;
+ 
++import android.animation.ValueAnimator;
++import android.content.Context;
+ import android.graphics.Canvas;
+ import android.graphics.Color;
+ import android.graphics.ColorFilter;
+ import android.graphics.Paint;
+ import android.graphics.PixelFormat;
+ import android.graphics.drawable.Drawable;
++import android.os.Build;
++import android.provider.Settings;
+ import android.view.animation.DecelerateInterpolator;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.core.graphics.ColorUtils;
+ 
+ import org.telegram.messenger.AndroidUtilities;
++import org.telegram.messenger.ApplicationLoader;
+ import org.telegram.messenger.Utilities;
+ 
+ public class BackDrawable extends Drawable {
+@@ -122,19 +127,63 @@ public class BackDrawable extends Drawable {
+         paint.setColor(ColorUtils.blendARGB(color, rotatedColor, currentRotation));
+ 
+         canvas.save();
+-        canvas.translate(getIntrinsicWidth() / 2f, getIntrinsicHeight() / 2f);
++
++        if (moveBackProgress != finalMoveBackProgress) {
++            if (moveBackLastFrameTime != 0) {
++                float durationScale = getAnimatorDurationScale(ApplicationLoader.applicationContext);
++
++                if (durationScale <= 0f) {
++                    moveBackProgress = finalMoveBackProgress;
++                } else {
++                    long dt = System.currentTimeMillis() - moveBackLastFrameTime;
++
++                    moveBackAnimationTime += (int) (dt / durationScale);
++
++                    if (moveBackAnimationTime >= moveBackDuration) {
++                        moveBackProgress = finalMoveBackProgress;
++                    } else {
++                        float t = interpolator.getInterpolation((float) moveBackAnimationTime / moveBackDuration);
++
++                        if (finalMoveBackProgress == 1f) {
++                            moveBackProgress = t;
++                        } else {
++                            moveBackProgress = 1f - t;
++                        }
++                    }
++                }
++            }
++
++            moveBackLastFrameTime = System.currentTimeMillis();
++            invalidateSelf();
++        }
++
++        float baseOffset = !showStick ? AndroidUtilities.dp(3.5f) * (1.0f - currentRotation) : 0;
++        float signedOffset = AndroidUtilities.lerp(baseOffset, -baseOffset, moveBackProgress);
++
++        canvas.translate(
++                getIntrinsicWidth() / 2f + signedOffset,
++                getIntrinsicHeight() / 2f
++        );
+         if (arrowRotation != 0) {
+             canvas.rotate(arrowRotation);
+         }
+         float rotation = currentRotation;
+-        canvas.translate(-AndroidUtilities.dp(0.66f)/* * (rotation)*/, 0);
++        canvas.translate(-AndroidUtilities.dp(0.66f)                 , 0);
+         if (!alwaysClose) {
+             canvas.rotate(currentRotation * (reverseAngle ? -225 : 135));
+         } else {
+             canvas.rotate(135 + currentRotation * (reverseAngle ? -180 : 180));
+             rotation = 1.0f;
+         }
+-        canvas.drawLine(AndroidUtilities.dp(AndroidUtilities.lerp(-6.75f, -8f, rotation)), 0, AndroidUtilities.dp(8) - (paint.getStrokeWidth() / 2f) * (1f - rotation), 0, paint);
++
++        float startX = AndroidUtilities.dp(AndroidUtilities.lerp(-6.75f, -8f, rotation));
++        float defaultEndX = AndroidUtilities.dp(8) - (paint.getStrokeWidth() / 2f) * (1f - rotation);
++
++        float stickFactor = showStick ? 1.0f : rotation;
++        float endX = AndroidUtilities.lerp(startX, defaultEndX, stickFactor);
++
++        canvas.drawLine(startX, 0, endX, 0, paint);
++
+         float startYDiff = AndroidUtilities.dp(-0.25f);
+         float endYDiff = AndroidUtilities.dp(AndroidUtilities.lerp(7f, 8f, rotation)) - (paint.getStrokeWidth() / 4f) * (1f - rotation);
+         float startXDiff = AndroidUtilities.dp(AndroidUtilities.lerp(-7f - 0.25f, 0f, rotation));
+@@ -168,4 +217,61 @@ public class BackDrawable extends Drawable {
+     public int getIntrinsicHeight() {
+         return AndroidUtilities.dp(24);
+     }
++    private boolean showStick = true;
++
++    private float moveBackProgress = 1f;
++    private float finalMoveBackProgress = 1f;
++    private long moveBackLastFrameTime;
++    private int moveBackAnimationTime;
++
++    private final float moveBackDuration = 220f;
++
++    public void setShowStick(boolean show) {
++        show = false;
++        if (showStick != show) {
++            showStick = show;
++            invalidateSelf();
++        }
++        setMoveBackIcon(false);
++    }
++
++    public boolean isShowStick() {
++        return showStick;
++    }
++
++    public void setMoveBackIcon(boolean moveBackIcon) {
++        float target = moveBackIcon ? 1f : 0f;
++
++        if (finalMoveBackProgress == target) {
++            return;
++        }
++
++        finalMoveBackProgress = target;
++
++        if (moveBackProgress < target) {
++            moveBackAnimationTime = (int) (moveBackProgress * moveBackDuration);
++        } else {
++            moveBackAnimationTime = (int) ((1f - moveBackProgress) * moveBackDuration);
++        }
++
++        moveBackLastFrameTime = System.currentTimeMillis();
++        invalidateSelf();
++    }
++
++    public static float getAnimatorDurationScale(Context context) {
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
++            return ValueAnimator.getDurationScale();
++        }
++
++        try {
++            return Settings.Global.getFloat(
++                    context.getContentResolver(),
++                    Settings.Global.ANIMATOR_DURATION_SCALE,
++                    1.0f
++            );
++        } catch (Throwable e) {
++            return 1.0f;
++        }
++    }
++
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -2947,6 +2947,7 @@ public class ChatActivity extends BaseFragment implements
+             observersGroup.add(NotificationCenter.didLoadSponsoredMessages);
+         }
+         observersGroup
++            .add(NotificationCenter.dialogsUnreadCounterChanged)
+             .add(NotificationCenter.updatedChatRanks)
+             .add(NotificationCenter.premiumFloodWaitReceived)
+             .add(NotificationCenter.messagesDidLoad)
+@@ -3752,7 +3753,13 @@ public class ChatActivity extends BaseFragment implements
+         if (inPreviewMode) {
+             actionBar.setBackButtonDrawable(null);
+         } else {
+-            actionBar.setBackButtonDrawable(new BackDrawable(isReport()));
++            // entiny: with the counter on, the arrow drops its tail and the pill is sized right after
++            BackDrawable inu_backDrawable = new BackDrawable(isReport());
++            if (desu.inugram.InuConfig.UNREAD_BADGE_ON_BACK_BUTTON.getValue()) {
++                inu_backDrawable.setShowStick(false);
++            }
++            actionBar.setBackButtonDrawable(inu_backDrawable);
++            desu.inugram.helpers.chat.UnreadBackBadgeHelper.update(actionBar, currentAccount);
+         }
+ 
+         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+@@ -20957,6 +20964,8 @@ public class ChatActivity extends BaseFragment implements
+     public void didReceivedNotification(int id, int account, final Object... args) {
+         if (id == NotificationCenter.messagesDidLoad) {
+             didReceivedNotification_messagesDidLoad(id, account, args);
++        } else if (id == NotificationCenter.dialogsUnreadCounterChanged) {
++            desu.inugram.helpers.chat.UnreadBackBadgeHelper.update(actionBar, account);
+         } else {
+             didReceivedNotification2(id, account, args);
+             didReceivedNotification3(id, account, args);
+@@ -47938,6 +47947,7 @@ public class ChatActivity extends BaseFragment implements
+             avatarContainer.setScaleY(scale);
+             avatarContainer.setAlpha(factor);
+             avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
++            desu.inugram.helpers.chat.UnreadBackBadgeHelper.update(actionBar, currentAccount);
+         }
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/CounterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/CounterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/CounterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/CounterView.java
+@@ -15,7 +15,6 @@ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+ import android.view.View;
+-import android.view.animation.OvershootInterpolator;
+ 
+ import org.telegram.messenger.AndroidUtilities;
+ import org.telegram.ui.ActionBar.Theme;
+@@ -39,13 +38,11 @@ public class CounterView extends View {
+         counterDrawable.setSize(getMeasuredHeight(), getMeasuredWidth());
+     }
+ 
+-
+     @Override
+     protected void onDraw(Canvas canvas) {
+         counterDrawable.draw(canvas);
+     }
+ 
+-
+     public void setColors(int textKey, int circleKey) {
+         counterDrawable.textColorKey = textKey;
+         counterDrawable.circleColorKey = circleKey;
+@@ -145,12 +142,24 @@ public class CounterView extends View {
+             width = w;
+         }
+ 
+-
+         private void drawInternal(Canvas canvas) {
+-            float size = radius * 2;
+-            float countTop = (lastH - AndroidUtilities.dp(size)) / 2f;
++            float bgHeight = customHeight > 0 ? customHeight : AndroidUtilities.dp(radius * 2);
++            float countTop = (lastH - bgHeight) / 2f;
++
+             updateX(countWidth);
+-            rectF.set(x, countTop, x + countWidth + AndroidUtilities.dp(radius - 0.5f), countTop + AndroidUtilities.dp(size));
++
++            float defaultBgWidth = countWidth + AndroidUtilities.dp(radius - 0.5f);
++            float bgWidth = customWidth > 0 ? customWidth : defaultBgWidth;
++
++            float bgLeft;
++            if (customWidth > 0) {
++                bgLeft = x + (defaultBgWidth - customWidth) / 2f;
++            } else {
++                bgLeft = x;
++            }
++
++            rectF.set(bgLeft, countTop, bgLeft + bgWidth, countTop + bgHeight);
++
+             if (circlePaint != null && drawBackground) {
+                 boolean needRestore = false;
+                 if (circleScale != 1f) {
+@@ -158,9 +167,10 @@ public class CounterView extends View {
+                     canvas.scale(circleScale, circleScale, rectF.centerX(), rectF.centerY());
+                     needRestore = true;
+                 }
+-                canvas.drawRoundRect(rectF, radius * AndroidUtilities.density, radius * AndroidUtilities.density, circlePaint);
++                float rx = bgHeight / 2f;
++                canvas.drawRoundRect(rectF, rx, rx, circlePaint);
+                 if (addServiceGradient && Theme.hasGradientService()) {
+-                    canvas.drawRoundRect(rectF, radius * AndroidUtilities.density, radius * AndroidUtilities.density, Theme.chat_actionBackgroundGradientDarkenPaint);
++                    canvas.drawRoundRect(rectF, rx, rx, Theme.chat_actionBackgroundGradientDarkenPaint);
+                 }
+                 if (needRestore) {
+                     canvas.restore();
+@@ -168,7 +178,8 @@ public class CounterView extends View {
+             }
+             if (countLayout != null) {
+                 canvas.save();
+-                canvas.translate(countLeft, countTop + AndroidUtilities.dp(4));
++                float textY = rectF.centerY() - (countLayout.getHeight() / 2f);
++                canvas.translate(countLeft, textY);
+                 countLayout.draw(canvas);
+                 canvas.restore();
+             }
+@@ -183,7 +194,7 @@ public class CounterView extends View {
+         }
+ 
+         public void setText(CharSequence text, boolean animated, int count, boolean isText) {
+-            if (TextUtils.equals(text, currentText)) {
++            if (TextUtils.equals(text, currentText) && count == currentCount) {
+                 return;
+             }
+             if (countAnimator != null) {
+@@ -192,7 +203,8 @@ public class CounterView extends View {
+             if (count > 0 && updateVisibility && parent != null) {
+                 parent.setVisibility(View.VISIBLE);
+             }
+-            if (Math.abs(count - currentCount) > 99) {
++            boolean visibilityChanging = (currentCount <= 0 && count > 0) || (currentCount > 0 && count <= 0);
++            if (Math.abs(count - currentCount) > 99 && !visibilityChanging) {
+                 animated = false;
+             }
+             if (!animated) {
+@@ -204,7 +216,7 @@ public class CounterView extends View {
+                     }
+                     return;
+                 }
+-                CharSequence newStr = text; // getStringOfCCount(count);
++                CharSequence newStr = text;
+                 countWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(newStr.toString())));
+                 countLayout = new StaticLayout(newStr, textPaint, countWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                 countLayoutWidth = countLayout.getLineCount() >= 1 ? countLayout.getLineWidth(0) : 0;
+@@ -213,7 +225,7 @@ public class CounterView extends View {
+                 }
+                 return;
+             }
+-            CharSequence newStr = text; // getStringOfCCount(count);
++            CharSequence newStr = text;
+ 
+             if (animated) {
+                 if (countAnimator != null) {
+@@ -245,19 +257,29 @@ public class CounterView extends View {
+                 });
+                 if (currentCount <= 0) {
+                     animationType = ANIMATION_TYPE_IN;
+-                    countAnimator.setDuration(220);
+-                    countAnimator.setInterpolator(new OvershootInterpolator());
++                    if (this.isIOSUnreadBadgeAvailable) {
++                        countAnimator.setDuration(380);
++                        countAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
++                    } else {
++                        countAnimator.setDuration(220);
++                        countAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
++                    }
+                 } else if (count == 0) {
+                     animationType = ANIMATION_TYPE_OUT;
+-                    countAnimator.setDuration(150);
+-                    countAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
++                    if (isIOSUnreadBadgeAvailable) {
++                        countAnimator.setDuration(380);
++                        countAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
++                    } else {
++                        countAnimator.setDuration(220);
++                        countAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
++                    }
+                 } else {
+                     animationType = ANIMATION_TYPE_REPLACE;
+                     countAnimator.setDuration(430);
+                     countAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
+                 }
+                 if (countLayout != null) {
+-                    CharSequence oldStr = currentText; // getStringOfCCount(currentCount);
++                    CharSequence oldStr = currentText;
+ 
+                     if (oldStr.length() == newStr.length() && !isText) {
+                         SpannableStringBuilder oldSpannableStr = new SpannableStringBuilder(oldStr);
+@@ -328,16 +350,26 @@ public class CounterView extends View {
+                     float cy = lastH / 2f;
+                     canvas.save();
+                     float progress = animationType == ANIMATION_TYPE_IN ? countChangeProgress : (1f - countChangeProgress);
++                    int alpha = (int) (255 * Math.max(0f, Math.min(1f, progress)));
++                    if (circlePaint != null) {
++                        circlePaint.setAlpha(alpha);
++                    }
++                    textPaint.setAlpha(alpha);
+                     canvas.scale(progress, progress, cx, cy);
+                     drawInternal(canvas);
+                     canvas.restore();
++                    if (circlePaint != null) {
++                        circlePaint.setAlpha(255);
++                    }
++                    textPaint.setAlpha(255);
+                 } else {
+                     float progressHalf = countChangeProgress * 2;
+                     if (progressHalf > 1f) {
+                         progressHalf = 1f;
+                     }
+ 
+-                    float countTop = (lastH - AndroidUtilities.dp(radius * 2)) / 2f;
++                    float bgHeight = customHeight > 0 ? customHeight : AndroidUtilities.dp(radius * 2);
++                    float countTop = (lastH - bgHeight) / 2f;
+                     float countWidth;
+                     if (this.countWidth == this.countWidthOld) {
+                         countWidth = this.countWidth;
+@@ -355,7 +387,11 @@ public class CounterView extends View {
+                         }
+                     }
+ 
+-                    rectF.set(x, countTop, x + countWidth + AndroidUtilities.dp(radius - 0.5f), countTop + AndroidUtilities.dp(radius * 2));
++                    float defaultBgWidth = countWidth + AndroidUtilities.dp(radius - 0.5f);
++                    float bgWidth = customWidth > 0 ? customWidth : defaultBgWidth;
++                    float bgLeft = customWidth > 0 ? (x + (defaultBgWidth - customWidth) / 2f) : x;
++
++                    rectF.set(bgLeft, countTop, bgLeft + bgWidth, countTop + bgHeight);
+                     canvas.save();
+                     canvas.scale(scale, scale, rectF.centerX(), rectF.centerY());
+                     boolean needRestore = false;
+@@ -365,9 +401,10 @@ public class CounterView extends View {
+                         canvas.scale(circleScale, circleScale, rectF.centerX(), rectF.centerY());
+                     }
+                     if (drawBackground && circlePaint != null) {
+-                        canvas.drawRoundRect(rectF, radius * AndroidUtilities.density, radius * AndroidUtilities.density, circlePaint);
++                        float rx = bgHeight / 2f;
++                        canvas.drawRoundRect(rectF, rx, rx, circlePaint);
+                         if (addServiceGradient && Theme.hasGradientService()) {
+-                            canvas.drawRoundRect(rectF, radius * AndroidUtilities.density, radius * AndroidUtilities.density, Theme.chat_actionBackgroundGradientDarkenPaint);
++                            canvas.drawRoundRect(rectF, rx, rx, Theme.chat_actionBackgroundGradientDarkenPaint);
+                         }
+                     }
+                     if (needRestore) {
+@@ -376,15 +413,17 @@ public class CounterView extends View {
+                     canvas.clipRect(rectF);
+ 
+                     boolean increment = reverseAnimation != countAnimationIncrement;
++                    float textY = rectF.centerY() - (countLayout != null ? countLayout.getHeight() / 2f : AndroidUtilities.dp(6));
++
+                     if (countAnimationInLayout != null) {
+                         canvas.save();
+-                        canvas.translate(countLeft, countTop + AndroidUtilities.dp(4) + (increment ? AndroidUtilities.dp(13) : -AndroidUtilities.dp(13)) * (1f - progressHalf));
++                        canvas.translate(countLeft, textY + (increment ? AndroidUtilities.dp(13) : -AndroidUtilities.dp(13)) * (1f - progressHalf));
+                         textPaint.setAlpha((int) (255 * progressHalf));
+                         countAnimationInLayout.draw(canvas);
+                         canvas.restore();
+                     } else if (countLayout != null) {
+                         canvas.save();
+-                        canvas.translate(countLeft, countTop + AndroidUtilities.dp(4) + (increment ? AndroidUtilities.dp(13) : -AndroidUtilities.dp(13)) * (1f - progressHalf));
++                        canvas.translate(countLeft, textY + (increment ? AndroidUtilities.dp(13) : -AndroidUtilities.dp(13)) * (1f - progressHalf));
+                         textPaint.setAlpha((int) (255 * progressHalf));
+                         countLayout.draw(canvas);
+                         canvas.restore();
+@@ -392,7 +431,7 @@ public class CounterView extends View {
+ 
+                     if (countOldLayout != null) {
+                         canvas.save();
+-                        canvas.translate(countLeft, countTop + AndroidUtilities.dp(4) + (increment ? -AndroidUtilities.dp(13) : AndroidUtilities.dp(13)) * (progressHalf));
++                        canvas.translate(countLeft, textY + (increment ? -AndroidUtilities.dp(13) : AndroidUtilities.dp(13)) * (progressHalf));
+                         textPaint.setAlpha((int) (255 * (1f - progressHalf)));
+                         countOldLayout.draw(canvas);
+                         canvas.restore();
+@@ -400,7 +439,7 @@ public class CounterView extends View {
+ 
+                     if (countAnimationStableLayout != null) {
+                         canvas.save();
+-                        canvas.translate(countLeft, countTop + AndroidUtilities.dp(4));
++                        canvas.translate(countLeft, textY);
+                         textPaint.setAlpha(255);
+                         countAnimationStableLayout.draw(canvas);
+                         canvas.restore();
+@@ -414,31 +453,15 @@ public class CounterView extends View {
+         }
+ 
+         public void updateBackgroundRect() {
+-            if (countChangeProgress != 1f) {
+-                if (animationType == ANIMATION_TYPE_IN || animationType == ANIMATION_TYPE_OUT) {
+-                    updateX(countWidth);
+-                    float countTop = (lastH - AndroidUtilities.dp(radius * 2)) / 2f;
+-                    rectF.set(x, countTop, x + countWidth + AndroidUtilities.dp(11), countTop + AndroidUtilities.dp(23));
+-                } else {
+-                    float progressHalf = countChangeProgress * 2;
+-                    if (progressHalf > 1f) {
+-                        progressHalf = 1f;
+-                    }
+-                    float countTop = (lastH - AndroidUtilities.dp(radius * 2)) / 2f;
+-                    float countWidth;
+-                    if (this.countWidth == this.countWidthOld) {
+-                        countWidth = this.countWidth;
+-                    } else {
+-                        countWidth = this.countWidth * progressHalf + this.countWidthOld * (1f - progressHalf);
+-                    }
+-                    updateX(countWidth);
+-                    rectF.set(x, countTop, x + countWidth + AndroidUtilities.dp(11), countTop + AndroidUtilities.dp(23));
+-                }
+-            } else {
+-                updateX(countWidth);
+-                float countTop = (lastH - AndroidUtilities.dp(radius * 2)) / 2f;
+-                rectF.set(x, countTop, x + countWidth + AndroidUtilities.dp(11), countTop + AndroidUtilities.dp(23));
+-            }
++            float bgHeight = customHeight > 0 ? customHeight : AndroidUtilities.dp(radius * 2);
++            float defaultBgWidth = countWidth + AndroidUtilities.dp(11);
++            float bgWidth = customWidth > 0 ? customWidth : defaultBgWidth;
++            float countTop = (lastH - bgHeight) / 2f;
++
++            updateX(countWidth);
++
++            float bgLeft = customWidth > 0 ? (x + (defaultBgWidth - customWidth) / 2f) : x;
++            rectF.set(bgLeft, countTop, bgLeft + bgWidth, countTop + bgHeight);
+         }
+ 
+         private void updateX(float countWidth) {
+@@ -476,8 +499,43 @@ public class CounterView extends View {
+         }
+ 
+         public int getWidth() {
+-            return currentCount == 0 ? 0 : (countWidth + AndroidUtilities.dp(radius - 0.5f));
++            if (currentCount == 0) return 0;
++            if (customWidth > 0) return (int) customWidth;
++            return (countWidth + AndroidUtilities.dp(radius - 0.5f));
++        }
++        private float customWidth = -1;
++        private float customHeight = -1;
++
++        private boolean isIOSUnreadBadgeAvailable;
++
++        private void setIOSUnreadBadgeAvailable(boolean available) {
++            isIOSUnreadBadgeAvailable = available;
++        }
++
++        private void setTextSize(float sizeSp) {
++            textPaint.setTextSize(AndroidUtilities.dp(sizeSp));
++            recreateLayout();
++        }
++
++        private void setBackgroundSize(float width, float height) {
++            this.customWidth = width > 0 ? AndroidUtilities.dp(width) : -1;
++            this.customHeight = height > 0 ? AndroidUtilities.dp(height) : -1;
++            if (parent != null) {
++                parent.invalidate();
++            }
++        }
++
++        private void recreateLayout() {
++            if (currentText != null) {
++                countWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(currentText.toString())));
++                countLayout = new StaticLayout(currentText, textPaint, countWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
++                countLayoutWidth = countLayout.getLineCount() >= 1 ? countLayout.getLineWidth(0) : 0;
++                if (parent != null) {
++                    parent.invalidate();
++                }
++            }
+         }
++
+     }
+ 
+     public float getEnterProgress() {
+@@ -495,5 +553,16 @@ public class CounterView extends View {
+     public boolean isInOutAnimation() {
+         return counterDrawable.animationType == CounterDrawable.ANIMATION_TYPE_IN || counterDrawable.animationType == CounterDrawable.ANIMATION_TYPE_OUT;
+     }
++    public void setIOSUnreadBadgeAvailable(boolean available) {
++        counterDrawable.isIOSUnreadBadgeAvailable = available;
++    }
++
++    public void setTextSize(float sizeSp) {
++        counterDrawable.setTextSize(sizeSp);
++    }
++
++    public void setBackgroundSize(float widthDp, float heightDp) {
++        counterDrawable.setBackgroundSize(widthDp, heightDp);
++    }
+ 
+ }

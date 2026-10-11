@@ -1751,7 +1751,6 @@
     <string name="InuDatacenterStatusAbout">Перевірка доступності та затримки до дата-центрів Telegram.</string>
     <string name="InuDatacenterYourDc">Ваш DC</string>
     <string name="InuDatacenterLeakGuardBlocked">Вимкнено захистом від витоків</string>
-    <string name="InuChatHeaderPreviewName">Олекс</string>
     <string name="InuChatHeaderSettings">Заголовок чату</string>
     <string name="InuChatHeaderSettingsInfo">Попередній перегляд вище оновлюється одразу, щойно ви змінюєте налаштування нижче.</string>
     <string name="InuConnectProxyImmediately">Підключитися одразу</string>
@@ -2019,4 +2018,7 @@
     <string name="InuAppIconDescOsu">Рожевий low-poly hit-circle</string>
     <string name="InuAppIconDescAmongUs">Член екіпажу на яскраво-жовтому</string>
     <string name="InuAppIconDescCrimson">Криваво-червоний місяць над сутінками сакури</string>
+    <string name="InuUnreadBadgeOnBackButton">Показати лічильник непрочитаних чатів</string>
+    <string name="InuUnreadBadgeOnBackButtonInfo">Показує кількість непрочитаних чатів на кнопці «назад» у чаті.</string>
+    <string name="InuUnreadBadgeOnBackButtonIos">Лічильник у стилі iOS</string>
 </resources>

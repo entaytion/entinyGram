@@ -1637,7 +1637,6 @@
     <string name="InuChatExportVideos">動画</string>
     <string name="InuChatExportView">表示</string>
     <string name="InuChatExportVoice">ボイスメッセージ</string>
-    <string name="InuChatHeaderPreviewName">アレックス</string>
     <string name="InuChatHeaderSettings">チャットヘッダー</string>
     <string name="InuChatHeaderSettingsInfo">下の設定を変更すると、上のプレビューがすぐに更新されます。</string>
     <string name="InuCompactInputSize">コンパクトモード</string>
@@ -1893,4 +1892,7 @@
     <string name="InuHideMessage">非表示</string>
     <string name="InuSideMenu">サイドメニュー</string>
     <string name="InuSideMenuInfo">ドロワー、そのセクション、アカウント、メニュー項目。</string>
+    <string name="InuUnreadBadgeOnBackButton">未読チャットの件数を表示</string>
+    <string name="InuUnreadBadgeOnBackButtonInfo">チャット内の戻るボタンに未読チャットの件数を表示します</string>
+    <string name="InuUnreadBadgeOnBackButtonIos">iOS 風のカウンター</string>
 </resources>

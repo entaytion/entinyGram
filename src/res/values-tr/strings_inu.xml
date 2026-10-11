@@ -1651,7 +1651,6 @@
     <string name="InuChatExportVideos">Videolar</string>
     <string name="InuChatExportView">Görüntüle</string>
     <string name="InuChatExportVoice">Sesli mesajlar</string>
-    <string name="InuChatHeaderPreviewName">Aleks</string>
     <string name="InuChatHeaderSettings">Sohbet başlığı</string>
     <string name="InuChatHeaderSettingsInfo">Aşağıdaki seçenekleri değiştirdikçe yukarıdaki önizleme anında güncellenir.</string>
     <string name="InuConfirmBeforeSending">Göndermeden önce onayla</string>
@@ -1891,4 +1890,7 @@
     <string name="InuHideMessage">Gizle</string>
     <string name="InuSideMenu">Yan menü</string>
     <string name="InuSideMenuInfo">Hamburger çekmece, bölümleri, hesaplar ve menü öğeleri.</string>
+    <string name="InuUnreadBadgeOnBackButton">Okunmamış sohbet sayacını göster</string>
+    <string name="InuUnreadBadgeOnBackButtonInfo">Sohbette geri düğmesinde okunmamış sohbet sayısını gösterir.</string>
+    <string name="InuUnreadBadgeOnBackButtonIos">iOS tarzı sayaç</string>
 </resources>

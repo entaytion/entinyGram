@@ -526,3 +526,4 @@ entiny/ui/topics-panel-redraw-storm.patch
 entiny/tabs/folder-empty-on-switch.patch
 entiny/chat/chat-header-pill-width.patch
 entiny/tabs/movable-chats-tab.patch
+entiny/chat/unread-badge-on-back-button.patch

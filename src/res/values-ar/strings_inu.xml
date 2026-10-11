@@ -1242,7 +1242,6 @@
     <string name="InuCenterTitleMainInfo">يوسّط عناوين شريط الإجراءات خارج المحادثات. للمحادثات مفتاحها الخاص أدناه.</string>
     <string name="InuChatHeaderSettings">ترويسة المحادثة</string>
     <string name="InuChatHeaderSettingsInfo">المعاينة الحية أعلاه تتحدث فوراً عند تغيير الخيارات أدناه.</string>
-    <string name="InuChatHeaderPreviewName">أحمد</string>
     <string name="InuCenterTitleChats">التوسيط في المحادثات/القنوات</string>
     <string name="InuCenterTitleChatsInfo">يوسّط عنوان المحادثة وعنوانها الفرعي؛ وتبقى الصورة الرمزية في جهتها. يعمل بمفرده.</string>
     <string name="InuCenterTitleRightAvatar">إظهار الصورة الرمزية على الجانب الآخر</string>
@@ -1914,4 +1913,7 @@
     <string name="InuHideMessage">إخفاء</string>
     <string name="InuSideMenu">القائمة الجانبية</string>
     <string name="InuSideMenuInfo">القائمة المنسدلة وأقسامها والحسابات وعناصر القائمة.</string>
+    <string name="InuUnreadBadgeOnBackButton">إظهار عدّاد المحادثات غير المقروءة</string>
+    <string name="InuUnreadBadgeOnBackButtonInfo">يعرض عدد المحادثات غير المقروءة على زر الرجوع داخل المحادثة.</string>
+    <string name="InuUnreadBadgeOnBackButtonIos">عدّاد بأسلوب iOS</string>
 </resources>

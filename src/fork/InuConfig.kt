@@ -1496,6 +1496,12 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
 
     @JvmField
+    val UNREAD_BADGE_ON_BACK_BUTTON = BoolItem("unread_badge_on_back_button", false)
+
+    @JvmField
+    val UNREAD_BADGE_ON_BACK_BUTTON_IOS = BoolItem("unread_badge_on_back_button_ios", false)
+
+    @JvmField
     val SAVE_SELF_DESTRUCT_MEDIA = BoolItem("save_self_destruct_media", false)
 
     @JvmField

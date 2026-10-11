@@ -1654,7 +1654,6 @@
     <string name="InuChatExportVideos">视频</string>
     <string name="InuChatExportView">查看</string>
     <string name="InuChatExportVoice">语音消息</string>
-    <string name="InuChatHeaderPreviewName">亚历克斯</string>
     <string name="InuChatHeaderSettings">聊天标题栏</string>
     <string name="InuChatHeaderSettingsInfo">更改下方选项时，上方预览会即时更新。</string>
     <string name="InuConfirmBeforeSending">发送前确认</string>
@@ -1894,4 +1893,7 @@
     <string name="InuHideMessage">隐藏</string>
     <string name="InuSideMenu">侧边菜单</string>
     <string name="InuSideMenuInfo">汉堡抽屉、其分区、账号和菜单项。</string>
+    <string name="InuUnreadBadgeOnBackButton">显示未读会话计数</string>
+    <string name="InuUnreadBadgeOnBackButtonInfo">在会话内的返回按钮上显示未读会话数量。</string>
+    <string name="InuUnreadBadgeOnBackButtonIos">iOS 风格计数器</string>
 </resources>
