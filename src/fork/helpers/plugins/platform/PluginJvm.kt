@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.os.Parcelable
 import android.util.Base64
 import android.util.LruCache
+import android.util.Log
 import android.util.Size
 import android.util.SizeF
 import android.util.SparseArray
@@ -955,7 +956,19 @@ object PluginJvm : SessionResource {
 
         init {
             val methods = HashMap<String, ArrayList<MemberInfo>>()
-            for (method in cls.declaredMethods) methods.getOrPut(method.name) { ArrayList() }.add(MemberInfo(method))
+            val declaredMethods = try {
+                cls.declaredMethods
+            } catch (e: LinkageError) {
+                Log.w("InuPluginHost", "Cannot inspect methods of ${cls.name}", e)
+                emptyArray()
+            }
+            for (method in declaredMethods) {
+                try {
+                    methods.getOrPut(method.name) { ArrayList() }.add(MemberInfo(method))
+                } catch (e: LinkageError) {
+                    Log.w("InuPluginHost", "Cannot inspect ${cls.name}.${method.name}", e)
+                }
+            }
             this.methods = methods
         }
     }

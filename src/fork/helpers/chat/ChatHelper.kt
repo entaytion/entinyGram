@@ -98,6 +98,7 @@ import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.AnimatedEmojiSpan
 import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.UndoView
 import org.telegram.ui.Components.ChatActivityEnterView
 import org.telegram.ui.Components.ColoredImageSpan
 import org.telegram.ui.Components.EditTextCaption
