@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 10 Oct 2026 03:34:44 +0200
+Subject: keep edited message object in sync with replacements
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java   | 11 +++++++++++
+ .../telegram/ui/Components/ChatActivityEnterView.java |  2 +-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -27144,6 +27144,17 @@ public class ChatActivity extends BaseFragment implements
+                     desu.inugram.helpers.chat.ReactionDebugHelper.onMessageObjectReplaced(old, messageObject);
+                     messageObject.copyStableParams(old);
+                     messages.set(index, messageObject);
++                    if (old != messageObject && (editingMessageObject == old || chatActivityEnterView != null && chatActivityEnterView.editingMessageObject == old)) {
++                        if (desu.inugram.helpers.chat.ReactionDebugHelper.isEnabled()) {
++                            FileLog.d("InuRx[" + classGuid + "] editing object replaced old=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(old) + " new=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(messageObject));
++                        }
++                        if (editingMessageObject == old) {
++                            editingMessageObject = messageObject;
++                        }
++                        if (chatActivityEnterView != null && chatActivityEnterView.editingMessageObject == old) {
++                            chatActivityEnterView.editingMessageObject = messageObject;
++                        }
++                    }
+                     if (chatAdapter != null && !chatAdapter.isFiltered) {
+                         chatAdapter.updateRowAtPosition(chatAdapter.messagesStartRow + index);
+                     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -688,7 +688,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+     private boolean destroyed;
+ 
+-    private MessageObject editingMessageObject;
++    public MessageObject editingMessageObject;
+     private boolean editingCaption;
+ 
+     private TL_account.TL_businessChatLink editingBusinessLink;

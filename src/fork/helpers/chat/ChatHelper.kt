@@ -90,11 +90,13 @@ import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BottomSheet
+import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.BasePermissionsActivity
 import org.telegram.ui.Cells.ChatMessageCell
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.AnimatedEmojiSpan
+import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ChatActivityEnterView
 import org.telegram.ui.Components.ColoredImageSpan
@@ -377,13 +379,22 @@ object ChatHelper {
     }
 
     @JvmStatic
-    fun forwardToSavedMessages(activity: ChatActivity, messages: ArrayList<MessageObject>) {
+    fun forwardToSavedMessages(fragment: BaseFragment, messages: ArrayList<MessageObject>) {
         if (messages.isEmpty()) return
-        val selfId = UserConfig.getInstance(activity.currentAccount).clientUserId
-        SendMessagesHelper.getInstance(activity.currentAccount)
+        val selfId = UserConfig.getInstance(fragment.currentAccount).clientUserId
+        SendMessagesHelper.getInstance(fragment.currentAccount)
             .sendMessage(messages, selfId, false, false, true, 0, 0L)
-        activity.createUndoView()
-        activity.undoView.showWithAction(selfId, org.telegram.ui.Components.UndoView.ACTION_FWD_MESSAGES, messages.size)
+        if (fragment is ChatActivity) {
+            fragment.createUndoView()
+            fragment.undoView.showWithAction(selfId, UndoView.ACTION_FWD_MESSAGES, messages.size)
+        } else {
+            BulletinFactory.createForwardedBulletin(
+                fragment.context, fragment, null, 1, selfId, messages.size,
+                fragment.getThemedColor(Theme.key_undo_background),
+                fragment.getThemedColor(Theme.key_undo_infoColor),
+                Bulletin.DURATION_SHORT,
+            ).show()
+        }
     }
 
     private fun removeWallpaperKey(currentAccount: Int, dialogId: Long) = "remove_wallpaper:$currentAccount:$dialogId"
@@ -657,6 +668,7 @@ object ChatHelper {
      * on its way back.
      */
     private class MessageMenu(
+        val activity: ChatActivity,
         val surface: ActionSurface,
         val registered: Map<ActionKey, RegisteredActionRow>,
     ) {
@@ -689,6 +701,7 @@ object ChatHelper {
             .sortedWith(compareBy<MessageObject> { it.messageOwner.date }.thenBy { it.dialogId }.thenBy { it.id })
             .map { it.messageOwner }
         val menu = MessageMenu(
+            activity,
             ActionSurface.message(
                 activity.currentAccount,
                 activity.dialogId,
@@ -763,9 +776,11 @@ object ChatHelper {
         val row = PluginActions.rowAt(menu.rows, option)
         if (row == null || !PluginActions.isEnabled(row.key) || !PluginActions.isPinned(row.key)) {
             cell.visibility = View.GONE
+            cell.setOnLongClickListener(null)
             return
         }
         PluginIcons.setIcon(cell, row.text, row.icon, row.owner, R.drawable.msg_settings_old)
+        PluginActions.bindSecondaryCallback(cell, row, menu.surface) { menu.activity.closeMenu() }
     }
 
     private fun finishPluginItems(menu: MessageMenu) {
@@ -2181,7 +2196,7 @@ object ChatHelper {
     }
 
     @JvmStatic
-    fun maybeHandleFileClick(activity: ChatActivity, message: MessageObject): Boolean {
+    fun maybeHandleFileClick(fragment: BaseFragment, message: MessageObject): Boolean {
         val name = message.documentName ?: return false
         val kind = when {
             name.endsWith(SettingsBackupHelper.FILENAME_SUFFIX) -> FileKind.SETTINGS
@@ -2192,48 +2207,48 @@ object ChatHelper {
             else -> return false
         }
 
-        val existing = existingFileForMessage(activity, message)
+        val existing = existingFileForMessage(fragment, message)
         if (existing != null) {
-            handleRecognizedFile(activity, message, existing, name, kind)
+            handleRecognizedFile(fragment, message, existing, name, kind)
             return true
         }
 
         // entiny: trigger download manually so stock does not route un-cached file to system open-with chooser
         val doc = message.getDocument() ?: return false
-        FileLoader.getInstance(activity.currentAccount).loadFile(doc, message, FileLoader.PRIORITY_NORMAL, 1)
-        pollFileDownload(activity, message, name, kind)
+        FileLoader.getInstance(fragment.currentAccount).loadFile(doc, message, FileLoader.PRIORITY_NORMAL, 1)
+        pollFileDownload(fragment, message, name, kind)
         return true
     }
 
-    private fun existingFileForMessage(activity: ChatActivity, message: MessageObject): File? {
+    private fun existingFileForMessage(fragment: BaseFragment, message: MessageObject): File? {
         val attach = message.messageOwner?.attachPath?.takeIf { it.isNotEmpty() }?.let { File(it) }
         return attach?.takeIf { it.exists() }
-            ?: FileLoader.getInstance(activity.currentAccount).getPathToMessage(message.messageOwner)
+            ?: FileLoader.getInstance(fragment.currentAccount).getPathToMessage(message.messageOwner)
                 ?.takeIf { it.exists() }
     }
 
     private fun handleRecognizedFile(
-        activity: ChatActivity,
+        fragment: BaseFragment,
         message: MessageObject,
         file: File,
         name: String,
         kind: FileKind,
     ) {
         when (kind) {
-            FileKind.SETTINGS -> SettingsBackupHelper.startImportFromFile(activity, file)
+            FileKind.SETTINGS -> SettingsBackupHelper.startImportFromFile(fragment, file)
             // #if PLUGINS
-            FileKind.PLUGIN -> PluginImportHelper.startImportFromFile(activity, file)
+            FileKind.PLUGIN -> PluginImportHelper.startImportFromFile(fragment, file)
             // #else
             FileKind.PLUGIN -> Unit
             // #endif
-            FileKind.FONT -> FontImportHelper.startImportFromFile(activity, message, file, name)
+            FileKind.FONT -> FontImportHelper.startImportFromFile(fragment, message, file, name)
         }
     }
 
     private enum class FileKind { SETTINGS, PLUGIN, FONT }
 
     private fun pollFileDownload(
-        activity: ChatActivity,
+        fragment: BaseFragment,
         message: MessageObject,
         name: String,
         kind: FileKind,
@@ -2241,12 +2256,12 @@ object ChatHelper {
     ) {
         if (attempts > 60) return
         AndroidUtilities.runOnUIThread({
-            if (activity.parentActivity == null) return@runOnUIThread
-            val file = existingFileForMessage(activity, message)
+            if (fragment.parentActivity == null) return@runOnUIThread
+            val file = existingFileForMessage(fragment, message)
             if (file != null) {
-                handleRecognizedFile(activity, message, file, name, kind)
+                handleRecognizedFile(fragment, message, file, name, kind)
             } else {
-                pollFileDownload(activity, message, name, kind, attempts + 1)
+                pollFileDownload(fragment, message, name, kind, attempts + 1)
             }
         }, 500)
     }
@@ -2587,6 +2602,7 @@ object ChatHelper {
                         PluginActions.dispatch(row, menu.surface)
                         activity.closeMenu()
                     }
+                    submenu.last?.let { PluginActions.bindSecondaryCallback(it, row, menu.surface) { activity.closeMenu() } }
                 }
             }
         }
@@ -2615,7 +2631,17 @@ object ChatHelper {
         group: MessageObject.GroupedMessages?,
     ): Boolean {
         if (message == null || index >= options.size) return false
-        return when (options[index]) {
+        val option = options[index]
+        // #if PLUGINS
+        if (option >= PluginActions.OPTION_BASE) {
+            val menu = messageMenu ?: return false
+            val row = PluginActions.rowAt(menu.rows, option) ?: return false
+            if (!PluginActions.dispatch(row, menu.surface, true)) return false
+            activity.closeMenu()
+            return true
+        }
+        // #endif
+        return when (option) {
             ChatActivity.OPTION_FORWARD -> when (InuConfig.FORWARD_LONG_TAP_ACTION.value) {
                 InuConfig.ForwardLongTapItem.OFF -> false
                 InuConfig.ForwardLongTapItem.CHOOSE_MODE -> openLongTapSubmenu(activity, popupLayout, cell) { swb ->

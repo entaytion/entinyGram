@@ -2,7 +2,7 @@
 <resources>
     <string name="InuOpenInDiscussion">ディスカッションで開く</string>
     <string name="InuBanUserConfirm">%1$s をこのグループから BAN しますか？</string>
-    <string name="InuSettings">entinyGram 設定</string>
+    <string name="InuSettings">Inugram 設定</string>
     <string name="InuSettingsInfo">犬は何してるの？</string>
     <string name="InuGeneral">一般</string>
     <string name="InuMiscellaneous">その他</string>
@@ -94,7 +94,7 @@
     <string name="InuOutgoingMessages">送信メッセージ</string>
     <string name="InuChannelMessages">投稿できるチャンネル</string>
     <string name="InuSameAsIncoming">受信メッセージと同じ</string>
-    <string name="InuDoubleTapInfo">ダブルタップ操作は、通常のタップを上記の時間だけ遅延させます。</string>
+    <string name="InuDoubleTapInfo">注：Telegram のダブルタップ処理の都合上、ダブルタップ動作を有効にすると通常のタップが上記の時間だけ遅延し、アプリの応答が鈍く感じられます。\n時間は調整できますが、遅延を完全になくすには動作を無効にするしかありません。</string>
     <string name="InuQuickReaction">クイックリアクション</string>
     <string name="InuShowReactions">リアクションを表示</string>
     <string name="InuHideStories">ストーリーを非表示</string>
@@ -105,7 +105,7 @@
     <string name="InuAttachCamera">カメラ</string>
     <string name="InuAttachCameraMode">カメラ</string>
     <string name="InuAttachCameraModeInstant">インスタント</string>
-    <string name="InuAttachCameraModeStatic">スタティック</string>
+    <string name="InuAttachCameraModeStatic">固定</string>
     <string name="InuAttachCameraModeFab">フローティングボタン</string>
     <string name="InuAttachCameraModeTab">下部タブ</string>
     <string name="InuShowAllRecentStickers">最近のスタンプをすべて表示</string>
@@ -155,7 +155,7 @@
     <string name="InuHideTrendingStickers">人気のスタンプを非表示</string>
     <string name="InuBottomTabs">下部タブ</string>
     <string name="InuBottomTabsHide">下部タブを非表示</string>
-<string name="InuBottomTabsHideInfo">項目はメイン画面のハンバーガーメニューに移動します</string>
+    <string name="InuBottomTabsHideInfo">項目はメイン画面のハンバーガーメニューに移動します</string>
     <string name="InuBottomTabsHideTopSearch">上部の検索を非表示</string>
     <string name="InuBottomTabsHideTopSearchInfo">下部タブで検索が有効な場合、チャット一覧の上にある検索欄を非表示にします</string>
     <string name="InuBottomTabsSeparateSearch">検索ボタンを分離</string>
@@ -194,12 +194,12 @@
     <string name="InuStickerTimeModeHideTime">時刻のみ非表示</string>
     <string name="InuStickerTimeModeHideIncoming">受信のみ非表示</string>
     <string name="InuStickerTimeModeHideCompletely">完全に非表示</string>
-    <string name="InuStickerSizeDialogMessage">i like antennas</string>
+    <string name="InuStickerSizeDialogMessage">いい子だね！</string>
     <string name="InuBubbleTails">吹き出しのしっぽ</string>
     <string name="InuSendAsRoundVideo">動画メッセージとして送信</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">わん! entinyGram か inuGram どっち? 🐶</string>
-    <string name="InuMiscPreviewEditedMessage">どっちも最高 🐶⚡</string>
+    <string name="InuMiscPreviewForwardedFrom">わんこ</string>
+    <string name="InuMiscPreviewForwardedMessage">わんっ!! これ見た?</string>
+    <string name="InuMiscPreviewEditedMessage">誤字はもうワンつもないよ</string>
     <string name="InuDeleteForBoth">デフォルトで「全員から削除」</string>
     <string name="InuDeleteForBothMessages">メッセージ</string>
     <string name="InuDeleteForBothDms">DM ダイアログ</string>
@@ -270,12 +270,12 @@
     <string name="InuCallConfirmationTitle">通話の確認</string>
     <string name="InuCallConfirmationText">**%1$s** に発信しますか？</string>
     <string name="InuHdBluetoothCallAudio">Bluetooth で高音質通話音声</string>
-    <string name="InuHdBluetoothCallAudioInfo">通話音声をメディアとして再生し、Bluetoothでの音質を向上させます。マイクは端末のものを使用します。</string>
+    <string name="InuHdBluetoothCallAudioInfo">ヘッドホンを低音質のヘッドセットプロファイルに切り替える代わりに、通話音声をメディアとして再生し、マイクは端末のものを使用します。通話開始時に Bluetooth デバイスが接続されている場合に適用されます</string>
     <string name="InuCallRotation">通話画面の回転</string>
     <string name="InuCallRotationInfo">通話画面を縦向きに固定せず、端末の回転に追従させます。レイアウトは縦向き用のため、横向きでは窮屈に見える場合があります</string>
     <string name="InuDisableChatBubbles">Android の通知バブルを無効化</string>
     <string name="InuKeepChatsInStack">前のチャットを開いたままにする</string>
-    <string name="InuKeepChatsInStackInfo">別のチャットを開いても、その後ろのチャットは閉じません</string>
+    <string name="InuKeepChatsInStackInfo">別のチャットを開いても背後のチャットを閉じません</string>
     <string name="InuInPlaceTranslation">その場で翻訳</string>
     <string name="InuTranslateWebPreviews">ウェブプレビューを翻訳</string>
     <string name="InuKeepOriginalAfterTranslation">原文を表示</string>
@@ -301,10 +301,10 @@
     <string name="InuHideMyPhoneNumber">自分の電話番号を非表示</string>
     <string name="InuFonts">フォント</string>
     <string name="InuAppFont">アプリのフォント</string>
-    <string name="InuAppFontInfo">アプリのフォントに設定できるのはカスタム（インポートした）フォントのみです。</string>
+    <string name="InuAppFontInfo">アプリ全体のインターフェースで使用するフォントです。アプリのフォントに設定できるのはカスタム（インポートした）フォントのみです。</string>
     <string name="InuFontCustomOnly">アプリのフォントに設定できるのは、カスタム（インポートした）フォントのみです。</string>
     <string name="InuAvailableFonts">利用可能なフォント</string>
-    <string name="InuFontsInfo">表示中のフォントはメディアエディターに現れます。ドラッグで並べ替え、目のアイコンで非表示、インポートしたフォントをタップで削除。</string>
+    <string name="InuFontsInfo">表示中のフォントはメディアエディターのテキストツールで使用できます。ドラッグで並べ替え、目のアイコンで非表示、インポートしたフォントをタップで削除できます。</string>
     <string name="InuFontAdd">フォントを追加</string>
     <string name="InuFontResetOrder">順序をリセット</string>
     <string name="InuFontRemove">削除</string>
@@ -335,7 +335,7 @@
     <string name="InuMonoFont">等幅フォント</string>
     <string name="InuMonoFontInfo">インラインコードやコードブロックなど、等幅ブロックに使用されるフォントです。</string>
     <string name="InuAppFontStack">フォントスタック</string>
-    <string name="InuAppFontStackInfo">最上段が主要フォント、以下は欠落文字（CJK など）のフォールバックです。ドラッグで並べ替え。</string>
+    <string name="InuAppFontStackInfo">最上段が主要な UI フォントで、以下は主要フォントに無い文字（CJK など）のためのフォールバックです。ドラッグで並べ替え。</string>
     <string name="InuFontStackAdd">フォントを追加</string>
     <string name="InuFontStackChoose">フォントを選択</string>
     <string name="InuFontStackApply">適用して再起動</string>
@@ -361,14 +361,12 @@
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
-
     <string name="InuMapsHeader">地図</string>
     <string name="InuMapProvider">地図ビューのプロバイダー</string>
     <string name="InuMapProviderGoogle">Google マップ</string>
     <string name="InuMapPreviewProvider">地図プレビューのプロバイダー</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-
     <string name="InuReplyIn">…で返信</string>
     <string name="InuDeletedMessage">削除されたメッセージ</string>
     <string name="InuDeletedMessageIdFormat">ID %1$d</string>
@@ -388,28 +386,21 @@
     <string name="InuRegDate">登録日: %s</string>
     <string name="InuJoinDate">参加日: %s</string>
     <string name="InuCreatedDate">作成日: %s</string>
-
     <string name="InuChatVoiceInAttach">録音を添付パネルへ</string>
     <string name="InuChatVoiceInAttachInfo">音声/動画録音ボタンを入力バーから添付シートに移動します</string>
     <string name="InuKeepScreenOnRecording">録音中は画面を点灯したままにする</string>
     <string name="InuKeepScreenOnRecordingInfo">音声・ビデオメッセージの録音中に画面が消えないようにします</string>
-
     <string name="InuDisableIntroSticker">紹介スタンプを送らない</string>
     <string name="InuDisableIntroStickerInfo">…また挨拶スタンプの提案も非表示にします</string>
-
     <string name="InuRoundDefaultCamera">丸メッセージのデフォルトカメラ</string>
     <string name="InuRoundCameraFront">フロント</string>
     <string name="InuRoundCameraRear">リア</string>
     <string name="InuRoundCameraAsk">毎回確認</string>
-
     <string name="InuDisableScrimBlur">スクリムのぼかしを無効化</string>
-    <string name="InuDisableScrimBlurInfo">メニューやプレビューの背景のぼかしを単純な暗転に置き換えます。ラグが減ることがあります。</string>
-
+    <string name="InuDisableScrimBlurInfo">コンテキストメニューやプレビューの背景のぼかしを単純な暗転に置き換えます。ラグが減ることがあります。</string>
     <string name="InuReduceMenuMotion">メニューのモーションを軽減</string>
     <string name="InuReduceMenuMotionInfo">コンテキストメニューのスタッガー表示をスキップし、メッセージメニューのアニメーションを簡素化します</string>
-
     <string name="InuProfilePhotoGradientFade">プロフィール写真のぼかしを無効化</string>
-
     <string name="InuNonIslandUI">クラシック UI</string>
     <string name="InuAnimationSpeed">アニメーション速度</string>
     <string name="InuAnimationSpeedInstant">瞬時</string>
@@ -419,9 +410,7 @@
     <string name="InuNonIslandGlobalSearch">グローバル検索</string>
     <string name="InuNonIslandChatElements">チャット要素</string>
     <string name="InuNonIslandHint">クラシック UI は、新しい (>12.6) 「Liquid Glass」UI の変更の一部を、可能な範囲で以前のフラットなデザインに戻します。\n視覚的なバグがいくつか残っている可能性があるのでご注意ください。</string>
-
     <string name="InuHideFadeView">フェードビューを非表示</string>
-
     <string name="InuStripTrackingParams">トラッキングパラメータを削除</string>
     <string name="InuStripTrackingParamsSource">AdGuard URL Tracking フィルター、更新日: %1$s</string>
     <string name="InuStripTrackingParamsUpdate">AdGuard からルールを更新</string>
@@ -429,7 +418,6 @@
     <string name="InuStripTrackingParamsUpdated">ルールを更新しました</string>
     <string name="InuStripTrackingParamsAlreadyLatest">すでに最新のルールセットです</string>
     <string name="InuStripTrackingParamsUpdateFailed">ルールの更新に失敗しました</string>
-
     <string name="InuWebPreviewReplacements">ウェブプレビューの置換</string>
     <string name="InuWebPreviewEnabled">置換を有効化</string>
     <string name="InuWebPreviewReplacementsInfo">ウェブプレビュー取得時に URL に適用される正規表現の置換。長押しで削除。</string>
@@ -438,7 +426,6 @@
     <string name="InuWebPreviewReset">デフォルトに戻す</string>
     <string name="InuWebPreviewPattern">パターン (regex)</string>
     <string name="InuWebPreviewReplacement">置換後</string>
-
     <string name="InuReactionsInRow">1 行のリアクション数</string>
     <string name="InuChatInputMaxLines">入力欄の最大行数</string>
     <string name="InuChatInputTextSize">入力欄の文字サイズ</string>
@@ -446,7 +433,6 @@
     <string name="InuReactionBarBelowInfo">リアクションバーをメニューの下に移動</string>
     <string name="InuChatViewsBottom">手の届くビューリスト</string>
     <string name="InuChatViewsBottomInfo">メッセージの閲覧者/リアクション一覧の項目を下部に移動</string>
-
     <string name="InuPinnedReactions">ピン留めリアクション</string>
     <string name="InuPinnedReactionsInfo">リアクションバーの先頭にリアクションをピン留めします。</string>
     <string name="InuPinnedReactionsHeader">ピン留めリアクション</string>
@@ -455,9 +441,7 @@
     <string name="InuPinnedReactionsCopyServerConfirm">現在のピン留めリアクションを、サーバー提供の人気リアクションに置き換えます。続行しますか？</string>
     <string name="InuPinnedReactionsRemoveAll">すべて削除</string>
     <string name="InuPinnedReactionsRemoveAllConfirm">ピン留めリアクションをすべて削除しますか？</string>
-
     <string name="InuOldMentionIndicator">従来のメンション表示</string>
-
     <string name="InuShowForwardTime">転送時刻を表示</string>
     <string name="InuForwardHeaderMode">転送ヘッダー</string>
     <string name="InuForwardHeaderModeRegular">通常</string>
@@ -466,7 +450,6 @@
     <string name="InuForwardHeaderModeCompact">コンパクト</string>
     <string name="InuShowForwardsCount">転送数を表示</string>
     <string name="InuCompactEdited">コンパクトな編集インジケーター</string>
-
     <string name="InuAddToStickersGifs">ステッカー/GIFに追加</string>
     <string name="InuLongTapAction">長押し動作</string>
     <string name="InuMenuMode">モード</string>
@@ -480,7 +463,6 @@
     <string name="InuRepeatLongTapForward">長押しで転送として繰り返し</string>
     <string name="InuReplyInDms">DMで返信</string>
     <string name="InuHiddenCaptionDescription">キャプションを削除しました</string>
-
     <string name="InuTextClassifierMode">テキスト分類モード</string>
     <string name="InuTextClassifierModeInfo">テキスト分類はテキストをダブルタップした際に選択を自動拡張するシステム機能です</string>
     <string name="InuTextClassifierModeNative">ネイティブ</string>
@@ -488,10 +470,8 @@
     <string name="InuTextClassifierModeImprovedInfo">誤検出を減らすため一部のエンティティのみを処理</string>
     <string name="InuTextClassifierModeOff">オフ</string>
     <string name="InuTextClassifierModeOffInfo">テキスト分類を無効にするとテキスト選択の応答性が向上します</string>
-
     <string name="InuSuggestCustomEmojiAfter">カスタム絵文字を通常絵文字の後に提案</string>
     <string name="InuSuggestCustomEmojiAfterInfo">「:shortcode」候補ポップアップで、アニメ/カスタム絵文字を通常絵文字の前ではなく後に表示します</string>
-
     <string name="InuFormattingPopup">カスタム書式メニュー</string>
     <string name="InuFormattingPopupInfo">標準の書式設定メニューをインタラクティブなポップアップに置き換えます。\nタップしてカスタマイズ…</string>
     <string name="InuFormattingPopupItems">メニュー項目</string>
@@ -502,7 +482,6 @@
     <string name="InuCut">切り取り</string>
     <string name="InuCodeLanguage">コードの言語</string>
     <string name="InuVersion">entinyGram v%1$s (ビルド %2$s)</string>
-
     <string name="InuSearchFilter">メディアで絞り込み</string>
     <string name="InuSearchFilterPhotos">写真</string>
     <string name="InuSearchFilterVideos">動画</string>
@@ -541,7 +520,6 @@
     <string name="InuAppIconLicenseInugram">仮アイコンです。より良いものを提供していただけたら嬉しいです</string>
     <string name="InuAppIconLicenseTelegram">**Telegram** によるアイコン。All rights reserved.</string>
     <string name="InuJumpToBeginning">最初へ移動</string>
-
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">更新チャンネル</string>
     <string name="InuUpdates">アップデート</string>
@@ -597,7 +575,7 @@
     <string name="InuOpenByUserId">検索とメッセージでIDから開く</string>
     <string name="InuOpenByUserIdInfo">検索で数値を入力した際やメッセージ内の数字をタップした際に直接プロフィールを表示します。</string>
     <string name="InuReorderAccounts">アカウントの並び替え</string>
-    <string name="InuReorderAccountsInfo">ドラッグで設定リストとアカウント切り替えの並び順を変更できます。</string>
+    <string name="InuReorderAccountsInfo">アカウントを長押ししてドラッグで並び替えます。順序は設定リストとアカウント切り替えに反映されます。</string>
     <string name="InuCreateAsSupergroup">スーパーグループとして作成</string>
     <string name="InuFeed">フィード</string>
     <string name="InuFeedToggleInfo">フィードをメニューと下部タブに追加します。デフォルトはオフで、下部タブはアプリの再起動後に反映されます</string>
@@ -632,20 +610,20 @@
     <string name="InuNetwork">ネットワーク</string>
     <string name="InuAutoDisableProxyOnVpn">VPN 使用時はプロキシを無効化</string>
     <string name="InuProxyImportFromClipboard">クリップボードからインポート</string>
-    <string name="InuProxyImportNothing">クリップボードに新しいプロキシのリンクがありません</string>
+    <string name="InuProxyImportNothing">クリップボードに新しいプロキシリンクがありません</string>
     <string name="InuProxyImported_one">プロキシを %1$d 件インポートしました</string>
-    <string name="InuProxyImported_other">プロキシを %1$d 件インポートしました</string>
+    <string name="InuProxyImported_other">%1$d 件のプロキシをインポートしました</string>
     <string name="InuFasterDownloads">ダウンロード高速化</string>
     <string name="InuFasterUploads">アップロード高速化</string>
-    <string name="InuFasterTransfersInfo">より大きいチャンクと多くの並列リクエスト。スループットが上がることも下がることもあります。</string>
+    <string name="InuFasterTransfersInfo">チャンクサイズと並列リクエスト数を増やします。スループットが上がる場合もあれば、逆に下がる場合もあります (特に Premium 以外のユーザー)</string>
     <string name="InuSendMp4DocumentAsVideo">MP4 ドキュメントを動画として送信</string>
     <string name="InuSendMp4DocumentAsVideoInfo">ファイルから添付した MP4 は変換せずに再生可能な動画として送信されます</string>
     <string name="InuMentionInsertTitle">メンションを挿入</string>
     <string name="InuPasscode">パスコード</string>
     <string name="InuPasscodeNeeded">先に Telegram のパスコードを設定してください。</string>
-    <string name="InuPasscodeShowInSettings">entinyGram の設定に表示</string>
-    <string name="InuPasscodeShowInSettingsInfo">オフの場合、このページは下のリンクからのみ開けます。今すぐ保存してください。</string>
-    <string name="InuPasscodeAccountsInfo">アカウント別のパスコード：ロック画面で入力するとそのアカウントが解除され、切り替わります。</string>
+    <string name="InuPasscodeShowInSettings">inugram の設定に表示</string>
+    <string name="InuPasscodeShowInSettingsInfo">オフの場合、このページは下のリンクからしか開けません。今すぐ保存してください — 一度生成されると変更されません。</string>
+    <string name="InuPasscodeAccountsInfo">各アカウントに独自のパスコードを設定できます。ロック画面で入力するとアプリのロックが解除され、そのアカウントに切り替わります。</string>
     <string name="InuPasscodeStateNone">未設定</string>
     <string name="InuPasscodeStateSet">パスコード設定済み</string>
     <string name="InuPasscodeStateHidden">非表示</string>
@@ -655,7 +633,7 @@
     <string name="InuPasscodeRemoveConfirm">このアカウントのパスコードを削除しますか？</string>
     <string name="InuPasscodeOpenStockSettings">標準のパスコード設定</string>
     <string name="InuPasscodeHideAccount">アカウントを隠す</string>
-    <string name="InuPasscodeHideAccountInfo">隠したアカウントは切り替えや通知に出ません。パスコードで表示できます。</string>
+    <string name="InuPasscodeHideAccountInfo">隠したアカウントはアカウント切り替えに表示されず、通知も出ません。ロック画面でそのアカウントのパスコードを入力すると表示されます。</string>
     <string name="InuPasscodeAllowPanic">パニックコードでログアウト</string>
     <string name="InuPasscodeAllowPanicInfo">パニックコードが入力されると、このアカウントはログアウトされます。</string>
     <string name="InuPasscodePanic">パニックコード</string>
@@ -672,7 +650,7 @@
     <string name="InuMessageMenuQuickActionsPlacement">配置</string>
     <string name="InuPlacementTop">上</string>
     <string name="InuPlacementBottom">下</string>
-    <string name="InuMessageMenuOrderInfo">メッセージのコンテキストメニューの項目を並べ替え・非表示にできます。ドラッグで移動、タップで非表示。</string>
+    <string name="InuMessageMenuOrderInfo">メッセージのコンテキストメニューの項目を並べ替えたり非表示にできます。ハンドルをドラッグして並べ替え、タップで表示/非表示を切り替えます。</string>
     <string name="InuMessageMenuOrderInfoBottom">項目を長押しするとクイックアクション行に移動します</string>
     <string name="InuMessageMenuReset">デフォルトに戻す</string>
     <string name="InuMenuSlotDelete">削除 / リンクをコピー</string>
@@ -682,13 +660,13 @@
     <string name="InuMenuBottomRowFull">クイックアクション行は満杯です（最大 4 件）</string>
     <string name="InuPrivacySecurity">プライバシーとセキュリティ</string>
     <string name="InuPerAccountPasscode">アカウントごとのパスコード</string>
-    <string name="InuHideInugramSettings">entinyGram の設定を非表示</string>
+    <string name="InuHideInugramSettings">inugram の設定を非表示</string>
     <string name="InuParanoiaDisableNotifications">通知を無効化</string>
     <string name="InuParanoiaHideOtherAccounts">他のアカウントを非表示</string>
     <string name="InuParanoiaDisguise">Telegram に偽装</string>
-    <string name="InuParanoiaDisguiseInfo">変更されるのはランチャーのアイコンと名前のみ。通知には引き続き「entinyGram」と表示されます。</string>
+    <string name="InuParanoiaDisguiseInfo">ランチャーのアイコンと名前のみが変わります。Android の制限により、通知やアプリ内の名前は引き続き「Inugram」と表示されます。</string>
     <string name="InuParanoiaMode">パラノイアモード</string>
-    <string name="InuParanoiaModeInfo">「危険な」チャットを隠し、必要に応じてアプリを偽装します — のぞき見に備えるために。</string>
+    <string name="InuParanoiaModeInfo">パラノイアモードでは、「危険な」チャットを隠し、必要に応じて標準アプリに偽装することで、誰かに端末を見られる事態に「備える」ことができます。</string>
     <string name="InuParanoiaLauncherShortcut">ランチャーショートカット</string>
     <string name="InuParanoiaLauncherShortcutInfo">アプリアイコンの長押しでパラノイアモードにすばやく入るショートカットを追加します。有効化中は非表示になります。</string>
     <string name="InuParanoiaSelect">隠すチャット</string>
@@ -705,7 +683,6 @@
     <string name="InuParanoiaEnableConfirm">パラノイアモードに入って再起動しますか？この項目は消えます — 戻るにはチャット検索で解除コードを入力するか、アプリを再インストールするしかありません！</string>
     <string name="InuParanoiaNeedSetup">先に解除コードを設定し、チャットを少なくとも1つ選んでください。</string>
     <string name="InuParanoiaExit">パラノイアモードを解除</string>
-
     <string name="InuSendToDiscussWithoutJoin">ディスカッショングループに参加せずに書き込む</string>
     <string name="InuSendToDiscussWithoutJoinInfo">ディスカッショングループのクライアント側メンバーシップチェックをスキップします</string>
     <string name="InuNavigationDrawer">ナビゲーションドロワー</string>
@@ -733,7 +710,7 @@
     <string name="InuRoundRecorderExponentialZoom">指数的ズーム</string>
     <string name="InuRoundRecorderExponentialZoomInfo">Google Camera のような滑らかなズームカーブ</string>
     <string name="InuRoundRecorderDualCamera">デュアルカメラ</string>
-    <string name="InuRoundRecorderDualCameraInfo">フロントとリアのカメラを同時に開き、瞬時に切り替えできます。電池消費が増えます。</string>
+    <string name="InuRoundRecorderDualCameraInfo">フロントとリアのカメラを同時に開き、録画中に瞬時に切り替えできます。電池消費が増えます。</string>
     <string name="InuRoundRecorderCameraApi">丸メッセージの録画は %1$s API を使用しています。**%2$s に切り替える >**</string>
     <string name="InuRoundRecorder60Fps">動画メッセージで60 FPS</string>
     <string name="InuRoundRecorder60FpsInfo">カメラが対応している場合、60 FPSで動画メッセージを録画します。</string>
@@ -776,7 +753,7 @@
     <string name="InuConfirmReactionText">**%2$s** に %1$s リアクションを送信しますか？</string>
     <string name="InuNotificationIcon">通知アイコン</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">entinyGram</string>
+    <string name="InuNotificationIconInugram">Inugram</string>
     <string name="InuNothingToTranslate">翻訳対象のメッセージが選択されていません。</string>
     <string name="InuVoiceRecorder">音声 / 丸メッセージ録画</string>
     <string name="InuSummarize">要約</string>
@@ -785,7 +762,7 @@
     <string name="InuCacheRemoved">ファイルをキャッシュから削除しました</string>
     <string name="InuChatMenuOrder">チャットメニュー</string>
     <string name="InuChatMenuItems">項目</string>
-    <string name="InuChatMenuOrderInfo">チャットの3点メニューの項目を並べ替え・非表示にできます。ドラッグで移動、スイッチで非表示。</string>
+    <string name="InuChatMenuOrderInfo">チャットの 3 点メニューの項目を並べ替えたり非表示にできます。ハンドルをドラッグして並べ替え、スイッチで非表示を切り替えます。</string>
     <string name="InuChatMenuReset">デフォルトに戻す</string>
     <string name="InuDialogsMenuOrder">オプションメニュー</string>
     <string name="InuDialogsMenuItems">項目</string>
@@ -798,19 +775,16 @@
     <string name="InuParanoiaHideFolders">フォルダーを隠す</string>
     <string name="InuParanoiaSelectWhitelist">表示するチャット</string>
     <string name="InuParanoiaWhitelist">ホワイトリストモード</string>
-
     <string name="InuBotSettings">ボット設定</string>
     <string name="InuBotHelp">ボットヘルプ</string>
-
-    <string name="InuCrashTitle">前回 entinyGram がクラッシュしました</string>
+    <string name="InuCrashTitle">前回 Inugram がクラッシュしました</string>
     <string name="InuCrashDesc">ご迷惑をおかけしました。修正に役立てるため、クラッシュログを開発者と共有できます。</string>
     <string name="InuCrashDescOom">ご迷惑をおかけしました。メモリ不足の問題にはクラッシュログはあまり役立ちません — ヒープダンプの方が有用です。</string>
     <string name="InuCrashShare">クラッシュログを共有</string>
     <string name="InuCrashDiscard">破棄</string>
     <string name="InuCrashChannel">クラッシュリカバリー</string>
-    <string name="InuCrashNotifTitle">entinyGram がクラッシュしました</string>
+    <string name="InuCrashNotifTitle">Inugram がクラッシュしました</string>
     <string name="InuCrashNotifText">タップで再起動</string>
-
     <string name="InuLogs">デバッグ</string>
     <string name="InuLogsEnabled">デバッグモード</string>
     <string name="InuForceNoVibration">すべての振動を無効化</string>
@@ -827,8 +801,7 @@
     <string name="InuLogsHeapUsage">ヒープ: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">ヒープダンプを作成</string>
     <string name="InuLogsMakingHeapDump">ヒープダンプを作成中…</string>
-    <string name="InuLogsHeapDumpWarning">**絶対に** .hprof ファイルを共有しないでください — **機密情報**（メッセージ、トークンなど）を含むメモリのスナップショットで、確認は自分だけで行ってください。作成中はアプリが一時的にフリーズします。</string>
-
+    <string name="InuLogsHeapDumpWarning">.hprof ファイルは**絶対に**誰とも共有しないでください — アプリのメモリのスナップショットであり、**メッセージやトークンなどの機密情報を含みます**。\n\n**自分だけで**確認してください。\n\nアプリはしばらくフリーズします。</string>
     <string name="InuMaterial3Fabs">フローティングボタン</string>
     <string name="InuMaterial3Sections">リスト項目</string>
     <string name="InuMaterial3Avatars">アバター</string>
@@ -844,14 +817,13 @@
     <string name="InuFormatting">書式設定</string>
     <string name="InuChatActions">チャットアクション</string>
     <string name="InuActions">アクション</string>
-    <string name="InuPluginActions">プラグインのアクション</string>
+    <string name="InuPluginActions">プラグインアクション</string>
     <string name="InuPinAction">アクションを固定</string>
     <string name="InuUnpinAction">アクションの固定を解除</string>
     <string name="InuLinksAndBrowser">リンクとブラウザ</string>
     <string name="InuStickers">スタンプ</string>
     <string name="InuReactions">リアクション</string>
     <string name="InuDelay">遅延</string>
-
     <string name="InuDisableQuickShare">クイック共有を無効化</string>
     <string name="InuDisableQuickShareInfo">共有ボタン（チャンネルメッセージの横）を長押ししたときに頻繁な連絡先を表示しない；確認なしで送信されます</string>
     <string name="InuSaveSelectedFiles">選択したファイルを保存</string>
@@ -908,16 +880,13 @@
     <string name="InuNicheSettingsInfo">一部のユーザーから要望があった、すべての人に必要とは限らない機能です。動作しない場合は削除します。</string>
     <string name="InuNicheUnlockedToast">bro、entiny tvは有効にしないで pls💀💀</string>
     <string name="InuNicheAlreadyUnlockedToast">bro、もう有効にしたじゃん 💀</string>
-
     <string name="InuStripTrackingParamsOnOpen">リンクを開くとき</string>
     <string name="InuStripTrackingParamsOnPaste">貼り付け時</string>
     <string name="InuStripTrackingParamsSourceRow">フィルターソース</string>
-
-    <string name="InuCrashTitleOom">entinyGram のメモリが不足しました</string>
+    <string name="InuCrashTitleOom">Inugram のメモリが不足しました</string>
     <string name="InuCrashDescHeapDump">ヒープダンプも保存されました。共有しないでください！プライベートな情報が含まれています！自分で確認して、気づいたことを教えていただけると、大変助かります。</string>
-    <string name="InuCrashOomEnableLogs">entinyGram 設定 > アプリについて でデバッグモードを有効にすると、次回以降の OOM 発生時にヒープダンプを作成します。</string>
+    <string name="InuCrashOomEnableLogs">Inugram 設定 > アプリについて でデバッグモードを有効にすると、次回以降の OOM 発生時にヒープダンプを作成します。</string>
     <string name="InuCrashShareHeapDump">ヒープダンプを保存</string>
-
     <string name="InuDeleteOwnMessages">自分のメッセージを削除</string>
     <string name="InuDeleteOwnMessagesSearching">あなたのメッセージを検索中…</string>
     <string name="InuDeleteOwnMessagesFoundProgress">%1$d / %2$d 件見つかりました</string>
@@ -1048,7 +1017,6 @@
     <string name="InuSaveDeletedMessagesInfo">削除されたメッセージをチャット内に 🗑️ 付きで保持します</string>
     <string name="InuSaveEditedMessages">編集履歴を保存</string>
     <string name="InuSaveEditedMessagesInfo">メッセージの過去のバージョンを保存し、編集履歴 ✏️ を表示できるようにします</string>
-
     <string name="InuSaveUserInfo">ユーザー情報を保存</string>
     <string name="InuSaveUserInfoInfo">サーバーが返さなくなった電話番号の国、登録月、名前/写真の変更日を保存します</string>
     <string name="InuSelfDestructMedia">消えるメディア</string>
@@ -1128,13 +1096,11 @@
     <string name="InuDeleteAllProfilePhotosConfirm">すべてのプロフィール写真を削除してもよろしいですか？この操作は取り消せません。</string>
     <string name="InuDeleteProfilePhotos">プロフィール写真を削除</string>
     <string name="InuDeleteProfilePhotosInfo">すべてのプロフィール写真、または選択した写真をワンタップで削除します</string>
-
     <string name="InuDeleteMyMessages">自分のメッセージを削除</string>
     <string name="InuDeleteMyMessagesTitle">自分のメッセージを削除しますか？</string>
     <string name="InuDeleteMyMessagesConfirm">このチャットで送信したすべてのメッセージが全員に対して削除されます。元に戻せません。</string>
     <string name="InuDeleteMyMessagesStarted">メッセージを削除しています…</string>
     <string name="InuDeleteMyMessagesDone">%1$d件のメッセージを削除しました</string>
-
     <string name="InuChatExport">チャットをエクスポート</string>
     <string name="InuChatExportInfo">プロフィールメニューでチャットをJSONまたはHTMLアーカイブにエクスポートします。</string>
     <string name="InuChatExportCollected">%1$d件のメッセージを収集しました</string>
@@ -1367,9 +1333,9 @@
     <string name="InuPoweredByProvider">翻訳提供: %1$s</string>
     <string name="InuTranslationProvider">翻訳プロバイダー</string>
     <string name="InuTranslationProviderTelegram">Telegram</string>
-    <string name="InuTranslationProviderFromPlugin">提供: %1$s</string>
+    <string name="InuTranslationProviderFromPlugin">%1$s から</string>
     <string name="InuTranslationProviderUnavailable">利用不可</string>
-    <string name="InuTranslationProviderInfo">追加の翻訳サービスは **プラグイン >** からインストールできます</string>
+    <string name="InuTranslationProviderInfo">追加の翻訳サービスは **プラグイン >** としてインストールできます</string>
     <string name="InuProfilePhotosDeleted">すべてのプロフィール写真を削除しました</string>
     <string name="InuProfilePhotosDeletedCount">%1$d 枚のプロフィール写真を削除しました</string>
     <string name="InuProfilePhotosSelected">選択中: %1$d</string>
@@ -1421,16 +1387,15 @@
     <string name="InuTranslateProviderTelegram">Telegram API</string>
     <string name="InuYes">はい</string>
     <string name="InuAccountSwitchShortcut">アカウント切り替えショートカット</string>
-    <string name="InuAccountSwitchShortcutInfo">アプリアイコン長押し時に開くアカウントを選択するショートカットを追加します</string>
-
+    <string name="InuAccountSwitchShortcutInfo">アプリアイコンの長押しメニューに、開くアカウントを選ぶショートカットを追加します</string>
     <string name="InuBlockSleepWhileDownloading">ダウンロード中のスリープを防止</string>
     <string name="InuBlockSleepWhileDownloadingInfo">ダウンロード中に部分的なウェイクロックを保持し、Androidがバックグラウンドで停止しないようにします。</string>
     <string name="InuHideProxySponsorChat">プロキシのスポンサーチャットを非表示</string>
     <string name="InuHideProxySponsorChatInfo">接続時に一部のMTProtoプロキシがチャット一覧の一番上に固定するプロモーションチャット/チャンネルをブロックします</string>
-    <string name="InuHideRichEditorButton">リッチテキストエディタのボタンを非表示</string>
+    <string name="InuHideRichEditorButton">リッチテキストエディターボタンを非表示</string>
     <string name="InuKeepDownloadsInBackground">スクロールや終了時にダウンロードを中断しない</string>
     <string name="InuKeepDownloadsInBackgroundInfo">スクロールで見えなくなったりチャットを離れても、ダウンロードを続けます。</string>
-    <string name="InuMaterial3BottomTabs">ボトムタブ</string>
+    <string name="InuMaterial3BottomTabs">下部タブ</string>
     <string name="InuIosBottomBar">iOS風のボトムバー</string>
     <string name="InuIosBottomBarInfo">iOS風の幅広で均等配置のボトムタブ。Material 3タブは無効になります。</string>
     <string name="InuIosChatHeader">コンパクトなピル</string>
@@ -1441,7 +1406,7 @@
     <string name="InuRegexFilterStatusEnabled">有効</string>
     <string name="InuStopBot">ボットを停止</string>
     <string name="InuStopBotAction">停止</string>
-    <string name="InuStopBotAlert">**%1$s** を停止してもよろしいですか？これ以上メッセージを送信できなくなります。</string>
+    <string name="InuStopBotAlert">**%1$s** を停止しますか？このボットからメッセージを受信できなくなります。</string>
     <string name="InuStopBotDone">ボットを停止しました</string>
     <string name="InuSelectionBottomNoQuote">選択バーの引用なし転送ボタン</string>
     <string name="InuSelectionBottomNoQuoteInfo">メッセージ選択時に「返信」ボタンを「引用なし転送」に置き換えます</string>
@@ -1453,9 +1418,9 @@
     <string name="InuDeletePermanentlyDone">完全に削除しました</string>
     <string name="InuAttachCameraSquare">正方形のカメラタイル</string>
     <string name="InuAttachCameraSquareInfo">ギャラリーのカメラが2マスではなく1マスになります</string>
-    <string name="InuSortAlbumsBySize">アルバムをサイズ順に並べ替え</string>
-    <string name="InuSortAlbumsBySizeInfo">添付メニューのアルバムを新着順ではなく写真の枚数順に並べ替えます</string>
-    <string name="InuDownloadDirectory">ダウンロードフォルダ</string>
+    <string name="InuSortAlbumsBySize">アルバムをサイズ順に並べる</string>
+    <string name="InuSortAlbumsBySizeInfo">添付メニューのアルバムを新しい順ではなく写真数の多い順に並べます</string>
+    <string name="InuDownloadDirectory">ダウンロードフォルダー</string>
     <string name="InuDownloadDirectoryApplied">新しくダウンロードするファイルにのみ適用されます</string>
     <string name="InuPreviewMessage">プレビュー</string>
     <string name="InuMinimize">最小化</string>
@@ -1572,8 +1537,8 @@
     <string name="InuHideProfileGiftsTabInfo">プロフィールの共有メディアから「ギフト」タブを削除します。</string>
     <string name="InuHideGiftAuctionsHint">ギフトオークションのバナーを非表示</string>
     <string name="InuHideCacheHint">「空き容量を増やす」カードを非表示</string>
-    <string name="InuTranslateAutoDetectLang">メッセージメニューの言語を自動検出</string>
-    <string name="InuTranslateAutoDetectLangInfo">Telegramが判別していないメッセージの言語を端末側で検出します。メニューが少し遅くなることがあります。</string>
+    <string name="InuTranslateAutoDetectLang">メッセージメニューで DNT を尊重</string>
+    <string name="InuTranslateAutoDetectLangInfo">メッセージの言語が DNT リストに含まれる場合、その言語は自動検出され、メニュー項目は非表示になります。\nこれによりメニューを開く動作がやや遅くなることがあります。</string>
     <string name="InuInstantTranslateBanner">即時翻訳バナー</string>
     <string name="InuInstantTranslateBannerInfo">外国語のメッセージが1件あった時点で翻訳バーを表示します。</string>
     <string name="InuIgnoreTranslationsDisabled">「翻訳が無効」を無視</string>
@@ -1595,7 +1560,6 @@
     <string name="InuSmallGifs">GIFを小さく表示</string>
     <string name="InuDeleteFailedProxies">接続できないプロキシを削除</string>
     <string name="InuDeleteFailedProxiesConfirm">利用できないすべてのプロキシを削除してもよろしいですか？</string>
-
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">転送時の投稿者、キャプション、静音送信のトグルと転送前の編集。</string>
     <string name="InuForwardProHideCaption">キャプションを非表示</string>
@@ -1710,9 +1674,9 @@
     <string name="InuDonateCopied">コピーしました</string>
     <string name="InuShowMediaSize">メディアのサイズを表示</string>
     <string name="InuPlugins">プラグイン</string>
-    <string name="InuPluginsInfo">プラグインはアプリを拡張するユーザー作成のスクリプトです。信頼できる提供元のプラグインだけをインストールしてください。</string>
-    <string name="InuPluginsEnableEngine">プラグインを有効にする</string>
-    <string name="InuPluginsEnableEngineInfo">インストール済みのプラグインを起動時に実行します</string>
+    <string name="InuPluginsInfo">プラグインはユーザーが作成した、アプリを拡張するスクリプトです。信頼できる提供元のプラグインのみインストールしてください。</string>
+    <string name="InuPluginsEnableEngine">プラグインを有効化</string>
+    <string name="InuPluginsEnableEngineInfo">起動時にインストール済みのプラグインを実行します</string>
     <string name="InuPluginsInstalled">インストール済み</string>
     <string name="InuPluginsEnabled">有効</string>
     <string name="InuPluginsEmpty">プラグインがインストールされていません</string>
@@ -1724,127 +1688,127 @@
     <string name="InuPluginSourceTitle">ソースコード</string>
     <string name="InuPluginsRemove">削除</string>
     <string name="InuPluginsRemoveTitle">%s を削除</string>
-    <string name="InuPluginsRemoveConfirm">このプラグインとそのデータをすべて削除しますか？ この操作は取り消せません。</string>
+    <string name="InuPluginsRemoveConfirm">このプラグインとそのすべてのデータを削除しますか？この操作は元に戻せません。</string>
     <string name="InuPluginsRemoveAll">すべてのプラグインを削除</string>
     <string name="InuPluginsRemoveAllConfirm_one">インストール済みのプラグイン %d 個とそのデータをすべて削除しますか？ この操作は取り消せません。</string>
-    <string name="InuPluginsRemoveAllConfirm_other">インストール済みのプラグイン %d 個とそのデータをすべて削除しますか？ この操作は取り消せません。</string>
-    <string name="InuPluginsByAuthor">作者: %1$s</string>
+    <string name="InuPluginsRemoveAllConfirm_other">インストール済みの %d 件のプラグインとそのすべてのデータを削除しますか？この操作は元に戻せません。</string>
+    <string name="InuPluginsByAuthor">%1$s 作</string>
     <string name="InuPluginsPermissions">権限</string>
-    <string name="InuPluginsPermissionsNone">このプラグインは権限を要求していません</string>
+    <string name="InuPluginsPermissionsNone">このプラグインは権限を要求しません</string>
     <string name="InuPluginGrantFs">ファイルストレージ</string>
     <string name="InuPluginGrantClipboardWrite">クリップボードへの書き込み</string>
     <string name="InuPluginGrantOpenUrl">リンクを開く</string>
-    <string name="InuPluginGrantAppVisibility">アプリの表示状態の監視</string>
-    <string name="InuPluginGrantNotificationsSuppress">通知の抑制</string>
-    <string name="InuPluginGrantClipboardRead">クリップボードの読み取り</string>
+    <string name="InuPluginGrantAppVisibility">アプリの表示状態を監視</string>
+    <string name="InuPluginGrantNotificationsSuppress">通知を抑制</string>
+    <string name="InuPluginGrantClipboardRead">クリップボードを読み取る</string>
     <string name="InuPluginGrantFetch">インターネットアクセス</string>
-    <string name="InuPluginGrantAccountRead">アカウントデータの読み取り</string>
+    <string name="InuPluginGrantAccountRead">アカウントデータを読み取る</string>
     <string name="InuPluginGrantAccountWrite">アカウント操作</string>
-    <string name="InuPluginGrantOnUpdate">アップデートの監視</string>
-    <string name="InuPluginGrantInterceptUpdate">アップデートの傍受</string>
-    <string name="InuPluginGrantInterceptSend">送信メッセージの傍受</string>
-    <string name="InuPluginGrantInterceptRpc">API リクエストの傍受</string>
-    <string name="InuPluginGrantInvokeRpc">API への直接アクセス</string>
+    <string name="InuPluginGrantOnUpdate">更新を監視</string>
+    <string name="InuPluginGrantInterceptUpdate">更新をインターセプト</string>
+    <string name="InuPluginGrantInterceptSend">送信メッセージをインターセプト</string>
+    <string name="InuPluginGrantInterceptRpc">API リクエストをインターセプト</string>
+    <string name="InuPluginGrantInvokeRpc">Raw API アクセス</string>
     <string name="InuPluginGrantTakeout">データエクスポートセッション</string>
-    <string name="InuPluginGrantUnsafeFs">端末のファイルへのアクセス</string>
-    <string name="InuPluginGrantUnsafeInvokeRaw">無検査の API アクセス</string>
+    <string name="InuPluginGrantUnsafeFs">デバイスのファイルへのアクセス</string>
+    <string name="InuPluginGrantUnsafeInvokeRaw">未検証の API アクセス</string>
     <string name="InuPluginGrantUnsafeJvm">Java コードの実行</string>
     <string name="InuPluginGrantUnsafeXposed">アプリコードのフック</string>
     <string name="InuPluginGrantUnsafeNotificationCenter">内部イベントへのアクセス</string>
-    <string name="InuPluginGrantUnsafeDisableApiFiltering">アカウント保護の無効化</string>
-    <string name="InuPluginGrantNotificationsSuppressInfo">アプリの実行中に、アプリ自身の通知の表示を止められます</string>
-    <string name="InuPluginGrantTakeoutInfo">あなたの承認後、通常のレート制限なしでデータをエクスポートできます</string>
-    <string name="InuPluginGrantUnsafeFsInfo">アプリが到達できる端末上のあらゆるファイルを読み書きできます</string>
-    <string name="InuPluginGrantUnsafeInvokeRawInfo">メソッドフィルターを回避して、任意の API リクエストを送信できます</string>
-    <string name="InuPluginGrantUnsafeJvmInfo">サンドボックスなしで任意のコードを実行できます</string>
+    <string name="InuPluginGrantUnsafeDisableApiFiltering">アカウント保護を無効化</string>
+    <string name="InuPluginGrantNotificationsSuppressInfo">実行中にアプリ自身の通知を停止できます</string>
+    <string name="InuPluginGrantTakeoutInfo">承認後、通常のレート制限なしでデータをエクスポートできます</string>
+    <string name="InuPluginGrantUnsafeFsInfo">アプリがアクセスできるデバイス上のすべてのファイルを読み書きできます</string>
+    <string name="InuPluginGrantUnsafeInvokeRawInfo">メソッドフィルターを回避して任意の API リクエストを送信できます</string>
+    <string name="InuPluginGrantUnsafeJvmInfo">サンドボックス外で任意のコードを実行できます</string>
     <string name="InuPluginGrantUnsafeXposedInfo">アプリのメソッドを置き換え、あらゆる部分の動作を変更できます</string>
-    <string name="InuPluginGrantUnsafeNotificationCenterInfo">アプリの内部イベントを監視し、発行します</string>
+    <string name="InuPluginGrantUnsafeNotificationCenterInfo">アプリの内部イベントを監視および送信します</string>
     <string name="InuPluginGrantUnsafeDisableApiFilteringInfo">アカウントに重大な影響を与える API 呼び出しへのアクセスをプラグインに許可します</string>
     <string name="InuPluginGrantUnknown">このバージョンのアプリでは認識されず、効果はありません</string>
-    <string name="InuPluginScopeReadSelf">自分のプロフィール</string>
+    <string name="InuPluginScopeReadSelf">あなたのプロフィール</string>
     <string name="InuPluginScopeReadPeers">ユーザーとチャット</string>
     <string name="InuPluginScopeReadMessages">メッセージ</string>
-    <string name="InuPluginScopeReadDialogs">チャット一覧</string>
+    <string name="InuPluginScopeReadDialogs">チャットリスト</string>
     <string name="InuPluginScopeReadHistory">メッセージ履歴</string>
     <string name="InuPluginScopeReadDraft">下書き</string>
-    <string name="InuPluginScopeWriteSend">メッセージの送信</string>
-    <string name="InuPluginScopeWriteEdit">メッセージの編集</string>
-    <string name="InuPluginScopeWriteDelete">メッセージの削除</string>
-    <string name="InuPluginScopeWriteForward">メッセージの転送</string>
-    <string name="InuPluginScopeWriteReact">メッセージへのリアクション</string>
+    <string name="InuPluginScopeWriteSend">メッセージを送信</string>
+    <string name="InuPluginScopeWriteEdit">メッセージを編集</string>
+    <string name="InuPluginScopeWriteDelete">メッセージを削除</string>
+    <string name="InuPluginScopeWriteForward">メッセージを転送</string>
+    <string name="InuPluginScopeWriteReact">メッセージにリアクション</string>
     <string name="InuPluginScopeWriteRead">チャットを既読にする</string>
-    <string name="InuPluginScopeWriteTyping">入力中ステータスの表示</string>
-    <string name="InuPluginScopeWriteDraft">下書きの編集</string>
+    <string name="InuPluginScopeWriteTyping">入力中の状態を表示</string>
+    <string name="InuPluginScopeWriteDraft">下書きを編集</string>
     <string name="InuPluginScopeUpdNewMessage">新着メッセージ</string>
     <string name="InuPluginScopeUpdEditMessage">編集されたメッセージ</string>
     <string name="InuPluginScopeUpdDeleteMessage">削除されたメッセージ</string>
-    <string name="InuPluginScopeAccountRead">%1$s の読み取り</string>
-    <string name="InuPluginScopeFetch">%1$s へのリクエスト</string>
-    <string name="InuPluginScopeFetchAny">任意のサイトへのリクエスト</string>
-    <string name="InuPluginScopeInvokeRpc">%1$s の呼び出し</string>
-    <string name="InuPluginScopeInterceptRpc">%1$s の呼び出しの傍受</string>
+    <string name="InuPluginScopeAccountRead">%1$s を読み取る</string>
+    <string name="InuPluginScopeFetch">%1$s にリクエストを送信</string>
+    <string name="InuPluginScopeFetchAny">任意のウェブサイトにリクエストを送信</string>
+    <string name="InuPluginScopeInvokeRpc">%1$s を呼び出す</string>
+    <string name="InuPluginScopeInterceptRpc">%1$s の呼び出しをインターセプト</string>
     <string name="InuPluginScopeAnyMethod">任意の API メソッド</string>
-    <string name="InuPluginScopeOnUpdate">%1$s の監視</string>
-    <string name="InuPluginScopeInterceptUpdate">%1$s の傍受</string>
-    <string name="InuPluginScopeAllUpdates">すべてのアップデート</string>
-    <string name="InuPluginTrustTitle">信頼できるプラグインだけをインストールしてください</string>
-    <string name="InuPluginTrustInfo">プラグインはサンドボックス内で動作し、宣言した権限だけが与えられます（次の画面に一覧が表示されます）。\nそれでも、権限を与えるとプラグインは次のことができます:</string>
-    <string name="InuPluginTrust1Title">あなたとして行動する</string>
-    <string name="InuPluginTrust1Text">アカウント権限があると、あなたの名義でメッセージの読み取り・送信・削除ができます。</string>
-    <string name="InuPluginTrust2Title">あなたのデータに触れる</string>
-    <string name="InuPluginTrust2Text">ファイルとネットワークの権限により、チャット・メディア・設定を読み取り、どこにでも送信できます。</string>
-    <string name="InuPluginTrust3Title">サンドボックスから出る</string>
-    <string name="InuPluginTrust3Text">安全でない権限はサンドボックスを外し、アプリ自身が到達できるすべてにアクセスしてコードを実行します。</string>
-    <string name="InuPluginTrustWarning">悪意のあるプラグインはあなたのアカウントを乗っ取る可能性があります</string>
-    <string name="InuPluginTrustAccept">理解しました。続ける</string>
+    <string name="InuPluginScopeOnUpdate">%1$s を監視</string>
+    <string name="InuPluginScopeInterceptUpdate">%1$s をインターセプト</string>
+    <string name="InuPluginScopeAllUpdates">すべての更新</string>
+    <string name="InuPluginTrustTitle">信頼できるプラグインのみインストールしてください</string>
+    <string name="InuPluginTrustInfo">プラグインはサンドボックス内で動作し、宣言した権限だけを取得します。権限は次の画面に表示されます。\nそれでも権限を付与すると、プラグインは次のことが可能になります:</string>
+    <string name="InuPluginTrust1Title">あなたとして操作</string>
+    <string name="InuPluginTrust1Text">アカウント権限を使って、あなたの名前でメッセージを読み取り、送信、削除できます。</string>
+    <string name="InuPluginTrust2Title">データにアクセス</string>
+    <string name="InuPluginTrust2Text">ファイルとネットワークの権限を使ってチャット、メディア、設定を読み取り、任意の場所に送信できます。</string>
+    <string name="InuPluginTrust3Title">サンドボックスから離脱</string>
+    <string name="InuPluginTrust3Text">危険な権限はサンドボックスを解除し、アプリ自体がアクセスできるすべてのものを使ってコードを実行します。</string>
+    <string name="InuPluginTrustWarning">悪意のあるプラグインにアカウントを乗っ取られる可能性があります</string>
+    <string name="InuPluginTrustAccept">理解して続行</string>
     <string name="InuPluginsDevMode">開発者モード</string>
-    <string name="InuPluginsDevModeInfo">パソコンから adb 経由でプラグインを送り、確認なしでインストール・再読み込みします</string>
-    <string name="InuPluginsDevModeBanner">この端末に adb でアクセスできるものは何でも、確認なしにプラグインをインストールして任意の権限を与えられます。作業が終わったらオフにしてください。</string>
+    <string name="InuPluginsDevModeInfo">コンピューターから adb 経由でプラグインをプッシュし、確認なしでインストールと再読み込みを行います</string>
+    <string name="InuPluginsDevModeBanner">このデバイスに adb でアクセスできるものは、確認なしでプラグインをインストールし、任意の権限を付与できます。作業が終わったらオフにしてください。</string>
     <string name="InuPluginsDevModeTurnOff">開発者モードをオフにする</string>
-    <string name="InuPluginsDevChip">dev</string>
+    <string name="InuPluginsDevChip">開発</string>
     <string name="InuPluginsDevPushed_one">プラグインを %d 個送信しました</string>
-    <string name="InuPluginsDevPushed_other">プラグインを %d 個送信しました</string>
+    <string name="InuPluginsDevPushed_other">%d 件のプラグインをプッシュしました</string>
     <string name="InuPluginsDevModeSheetTitle">開発者モードをオンにしますか？</string>
-    <string name="InuPluginsDevModeSheetInfo">プラグイン開発のための機能です。パソコンが adb 経由でファイルを送ると、アプリがすぐにインストールします。\nオンの間:</string>
-    <string name="InuPluginsDevMode1Title">adb を使うものすべて</string>
-    <string name="InuPluginsDevMode1Text">接続したパソコンや、すでに adb 経由でこの端末と通信しているもの（Shizuku など）が、プラグインを送信できます。</string>
+    <string name="InuPluginsDevModeSheetInfo">プラグイン開発用の機能です。コンピューターから adb 経由でファイルをプッシュすると、アプリがすぐにインストールします。\nオンの間:</string>
+    <string name="InuPluginsDevMode1Title">adb にアクセスできるすべてのもの</string>
+    <string name="InuPluginsDevMode1Text">接続したコンピューターや、このデバイスと adb 経由ですでに通信しているもの（Shizuku など）は、プラグインをプッシュできます。</string>
     <string name="InuPluginsDevMode2Title">権限の確認なし</string>
-    <string name="InuPluginsDevMode2Text">送信されたプラグインは、宣言した権限ごとインストールされます。信頼確認画面も権限一覧も取り消しもありません。</string>
-    <string name="InuPluginsDevMode3Title">オフにするまで</string>
-    <string name="InuPluginsDevMode3Text">再起動してもオンのままです。オンの間はプラグインのページに警告が表示されます。</string>
-    <string name="InuPluginsDevModeSheetWarning">プラグインを開発しているとき以外はオフのままにしてください</string>
-    <string name="InuPluginsDevModeSheetAccept">理解しました。オンにする</string>
+    <string name="InuPluginsDevMode2Text">プッシュされたプラグインはインストールされ、宣言したすべての権限が付与されます。信頼確認画面、権限リスト、取り消しはありません。</string>
+    <string name="InuPluginsDevMode3Title">オフにするまで継続</string>
+    <string name="InuPluginsDevMode3Text">再起動後もオンのままです。オンの間はプラグインページに警告が表示されます。</string>
+    <string name="InuPluginsDevModeSheetWarning">プラグインを開発していない場合はオフにしてください</string>
+    <string name="InuPluginsDevModeSheetAccept">理解してオンにする</string>
     <string name="InuPluginObfuscatedTitle">難読化されたコード</string>
-    <string name="InuPluginObfuscatedInfo">このプラグインのコードは意図的に難読化されているようです。難読化は悪意のある動作を隠すためによく使われます。入手元を完全に信頼できる場合のみ、このプラグインを残してください。</string>
-    <string name="InuPluginMinifiedTitle">最小化されたコード</string>
-    <string name="InuPluginMinifiedInfo">このプラグインのコードは最小化されているようで、簡単には確認できません。入手元を信頼できる場合のみ、このプラグインを残してください。</string>
+    <string name="InuPluginObfuscatedInfo">このプラグインのコードは意図的に難読化されているようです。難読化は悪意のある動作を隠すためによく使われます。提供元を完全に信頼できる場合のみ、このプラグインを残してください。</string>
+    <string name="InuPluginMinifiedTitle">圧縮されたコード</string>
+    <string name="InuPluginMinifiedInfo">このプラグインのコードは圧縮されているため、簡単に確認できません。提供元を信頼できる場合のみ、このプラグインを残してください。</string>
     <string name="InuPluginsSafeMode">セーフモード</string>
-    <string name="InuPluginsSafeModeShortcut">アプリを閉じる（次回起動はセーフモード）</string>
-    <string name="InuPluginsSafeModeForced">このセッションではプラグインは実行されていません。再び実行するにはアプリを再起動してください。</string>
-    <string name="InuPluginsSafeModeCrashed">前回プラグインの起動中にアプリが停止したため、このセッションではプラグインは実行されていません。</string>
-    <string name="InuPluginsSafeModeHostError">内部エラーにより、このセッションのすべてのプラグインが停止しました。再び実行するにはアプリを再起動してください。</string>
-    <string name="InuPluginsSafeModeCrashLoop">プラグインの起動直後にアプリが 2 回続けてクラッシュしたため、このセッションではプラグインは実行されていません。</string>
+    <string name="InuPluginsSafeModeShortcut">アプリを閉じ、次回はセーフモードで起動</string>
+    <string name="InuPluginsSafeModeForced">このセッションではプラグインが実行されていません。再度実行するにはアプリを再起動してください。</string>
+    <string name="InuPluginsSafeModeCrashed">前回プラグインの起動中にアプリが停止したため、このセッションではプラグインが実行されていません。</string>
+    <string name="InuPluginsSafeModeHostError">内部エラーにより、このセッションのすべてのプラグインが停止しました。再度実行するにはアプリを再起動してください。</string>
+    <string name="InuPluginsSafeModeCrashLoop">プラグイン起動直後にアプリが 2 回連続でクラッシュしたため、このセッションではプラグインが実行されていません。</string>
     <string name="InuPluginInstall">インストール</string>
     <string name="InuPluginInstallTitle">プラグインをインストール</string>
-    <string name="InuPluginInstallEnable">インストール後に有効にする</string>
+    <string name="InuPluginInstallEnable">インストール後に有効化</string>
     <string name="InuPluginInstalled">%1$s をインストールしました</string>
     <string name="InuPluginUpdate">更新</string>
     <string name="InuPluginUpdateTitle">プラグインを更新</string>
     <string name="InuPluginUpdatePermissions">新しい権限</string>
-    <string name="InuPluginUpdatePermissionsNone">この更新では新しい権限は要求されません。</string>
+    <string name="InuPluginUpdatePermissionsNone">この更新は新しい権限を要求しません。</string>
     <string name="InuPluginUpdatePermissionsDropped">要求されなくなった権限</string>
-    <string name="InuPluginUpdatePermissionsKeptTitle">許可済み</string>
+    <string name="InuPluginUpdatePermissionsKeptTitle">付与済み</string>
     <string name="InuPluginUpdatePermissionsKept_one">許可済みの権限 %1$d 件を確認</string>
-    <string name="InuPluginUpdatePermissionsKept_other">許可済みの権限 %1$d 件を確認</string>
+    <string name="InuPluginUpdatePermissionsKept_other">付与済みの %1$d 件の権限を確認</string>
     <string name="InuPluginUpdated">%1$s を更新しました</string>
-    <string name="InuPluginCrashed">%1$s がクラッシュしたためオフにしました</string>
-    <string name="InuPluginAlreadyInstalled">%1$s はすでにインストールされています</string>
+    <string name="InuPluginCrashed">%1$s がクラッシュしたため無効にしました</string>
+    <string name="InuPluginAlreadyInstalled">%1$s はインストール済みです</string>
     <string name="InuPluginsErrorNoManifest">有効なプラグインではありません（メタデータヘッダーがありません）</string>
-    <string name="InuPluginsErrorRead">選択したファイルを読み込めませんでした</string>
+    <string name="InuPluginsErrorRead">選択したファイルを読み取れませんでした</string>
     <string name="InuPluginsErrorWrite">プラグインファイルを保存できませんでした</string>
-    <string name="InuPluginsErrorApiVersion">より新しい entinyGram が必要です（プラグイン API %1$d、このアプリは %2$d）</string>
-    <string name="InuPluginsErrorPlatform">このプラットフォーム向けではありません（%1$s が必要）</string>
-    <string name="InuPluginsErrorBadGrant">無効な権限が要求されています（%1$s）</string>
+    <string name="InuPluginsErrorApiVersion">新しい Inugram が必要です（プラグイン API %1$d、このアプリは %2$d）</string>
+    <string name="InuPluginsErrorPlatform">このプラットフォーム用ではありません（%1$s が必要）</string>
+    <string name="InuPluginsErrorBadGrant">無効な権限が要求されました（%1$s）</string>
     <string name="InuPluginsErrorUnconsentedGrants">インストール時に確認されていない権限を要求しています（%1$s）。確認するにはプラグインを更新してください</string>
     <string name="InuPluginsFailedAtLoad">読み込みエラー</string>
     <string name="InuPluginsFailedAtRuntime">実行時エラー</string>
@@ -1903,4 +1867,15 @@
     <string name="InuUnreadBadgeOnBackButton">未読チャットの件数を表示</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">チャット内の戻るボタンに未読チャットの件数を表示します</string>
     <string name="InuUnreadBadgeOnBackButtonIos">iOS 風のカウンター</string>
+    <string name="InuOptimizedAttachmentMenu">最適化された添付メニュー</string>
+    <string name="InuOptimizedAttachmentMenuInfo">写真や動画を開くときのアニメーションを滑らかにします</string>
+    <string name="InuEditedMessageDateMode">編集済みメッセージのタイムスタンプ</string>
+    <string name="InuEditedMessageDateModeTelegram">デフォルト</string>
+    <string name="InuEditedMessageDateModeEdit">編集日時</string>
+    <string name="InuEditedMessageDateModeSend">送信日時</string>
+    <string name="InuBiometricExplicitConfirmation">追加の確認</string>
+    <string name="InuBiometricExplicitConfirmationInfo">顔/虹彩認証の成功後に追加のタップを求めます</string>
+    <string name="InuBiometricRequireConfirmationPasscode">アプリのロック解除時</string>
+    <string name="InuBiometricRequireConfirmationBots">ミニアプリ内</string>
+    <string name="InuBiometricRequireConfirmationActions">チャットの削除またはログアウト時</string>
 </resources>

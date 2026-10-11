@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 10 Oct 2026 22:18:49 +0200
+Subject: fix forum bot command menu layering
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -17596,7 +17596,8 @@ public class ChatActivity extends BaseFragment implements
+         @Override
+         public void addView(View child, int index, ViewGroup.LayoutParams params) {
+             if (chatActivityEnterView != null && child == chatActivityEnterView.botCommandsMenuContainer) {
+-                final int indexToAdd = chatActivityFadeView != null ? indexOfChild(chatActivityFadeView) : -1;
++                final int topicsTabsIndex = indexOfChild(topicsTabs);
++                final int indexToAdd = topicsTabsIndex >= 0 ? topicsTabsIndex + 1 : chatActivityFadeView != null ? indexOfChild(chatActivityFadeView) : -1;
+                 super.addView(child, indexToAdd >= 0 ? indexToAdd : index, params);
+             } else {
+                 super.addView(child, index, params);

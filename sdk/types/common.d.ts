@@ -1468,6 +1468,8 @@ declare namespace inu {
       text: string
       /** Subtitle for the switch */
       subtitle?: string
+      /** Allow the label and subtitle to wrap instead of ellipsizing */
+      multiline?: boolean
       /** Icon shown next to the switch */
       icon?: UIIcon
       /** Current switch status */
@@ -1485,6 +1487,8 @@ declare namespace inu {
       /** Button label */
       text: InputText
       subtitle?: InputText
+      /** Allow the label and subtitle to wrap instead of ellipsizing */
+      multiline?: boolean
       /** Icon shown in the button */
       icon?: UIIcon
       /** "Value" of the button */
@@ -1503,6 +1507,8 @@ declare namespace inu {
       id?: string
       /** Label for the button */
       text: InputText
+      /** Allow the label to wrap instead of ellipsizing */
+      multiline?: boolean
       /** Icon shown in the button */
       icon?: UIIcon
       /** Select items */
@@ -1716,10 +1722,10 @@ declare namespace inu {
     dialogId: number
     topicId?: number
   }
-  type MessageActionSource = 'bubble' | 'selection'
+  type MessageActionSource = 'bubble' | 'selection' | 'sharedMedia'
   interface MessageActionContext extends ChatActionContext {
     source: MessageActionSource
-    /** Oldest to newest. A bubble expands its album; a selection contains exactly what the user selected. */
+    /** Oldest to newest. A bubble expands its album; a selection or shared media contains exactly what the user selected. */
     messages: readonly Message[]
   }
 
@@ -1729,6 +1735,8 @@ declare namespace inu {
     icon?: UIIcon | ((ctx: GetterCtx) => UIIcon)
     visible?: (ctx: Ctx) => boolean
     callback: (ctx: Ctx) => void
+    /** Long-tap handler */
+    secondaryCallback?: (ctx: Ctx) => void
   }
 
   interface MessageActionOptions extends ActionOptions<MessageActionContext, MessageActionContext | null> {

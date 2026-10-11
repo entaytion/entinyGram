@@ -172,15 +172,15 @@ index 0000000..0000000 100644
      private final int MAX_TRIES = 15;
      private final Runnable loadFrameRunnable = this::loadFrameRunnableImpl;
  
-@@ -334,6 +334,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+@@ -331,6 +331,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
              adaptRenderingSize();
              updateScaleFactor();
              decoderCreated = !isWebmSticker || mDecoder != null || (decoderTryCount++) > MAX_TRIES;
 +            desu.inugram.helpers.media.WebmStickerDebugHelper.onDecoderCreateAttempt(this);
              AndroidUtilities.runOnUIThread(AnimatedFileDrawable.this::checkChoreographerInternal);
          }
-         if (mDecoder == null && !precache) {
-@@ -683,6 +684,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+         try {
+@@ -676,6 +677,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
              recycleWithSecond = true;
              return;
          }

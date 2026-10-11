@@ -8,7 +8,8 @@ Subject: hooks into various places inside ChatActivity
  .../ui/ActionBar/ActionBarMenuItem.java       |   4 +
  .../java/org/telegram/ui/AvatarPreviewer.java |   4 +-
  .../java/org/telegram/ui/ChatActivity.java    | 122 ++++++++++++------
- 4 files changed, 87 insertions(+), 45 deletions(-)
+ .../ui/Components/SharedMediaLayout.java      |   3 +
+ 5 files changed, 90 insertions(+), 45 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -517,3 +518,17 @@ index 0000000..0000000 100644
          }
  
          if (showWelcomeMessageRevertOption(primaryMessage)) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -7840,6 +7840,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+                     SharedDocumentCell cell = (SharedDocumentCell) view;
+                     TLRPC.Document document = message.getDocument();
+                     if (cell.isLoaded()) {
++                        if (desu.inugram.helpers.chat.ChatHelper.maybeHandleFileClick(profileActivity, message)) {
++                            return;
++                        }
+                         if (message.canPreviewDocument()) {
+                             PhotoViewer.getInstance().setParentActivity(profileActivity);
+                             index = sharedMediaData[selectedMode].messages.indexOf(message);

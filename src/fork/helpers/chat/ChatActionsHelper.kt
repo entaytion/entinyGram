@@ -7,8 +7,11 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
 import desu.inugram.helpers.vibration.HapticFeedbackConstants
+import android.util.SparseArray
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.core.content.edit
 import desu.inugram.InuConfig
 // #if PLUGINS
@@ -37,11 +40,13 @@ import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.UserObject
+import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenu
 import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.AvatarPreviewer
 import org.telegram.ui.BasePermissionsActivity
@@ -54,6 +59,8 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ChatActivityEnterView
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.Components.SharedMediaLayout
+import org.telegram.ui.Components.TranslateAlert2
 import org.telegram.ui.ManageLinksActivity
 import org.telegram.ui.MessageSendPreview
 import org.telegram.ui.RestrictedLanguagesSelectActivity
@@ -261,8 +268,8 @@ object ChatActionsHelper {
     private val pluginMenus = WeakHashMap<ChatActivity, ChatPluginMenu>()
     private var watchingActions = false
 
-    private class SelectionPluginMenu(
-        val overflow: ActionBarMenuItem,
+    internal class SelectionPluginMenu(
+        val source: MessageActionSource,
         val submenu: ItemOptions,
         val actionsCell: ActionBarMenuSubItem,
     ) {
@@ -272,17 +279,23 @@ object ChatActionsHelper {
         var generation = 0
         var pending: Runnable? = null
     }
+    // #endif
 
-    private val selectionPluginMenus = WeakHashMap<ChatActivity, SelectionPluginMenu>()
+    private val selectionMenus = WeakHashMap<ChatActivity, SelectionMenu>()
 
     fun onFragmentDestroy(activity: ChatActivity) {
+        // #if PLUGINS
         pluginMenus.remove(activity)
-        val state = selectionPluginMenus.remove(activity) ?: return
+        val state = selectionMenus.remove(activity)?.plugins ?: return
         state.generation++
         state.pending?.let(AndroidUtilities::cancelRunOnUIThread)
         state.pending = null
+        // #else
+        selectionMenus.remove(activity)
+        // #endif
     }
 
+    // #if PLUGINS
     /**
      * The rows arrive one globalQueue hop later - an engine cannot be entered from the ui thread -
      * which is why they are rendered here, when the chat's menu is *built*, rather than when the
@@ -364,7 +377,10 @@ object ChatActionsHelper {
         for (row in rows) {
             val cell = headerItem.getSubItem(PluginActions.optionIdFor(row.key)) as? ActionBarMenuSubItem
             if (cell == null) unbound.add(row)
-            else PluginIcons.setIcon(cell, row.text, row.icon, row.owner, R.drawable.msg_settings_old)
+            else {
+                PluginIcons.setIcon(cell, row.text, row.icon, row.owner, R.drawable.msg_settings_old)
+                PluginActions.bindSecondaryCallback(cell, row, state.surface) { headerItem.closeSubMenu() }
+            }
         }
         if (unbound.isEmpty()) return
         val binder = object : View.OnAttachStateChangeListener {
@@ -374,6 +390,7 @@ object ChatActionsHelper {
                 for (row in unbound) {
                     val cell = headerItem.getSubItem(PluginActions.optionIdFor(row.key)) as? ActionBarMenuSubItem ?: continue
                     PluginIcons.setIcon(cell, row.text, row.icon, row.owner, R.drawable.msg_settings_old)
+                    PluginActions.bindSecondaryCallback(cell, row, state.surface) { headerItem.closeSubMenu() }
                 }
             }
 
@@ -421,6 +438,7 @@ object ChatActionsHelper {
                 PluginActions.dispatch(row, state.surface)
                 headerItem.closeSubMenu()
             }
+            submenu.last?.let { PluginActions.bindSecondaryCallback(it, row, state.surface) { headerItem.closeSubMenu() } }
         }
         if (headerItem.hasSubItem(ACTION_PLUGIN_ACTIONS)) {
             headerItem.showSubItem(ACTION_PLUGIN_ACTIONS)
@@ -472,13 +490,8 @@ object ChatActionsHelper {
 
     private fun dispatchPluginItem(id: Int, activity: ChatActivity): Boolean {
         if (activity.actionBar?.isActionModeShowed == true) {
-            val selection = selectionPluginMenus[activity]
-            val row = PluginActions.rowAt(selection?.rows.orEmpty(), id)
-            val surface = selection?.surface
-            if (row != null && surface != null) {
-                PluginActions.dispatch(row, surface)
-                return true
-            }
+            val menu = selectionMenus[activity]
+            if (menu != null && dispatchSelectionPluginItem(menu, id)) return true
         }
         val state = pluginMenus[activity] ?: return false
         val row = PluginActions.rowAt(state.rows, id) ?: return false
@@ -548,10 +561,9 @@ object ChatActionsHelper {
             }
 
             ACTION_SELECT_RANGE -> fillSelectionGaps(activity)
-            ACTION_SEL_SAVE -> saveSelectionToSavedMessages(activity)
-            ACTION_SEL_FORWARD_NO_QUOTE -> forwardSelectionNoQuote(activity)
+            ACTION_SEL_SAVE, ACTION_SEL_FORWARD_NO_QUOTE, ACTION_SEL_GALLERY ->
+                return selectionMenus[activity]?.let { handleSelectionClick(it, id) } ?: false
             ACTION_SEL_TRANSLATE -> translateSelection(activity)
-            ACTION_SEL_GALLERY -> saveSelectionToGallery(activity)
             ACTION_SEL_PIN -> pinSelection(activity)
             ACTION_SEL_UNPIN -> unpinSelection(activity)
 
@@ -709,6 +721,25 @@ object ChatActionsHelper {
         headerItem.setSubItemShown(ACTION_SHOW_PINNED_PANEL, hidden)
     }
 
+    // --- selection action mode ---
+
+    /** the overflow of a message selection, in a chat or in shared media */
+    class SelectionMenu internal constructor(
+        internal val overflow: ActionBarMenuItem,
+        internal val fragment: BaseFragment,
+        internal val dialogId: Long,
+        internal val topicId: Long,
+        internal val selected: Array<SparseArray<MessageObject>>,
+        /** null in shared media, which has no translate or pin rows */
+        internal val chat: ChatActivity?,
+        internal val clearSelection: Runnable,
+        internal val forwardWithoutQuote: Runnable,
+    ) {
+        // #if PLUGINS
+        internal var plugins: SelectionPluginMenu? = null
+        // #endif
+    }
+
     @JvmStatic
     fun addActionModeItems(activity: ChatActivity, actionMode: ActionBarMenu, anchorAfterId: Int) {
         val item = actionMode.addItemWithWidth(
@@ -731,6 +762,71 @@ object ChatActionsHelper {
             AndroidUtilities.dp(54f),
             LocaleController.getString(R.string.AccDescrMoreOptions),
         )
+        val menu = SelectionMenu(
+            overflow,
+            activity,
+            activity.dialogId,
+            activity.topicId,
+            activity.selectedMessagesIds,
+            activity,
+            { activity.clearSelectionMode() },
+            { forwardSelectionNoQuote(activity) },
+        )
+        addSelectionItems(menu)
+        selectionMenus[activity] = menu
+        activity.actionModeViews.add(overflow)
+    }
+
+    @JvmStatic
+    fun createSharedMediaMenu(
+        layout: SharedMediaLayout,
+        fragment: BaseFragment,
+        dialogId: Long,
+        topicId: Long,
+        selected: Array<SparseArray<MessageObject>>,
+        actionModeLayout: LinearLayout,
+        actionModeViews: ArrayList<View>,
+        forward: Utilities.Callback<View>,
+    ): SelectionMenu {
+        val overflow = ActionBarMenuItem(
+            layout.context,
+            null,
+            fragment.getThemedColor(Theme.key_actionBarActionModeDefaultSelector),
+            fragment.getThemedColor(Theme.key_actionBarActionModeDefaultIcon),
+            false,
+            fragment.resourceProvider,
+        )
+        overflow.setIcon(R.drawable.ic_ab_other)
+        overflow.contentDescription = LocaleController.getString(R.string.AccDescrMoreOptions)
+        overflow.isDuplicateParentStateEnabled = false
+        overflow.visibility = View.GONE
+        overflow.setOnClickListener { overflow.toggleSubMenu() }
+        actionModeLayout.addView(
+            overflow,
+            LinearLayout.LayoutParams(AndroidUtilities.dp(54f), ViewGroup.LayoutParams.MATCH_PARENT),
+        )
+        actionModeViews.add(overflow)
+        val menu = SelectionMenu(
+            overflow,
+            fragment,
+            dialogId,
+            topicId,
+            selected,
+            null,
+            { layout.closeActionMode() },
+            {
+                ChatHelper.clearForwardFlags()
+                forward.run(overflow)
+                ChatHelper.pendingHideAuthor = true
+            },
+        )
+        overflow.setDelegate { id -> handleSelectionClick(menu, id) }
+        addSelectionItems(menu)
+        return menu
+    }
+
+    private fun addSelectionItems(menu: SelectionMenu) {
+        val overflow = menu.overflow
         overflow.addSubItem(
             ACTION_SEL_SAVE,
             R.drawable.msg_saved,
@@ -741,33 +837,35 @@ object ChatActionsHelper {
             R.drawable.msg_forward_noquote,
             LocaleController.getString(R.string.InuForwardNoQuote),
         )
-        overflow.addSubItem(
-            ACTION_SEL_TRANSLATE,
-            R.drawable.msg_translate,
-            LocaleController.getString(R.string.TranslateMessage),
-        )
+        if (menu.chat != null) {
+            overflow.addSubItem(
+                ACTION_SEL_TRANSLATE,
+                R.drawable.msg_translate,
+                LocaleController.getString(R.string.TranslateMessage),
+            )
+        }
         overflow.addSubItem(
             ACTION_SEL_GALLERY,
             R.drawable.msg_download,
             LocaleController.getString(R.string.SaveToGallery),
         )
-        overflow.addSubItem(
-            ACTION_SEL_PIN,
-            R.drawable.msg_pin,
-            LocaleController.getString(R.string.PinMessage),
-        )
-        overflow.addSubItem(
-            ACTION_SEL_UNPIN,
-            R.drawable.msg_unpin,
-            LocaleController.getString(R.string.UnpinMessage),
-        )
+        if (menu.chat != null) {
+            overflow.addSubItem(
+                ACTION_SEL_PIN,
+                R.drawable.msg_pin,
+                LocaleController.getString(R.string.PinMessage),
+            )
+            overflow.addSubItem(
+                ACTION_SEL_UNPIN,
+                R.drawable.msg_unpin,
+                LocaleController.getString(R.string.UnpinMessage),
+            )
+        }
         // #if PLUGINS
+        val source = if (menu.chat != null) MessageActionSource.SELECTION else MessageActionSource.SHARED_MEDIA
         val cells = HashMap<ActionKey, ActionBarMenuSubItem>()
         if (InuConfig.PLUGINS_ENABLED.value) {
-            val registered = PluginActions.registeredRows(
-                PluginActions.KIND_MESSAGE,
-                PluginActions.MESSAGE_PLACEMENT_SELECTION,
-            )
+            val registered = PluginActions.registeredRows(PluginActions.KIND_MESSAGE, source.placements)
             val byKey = registered.associateBy { it.key }
             for (key in PluginActions.orderMainKeys(PluginActions.KIND_MESSAGE, registered.map { it.key })) {
                 val row = byKey.getValue(key)
@@ -781,7 +879,7 @@ object ChatActionsHelper {
                 }
             }
         }
-        val submenu = ItemOptions.swipeback(overflow.popupLayout, activity.resourceProvider)
+        val submenu = ItemOptions.swipeback(overflow.popupLayout, menu.fragment.resourceProvider)
         submenu.add(R.drawable.ic_ab_back, LocaleController.getString(R.string.Back)) {
             overflow.popupLayout.swipeBack?.closeForeground()
         }
@@ -792,11 +890,22 @@ object ChatActionsHelper {
             LocaleController.getString(R.string.InuActions),
             submenu.linearLayout,
         ).apply { visibility = View.GONE }
-        val pluginMenu = SelectionPluginMenu(overflow, submenu, actionsCell)
-        pluginMenu.cells.putAll(cells)
-        selectionPluginMenus[activity] = pluginMenu
+        menu.plugins = SelectionPluginMenu(source, submenu, actionsCell).also { it.cells.putAll(cells) }
         // #endif
-        activity.actionModeViews.add(overflow)
+    }
+
+    private fun handleSelectionClick(menu: SelectionMenu, id: Int): Boolean {
+        when (id) {
+            ACTION_SEL_SAVE -> saveSelectionToSavedMessages(menu)
+            ACTION_SEL_FORWARD_NO_QUOTE -> menu.forwardWithoutQuote.run()
+            ACTION_SEL_GALLERY -> saveSelectionToGallery(menu)
+            // #if PLUGINS
+            else -> return dispatchSelectionPluginItem(menu, id)
+            // #else
+            else -> return false
+            // #endif
+        }
+        return true
     }
 
     @JvmStatic
@@ -812,20 +921,24 @@ object ChatActionsHelper {
             ACTION_SELECT_RANGE,
             if (hasUnselectedGap(activity)) View.VISIBLE else View.GONE,
         )
+        selectionMenus[activity]?.let(::updateSelectionMenu)
+    }
 
-        val overflow = actionMode.getItem(ACTION_SELECTION_MENU) as? ActionBarMenuItem ?: return
-        var any = false
+    @JvmStatic
+    fun updateSelectionMenu(menu: SelectionMenu) {
+        val overflow = menu.overflow
+        val chat = menu.chat
+        val messages = collectSelected(menu)
         var hasText = false
         var hasMedia = false
         var canPin = false
         var canUnpin = false
         var allForwardable = true
-        forEachSelectedMessage(activity) { msg ->
-            any = true
+        for (msg in messages) {
             if (!msg.messageOwner?.message.isNullOrEmpty()) hasText = true
             if (msg.isPhoto || msg.isVideo) hasMedia = true
-            if (canPinMessage(activity, msg)) {
-                if (isPinnedMessage(activity, msg)) {
+            if (chat != null && canPinMessage(chat, msg)) {
+                if (isPinnedMessage(chat, msg)) {
                     canUnpin = true
                 } else {
                     canPin = true
@@ -833,32 +946,37 @@ object ChatActionsHelper {
             }
             if (!msg.canForwardMessage()) allForwardable = false
         }
-        val selfId = UserConfig.getInstance(activity.currentAccount).clientUserId
-        val canForward = any && allForwardable && !activity.isPeerNoForwards
-        val canSave = canForward && activity.dialogId != selfId
-        val canTranslate = any && hasText && InuConfig.IN_PLACE_TRANSLATION.value
+        val account = menu.fragment.currentAccount
+        val noForwards = chat?.isPeerNoForwards ?: MessagesController.getInstance(account).isPeerNoForwards(menu.dialogId)
+        val canForward = messages.isNotEmpty() && allForwardable && !noForwards
+        val canSave = canForward && menu.dialogId != UserConfig.getInstance(account).clientUserId
+        val canTranslate = chat != null && hasText && InuConfig.IN_PLACE_TRANSLATION.value
         overflow.setSubItemShown(ACTION_SEL_SAVE, canSave)
         overflow.setSubItemShown(ACTION_SEL_FORWARD_NO_QUOTE, canForward)
-        overflow.setSubItemShown(ACTION_SEL_TRANSLATE, canTranslate)
         overflow.setSubItemShown(ACTION_SEL_GALLERY, hasMedia)
-        overflow.setSubItemShown(ACTION_SEL_PIN, canPin)
-        overflow.setSubItemShown(ACTION_SEL_UNPIN, canUnpin)
-        actionMode.setItemVisibility(
-            ACTION_SELECTION_MENU,
-            if (canSave || canForward || canTranslate || hasMedia || canPin || canUnpin) View.VISIBLE else View.GONE,
-        )
+        if (chat != null) {
+            overflow.setSubItemShown(ACTION_SEL_TRANSLATE, canTranslate)
+            overflow.setSubItemShown(ACTION_SEL_PIN, canPin)
+            overflow.setSubItemShown(ACTION_SEL_UNPIN, canUnpin)
+        }
+        val anyShown = canSave || canForward || canTranslate || hasMedia || canPin || canUnpin
+        overflow.visibility = if (anyShown) View.VISIBLE else View.GONE
         // #if PLUGINS
-        updateSelectionPluginItems(activity, actionMode, overflow)
+        updateSelectionPluginItems(menu)
         // #endif
     }
 
     // #if PLUGINS
-    private fun updateSelectionPluginItems(
-        activity: ChatActivity,
-        actionMode: ActionBarMenu,
-        overflow: ActionBarMenuItem,
-    ) {
-        val state = selectionPluginMenus[activity] ?: return
+    private fun dispatchSelectionPluginItem(menu: SelectionMenu, id: Int): Boolean {
+        val state = menu.plugins ?: return false
+        val row = PluginActions.rowAt(state.rows, id) ?: return false
+        PluginActions.dispatch(row, state.surface ?: return false)
+        return true
+    }
+
+    private fun updateSelectionPluginItems(menu: SelectionMenu) {
+        val state = menu.plugins ?: return
+        val overflow = menu.overflow
         state.generation++
         val generation = state.generation
         state.pending?.let(AndroidUtilities::cancelRunOnUIThread)
@@ -869,25 +987,24 @@ object ChatActionsHelper {
         state.actionsCell.visibility = View.GONE
 
         if (!InuConfig.PLUGINS_ENABLED.value) return
-        if (!PluginActions.hasRows(PluginActions.KIND_MESSAGE, PluginActions.MESSAGE_PLACEMENT_SELECTION)) return
+        if (!PluginActions.hasRows(PluginActions.KIND_MESSAGE, state.source.placements)) return
         val pending = Runnable {
-            if (selectionPluginMenus[activity] !== state || state.generation != generation) return@Runnable
+            if (state.generation != generation) return@Runnable
             state.pending = null
-            val messages = collectSelected(activity)
+            val messages = collectSelected(menu)
                 .sortedWith(compareBy<MessageObject> { it.messageOwner.date }.thenBy { it.dialogId }.thenBy { it.id })
                 .map { it.messageOwner }
             if (messages.isEmpty()) return@Runnable
             val surface = ActionSurface.message(
-                activity.currentAccount,
-                activity.dialogId,
-                activity.topicId,
-                MessageActionSource.SELECTION,
+                menu.fragment.currentAccount,
+                menu.dialogId,
+                menu.topicId,
+                state.source,
                 messages,
             )
             state.surface = surface
             PluginActions.render(PluginActions.KIND_MESSAGE, surface) { rows ->
-                if (selectionPluginMenus[activity] !== state || state.generation != generation) return@render
-                if (activity.actionBar?.isActionModeShowed != true) return@render
+                if (state.generation != generation || collectSelected(menu).isEmpty()) return@render
                 state.rows = rows
                 val enabled = rows.filter { PluginActions.isEnabled(it.key) }
                 val pinnedByKey = enabled.filter { PluginActions.isPinned(it.key) }.associateBy { it.key }
@@ -906,6 +1023,7 @@ object ChatActionsHelper {
                         )
                     }
                     PluginIcons.setIcon(cell, row.text, row.icon, row.owner, R.drawable.msg_settings_old)
+                    PluginActions.bindSecondaryCallback(cell, row, surface) { overflow.closeSubMenu() }
                     overflow.setSubItemShown(PluginActions.optionIdFor(row.key), true)
                 }
                 clearSubmenuRows(state.submenu)
@@ -918,12 +1036,13 @@ object ChatActionsHelper {
                         row.owner,
                         R.drawable.msg_settings_old,
                     ) {
-                        dispatchPluginItem(PluginActions.optionIdFor(row.key), activity)
+                        dispatchSelectionPluginItem(menu, PluginActions.optionIdFor(row.key))
                         overflow.closeSubMenu()
                     }
+                    state.submenu.last?.let { PluginActions.bindSecondaryCallback(it, row, surface) { overflow.closeSubMenu() } }
                 }
                 state.actionsCell.visibility = if (submenuRows.isEmpty()) View.GONE else View.VISIBLE
-                if (enabled.isNotEmpty()) actionMode.setItemVisibility(ACTION_SELECTION_MENU, View.VISIBLE)
+                if (enabled.isNotEmpty()) overflow.visibility = View.VISIBLE
             }
         }
         state.pending = pending
@@ -932,23 +1051,25 @@ object ChatActionsHelper {
 
     // #endif
 
-    private inline fun forEachSelectedMessage(activity: ChatActivity, action: (MessageObject) -> Unit) {
-        // entiny: iterate selected messages index 1 first (merged dialog), then 0; SparseArray is id-ascending
+    private inline fun forEachSelectedMessage(selected: Array<SparseArray<MessageObject>>, action: (MessageObject) -> Unit) {
+        // index 1 (merged dialog) first, then 0; SparseArray iteration is id-ascending within each
         for (a in 1 downTo 0) {
-            val arr = activity.selectedMessagesIds[a]
+            val arr = selected[a]
             for (i in 0 until arr.size()) action(arr.valueAt(i))
         }
     }
 
-    private fun collectSelected(activity: ChatActivity): ArrayList<MessageObject> {
+    /** shared media selects stories with the same arrays; they are not messages */
+    private fun collectSelected(menu: SelectionMenu): ArrayList<MessageObject> {
         val out = ArrayList<MessageObject>()
-        forEachSelectedMessage(activity) { out.add(it) }
+        forEachSelectedMessage(menu.selected) { out.add(it) }
+        if (out.any { it.storyItem != null }) out.clear()
         return out
     }
 
-    private fun saveSelectionToSavedMessages(activity: ChatActivity) {
-        ChatHelper.forwardToSavedMessages(activity, collectSelected(activity))
-        activity.clearSelectionMode()
+    private fun saveSelectionToSavedMessages(menu: SelectionMenu) {
+        ChatHelper.forwardToSavedMessages(menu.fragment, collectSelected(menu))
+        menu.clearSelection.run()
     }
 
     @JvmStatic
@@ -965,7 +1086,9 @@ object ChatActionsHelper {
         val restricted = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
         val seenGroups = HashSet<Long>()
         var anyStarted = false
-        for (msg in collectSelected(activity)) {
+        val selected = ArrayList<MessageObject>()
+        forEachSelectedMessage(activity.selectedMessagesIds) { selected.add(it) }
+        for (msg in selected) {
             val groupId = msg.groupId
             val group = if (groupId != 0L) {
                 if (!seenGroups.add(groupId)) continue
@@ -991,8 +1114,9 @@ object ChatActionsHelper {
         }
     }
 
-    private fun saveSelectionToGallery(activity: ChatActivity) {
-        val parent = activity.parentActivity ?: return
+    private fun saveSelectionToGallery(menu: SelectionMenu) {
+        val fragment = menu.fragment
+        val parent = fragment.parentActivity ?: return
         if (Build.VERSION.SDK_INT >= 23 && (Build.VERSION.SDK_INT <= 28 || BuildVars.NO_SCOPED_STORAGE) &&
             parent.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -1004,13 +1128,13 @@ object ChatActionsHelper {
         }
         var photos = 0
         var videos = 0
-        for (msg in collectSelected(activity)) {
+        for (msg in collectSelected(menu)) {
             when {
                 msg.isPhoto -> photos++
                 msg.isVideo -> videos++
                 else -> continue
             }
-            activity.saveMessageToGallery(msg)
+            ChatActivity.inu_saveMessageToGallery(fragment.currentAccount, parent, msg)
         }
         val count = photos + videos
         if (count > 0) {
@@ -1019,15 +1143,15 @@ object ChatActionsHelper {
                 photos == 0 -> BulletinFactory.FileType.VIDEOS
                 else -> BulletinFactory.FileType.MEDIA
             }
-            BulletinFactory.of(activity).createDownloadBulletin(type, count, activity.resourceProvider).show()
+            BulletinFactory.of(fragment).createDownloadBulletin(type, count, fragment.resourceProvider).show()
         }
-        activity.clearSelectionMode()
+        menu.clearSelection.run()
     }
 
     private fun pinSelection(activity: ChatActivity) {
         val messages = ArrayList<MessageObject>()
         val seenIds = HashSet<Int>()
-        forEachSelectedMessage(activity) { msg ->
+        forEachSelectedMessage(activity.selectedMessagesIds) { msg ->
             if (seenIds.add(msg.id) && canPinMessage(activity, msg) && !isPinnedMessage(activity, msg)) {
                 messages.add(msg)
             }
@@ -1040,7 +1164,7 @@ object ChatActionsHelper {
     private fun unpinSelection(activity: ChatActivity) {
         val messages = ArrayList<MessageObject>()
         val seenIds = HashSet<Int>()
-        forEachSelectedMessage(activity) { msg ->
+        forEachSelectedMessage(activity.selectedMessagesIds) { msg ->
             if (seenIds.add(msg.id) && canPinMessage(activity, msg) && isPinnedMessage(activity, msg)) {
                 messages.add(msg)
             }

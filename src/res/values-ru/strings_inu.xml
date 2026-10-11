@@ -15,8 +15,8 @@
     <string name="InuSetReminder">Задать напоминание</string>
     <string name="InuHideMessage">Скрыть</string>
     <string name="InuBanUserConfirm">Заблокировать %1$s в этой группе?</string>
-    <string name="InuSettings">Настройки entinyGram</string>
-    <string name="InuSettingsInfo">сквозь землю и ветер я иду за тобой</string>
+    <string name="InuSettings">Настройки Inugram</string>
+    <string name="InuSettingsInfo">Что делает эта собачонка?</string>
     <string name="InuGeneral">Основные</string>
     <string name="InuMiscellaneous">Прочее</string>
     <string name="InuWideChannelPosts">Широкие посты</string>
@@ -78,7 +78,7 @@
     <string name="InuPerformanceClassLow">Низкий</string>
     <string name="InuPerformanceClassAverage">Средний</string>
     <string name="InuPerformanceClassHigh">Высокий</string>
-    <string name="InuAnnoyances">Скрыть лишнее</string>
+    <string name="InuAnnoyances">Раздражители</string>
     <string name="InuAnnoyancesChats">Чаты</string>
     <string name="InuAnnoyancesStories">Истории</string>
     <string name="InuAnnoyancesProfile">Профиль</string>
@@ -112,8 +112,8 @@
     <string name="InuIncomingMessages">Входящие сообщения</string>
     <string name="InuOutgoingMessages">Исходящие сообщения</string>
     <string name="InuChannelMessages">Каналы, куда вы можете писать</string>
-    <string name="InuSameAsIncoming">Как у входящих / исходящих</string>
-    <string name="InuDoubleTapInfo">Действия по двойному тапу задерживают обычный тап на указанное время.</string>
+    <string name="InuSameAsIncoming">Как у входящих</string>
+    <string name="InuDoubleTapInfo">Из-за того, как Telegram обрабатывает двойные тапы, включение действия по двойному тапу приводит к задержке обычных тапов на указанное выше время, отчего приложение ощущается менее отзывчивым.\nВы можете настроить длительность, но полностью избавиться от задержки можно только отключив действия.</string>
     <string name="InuQuickReaction">Быстрая реакция</string>
     <string name="InuShowReactions">Показать реакции</string>
     <string name="InuHideStories">Скрыть истории</string>
@@ -124,7 +124,7 @@
     <string name="InuAttachCamera">Камера</string>
     <string name="InuAttachCameraMode">Камера</string>
     <string name="InuAttachCameraModeInstant">Мгновенная</string>
-    <string name="InuAttachCameraModeStatic">Обычная</string>
+    <string name="InuAttachCameraModeStatic">Статичная</string>
     <string name="InuAttachCameraModeFab">Плавающая кнопка</string>
     <string name="InuAttachCameraModeTab">Нижняя вкладка</string>
     <string name="InuShowAllRecentStickers">Показывать все недавние стикеры</string>
@@ -172,7 +172,7 @@
     <string name="InuHideTrendingStickers">Скрыть популярные стикеры</string>
     <string name="InuBottomTabs">Нижние вкладки</string>
     <string name="InuBottomTabsHide">Скрыть нижние вкладки</string>
-<string name="InuBottomTabsHideInfo">Пункты перемещаются в гамбургер-меню главного экрана</string>
+    <string name="InuBottomTabsHideInfo">Пункты перемещаются в гамбургер-меню главного экрана</string>
     <string name="InuBottomTabsHideTopSearch">Скрыть верхний поиск</string>
     <string name="InuBottomTabsHideTopSearchInfo">Скрывать поле поиска над списком чатов, если поиск включён в нижней панели</string>
     <string name="InuBottomTabsSeparateSearch">Отдельная кнопка поиска</string>
@@ -215,12 +215,12 @@
     <string name="InuStickerTimeModeHideTime">Скрыть только время</string>
     <string name="InuStickerTimeModeHideIncoming">Скрыть только для входящих</string>
     <string name="InuStickerTimeModeHideCompletely">Скрыть полностью</string>
-    <string name="InuStickerSizeDialogMessage">i like antennas</string>
+    <string name="InuStickerSizeDialogMessage">хороший щеночек!</string>
     <string name="InuBubbleTails">Хвостики у сообщений</string>
     <string name="InuSendAsRoundVideo">Отправить как кружок</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">гав! entinyGram или inuGram? 🐶</string>
-    <string name="InuMiscPreviewEditedMessage">оба лучшие, собачья база 🐶⚡</string>
+    <string name="InuMiscPreviewForwardedFrom">пёсик</string>
+    <string name="InuMiscPreviewForwardedMessage">гав!! ты это видел?</string>
+    <string name="InuMiscPreviewEditedMessage">безупёсно, больше никаких опечаток</string>
     <string name="InuDeleteForBoth">«Удалить у всех» по умолчанию</string>
     <string name="InuDeleteForBothMessages">Отдельные сообщения</string>
     <string name="InuDeleteForBothDms">Переписки</string>
@@ -297,17 +297,17 @@
     <string name="InuCallConfirmationTitle">Подтверждение звонка</string>
     <string name="InuCallConfirmationText">Позвонить **%1$s**?</string>
     <string name="InuHdBluetoothCallAudio">HD-звук звонков по Bluetooth</string>
-    <string name="InuHdBluetoothCallAudioInfo">Воспроизводит звук звонка как медиа для лучшего качества Bluetooth, используя микрофон телефона.</string>
+    <string name="InuHdBluetoothCallAudioInfo">Воспроизводить звук звонка как медиа вместо переключения наушников на низкокачественный профиль гарнитуры, используя микрофон телефона. Применяется, если Bluetooth-устройство подключено в момент начала звонка</string>
     <string name="InuCallRotation">Поворот экрана звонка</string>
     <string name="InuCallRotationInfo">Позволяет экрану звонка поворачиваться вместе с устройством вместо фиксации в портрете. Раскладка рассчитана на портрет и в ландшафте может выглядеть тесно</string>
     <string name="InuDisableChatBubbles">Отключить пузыри уведомлений Android</string>
-    <string name="InuKeepChatsInStack">Не закрывать предыдущие чаты</string>
-    <string name="InuKeepChatsInStackInfo">Открытие другого чата не закроет чаты позади него</string>
+    <string name="InuKeepChatsInStack">Оставлять предыдущие чаты открытыми</string>
+    <string name="InuKeepChatsInStackInfo">Открытие другого чата не закроет чаты за ним</string>
     <string name="InuInPlaceTranslation">Перевод на месте</string>
     <string name="InuTranslateWebPreviews">Переводить превью ссылок</string>
     <string name="InuKeepOriginalAfterTranslation">Показывать оригинал</string>
-    <string name="InuTranslateAutoDetectLang">Определять язык для меню сообщения</string>
-    <string name="InuTranslateAutoDetectLangInfo">Определение языка на устройстве для сообщений, которые Telegram ещё не распознал. Может чуть замедлить открытие меню.</string>
+    <string name="InuTranslateAutoDetectLang">Учитывать DNT в меню сообщения</string>
+    <string name="InuTranslateAutoDetectLangInfo">Если язык сообщения есть в списке "Не переводить", он определяется автоматически, а пункт меню скрывается.\nЭто может немного замедлить открытие меню.</string>
     <string name="InuTranslateInstantView">Перевести страницу</string>
     <string name="InuInstantViewShowOriginal">Показать оригинал</string>
     <string name="InuTranslating">Перевод…</string>
@@ -370,10 +370,10 @@
     <string name="InuFontImporting">Импортируем шрифт…</string>
     <string name="InuFonts">Шрифты</string>
     <string name="InuAppFont">Шрифт приложения</string>
-    <string name="InuAppFontInfo">Шрифтом приложения можно выбрать только свои (импортированные) шрифты.</string>
+    <string name="InuAppFontInfo">Шрифт, используемый по всему интерфейсу приложения. Шрифтом приложения можно выбрать только свои (импортированные) шрифты.</string>
     <string name="InuFontCustomOnly">Шрифтом приложения можно выбрать только свои (импортированные) шрифты.</string>
     <string name="InuAvailableFonts">Доступные шрифты</string>
-    <string name="InuFontsInfo">Видимые шрифты появляются в медиа-редакторе. Перетаскивайте для изменения порядка, глазок — скрыть; нажмите на импортированный шрифт, чтобы удалить.</string>
+    <string name="InuFontsInfo">Видимые шрифты доступны в инструменте текста медиа-редактора. Перетаскивай, чтобы изменить порядок, нажми на глаз, чтобы скрыть; нажми на импортированный шрифт, чтобы удалить его.</string>
     <string name="InuFontAdd">Добавить шрифт</string>
     <string name="InuFontResetOrder">Сбросить порядок</string>
     <string name="InuFontRemove">Удалить</string>
@@ -390,7 +390,7 @@
     <string name="InuFontVariableSlant">Вариативный шрифт (%1$s)</string>
     <string name="InuFontStyleRegular">Обычный</string>
     <string name="InuFontStyleItalic">Курсив</string>
-    <string name="InuFontStyleItalicSuffix">%1 курсив</string>
+    <string name="InuFontStyleItalicSuffix">%1$s Italic</string>
     <string name="InuFontIncludeSystem">Включить системные шрифты</string>
     <string name="InuFontIncludeSystemInfo">Показывать в списке ниже шрифты, предоставленные системой</string>
     <string name="InuFontTagStock">Стандартный</string>
@@ -399,7 +399,7 @@
     <string name="InuMonoFont">Моноширинный шрифт</string>
     <string name="InuMonoFontInfo">Шрифт для моноширинных блоков — инлайн-кода и блоков кода.</string>
     <string name="InuAppFontStack">Стек шрифтов</string>
-    <string name="InuAppFontStackInfo">Верхний шрифт — основной; остальные — запасные для отсутствующих символов (CJK и т. п.). Перетаскивайте для изменения порядка.</string>
+    <string name="InuAppFontStackInfo">Верхний шрифт — основной шрифт интерфейса; шрифты ниже — запасные, используются для символов (CJK и т. д.), которых нет в основном. Перетаскивай, чтобы изменить порядок.</string>
     <string name="InuFontStackAdd">Добавить шрифт</string>
     <string name="InuFontStackChoose">Выбрать шрифт</string>
     <string name="InuFontStackApply">Применить и перезапустить</string>
@@ -429,7 +429,6 @@
     <string name="InuIconReplacementSolar">Solar от @Design480</string>
     <string name="InuIconReplacementVkui">VKUI от VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
-
     <string name="InuMapsHeader">Карты</string>
     <string name="InuMapProvider">Источник карт</string>
     <string name="InuMapProviderGoogle">Google Maps</string>
@@ -437,7 +436,6 @@
     <string name="InuMapPreviewProvider">Источник превью карт</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-
     <string name="InuReplyIn">Ответить в…</string>
     <string name="InuDeletedMessage">Удалённое сообщение</string>
     <string name="InuDeletedMessageIdFormat">ID %1$d</string>
@@ -457,28 +455,21 @@
     <string name="InuRegDate">Зарегистрирован: %s</string>
     <string name="InuJoinDate">Присоединился: %s</string>
     <string name="InuCreatedDate">Создан: %s</string>
-
     <string name="InuChatVoiceInAttach">Запись в панели вложений</string>
     <string name="InuChatVoiceInAttachInfo">Перемещает кнопку записи голоса/видео из строки ввода в панель вложений</string>
     <string name="InuKeepScreenOnRecording">Не выключать экран при записи</string>
     <string name="InuKeepScreenOnRecordingInfo">Экран не гаснет во время записи голосового или видеосообщения</string>
-
     <string name="InuDisableIntroSticker">Не отправлять приветственный стикер</string>
     <string name="InuDisableIntroStickerInfo">…и скрывать предложения приветственных стикеров</string>
-
     <string name="InuRoundDefaultCamera">Камера для кружочков</string>
     <string name="InuRoundCameraFront">Фронтальная</string>
     <string name="InuRoundCameraRear">Основная</string>
     <string name="InuRoundCameraAsk">Спрашивать</string>
-
     <string name="InuDisableScrimBlur">Отключить размытие подложки</string>
-    <string name="InuDisableScrimBlurInfo">Плоское затемнение вместо размытия за меню и превью. Может уменьшить лаги.</string>
-
+    <string name="InuDisableScrimBlurInfo">Заменяет размытие за контекстными меню и превью на плоское затемнение. Может уменьшить лаги.</string>
     <string name="InuReduceMenuMotion">Уменьшить анимации меню</string>
     <string name="InuReduceMenuMotionInfo">Пропускать поэтапное появление контекстного меню и упрощать анимации меню сообщения</string>
-
     <string name="InuProfilePhotoGradientFade">Отключить размытие фото профиля</string>
-
     <string name="InuNonIslandUI">Классический интерфейс</string>
     <string name="InuAnimationSpeed">Скорость анимаций</string>
     <string name="InuAnimationSpeedInstant">Мгновенно</string>
@@ -488,9 +479,7 @@
     <string name="InuNonIslandGlobalSearch">Глобальный поиск</string>
     <string name="InuNonIslandChatElements">Элементы чата</string>
     <string name="InuNonIslandHint">Классический интерфейс откатывает часть новых (>12.6) изменений «Liquid Glass» назад к старому плоскому дизайну (по мере возможности).\nВероятно, остались визуальные баги — имейте в виду.</string>
-
     <string name="InuHideFadeView">Скрыть градиенты затухания</string>
-
     <string name="InuStripTrackingParams">Удалять параметры трекинга</string>
     <string name="InuStripTrackingParamsSource">Фильтр URL Tracking от AdGuard, обновлён %1$s</string>
     <string name="InuStripTrackingParamsUpdate">Обновить правила из AdGuard</string>
@@ -498,7 +487,6 @@
     <string name="InuStripTrackingParamsUpdated">Правила обновлены</string>
     <string name="InuStripTrackingParamsAlreadyLatest">Уже актуальная версия правил</string>
     <string name="InuStripTrackingParamsUpdateFailed">Не удалось обновить правила</string>
-
     <string name="InuWebPreviewReplacements">Замены для превью ссылок</string>
     <string name="InuWebPreviewEnabled">Включить замены</string>
     <string name="InuWebPreviewReplacementsInfo">Замены по регулярным выражениям, применяемые к URL при получении превью ссылок. Долгое нажатие — удалить.</string>
@@ -507,7 +495,6 @@
     <string name="InuWebPreviewReset">Сбросить по умолчанию</string>
     <string name="InuWebPreviewPattern">Шаблон (regex)</string>
     <string name="InuWebPreviewReplacement">Замена</string>
-
     <string name="InuReactionsInRow">Реакций в ряд</string>
     <string name="InuChatInputMaxLines">Максимум строк в поле ввода</string>
     <string name="InuChatInputTextSize">Размер текста поля ввода</string>
@@ -515,7 +502,6 @@
     <string name="InuReactionBarBelowInfo">Переместить панель реакций под меню</string>
     <string name="InuChatViewsBottom">Доступный список просмотров</string>
     <string name="InuChatViewsBottomInfo">Перенести пункт со списком просмотров/реакций в нижнюю часть</string>
-
     <string name="InuPinnedReactions">Закреплённые реакции</string>
     <string name="InuPinnedReactionsInfo">Закреплять реакции в начале панели реакций.</string>
     <string name="InuPinnedReactionsHeader">Закреплённые реакции</string>
@@ -524,18 +510,15 @@
     <string name="InuPinnedReactionsCopyServerConfirm">Это заменит ваши текущие закреплённые реакции на топ-реакции с сервера. Продолжить?</string>
     <string name="InuPinnedReactionsRemoveAll">Удалить все</string>
     <string name="InuPinnedReactionsRemoveAllConfirm">Удалить все закреплённые реакции?</string>
-
     <string name="InuOldMentionIndicator">Старый индикатор упоминаний</string>
-
     <string name="InuShowForwardTime">Показывать время пересылки</string>
     <string name="InuForwardHeaderMode">Заголовок пересылки</string>
     <string name="InuForwardHeaderModeRegular">Обычный</string>
     <string name="InuForwardHeaderModeIcon">Значок</string>
     <string name="InuForwardHeaderModeIconNoTimeInfo">Совпадает с компактным режимом, когда «Показывать время пересылки» выключено</string>
     <string name="InuForwardHeaderModeCompact">Компактный</string>
-    <string name="InuShowForwardsCount">Показывать число пересылок</string>
+    <string name="InuShowForwardsCount">Число пересылок</string>
     <string name="InuCompactEdited">Компактный индикатор изменения</string>
-
     <string name="InuAddToStickersGifs">Добавить в стикеры/GIF</string>
     <string name="InuLongTapAction">Действие по долгому тапу</string>
     <string name="InuMenuMode">Режим</string>
@@ -551,7 +534,6 @@
     <string name="InuRepeatLongTapForward">Долгий тап — повторить пересылкой</string>
     <string name="InuReplyInDms">Ответить в ЛС</string>
     <string name="InuHiddenCaptionDescription">Подписи удалены</string>
-
     <string name="InuTextClassifierMode">Режим текстового классификатора</string>
     <string name="InuTextClassifierModeInfo">Текстовый классификатор — это системный компонент, который автоматически расширяет выделение при двойном касании текста</string>
     <string name="InuTextClassifierModeNative">Системный</string>
@@ -559,10 +541,8 @@
     <string name="InuTextClassifierModeImprovedInfo">Обрабатывать только часть сущностей, чтобы уменьшить ложные срабатывания</string>
     <string name="InuTextClassifierModeOff">Выкл.</string>
     <string name="InuTextClassifierModeOffInfo">Отключение классификатора улучшает отзывчивость выделения текста</string>
-
     <string name="InuSuggestCustomEmojiAfter">Кастомные эмодзи после обычных</string>
     <string name="InuSuggestCustomEmojiAfterInfo">В подсказке «:shortcode» показывать анимированные/кастомные эмодзи после обычных, а не до</string>
-
     <string name="InuFormattingPopup">Своё меню форматирования</string>
     <string name="InuFormattingPopupInfo">Заменяет стандартное меню форматирования на интерактивное всплывающее.\nНажмите, чтобы настроить…</string>
     <string name="InuFormattingPopupItems">Кнопки меню</string>
@@ -577,7 +557,6 @@
     <string name="InuDataBackup">Резервное копирование</string>
     <string name="InuBuildFull">Полная</string>
     <string name="InuBuildPluginless">Без плагинов</string>
-
     <string name="InuSearchFilter">Фильтр по медиа</string>
     <string name="InuSearchFilterPhotos">Фото</string>
     <string name="InuSearchFilterVideos">Видео</string>
@@ -619,7 +598,6 @@
     <string name="InuAppIconLicenseInugram">Временная иконка, не стесняйтесь предложить лучше</string>
     <string name="InuAppIconLicenseTelegram">Иконка от **Telegram**. Все права защищены.</string>
     <string name="InuJumpToBeginning">Перейти в начало</string>
-
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Канал обновлений</string>
     <string name="InuUpdates">Обновления</string>
@@ -652,7 +630,7 @@
     <string name="InuFontStyles_other">%1$d стиля</string>
     <string name="InuBackupImportSheetApply">Да, применить</string>
     <string name="InuBackupImportSheetCancel">Нет, оставить как есть</string>
-    <string name="InuBackupSettings">Резервное копирование и сброс</string>
+    <string name="InuBackupSettings">Резервная копия и сброс</string>
     <string name="InuBackupReset">Сбросить настройки</string>
     <string name="InuBackupResetConfirm">Все настройки entinyGram будут сброшены до значений по умолчанию. Ваши чаты, аккаунты и собственные настройки Telegram останутся неизменными.\n\nЭто действие нельзя отменить.</string>
     <string name="InuBackupResetSuccess">Сброшено %1$d настроек</string>
@@ -679,7 +657,7 @@
     <string name="InuOpenByUserId">Открытие по ID в поиске и чатах</string>
     <string name="InuOpenByUserIdInfo">Показывать прямой переход в профиль при вводе чисел в поиске или нажатии на цифры в сообщениях.</string>
     <string name="InuReorderAccounts">Изменить порядок аккаунтов</string>
-    <string name="InuReorderAccountsInfo">Перетаскивайте аккаунты, чтобы изменить их порядок в списке настроек и переключателе аккаунтов.</string>
+    <string name="InuReorderAccountsInfo">Зажмите аккаунт и перетащите, чтобы изменить порядок. Порядок применяется к списку настроек и переключателю аккаунтов.</string>
     <string name="InuCreateAsSupergroup">Создать как супергруппу</string>
     <string name="InuFeed">Лента</string>
     <string name="InuFeedToggleInfo">Добавляет ленту в меню и нижние вкладки. По умолчанию выключено; для нижней вкладки нужен перезапуск</string>
@@ -713,23 +691,21 @@
     <string name="InuCallbackDataCopied">Callback-данные скопированы</string>
     <string name="InuNetwork">Сеть</string>
     <string name="InuAutoDisableProxyOnVpn">Отключать прокси при активном VPN</string>
-    <string name="InuProxyImportFromClipboard">Импорт из буфера обмена</string>
+    <string name="InuProxyImportFromClipboard">Импортировать из буфера обмена</string>
     <string name="InuProxyImportNothing">В буфере обмена нет новых ссылок на прокси</string>
     <string name="InuProxyImported_one">Импортирован %1$d прокси</string>
-    <string name="InuProxyImported_other">Импортировано прокси: %1$d</string>
+    <string name="InuProxyImported_other">Импортировано %1$d прокси</string>
     <string name="InuFasterDownloads">Ускорение скачивания</string>
     <string name="InuFasterUploads">Ускорение выгрузки</string>
-    <string name="InuFasterTransfersInfo">Большие чанки и больше параллельных запросов. Может улучшить — или ухудшить — скорость передачи.</string>
+    <string name="InuFasterTransfersInfo">Увеличивает размер чанка и количество параллельных запросов. Может улучшить скорость, но может и навредить (особенно для пользователей без Premium)</string>
     <string name="InuSendMp4DocumentAsVideo">Отправлять MP4-документы как видео</string>
     <string name="InuSendMp4DocumentAsVideoInfo">MP4-файлы, прикреплённые через «Файлы», отправляются как проигрываемые видео без конвертации</string>
-
     <string name="InuMentionInsertTitle">Вставить упоминание</string>
-
     <string name="InuPasscode">Код-пароль</string>
     <string name="InuPasscodeNeeded">Сначала настройте код-пароль Telegram.</string>
-    <string name="InuPasscodeShowInSettings">Показывать в настройках entinyGram</string>
-    <string name="InuPasscodeShowInSettingsInfo">Когда выключено, эта страница открывается только по ссылке ниже — сохраните её сейчас.</string>
-    <string name="InuPasscodeAccountsInfo">Код-пароль для каждого аккаунта: введите его на экране блокировки, чтобы разблокировать приложение и переключиться на этот аккаунт.</string>
+    <string name="InuPasscodeShowInSettings">Показывать в настройках inugram</string>
+    <string name="InuPasscodeShowInSettingsInfo">Когда выключено, эту страницу можно открыть **только** по ссылке ниже. Сохраните её сейчас — после создания она не меняется.</string>
+    <string name="InuPasscodeAccountsInfo">У каждого аккаунта может быть свой код-пароль. Ввод его на экране блокировки разблокирует приложение и переключит на этот аккаунт.</string>
     <string name="InuPasscodeStateNone">Не настроен</string>
     <string name="InuPasscodeStateSet">Код-пароль установлен</string>
     <string name="InuPasscodeStateHidden">Скрыт</string>
@@ -739,7 +715,7 @@
     <string name="InuPasscodeRemoveConfirm">Удалить код-пароль для этого аккаунта?</string>
     <string name="InuPasscodeOpenStockSettings">Стандартные настройки код-пароля</string>
     <string name="InuPasscodeHideAccount">Скрыть аккаунт</string>
-    <string name="InuPasscodeHideAccountInfo">Скрытые аккаунты не показываются в переключателе и не присылают уведомлений; откройте их кодом-паролем этого аккаунта.</string>
+    <string name="InuPasscodeHideAccountInfo">Скрытые аккаунты не отображаются в переключателе и не присылают уведомлений. Откройте их, введя код-пароль этого аккаунта на экране блокировки.</string>
     <string name="InuPasscodeAllowPanic">Выходить по паник-коду</string>
     <string name="InuPasscodeAllowPanicInfo">При вводе паник-кода этот аккаунт будет разлогинен.</string>
     <string name="InuPasscodePanic">Паник-код</string>
@@ -756,7 +732,7 @@
     <string name="InuMessageMenuQuickActionsPlacement">Расположение</string>
     <string name="InuPlacementTop">Сверху</string>
     <string name="InuPlacementBottom">Снизу</string>
-    <string name="InuMessageMenuOrderInfo">Измените порядок или скройте пункты контекстного меню сообщения. Перетаскивайте для перестановки, нажимайте, чтобы скрыть.</string>
+    <string name="InuMessageMenuOrderInfo">Переставь или скрой пункты в контекстном меню сообщения. Перетаскивай ручку для перестановки, нажми чтобы показать/скрыть.</string>
     <string name="InuMessageMenuOrderInfoBottom">Зажми пункт, чтобы переместить его в строку быстрых действий</string>
     <string name="InuMenuSlotDelete">Удалить / Копировать ссылку</string>
     <string name="InuMenuSlotEditForward">Изменить / Переслать</string>
@@ -766,13 +742,13 @@
     <string name="InuMessageMenuReset">Сбросить по умолчанию</string>
     <string name="InuPrivacySecurity">Конфиденциальность и безопасность</string>
     <string name="InuPerAccountPasscode">Код-пароль для каждого аккаунта</string>
-    <string name="InuHideInugramSettings">Скрыть настройки entinyGram</string>
+    <string name="InuHideInugramSettings">Скрыть настройки inugram</string>
     <string name="InuParanoiaDisableNotifications">Отключить уведомления</string>
     <string name="InuParanoiaHideOtherAccounts">Скрыть другие аккаунты</string>
     <string name="InuParanoiaDisguise">Маскировка под Telegram</string>
-    <string name="InuParanoiaDisguiseInfo">Меняются только иконка и имя в лаунчере; уведомления по-прежнему показывают «entinyGram».</string>
+    <string name="InuParanoiaDisguiseInfo">Меняются только иконка и имя в лаунчере. Из-за ограничений Android уведомления и имя внутри приложения по-прежнему показывают «Inugram».</string>
     <string name="InuParanoiaMode">Режим паранойи</string>
-    <string name="InuParanoiaModeInfo">Скрывает «опасные» чаты и при желании маскирует приложение — будьте готовы к тому, кто заглянет в телефон.</string>
+    <string name="InuParanoiaModeInfo">Режим паранойи позволяет «подготовиться» к тому, что кто-то заглянет в ваш телефон: он скрывает любые «опасные» чаты и при желании маскирует приложение под стандартное.</string>
     <string name="InuParanoiaLauncherShortcut">Ярлык на иконке лаунчера</string>
     <string name="InuParanoiaLauncherShortcutInfo">Добавляет ярлык по долгому нажатию на иконку приложения для быстрого входа в режим паранойи. Скрыт, пока режим активен.</string>
     <string name="InuParanoiaSelect">Чаты для скрытия</string>
@@ -789,7 +765,6 @@
     <string name="InuParanoiaEnableConfirm">Войти в режим паранойи и перезапустить? Этот пункт исчезнет — вернуться можно только введя код выхода в поиске по чатам или переустановив приложение!</string>
     <string name="InuParanoiaNeedSetup">Сначала задайте код выхода и выберите хотя бы один чат.</string>
     <string name="InuParanoiaExit">Выйти из режима паранойи</string>
-
     <string name="InuSendToDiscussWithoutJoin">Писать в комментарии без вступления</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Пропускать клиентскую проверку членства для групп обсуждения (комментариев)</string>
     <string name="InuNavigationDrawer">Боковое меню</string>
@@ -855,7 +830,7 @@
     <string name="InuRoundRecorderExponentialZoom">Экспоненциальный зум</string>
     <string name="InuRoundRecorderExponentialZoomInfo">Более плавная кривая зума, как в Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Две камеры</string>
-    <string name="InuRoundRecorderDualCameraInfo">Открывает фронтальную и основную камеры одновременно для мгновенного переключения. Расходует больше батареи.</string>
+    <string name="InuRoundRecorderDualCameraInfo">Открывать одновременно фронтальную и основную камеры для мгновенного переключения во время записи. Расходует больше батареи.</string>
     <string name="InuRoundRecorderCameraApi">Запись кружочков использует %1$s API. **Переключиться на %2$s >**</string>
     <string name="InuRoundRecorder60Fps">60 FPS в видеосообщениях</string>
     <string name="InuRoundRecorder60FpsInfo">Записывать видеосообщения с частотой 60 кадров в секунду, если поддерживается камерой.</string>
@@ -898,7 +873,7 @@
     <string name="InuConfirmReactionText">Отправить реакцию %1$s в **%2$s**?</string>
     <string name="InuNotificationIcon">Иконка уведомления</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">entinyGram</string>
+    <string name="InuNotificationIconInugram">Inugram</string>
     <string name="InuNothingToTranslate">Нет сообщений для перевода.</string>
     <string name="InuAlreadyInTargetLanguage">Это сообщение уже на %1$s.</string>
     <string name="InuVoiceRecorder">Запись голоса / кружочков</string>
@@ -908,7 +883,7 @@
     <string name="InuCacheRemoved">Файл удалён из кэша</string>
     <string name="InuChatMenuOrder">Меню чата</string>
     <string name="InuChatMenuItems">Пункты</string>
-    <string name="InuChatMenuOrderInfo">Измените порядок или скройте пункты меню «три точки» в чатах. Перетаскивайте для перестановки, переключайте, чтобы скрыть.</string>
+    <string name="InuChatMenuOrderInfo">Переставь или скрой пункты в меню «три точки» в чатах. Перетаскивай ручку для перестановки, используй переключатель чтобы скрыть.</string>
     <string name="InuChatMenuReset">Сбросить по умолчанию</string>
     <string name="InuDialogsMenuOrder">Меню опций</string>
     <string name="InuDialogsMenuItems">Пункты</string>
@@ -930,18 +905,15 @@
     <string name="InuParanoiaHideFolders">Скрыть папки</string>
     <string name="InuParanoiaSelectWhitelist">Чаты для показа</string>
     <string name="InuParanoiaWhitelist">Режим белого списка</string>
-
     <string name="InuBotSettings">Настройки бота</string>
     <string name="InuBotHelp">Помощь бота</string>
-
-    <string name="InuCrashTitle">entinyGram упал в прошлый раз</string>
+    <string name="InuCrashTitle">Inugram упал в прошлый раз</string>
     <string name="InuCrashDesc">Извиняемся. Вы можете поделиться логом краша с разработчиком, чтобы помочь его исправить.</string>
     <string name="InuCrashShare">Поделиться логом</string>
     <string name="InuCrashDiscard">Отбросить</string>
     <string name="InuCrashChannel">Восстановление после краша</string>
-    <string name="InuCrashNotifTitle">entinyGram упал</string>
+    <string name="InuCrashNotifTitle">Inugram упал</string>
     <string name="InuCrashNotifText">Нажмите для перезапуска</string>
-
     <string name="InuLogs">Отладка</string>
     <string name="InuLogsEnabled">Режим отладки</string>
     <string name="InuForceNoVibration">Отключить всю вибрацию</string>
@@ -961,8 +933,7 @@
     <string name="InuLogsHeapUsage">Куча: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">Сделать хипдамп</string>
     <string name="InuLogsMakingHeapDump">Создание хипдампа…</string>
-    <string name="InuLogsHeapDumpWarning">**НИКОГДА** не делись файлом .hprof — это снимок памяти, который **содержит чувствительную информацию** (сообщения, токены и т. д.), изучай его только сам. Приложение ненадолго зависнет при создании дампа.</string>
-
+    <string name="InuLogsHeapDumpWarning">**НИКОГДА** не делись полученным файлом .hprof ни с кем — это снимок памяти приложения, и он **содержит чувствительную информацию** (сообщения, токены и т. д.).\n\nИзучай его **ТОЛЬКО** сам.\n\nПриложение ненадолго зависнет.</string>
     <string name="InuMaterial3Fabs">Плавающие кнопки</string>
     <string name="InuMaterial3Sections">Элементы списка</string>
     <string name="InuTypographyAndIcons">Шрифты и иконки</string>
@@ -977,7 +948,6 @@
     <string name="InuStickers">Стикеры</string>
     <string name="InuReactions">Реакции</string>
     <string name="InuDelay">Задержка</string>
-
     <string name="InuMemoryTrim">Освобождать память в фоне</string>
     <string name="InuMemoryTrimInfo">Очищает кэши изображений и сжимает память вскоре после сворачивания приложения</string>
     <string name="InuDisableQuickShare">Отключить быструю отправку</string>
@@ -1078,17 +1048,14 @@
     <string name="InuNicheSettingsInfo">Здесь собраны функции, которые нужны не всем, но о которых попросили. Если они не работают, мы их удалим.</string>
     <string name="InuNicheUnlockedToast">бро, не включай entiny tv плз💀💀</string>
     <string name="InuNicheAlreadyUnlockedToast">бро, ты уже включил это 💀</string>
-
     <string name="InuStripTrackingParamsOnOpen">При открытии ссылок</string>
     <string name="InuStripTrackingParamsOnPaste">При вставке</string>
     <string name="InuStripTrackingParamsSourceRow">Источник фильтра</string>
-
-    <string name="InuCrashTitleOom">entinyGram исчерпал память</string>
+    <string name="InuCrashTitleOom">Inugram исчерпал память</string>
     <string name="InuCrashDescOom">Извиняемся. Логи краша не очень полезны при нехватке памяти — тут помогает хипдамп.</string>
-    <string name="InuCrashOomEnableLogs">Включи режим отладки в Настройках entinyGram > О приложении, чтобы создавать хипдамп при каждом будущем OOM.</string>
+    <string name="InuCrashOomEnableLogs">Включи режим отладки в Настройках Inugram > О приложении, чтобы создавать хипдамп при каждом будущем OOM.</string>
     <string name="InuCrashDescHeapDump">Также сохранён дамп кучи. НЕ ОТПРАВЛЯЙТЕ ЕГО! Он содержит личные данные! Можете посмотреть его сами и поделиться находками — это сильно поможет.</string>
     <string name="InuCrashShareHeapDump">Сохранить дамп кучи</string>
-
     <string name="InuDeleteOwnMessages">Удалить мои сообщения</string>
     <string name="InuDeleteOwnMessagesSearching">Поиск ваших сообщений…</string>
     <string name="InuDeleteOwnMessagesFoundProgress">Найдено %1$d / %2$d</string>
@@ -1177,7 +1144,6 @@
     <string name="InuSaveDeletedMessagesInfo">Сохраняет удаленные сообщения в чатах с пометкой 🗑️</string>
     <string name="InuSaveEditedMessages">Сохранять историю редактирования</string>
     <string name="InuSaveEditedMessagesInfo">Сохраняет предыдущие версии сообщений и позволяет просматривать историю ✏️</string>
-
     <string name="InuSaveUserInfo">Сохранять данные о пользователе</string>
     <string name="InuSaveUserInfoInfo">Сохраняет страну телефона, месяц регистрации и журнал смены имени, юзернейма, био и фото, когда сервер перестаёт их присылать</string>
     <string name="InuContactChanges">Изменения контакта</string>
@@ -1248,7 +1214,7 @@
     <string name="InuRegexFilterImportHint">Вставьте JSON экспортированных фильтров</string>
     <string name="InuRegexFilterImportDone">Импортировано фильтров: %d</string>
     <string name="InuRefreshStickerSet">Обновить</string>
-    <string name="InuStickerSetRefreshed">Набор обновлен</string>
+    <string name="InuStickerSetRefreshed">Набор обновлён</string>
     <string name="InuStickerSetRefreshFailed">Не удалось обновить набор</string>
     <string name="InuTOS">Запрещённые функции</string>
     <string name="InuTranslateOutgoing">Переводить мои сообщения</string>
@@ -1275,7 +1241,6 @@
     <string name="InuAdditional">Дополнительно</string>
     <string name="InuEditHistoryDiff">Подсвечивать изменения текста (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Отображать удаленный текст красным зачеркиванием, а добавленный зеленым в истории изменений</string>
-
     <string name="InuGhostMode">Режим призрака</string>
     <string name="InuGhostModeMaster">Режим призрака</string>
     <string name="InuGhostModeInfo">Скрывать отметки о прочтении, онлайн-статус, набор текста и просмотры историй.</string>
@@ -1313,17 +1278,13 @@
     <string name="InuGhostDisabled">Режим призрака выключен</string>
     <string name="InuMarkChatAsRead">Пометить как прочитанное</string>
     <string name="InuMarkChatAsReadDone">Чат помечен как прочитанный</string>
-
-
     <string name="InuDeleteProfilePhotos">Удалить фото профиля</string>
     <string name="InuDeleteProfilePhotosInfo">Удаление всех фото профиля или только выбранных в одно нажатие</string>
-
     <string name="InuDeleteMyMessages">Удалить мои сообщения</string>
     <string name="InuDeleteMyMessagesTitle">Удалить мои сообщения?</string>
     <string name="InuDeleteMyMessagesConfirm">Все отправленные тобой в этом чате сообщения будут удалены для всех. Это нельзя отменить.</string>
     <string name="InuDeleteMyMessagesStarted">Удаление твоих сообщений…</string>
     <string name="InuDeleteMyMessagesDone">Удалено %1$d твоих сообщений</string>
-
     <string name="InuChatExport">Экспорт чата</string>
     <string name="InuChatExportInfo">Экспорт чата в JSON или HTML-архив из меню профиля.</string>
     <string name="InuChatExportCollected">Собрано %1$d сообщений</string>
@@ -1356,7 +1317,6 @@
     <string name="InuDeselectAll">Снять выделение</string>
     <string name="InuMainPhoto">Главное</string>
     <string name="InuProfilePhotosSelected">Выбрано: %1$d</string>
-
     <string name="InuDeletedAt">Удалено %1$s</string>
     <string name="InuDisableFlagSecure">Отключить FLAG_SECURE</string>
     <string name="InuDisableFlagSecureInfo">Снимает запрет на скриншоты: разрешает скриншоты и запись экрана в секретных чатах, исчезающих медиа и защищённых каналах.</string>
@@ -1504,8 +1464,6 @@
     <string name="InuDeletedMarkPreviewSender">Алина</string>
     <string name="InuHideDevBadges">Отключить бейджи entinyGram</string>
     <string name="InuHideDevBadgesInfo">Они ничего не означают, не дают преимуществ — просто благодарность от разработчика</string>
-
-    <!-- AI Services & Summaries -->
     <string name="InuAiApiKeyHint">API-ключ</string>
     <string name="InuAiChatTitle">AI Чат</string>
     <string name="InuAiEditorButtonInfo">Показывает действия AI рядом с полем ввода для переписывания, продолжения, суммаризации и исправления текста.</string>
@@ -1538,8 +1496,6 @@
     <string name="InuAiReasoningMedium">Средняя</string>
     <string name="InuAiReasoningHigh">Высокая</string>
     <string name="InuAiSummaryTemperatureInfo">Меньшие значения держат пересказ ближе к оригиналу. Пока вы не меняли, используется температура редактора.</string>
-
-    <!-- General & Icons -->
     <string name="InuAppIconOldEntinygram">Старый entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">Старый entinyGram</string>
     <string name="InuNotificationIconInfo">На Xiaomi (MIUI/HyperOS) система может подменять эту иконку иконкой приложения, поэтому выбор там может быть незаметен</string>
@@ -1547,8 +1503,6 @@
     <string name="InuShowDrawerAccountsInfo">Показывать переключатель аккаунтов под профилем в боковой панели.</string>
     <string name="InuYes">Да</string>
     <string name="InuNo">Нет</string>
-
-    <!-- Message Details -->
     <string name="InuMsgDetailAdaptiveTextColor">Адаптивный цвет текста</string>
     <string name="InuMsgDetailArtists">Исполнители</string>
     <string name="InuMsgDetailAssociatedEmoji">Связанный эмодзи</string>
@@ -1608,14 +1562,13 @@
     <string name="InuMsgDetailViews">Просмотры</string>
     <string name="InuMsgDetailVoiceNote">Голосовое сообщение</string>
     <string name="InuMsgDetailWaveformLength">Сэмплы волны</string>
-    <string name="InuAccountSwitchShortcut">Ярлык переключения аккаунтов</string>
-    <string name="InuAccountSwitchShortcutInfo">Добавить ярлык по долгому нажатию на иконку приложения с выбором аккаунта для входа</string>
-
+    <string name="InuAccountSwitchShortcut">Ярлык переключения аккаунта</string>
+    <string name="InuAccountSwitchShortcutInfo">Добавляет в меню долгого нажатия на значок приложения ярлык с выбором открываемого аккаунта</string>
     <string name="InuBlockSleepWhileDownloading">Запретить спящий режим при загрузке</string>
     <string name="InuBlockSleepWhileDownloadingInfo">Удерживает wake lock во время активной загрузки, чтобы Android не приостанавливал её в фоне.</string>
     <string name="InuHideProxySponsorChat">Скрыть спонсорский чат прокси</string>
     <string name="InuHideProxySponsorChatInfo">Блокирует рекламный чат или канал, который некоторые MTProto-прокси закрепляют вверху списка чатов</string>
-    <string name="InuHideRichEditorButton">Скрыть кнопку форматирования текста</string>
+    <string name="InuHideRichEditorButton">Скрыть кнопку редактора форматирования</string>
     <string name="InuKeepDownloadsInBackground">Не прерывать загрузки при скролле и выходе</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Загрузки продолжаются, когда вы прокручиваете сообщение или выходите из чата.</string>
     <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
@@ -1628,12 +1581,12 @@
     <string name="InuParanoiaHideMyStories">Скрыть мои истории</string>
     <string name="InuStopBot">Остановить бота</string>
     <string name="InuStopBotAction">Остановить</string>
-    <string name="InuStopBotAlert">Вы уверены, что хотите остановить **%1$s**? Он больше не сможет отправлять вам сообщения.</string>
+    <string name="InuStopBotAlert">Остановить **%1$s**? Бот больше не сможет отправлять вам сообщения.</string>
     <string name="InuStopBotDone">Бот остановлен</string>
     <string name="InuAttachCameraSquare">Квадратная плитка камеры</string>
     <string name="InuAttachCameraSquareInfo">Камера в галерее занимает одну ячейку вместо двух</string>
     <string name="InuSortAlbumsBySize">Сортировать альбомы по размеру</string>
-    <string name="InuSortAlbumsBySizeInfo">Альбомы в меню вложений упорядочиваются по количеству фото, а не по новизне</string>
+    <string name="InuSortAlbumsBySizeInfo">Альбомы в меню вложений сортируются по количеству фото, а не по давности</string>
     <string name="InuDownloadDirectory">Папка загрузок</string>
     <string name="InuDownloadDirectoryApplied">Применяется только к новым загрузкам</string>
     <string name="InuPreviewMessage">Предпросмотр</string>
@@ -1725,7 +1678,6 @@
     <string name="InuSmallGifs">Маленькие GIF</string>
     <string name="InuDeleteFailedProxies">Удалить недоступные прокси</string>
     <string name="InuDeleteFailedProxiesConfirm">Вы уверены, что хотите удалить все недоступные прокси?</string>
-
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">Переключатели автора, подписи и беззвучной отправки, плюс редактирование перед пересылкой.</string>
     <string name="InuForwardProHideCaption">Скрыть подпись</string>
@@ -1736,7 +1688,6 @@
     <string name="InuForwardDownloading">Сначала скачиваю %1$s, затем перешлю</string>
     <string name="InuForwardDownloadFailed">Не удалось скачать файл, пересылка отменена</string>
     <string name="InuForwardTooLarge">Файл превышает лимит загрузки (%1$s), переслать нельзя</string>
-
     <string name="InuIosButtonPlacement">Расположение кнопок как в iOS</string>
     <string name="InuIosButtonPlacementInfo">Переносит кнопку вложений влево, а эмодзи внутрь поля ввода справа.</string>
     <string name="InuIosInputAppearance">Оформление как в iOS</string>
@@ -1839,11 +1790,11 @@
     <string name="InuDonateCopied">Скопировано</string>
     <string name="InuShowMediaSize">Показывать размер медиа</string>
     <string name="InuPlugins">Плагины</string>
-    <string name="InuPluginsInfo">Плагины — это пользовательские скрипты, расширяющие приложение. Устанавливайте плагины только из источников, которым доверяете.</string>
+    <string name="InuPluginsInfo">Плагины — пользовательские скрипты, расширяющие приложение. Устанавливайте плагины только из доверенных источников.</string>
     <string name="InuPluginsEnableEngine">Включить плагины</string>
     <string name="InuPluginsEnableEngineInfo">Запускать установленные плагины при старте</string>
     <string name="InuPluginsInstalled">Установленные</string>
-    <string name="InuPluginsEnabled">Включённые</string>
+    <string name="InuPluginsEnabled">Включён</string>
     <string name="InuPluginsEmpty">Нет установленных плагинов</string>
     <string name="InuPluginsLoadFromDisk">Загрузить из файла</string>
     <string name="InuPluginsCompactView">Компактный вид</string>
@@ -1853,43 +1804,43 @@
     <string name="InuPluginSourceTitle">Исходный код</string>
     <string name="InuPluginsRemove">Удалить</string>
     <string name="InuPluginsRemoveTitle">Удалить %s</string>
-    <string name="InuPluginsRemoveConfirm">Удалить этот плагин вместе со всеми его данными? Это нельзя отменить.</string>
+    <string name="InuPluginsRemoveConfirm">Удалить этот плагин и все его данные? Это нельзя отменить.</string>
     <string name="InuPluginsRemoveAll">Удалить все плагины</string>
-    <string name="InuPluginsRemoveAllConfirm_one">Удалить %d установленный плагин вместе со всеми его данными? Это нельзя отменить.</string>
-    <string name="InuPluginsRemoveAllConfirm_other">Удалить все установленные плагины (%d) вместе со всеми их данными? Это нельзя отменить.</string>
-    <string name="InuPluginsByAuthor">от %1$s</string>
+    <string name="InuPluginsRemoveAllConfirm_one">Удалить %d установленный плагин и все его данные? Это нельзя отменить.</string>
+    <string name="InuPluginsRemoveAllConfirm_other">Удалить все %d установленных плагинов и все их данные? Это нельзя отменить.</string>
+    <string name="InuPluginsByAuthor">автор: %1$s</string>
     <string name="InuPluginsPermissions">Разрешения</string>
-    <string name="InuPluginsPermissionsNone">Этот плагин не запрашивает никаких разрешений</string>
-    <string name="InuPluginGrantFs">Файловое хранилище</string>
+    <string name="InuPluginsPermissionsNone">Этот плагин не запрашивает разрешений</string>
+    <string name="InuPluginGrantFs">Хранилище файлов</string>
     <string name="InuPluginGrantClipboardWrite">Запись в буфер обмена</string>
     <string name="InuPluginGrantOpenUrl">Открытие ссылок</string>
     <string name="InuPluginGrantAppVisibility">Отслеживание видимости приложения</string>
-    <string name="InuPluginGrantNotificationsSuppress">Скрытие уведомлений</string>
+    <string name="InuPluginGrantNotificationsSuppress">Блокировка уведомлений</string>
     <string name="InuPluginGrantClipboardRead">Чтение буфера обмена</string>
     <string name="InuPluginGrantFetch">Доступ в интернет</string>
     <string name="InuPluginGrantAccountRead">Чтение данных аккаунта</string>
-    <string name="InuPluginGrantAccountWrite">Действия в аккаунте</string>
-    <string name="InuPluginGrantOnUpdate">Отслеживание обновлений</string>
+    <string name="InuPluginGrantAccountWrite">Действия с аккаунтом</string>
+    <string name="InuPluginGrantOnUpdate">Наблюдение за обновлениями</string>
     <string name="InuPluginGrantInterceptUpdate">Перехват обновлений</string>
     <string name="InuPluginGrantInterceptSend">Перехват исходящих сообщений</string>
     <string name="InuPluginGrantInterceptRpc">Перехват API-запросов</string>
     <string name="InuPluginGrantInvokeRpc">Прямой доступ к API</string>
     <string name="InuPluginGrantTakeout">Сеансы экспорта данных</string>
     <string name="InuPluginGrantUnsafeFs">Доступ к файлам устройства</string>
-    <string name="InuPluginGrantUnsafeInvokeRaw">API-запросы без проверок</string>
+    <string name="InuPluginGrantUnsafeInvokeRaw">Непроверенный доступ к API</string>
     <string name="InuPluginGrantUnsafeJvm">Выполнение Java-кода</string>
     <string name="InuPluginGrantUnsafeXposed">Хуки кода приложения</string>
     <string name="InuPluginGrantUnsafeNotificationCenter">Доступ к внутренним событиям</string>
     <string name="InuPluginGrantUnsafeDisableApiFiltering">Отключение защиты аккаунта</string>
-    <string name="InuPluginGrantNotificationsSuppressInfo">Может не давать приложению показывать собственные уведомления, пока оно работает</string>
-    <string name="InuPluginGrantTakeoutInfo">Может экспортировать ваши данные без обычных ограничений по частоте — после вашего подтверждения</string>
-    <string name="InuPluginGrantUnsafeFsInfo">Может читать и записывать любые файлы на устройстве, доступные приложению</string>
-    <string name="InuPluginGrantUnsafeInvokeRawInfo">Может отправлять любые API-запросы в обход фильтра методов</string>
-    <string name="InuPluginGrantUnsafeJvmInfo">Может выполнять произвольный код без песочницы</string>
-    <string name="InuPluginGrantUnsafeXposedInfo">Может подменять методы приложения, меняя поведение любой его части</string>
-    <string name="InuPluginGrantUnsafeNotificationCenterInfo">Следит за внутренними событиями приложения и создаёт их</string>
-    <string name="InuPluginGrantUnsafeDisableApiFilteringInfo">Даёт плагину доступ к критичным для аккаунта API-вызовам</string>
-    <string name="InuPluginGrantUnknown">Эта версия приложения не распознаёт разрешение, оно ни на что не влияет</string>
+    <string name="InuPluginGrantNotificationsSuppressInfo">Может не дать приложению публиковать собственные уведомления во время работы</string>
+    <string name="InuPluginGrantTakeoutInfo">После вашего подтверждения может экспортировать данные без обычных ограничений частоты</string>
+    <string name="InuPluginGrantUnsafeFsInfo">Может читать и изменять любой доступный приложению файл на устройстве</string>
+    <string name="InuPluginGrantUnsafeInvokeRawInfo">Может отправить любой API-запрос в обход фильтра методов</string>
+    <string name="InuPluginGrantUnsafeJvmInfo">Может выполнять произвольный код вне песочницы</string>
+    <string name="InuPluginGrantUnsafeXposedInfo">Может заменять методы приложения, меняя поведение любой его части</string>
+    <string name="InuPluginGrantUnsafeNotificationCenterInfo">Наблюдает за внутренними событиями приложения и публикует их</string>
+    <string name="InuPluginGrantUnsafeDisableApiFilteringInfo">Разрешает плагину доступ к критическим для аккаунта вызовам API</string>
+    <string name="InuPluginGrantUnknown">Не распознано этой версией приложения и ни на что не влияет</string>
     <string name="InuPluginScopeReadSelf">ваш профиль</string>
     <string name="InuPluginScopeReadPeers">пользователи и чаты</string>
     <string name="InuPluginScopeReadMessages">сообщения</string>
@@ -1897,84 +1848,84 @@
     <string name="InuPluginScopeReadHistory">история сообщений</string>
     <string name="InuPluginScopeReadDraft">черновики</string>
     <string name="InuPluginScopeWriteSend">отправка сообщений</string>
-    <string name="InuPluginScopeWriteEdit">редактирование сообщений</string>
+    <string name="InuPluginScopeWriteEdit">изменение сообщений</string>
     <string name="InuPluginScopeWriteDelete">удаление сообщений</string>
     <string name="InuPluginScopeWriteForward">пересылка сообщений</string>
     <string name="InuPluginScopeWriteReact">реакции на сообщения</string>
-    <string name="InuPluginScopeWriteRead">пометка чатов прочитанными</string>
-    <string name="InuPluginScopeWriteTyping">показ статуса набора</string>
-    <string name="InuPluginScopeWriteDraft">редактирование черновиков</string>
+    <string name="InuPluginScopeWriteRead">отметка чатов прочитанными</string>
+    <string name="InuPluginScopeWriteTyping">отправка статуса набора</string>
+    <string name="InuPluginScopeWriteDraft">изменение черновиков</string>
     <string name="InuPluginScopeUpdNewMessage">новые сообщения</string>
     <string name="InuPluginScopeUpdEditMessage">изменённые сообщения</string>
     <string name="InuPluginScopeUpdDeleteMessage">удалённые сообщения</string>
-    <string name="InuPluginScopeAccountRead">чтение: %1$s</string>
+    <string name="InuPluginScopeAccountRead">чтение %1$s</string>
     <string name="InuPluginScopeFetch">запросы к %1$s</string>
-    <string name="InuPluginScopeFetchAny">запросы к любому сайту</string>
+    <string name="InuPluginScopeFetchAny">запросы к любым сайтам</string>
     <string name="InuPluginScopeInvokeRpc">вызов %1$s</string>
     <string name="InuPluginScopeInterceptRpc">перехват вызовов %1$s</string>
     <string name="InuPluginScopeAnyMethod">любой метод API</string>
-    <string name="InuPluginScopeOnUpdate">отслеживание: %1$s</string>
-    <string name="InuPluginScopeInterceptUpdate">перехват: %1$s</string>
+    <string name="InuPluginScopeOnUpdate">наблюдение за %1$s</string>
+    <string name="InuPluginScopeInterceptUpdate">перехват %1$s</string>
     <string name="InuPluginScopeAllUpdates">все обновления</string>
     <string name="InuPluginTrustTitle">Устанавливайте только доверенные плагины</string>
-    <string name="InuPluginTrustInfo">Плагины работают в песочнице и получают только заявленные разрешения — их список будет на следующем экране.\nНо даже с ними плагин может:</string>
+    <string name="InuPluginTrustInfo">Плагины работают в песочнице и получают только заявленные разрешения, перечисленные на следующем экране.\nНо эти разрешения всё равно позволяют плагину:</string>
     <string name="InuPluginTrust1Title">Действовать от вашего имени</string>
     <string name="InuPluginTrust1Text">Разрешения аккаунта позволяют читать, отправлять и удалять сообщения от вашего имени.</string>
-    <string name="InuPluginTrust2Title">Добраться до ваших данных</string>
-    <string name="InuPluginTrust2Text">Файловые и сетевые разрешения читают чаты, медиа и настройки и могут отправить их куда угодно.</string>
-    <string name="InuPluginTrust3Title">Выйти из песочницы</string>
-    <string name="InuPluginTrust3Text">Небезопасное разрешение снимает песочницу и запускает код со всем, до чего дотягивается само приложение.</string>
+    <string name="InuPluginTrust2Title">Получать ваши данные</string>
+    <string name="InuPluginTrust2Text">Разрешения файлов и сети позволяют читать чаты, медиа и настройки и отправлять их куда угодно.</string>
+    <string name="InuPluginTrust3Title">Выходить из песочницы</string>
+    <string name="InuPluginTrust3Text">Небезопасное разрешение отключает песочницу и запускает код с доступом ко всему, что доступно самому приложению.</string>
     <string name="InuPluginTrustWarning">Вредоносный плагин может захватить ваш аккаунт</string>
-    <string name="InuPluginTrustAccept">Понимаю, продолжить</string>
+    <string name="InuPluginTrustAccept">Понятно, продолжить</string>
     <string name="InuPluginsDevMode">Режим разработчика</string>
-    <string name="InuPluginsDevModeInfo">Отправляйте плагины с компьютера через adb — они устанавливаются и перезагружаются без вопросов</string>
-    <string name="InuPluginsDevModeBanner">Всё, что имеет доступ к этому устройству по adb, может установить плагин и выдать ему любые разрешения без вашего ведома. Выключите это, когда закончите.</string>
+    <string name="InuPluginsDevModeInfo">Отправляйте плагины с компьютера через adb, устанавливая и перезагружая их без подтверждения</string>
+    <string name="InuPluginsDevModeBanner">Всё с доступом к этому устройству через adb может без подтверждения установить плагин и выдать ему любое разрешение. Выключите этот режим, когда закончите.</string>
     <string name="InuPluginsDevModeTurnOff">Выключить режим разработчика</string>
     <string name="InuPluginsDevChip">dev</string>
     <string name="InuPluginsDevPushed_one">Отправлен %d плагин</string>
-    <string name="InuPluginsDevPushed_other">Отправлено плагинов: %d</string>
+    <string name="InuPluginsDevPushed_other">Отправлено %d плагинов</string>
     <string name="InuPluginsDevModeSheetTitle">Включить режим разработчика?</string>
-    <string name="InuPluginsDevModeSheetInfo">Он нужен для разработки плагинов: компьютер отправляет файл по adb, и приложение сразу его устанавливает.\nПока он включён:</string>
-    <string name="InuPluginsDevMode1Title">Всё, что есть в adb</string>
-    <string name="InuPluginsDevMode1Text">Любой компьютер, к которому вы подключаетесь, и всё, что уже общается с устройством по adb (например, Shizuku), может отправить плагин.</string>
+    <string name="InuPluginsDevModeSheetInfo">Он нужен для разработки плагинов: компьютер отправляет файл через adb, а приложение сразу его устанавливает.\nПока режим включён:</string>
+    <string name="InuPluginsDevMode1Title">Всё с доступом к adb</string>
+    <string name="InuPluginsDevMode1Text">Любой подключённый компьютер и всё, что уже общается с устройством через adb (например, Shizuku), может отправить плагин.</string>
     <string name="InuPluginsDevMode2Title">Без проверки разрешений</string>
-    <string name="InuPluginsDevMode2Text">Отправленный плагин устанавливается и получает всё, что заявил. Ни экрана доверия, ни списка разрешений, ни отмены.</string>
+    <string name="InuPluginsDevMode2Text">Отправленный плагин устанавливается и получает все заявленные разрешения. Без экрана доверия, списка разрешений и возможности отмены.</string>
     <string name="InuPluginsDevMode3Title">Пока вы не выключите</string>
-    <string name="InuPluginsDevMode3Text">Остаётся включённым после перезапусков. Страница плагинов предупреждает об этом.</string>
-    <string name="InuPluginsDevModeSheetWarning">Не включайте, если не пишете плагин</string>
-    <string name="InuPluginsDevModeSheetAccept">Понимаю, включить</string>
+    <string name="InuPluginsDevMode3Text">Режим сохраняется после перезапуска. Пока он включён, на странице плагинов показывается предупреждение.</string>
+    <string name="InuPluginsDevModeSheetWarning">Не включайте, если не разрабатываете плагин</string>
+    <string name="InuPluginsDevModeSheetAccept">Понятно, включить</string>
     <string name="InuPluginObfuscatedTitle">Обфусцированный код</string>
-    <string name="InuPluginObfuscatedInfo">Код этого плагина, похоже, намеренно обфусцирован. Обфускацию часто используют, чтобы скрыть вредоносное поведение — оставляйте плагин, только если полностью доверяете источнику.</string>
+    <string name="InuPluginObfuscatedInfo">Код этого плагина намеренно обфусцирован. Обфускацию часто используют, чтобы скрыть вредоносное поведение — оставляйте плагин, только если полностью доверяете его источнику.</string>
     <string name="InuPluginMinifiedTitle">Минифицированный код</string>
-    <string name="InuPluginMinifiedInfo">Код этого плагина, похоже, минифицирован, поэтому его трудно проверить. Оставляйте плагин, только если доверяете источнику.</string>
+    <string name="InuPluginMinifiedInfo">Код этого плагина минифицирован, поэтому его сложно проверить. Оставляйте плагин, только если доверяете его источнику.</string>
     <string name="InuPluginsSafeMode">Безопасный режим</string>
-    <string name="InuPluginsSafeModeShortcut">Закрыть приложение, следующий запуск — безопасный режим</string>
-    <string name="InuPluginsSafeModeForced">В этом сеансе плагины не запущены. Перезапустите приложение, чтобы снова их запустить.</string>
-    <string name="InuPluginsSafeModeCrashed">В прошлый раз приложение остановилось во время запуска плагина, поэтому в этом сеансе плагины не запущены.</string>
+    <string name="InuPluginsSafeModeShortcut">Закрыть приложение; следующий запуск безопасный</string>
+    <string name="InuPluginsSafeModeForced">В этом сеансе плагины не работают. Перезапустите приложение, чтобы снова их запустить.</string>
+    <string name="InuPluginsSafeModeCrashed">В прошлый раз приложение остановилось при запуске плагина, поэтому в этом сеансе плагины не работают.</string>
     <string name="InuPluginsSafeModeHostError">Внутренняя ошибка остановила все плагины в этом сеансе. Перезапустите приложение, чтобы снова их запустить.</string>
-    <string name="InuPluginsSafeModeCrashLoop">Приложение дважды подряд упало вскоре после запуска плагинов, поэтому в этом сеансе плагины не запущены.</string>
+    <string name="InuPluginsSafeModeCrashLoop">Приложение дважды подряд упало вскоре после запуска плагинов, поэтому в этом сеансе плагины не работают.</string>
     <string name="InuPluginInstall">Установить</string>
-    <string name="InuPluginInstallTitle">Установка плагина</string>
+    <string name="InuPluginInstallTitle">Установить плагин</string>
     <string name="InuPluginInstallEnable">Включить после установки</string>
     <string name="InuPluginInstalled">%1$s установлен</string>
     <string name="InuPluginUpdate">Обновить</string>
-    <string name="InuPluginUpdateTitle">Обновление плагина</string>
+    <string name="InuPluginUpdateTitle">Обновить плагин</string>
     <string name="InuPluginUpdatePermissions">Новые разрешения</string>
     <string name="InuPluginUpdatePermissionsNone">Это обновление не запрашивает новых разрешений.</string>
-    <string name="InuPluginUpdatePermissionsDropped">Больше не запрашивается</string>
+    <string name="InuPluginUpdatePermissionsDropped">Больше не запрашиваются</string>
     <string name="InuPluginUpdatePermissionsKeptTitle">Уже выданы</string>
     <string name="InuPluginUpdatePermissionsKept_one">Проверить %1$d уже выданное разрешение</string>
-    <string name="InuPluginUpdatePermissionsKept_other">Проверить уже выданные разрешения: %1$d</string>
+    <string name="InuPluginUpdatePermissionsKept_other">Проверить %1$d уже выданных разрешений</string>
     <string name="InuPluginUpdated">%1$s обновлён</string>
     <string name="InuPluginCrashed">%1$s упал и был выключен</string>
     <string name="InuPluginAlreadyInstalled">%1$s уже установлен</string>
-    <string name="InuPluginsErrorNoManifest">Не плагин (нет заголовка с метаданными)</string>
+    <string name="InuPluginsErrorNoManifest">Некорректный плагин (нет заголовка метаданных)</string>
     <string name="InuPluginsErrorRead">Не удалось прочитать выбранный файл</string>
     <string name="InuPluginsErrorWrite">Не удалось сохранить файл плагина</string>
-    <string name="InuPluginsErrorApiVersion">Нужна более новая entinyGram (API плагинов %1$d, в этом приложении %2$d)</string>
-    <string name="InuPluginsErrorPlatform">Сделан не для этой платформы (нужна %1$s)</string>
-    <string name="InuPluginsErrorBadGrant">Запрошены недопустимые разрешения (%1$s)</string>
-    <string name="InuPluginsErrorUnconsentedGrants">Запрашивает разрешения, не проверенные при установке (%1$s); обновите плагин, чтобы их проверить</string>
+    <string name="InuPluginsErrorApiVersion">Нужна более новая версия Inugram (API плагинов %1$d, в приложении %2$d)</string>
+    <string name="InuPluginsErrorPlatform">Не для этой платформы (требуется %1$s)</string>
+    <string name="InuPluginsErrorBadGrant">Запрошены некорректные разрешения (%1$s)</string>
+    <string name="InuPluginsErrorUnconsentedGrants">Запрошены не проверенные при установке разрешения (%1$s); обновите плагин, чтобы их проверить</string>
     <string name="InuPluginsFailedAtLoad">Ошибка загрузки</string>
     <string name="InuPluginsFailedAtRuntime">Ошибка выполнения</string>
     <string name="InuPluginsFailedAtUnload">Ошибка выгрузки</string>
@@ -1986,28 +1937,23 @@
     <string name="InuMarketplaceChecksum">файл не совпадает с контрольной суммой</string>
     <string name="InuCopyAllProxies">Копировать все</string>
     <string name="InuShareAllProxies">Поделиться всеми</string>
-
     <string name="InuOptimizedAttachmentMenu">Оптимизированное меню вложений</string>
-    <string name="InuOptimizedAttachmentMenuInfo">Улучшает плавность анимации при открытии фото и видео</string>
-    <string name="InuEditedMessageDateMode">Время отредактированного сообщения</string>
+    <string name="InuOptimizedAttachmentMenuInfo">Делает анимацию открытия фото и видео плавнее</string>
+    <string name="InuEditedMessageDateMode">Время изменения сообщения</string>
     <string name="InuEditedMessageDateModeTelegram">По умолчанию</string>
-    <string name="InuEditedMessageDateModeEdit">Дата редактирования</string>
+    <string name="InuEditedMessageDateModeEdit">Дата изменения</string>
     <string name="InuEditedMessageDateModeSend">Дата отправки</string>
-
     <string name="InuAllowForwardRestrictedWarning">Telegram всё равно может блокировать часть пересылок, даже с включённой опцией. Если видите "Plain forwarding is not allowed.", скопируйте текст или сохраните медиа.</string>
     <string name="InuBackupImportSheetReplace">Заменить все настройки</string>
     <string name="InuDrawerMenuAddDivider">Добавить разделитель</string>
     <string name="InuMaterial3AccentIcons">Иконки акцентного цвета</string>
-
     <string name="InuAppIconsSelect">Применить иконку</string>
     <string name="InuAppIconsKeep">Оставить текущую иконку</string>
-
     <string name="InuAppIconBlush">Blush</string>
     <string name="InuAppIconNoxSky">Nox Sky</string>
     <string name="InuAppIconInverse">Inverse</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconAmongUs">Among Us</string>
-
     <string name="InuAppIconCrimson">Багровый</string>
     <string name="InuAppIconBy">от %1$s</string>
     <string name="InuAppIconDescDefault">Классическая тарелка entinyGram</string>

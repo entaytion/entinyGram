@@ -5,6 +5,7 @@ import android.content.res.Resources
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
 import desu.inugram.helpers.security.ParanoiaHelper
 
 object LocaleHelper {
@@ -14,6 +15,7 @@ object LocaleHelper {
     private var cachedDefault: Resources? = null
     @Volatile
     private var cachedCandidates: List<Resources> = emptyList()
+    private val resNames = ConcurrentHashMap<Int, String>()
 
     @JvmStatic
     fun isLocalOnlyString(key: String?): Boolean {
@@ -27,13 +29,12 @@ object LocaleHelper {
     }
 
     @JvmStatic
-    fun getLocalString(rawKey: String?, res: Int): String? {
+    fun getLocalString(key: String?, res: Int): String? {
+        val name = key ?: getResourceName(res)
+        if (!isLocalOnlyString(name)) return null
+        disguiseName(name)?.let { return it }
         val ctx = ApplicationLoader.applicationContext ?: return null
-        // entiny: getString(@StringRes) arrives with no key, derive it so AppName/Inu* stay local
-        val key = rawKey ?: if (res != 0) try { ctx.resources.getResourceEntryName(res) } catch (_: Exception) { null } else null
-        if (!isLocalOnlyString(key)) return null
-        disguiseName(key)?.let { return it }
-        val id = if (res != 0) res else ctx.resources.getIdentifier(key, "string", ctx.packageName)
+        val id = if (res != 0) res else ctx.resources.getIdentifier(name, "string", ctx.packageName)
         if (id == 0) return null
         return resolve(id) ?: getResourceString(id, null)
     }
@@ -53,7 +54,18 @@ object LocaleHelper {
         }
     }
 
-    // entiny: disguised app name must read as stock Telegram regardless of locale
+    private fun getResourceName(res: Int): String? {
+        if (res == 0) return null
+        val ctx = ApplicationLoader.applicationContext ?: return null
+        return resNames.getOrPut(res) {
+            try {
+                ctx.resources.getResourceEntryName(res)
+            } catch (_: Resources.NotFoundException) {
+                ""
+            }
+        }.ifEmpty { null }
+    }
+
     private fun disguiseName(key: String?): String? {
         if (!ParanoiaHelper.isDisguised()) return null
         return when (key) {

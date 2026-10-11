@@ -22,6 +22,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.children
 import desu.inugram.InuConfig
 import desu.inugram.helpers.plugins.BootGuard
 import desu.inugram.helpers.InuUtils
@@ -52,6 +53,7 @@ import org.telegram.ui.Components.Switch
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import kotlin.math.ceil
+import kotlin.math.max
 
 class PluginsActivity : SettingsPageActivity() {
     private val rows = HashMap<String, PluginRow>()
@@ -498,8 +500,8 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
             header.addView(switch, LayoutHelper.createLinear(37, 24, Gravity.CENTER_VERTICAL, if (rtl) 22 else 0, 0, if (rtl) 0 else 22, 0))
             addView(header, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, HEIGHT_DP))
         } else {
-            // icon above the handle in one narrow gutter, so title, description and actions all
-            // share a single text column instead of clearing both of them
+            // icon above the handle in one narrow gutter, so title and description share a single
+            // text column instead of clearing both of them; actions reclaim the gutter's width below it
             val gutter = LinearLayout(context).apply {
                 orientation = VERTICAL
                 gravity = Gravity.CENTER_HORIZONTAL
@@ -522,16 +524,25 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
                 ellipsize = TextUtils.TruncateAt.END
             }
 
-            val actions = ActionsFlow(context)
+            val actions = object : LinearLayout(context) {
+                override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                    orientation = HORIZONTAL
+                    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+                    if (children.any { it.visibility != GONE && (it as TextView).lineCount > 1 }) {
+                        orientation = VERTICAL
+                        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+                    }
+                }
+            }.apply { gravity = Gravity.END }
             settingsAction = mkAction(R.string.Settings, red = false).also {
                 it.visibility = GONE
-                actions.addView(it, actions.childParams())
+                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
             }
             reloadAction = mkAction(R.string.InuPluginsReload, red = false).also {
-                actions.addView(it, actions.childParams())
+                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
             }
             removeAction = mkAction(R.string.InuPluginsRemove, red = true).also {
-                actions.addView(it, actions.childParams())
+                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
             }
 
             val content = LinearLayout(context).apply { orientation = VERTICAL }
@@ -543,23 +554,42 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
                     if (rtl) 22 else 0, 4, if (rtl) 0 else 22, 0,
                 ),
             )
-            content.addView(
-                actions,
-                LayoutHelper.createLinear(
-                    LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.NO_GRAVITY,
-                    if (rtl) 8 else 0, 6, if (rtl) 0 else 8, 0,
-                ),
-            )
+            val body = object : ViewGroup(context) {
+                private val gutterStart = AndroidUtilities.dp(8f)
+                private val contentStart = AndroidUtilities.dp(8f + 40f + 12f)
+                private val actionsEnd = AndroidUtilities.dp(8f)
+                private var actionsY = 0
 
-            val body = LinearLayout(context).apply { orientation = HORIZONTAL }
-            body.addView(
-                gutter,
-                LayoutHelper.createLinear(
-                    40, LayoutHelper.WRAP_CONTENT, Gravity.NO_GRAVITY,
-                    if (rtl) 12 else 8, 0, if (rtl) 8 else 12, 0,
-                ),
-            )
-            body.addView(content, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
+                override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                    val width = MeasureSpec.getSize(widthMeasureSpec)
+                    val unspecified = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+                    gutter.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(40f), MeasureSpec.EXACTLY), unspecified)
+                    content.measure(MeasureSpec.makeMeasureSpec(width - contentStart, MeasureSpec.EXACTLY), unspecified)
+                    actionsY = content.measuredHeight + AndroidUtilities.dp(6f)
+                    if (actionsY < gutter.measuredHeight) {
+                        actions.measure(MeasureSpec.makeMeasureSpec(width - contentStart - actionsEnd, MeasureSpec.AT_MOST), unspecified)
+                        if (actions.orientation == VERTICAL) actionsY = gutter.measuredHeight
+                    }
+                    if (actionsY >= gutter.measuredHeight) {
+                        actions.measure(MeasureSpec.makeMeasureSpec(width - gutterStart - actionsEnd, MeasureSpec.AT_MOST), unspecified)
+                    }
+                    setMeasuredDimension(width, max(gutter.measuredHeight, actionsY + actions.measuredHeight))
+                }
+
+                override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+                    place(gutter, gutterStart, 0)
+                    place(content, contentStart, 0)
+                    place(actions, width - actionsEnd - actions.measuredWidth, actionsY)
+                }
+
+                private fun place(child: View, x: Int, y: Int) {
+                    val left = if (rtl) width - x - child.measuredWidth else x
+                    child.layout(left, y, left + child.measuredWidth, y + child.measuredHeight)
+                }
+            }
+            body.addView(gutter)
+            body.addView(content)
+            body.addView(actions)
             addView(
                 body,
                 LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 10f, 0f, 10f),
@@ -679,56 +709,6 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
         private const val ROOMY_DIVIDER_INSET_DP = 60f
         private const val WARNING_SIZE_DP = 12.5f
         private const val WARNING_OFFSET_DP = 1.5f
-    }
-}
-
-// entiny: wraps onto more lines instead of squeezing the last action into one letter per line
-private class ActionsFlow(context: Context) : ViewGroup(context) {
-    fun childParams() = MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-        leftMargin = AndroidUtilities.dp(4f)
-        rightMargin = AndroidUtilities.dp(4f)
-    }
-
-    private fun wrap(max: Int): List<List<View>> {
-        val lines = ArrayList<ArrayList<View>>()
-        var x = 0
-        for (child in children.filter { it.visibility != GONE }) {
-            val lp = child.layoutParams as MarginLayoutParams
-            child.measure(MeasureSpec.makeMeasureSpec(max, MeasureSpec.AT_MOST), MeasureSpec.UNSPECIFIED)
-            val w = child.measuredWidth + lp.leftMargin + lp.rightMargin
-            if (lines.isEmpty() || x + w > max) {
-                lines.add(ArrayList())
-                x = 0
-            }
-            lines.last().add(child)
-            x += w
-        }
-        return lines
-    }
-
-    private fun View.outerWidth() = measuredWidth + (layoutParams as MarginLayoutParams).let { it.leftMargin + it.rightMargin }
-
-    private fun View.outerHeight() = measuredHeight + (layoutParams as MarginLayoutParams).let { it.topMargin + it.bottomMargin }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val lines = wrap(MeasureSpec.getSize(widthMeasureSpec))
-        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), lines.sumOf { line -> line.maxOf { it.outerHeight() } })
-    }
-
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        val width = r - l
-        val rtl = LocaleController.isRTL
-        var y = 0
-        for (line in wrap(width)) {
-            var x = if (rtl) 0 else width - line.sumOf { it.outerWidth() }
-            for (child in line) {
-                val lp = child.layoutParams as MarginLayoutParams
-                x += lp.leftMargin
-                child.layout(x, y + lp.topMargin, x + child.measuredWidth, y + lp.topMargin + child.measuredHeight)
-                x += child.measuredWidth + lp.rightMargin
-            }
-            y += line.maxOf { it.outerHeight() }
-        }
     }
 }
 

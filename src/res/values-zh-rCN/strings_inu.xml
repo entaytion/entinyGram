@@ -2,8 +2,8 @@
 <resources>
     <string name="InuOpenInDiscussion">在讨论中打开</string>
     <string name="InuBanUserConfirm">将 %1$s 从本群封禁？</string>
-    <string name="InuSettings">entinyGram 设置</string>
-    <string name="InuSettingsInfo">through the land and wind I follow you</string>
+    <string name="InuSettings">Inugram 设置</string>
+    <string name="InuSettingsInfo">汪汪在干啥？</string>
     <string name="InuGeneral">通用</string>
     <string name="InuMiscellaneous">杂项</string>
     <string name="InuWideChannelPosts">宽屏帖子</string>
@@ -94,7 +94,7 @@
     <string name="InuOutgoingMessages">发出的消息</string>
     <string name="InuChannelMessages">你可以发布消息的频道</string>
     <string name="InuSameAsIncoming">与收到的消息相同</string>
-    <string name="InuDoubleTapInfo">双击操作会让普通点击延迟上述时长。</string>
+    <string name="InuDoubleTapInfo">注意：由于 Telegram 处理双击的方式，启用双击操作会让普通点击延迟上述时间，使应用响应变慢。\n你可以调整时长，但完全消除延迟的唯一方法是禁用这些操作。</string>
     <string name="InuQuickReaction">快速回应</string>
     <string name="InuShowReactions">显示回应</string>
     <string name="InuHideStories">隐藏快拍</string>
@@ -105,7 +105,7 @@
     <string name="InuAttachCamera">相机</string>
     <string name="InuAttachCameraMode">相机</string>
     <string name="InuAttachCameraModeInstant">即时</string>
-    <string name="InuAttachCameraModeStatic">静态</string>
+    <string name="InuAttachCameraModeStatic">固定</string>
     <string name="InuAttachCameraModeFab">悬浮按钮</string>
     <string name="InuAttachCameraModeTab">底部标签</string>
     <string name="InuShowAllRecentStickers">显示全部最近贴纸</string>
@@ -155,7 +155,7 @@
     <string name="InuHideTrendingStickers">隐藏热门贴纸</string>
     <string name="InuBottomTabs">底部标签</string>
     <string name="InuBottomTabsHide">隐藏底部标签</string>
-<string name="InuBottomTabsHideInfo">条目会移入主屏幕的汉堡菜单</string>
+    <string name="InuBottomTabsHideInfo">条目会移入主屏幕的汉堡菜单</string>
     <string name="InuBottomTabsHideTopSearch">隐藏顶部搜索</string>
     <string name="InuBottomTabsHideTopSearchInfo">启用底部标签中的搜索时，隐藏聊天列表上方的搜索框</string>
     <string name="InuBottomTabsSeparateSearch">独立搜索按钮</string>
@@ -194,12 +194,12 @@
     <string name="InuStickerTimeModeHideTime">仅隐藏时间</string>
     <string name="InuStickerTimeModeHideIncoming">仅隐藏收到的</string>
     <string name="InuStickerTimeModeHideCompletely">完全隐藏</string>
-    <string name="InuStickerSizeDialogMessage">i like antennas</string>
+    <string name="InuStickerSizeDialogMessage">好狗狗！</string>
     <string name="InuBubbleTails">气泡尾巴</string>
     <string name="InuSendAsRoundVideo">以圆形视频发送</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">汪! entinyGram 还是 inuGram? 🐶</string>
-    <string name="InuMiscPreviewEditedMessage">两个都很棒 🐶⚡</string>
+    <string name="InuMiscPreviewForwardedFrom">狗狗</string>
+    <string name="InuMiscPreviewForwardedMessage">汪!! 你看到这个了吗?</string>
+    <string name="InuMiscPreviewEditedMessage">汪美无缺，再没有错别字</string>
     <string name="InuDeleteForBoth">默认「为所有人删除」</string>
     <string name="InuDeleteForBothMessages">消息</string>
     <string name="InuDeleteForBothDms">私聊</string>
@@ -270,12 +270,12 @@
     <string name="InuCallConfirmationTitle">确认通话</string>
     <string name="InuCallConfirmationText">呼叫 **%1$s**？</string>
     <string name="InuHdBluetoothCallAudio">蓝牙通话高清音质</string>
-    <string name="InuHdBluetoothCallAudioInfo">将通话音频作为媒体播放以提升蓝牙音质，使用手机麦克风。</string>
+    <string name="InuHdBluetoothCallAudioInfo">将通话音频作为媒体播放，而不是把耳机切换到低音质的耳麦模式，并使用手机麦克风。在通话开始时已连接蓝牙设备时生效</string>
     <string name="InuCallRotation">旋转通话屏幕</string>
     <string name="InuCallRotationInfo">让通话屏幕跟随设备旋转，而不是固定为竖屏。布局针对竖屏设计，横屏下可能显得拥挤</string>
     <string name="InuDisableChatBubbles">禁用 Android 通知气泡</string>
-    <string name="InuKeepChatsInStack">保持之前的聊天打开</string>
-    <string name="InuKeepChatsInStackInfo">打开另一个聊天时，不会关闭其后面的聊天</string>
+    <string name="InuKeepChatsInStack">保留之前打开的聊天</string>
+    <string name="InuKeepChatsInStackInfo">打开其他聊天时不会关闭后面的聊天</string>
     <string name="InuInPlaceTranslation">就地翻译</string>
     <string name="InuTranslateWebPreviews">翻译网页预览</string>
     <string name="InuKeepOriginalAfterTranslation">显示原文</string>
@@ -300,10 +300,10 @@
     <string name="InuHideMyPhoneNumber">隐藏我的手机号</string>
     <string name="InuFonts">字体</string>
     <string name="InuAppFont">应用字体</string>
-    <string name="InuAppFontInfo">只有自定义（导入的）字体才能设为应用字体。</string>
+    <string name="InuAppFontInfo">整个应用界面使用的字体。只有自定义（导入的）字体才能设为应用字体。</string>
     <string name="InuFontCustomOnly">只有自定义（导入的）字体才能设为应用字体。</string>
     <string name="InuAvailableFonts">可用字体</string>
-    <string name="InuFontsInfo">可见字体显示在媒体编辑器中。拖动排序，点击眼睛隐藏，点击已导入的字体可移除。</string>
+    <string name="InuFontsInfo">可见字体可在媒体编辑器的文字工具中使用。拖动以重新排序，点击眼睛图标隐藏；点击已导入的字体可将其移除。</string>
     <string name="InuFontAdd">添加字体</string>
     <string name="InuFontResetOrder">重置顺序</string>
     <string name="InuFontRemove">移除</string>
@@ -334,7 +334,7 @@
     <string name="InuMonoFont">等宽字体</string>
     <string name="InuMonoFontInfo">用于等宽区块的字体 —— 行内代码和代码块。</string>
     <string name="InuAppFontStack">字体栈</string>
-    <string name="InuAppFontStackInfo">最上方为主字体，其余为缺失字符（CJK 等）的后备字体。拖动以排序。</string>
+    <string name="InuAppFontStackInfo">最上方的字体是主界面字体；下方的是后备字体，用于主字体缺失的字符 (CJK 等)。拖动以重新排序。</string>
     <string name="InuFontStackAdd">添加字体</string>
     <string name="InuFontStackChoose">选择字体</string>
     <string name="InuFontStackApply">应用并重启</string>
@@ -360,14 +360,12 @@
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
-
     <string name="InuMapsHeader">地图</string>
     <string name="InuMapProvider">地图视图提供方</string>
     <string name="InuMapProviderGoogle">Google 地图</string>
     <string name="InuMapPreviewProvider">地图预览提供方</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-
     <string name="InuReplyIn">在…中回复</string>
     <string name="InuDeletedMessage">已删除的消息</string>
     <string name="InuDeletedMessageIdFormat">ID %1$d</string>
@@ -387,28 +385,21 @@
     <string name="InuRegDate">注册于: %s</string>
     <string name="InuJoinDate">加入于: %s</string>
     <string name="InuCreatedDate">创建于: %s</string>
-
     <string name="InuChatVoiceInAttach">录制按钮放入附件</string>
     <string name="InuChatVoiceInAttachInfo">将语音/视频录制按钮从输入栏移入附件面板</string>
     <string name="InuKeepScreenOnRecording">录制时保持屏幕常亮</string>
     <string name="InuKeepScreenOnRecordingInfo">录制语音或视频消息时屏幕不会熄灭</string>
-
     <string name="InuDisableIntroSticker">不发送介绍贴纸</string>
     <string name="InuDisableIntroStickerInfo">…并隐藏问候贴纸建议</string>
-
     <string name="InuRoundDefaultCamera">圆形消息默认相机</string>
     <string name="InuRoundCameraFront">前置</string>
     <string name="InuRoundCameraRear">后置</string>
     <string name="InuRoundCameraAsk">每次询问</string>
-
     <string name="InuDisableScrimBlur">禁用遮罩模糊</string>
-    <string name="InuDisableScrimBlurInfo">菜单和预览后改用平面压暗而非模糊背景，可能减轻卡顿。</string>
-
+    <string name="InuDisableScrimBlurInfo">将上下文菜单和预览背后的模糊替换为纯色压暗。可能减轻卡顿。</string>
     <string name="InuReduceMenuMotion">减少菜单动画</string>
     <string name="InuReduceMenuMotionInfo">跳过上下文菜单的逐项延迟出现，简化消息菜单动画</string>
-
     <string name="InuProfilePhotoGradientFade">禁用资料头像模糊</string>
-
     <string name="InuNonIslandUI">经典界面</string>
     <string name="InuAnimationSpeed">动画速度</string>
     <string name="InuAnimationSpeedInstant">瞬间</string>
@@ -418,9 +409,7 @@
     <string name="InuNonIslandGlobalSearch">全局搜索</string>
     <string name="InuNonIslandChatElements">聊天元素</string>
     <string name="InuNonIslandHint">经典界面会将新版 (>12.6) 「Liquid Glass」界面的部分改动尽力还原为旧的扁平设计。\n可能仍有一些视觉缺陷，请知悉。</string>
-
     <string name="InuHideFadeView">隐藏渐隐视图</string>
-
     <string name="InuStripTrackingParams">移除追踪参数</string>
     <string name="InuStripTrackingParamsSource">AdGuard URL Tracking 过滤器，更新于 %1$s</string>
     <string name="InuStripTrackingParamsUpdate">从 AdGuard 更新规则</string>
@@ -428,7 +417,6 @@
     <string name="InuStripTrackingParamsUpdated">规则已更新</string>
     <string name="InuStripTrackingParamsAlreadyLatest">已是最新规则集</string>
     <string name="InuStripTrackingParamsUpdateFailed">规则更新失败</string>
-
     <string name="InuWebPreviewReplacements">网页预览替换</string>
     <string name="InuWebPreviewEnabled">启用替换</string>
     <string name="InuWebPreviewReplacementsInfo">获取网页预览时对 URL 应用的正则替换。长按删除。</string>
@@ -437,7 +425,6 @@
     <string name="InuWebPreviewReset">恢复默认</string>
     <string name="InuWebPreviewPattern">模式 (regex)</string>
     <string name="InuWebPreviewReplacement">替换为</string>
-
     <string name="InuReactionsInRow">每行回应数</string>
     <string name="InuChatInputMaxLines">输入框最大行数</string>
     <string name="InuChatInputTextSize">输入框文字大小</string>
@@ -445,7 +432,6 @@
     <string name="InuReactionBarBelowInfo">将回应栏移到菜单下方</string>
     <string name="InuChatViewsBottom">可达浏览列表</string>
     <string name="InuChatViewsBottomInfo">将消息浏览者/回应列表项移到底部</string>
-
     <string name="InuPinnedReactions">置顶回应</string>
     <string name="InuPinnedReactionsInfo">将回应固定在回应栏开头。</string>
     <string name="InuPinnedReactionsHeader">置顶回应</string>
@@ -454,9 +440,7 @@
     <string name="InuPinnedReactionsCopyServerConfirm">这将用服务端提供的热门回应替换当前的置顶回应。继续吗？</string>
     <string name="InuPinnedReactionsRemoveAll">全部移除</string>
     <string name="InuPinnedReactionsRemoveAllConfirm">移除所有置顶回应？</string>
-
     <string name="InuOldMentionIndicator">旧版提及指示器</string>
-
     <string name="InuShowForwardTime">显示转发时间</string>
     <string name="InuForwardHeaderMode">转发标题</string>
     <string name="InuForwardHeaderModeRegular">常规</string>
@@ -465,7 +449,6 @@
     <string name="InuForwardHeaderModeCompact">紧凑</string>
     <string name="InuShowForwardsCount">显示转发次数</string>
     <string name="InuCompactEdited">紧凑编辑指示器</string>
-
     <string name="InuAddToStickersGifs">添加到贴纸/GIF</string>
     <string name="InuLongTapAction">长按操作</string>
     <string name="InuMenuMode">模式</string>
@@ -479,7 +462,6 @@
     <string name="InuRepeatLongTapForward">长按以转发形式重复</string>
     <string name="InuReplyInDms">在私信中回复</string>
     <string name="InuHiddenCaptionDescription">说明已移除</string>
-
     <string name="InuTextClassifierMode">文本分类器模式</string>
     <string name="InuTextClassifierModeInfo">文本分类器是双击文本时自动扩展选择的系统组件</string>
     <string name="InuTextClassifierModeNative">原生</string>
@@ -487,10 +469,8 @@
     <string name="InuTextClassifierModeImprovedInfo">仅处理部分实体类型以减少误判</string>
     <string name="InuTextClassifierModeOff">关闭</string>
     <string name="InuTextClassifierModeOffInfo">禁用文本分类器可提升文本选择响应速度</string>
-
     <string name="InuSuggestCustomEmojiAfter">自定义表情排在普通之后</string>
     <string name="InuSuggestCustomEmojiAfterInfo">在「:shortcode」建议弹窗中，将动画/自定义表情显示在普通表情之后而非之前</string>
-
     <string name="InuFormattingPopup">自定义格式菜单</string>
     <string name="InuFormattingPopupInfo">用交互式弹窗替换原版富文本格式菜单。\n点击以自定义…</string>
     <string name="InuFormattingPopupItems">弹窗按钮</string>
@@ -501,7 +481,6 @@
     <string name="InuCut">剪切</string>
     <string name="InuCodeLanguage">代码语言</string>
     <string name="InuVersion">entinyGram v%1$s (构建 %2$s)</string>
-
     <string name="InuSearchFilter">按媒体过滤</string>
     <string name="InuSearchFilterPhotos">照片</string>
     <string name="InuSearchFilterVideos">视频</string>
@@ -540,7 +519,6 @@
     <string name="InuAppIconLicenseInugram">占位图标，欢迎提供更好的</string>
     <string name="InuAppIconLicenseTelegram">图标版权归 **Telegram** 所有。保留所有权利。</string>
     <string name="InuJumpToBeginning">跳到开头</string>
-
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">更新频道</string>
     <string name="InuUpdates">更新</string>
@@ -596,7 +574,7 @@
     <string name="InuOpenByUserId">在搜索和消息中按 ID 打开</string>
     <string name="InuOpenByUserIdInfo">在搜索中输入数字或点击消息中的数字时显示直接个人资料快捷方式。</string>
     <string name="InuReorderAccounts">重排账号</string>
-    <string name="InuReorderAccountsInfo">拖动以重新排序设置列表和账号切换器中的账号。</string>
+    <string name="InuReorderAccountsInfo">长按账号并拖动来重新排序。该顺序应用于设置列表和账号切换器。</string>
     <string name="InuCreateAsSupergroup">创建为超级群</string>
     <string name="InuFeed">动态</string>
     <string name="InuFeedToggleInfo">将动态添加到菜单和底部标签页。默认关闭；底部标签页需要重启应用</string>
@@ -636,15 +614,15 @@
     <string name="InuProxyImported_other">已导入 %1$d 个代理</string>
     <string name="InuFasterDownloads">加速下载</string>
     <string name="InuFasterUploads">加速上传</string>
-    <string name="InuFasterTransfersInfo">更大的分块和更多并行请求。可能提升——也可能降低——吞吐量。</string>
+    <string name="InuFasterTransfersInfo">提高分块大小和并行请求数。可能提升吞吐，也可能产生反效果 (尤其对非 Premium 用户)</string>
     <string name="InuSendMp4DocumentAsVideo">将 MP4 文档作为视频发送</string>
     <string name="InuSendMp4DocumentAsVideoInfo">通过「文件」附加的 MP4 会作为可播放视频发送，无需转换</string>
     <string name="InuMentionInsertTitle">插入提及</string>
     <string name="InuPasscode">密码锁</string>
     <string name="InuPasscodeNeeded">请先设置 Telegram 密码锁。</string>
-    <string name="InuPasscodeShowInSettings">在 entinyGram 设置中显示</string>
-    <string name="InuPasscodeShowInSettingsInfo">关闭时，本页只能通过下方链接打开——请立即保存。</string>
-    <string name="InuPasscodeAccountsInfo">每个账号独立密码：在锁屏输入即可解锁并切换到该账号。</string>
+    <string name="InuPasscodeShowInSettings">在 inugram 设置中显示</string>
+    <string name="InuPasscodeShowInSettingsInfo">关闭时，本页**只能**通过下方链接打开。请立即保存 —— 一旦生成将不再更改。</string>
+    <string name="InuPasscodeAccountsInfo">每个账号可以有自己的密码。在锁屏输入它会解锁应用并切换到该账号。</string>
     <string name="InuPasscodeStateNone">未设置</string>
     <string name="InuPasscodeStateSet">已设置密码</string>
     <string name="InuPasscodeStateHidden">已隐藏</string>
@@ -654,7 +632,7 @@
     <string name="InuPasscodeRemoveConfirm">移除此账号的密码？</string>
     <string name="InuPasscodeOpenStockSettings">原版密码锁设置</string>
     <string name="InuPasscodeHideAccount">隐藏账号</string>
-    <string name="InuPasscodeHideAccountInfo">隐藏的账号不出现在切换器中，也不产生通知；输入其密码可显示。</string>
+    <string name="InuPasscodeHideAccountInfo">隐藏的账号不会出现在账号切换器中，也不会产生通知。在锁屏输入该账号的密码可显示。</string>
     <string name="InuPasscodeAllowPanic">使用紧急密码登出</string>
     <string name="InuPasscodeAllowPanicInfo">输入紧急密码时，本账号将被登出。</string>
     <string name="InuPasscodePanic">紧急密码</string>
@@ -671,7 +649,7 @@
     <string name="InuMessageMenuQuickActionsPlacement">位置</string>
     <string name="InuPlacementTop">顶部</string>
     <string name="InuPlacementBottom">底部</string>
-    <string name="InuMessageMenuOrderInfo">重新排序或隐藏消息上下文菜单项。拖动移动，点按隐藏。</string>
+    <string name="InuMessageMenuOrderInfo">重新排序或隐藏消息上下文菜单中的项目。拖动手柄进行排序，点按以显示/隐藏</string>
     <string name="InuMessageMenuOrderInfoBottom">长按某一项以将其移到快捷操作栏</string>
     <string name="InuMessageMenuReset">重置为默认</string>
     <string name="InuMenuSlotDelete">删除 / 复制链接</string>
@@ -681,13 +659,13 @@
     <string name="InuMenuBottomRowFull">快捷操作栏已满 (最多 4 个)</string>
     <string name="InuPrivacySecurity">隐私与安全</string>
     <string name="InuPerAccountPasscode">每个账号独立密码</string>
-    <string name="InuHideInugramSettings">隐藏 entinyGram 设置</string>
+    <string name="InuHideInugramSettings">隐藏 inugram 设置</string>
     <string name="InuParanoiaDisableNotifications">禁用通知</string>
     <string name="InuParanoiaHideOtherAccounts">隐藏其他账号</string>
     <string name="InuParanoiaDisguise">伪装成 Telegram</string>
-    <string name="InuParanoiaDisguiseInfo">仅更改启动器图标和名称；通知仍显示「entinyGram」。</string>
+    <string name="InuParanoiaDisguiseInfo">仅更改启动器图标和名称。由于 Android 限制，通知和应用内名称仍显示「Inugram」。</string>
     <string name="InuParanoiaMode">偏执模式</string>
-    <string name="InuParanoiaModeInfo">隐藏「危险」聊天，可选择伪装应用——为他人查看手机做好准备。</string>
+    <string name="InuParanoiaModeInfo">偏执模式让你为他人查看手机做好「准备」：隐藏任何「危险」聊天，并可选择伪装成原版应用。</string>
     <string name="InuParanoiaLauncherShortcut">启动器快捷方式</string>
     <string name="InuParanoiaLauncherShortcutInfo">在应用图标上添加长按快捷方式，以快速进入偏执模式。激活时该快捷方式会隐藏。</string>
     <string name="InuParanoiaSelect">要隐藏的聊天</string>
@@ -704,7 +682,6 @@
     <string name="InuParanoiaEnableConfirm">进入偏执模式并重启？此项将消失 —— 唯一的返回方式是在聊天搜索中输入退出码，或重新安装应用！</string>
     <string name="InuParanoiaNeedSetup">请先设置退出码并至少选择一个聊天。</string>
     <string name="InuParanoiaExit">退出偏执模式</string>
-
     <string name="InuSendToDiscussWithoutJoin">不加入即在讨论组发言</string>
     <string name="InuSendToDiscussWithoutJoinInfo">跳过讨论组的客户端成员检查</string>
     <string name="InuNavigationDrawer">侧边抽屉</string>
@@ -732,7 +709,7 @@
     <string name="InuRoundRecorderExponentialZoom">指数缩放</string>
     <string name="InuRoundRecorderExponentialZoomInfo">更平滑的缩放曲线，类似 Google Camera</string>
     <string name="InuRoundRecorderDualCamera">双摄像头</string>
-    <string name="InuRoundRecorderDualCameraInfo">同时打开前后摄像头以便即时切换，耗电更多。</string>
+    <string name="InuRoundRecorderDualCameraInfo">同时打开前后摄像头，可在录制中即时切换。耗电更多。</string>
     <string name="InuRoundRecorderCameraApi">圆形录制使用 %1$s API。**切换到 %2$s >**</string>
     <string name="InuRoundRecorder60Fps">视频留言 60 FPS</string>
     <string name="InuRoundRecorder60FpsInfo">如果相机支持，以 60 FPS 录制视频留言。</string>
@@ -775,7 +752,7 @@
     <string name="InuConfirmReactionText">在 **%2$s** 发送 %1$s 回应？</string>
     <string name="InuNotificationIcon">通知图标</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">entinyGram</string>
+    <string name="InuNotificationIconInugram">Inugram</string>
     <string name="InuNothingToTranslate">没有可翻译的消息。</string>
     <string name="InuAlreadyInTargetLanguage">此消息已是 %1$s。</string>
     <string name="InuVoiceRecorder">语音 / 圆形录制</string>
@@ -785,7 +762,7 @@
     <string name="InuCacheRemoved">文件已从缓存移除</string>
     <string name="InuChatMenuOrder">聊天菜单</string>
     <string name="InuChatMenuItems">项目</string>
-    <string name="InuChatMenuOrderInfo">重新排序或隐藏聊天三点菜单项。拖动移动，开关切换隐藏。</string>
+    <string name="InuChatMenuOrderInfo">重新排序或隐藏聊天中三点菜单的项目。拖动手柄进行排序，使用开关进行隐藏。</string>
     <string name="InuChatMenuReset">重置为默认</string>
     <string name="InuDialogsMenuOrder">选项菜单</string>
     <string name="InuDialogsMenuItems">项目</string>
@@ -798,18 +775,15 @@
     <string name="InuParanoiaHideFolders">隐藏文件夹</string>
     <string name="InuParanoiaSelectWhitelist">要显示的聊天</string>
     <string name="InuParanoiaWhitelist">白名单模式</string>
-
     <string name="InuBotSettings">机器人设置</string>
     <string name="InuBotHelp">机器人帮助</string>
-
-    <string name="InuCrashTitle">entinyGram 上次崩溃了</string>
+    <string name="InuCrashTitle">Inugram 上次崩溃了</string>
     <string name="InuCrashDesc">抱歉。你可以与开发者分享崩溃日志以帮助修复。</string>
     <string name="InuCrashShare">分享崩溃日志</string>
     <string name="InuCrashDiscard">丢弃</string>
     <string name="InuCrashChannel">崩溃恢复</string>
-    <string name="InuCrashNotifTitle">entinyGram 崩溃了</string>
+    <string name="InuCrashNotifTitle">Inugram 崩溃了</string>
     <string name="InuCrashNotifText">点击重启</string>
-
     <string name="InuLogs">调试</string>
     <string name="InuLogsEnabled">调试模式</string>
     <string name="InuForceNoVibration">禁用所有振动</string>
@@ -826,8 +800,7 @@
     <string name="InuLogsHeapUsage">堆内存: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">生成堆转储</string>
     <string name="InuLogsMakingHeapDump">正在生成堆转储…</string>
-    <string name="InuLogsHeapDumpWarning">**切勿**分享 .hprof 文件——它是包含**敏感信息**（消息、令牌等）的内存快照，请只自行查看。生成期间应用会短暂冻结。</string>
-
+    <string name="InuLogsHeapDumpWarning">**切勿**与任何人分享生成的 .hprof 文件 —— 它是应用内存的快照，**包含敏感信息**（消息、令牌等）。\n\n**仅**自行查看。\n\n应用将会冻结一段时间。</string>
     <string name="InuMaterial3Fabs">悬浮按钮</string>
     <string name="InuMaterial3Sections">列表项</string>
     <string name="InuMaterial3Avatars">头像</string>
@@ -850,7 +823,6 @@
     <string name="InuStickers">贴纸</string>
     <string name="InuReactions">回应</string>
     <string name="InuDelay">延迟</string>
-
     <string name="InuDisableQuickShare">禁用快速分享</string>
     <string name="InuDisableQuickShareInfo">长按分享按钮（频道消息旁边）时不显示常用联系人；会直接发送，无需确认</string>
     <string name="InuSaveSelectedFiles">保存所选文件</string>
@@ -907,17 +879,14 @@
     <string name="InuNicheSettingsInfo">这里收录了并非所有人都需要、但有人提出需求的功能。如果无法正常使用，我们会将其移除。</string>
     <string name="InuNicheUnlockedToast">bro，别开 entiny tv 求你了💀💀</string>
     <string name="InuNicheAlreadyUnlockedToast">bro，你已经开过了💀</string>
-
     <string name="InuStripTrackingParamsOnOpen">打开链接时</string>
     <string name="InuStripTrackingParamsOnPaste">粘贴时</string>
     <string name="InuStripTrackingParamsSourceRow">过滤器源</string>
-
-    <string name="InuCrashTitleOom">entinyGram 内存不足</string>
+    <string name="InuCrashTitleOom">Inugram 内存不足</string>
     <string name="InuCrashDescOom">抱歉。崩溃日志对内存不足问题帮助不大 —— 堆转储才有用。</string>
     <string name="InuCrashDescHeapDump">同时保存了堆转储。请勿分享！里面包含隐私数据！如果愿意，可以自己查看一下，并把你的发现告诉开发者——会非常有帮助。</string>
-    <string name="InuCrashOomEnableLogs">在 entinyGram 设置 > 关于 中启用调试模式，以便在今后每次内存不足时生成堆转储。</string>
+    <string name="InuCrashOomEnableLogs">在 Inugram 设置 > 关于 中启用调试模式，以便在今后每次内存不足时生成堆转储。</string>
     <string name="InuCrashShareHeapDump">保存堆转储</string>
-
     <string name="InuDeleteOwnMessages">删除我的消息</string>
     <string name="InuDeleteOwnMessagesSearching">正在查找你的消息…</string>
     <string name="InuDeleteOwnMessagesFoundProgress">找到 %1$d / %2$d</string>
@@ -1044,7 +1013,6 @@
     <string name="InuSaveDeletedMessagesInfo">在聊天中保留标有 🗑️ 的已删除消息</string>
     <string name="InuSaveEditedMessages">保存编辑历史</string>
     <string name="InuSaveEditedMessagesInfo">保存以前的消息版本并允许查看编辑历史 ✏️</string>
-
     <string name="InuSaveUserInfo">保存用户信息</string>
     <string name="InuSaveUserInfoInfo">在服务器停止返回后保留电话号码国家/地区、注册月份以及姓名/头像更改日期</string>
     <string name="InuSelfDestructMedia">阅后即焚媒体</string>
@@ -1124,13 +1092,11 @@
     <string name="InuDeleteAllProfilePhotosConfirm">确定要删除所有头像吗？此操作无法撤销。</string>
     <string name="InuDeleteProfilePhotos">删除个人头像</string>
     <string name="InuDeleteProfilePhotosInfo">一键删除全部个人头像或仅删除选中的头像</string>
-
     <string name="InuDeleteMyMessages">删除我的消息</string>
     <string name="InuDeleteMyMessagesTitle">删除我的消息？</string>
     <string name="InuDeleteMyMessagesConfirm">你在此聊天中发送的所有消息都将为所有人删除。此操作无法撤销。</string>
     <string name="InuDeleteMyMessagesStarted">正在删除你的消息…</string>
     <string name="InuDeleteMyMessagesDone">已删除 %1$d 条你的消息</string>
-
     <string name="InuChatExport">导出聊天</string>
     <string name="InuChatExportInfo">在个人资料菜单中将聊天导出为 JSON 或 HTML 存档。</string>
     <string name="InuChatExportCollected">已收集 %1$d 条消息</string>
@@ -1370,7 +1336,7 @@
     <string name="InuTranslationProviderTelegram">Telegram</string>
     <string name="InuTranslationProviderFromPlugin">来自 %1$s</string>
     <string name="InuTranslationProviderUnavailable">不可用</string>
-    <string name="InuTranslationProviderInfo">你可以通过 **插件 >** 安装更多翻译服务</string>
+    <string name="InuTranslationProviderInfo">你可以将其他翻译服务安装为**插件 >**</string>
     <string name="InuProfilePhotosDeleted">已删除所有个人头像</string>
     <string name="InuProfilePhotosDeletedCount">已删除 %1$d 张头像</string>
     <string name="InuProfilePhotosSelected">已选择：%1$d</string>
@@ -1432,8 +1398,7 @@
     <string name="InuTranslateProviderTelegram">Telegram API</string>
     <string name="InuYes">是</string>
     <string name="InuAccountSwitchShortcut">账号切换快捷方式</string>
-    <string name="InuAccountSwitchShortcutInfo">在应用图标长按菜单中添加快捷方式，点击可选择要打开的账号</string>
-
+    <string name="InuAccountSwitchShortcutInfo">在应用图标的长按菜单中添加快捷方式，用于选择要打开的账号</string>
     <string name="InuBlockSleepWhileDownloading">下载时阻止休眠</string>
     <string name="InuBlockSleepWhileDownloadingInfo">在下载进行时保持部分唤醒锁（wake lock），防止 Android 在后台暂停下载。</string>
     <string name="InuHideProxySponsorChat">隐藏代理赞助商聊天</string>
@@ -1441,17 +1406,17 @@
     <string name="InuHideRichEditorButton">隐藏富文本编辑器按钮</string>
     <string name="InuKeepDownloadsInBackground">滑动或退出时不中断下载</string>
     <string name="InuKeepDownloadsInBackgroundInfo">滚出屏幕或离开聊天时，下载会继续进行。</string>
-    <string name="InuMaterial3BottomTabs">底部标签栏</string>
+    <string name="InuMaterial3BottomTabs">底部标签</string>
     <string name="InuIosBottomBar">iOS 风格底部栏</string>
     <string name="InuIosBottomBarInfo">iOS 风格更宽、均匀分布的底部标签。会禁用 Material 3 标签。</string>
     <string name="InuIosChatHeader">紧凑胶囊</string>
     <string name="InuIosChatHeaderInfo">iOS 风格的紧凑聊天标题胶囊，悬浮居中。</string>
     <string name="InuChatHeaderNoPill">隐藏胶囊背景</string>
     <string name="InuChatHeaderNoPillInfo">标题和副标题直接显示在壁纸上，不带胶囊。</string>
-    <string name="InuParanoiaHideMyStories">隐藏我的故事</string>
+    <string name="InuParanoiaHideMyStories">隐藏我的快拍</string>
     <string name="InuStopBot">停止机器人</string>
     <string name="InuStopBotAction">停止</string>
-    <string name="InuStopBotAlert">确定要停止 **%1$s** 吗？它将无法再向您发送消息。</string>
+    <string name="InuStopBotAlert">确定要停止 **%1$s** 吗？它将无法再向你发送消息。</string>
     <string name="InuStopBotDone">机器人已停止</string>
     <string name="InuSelectionBottomNoQuote">多选栏中的无引用转发按钮</string>
     <string name="InuSelectionBottomNoQuoteInfo">在选择消息时将“回复”按钮替换为“无引用转发”</string>
@@ -1464,8 +1429,8 @@
     <string name="InuAttachCameraSquare">方形相机磁贴</string>
     <string name="InuAttachCameraSquareInfo">图库中的相机占一格而不是两格</string>
     <string name="InuSortAlbumsBySize">按大小排序相册</string>
-    <string name="InuSortAlbumsBySizeInfo">附件菜单中的相册将按照片数量而非最近时间排序</string>
-    <string name="InuDownloadDirectory">下载目录</string>
+    <string name="InuSortAlbumsBySizeInfo">附件菜单中的相册按照片数量而非最近使用时间排序</string>
+    <string name="InuDownloadDirectory">下载文件夹</string>
     <string name="InuDownloadDirectoryApplied">仅适用于新下载的文件</string>
     <string name="InuPreviewMessage">预览</string>
     <string name="InuMinimize">最小化</string>
@@ -1582,8 +1547,8 @@
     <string name="InuHideProfileGiftsTabInfo">从个人资料共享媒体中移除「礼物」标签页。</string>
     <string name="InuHideGiftAuctionsHint">隐藏礼物拍卖横幅</string>
     <string name="InuHideCacheHint">隐藏\"释放空间\"卡片</string>
-    <string name="InuTranslateAutoDetectLang">为消息菜单检测语言</string>
-    <string name="InuTranslateAutoDetectLangInfo">对 Telegram 未识别语言的消息进行设备端检测，可能略微拖慢菜单。</string>
+    <string name="InuTranslateAutoDetectLang">在消息菜单中遵循「不翻译」列表</string>
+    <string name="InuTranslateAutoDetectLangInfo">当消息语言在「不翻译」列表中时，会自动检测其语言并隐藏该菜单项。\n这可能会让菜单打开得稍慢一些。</string>
     <string name="InuInstantTranslateBanner">即时翻译横幅</string>
     <string name="InuInstantTranslateBannerInfo">收到一条外语消息后即显示翻译栏。</string>
     <string name="InuIgnoreTranslationsDisabled">忽略\"已禁用翻译\"</string>
@@ -1605,7 +1570,6 @@
     <string name="InuSmallGifs">GIF 显示得更小</string>
     <string name="InuDeleteFailedProxies">删除失效代理</string>
     <string name="InuDeleteFailedProxiesConfirm">确定要删除所有不可用的代理吗？</string>
-
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">转发时提供作者、说明和静默发送开关，以及转发前编辑。</string>
     <string name="InuForwardProHideCaption">隐藏文字说明</string>
@@ -1616,7 +1580,6 @@
     <string name="InuForwardDownloading">先下载 %1$s，然后转发</string>
     <string name="InuForwardDownloadFailed">文件下载失败，未能转发</string>
     <string name="InuForwardTooLarge">文件超过上传上限（%1$s），无法转发</string>
-
     <string name="InuIosButtonPlacement">按钮布局 (iOS)</string>
     <string name="InuIosButtonPlacementInfo">将附件按钮移至左侧，将表情按钮移至输入框内部右侧。</string>
     <string name="InuIosInputAppearance">外观 (iOS)</string>
@@ -1711,12 +1674,12 @@
     <string name="InuDonateCopied">已复制</string>
     <string name="InuShowMediaSize">显示媒体大小</string>
     <string name="InuPlugins">插件</string>
-    <string name="InuPluginsInfo">插件是用户编写的、用于扩展应用的脚本。请只安装来自可信来源的插件。</string>
+    <string name="InuPluginsInfo">插件是由用户制作、用于扩展应用的脚本。请只安装来自可信来源的插件。</string>
     <string name="InuPluginsEnableEngine">启用插件</string>
     <string name="InuPluginsEnableEngineInfo">启动时运行已安装的插件</string>
     <string name="InuPluginsInstalled">已安装</string>
     <string name="InuPluginsEnabled">已启用</string>
-    <string name="InuPluginsEmpty">尚未安装任何插件</string>
+    <string name="InuPluginsEmpty">未安装插件</string>
     <string name="InuPluginsLoadFromDisk">从文件加载</string>
     <string name="InuPluginsCompactView">紧凑视图</string>
     <string name="InuPluginsNormalView">普通视图</string>
@@ -1728,129 +1691,129 @@
     <string name="InuPluginsRemoveConfirm">移除此插件及其所有数据？此操作无法撤销。</string>
     <string name="InuPluginsRemoveAll">移除所有插件</string>
     <string name="InuPluginsRemoveAllConfirm_one">移除已安装的 %d 个插件及其所有数据？此操作无法撤销。</string>
-    <string name="InuPluginsRemoveAllConfirm_other">移除已安装的 %d 个插件及其所有数据？此操作无法撤销。</string>
+    <string name="InuPluginsRemoveAllConfirm_other">移除全部 %d 个已安装的插件及其所有数据？此操作无法撤销。</string>
     <string name="InuPluginsByAuthor">作者：%1$s</string>
     <string name="InuPluginsPermissions">权限</string>
-    <string name="InuPluginsPermissionsNone">此插件未请求任何权限</string>
+    <string name="InuPluginsPermissionsNone">此插件不请求任何权限</string>
     <string name="InuPluginGrantFs">文件存储</string>
     <string name="InuPluginGrantClipboardWrite">写入剪贴板</string>
     <string name="InuPluginGrantOpenUrl">打开链接</string>
-    <string name="InuPluginGrantAppVisibility">监测应用可见性</string>
-    <string name="InuPluginGrantNotificationsSuppress">拦截通知</string>
+    <string name="InuPluginGrantAppVisibility">监视应用可见性</string>
+    <string name="InuPluginGrantNotificationsSuppress">抑制通知</string>
     <string name="InuPluginGrantClipboardRead">读取剪贴板</string>
     <string name="InuPluginGrantFetch">访问互联网</string>
     <string name="InuPluginGrantAccountRead">读取账号数据</string>
     <string name="InuPluginGrantAccountWrite">账号操作</string>
-    <string name="InuPluginGrantOnUpdate">监听更新</string>
+    <string name="InuPluginGrantOnUpdate">监视更新</string>
     <string name="InuPluginGrantInterceptUpdate">拦截更新</string>
     <string name="InuPluginGrantInterceptSend">拦截发出的消息</string>
     <string name="InuPluginGrantInterceptRpc">拦截 API 请求</string>
-    <string name="InuPluginGrantInvokeRpc">直接访问 API</string>
+    <string name="InuPluginGrantInvokeRpc">原始 API 访问</string>
     <string name="InuPluginGrantTakeout">数据导出会话</string>
     <string name="InuPluginGrantUnsafeFs">访问设备文件</string>
-    <string name="InuPluginGrantUnsafeInvokeRaw">不受检查的 API 访问</string>
+    <string name="InuPluginGrantUnsafeInvokeRaw">未经检查的 API 访问</string>
     <string name="InuPluginGrantUnsafeJvm">执行 Java 代码</string>
     <string name="InuPluginGrantUnsafeXposed">应用代码钩子</string>
     <string name="InuPluginGrantUnsafeNotificationCenter">访问内部事件</string>
-    <string name="InuPluginGrantUnsafeDisableApiFiltering">停用账号保护</string>
-    <string name="InuPluginGrantNotificationsSuppressInfo">可在应用运行期间阻止其发出自身的通知</string>
-    <string name="InuPluginGrantTakeoutInfo">经你批准后，可不受常规频率限制地导出你的数据</string>
-    <string name="InuPluginGrantUnsafeFsInfo">可读写应用能访问到的设备上的任何文件</string>
-    <string name="InuPluginGrantUnsafeInvokeRawInfo">可绕过方法过滤器，发送任意 API 请求</string>
-    <string name="InuPluginGrantUnsafeJvmInfo">可在沙盒之外运行任意代码</string>
-    <string name="InuPluginGrantUnsafeXposedInfo">可替换应用的方法，改变其任何部分的行为</string>
-    <string name="InuPluginGrantUnsafeNotificationCenterInfo">监听并发布应用的内部事件</string>
-    <string name="InuPluginGrantUnsafeDisableApiFilteringInfo">允许插件访问对账号至关重要的 API 调用</string>
-    <string name="InuPluginGrantUnknown">此版本的应用无法识别，没有任何效果</string>
+    <string name="InuPluginGrantUnsafeDisableApiFiltering">禁用账号保护</string>
+    <string name="InuPluginGrantNotificationsSuppressInfo">可在运行时阻止应用发布自己的通知</string>
+    <string name="InuPluginGrantTakeoutInfo">经你批准后，可不受通常的速率限制导出数据</string>
+    <string name="InuPluginGrantUnsafeFsInfo">可读写应用能访问的设备上的任何文件</string>
+    <string name="InuPluginGrantUnsafeInvokeRawInfo">可绕过方法过滤器发送任何 API 请求</string>
+    <string name="InuPluginGrantUnsafeJvmInfo">可在沙盒外运行任意代码</string>
+    <string name="InuPluginGrantUnsafeXposedInfo">可替换应用的方法，改变应用任何部分的行为</string>
+    <string name="InuPluginGrantUnsafeNotificationCenterInfo">监视并发布应用的内部事件</string>
+    <string name="InuPluginGrantUnsafeDisableApiFilteringInfo">允许插件访问涉及账号安全的关键 API 调用</string>
+    <string name="InuPluginGrantUnknown">此版本的应用无法识别，不会产生任何效果</string>
     <string name="InuPluginScopeReadSelf">你的个人资料</string>
     <string name="InuPluginScopeReadPeers">用户和聊天</string>
     <string name="InuPluginScopeReadMessages">消息</string>
     <string name="InuPluginScopeReadDialogs">聊天列表</string>
-    <string name="InuPluginScopeReadHistory">消息记录</string>
+    <string name="InuPluginScopeReadHistory">消息历史</string>
     <string name="InuPluginScopeReadDraft">草稿</string>
     <string name="InuPluginScopeWriteSend">发送消息</string>
     <string name="InuPluginScopeWriteEdit">编辑消息</string>
     <string name="InuPluginScopeWriteDelete">删除消息</string>
     <string name="InuPluginScopeWriteForward">转发消息</string>
-    <string name="InuPluginScopeWriteReact">回应消息</string>
+    <string name="InuPluginScopeWriteReact">对消息作出回应</string>
     <string name="InuPluginScopeWriteRead">将聊天标为已读</string>
-    <string name="InuPluginScopeWriteTyping">显示正在输入状态</string>
+    <string name="InuPluginScopeWriteTyping">显示输入状态</string>
     <string name="InuPluginScopeWriteDraft">编辑草稿</string>
     <string name="InuPluginScopeUpdNewMessage">新消息</string>
     <string name="InuPluginScopeUpdEditMessage">已编辑的消息</string>
     <string name="InuPluginScopeUpdDeleteMessage">已删除的消息</string>
     <string name="InuPluginScopeAccountRead">读取 %1$s</string>
-    <string name="InuPluginScopeFetch">向 %1$s 发起请求</string>
-    <string name="InuPluginScopeFetchAny">向任意网站发起请求</string>
+    <string name="InuPluginScopeFetch">向 %1$s 发出请求</string>
+    <string name="InuPluginScopeFetchAny">向任何网站发出请求</string>
     <string name="InuPluginScopeInvokeRpc">调用 %1$s</string>
     <string name="InuPluginScopeInterceptRpc">拦截对 %1$s 的调用</string>
-    <string name="InuPluginScopeAnyMethod">任意 API 方法</string>
-    <string name="InuPluginScopeOnUpdate">监听 %1$s</string>
+    <string name="InuPluginScopeAnyMethod">任何 API 方法</string>
+    <string name="InuPluginScopeOnUpdate">监视 %1$s</string>
     <string name="InuPluginScopeInterceptUpdate">拦截 %1$s</string>
     <string name="InuPluginScopeAllUpdates">所有更新</string>
     <string name="InuPluginTrustTitle">只安装你信任的插件</string>
-    <string name="InuPluginTrustInfo">插件在沙盒中运行，只会获得它们声明的权限（下一屏会列出）。\n即便如此，授予权限后插件仍可以：</string>
-    <string name="InuPluginTrust1Title">以你的身份行事</string>
-    <string name="InuPluginTrust1Text">账号权限可以以你的名义读取、发送和删除消息。</string>
-    <string name="InuPluginTrust2Title">接触你的数据</string>
-    <string name="InuPluginTrust2Text">文件和网络权限可以读取聊天、媒体和设置，并将它们发送到任何地方。</string>
+    <string name="InuPluginTrustInfo">插件在沙盒中运行，并且只会获得它声明的权限，这些权限会列在下一个页面中。\n但授予这些权限仍会让插件能够：</string>
+    <string name="InuPluginTrust1Title">以你的身份操作</string>
+    <string name="InuPluginTrust1Text">账号权限允许它以你的名义读取、发送和删除消息。</string>
+    <string name="InuPluginTrust2Title">获取你的数据</string>
+    <string name="InuPluginTrust2Text">文件和网络权限允许它读取聊天、媒体和设置，并将其发送到任何地方。</string>
     <string name="InuPluginTrust3Title">离开沙盒</string>
-    <string name="InuPluginTrust3Text">不安全权限会解除沙盒，并以应用自身所能访问的一切权限运行代码。</string>
-    <string name="InuPluginTrustWarning">恶意插件可能接管你的账号</string>
+    <string name="InuPluginTrust3Text">不安全权限会移除沙盒，并使用应用自身能访问的一切来运行代码。</string>
+    <string name="InuPluginTrustWarning">恶意插件可以接管你的账号</string>
     <string name="InuPluginTrustAccept">我已了解，继续</string>
     <string name="InuPluginsDevMode">开发者模式</string>
-    <string name="InuPluginsDevModeInfo">通过 adb 从电脑推送插件，无需询问即可安装并重新加载</string>
-    <string name="InuPluginsDevModeBanner">任何能通过 adb 访问此设备的程序都可以安装插件并授予任意权限，而不会询问你。用完后请关闭此项。</string>
+    <string name="InuPluginsDevModeInfo">通过 adb 从电脑推送插件，无需询问即可安装和重新加载</string>
+    <string name="InuPluginsDevModeBanner">任何能通过 adb 访问此设备的程序都可以安装插件并授予其任意权限，无需询问。完成后请将其关闭。</string>
     <string name="InuPluginsDevModeTurnOff">关闭开发者模式</string>
-    <string name="InuPluginsDevChip">dev</string>
+    <string name="InuPluginsDevChip">开发</string>
     <string name="InuPluginsDevPushed_one">已推送 %d 个插件</string>
     <string name="InuPluginsDevPushed_other">已推送 %d 个插件</string>
     <string name="InuPluginsDevModeSheetTitle">开启开发者模式？</string>
-    <string name="InuPluginsDevModeSheetInfo">它用于开发插件：电脑通过 adb 推送文件，应用会立即安装。\n开启期间：</string>
-    <string name="InuPluginsDevMode1Title">任何使用 adb 的程序</string>
-    <string name="InuPluginsDevMode1Text">你连接的任何电脑，以及已通过 adb 与此设备通信的程序（如 Shizuku），都可以推送插件。</string>
+    <string name="InuPluginsDevModeSheetInfo">此功能用于开发插件：电脑通过 adb 推送文件后，应用会立即安装。\n开启期间：</string>
+    <string name="InuPluginsDevMode1Title">任何能访问 adb 的程序</string>
+    <string name="InuPluginsDevMode1Text">你连接的任何电脑，以及已通过 adb 与此设备通信的任何程序（如 Shizuku），都可以推送插件。</string>
     <string name="InuPluginsDevMode2Title">不审核权限</string>
-    <string name="InuPluginsDevMode2Text">推送的插件会按其声明的权限直接安装。没有信任确认页，没有权限列表，也无法撤销。</string>
-    <string name="InuPluginsDevMode3Title">直到你关闭为止</string>
-    <string name="InuPluginsDevMode3Text">重启后仍保持开启。开启期间，插件页面会向你发出警告。</string>
+    <string name="InuPluginsDevMode2Text">推送的插件会被安装，并获得其声明的所有权限。没有信任确认页面、权限列表，也无法撤销。</string>
+    <string name="InuPluginsDevMode3Title">直到你将其关闭</string>
+    <string name="InuPluginsDevMode3Text">重启后仍会保持开启。开启时，插件页面会显示警告。</string>
     <string name="InuPluginsDevModeSheetWarning">除非你正在编写插件，否则请保持关闭</string>
     <string name="InuPluginsDevModeSheetAccept">我已了解，开启</string>
-    <string name="InuPluginObfuscatedTitle">已混淆的代码</string>
-    <string name="InuPluginObfuscatedInfo">此插件的代码似乎被刻意混淆。混淆常被用来隐藏恶意行为——只有在你完全信任其来源时才保留此插件。</string>
-    <string name="InuPluginMinifiedTitle">已压缩的代码</string>
-    <string name="InuPluginMinifiedInfo">此插件的代码似乎经过压缩，难以审查。只有在你信任其来源时才保留此插件。</string>
+    <string name="InuPluginObfuscatedTitle">混淆代码</string>
+    <string name="InuPluginObfuscatedInfo">此插件的代码似乎被刻意混淆。代码混淆常用于隐藏恶意行为——只有在你完全信任其来源时才保留此插件。</string>
+    <string name="InuPluginMinifiedTitle">压缩代码</string>
+    <string name="InuPluginMinifiedInfo">此插件的代码似乎经过压缩，因此难以审核。只有在你信任其来源时才保留此插件。</string>
     <string name="InuPluginsSafeMode">安全模式</string>
-    <string name="InuPluginsSafeModeShortcut">关闭应用，下次启动进入安全模式</string>
-    <string name="InuPluginsSafeModeForced">本次会话没有运行任何插件。重启应用即可再次运行。</string>
-    <string name="InuPluginsSafeModeCrashed">上次插件启动时应用停止了，因此本次会话没有运行任何插件。</string>
-    <string name="InuPluginsSafeModeHostError">内部错误使本次会话中的所有插件停止运行。重启应用即可再次运行。</string>
-    <string name="InuPluginsSafeModeCrashLoop">插件启动后不久应用连续崩溃了两次，因此本次会话没有运行任何插件。</string>
+    <string name="InuPluginsSafeModeShortcut">关闭应用，下次以安全模式启动</string>
+    <string name="InuPluginsSafeModeForced">本次会话中没有插件运行。重启应用即可再次运行插件。</string>
+    <string name="InuPluginsSafeModeCrashed">上次启动插件时应用停止，因此本次会话中没有插件运行。</string>
+    <string name="InuPluginsSafeModeHostError">内部错误已停止本次会话中的所有插件。重启应用即可再次运行插件。</string>
+    <string name="InuPluginsSafeModeCrashLoop">插件启动后不久，应用连续崩溃两次，因此本次会话中没有插件运行。</string>
     <string name="InuPluginInstall">安装</string>
     <string name="InuPluginInstallTitle">安装插件</string>
     <string name="InuPluginInstallEnable">安装后启用</string>
     <string name="InuPluginInstalled">已安装 %1$s</string>
     <string name="InuPluginUpdate">更新</string>
     <string name="InuPluginUpdateTitle">更新插件</string>
-    <string name="InuPluginUpdatePermissions">新增权限</string>
-    <string name="InuPluginUpdatePermissionsNone">此更新没有请求任何新权限。</string>
+    <string name="InuPluginUpdatePermissions">新权限</string>
+    <string name="InuPluginUpdatePermissionsNone">此更新不请求任何新权限。</string>
     <string name="InuPluginUpdatePermissionsDropped">不再请求</string>
     <string name="InuPluginUpdatePermissionsKeptTitle">已授予</string>
     <string name="InuPluginUpdatePermissionsKept_one">查看 %1$d 项已授予的权限</string>
-    <string name="InuPluginUpdatePermissionsKept_other">查看 %1$d 项已授予的权限</string>
+    <string name="InuPluginUpdatePermissionsKept_other">检查已授予的 %1$d 项权限</string>
     <string name="InuPluginUpdated">已更新 %1$s</string>
     <string name="InuPluginCrashed">%1$s 已崩溃并被关闭</string>
     <string name="InuPluginAlreadyInstalled">%1$s 已安装</string>
-    <string name="InuPluginsErrorNoManifest">不是有效的插件（缺少元数据头）</string>
+    <string name="InuPluginsErrorNoManifest">不是有效插件（缺少元数据头）</string>
     <string name="InuPluginsErrorRead">无法读取所选文件</string>
     <string name="InuPluginsErrorWrite">无法保存插件文件</string>
-    <string name="InuPluginsErrorApiVersion">需要更新版本的 entinyGram（插件 API %1$d，此应用为 %2$d）</string>
-    <string name="InuPluginsErrorPlatform">不适用于此平台（需要 %1$s）</string>
-    <string name="InuPluginsErrorBadGrant">请求了无效的权限（%1$s）</string>
-    <string name="InuPluginsErrorUnconsentedGrants">请求了安装时未审核的权限（%1$s）；请更新插件以进行审核</string>
+    <string name="InuPluginsErrorApiVersion">需要更新版本的 Inugram（插件 API %1$d，此应用为 %2$d）</string>
+    <string name="InuPluginsErrorPlatform">并非为此平台制作（需要 %1$s）</string>
+    <string name="InuPluginsErrorBadGrant">请求了无效权限（%1$s）</string>
+    <string name="InuPluginsErrorUnconsentedGrants">请求了安装时未经审核的权限（%1$s）；请更新插件以审核这些权限</string>
     <string name="InuPluginsFailedAtLoad">加载错误</string>
     <string name="InuPluginsFailedAtRuntime">运行时错误</string>
     <string name="InuPluginsFailedAtUnload">卸载错误</string>
-    <string name="InuPluginsFailedFormat">%1$s：%2$s</string>
+    <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
     <string name="InuAccountsSection">账号</string>
     <string name="InuManyAccountsTitle">账号过多</string>
     <string name="InuManyAccountsMessage">超过 8 个账号可能会拖慢应用并增加耗电。仍要再添加一个吗？</string>
@@ -1904,4 +1867,15 @@
     <string name="InuUnreadBadgeOnBackButton">显示未读会话计数</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">在会话内的返回按钮上显示未读会话数量。</string>
     <string name="InuUnreadBadgeOnBackButtonIos">iOS 风格计数器</string>
+    <string name="InuOptimizedAttachmentMenu">优化附件菜单</string>
+    <string name="InuOptimizedAttachmentMenuInfo">提升打开照片和视频时的动画流畅度</string>
+    <string name="InuEditedMessageDateMode">已编辑消息时间戳</string>
+    <string name="InuEditedMessageDateModeTelegram">默认</string>
+    <string name="InuEditedMessageDateModeEdit">编辑时间</string>
+    <string name="InuEditedMessageDateModeSend">发送时间</string>
+    <string name="InuBiometricExplicitConfirmation">额外确认</string>
+    <string name="InuBiometricExplicitConfirmationInfo">面部/虹膜识别成功后要求额外点击确认</string>
+    <string name="InuBiometricRequireConfirmationPasscode">解锁应用时</string>
+    <string name="InuBiometricRequireConfirmationBots">在小程序中</string>
+    <string name="InuBiometricRequireConfirmationActions">删除聊天或登出时</string>
 </resources>

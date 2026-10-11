@@ -12,8 +12,8 @@
     <string name="InuDrawerM3SectionsInfo">Yan menü öğelerini yuvarlatılmış Material 3 kartları olarak gruplar.</string>
     <string name="InuDrawerKeepOptionsMenu">Üç nokta menüsünü koru</string>
     <string name="InuDrawerKeepOptionsMenuInfo">Yan menüyle birlikte sohbet listesi menü düğmesini göster</string>
-    <string name="InuSettings">entinyGram Ayarları</string>
-    <string name="InuSettingsInfo">through the land and wind I follow you</string>
+    <string name="InuSettings">Inugram Ayarları</string>
+    <string name="InuSettingsInfo">ne yapıyor bu köpek?</string>
     <string name="InuGeneral">Genel</string>
     <string name="InuMiscellaneous">Çeşitli</string>
     <string name="InuWideChannelPosts">Geniş gönderiler</string>
@@ -104,7 +104,7 @@
     <string name="InuOutgoingMessages">Giden mesajlar</string>
     <string name="InuChannelMessages">Gönderi paylaşabildiğiniz kanallar</string>
     <string name="InuSameAsIncoming">Gelen ile aynı</string>
-    <string name="InuDoubleTapInfo">Çift dokunma eylemleri, normal dokunmaları yukarıdaki süre kadar geciktirir.</string>
+    <string name="InuDoubleTapInfo">Not: Telegram\'ın çift dokunmaları işleme biçimi nedeniyle, bir çift dokunma eylemini etkinleştirmek tek dokunmaların yukarıdaki süre kadar gecikmesine ve uygulamanın daha az tepkisel hissettirmesine neden olur.\nSüreyi ayarlayabilirsiniz, ancak gecikmeyi tamamen önlemenin tek yolu eylemleri devre dışı bırakmaktır.</string>
     <string name="InuQuickReaction">Hızlı Tepki</string>
     <string name="InuShowReactions">Tepkileri Göster</string>
     <string name="InuHideStories">Hikayeleri gizle</string>
@@ -135,8 +135,8 @@
     <string name="InuAttachCamera">Kamera</string>
     <string name="InuAttachCameraMode">Kamera</string>
     <string name="InuAttachCameraModeInstant">Anlık</string>
-    <string name="InuAttachCameraModeStatic">Statik</string>
-    <string name="InuAttachCameraModeFab">Kayan düğme</string>
+    <string name="InuAttachCameraModeStatic">Sabit</string>
+    <string name="InuAttachCameraModeFab">Yüzen düğme</string>
     <string name="InuAttachCameraModeTab">Alt sekme</string>
     <string name="InuRoundRecorderKeepZoom">Yakınlaştırmayı bırakınca koru</string>
     <string name="InuRoundRecorderZoomSlider">Yakınlaştırma kaydırıcısı</string>
@@ -145,7 +145,7 @@
     <string name="InuRoundRecorderExponentialZoom">Üstel yakınlaştırma</string>
     <string name="InuRoundRecorderExponentialZoomInfo">Google Kamera gibi daha pürüzsüz bir yakınlaştırma eğrisi</string>
     <string name="InuRoundRecorderDualCamera">Çift kamera</string>
-    <string name="InuRoundRecorderDualCameraInfo">Anında geçiş için ön ve arka kamerayı aynı anda açar. Daha fazla pil tüketir.</string>
+    <string name="InuRoundRecorderDualCameraInfo">Kayıt sırasında anında geçiş yapmak için hem ön hem de arka kamerayı aynı anda açar. Daha fazla pil tüketir.</string>
     <string name="InuRoundRecorderCameraApi">Yuvarlak kaydedici %1$s API\'sini kullanıyor. **%2$s API\'sine geç >**</string>
     <string name="InuRoundRecorder60Fps">Video mesajlarında 60 FPS</string>
     <string name="InuRoundRecorder60FpsInfo">Kamera destekliyorsa video mesajlarını 60 FPS hızında kaydedin.</string>
@@ -233,7 +233,7 @@
     <string name="InuHideTrendingStickers">Trend çıkartmaları gizle</string>
     <string name="InuBottomTabs">Alt sekmeler</string>
     <string name="InuBottomTabsHide">Alt sekmeleri gizle</string>
-<string name="InuBottomTabsHideInfo">Ögeler ana ekranın sol yan menüsüne taşınır</string>
+    <string name="InuBottomTabsHideInfo">Ögeler ana ekranın sol yan menüsüne taşınır</string>
     <string name="InuBottomTabsHideTopSearch">Üst aramayı gizle</string>
     <string name="InuBottomTabsHideTopSearchInfo">Alt sekmelerde Arama etkin olduğunda sohbet listesinin üstündeki arama alanını gizle</string>
     <string name="InuBottomTabsSeparateSearch">Ayrı arama düğmesi</string>
@@ -296,12 +296,12 @@
     <string name="InuStickerTimeModeHideTime">Sadece saati gizle</string>
     <string name="InuStickerTimeModeHideIncoming">Sadece gelenler için gizle</string>
     <string name="InuStickerTimeModeHideCompletely">Tamamen gizle</string>
-    <string name="InuStickerSizeDialogMessage">i like antennas</string>
+    <string name="InuStickerSizeDialogMessage">aferin köpeğe!</string>
     <string name="InuBubbleTails">Baloncuk kuyrukları</string>
     <string name="InuSendAsRoundVideo">Yuvarlak video olarak gönder</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">hav! entinyGram mı yoksa inuGram mı? 🐶</string>
-    <string name="InuMiscPreviewEditedMessage">ikisi de en iyisi 🐶⚡</string>
+    <string name="InuMiscPreviewForwardedFrom">köpekçik</string>
+    <string name="InuMiscPreviewForwardedMessage">hav!! bunu gördün mü?</string>
+    <string name="InuMiscPreviewEditedMessage">kesinlikle, artık yazım hatası yok</string>
     <string name="InuDeleteForBoth">Varsayılan olarak \"Her iki taraftan sil\"</string>
     <string name="InuDeleteForBothMessages">Mesajlar</string>
     <string name="InuDeleteForBothDms">Özel sohbetler</string>
@@ -374,7 +374,7 @@
     <string name="InuCallConfirmationTitle">Aramayı onayla</string>
     <string name="InuCallConfirmationText">**%1$s** aransın mı?</string>
     <string name="InuHdBluetoothCallAudio">Bluetooth\'ta HD arama sesi</string>
-    <string name="InuHdBluetoothCallAudioInfo">Arama sesini daha iyi Bluetooth kalitesi için medya olarak oynatır; telefonun mikrofonunu kullanır.</string>
+    <string name="InuHdBluetoothCallAudioInfo">Kulaklığı düşük kaliteli kulaklık profiline geçirmek yerine arama sesini medya olarak oynatır ve telefonun mikrofonunu kullanır. Arama başladığında bir Bluetooth cihazı bağlıysa uygulanır</string>
     <string name="InuCallRotation">Arama ekranını döndür</string>
     <string name="InuCallRotationInfo">Arama ekranının dikey modda sabit kalmak yerine cihazın dönüşünü takip etmesini sağlar. Düzen dikey mod için tasarlandı, yatay modda sıkışık görünebilir</string>
     <string name="InuConfirmInternalLinks">Dahili bağlantıları açmayı onayla</string>
@@ -390,10 +390,10 @@
     <string name="InuConfirmReactionText">**%2$s** sohbetine %1$s tepkisi gönderilsin mi?</string>
     <string name="InuNotificationIcon">Bildirim simgesi</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">entinyGram</string>
+    <string name="InuNotificationIconInugram">Inugram</string>
     <string name="InuDisableChatBubbles">Android bildirim balonlarını devre dışı bırak</string>
     <string name="InuKeepChatsInStack">Önceki sohbetleri açık tut</string>
-    <string name="InuKeepChatsInStackInfo">Başka bir sohbeti açmak, arkasındaki sohbetleri kapatmaz</string>
+    <string name="InuKeepChatsInStackInfo">Başka bir sohbet açmak arkadaki sohbetleri kapatmaz</string>
     <string name="InuInPlaceTranslation">Yerinde çeviri</string>
     <string name="InuTranslateWebPreviews">Web önizlemelerini çevir</string>
     <string name="InuKeepOriginalAfterTranslation">Orijinal metni göster</string>
@@ -420,10 +420,10 @@
     <string name="InuHideMyPhoneNumber">Telefon numaramı gizle</string>
     <string name="InuFonts">Yazı Tipleri</string>
     <string name="InuAppFont">Uygulama yazı tipi</string>
-    <string name="InuAppFontInfo">Uygulama yazı tipi olarak yalnızca özel (içe aktarılan) yazı tipleri seçilebilir.</string>
+    <string name="InuAppFontInfo">Uygulama arayüzü genelinde kullanılan yazı tipi. Uygulama yazı tipi olarak yalnızca Özel (içe aktarılmış) yazı tipleri seçilebilir.</string>
     <string name="InuFontCustomOnly">Uygulama yazı tipi olarak yalnızca Özel (içe aktarılmış) yazı tipleri seçilebilir.</string>
     <string name="InuAvailableFonts">Kullanılabilir yazı tipleri</string>
-    <string name="InuFontsInfo">Görünür yazı tipleri medya düzenleyicide görünür. Sıralamak için sürükleyin, gizlemek için göze dokunun, kaldırmak için içe aktarılan yazı tipine dokunun.</string>
+    <string name="InuFontsInfo">Görünür yazı tipleri medya düzenleyicisinin metin aracında mevcuttur. Yeniden sıralamak için sürükleyin, gizlemek için göze dokunun; kaldırmak için içe aktarılan bir yazı tipine dokunun.</string>
     <string name="InuFontAdd">Yazı tipi ekle</string>
     <string name="InuFontResetOrder">Sıralamayı sıfırla</string>
     <string name="InuFontRemove">Kaldır</string>
@@ -454,7 +454,7 @@
     <string name="InuMonoFont">Eşaralıklı (Monospace) yazı tipi</string>
     <string name="InuMonoFontInfo">Eşaralıklı bloklar için kullanılan yazı tipi — satır içi kod ve kod blokları.</string>
     <string name="InuAppFontStack">Yazı tipi yığını</string>
-    <string name="InuAppFontStackInfo">En üstteki yazı tipi asıl olandır; diğerleri eksik karakterler (CJK vb.) için yedektir. Sıralamak için sürükleyin.</string>
+    <string name="InuAppFontStackInfo">En üstteki yazı tipi birincil arayüz yazı tipidir; alttakiler ise birincil yazı tipinde bulunmayan karakterler (Çince/Japonca/Korece vb.) için yedektir. Yeniden sıralamak için sürükleyin.</string>
     <string name="InuFontStackAdd">Yazı tipi ekle</string>
     <string name="InuFontStackChoose">Yazı tipi seç</string>
     <string name="InuFontStackApply">Uygula ve yeniden başlat</string>
@@ -481,14 +481,12 @@
     <string name="InuIconReplacementSolar">@Design480 tarafından Solar</string>
     <string name="InuIconReplacementVkui">VK tarafından VKUI</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
-
     <string name="InuMapsHeader">Haritalar</string>
     <string name="InuMapProvider">Harita görünümü sağlayıcısı</string>
     <string name="InuMapProviderGoogle">Google Haritalar</string>
     <string name="InuMapPreviewProvider">Harita önizleme sağlayıcısı</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-
     <string name="InuReplyIn">Şurada yanıtla…</string>
     <string name="InuDeletedMessage">Silinmiş mesaj</string>
     <string name="InuDeletedMessageIdFormat">Kimlik %1$d</string>
@@ -509,23 +507,18 @@
     <string name="InuRegDate">Kayıt Tarihi: %s</string>
     <string name="InuJoinDate">Katılma tarihi: %s</string>
     <string name="InuCreatedDate">Oluşturulma tarihi: %s</string>
-
     <string name="InuChatVoiceInAttach">Eklerde kaydedici</string>
     <string name="InuChatVoiceInAttachInfo">Ses/video kayıt düğmesini giriş çubuğundan ek paneline taşır</string>
     <string name="InuKeepScreenOnRecording">Kayıt sırasında ekranı açık tut</string>
     <string name="InuKeepScreenOnRecordingInfo">Sesli veya görüntülü mesaj kaydederken ekranın kapanmasını engeller</string>
-
     <string name="InuDisableIntroSticker">Tanıtım çıkartması gönderme</string>
     <string name="InuDisableIntroStickerInfo">…ve karşılama çıkartma önerilerini gizle</string>
-
     <string name="InuRoundDefaultCamera">Varsayılan yuvarlak mesaj kamerası</string>
     <string name="InuRoundCameraFront">Ön</string>
     <string name="InuRoundCameraRear">Arka</string>
     <string name="InuRoundCameraAsk">Her seferinde sor</string>
-
     <string name="InuDisableScrimBlur">Karartma bulanıklığını devre dışı bırak</string>
-    <string name="InuDisableScrimBlurInfo">Menü ve önizlemelerin arkasında bulanık arka plan yerine düz karartma. Takılmaları azaltabilir.</string>
-
+    <string name="InuDisableScrimBlurInfo">Bağlam menülerinin ve önizlemelerin arkasındaki bulanık arka planı düz bir karartmayla değiştirir. Etkinleştirmek takılmaları azaltabilir.</string>
     <string name="InuDisableGlassGlare">Cam parlamasını devre dışı bırak</string>
     <string name="InuDisableProfileAvatarBlur">Profil avatarı bulanıklığını devre dışı bırak</string>
     <string name="InuClownAvatarsSection">Engellenen avatarlar</string>
@@ -545,12 +538,9 @@
     <string name="InuNicheSettingsInfo">Herkesin ihtiyaç duymadığı ancak istenen özellikler burada bulunur. Çalışmıyorlarsa kaldırılacaklar.</string>
     <string name="InuNicheUnlockedToast">kanka entiny tv\'yi açma lütfen💀💀</string>
     <string name="InuNicheAlreadyUnlockedToast">kanka, bunu zaten açtın 💀</string>
-
     <string name="InuReduceMenuMotion">Menü hareketlerini azalt</string>
     <string name="InuReduceMenuMotionInfo">Bağlam menüsü kademeli açılışını atlar ve mesaj menüsü animasyonlarını sadeleştirir</string>
-
     <string name="InuProfilePhotoGradientFade">Profil fotoğrafı bulanıklığını devre dışı bırak</string>
-
     <string name="InuNonIslandUI">Klasik Arayüz</string>
     <string name="InuTypographyAndIcons">Tipografi &amp; simgeler</string>
     <string name="InuMotion">Hareket</string>
@@ -572,9 +562,7 @@
     <string name="InuNonIslandGlobalSearch">Genel arama</string>
     <string name="InuNonIslandChatElements">Sohbet ögeleri</string>
     <string name="InuNonIslandHint">Klasik Arayüz, yeni (>12.6) \"Likit Cam\" arayüz değişikliklerinin bazılarını eski düz tasarıma geri döndürür (mümkün olduğu kadar).\nMuhtemelen bir sürü görsel hata olabilir, bilginize.</string>
-
     <string name="InuHideFadeView">Solma görünümlerini gizle</string>
-
     <string name="InuStripTrackingParams">İzleme parametrelerini temizle</string>
     <string name="InuStripTrackingParamsOnOpen">Bağlantıları açarken</string>
     <string name="InuStripTrackingParamsOnPaste">Yapıştırırken</string>
@@ -585,7 +573,6 @@
     <string name="InuStripTrackingParamsUpdated">Kurallar güncellendi</string>
     <string name="InuStripTrackingParamsAlreadyLatest">Zaten en son kural setindesiniz</string>
     <string name="InuStripTrackingParamsUpdateFailed">Kurallar güncellenemedi</string>
-
     <string name="InuWebPreviewReplacements">Web önizleme değişiklikleri</string>
     <string name="InuWebPreviewEnabled">Değişiklikleri etkinleştir</string>
     <string name="InuWebPreviewReplacementsInfo">Web önizlemeleri alınırken URL\'lere uygulanan Regex değişiklikleri. Silmek için uzun basın.</string>
@@ -594,7 +581,6 @@
     <string name="InuWebPreviewReset">Varsayılanlara sıfırla</string>
     <string name="InuWebPreviewPattern">Desen (regex)</string>
     <string name="InuWebPreviewReplacement">Yeni değer</string>
-
     <string name="InuReactionsInRow">Satırdaki tepkiler</string>
     <string name="InuChatInputMaxLines">Sohbet girişi azami satır sayısı</string>
     <string name="InuChatInputTextSize">Giriş metni boyutu</string>
@@ -602,7 +588,6 @@
     <string name="InuReactionBarBelowInfo">Tepkiler çubuğunu menünün altına taşır</string>
     <string name="InuChatViewsBottom">Erişilebilir görüntüleme listesi</string>
     <string name="InuChatViewsBottomInfo">Mesaj görüntüleme/tepki listesi ögesini en alta taşır</string>
-
     <string name="InuPinnedReactions">Sabitlenmiş tepkiler</string>
     <string name="InuPinnedReactionsInfo">Tepkileri, tepki çubuğunun başına sabitleyin.</string>
     <string name="InuPinnedReactionsHeader">Sabitlenmiş tepkiler</string>
@@ -611,9 +596,7 @@
     <string name="InuPinnedReactionsCopyServerConfirm">Bu işlem, mevcut sabitlenmiş tepkilerinizi sunucu tarafından sağlanan popüler tepkilerle değiştirecektir. Devam edilsin mi?</string>
     <string name="InuPinnedReactionsRemoveAll">Tümünü kaldır</string>
     <string name="InuPinnedReactionsRemoveAllConfirm">Tüm sabitlenmiş tepkiler kaldırılsın mı?</string>
-
     <string name="InuOldMentionIndicator">Eski bahsetme göstergesi</string>
-
     <string name="InuShowForwardTime">İletilme zamanını göster</string>
     <string name="InuForwardHeaderMode">İletim başlığı</string>
     <string name="InuForwardHeaderModeRegular">Normal</string>
@@ -622,7 +605,6 @@
     <string name="InuForwardHeaderModeCompact">Kompakt</string>
     <string name="InuShowForwardsCount">Yönlendirme sayısını göster</string>
     <string name="InuCompactEdited">Küçük düzenlendi göstergesi</string>
-
     <string name="InuAddToStickersGifs">Çıkartmalara/GIF\'lere ekle</string>
     <string name="InuLongTapAction">Uzun dokunma eylemi</string>
     <string name="InuMenuMode">Mod</string>
@@ -637,7 +619,6 @@
     <string name="InuReplyInDms">Özel sohbetlerde yanıtla</string>
     <string name="InuHiddenCaptionDescription">Açıklamalar kaldırıldı</string>
     <string name="InuHiddenSendersAndCaptionDescription">Gönderen adları ve açıklamalar kaldırıldı</string>
-
     <string name="InuTextClassifierMode">Metin sınıflandırıcı modu</string>
     <string name="InuTextClassifierModeInfo">Metin sınıflandırıcı, metne çift dokunulduğunda seçimi otomatik genişleten bir sistem bileşenidir</string>
     <string name="InuTextClassifierModeNative">Orijinal</string>
@@ -645,11 +626,8 @@
     <string name="InuTextClassifierModeImprovedInfo">Yanlış pozitifleri azaltmak için yalnızca belirli öge türlerini işler</string>
     <string name="InuTextClassifierModeOff">Kapalı</string>
     <string name="InuTextClassifierModeOffInfo">Metin sınıflandırıcıyı kapatmak metin seçme tepkiselliğini artırır</string>
-
     <string name="InuSuggestCustomEmojiAfter">Özel emojileri normal emojilerden sonra öner</string>
     <string name="InuSuggestCustomEmojiAfterInfo">\":kısakod\" öneri penceresinde hareketli/özel emojileri normal olanlardan önce değil sonra gösterir</string>
-
-
     <string name="InuFormattingPopup">Özel biçimlendirme penceresi</string>
     <string name="InuFormattingPopupInfo">Varsayılan zengin metin biçimlendirme menüsünü etkileşimli bir açılır pencere ile değiştirir.\nÖzelleştirmek için tıklayın…</string>
     <string name="InuFormattingPopupItems">Açılır pencere düğmeleri</string>
@@ -660,7 +638,6 @@
     <string name="InuCut">Kes</string>
     <string name="InuCodeLanguage">Kod dili</string>
     <string name="InuVersion">entinyGram v%1$s (derleme %2$s)</string>
-
     <string name="InuSearchFilter">Medyaya göre filtrele</string>
     <string name="InuSearchFilterPhotos">Fotoğraflar</string>
     <string name="InuSearchFilterVideos">Videolar</string>
@@ -701,7 +678,6 @@
     <string name="InuAppIconLicenseInugram">Yer tutucu simge, daha iyisini katkıda bulunmaktan çekinmeyin</string>
     <string name="InuAppIconLicenseTelegram">Simge **Telegram** tarafından yapılmıştır. Tüm hakları saklıdır.</string>
     <string name="InuJumpToBeginning">En başa git</string>
-
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Güncelleme kanalı</string>
     <string name="InuUpdates">Güncellemeler</string>
@@ -730,7 +706,7 @@
     <string name="InuFontStyles_other">%1$d stil</string>
     <string name="InuBackupImportSheetApply">Evet, uygula</string>
     <string name="InuBackupImportSheetCancel">Hayır, olduğu gibi bırak</string>
-    <string name="InuBackupSettings">Yedekleme ve sıfırlama</string>
+    <string name="InuBackupSettings">Yedekle ve sıfırla</string>
     <string name="InuBackupReset">Ayarları sıfırla</string>
     <string name="InuBackupResetConfirm">Tüm entinyGram ayarları varsayılan değerlerine sıfırlanacaktır. Sohbetleriniz, hesaplarınız ve Telegram\'ın kendi ayarları aynı kalır.\n\nBu işlem geri alınamaz.</string>
     <string name="InuBackupResetSuccess">%1$d ayar sıfırlandı</string>
@@ -757,7 +733,7 @@
     <string name="InuOpenByUserId">Aramada ve mesajlarda Kimlik ile aç</string>
     <string name="InuOpenByUserIdInfo">Aramada sayı girerken veya mesajlardaki sayılara dokunurken doğrudan profil kısayolu gösterin.</string>
     <string name="InuReorderAccounts">Hesapları yeniden sırala</string>
-    <string name="InuReorderAccountsInfo">Ayarlar listesinde ve hesap seçicide hesapları yeniden sıralamak için sürükleyin.</string>
+    <string name="InuReorderAccountsInfo">Yeniden sıralamak için bir hesaba uzun basın ve sürükleyin. Bu sıra ayarlar listesi ve hesap seçici için geçerlidir.</string>
     <string name="InuCreateAsSupergroup">Süper grup olarak oluştur</string>
     <string name="InuFeed">Akış</string>
     <string name="InuFeedToggleInfo">Akışı menülere ve alt sekmelere ekler. Varsayılan olarak kapalıdır; alt sekme için uygulamanın yeniden başlatılması gerekir</string>
@@ -797,15 +773,15 @@
     <string name="InuProxyImported_other">%1$d proxy içe aktarıldı</string>
     <string name="InuFasterDownloads">Daha hızlı indirmeler</string>
     <string name="InuFasterUploads">Daha hızlı yüklemeler</string>
-    <string name="InuFasterTransfersInfo">Daha büyük parçalar ve daha çok eşzamanlı istek. Hızı artırabilir de azaltabilir de.</string>
+    <string name="InuFasterTransfersInfo">Parça boyutunu ve eşzamanlı istek sayısını artırır. Aktarım hızını artırabilir ancak olumsuz bir etkiye de yol açabilir (özellikle Premium olmayan kullanıcılar için)</string>
     <string name="InuSendMp4DocumentAsVideo">MP4 belgelerini video olarak gönder</string>
     <string name="InuSendMp4DocumentAsVideoInfo">Dosyalar aracılığıyla eklenen MP4 dosyaları dönüştürülmeden oynatılabilir video olarak gönderilir</string>
     <string name="InuMentionInsertTitle">Bahsetme ekle</string>
     <string name="InuPasscode">Parola</string>
     <string name="InuPasscodeNeeded">Önce bir Telegram parolası ayarlayın.</string>
-    <string name="InuPasscodeShowInSettings">entinyGram ayarlarında göster</string>
-    <string name="InuPasscodeShowInSettingsInfo">Kapalıyken bu sayfa yalnızca aşağıdaki bağlantıyla açılır — şimdi kaydedin.</string>
-    <string name="InuPasscodeAccountsInfo">Hesaba özel parolalar: kilit ekranında parolayı girerek kilidi açıp o hesaba geçin.</string>
+    <string name="InuPasscodeShowInSettings">Inugram ayarlarında göster</string>
+    <string name="InuPasscodeShowInSettingsInfo">Kapalı olduğunda, bu sayfa **yalnızca** aşağıdaki bağlantı üzerinden açılabilir. Şimdi kaydedin — bir kez oluşturulduktan sonra değişmez.</string>
+    <string name="InuPasscodeAccountsInfo">Her hesabın kendine ait bir parolası olabilir. Kilit ekranında bu parolayı girmek uygulamanın kilidini açar ve o hesaba geçiş yapar.</string>
     <string name="InuPasscodeStateNone">Yapılandırılmadı</string>
     <string name="InuPasscodeStateSet">Parola ayarlandı</string>
     <string name="InuPasscodeStateHidden">Gizli</string>
@@ -815,7 +791,7 @@
     <string name="InuPasscodeRemoveConfirm">Bu hesap için parola kaldırılsın mı?</string>
     <string name="InuPasscodeOpenStockSettings">Orijinal parola ayarları</string>
     <string name="InuPasscodeHideAccount">Hesabı gizle</string>
-    <string name="InuPasscodeHideAccountInfo">Gizli hesaplar seçicide ve bildirimlerde görünmez; parolasıyla yeniden ortaya çıkarılır.</string>
+    <string name="InuPasscodeHideAccountInfo">Gizli hesaplar hesap değiştiricide görünmez ve bildirim oluşturmaz. Kilit ekranında bu hesabın parolasını girerek onları tekrar görünür yapabilirsiniz.</string>
     <string name="InuPasscodeAllowPanic">Panik kodu ile çıkış yap</string>
     <string name="InuPasscodeAllowPanicInfo">Panik kodu girildiğinde bu hesaptan çıkış yapılacaktır.</string>
     <string name="InuPasscodePanic">Panik kodu</string>
@@ -832,7 +808,7 @@
     <string name="InuMessageMenuQuickActionsPlacement">Yerleşim</string>
     <string name="InuPlacementTop">Üst</string>
     <string name="InuPlacementBottom">Alt</string>
-    <string name="InuMessageMenuOrderInfo">Mesaj menüsü ögelerini yeniden sıralayın veya gizleyin. Taşımak için sürükleyin, gizlemek için dokunun.</string>
+    <string name="InuMessageMenuOrderInfo">Mesaj bağlam menüsündeki ögeleri yeniden sıralayın veya gizleyin. Yeniden düzenlemek için tutamağı sürükleyin, göstermek/gizlemek için dokunun</string>
     <string name="InuMessageMenuOrderInfoBottom">Hızlı eylemler satırına taşımak için bir ögeye uzun basın</string>
     <string name="InuMessageMenuReset">Varsayılana sıfırla</string>
     <string name="InuMenuSlotDelete">Sil / Bağlantıyı kopyala</string>
@@ -842,7 +818,7 @@
     <string name="InuMenuBottomRowFull">Hızlı eylemler satırı dolu (en fazla 4)</string>
     <string name="InuChatMenuOrder">Sohbet menüsü</string>
     <string name="InuChatMenuItems">Ögeler</string>
-    <string name="InuChatMenuOrderInfo">Sohbetin üç nokta menüsü ögelerini yeniden sıralayın veya gizleyin. Taşımak için sürükleyin, gizlemek için anahtarı kapatın.</string>
+    <string name="InuChatMenuOrderInfo">Sohbetlerdeki üç nokta menüsündeki ögeleri yeniden sıralayın veya gizleyin. Yeniden düzenlemek için tutamağı sürükleyin, gizlemek için anahtarı kapatın.</string>
     <string name="InuChatMenuReset">Varsayılana sıfırla</string>
     <string name="InuDialogsMenuOrder">Seçenekler menüsü</string>
     <string name="InuDialogsMenuItems">Öğeler</string>
@@ -854,14 +830,14 @@
     <string name="InuGoToMessagePrompt">Mesaj Kimliği (ID)</string>
     <string name="InuPrivacySecurity">Gizlilik &amp; Güvenlik</string>
     <string name="InuPerAccountPasscode">Hesap başına parola</string>
-    <string name="InuHideInugramSettings">entinyGram ayarlarını gizle</string>
+    <string name="InuHideInugramSettings">Inugram ayarlarını gizle</string>
     <string name="InuParanoiaDisableNotifications">Bildirimleri devre dışı bırak</string>
     <string name="InuParanoiaHideOtherAccounts">Diğer hesapları gizle</string>
     <string name="InuParanoiaHideFolders">Klasörleri gizle</string>
     <string name="InuParanoiaDisguise">Telegram olarak gizle</string>
-    <string name="InuParanoiaDisguiseInfo">Yalnızca başlatıcı simgesi ve adı değişir; bildirimler hâlâ \"entinyGram\" yazar.</string>
+    <string name="InuParanoiaDisguiseInfo">Yalnızca başlatıcı simgesi ve adı değişir. Android kısıtlamaları nedeniyle bildirimler ve uygulama içi ad hâlâ \"Inugram\" olarak görünür.</string>
     <string name="InuParanoiaMode">Paranoia modu</string>
-    <string name="InuParanoiaModeInfo">\"Tehlikeli\" sohbetleri gizler ve uygulamayı isteğe bağlı olarak kılığa sokar — karıştıran bir göze hazırlıklı olun.</string>
+    <string name="InuParanoiaModeInfo">Paranoia modu, \"tehlikeli\" sohbetleri gizleyerek ve isteğe bağlı olarak varsayılan uygulama gibi görünerek bir başkasının telefonunuzu kontrol etmesine \"hazırlıklı\" olmanızı sağlar.</string>
     <string name="InuParanoiaLauncherShortcut">Başlatıcı kısayolu</string>
     <string name="InuParanoiaLauncherShortcutInfo">Paranoia moduna hızlıca girmek için uygulama simgesine uzun basma kısayolu ekleyin. Etkinleştiğinde gizlenir.</string>
     <string name="InuParanoiaSelect">Gizlenecek sohbetler</string>
@@ -880,23 +856,20 @@
     <string name="InuParanoiaEnableConfirm">Paranoia moduna girilip yeniden başlatılsın mı? Bu giriş kaybolacaktır — geri dönmenin tek yolu sohbet aramasında çıkış kodunu yazmak veya uygulamayı yeniden yüklemektir!</string>
     <string name="InuParanoiaNeedSetup">Önce bir çıkış kodu belirleyin ve en az bir sohbet seçin.</string>
     <string name="InuParanoiaExit">Paranoia modundan çık</string>
-
     <string name="InuBotSettings">Bot Ayarları</string>
     <string name="InuBotHelp">Bot Yardımı</string>
-
-    <string name="InuCrashTitle">entinyGram geçen sefer çöktü</string>
-    <string name="InuCrashTitleOom">entinyGram bellek yetersizliği yaşadı</string>
+    <string name="InuCrashTitle">Inugram geçen sefer çöktü</string>
+    <string name="InuCrashTitleOom">Inugram bellek yetersizliği yaşadı</string>
     <string name="InuCrashDesc">Bunun için üzgünüz. Düzeltilmesine yardımcı olmak için çökme günlüğünü geliştiriciyle paylaşabilirsiniz.</string>
     <string name="InuCrashDescOom">Bunun için üzgünüz. Çökme günlükleri bellek yetersizliği sorunları için pek yararlı değildir — bellek dökümü (heap dump) daha çok yardımcı olur.</string>
     <string name="InuCrashDescHeapDump">Bir bellek dökümü de kaydedildi. BUNU PAYLAŞMAYIN! Özel veriler içerir! İsterseniz kendiniz inceleyin ve bulgularınızı paylaşın — bu çok yardımcı olur.</string>
-    <string name="InuCrashOomEnableLogs">Gelecekteki her OOM durumunda bellek dökümü oluşturmak için entinyGram Ayarları > Hakkında bölümünden hata ayıklama modunu etkinleştirin.</string>
+    <string name="InuCrashOomEnableLogs">Gelecekteki her OOM durumunda bellek dökümü oluşturmak için Inugram Ayarları > Hakkında bölümünden hata ayıklama modunu etkinleştirin.</string>
     <string name="InuCrashShare">Çökme günlüğünü paylaş</string>
     <string name="InuCrashShareHeapDump">Bellek dökümünü kaydet</string>
     <string name="InuCrashDiscard">Vazgeç</string>
     <string name="InuCrashChannel">Çökme kurtarma</string>
-    <string name="InuCrashNotifTitle">entinyGram çöktü</string>
+    <string name="InuCrashNotifTitle">Inugram çöktü</string>
     <string name="InuCrashNotifText">Yeniden başlatmak için dokunun</string>
-
     <string name="InuLogs">Hata Ayıklama</string>
     <string name="InuLogsEnabled">Hata ayıklama modu</string>
     <string name="InuForceNoVibration">Tüm titreşimi kapat</string>
@@ -913,8 +886,7 @@
     <string name="InuLogsHeapUsage">Bellek Yığını (Heap): %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">Bellek dökümü (heap dump) oluştur</string>
     <string name="InuLogsMakingHeapDump">Bellek dökümü oluşturuluyor…</string>
-    <string name="InuLogsHeapDumpWarning">**ASLA** .hprof dosyasını paylaşmayın — bu, **hassas veriler** (mesajlar, jetonlar vb.) içeren bir bellek anlık görüntüsüdür ve yalnızca kendiniz incelemelisiniz. Uygulama oluşturulurken kısa süreliğine donacaktır.</string>
-
+    <string name="InuLogsHeapDumpWarning">Oluşturulan .hprof dosyasını **ASLA** hiç kimseyle paylaşmayın — bu dosya uygulamanın bellek anlık görüntüsüdür ve **hassas bilgiler** (mesajlar, jetonlar vb.) içerir.\n\nYalnızca **KENDİNİZ** inceleyin.\n\nUygulama bir süreliğine donacaktır.</string>
     <string name="InuDeleteOwnMessages">Mesajlarımı sil</string>
     <string name="InuDeleteOwnMessagesSearching">Mesajlarınız aranıyor…</string>
     <string name="InuDeleteOwnMessagesFoundProgress">Bulunan: %1$d / %2$d</string>
@@ -1041,7 +1013,6 @@
     <string name="InuSaveDeletedMessagesInfo">Silinen mesajları sohbetlerde 🗑️ işaretiyle tutar</string>
     <string name="InuSaveEditedMessages">Düzenleme geçmişini kaydet</string>
     <string name="InuSaveEditedMessagesInfo">Önceki mesaj sürümlerini kaydeder ve düzenleme geçmişini ✏️ görüntülemeyi sağlar</string>
-
     <string name="InuSaveUserInfo">Kullanıcı bilgilerini kaydet</string>
     <string name="InuSaveUserInfoInfo">Sunucu göndermeyi bıraktığında telefon ülkesi, kayıt ayı ve ad/fotoğraf değişiklik tarihlerini saklar</string>
     <string name="InuSelfDestructMedia">Süreli medya</string>
@@ -1121,13 +1092,11 @@
     <string name="InuDeleteAllProfilePhotosConfirm">Tüm profil fotoğraflarını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
     <string name="InuDeleteProfilePhotos">Profil fotoğraflarını sil</string>
     <string name="InuDeleteProfilePhotosInfo">Tüm profil fotoğraflarını veya yalnızca seçilenleri tek dokunuşla silin</string>
-
     <string name="InuDeleteMyMessages">Mesajlarımı sil</string>
     <string name="InuDeleteMyMessagesTitle">Mesajlarım silinsin mi?</string>
     <string name="InuDeleteMyMessagesConfirm">Bu sohbette gönderdiğin tüm mesajlar herkes için silinecek. Bu işlem geri alınamaz.</string>
     <string name="InuDeleteMyMessagesStarted">Mesajların siliniyor…</string>
     <string name="InuDeleteMyMessagesDone">%1$d mesajın silindi</string>
-
     <string name="InuChatExport">Sohbeti dışa aktar</string>
     <string name="InuChatExportInfo">Sohbeti profil menüsünden JSON veya HTML arşivi olarak dışa aktarın.</string>
     <string name="InuChatExportCollected">%1$d mesaj toplandı</string>
@@ -1367,7 +1336,7 @@
     <string name="InuTranslationProviderTelegram">Telegram</string>
     <string name="InuTranslationProviderFromPlugin">%1$s tarafından</string>
     <string name="InuTranslationProviderUnavailable">Kullanılamıyor</string>
-    <string name="InuTranslationProviderInfo">Ek çeviri hizmetlerini **Eklentiler >** olarak kurabilirsiniz</string>
+    <string name="InuTranslationProviderInfo">Ek çeviri hizmetlerini **Eklentiler >** bölümünden yükleyebilirsiniz</string>
     <string name="InuProfilePhotosDeleted">Tüm profil fotoğrafları silindi</string>
     <string name="InuProfilePhotosDeletedCount">%1$d profil fotoğrafı silindi</string>
     <string name="InuProfilePhotosSelected">Seçilen: %1$d</string>
@@ -1429,8 +1398,7 @@
     <string name="InuTranslateProviderTelegram">Telegram API</string>
     <string name="InuYes">Evet</string>
     <string name="InuAccountSwitchShortcut">Hesap değiştirici kısayolu</string>
-    <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine uzun basıldığında hangi hesabın açılacağını soran bir kısayol ekler</string>
-
+    <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine, hangi hesabın açılacağını soran bir uzun basma kısayolu ekler</string>
     <string name="InuBlockSleepWhileDownloading">İndirirken uyku modunu engelle</string>
     <string name="InuBlockSleepWhileDownloadingInfo">İndirme etkin olduğunda Android\'in arka planda duraklatmasını önlemek için kısmi bir wake lock tutar.</string>
     <string name="InuHideProxySponsorChat">Vekil sunucu sponsor sohbetini gizle</string>
@@ -1461,10 +1429,10 @@
     <string name="InuAttachCameraSquare">Kare kamera karosu</string>
     <string name="InuAttachCameraSquareInfo">Galerideki kamera iki yerine tek hücre kaplar</string>
     <string name="InuSortAlbumsBySize">Albümleri boyuta göre sırala</string>
-    <string name="InuSortAlbumsBySizeInfo">Ek menüsündeki albümler yeniliğe göre değil fotoğraf sayısına göre sıralanır</string>
+    <string name="InuSortAlbumsBySizeInfo">Ek menüsündeki albümler güncellik yerine fotoğraf sayısına göre sıralanır</string>
     <string name="InuDownloadDirectory">İndirme klasörü</string>
-    <string name="InuDownloadDirectoryApplied">Yalnızca yeni indirilen dosyalar için geçerlidir</string>
-    <string name="InuPreviewMessage">Önizleme</string>
+    <string name="InuDownloadDirectoryApplied">Yalnızca yeni indirilen dosyalara uygulanır</string>
+    <string name="InuPreviewMessage">Önizle</string>
     <string name="InuMinimize">Küçült</string>
     <string name="InuCenterTitleChatsInfo">Sohbet başlığını ve alt başlığı ortalar; profil resmi solda kalır. Tek başına çalışır.</string>
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
@@ -1579,8 +1547,8 @@
     <string name="InuHideProfileGiftsTabInfo">Profilin paylaşılan medya bölümünden Hediyeler sekmesini kaldırır.</string>
     <string name="InuHideGiftAuctionsHint">Hediye açık artırma afişini gizle</string>
     <string name="InuHideCacheHint">\"Yer açın\" kartını gizle</string>
-    <string name="InuTranslateAutoDetectLang">Mesaj menüsü için dili algıla</string>
-    <string name="InuTranslateAutoDetectLangInfo">Telegram\'ın çözümleyemediği mesajlarda dili cihazda algılar. Menüyü biraz yavaşlatabilir.</string>
+    <string name="InuTranslateAutoDetectLang">Mesaj menüsünde Çevirme listesine uy</string>
+    <string name="InuTranslateAutoDetectLangInfo">Mesaj dili Çevirme (DNT) listesindeyse dili otomatik algılanır ve menü ögesi gizlenir.\nBu, menünün biraz daha yavaş açılmasına neden olabilir.</string>
     <string name="InuInstantTranslateBanner">Anında çeviri başlığı</string>
     <string name="InuInstantTranslateBannerInfo">Tek bir yabancı dilde mesajdan sonra çeviri çubuğunu göster.</string>
     <string name="InuIgnoreTranslationsDisabled">\"Çeviriler devre dışı\" seçeneğini yoksay</string>
@@ -1602,7 +1570,6 @@
     <string name="InuSmallGifs">Küçük GIF\'leri göster</string>
     <string name="InuDeleteFailedProxies">Kullanılamayan Vekil Sunucuları Sil</string>
     <string name="InuDeleteFailedProxiesConfirm">Tüm kullanılamayan vekil sunucuları silmek istediğinizden emin misiniz?</string>
-
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">İletmeden önce yazar, altyazı ve sessiz gönderme anahtarları ile düzenleme.</string>
     <string name="InuForwardProHideCaption">Başlıkları gizle</string>
@@ -1613,7 +1580,6 @@
     <string name="InuForwardDownloading">Önce %1$s indiriliyor, sonra iletilecek</string>
     <string name="InuForwardDownloadFailed">Dosya indirilemedi, iletilmedi</string>
     <string name="InuForwardTooLarge">Dosya yükleme sınırını aşıyor (%1$s), iletilemez</string>
-
     <string name="InuIosButtonPlacement">Düğme yerleşimi (iOS)</string>
     <string name="InuIosButtonPlacementInfo">Ek dosya düğmesini sola ve ifade düğmesini giriş alanının sağına taşır.</string>
     <string name="InuIosInputAppearance">Görünüm (iOS)</string>
@@ -1708,12 +1674,12 @@
     <string name="InuDonateCopied">Kopyalandı</string>
     <string name="InuShowMediaSize">Medya boyutunu göster</string>
     <string name="InuPlugins">Eklentiler</string>
-    <string name="InuPluginsInfo">Eklentiler, uygulamayı genişleten kullanıcı yapımı betiklerdir. Eklentileri yalnızca güvendiğiniz kaynaklardan kurun.</string>
+    <string name="InuPluginsInfo">Eklentiler, uygulamayı genişleten kullanıcı yapımı betiklerdir. Yalnızca güvendiğiniz kaynaklardan eklenti yükleyin.</string>
     <string name="InuPluginsEnableEngine">Eklentileri etkinleştir</string>
-    <string name="InuPluginsEnableEngineInfo">Kurulu eklentileri açılışta çalıştır</string>
-    <string name="InuPluginsInstalled">Kurulu</string>
+    <string name="InuPluginsEnableEngineInfo">Yüklü eklentileri başlangıçta çalıştır</string>
+    <string name="InuPluginsInstalled">Yüklü</string>
     <string name="InuPluginsEnabled">Etkin</string>
-    <string name="InuPluginsEmpty">Kurulu eklenti yok</string>
+    <string name="InuPluginsEmpty">Yüklü eklenti yok</string>
     <string name="InuPluginsLoadFromDisk">Dosyadan yükle</string>
     <string name="InuPluginsCompactView">Kompakt görünüm</string>
     <string name="InuPluginsNormalView">Normal görünüm</string>
@@ -1721,12 +1687,12 @@
     <string name="InuPluginsViewSource">Kaynak kodunu görüntüle</string>
     <string name="InuPluginSourceTitle">Kaynak kodu</string>
     <string name="InuPluginsRemove">Kaldır</string>
-    <string name="InuPluginsRemoveTitle">%s kaldırılsın mı</string>
+    <string name="InuPluginsRemoveTitle">%s eklentisini kaldır</string>
     <string name="InuPluginsRemoveConfirm">Bu eklenti tüm verileriyle birlikte kaldırılsın mı? Bu işlem geri alınamaz.</string>
     <string name="InuPluginsRemoveAll">Tüm eklentileri kaldır</string>
-    <string name="InuPluginsRemoveAllConfirm_one">Kurulu %d eklenti tüm verileriyle birlikte kaldırılsın mı? Bu işlem geri alınamaz.</string>
-    <string name="InuPluginsRemoveAllConfirm_other">Kurulu %d eklentinin tümü tüm verileriyle birlikte kaldırılsın mı? Bu işlem geri alınamaz.</string>
-    <string name="InuPluginsByAuthor">geliştiren: %1$s</string>
+    <string name="InuPluginsRemoveAllConfirm_one">Yüklü %d eklenti tüm verileriyle birlikte kaldırılsın mı? Bu işlem geri alınamaz.</string>
+    <string name="InuPluginsRemoveAllConfirm_other">Yüklü %d eklentinin tümü, tüm verileriyle birlikte kaldırılsın mı? Bu işlem geri alınamaz.</string>
+    <string name="InuPluginsByAuthor">%1$s tarafından</string>
     <string name="InuPluginsPermissions">İzinler</string>
     <string name="InuPluginsPermissionsNone">Bu eklenti herhangi bir izin istemiyor</string>
     <string name="InuPluginGrantFs">Dosya depolama</string>
@@ -1745,20 +1711,20 @@
     <string name="InuPluginGrantInvokeRpc">Ham API erişimi</string>
     <string name="InuPluginGrantTakeout">Veri dışa aktarma oturumları</string>
     <string name="InuPluginGrantUnsafeFs">Cihaz dosyalarına erişim</string>
-    <string name="InuPluginGrantUnsafeInvokeRaw">Denetimsiz API erişimi</string>
+    <string name="InuPluginGrantUnsafeInvokeRaw">Denetlenmeyen API erişimi</string>
     <string name="InuPluginGrantUnsafeJvm">Java kodu çalıştırma</string>
     <string name="InuPluginGrantUnsafeXposed">Uygulama kodu kancaları</string>
     <string name="InuPluginGrantUnsafeNotificationCenter">Dahili olaylara erişim</string>
     <string name="InuPluginGrantUnsafeDisableApiFiltering">Hesap korumasını devre dışı bırakma</string>
-    <string name="InuPluginGrantNotificationsSuppressInfo">Uygulama çalışırken kendi bildirimlerini göndermesini durdurabilir</string>
-    <string name="InuPluginGrantTakeoutInfo">Onayınızdan sonra, olağan hız sınırları olmadan verilerinizi dışa aktarabilir</string>
-    <string name="InuPluginGrantUnsafeFsInfo">Uygulamanın erişebildiği cihazdaki her dosyayı okuyabilir ve yazabilir</string>
-    <string name="InuPluginGrantUnsafeInvokeRawInfo">Yöntem filtresini atlayarak her türlü API isteğini gönderebilir</string>
-    <string name="InuPluginGrantUnsafeJvmInfo">Kum havuzu olmadan rastgele kod çalıştırabilir</string>
-    <string name="InuPluginGrantUnsafeXposedInfo">Uygulamanın yöntemlerini değiştirerek herhangi bir bölümünün davranışını değiştirebilir</string>
-    <string name="InuPluginGrantUnsafeNotificationCenterInfo">Uygulamanın dahili olaylarını izler ve yayınlar</string>
+    <string name="InuPluginGrantNotificationsSuppressInfo">Çalışırken uygulamanın kendi bildirimlerini göndermesini durdurabilir</string>
+    <string name="InuPluginGrantTakeoutInfo">Onayınızdan sonra verilerinizi normal hız sınırları olmadan dışa aktarabilir</string>
+    <string name="InuPluginGrantUnsafeFsInfo">Uygulamanın erişebildiği cihazdaki tüm dosyaları okuyup yazabilir</string>
+    <string name="InuPluginGrantUnsafeInvokeRawInfo">Yöntem filtresini atlayarak herhangi bir API isteği gönderebilir</string>
+    <string name="InuPluginGrantUnsafeJvmInfo">Korumalı alan dışında rastgele kod çalıştırabilir</string>
+    <string name="InuPluginGrantUnsafeXposedInfo">Uygulama yöntemlerini değiştirerek herhangi bir bölümün davranışını değiştirebilir</string>
+    <string name="InuPluginGrantUnsafeNotificationCenterInfo">Uygulamanın dahili olaylarını izleyip yayımlar</string>
     <string name="InuPluginGrantUnsafeDisableApiFilteringInfo">Eklentinin hesap açısından kritik API çağrılarına erişmesine izin verir</string>
-    <string name="InuPluginGrantUnknown">Uygulamanın bu sürümü tarafından tanınmıyor, hiçbir etkisi yok</string>
+    <string name="InuPluginGrantUnknown">Bu uygulama sürümü tarafından tanınmıyor; etkisi yok</string>
     <string name="InuPluginScopeReadSelf">profiliniz</string>
     <string name="InuPluginScopeReadPeers">kullanıcılar ve sohbetler</string>
     <string name="InuPluginScopeReadMessages">mesajlar</string>
@@ -1766,11 +1732,11 @@
     <string name="InuPluginScopeReadHistory">mesaj geçmişi</string>
     <string name="InuPluginScopeReadDraft">taslaklar</string>
     <string name="InuPluginScopeWriteSend">mesaj gönderme</string>
-    <string name="InuPluginScopeWriteEdit">mesaj düzenleme</string>
-    <string name="InuPluginScopeWriteDelete">mesaj silme</string>
-    <string name="InuPluginScopeWriteForward">mesaj iletme</string>
+    <string name="InuPluginScopeWriteEdit">mesajları düzenleme</string>
+    <string name="InuPluginScopeWriteDelete">mesajları silme</string>
+    <string name="InuPluginScopeWriteForward">mesajları iletme</string>
     <string name="InuPluginScopeWriteReact">mesajlara tepki verme</string>
-    <string name="InuPluginScopeWriteRead">sohbetleri okundu olarak işaretleme</string>
+    <string name="InuPluginScopeWriteRead">sohbetleri okundu işaretleme</string>
     <string name="InuPluginScopeWriteTyping">yazıyor durumunu gösterme</string>
     <string name="InuPluginScopeWriteDraft">taslakları düzenleme</string>
     <string name="InuPluginScopeUpdNewMessage">yeni mesajlar</string>
@@ -1785,65 +1751,65 @@
     <string name="InuPluginScopeOnUpdate">%1$s izleme</string>
     <string name="InuPluginScopeInterceptUpdate">%1$s yakalama</string>
     <string name="InuPluginScopeAllUpdates">tüm güncellemeler</string>
-    <string name="InuPluginTrustTitle">Yalnızca güvendiğiniz eklentileri kurun</string>
-    <string name="InuPluginTrustInfo">Eklentiler bir kum havuzunda çalışır ve yalnızca bildirdikleri izinleri alır; bunlar bir sonraki ekranda listelenir.\nBu izinleri vermek yine de bir eklentinin şunları yapmasına izin verir:</string>
-    <string name="InuPluginTrust1Title">Sizin adınıza hareket etmek</string>
-    <string name="InuPluginTrust1Text">Hesap izinleri, adınıza mesaj okur, gönderir ve siler.</string>
-    <string name="InuPluginTrust2Title">Verilerinize ulaşmak</string>
-    <string name="InuPluginTrust2Text">Dosya ve ağ izinleri sohbetleri, medyayı ve ayarları okur ve bunları her yere gönderebilir.</string>
-    <string name="InuPluginTrust3Title">Kum havuzundan çıkmak</string>
-    <string name="InuPluginTrust3Text">Güvenli olmayan bir izin kum havuzunu kaldırır ve uygulamanın erişebildiği her şeyle kod çalıştırır.</string>
+    <string name="InuPluginTrustTitle">Yalnızca güvendiğiniz eklentileri yükleyin</string>
+    <string name="InuPluginTrustInfo">Eklentiler korumalı alanda çalışır ve yalnızca beyan ettikleri, sonraki ekranda listelenen izinleri alır.\nBunları vermek yine de eklentinin şunları yapmasına izin verir:</string>
+    <string name="InuPluginTrust1Title">Sizin adınıza hareket etme</string>
+    <string name="InuPluginTrust1Text">Hesap izinleri adınıza mesajları okur, gönderir ve siler.</string>
+    <string name="InuPluginTrust2Title">Verilerinize erişme</string>
+    <string name="InuPluginTrust2Text">Dosya ve ağ izinleri sohbetleri, medyayı ve ayarları okur ve bunları herhangi bir yere gönderebilir.</string>
+    <string name="InuPluginTrust3Title">Korumalı alandan çıkma</string>
+    <string name="InuPluginTrust3Text">Güvenli olmayan bir izin korumalı alanı kaldırır ve uygulamanın erişebildiği her şeyle kod çalıştırır.</string>
     <string name="InuPluginTrustWarning">Kötü amaçlı bir eklenti hesabınızı ele geçirebilir</string>
-    <string name="InuPluginTrustAccept">Anladım, devam et</string>
+    <string name="InuPluginTrustAccept">Anlıyorum, devam et</string>
     <string name="InuPluginsDevMode">Geliştirici modu</string>
-    <string name="InuPluginsDevModeInfo">Eklentileri bilgisayarınızdan adb ile gönderin; sormadan kurulur ve yeniden yüklenir</string>
-    <string name="InuPluginsDevModeBanner">Bu cihaza adb erişimi olan her şey, size sormadan bir eklenti kurabilir ve ona istediği izni verebilir. İşiniz bitince bunu kapatın.</string>
+    <string name="InuPluginsDevModeInfo">Eklentileri bilgisayarınızdan adb üzerinden sorulmadan yükleyip yeniden yüklemek için gönderin</string>
+    <string name="InuPluginsDevModeBanner">Bu cihaza adb erişimi olan her şey bir eklenti yükleyip ona sorulmadan herhangi bir izin verebilir. İşiniz bitince bunu kapatın.</string>
     <string name="InuPluginsDevModeTurnOff">Geliştirici modunu kapat</string>
-    <string name="InuPluginsDevChip">dev</string>
+    <string name="InuPluginsDevChip">geliştirici</string>
     <string name="InuPluginsDevPushed_one">%d eklenti gönderildi</string>
     <string name="InuPluginsDevPushed_other">%d eklenti gönderildi</string>
     <string name="InuPluginsDevModeSheetTitle">Geliştirici modu açılsın mı?</string>
-    <string name="InuPluginsDevModeSheetInfo">Eklenti geliştirmek için vardır: bilgisayarınız adb ile bir dosya gönderir ve uygulama onu hemen kurar.\nAçıkken:</string>
-    <string name="InuPluginsDevMode1Title">adb ile gelen her şey</string>
-    <string name="InuPluginsDevMode1Text">Bağlandığınız herhangi bir bilgisayar ve bu cihazla zaten adb üzerinden konuşan her şey (ör. Shizuku) bir eklenti gönderebilir.</string>
+    <string name="InuPluginsDevModeSheetInfo">Eklenti geliştirmek içindir: bilgisayarınız adb üzerinden bir dosya gönderir ve uygulama bunu hemen yükler.\nAçıkken:</string>
+    <string name="InuPluginsDevMode1Title">adb erişimi olan her şey</string>
+    <string name="InuPluginsDevMode1Text">Bağlandığınız herhangi bir bilgisayar ve bu cihazla adb üzerinden iletişim kuran her şey (ör. Shizuku) eklenti gönderebilir.</string>
     <string name="InuPluginsDevMode2Title">İzin incelemesi yok</string>
-    <string name="InuPluginsDevMode2Text">Gönderilen eklenti kurulur ve bildirdiği her şey verilir. Güven ekranı yok, izin listesi yok, geri alma yok.</string>
+    <string name="InuPluginsDevMode2Text">Gönderilen eklenti yüklenir ve beyan ettiği tüm izinler verilir. Güven ekranı, izin listesi veya geri alma yoktur.</string>
     <string name="InuPluginsDevMode3Title">Siz kapatana kadar</string>
-    <string name="InuPluginsDevMode3Text">Yeniden başlatmalarda da açık kalır. Eklentiler sayfası açıkken sizi uyarır.</string>
-    <string name="InuPluginsDevModeSheetWarning">Eklenti yazmıyorsanız bunu kapalı bırakın</string>
-    <string name="InuPluginsDevModeSheetAccept">Anladım, aç</string>
-    <string name="InuPluginObfuscatedTitle">Gizlenmiş kod</string>
-    <string name="InuPluginObfuscatedInfo">Bu eklentinin kodu kasıtlı olarak gizlenmiş görünüyor. Gizleme çoğu zaman kötü amaçlı davranışı saklamak için kullanılır; eklentiyi yalnızca kaynağına tamamen güveniyorsanız tutun.</string>
+    <string name="InuPluginsDevMode3Text">Yeniden başlatmalarda açık kalır. Açıkken eklentiler sayfası sizi uyarır.</string>
+    <string name="InuPluginsDevModeSheetWarning">Eklenti yazmıyorsanız bunu kapalı tutun</string>
+    <string name="InuPluginsDevModeSheetAccept">Anlıyorum, aç</string>
+    <string name="InuPluginObfuscatedTitle">Karmaşıklaştırılmış kod</string>
+    <string name="InuPluginObfuscatedInfo">Bu eklentinin kodu kasıtlı olarak karmaşıklaştırılmış görünüyor. Karmaşıklaştırma genellikle kötü amaçlı davranışları gizlemek için kullanılır — bu eklentiyi yalnızca kaynağına tamamen güveniyorsanız tutun.</string>
     <string name="InuPluginMinifiedTitle">Küçültülmüş kod</string>
-    <string name="InuPluginMinifiedInfo">Bu eklentinin kodu küçültülmüş görünüyor, bu yüzden kolayca incelenemez. Eklentiyi yalnızca kaynağına güveniyorsanız tutun.</string>
+    <string name="InuPluginMinifiedInfo">Bu eklentinin kodu küçültülmüş görünüyor, bu yüzden kolayca incelenemez. Bu eklentiyi yalnızca kaynağına güveniyorsanız tutun.</string>
     <string name="InuPluginsSafeMode">Güvenli mod</string>
-    <string name="InuPluginsSafeModeShortcut">Uygulamayı kapat, sonraki açılış güvenli mod</string>
+    <string name="InuPluginsSafeModeShortcut">Uygulamayı kapat; sonraki başlangıç güvenli modda</string>
     <string name="InuPluginsSafeModeForced">Bu oturumda hiçbir eklenti çalışmıyor. Yeniden çalıştırmak için uygulamayı yeniden başlatın.</string>
-    <string name="InuPluginsSafeModeCrashed">Uygulama son seferde bir eklenti başlarken durdu, bu yüzden bu oturumda hiçbir eklenti çalışmıyor.</string>
+    <string name="InuPluginsSafeModeCrashed">Bir eklenti başlatılırken uygulama son seferinde durduğundan bu oturumda hiçbir eklenti çalışmıyor.</string>
     <string name="InuPluginsSafeModeHostError">Dahili bir hata bu oturumdaki tüm eklentileri durdurdu. Yeniden çalıştırmak için uygulamayı yeniden başlatın.</string>
-    <string name="InuPluginsSafeModeCrashLoop">Uygulama, eklentiler başladıktan kısa süre sonra art arda iki kez çöktü, bu yüzden bu oturumda hiçbir eklenti çalışmıyor.</string>
-    <string name="InuPluginInstall">Kur</string>
-    <string name="InuPluginInstallTitle">Eklentiyi kur</string>
-    <string name="InuPluginInstallEnable">Kurulumdan sonra etkinleştir</string>
-    <string name="InuPluginInstalled">%1$s kuruldu</string>
+    <string name="InuPluginsSafeModeCrashLoop">Eklentiler başladıktan kısa süre sonra uygulama art arda iki kez çöktüğünden bu oturumda hiçbir eklenti çalışmıyor.</string>
+    <string name="InuPluginInstall">Yükle</string>
+    <string name="InuPluginInstallTitle">Eklenti yükle</string>
+    <string name="InuPluginInstallEnable">Yükledikten sonra etkinleştir</string>
+    <string name="InuPluginInstalled">%1$s yüklendi</string>
     <string name="InuPluginUpdate">Güncelle</string>
     <string name="InuPluginUpdateTitle">Eklentiyi güncelle</string>
     <string name="InuPluginUpdatePermissions">Yeni izinler</string>
-    <string name="InuPluginUpdatePermissionsNone">Bu güncelleme yeni bir izin istemiyor.</string>
+    <string name="InuPluginUpdatePermissionsNone">Bu güncelleme yeni izin istemiyor.</string>
     <string name="InuPluginUpdatePermissionsDropped">Artık istenmiyor</string>
-    <string name="InuPluginUpdatePermissionsKeptTitle">Zaten verilmiş</string>
+    <string name="InuPluginUpdatePermissionsKeptTitle">Zaten verildi</string>
     <string name="InuPluginUpdatePermissionsKept_one">Zaten verilmiş %1$d izni incele</string>
     <string name="InuPluginUpdatePermissionsKept_other">Zaten verilmiş %1$d izni incele</string>
     <string name="InuPluginUpdated">%1$s güncellendi</string>
     <string name="InuPluginCrashed">%1$s çöktü ve kapatıldı</string>
-    <string name="InuPluginAlreadyInstalled">%1$s zaten kurulu</string>
+    <string name="InuPluginAlreadyInstalled">%1$s zaten yüklü</string>
     <string name="InuPluginsErrorNoManifest">Geçerli bir eklenti değil (meta veri başlığı eksik)</string>
     <string name="InuPluginsErrorRead">Seçilen dosya okunamadı</string>
     <string name="InuPluginsErrorWrite">Eklenti dosyası kaydedilemedi</string>
-    <string name="InuPluginsErrorApiVersion">Daha yeni bir entinyGram gerekiyor (eklenti API’si %1$d, bu uygulamada %2$d var)</string>
+    <string name="InuPluginsErrorApiVersion">Daha yeni bir Inugram gerekiyor (eklenti API\'si %1$d, bu uygulamada %2$d)</string>
     <string name="InuPluginsErrorPlatform">Bu platform için yapılmamış (%1$s gerekiyor)</string>
     <string name="InuPluginsErrorBadGrant">Geçersiz izinler istendi (%1$s)</string>
-    <string name="InuPluginsErrorUnconsentedGrants">Kurulumda incelenmemiş izinler istiyor (%1$s); incelemek için eklentiyi güncelleyin</string>
+    <string name="InuPluginsErrorUnconsentedGrants">Yükleme sırasında incelenmeyen izinler istiyor (%1$s); incelemek için eklentiyi güncelleyin</string>
     <string name="InuPluginsFailedAtLoad">Yükleme hatası</string>
     <string name="InuPluginsFailedAtRuntime">Çalışma zamanı hatası</string>
     <string name="InuPluginsFailedAtUnload">Kaldırma hatası</string>
@@ -1901,4 +1867,16 @@
     <string name="InuUnreadBadgeOnBackButton">Okunmamış sohbet sayacını göster</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">Sohbette geri düğmesinde okunmamış sohbet sayısını gösterir.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">iOS tarzı sayaç</string>
+    <string name="InuOptimizedAttachmentMenu">Optimize edilmiş ek menüsü</string>
+    <string name="InuOptimizedAttachmentMenuInfo">Fotoğraf ve videoları açarken animasyon akıcılığını artırır</string>
+    <string name="InuEditedMessageDateMode">Düzenlenen mesaj zaman damgası</string>
+    <string name="InuEditedMessageDateModeTelegram">Varsayılan</string>
+    <string name="InuEditedMessageDateModeEdit">Düzenleme tarihi</string>
+    <string name="InuEditedMessageDateModeSend">Gönderim tarihi</string>
+    <string name="InuDisguiseName" translatable="false">Telegram</string>
+    <string name="InuBiometricExplicitConfirmation">Ek onay</string>
+    <string name="InuBiometricExplicitConfirmationInfo">Başarılı yüz/iris taramasından sonra fazladan bir dokunuş iste</string>
+    <string name="InuBiometricRequireConfirmationPasscode">Uygulamanın kilidini açarken</string>
+    <string name="InuBiometricRequireConfirmationBots">Mini uygulamalarda</string>
+    <string name="InuBiometricRequireConfirmationActions">Sohbetleri silerken veya çıkış yaparken</string>
 </resources>

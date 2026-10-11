@@ -106,6 +106,7 @@ fn read_log(ctx: &Context) -> String {
 pub(crate) const CHAT_SURFACE: &str = r#"{"accountId":0,"dialogId":-100,"topicId":7}"#;
 pub(crate) const MESSAGE_SURFACE: &str = r#"{"accountId":0,"dialogId":-100,"source":"bubble","messages":[{"_":"message","id":11,"date":1,"message":"one","peer_id":{"_":"peerChat","chat_id":"100"},"dialog_id":"-100","grouped_id":"77"},{"_":"message","id":12,"date":2,"message":"two","peer_id":{"_":"peerChat","chat_id":"100"},"dialog_id":"-100","grouped_id":"77"}]}"#;
 pub(crate) const SELECTION_SURFACE: &str = r#"{"accountId":0,"dialogId":-100,"topicId":7,"source":"selection","messages":[{"_":"message","id":3,"date":1,"message":"three","peer_id":{"_":"peerChat","chat_id":"200"},"dialog_id":"-200"},{"_":"message","id":14,"date":2,"message":"fourteen","peer_id":{"_":"peerChat","chat_id":"100"},"dialog_id":"-100"}]}"#;
+pub(crate) const SHARED_MEDIA_SURFACE: &str = r#"{"accountId":0,"dialogId":-100,"source":"sharedMedia","messages":[{"_":"message","id":15,"date":3,"message":"","peer_id":{"_":"peerChat","chat_id":"100"},"dialog_id":"-100"}]}"#;
 
 pub(crate) fn row(token: u32, text: &str) -> String {
   format!(r#"{{"token":{token},"text":"{text}"}}"#)
@@ -126,7 +127,10 @@ fn a_static_row_renders_without_running_plugin_code() {
     "#,
   );
   assert_eq!(host.registered.borrow().len(), 1);
-  assert_eq!(host.registered.borrow()[0], (KIND_CHAT, 1, "a".to_string(), Some("Alpha".to_string()), None, 0),);
+  assert_eq!(
+    host.registered.borrow()[0],
+    (KIND_CHAT, 1, "a".to_string(), Some("Alpha".to_string()), None, 0),
+  );
   let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, rows(&[row(1, "Alpha")]));
 }
@@ -164,7 +168,8 @@ fn message_placements_filter_each_surface_and_settings_include_every_placement()
     r#"
       inu.registerMessageAction({ id: 'bubble', text: 'bubble', callback: () => {} });
       inu.registerMessageAction({ id: 'selection', placements: ['selection'], text: 'selection', callback: () => {} });
-      inu.registerMessageAction({ id: 'both', placements: ['bubble', 'selection'], text: 'both', callback: () => {} })
+      inu.registerMessageAction({ id: 'both', placements: ['bubble', 'selection'], text: 'both', callback: () => {} });
+      inu.registerMessageAction({ id: 'media', placements: ['selection', 'sharedMedia'], text: 'media', callback: () => {} })
     "#,
   );
 
@@ -174,11 +179,12 @@ fn message_placements_filter_each_surface_and_settings_include_every_placement()
   );
   assert_eq!(
     state.render(&ctx, KIND_MESSAGE, SELECTION_SURFACE).unwrap(),
-    rows(&[row(2, "selection"), row(3, "both")]),
+    rows(&[row(2, "selection"), row(3, "both"), row(4, "media")]),
   );
+  assert_eq!(state.render(&ctx, KIND_MESSAGE, SHARED_MEDIA_SURFACE).unwrap(), rows(&[row(4, "media")]));
   assert_eq!(
     state.render(&ctx, KIND_MESSAGE, "null").unwrap(),
-    rows(&[row(1, "bubble"), row(2, "selection"), row(3, "both")]),
+    rows(&[row(1, "bubble"), row(2, "selection"), row(3, "both"), row(4, "media")]),
   );
 }
 
@@ -321,9 +327,36 @@ fn a_callback_that_throws_is_the_plugins_fault() {
     &ctx,
     r#"inu.registerChatAction({ id: 'a', text: 'A', callback: () => { throw new Error('nope') } })"#,
   );
-  state.dispatch(&ctx, KIND_CHAT, 1, CHAT_SURFACE);
+  state.dispatch(&ctx, KIND_CHAT, 1, false, CHAT_SURFACE);
   let logs = logs.borrow();
   assert!(logs.iter().any(|l| l.starts_with(crate::FAULT_PREFIX) && l.contains("nope")), "{logs:#?}");
+}
+
+#[test]
+fn primary_and_secondary_callbacks_dispatch_independently() {
+  let (_rt, ctx, host, state, _logs) = setup();
+  eval(
+    &ctx,
+    r#"
+      globalThis.__log = [];
+      inu.registerChatAction({
+        id: 'both', text: 'Both',
+        callback: ctx => __log.push(`tap ${ctx.dialogId}`),
+        secondaryCallback: ctx => __log.push(`long ${ctx.dialogId}`),
+      });
+      inu.registerChatAction({
+        id: 'tap', text: 'Tap', callback: () => __log.push('tap only'),
+      })
+    "#,
+  );
+  assert_eq!(host.registered.borrow()[0].5, HAS_SECONDARY_CALLBACK);
+  assert_eq!(host.registered.borrow()[1].5, 0);
+
+  state.dispatch(&ctx, KIND_CHAT, 1, false, CHAT_SURFACE);
+  state.dispatch(&ctx, KIND_CHAT, 1, true, CHAT_SURFACE);
+  state.dispatch(&ctx, KIND_CHAT, 2, false, CHAT_SURFACE);
+  state.dispatch(&ctx, KIND_CHAT, 2, true, CHAT_SURFACE);
+  assert_eq!(read_log(&ctx), r#"["tap -100","long -100","tap only"]"#);
 }
 
 /// tokens are never reused, so a row drawn before a replacement cannot be answered by the row
@@ -339,12 +372,12 @@ fn a_dispatch_for_a_disposed_or_replaced_row_does_nothing() {
       globalThis.__d = inu.registerChatAction({ id: 'a', text: 'A2', callback: () => { __log.push('second') } })
     "#,
   );
-  state.dispatch(&ctx, KIND_CHAT, 1, CHAT_SURFACE);
+  state.dispatch(&ctx, KIND_CHAT, 1, false, CHAT_SURFACE);
   assert_eq!(read_log(&ctx), "[]");
-  state.dispatch(&ctx, KIND_CHAT, 2, CHAT_SURFACE);
+  state.dispatch(&ctx, KIND_CHAT, 2, false, CHAT_SURFACE);
   assert_eq!(read_log(&ctx), r#"["second"]"#);
   eval(&ctx, "__d()");
-  state.dispatch(&ctx, KIND_CHAT, 2, CHAT_SURFACE);
+  state.dispatch(&ctx, KIND_CHAT, 2, false, CHAT_SURFACE);
   assert_eq!(read_log(&ctx), r#"["second"]"#, "the stale row is inert");
   assert!(logs.borrow().is_empty());
 }
@@ -413,10 +446,10 @@ fn the_bundled_actions_test_plugin_passes() {
 
   assert_eq!(state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap(), rows(&[row(2, "Chat row")]));
   assert_eq!(state.render(&ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap(), rows(&[row(1, "Message row")]));
-  state.dispatch(&ctx, KIND_MESSAGE, 1, MESSAGE_SURFACE);
-  state.dispatch(&ctx, KIND_MESSAGE, 1, SELECTION_SURFACE);
-  state.dispatch(&ctx, KIND_PROFILE, 1, CHAT_SURFACE);
-  state.dispatch(&ctx, KIND_GLOBAL, 1, r#"{"accountId":0}"#);
+  state.dispatch(&ctx, KIND_MESSAGE, 1, false, MESSAGE_SURFACE);
+  state.dispatch(&ctx, KIND_MESSAGE, 1, false, SELECTION_SURFACE);
+  state.dispatch(&ctx, KIND_PROFILE, 1, false, CHAT_SURFACE);
+  state.dispatch(&ctx, KIND_GLOBAL, 1, false, r#"{"accountId":0}"#);
 
   while rt.is_job_pending() {
     rt.execute_pending_job().ok();

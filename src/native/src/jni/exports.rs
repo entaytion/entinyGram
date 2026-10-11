@@ -963,11 +963,12 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeDispatchA
   ptr: jlong,
   kind: jint,
   token: jint,
+  secondary: jboolean,
   surface_json: JString,
 ) {
   with_engine_env(&mut env, ptr, (), |env, engine| {
     let surface_json = jstring_to_string(env, &surface_json);
-    engine.actions.dispatch(&engine.ctx, kind, token as u32, &surface_json);
+    engine.actions.dispatch(&engine.ctx, kind, token as u32, secondary, &surface_json);
   })
 }
 

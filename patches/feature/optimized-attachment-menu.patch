@@ -28,7 +28,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
-@@ -2009,6 +2009,9 @@ public class ImageLoader {
+@@ -2003,6 +2003,9 @@ public class ImageLoader {
              if (image != null) {
                  final ArrayList<ImageReceiver> finalImageReceiverArray = new ArrayList<>(imageReceiverArray);
                  final ArrayList<Integer> finalImageReceiverGuidsArray = new ArrayList<>(imageReceiverGuidsArray);
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
                  AndroidUtilities.runOnUIThread(() -> {
                      if (image instanceof AnimatedFileDrawable && !((AnimatedFileDrawable) image).isWebmSticker) {
                          boolean imageSet = false;
-@@ -3439,6 +3442,7 @@ public class ImageLoader {
+@@ -3433,6 +3436,7 @@ public class ImageLoader {
              }
              if (drawable != null) {
                  cancelLoadingForImageReceiver(imageReceiver, true);

@@ -112,6 +112,7 @@ fn make_check<'js>(
   out.set("text", req_str(ctx, &opts, "check", "text")?)?;
   set_icon(&out, opt_icon(ctx, &opts, "check", jvm)?)?;
   set_opt(&out, "subtitle", opt_str(ctx, &opts, "check", "subtitle")?)?;
+  set_opt(&out, "multiline", opt_bool(ctx, &opts, "check", "multiline")?)?;
   out.set("checked", req_bool(ctx, &opts, "check", "checked")?)?;
   out.set("onChange", req_fn(ctx, &opts, "check", "onChange")?)?;
   set_opt(&out, "onSecondaryClick", opt_fn(ctx, &opts, "check", "onSecondaryClick")?)?;
@@ -142,6 +143,7 @@ fn make_button<'js>(
   if let Some(value) = opt_text(ctx, &opts, "button", "value")? {
     write_input_text(&out, "value", value)?;
   }
+  set_opt(&out, "multiline", opt_bool(ctx, &opts, "button", "multiline")?)?;
   out.set("danger", opt_bool(ctx, &opts, "button", "danger")?.unwrap_or_default())?;
   out.set("onClick", req_fn(ctx, &opts, "button", "onClick")?)?;
   set_opt(&out, "onSecondaryClick", opt_fn(ctx, &opts, "button", "onSecondaryClick")?)?;
@@ -157,6 +159,7 @@ fn make_select<'js>(
   set_opt(&out, "id", opt_str(ctx, &opts, "select", "id")?)?;
   write_input_text(&out, "text", req_text(ctx, &opts, "select", "text")?)?;
   set_icon(&out, opt_icon(ctx, &opts, "select", jvm)?)?;
+  set_opt(&out, "multiline", opt_bool(ctx, &opts, "select", "multiline")?)?;
 
   let raw: Value = field(ctx, &opts, "select", "items")?;
   let arr = raw.as_array().ok_or_else(|| Exception::throw_type(ctx, "select: 'items' must be an array"))?;
@@ -568,6 +571,7 @@ impl UiState {
           out.set("text", obj.get::<_, String>("text")?)?;
           copy_icon(&out, obj, &mut retained_icon_values)?;
           set_opt(&out, "subtitle", obj.get::<_, Option<String>>("subtitle")?)?;
+          set_opt(&out, "multiline", obj.get::<_, Option<bool>>("multiline")?)?;
           out.set("checked", obj.get::<_, bool>("checked")?)?;
           out.set("onChange", alloc_slot(&row, obj.get::<_, Function>("onChange")?))?;
           copy_secondary_click(&out, obj, &row, &mut alloc_slot)?;
@@ -578,6 +582,7 @@ impl UiState {
           copy_icon(&out, obj, &mut retained_icon_values)?;
           set_opt(&out, "subtitle", obj.get::<_, Option<String>>("subtitle")?)?;
           set_opt(&out, "value", obj.get::<_, Option<String>>("value")?)?;
+          set_opt(&out, "multiline", obj.get::<_, Option<bool>>("multiline")?)?;
           for key in ["text", "subtitle", "value"] {
             copy_text(&out, obj, key)?;
           }
@@ -590,6 +595,7 @@ impl UiState {
           out.set("text", obj.get::<_, String>("text")?)?;
           copy_icon(&out, obj, &mut retained_icon_values)?;
           copy_text(&out, obj, "text")?;
+          set_opt(&out, "multiline", obj.get::<_, Option<bool>>("multiline")?)?;
           out.set("items", obj.get::<_, Array>("items")?)?;
           out.set("selected", obj.get::<_, i32>("selected")?)?;
           out.set("dialog", obj.get::<_, bool>("dialog")?)?;

@@ -142,6 +142,7 @@ stg float <patch>
 stg rename <old> entiny__<name>
 ```
 At that point you own its maintenance.
+Release notes live in `changelogs/<build>.md`, drafted with the `inugram-changelog` skill.
 
 **Documentation in `FEATURES.md`:**
 Every entinyGram feature gets its own bullet under `## entinyGram additions` in `FEATURES.md`, in the topical subsection that fits it (privacy & protection / restricted features / power-user tools / debloat & premium noise) — never left as an unmarked line inside `## inuGram additions`.

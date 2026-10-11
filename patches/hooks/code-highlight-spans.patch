@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 10 Oct 2026 15:32:11 +0200
+Subject: expose code highlight span computation
+
+---
+ .../telegram/messenger/CodeHighlighting.java  | 27 +++++++++++--------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java b/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java
+@@ -265,16 +265,7 @@ public class CodeHighlighting {
+         }
+         final String source = result.toString();
+         Utilities.searchQueue.postRunnable(() -> {
+-            if (compiledPatterns == null) {
+-                parse();
+-            }
+-            final ArrayList<CachedToSpan> spans = new ArrayList<>();
+-            try {
+-                final StringToken[] tokens = tokenize(source, compiledPatterns == null ? null : compiledPatterns.get(language), 0).toArray();
+-                colorize(result, 0, result.length(), tokens, -1, spans);
+-            } catch (Exception e) {
+-                FileLog.e(e);
+-            }
++            final ArrayList<CachedToSpan> spans = inu_computeSpans(source, language);
+             AndroidUtilities.runOnUIThread(() -> {
+                 for (int i = 0; i < spans.size(); ++i) {
+                     final CachedToSpan span = spans.get(i);
+@@ -285,6 +276,20 @@ public class CodeHighlighting {
+         });
+     }
+ 
++    public static ArrayList<CachedToSpan> inu_computeSpans(String source, String language) {
++        if (compiledPatterns == null) {
++            parse();
++        }
++        final ArrayList<CachedToSpan> spans = new ArrayList<>();
++        try {
++            final StringToken[] tokens = tokenize(source, compiledPatterns == null ? null : compiledPatterns.get(language), 0).toArray();
++            colorize(null, 0, source.length(), tokens, -1, spans);
++        } catch (Exception e) {
++            FileLog.e(e);
++        }
++        return spans;
++    }
++
+     public static void prepare() {
+         if (compiledPatterns != null) return;
+         Utilities.searchQueue.postRunnable(() -> {
+@@ -378,7 +383,7 @@ public class CodeHighlighting {
+         }
+     }
+ 
+-    private static class CachedToSpan {
++    public static class CachedToSpan {
+         public int group;
+         public int start, end;
+         public CachedToSpan(int group, int start, int end) {

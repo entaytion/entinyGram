@@ -11,7 +11,6 @@ import android.view.View
 import desu.inugram.helpers.plugins.QuickJs
 import desu.inugram.helpers.plugins.ui.PluginIcons
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Cells.TextCell
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
@@ -25,7 +24,7 @@ class ButtonIcon(val spec: String?, val engine: QuickJs)
  * only, so value/subtitle changes rebind the same holder in place, with the value animating
  * via TextCell's AnimatedTextView.
  */
-open class ButtonCellFactory : UItem.UItemFactory<TextCell>() {
+open class ButtonCellFactory : UItem.UItemFactory<PluginSettingCell>() {
     companion object {
         init {
             setup(ButtonCellFactory())
@@ -46,6 +45,7 @@ open class ButtonCellFactory : UItem.UItemFactory<TextCell>() {
             icon: ButtonIcon?,
             danger: Boolean,
             formatting: String?,
+            multiline: Boolean = false,
         ): UItem =
             UItem.ofFactory(ButtonCellFactory::class.java).apply {
                 this.id = id
@@ -55,6 +55,7 @@ open class ButtonCellFactory : UItem.UItemFactory<TextCell>() {
                 this.`object` = icon
                 this.object2 = formatting
                 this.red = danger
+                this.flags = if (multiline) 1 else 0
             }
     }
 
@@ -66,7 +67,7 @@ open class ButtonCellFactory : UItem.UItemFactory<TextCell>() {
         currentAccount: Int,
         classGuid: Int,
         resourcesProvider: Theme.ResourcesProvider?,
-    ): TextCell = TextCell(context, 23, false, needsCheckBox, resourcesProvider)
+    ): PluginSettingCell = PluginSettingCell(context, needsCheckBox, resourcesProvider)
 
     override fun bindView(
         view: View,
@@ -75,8 +76,9 @@ open class ButtonCellFactory : UItem.UItemFactory<TextCell>() {
         adapter: UniversalAdapter?,
         listView: UniversalRecyclerView?,
     ) {
-        val cell = view as TextCell
+        val cell = view as PluginSettingCell
         val sameRow = cell.tag == item.id
+        cell.setMultiline(item.flags != 0)
         // fix oversized emojis
         resizeEmoji(item.text, cell.textView.paint)
         resizeEmoji(item.subtext, cell.subtitleView.paint)
@@ -134,7 +136,8 @@ open class ButtonCellFactory : UItem.UItemFactory<TextCell>() {
             left?.engine === right?.engine &&
             a.object2 == b.object2 &&
             a.red == b.red &&
-            a.checked == b.checked
+            a.checked == b.checked &&
+            a.flags == b.flags
     }
 }
 
@@ -145,7 +148,7 @@ class CheckCellFactory : ButtonCellFactory() {
             setup(CheckCellFactory())
         }
 
-        fun of(id: Int, text: CharSequence, subtitle: CharSequence?, icon: ButtonIcon?, checked: Boolean, formatting: String?): UItem =
+        fun of(id: Int, text: CharSequence, subtitle: CharSequence?, icon: ButtonIcon?, checked: Boolean, formatting: String?, multiline: Boolean = false): UItem =
             UItem.ofFactory(CheckCellFactory::class.java).apply {
                 this.id = id
                 this.text = text
@@ -153,6 +156,7 @@ class CheckCellFactory : ButtonCellFactory() {
                 this.`object` = icon
                 this.object2 = formatting
                 this.checked = checked
+                this.flags = if (multiline) 1 else 0
             }
     }
 

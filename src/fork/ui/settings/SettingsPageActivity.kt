@@ -77,6 +77,11 @@ abstract class SettingsPageActivity : UniversalFragment() {
             actionBar.setAdaptiveBackground(listView)
             listView.clipToPadding = false
             // entiny: pre-scroll before first layout so target row is on-screen without post-transition jump
+            listView.setOnItemClickListener { view, position, x, y ->
+                val item = listView.adapter.getItem(position) ?: return@setOnItemClickListener
+                onClick(item, view, position, x, y)
+                listView.adapter.update(true)
+            }
             if (highlightItemId != -1) {
                 val index = findItemPosition(listView, highlightItemId)
                 if (index >= 0) {
