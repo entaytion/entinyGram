@@ -198,7 +198,11 @@ internal class FeedUnreadTracker(
     }
 
     private fun getEffectiveReadInboxMax(dialogId: Long): Int =
-        maxOf(readInboxMaxByDialog.get(dialogId, NO_READ_ID), pendingMaxReadId.get(dialogId, NO_READ_ID))
+        maxOf(
+            readInboxMaxByDialog.get(dialogId, NO_READ_ID),
+            pendingMaxReadId.get(dialogId, NO_READ_ID),
+            MessagesController.getInstance(currentAccount).dialogs_read_inbox_max[dialogId] ?: NO_READ_ID,
+        )
 
     companion object {
         private const val FLUSH_DELAY_MS = 1000L

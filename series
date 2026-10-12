@@ -535,3 +535,4 @@ entiny/tabs/movable-chats-tab.patch
 entiny/chat/reply-background.patch
 entiny/chat/unread-badge-on-back-button.patch
 entiny/media/photo-viewer-null-stop-scroll.patch
+entiny/feed/feed-reading-fixes.patch

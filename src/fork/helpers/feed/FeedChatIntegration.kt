@@ -33,15 +33,13 @@ class FeedChatIntegration(
     private var pendingInitialScrollRestore: ScrollAnchor? = null
     private var reactionsRefreshScheduled = false
     private var readyToMarkAsRead = false
-    private var scrollPreservedNewerToUnread = false
+    private var preservedNewerAnchor: ScrollAnchor? = null
     private var settleAtNewestScheduled = false
     private var totalScrollDy = 0
     private var unreadDivider: MessageObject? = null
     private var viewportActive = false
     private var preserveScrollLoadIndex = -1
     private var lastPagedownCount = -1
-    private var seenNewestRow: MessageObject? = null
-    private var seenOldestRow: MessageObject? = null
 
     private val settleAtNewestRunnable = Runnable { settleAtNewestNow() }
 
@@ -394,10 +392,6 @@ class FeedChatIntegration(
             0
         } else {
             val newestVisibleIndex = maxOf(0, rawNewestIndex)
-            val oldestVisibleIndex = host.getLastVisibleMessageIndex()
-            if (canMarkVisibleAsRead() && oldestVisibleIndex >= 0) {
-                markScrolledPastAsSeen(host.getMessages(), newestVisibleIndex, oldestVisibleIndex)
-            }
             FeedController.getInstance(currentAccount).countUnreadBelow(host.getMessages(), newestVisibleIndex)
         }
         if (unreadBelow != lastPagedownCount) {
@@ -413,35 +407,10 @@ class FeedChatIntegration(
         }
     }
 
-    private fun markScrolledPastAsSeen(rows: ArrayList<MessageObject?>, newestIndex: Int, oldestIndex: Int) {
-        val prevNewest = seenNewestRow
-        val prevOldest = seenOldestRow
-        seenNewestRow = rows.getOrNull(newestIndex)
-        seenOldestRow = rows.getOrNull(oldestIndex)
-        if (prevNewest == null || prevOldest == null) {
-            return
-        }
-        val prevNewestIndex = rows.indexOf(prevNewest)
-        val prevOldestIndex = rows.indexOf(prevOldest)
-        if (prevNewestIndex < 0 || prevOldestIndex < 0) {
-            return
-        }
-        val feedController = FeedController.getInstance(currentAccount)
-        val from = maxOf(0, minOf(newestIndex, oldestIndex, prevNewestIndex, prevOldestIndex))
-        val to = minOf(rows.size - 1, maxOf(newestIndex, oldestIndex, prevNewestIndex, prevOldestIndex))
-        for (i in from..to) {
-            val row = rows[i]
-            if (FeedMessageUtils.isPostRow(row)) {
-                feedController.onPostSeen(row!!.dialogId, row.realId)
-            }
-        }
-    }
-
-    fun afterPreservedNewerMessagesInserted(): Boolean {
-        val scrollToUnread = scrollPreservedNewerToUnread
-        applyUnreadDivider(scrollToUnread, true)
-        scrollPreservedNewerToUnread = false
-        return scrollToUnread
+    fun afterPreservedNewerMessagesInserted() {
+        applyUnreadDivider(false, true)
+        host.restoreScrollAnchor(preservedNewerAnchor)
+        preservedNewerAnchor = null
     }
 
     fun applyUnreadDivider(scrollToDivider: Boolean) {
@@ -449,9 +418,7 @@ class FeedChatIntegration(
     }
 
     fun beforePreservedNewerMessagesInserted() {
-        scrollPreservedNewerToUnread = host.isListScrollIdle() &&
-            !host.isScrollAnimationRunning() &&
-            host.getDistanceToNewerPx() <= NEAR_NEWEST_THRESHOLD
+        preservedNewerAnchor = host.captureScrollAnchor()
     }
 
     fun canMarkVisibleAsRead(): Boolean =
@@ -841,7 +808,7 @@ class FeedChatIntegration(
         readyToMarkAsRead = false
         pendingDividerScroll = false
         pendingInitialScrollRestore = null
-        scrollPreservedNewerToUnread = false
+        preservedNewerAnchor = null
         preserveScrollLoadIndex = -1
         unreadDivider = null
         lastPagedownCount = -1
@@ -904,8 +871,6 @@ class FeedChatIntegration(
             AndroidUtilities.cancelRunOnUIThread(settleAtNewestRunnable)
             settleAtNewestScheduled = false
         }
-        seenNewestRow = null
-        seenOldestRow = null
         cancelPendingReactionsRefresh()
     }
 
