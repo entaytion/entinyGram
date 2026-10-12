@@ -169,7 +169,7 @@ index 0000000..0000000 100644
              }
  
              canvas.save();
-@@ -5405,6 +5410,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5407,6 +5412,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          };
          avatarImage.createBlurEffect(getActionsExtraHeight());
@@ -177,7 +177,7 @@ index 0000000..0000000 100644
          avatarImage.getImageReceiver().setAllowDecodeSingleFrame(true);
          avatarImage.setRoundRadiusForExpand(getSmallAvatarRoundRadius());
          avatarImage.setPivotX(0);
-@@ -6490,6 +6496,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6492,6 +6498,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private int getSmallAvatarRoundRadius() {

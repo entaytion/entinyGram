@@ -1867,6 +1867,10 @@
     <string name="InuPluginScopeOnUpdate">наблюдение за %1$s</string>
     <string name="InuPluginScopeInterceptUpdate">перехват %1$s</string>
     <string name="InuPluginScopeAllUpdates">все обновления</string>
+    <string name="InuPluginScopesMore_one">и ещё %1$d</string>
+    <string name="InuPluginScopesMore_few">и ещё %1$d</string>
+    <string name="InuPluginScopesMore_many">и ещё %1$d</string>
+    <string name="InuPluginScopesMore_other">и ещё %1$d</string>
     <string name="InuPluginTrustTitle">Устанавливайте только доверенные плагины</string>
     <string name="InuPluginTrustInfo">Плагины работают в песочнице и получают только заявленные разрешения, перечисленные на следующем экране.\nНо эти разрешения всё равно позволяют плагину:</string>
     <string name="InuPluginTrust1Title">Действовать от вашего имени</string>

@@ -468,6 +468,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - photo crop silently not applied to the sent image
 - high-quality photo cropping in PhotoViewer (crop *before* downscaling)
 - sticker creator output sent as photo when high-quality default is on
+- sticker-pack Edit button no longer ignores slower taps or inherits the recent-stickers Create button's long-press action
 - non-square webm stickers rendered off-center in the emoji panel (precached frames were blitted top-left and scaled by width only)
 - webm sticker permanently stuck blank until the app is restarted (an image load cancelled mid-flight published a decoder-less drawable into the animation cache, whose stream stayed cancelled and which never retried decoding)
 - webm stickers played too fast (frame pacing was driven by the container's declared fps instead of frame timestamps, so variable-rate or mis-probed webm ran at up to 2x)
@@ -510,6 +511,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - applying a style over a mixed-span selection smearing one span (e.g. mono) across the whole range
 - photo viewer ui respects litemode blur
 - search-as-list box respects litemode blur
+- emoji/sticker panel bottom controls use solid backgrounds when Power Saving blur is disabled
 - lazy face detect (only on filters tab)
 - lazy chromecast init in photo viewer
 - stale video seekbar leaking onto photos in photo viewer
@@ -528,6 +530,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - nav stack lockup after rapid back swipes
 - click-through area to the left/right of bottom bar tabs
 - profile scroll jump when opening uncached user
+- "Add post" button no longer flashes when opening your profile before the Posts section is visible
 - stale unread badges on global-search top peers
 - stale unread mention pointer after reading mention on another device (mention button jumping to old message)
 - folder pins silently missing when the pinned dialog isn't in the local dialogs cache (now fetched from server)
@@ -569,6 +572,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - notifications for chats read on another device no longer linger forever when the app process was killed in between (stock only tracked posted notifications in memory)
 - more stale notification fixes: reaction, "scheduled message sent", story and forum-topic notifications now clear when read/seen on another device while the app is connected (stock only cleared these via FCM pushes, which aren't delivered to online sessions, or on opening the chat locally); notification refresh is no longer skipped when unread counts happen to stay equal (forums, communities, muted chats)
 - unchanged notifications are no longer re-posted on every update (stock re-notifies every chat each time anything changes, making notification bridges like Mi Fitness re-forward the whole stack to the wearable)
+- notification avatars no longer go missing after the system evicts them from cache: a missing avatar is downloaded and the notification updated silently once it arrives
 - crash long-pressing a sticker set while off-screen rows are cached (reorder update bound null item on cached/hidden holders)
 - crash cutting out a sticker after the photo editor recycled the source image mid-segmentation
 - crash after transferring channel ownership (admin sort comparator overflowed on 64-bit peer ids)

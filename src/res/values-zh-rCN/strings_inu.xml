@@ -1751,6 +1751,7 @@
     <string name="InuPluginScopeOnUpdate">监视 %1$s</string>
     <string name="InuPluginScopeInterceptUpdate">拦截 %1$s</string>
     <string name="InuPluginScopeAllUpdates">所有更新</string>
+    <string name="InuPluginScopesMore_other">以及另外 %1$d 项</string>
     <string name="InuPluginTrustTitle">只安装你信任的插件</string>
     <string name="InuPluginTrustInfo">插件在沙盒中运行，并且只会获得它声明的权限，这些权限会列在下一个页面中。\n但授予这些权限仍会让插件能够：</string>
     <string name="InuPluginTrust1Title">以你的身份操作</string>

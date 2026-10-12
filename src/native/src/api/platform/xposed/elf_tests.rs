@@ -14,6 +14,22 @@ const SHN_UNDEF: u16 = 0;
 const SHT_SYMTAB: u32 = 2;
 const SHT_DYNSYM: u32 = 11;
 
+#[test]
+fn lsposed_is_identified_by_soname_or_module_path() {
+  let strings = b"\0other.so\0liblspd.so\0";
+  let dynamic = [
+    Dynamic {
+      tag: DT_STRTAB,
+      value: strings.as_ptr() as u64,
+    },
+    Dynamic { tag: DT_SONAME, value: 10 },
+    Dynamic { tag: DT_NULL, value: 0 },
+  ];
+  assert_eq!(unsafe { read_soname(0, &dynamic) }, Some(c"liblspd.so"));
+  assert!(is_lsposed_name(c"/data/adb/modules/zygisk_lsposed/zygisk/arm64-v8a.so"));
+  assert!(!is_lsposed_name(c"/data/app/desu.inugram/lib/arm64/liblsplant.so"));
+}
+
 /// Builds an ELF64 image with the symbol tables described, plus an optional `.gnu_debugdata`
 /// section holding a second such image.
 struct Builder {

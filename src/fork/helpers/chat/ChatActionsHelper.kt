@@ -472,8 +472,7 @@ object ChatActionsHelper {
     ) {
         if (activity == null) return
         val text = enterView.fieldText ?: return
-        val hasUrl = runCatching { AndroidUtilities.WEB_URL.matcher(text).find() }.getOrDefault(false)
-        if (!hasUrl) return
+        if (!WebPreviewHelper.hasUrl(text)) return
         options.add(R.drawable.msg_retry, LocaleController.getString(R.string.InuRefetchWebPreview)) {
             preview.dismiss(false)
             enterView.messageSendPreview = null

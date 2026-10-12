@@ -8,7 +8,7 @@ Subject: non-island ui in various parts of the app
  .../ui/ActionBar/ActionBarLayout.java         |   2 +-
  .../telegram/ui/ChannelAdminLogActivity.java  |  21 ++-
  .../java/org/telegram/ui/ChatActivity.java    | 142 ++++++++++------
- .../ui/Components/ChatActivityEnterView.java  |  66 +++++---
+ .../ui/Components/ChatActivityEnterView.java  |  68 +++++---
  ...ChatActivityEnterViewAnimatedIconView.java |  17 +-
  .../ChatActivityTopPanelLayout.java           |  27 +++-
  .../ui/Components/ChatAttachAlert.java        |  20 +++
@@ -41,7 +41,7 @@ Subject: non-island ui in various parts of the app
  .../ui/bots/BotCommandsMenuContainer.java     |   4 +-
  .../bots/ChatAttachAlertBotWebViewLayout.java |   5 +-
  .../java/org/telegram/ui/iv/RichEditor.java   |   4 +-
- 37 files changed, 752 insertions(+), 282 deletions(-)
+ 37 files changed, 753 insertions(+), 283 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -858,6 +858,15 @@ index 0000000..0000000 100644
          sendButton.setOnClickListener(view -> {
              if ((messageSendPreview != null && messageSendPreview.isShowing()) || (runningAnimationAudio != null && runningAnimationAudio.isRunning()) || moveToSendStateRunnable != null) {
                  return;
+@@ -4492,7 +4495,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 botCommandsMenuContainer.dismiss();
+             }
+         });
+-        messageEditTextContainer.addView(botCommandsMenuButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 32, Gravity.BOTTOM | Gravity.LEFT, 8, 6, 8, 6));
++        messageEditTextContainer.addView(botCommandsMenuButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 32, Gravity.BOTTOM | Gravity.LEFT, 8, (DEFAULT_HEIGHT - 32) / 2f, 8, (DEFAULT_HEIGHT - 32) / 2f));
+         AndroidUtilities.updateViewVisibilityAnimated(botCommandsMenuButton, false, 1f, false);
+         botCommandsMenuButton.setExpanded(true, false);
+     }
 @@ -4703,7 +4706,8 @@ public class ChatActivityEnterView extends FrameLayout implements
                  canvas.clipRect(0, separatorY, getMeasuredWidth(), getMeasuredHeight());
              }

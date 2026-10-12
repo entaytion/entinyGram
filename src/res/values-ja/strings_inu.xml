@@ -1751,6 +1751,7 @@
     <string name="InuPluginScopeOnUpdate">%1$s を監視</string>
     <string name="InuPluginScopeInterceptUpdate">%1$s をインターセプト</string>
     <string name="InuPluginScopeAllUpdates">すべての更新</string>
+    <string name="InuPluginScopesMore_other">ほか%1$d件</string>
     <string name="InuPluginTrustTitle">信頼できるプラグインのみインストールしてください</string>
     <string name="InuPluginTrustInfo">プラグインはサンドボックス内で動作し、宣言した権限だけを取得します。権限は次の画面に表示されます。\nそれでも権限を付与すると、プラグインは次のことが可能になります:</string>
     <string name="InuPluginTrust1Title">あなたとして操作</string>

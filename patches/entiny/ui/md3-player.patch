@@ -30,7 +30,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -37918,7 +37918,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37941,7 +37941,7 @@ public class ChatActivity extends BaseFragment implements
                      cell.resetPressedLink(-1);
                  }
                  if (!messageObject.isVoice()) {
@@ -169,7 +169,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -3911,7 +3911,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3914,7 +3914,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                              MediaController.getInstance().playMessage(savedMusicList.list.get(0));
                          }
                      }

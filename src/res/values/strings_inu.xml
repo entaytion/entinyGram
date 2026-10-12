@@ -1922,6 +1922,8 @@
     <string name="InuPluginScopeOnUpdate">watch %1$s</string>
     <string name="InuPluginScopeInterceptUpdate">intercept %1$s</string>
     <string name="InuPluginScopeAllUpdates">all updates</string>
+    <string name="InuPluginScopesMore_one">and %1$d more</string>
+    <string name="InuPluginScopesMore_other">and %1$d more</string>
     <string name="InuPluginTrustTitle">Only install plugins you trust</string>
     <string name="InuPluginTrustInfo">Plugins run in a sandbox and only get the permissions they declare, which the next screen lists.\nGranting them still lets a plugin:</string>
     <string name="InuPluginTrust1Title">Act as you</string>

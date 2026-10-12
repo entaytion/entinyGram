@@ -2831,8 +2831,7 @@ object ChatHelper {
         val text = editTextCaption?.text
         if (!messageObject.isMediaEmpty || groupedMessages != null) return false
         if (text.isNullOrEmpty()) return false
-        val hasUrl = runCatching { AndroidUtilities.WEB_URL.matcher(text).find() }.getOrDefault(false)
-        if (!hasUrl) return false
+        if (!WebPreviewHelper.hasUrl(text)) return false
 
         ItemOptions.makeOptions(fragment, anchor, false, false, true)
             .forceTop(true)

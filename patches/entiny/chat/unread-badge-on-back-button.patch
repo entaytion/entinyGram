@@ -604,7 +604,7 @@ index 0000000..0000000 100644
          } else {
              didReceivedNotification2(id, account, args);
              didReceivedNotification3(id, account, args);
-@@ -47976,6 +47985,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47999,6 +48008,7 @@ public class ChatActivity extends BaseFragment implements
              avatarContainer.setScaleY(scale);
              avatarContainer.setAlpha(factor);
              avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);

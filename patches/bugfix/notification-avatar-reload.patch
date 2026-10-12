@@ -1,0 +1,130 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 12 Oct 2026 15:07:59 +0300
+Subject: download missing notification avatars and update the notification once loaded
+
+---
+ .../messenger/NotificationsController.java    | 35 +++++++++++++++----
+ 1 file changed, 28 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+@@ -71,6 +71,7 @@ import org.telegram.messenger.utils.tlutils.TLKeyboardHelper;
+ import org.telegram.messenger.utils.tlutils.TlUtils;
+ import org.telegram.messenger.voip.VoIPGroupNotification;
+ import org.telegram.tgnet.ConnectionsManager;
++import org.telegram.tgnet.TLObject;
+ import org.telegram.tgnet.TLRPC;
+ import org.telegram.tgnet.tl.TL_account;
+ import org.telegram.tgnet.tl.TL_keyboard;
+@@ -117,6 +118,7 @@ public class NotificationsController extends BaseController implements Notificat
+     private final LongSparseArray<Integer> lastWearNotifiedMessageId = new LongSparseArray<>();
+     private final LongSparseArray<Integer> pushDialogsOverrideMention = new LongSparseArray<>();
+     private final HashSet<String> pendingVoiceLoads = new HashSet<>();
++    private final HashSet<String> inu_pendingAvatarLoads = new HashSet<>();
+     public final ArrayList<MessageObject> popupMessages = new ArrayList<>();
+     public ArrayList<MessageObject> popupReplyMessages = new ArrayList<>();
+     private final HashSet<Long> openedInBubbleDialogs = new HashSet<>();
+@@ -254,6 +256,7 @@ public class NotificationsController extends BaseController implements Notificat
+ 
+         AndroidUtilities.runOnUIThread(() -> {
+             getNotificationCenter().addObserver(this, NotificationCenter.fileLoaded);
++            getNotificationCenter().addObserver(this, NotificationCenter.fileLoadFailed);
+         });
+     }
+ 
+@@ -3399,8 +3402,14 @@ public class NotificationsController extends BaseController implements Notificat
+             notificationsQueue.postRunnable(() -> {
+                 if (pendingVoiceLoads.remove(path)) {
+                     showOrUpdateNotification(true);
++                } else if (inu_pendingAvatarLoads.remove(path)) {
++                    NotificationsHelper.clearPostedSignatures(currentAccount);
++                    showOrUpdateNotification(false);
+                 }
+             });
++        } else if (id == NotificationCenter.fileLoadFailed) {
++            String path = (String) args[0];
++            notificationsQueue.postRunnable(() -> inu_pendingAvatarLoads.remove(path));
+         }
+     }
+ 
+@@ -4805,7 +4814,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     mBuilder.setLargeIcon(img.getBitmap());
+                 } else {
+                     try {
+-                        File file = getFileLoader().getPathToAttach(photoPath, true);
++                        File file = inu_getAvatarFile(photoPath, chat != null ? chat : user);
+                         if (file.exists()) {
+                             float scaleFactor = 160.0f / AndroidUtilities.dp(50);
+                             BitmapFactory.Options options = new BitmapFactory.Options();
+@@ -5288,7 +5297,7 @@ public class NotificationsController extends BaseController implements Notificat
+             }
+ 
+             if (photoPath != null) {
+-                avatarFile = getFileLoader().getPathToAttach(photoPath, true);
++                avatarFile = inu_getAvatarFile(photoPath, dialogId == UserObject.VERIFY && lastMessageObject != null && lastMessageObject.getForwardedFromId() != null ? getMessagesController().getUserOrChat(lastMessageObject.getForwardedFromId()) : chat != null ? chat : user);
+                 if (Build.VERSION.SDK_INT < 28) {
+                     BitmapDrawable img = ImageLoader.getInstance().getImageFromMemory(photoPath, null, "50_50");
+                     if (img != null) {
+@@ -5380,7 +5389,7 @@ public class NotificationsController extends BaseController implements Notificat
+                 try {
+                     if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+                         Person.Builder personBuilder = new Person.Builder().setName(LocaleController.getString(R.string.FromYou));
+-                        File avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
++                        File avatar = inu_getAvatarFile(sender.photo.photo_small, sender);
+                         loadRoundAvatar(getUserConfig().getClientUserId(), avatar, personBuilder);
+                         selfPerson = personBuilder.build();
+                         personCache.put(selfUserId, selfPerson);
+@@ -5530,19 +5539,19 @@ public class NotificationsController extends BaseController implements Notificat
+                                     }
+                                 }
+                                 if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+-                                    avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
++                                    avatar = inu_getAvatarFile(sender.photo.photo_small, sender);
+                                 }
+                             }
+                             if (avatar == null && dialogId == UserObject.VERIFY && messageObject.getForwardedFromId() != null) {
+                                 if (uid >= 0) {
+                                     TLRPC.User sender = getMessagesController().getUser(uid);
+                                     if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+-                                        avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
++                                        avatar = inu_getAvatarFile(sender.photo.photo_small, sender);
+                                     }
+                                 } else {
+                                     TLRPC.Chat sender = getMessagesController().getChat(-uid);
+                                     if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+-                                        avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
++                                        avatar = inu_getAvatarFile(sender.photo.photo_small, sender);
+                                     }
+                                 }
+                             }
+@@ -5983,7 +5992,7 @@ public class NotificationsController extends BaseController implements Notificat
+             if (user1 != null) {
+                 username = UserObject.getUserName(user1);
+                 if (user1 != null && user1.photo != null && user1.photo.photo_small != null && user1.photo.photo_small.volume_id != 0 && user1.photo.photo_small.local_id != 0) {
+-                    File file = getFileLoader().getPathToAttach(user1.photo.photo_small, true);
++                    File file = inu_getAvatarFile(user1.photo.photo_small, user1);
+                     if (!file.exists()) {
+                         file = null;
+                         if (user1.photo.photo_big != null) {
+@@ -6018,6 +6027,18 @@ public class NotificationsController extends BaseController implements Notificat
+         return new Pair<>(storiesCount, hidden);
+     }
+ 
++    // the system evicts cache files oldest-download-first (noatime), regardless of recent use
++    private File inu_getAvatarFile(TLRPC.FileLocation location, TLObject owner) {
++        File file = getFileLoader().getPathToAttach(location, true);
++        if (!file.exists()) {
++            ImageLocation imageLocation = ImageLocation.getForUserOrChat(currentAccount, owner, ImageLocation.TYPE_SMALL);
++            if (imageLocation != null && inu_pendingAvatarLoads.add(FileLoader.getAttachFileName(location))) {
++                getFileLoader().loadFile(imageLocation, owner, "jpg", FileLoader.PRIORITY_HIGH, 1);
++            }
++        }
++        return file;
++    }
++
+     public static Person.Builder loadRoundAvatar(long dialogId, File avatar, Person.Builder personBuilder) {
+         if (dialogId == UserObject.OAUTH) {
+             personBuilder.setIcon(IconCompat.createWithResource(ApplicationLoader.applicationContext, R.drawable.ic_launcher_dr));

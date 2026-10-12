@@ -2,12 +2,77 @@ use object::elf::{FileHeader64, SHT_DYNSYM, SHT_SYMTAB};
 use object::read::elf::{FileHeader, SectionHeader, Sym, SymbolTable};
 use object::LittleEndian;
 use std::collections::HashMap;
-use std::ffi::c_void;
 #[cfg(target_os = "android")]
-use std::ffi::{c_int, CStr};
+use std::ffi::c_int;
+use std::ffi::{c_char, c_void, CStr};
 use std::fs;
 
 type Header = FileHeader64<LittleEndian>;
+
+#[repr(C)]
+struct Dynamic {
+  tag: i64,
+  value: u64,
+}
+
+const DT_NULL: i64 = 0;
+const DT_STRTAB: i64 = 5;
+const DT_SONAME: i64 = 14;
+
+unsafe fn read_soname(load_bias: usize, dynamic: &[Dynamic]) -> Option<&CStr> {
+  let mut strings = None;
+  let mut soname = None;
+  for entry in dynamic {
+    match entry.tag {
+      DT_NULL => break,
+      DT_STRTAB => strings = usize::try_from(entry.value).ok(),
+      DT_SONAME => soname = usize::try_from(entry.value).ok(),
+      _ => {}
+    }
+  }
+  let address = load_bias.checked_add(strings?)?.checked_add(soname?)?;
+  // SAFETY: the dynamic loader validated this string table and SONAME before exposing the image
+  Some(unsafe { CStr::from_ptr(address as *const c_char) })
+}
+
+fn is_lsposed_name(name: &CStr) -> bool {
+  let name = name.to_bytes();
+  name.ends_with(b"/liblspd.so") || name.windows(b"/zygisk_lsposed/".len()).any(|part| part == b"/zygisk_lsposed/")
+}
+
+#[cfg(target_os = "android")]
+unsafe extern "C" fn find_lsposed(info: *mut libc::dl_phdr_info, _size: usize, _data: *mut c_void) -> c_int {
+  // SAFETY: bionic hands over an entry and its program headers for the duration of this call
+  let info = unsafe { &*info };
+  if !info.dlpi_name.is_null() && is_lsposed_name(unsafe { CStr::from_ptr(info.dlpi_name) }) {
+    return 1;
+  }
+  if info.dlpi_phdr.is_null() {
+    return 0;
+  }
+  let headers = unsafe { std::slice::from_raw_parts(info.dlpi_phdr, info.dlpi_phnum as usize) };
+  let Some(dynamic) = headers.iter().find(|header| header.p_type == libc::PT_DYNAMIC) else {
+    return 0;
+  };
+  let Some(address) = (info.dlpi_addr as usize).checked_add(dynamic.p_vaddr as usize) else {
+    return 0;
+  };
+  let entries = unsafe {
+    std::slice::from_raw_parts(address as *const Dynamic, dynamic.p_memsz as usize / std::mem::size_of::<Dynamic>())
+  };
+  unsafe { read_soname(info.dlpi_addr as usize, entries) }.is_some_and(|name| name.to_bytes() == b"liblspd.so") as c_int
+}
+
+#[cfg(target_os = "android")]
+pub fn is_lsposed_loaded() -> bool {
+  // SAFETY: `find_lsposed` does not retain bionic's callback arguments
+  unsafe { libc::dl_iterate_phdr(Some(find_lsposed), std::ptr::null_mut()) != 0 }
+}
+
+#[cfg(not(target_os = "android"))]
+pub fn is_lsposed_loaded() -> bool {
+  false
+}
 
 fn read_tables(image: &[u8]) -> Vec<SymbolTable<'_, Header>> {
   let Ok(header) = Header::parse(image) else {

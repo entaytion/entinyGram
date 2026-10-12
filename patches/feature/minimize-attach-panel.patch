@@ -27,7 +27,7 @@ index 0000000..0000000 100644
          chatAttachAlert.parentThemeDelegate = themeDelegate;
          showDialog(chatAttachAlert);
      }
-@@ -30144,6 +30147,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30146,6 +30149,7 @@ public class ChatActivity extends BaseFragment implements
          super.onResume();
          checkShowBlur(false);
          inu_updateMenuSlotAvatar();

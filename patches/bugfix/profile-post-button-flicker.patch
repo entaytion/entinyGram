@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Nika Krasnova <nika@nikableh.moe>
+Date: Sun, 11 Oct 2026 14:50:45 +0200
+Subject: Prevent Add post from flashing when opening your profile
+
+---
+ .../src/main/java/org/telegram/ui/ProfileActivity.java         | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -3531,6 +3531,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+ 
+         if (myProfile) {
+             bottomButtonsContainer = new FrameLayout(context);
++            bottomButtonsContainer.setVisibility(View.INVISIBLE);
+ 
+             bottomButtonContainer = new FrameLayout[2];
+             bottomButton = new ButtonWithCounterView[2];
+@@ -6143,7 +6144,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+         } else {
+             buttonsTranslationY = dp(72);
+         }
+-        animatorBottomButtonVisibility.setValue(buttonsTranslationY <= 0, true);
++        animatorBottomButtonVisibility.setValue(buttonsTranslationY <= 0, bottomButtonsContainer.isLaidOut());
+ 
+         final float factor = animatorBottomButtonVisibility.getFloatValue();
+         bottomButtonsContainer.setTranslationY(lerp(dp(60), 0, factor));

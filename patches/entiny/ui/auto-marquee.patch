@@ -860,7 +860,7 @@ index 0000000..0000000 100644
          }
  
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -30038,10 +30081,45 @@ public class ChatActivity extends BaseFragment implements
+@@ -30040,10 +30083,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  
@@ -1466,7 +1466,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -5621,6 +5621,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5623,6 +5623,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              nameTextView[a].setPivotX(0);
              nameTextView[a].setPivotY(0);
              nameTextView[a].setAlpha(a == 0 ? 0.0f : 1.0f);

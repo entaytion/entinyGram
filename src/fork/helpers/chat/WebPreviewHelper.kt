@@ -1,13 +1,16 @@
 package desu.inugram.helpers.chat
 
+import android.text.Spanned
 import android.text.TextUtils
 import android.util.Log
 import desu.inugram.InuConfig
 import org.json.JSONArray
 import org.json.JSONObject
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.tgnet.TLRPC
+import org.telegram.ui.Components.URLSpanReplacement
 
 object WebPreviewHelper {
     data class Replacement(val pattern: String, val replacement: String)
@@ -83,8 +86,15 @@ object WebPreviewHelper {
     @JvmStatic
     fun allUrlsPresent(urls: List<CharSequence>?, text: CharSequence): Boolean {
         if (urls.isNullOrEmpty()) return false
-        return urls.all { TextUtils.indexOf(text, it) != -1 }
+        val spans = (text as? Spanned)?.getSpans(0, text.length, URLSpanReplacement::class.java)
+        return urls.all { url ->
+            TextUtils.indexOf(text, url) != -1 || spans?.any { TextUtils.equals(it.url, url) } == true
+        }
     }
+
+    fun hasUrl(text: CharSequence): Boolean =
+        runCatching { AndroidUtilities.WEB_URL.matcher(text).find() }.getOrDefault(false) ||
+            (text as? Spanned)?.getSpans(0, text.length, URLSpanReplacement::class.java)?.isNotEmpty() == true
 
     @JvmStatic
     fun applyReplacements(url: String): String {

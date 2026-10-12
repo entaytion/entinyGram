@@ -776,6 +776,12 @@ fn build_handler<'js>(ctx: &Ctx<'js>) -> JsResult<Object<'js>> {
         if key == TO_JSON_KEY {
           return view.read_to_json(&ctx);
         }
+        if view.is_vector && key != "length" && key.parse::<usize>().is_err() {
+          if let Some(method) = get_array_method(&ctx, &key)? {
+            vector_length(&ctx, view.host(), view.handle)?;
+            return Ok(method);
+          }
+        }
         view.read_field(&ctx, &key)
       },
     )?,
@@ -832,6 +838,10 @@ fn build_handler<'js>(ctx: &Ctx<'js>) -> JsResult<Object<'js>> {
       }
       let key = property_key_string(&ctx, &prop)?;
       if key == TO_JSON_KEY {
+        return Ok(true);
+      }
+      if view.is_vector && key != "length" && key.parse::<usize>().is_err() && get_array_method(&ctx, &key)?.is_some() {
+        vector_length(&ctx, view.host(), view.handle)?;
         return Ok(true);
       }
       view.has_field(&ctx, &key)
@@ -941,6 +951,15 @@ fn property_key_string<'js>(ctx: &Ctx<'js>, prop: &Value<'js>) -> JsResult<Strin
     return sym.as_atom().to_string();
   }
   Err(Exception::throw_message(ctx, "tl proxy: unsupported property key"))
+}
+
+fn get_array_method<'js>(ctx: &Ctx<'js>, key: &str) -> JsResult<Option<Value<'js>>> {
+  let prototype = Array::new(ctx.clone())?
+    .as_object()
+    .get_prototype()
+    .ok_or_else(|| Exception::throw_message(ctx, "tl vector: array prototype is missing"))?;
+  let value: Value = prototype.get(key)?;
+  Ok(value.is_function().then_some(value))
 }
 
 fn vector_length<'js>(ctx: &Ctx<'js>, host: &dyn TlHost, handle: i64) -> JsResult<i64> {

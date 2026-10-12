@@ -5,8 +5,8 @@ Subject: md3-style actions in profile
 
 ---
  .../ui/Components/ProfileActionsView.java     | 82 +++++++++++++------
- .../java/org/telegram/ui/ProfileActivity.java | 22 +++--
- 2 files changed, 68 insertions(+), 36 deletions(-)
+ .../java/org/telegram/ui/ProfileActivity.java | 24 ++++--
+ 2 files changed, 70 insertions(+), 36 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
 index 0000000..0000000 100644
@@ -233,12 +233,21 @@ index 0000000..0000000 100644
      private FrameLayout avatarContainer;
      private FrameLayout avatarContainer2;
      private ProfileActionsView actionsView;
-+    private final boolean inu_materialProfileActions = ProfileHelper.useMaterialProfileActions();
-+    private final int inu_profileActionsHeight = inu_materialProfileActions ? 94 : 74;
++    private boolean inu_materialProfileActions = ProfileHelper.useMaterialProfileActions();
++    private int inu_profileActionsHeight = inu_materialProfileActions ? 94 : 74;
      private MessagesController.SavedMusicList savedMusicList;
      private ProfileMusicView musicView;
      private AnimatedStatusView animatedStatusView;
-@@ -3902,7 +3904,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -2538,6 +2540,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+ 
+     @Override
+     public View createView(Context context) {
++        inu_materialProfileActions = ProfileHelper.useMaterialProfileActions();
++        inu_profileActionsHeight = inu_materialProfileActions ? 94 : 74;
+         Theme.createProfileResources(context);
+         Theme.createChatResources(context, false);
+         BaseFragment lastFragment = parentLayout.getLastFragment();
+@@ -3902,7 +3906,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
              });
  
@@ -247,7 +256,7 @@ index 0000000..0000000 100644
              setActionsMode();
              updateNotifications(false);
  
-@@ -5536,7 +5538,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5536,7 +5540,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarsViewPager.setChatInfo(chatInfo);
          }
          avatarContainer2.addView(avatarsViewPager);
@@ -256,7 +265,7 @@ index 0000000..0000000 100644
          avatarContainer2.addView(overlaysView);
          if (actionsView != null) {
              avatarsBlurView.setActionsView(actionsView);
-@@ -6101,7 +6103,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6101,7 +6105,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      private int getActionsExtraHeight(boolean withMusic) {
          if (userId != 0 && imageUpdater != null && !myProfile)
              return 0;
@@ -265,7 +274,7 @@ index 0000000..0000000 100644
      }
  
      private int getHeaderExtraHeight() {
-@@ -11325,17 +11327,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11325,17 +11329,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return;
          }
          final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
@@ -287,7 +296,7 @@ index 0000000..0000000 100644
              actionsView.updatePosition(bottom - height + ProfileHelper.expandedActionsOffset(playProfileAnimation, avatarAnimationProgress, currentExpandAnimatorValue, openAnimationInProgress), height);
          }
  
-@@ -11355,22 +11358,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11355,22 +11360,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return;
          }
          final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);

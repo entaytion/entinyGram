@@ -1751,6 +1751,8 @@
     <string name="InuPluginScopeOnUpdate">%1$s izleme</string>
     <string name="InuPluginScopeInterceptUpdate">%1$s yakalama</string>
     <string name="InuPluginScopeAllUpdates">tüm güncellemeler</string>
+    <string name="InuPluginScopesMore_one">ve %1$d tane daha</string>
+    <string name="InuPluginScopesMore_other">ve %1$d tane daha</string>
     <string name="InuPluginTrustTitle">Yalnızca güvendiğiniz eklentileri yükleyin</string>
     <string name="InuPluginTrustInfo">Eklentiler korumalı alanda çalışır ve yalnızca beyan ettikleri, sonraki ekranda listelenen izinleri alır.\nBunları vermek yine de eklentinin şunları yapmasına izin verir:</string>
     <string name="InuPluginTrust1Title">Sizin adınıza hareket etme</string>

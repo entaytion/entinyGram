@@ -1,0 +1,152 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 12 Oct 2026 02:44:04 +0200
+Subject: fix blur outlines after reopening photo editor
+
+---
+ .../ui/Components/Paint/Painting.java         | 43 ++++++++++++++++---
+ .../ui/Components/Paint/ShaderSet.java        | 15 +++++++
+ .../telegram/ui/Components/Paint/Texture.java | 10 ++---
+ 3 files changed, 57 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Painting.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Painting.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Painting.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Painting.java
+@@ -59,6 +59,7 @@ public class Painting {
+     private Brush brush;
+     private HashMap<Integer, Texture> brushTextures = new HashMap<>();
+     private Texture bitmapTexture;
++    private Texture bitmapSourceTexture;
+     private Texture originalBitmapTexture;
+     private ByteBuffer vertexBuffer;
+     private ByteBuffer textureBuffer;
+@@ -163,14 +164,16 @@ public class Painting {
+     }
+ 
+     public void setBitmap(Bitmap bitmap) {
+-        if (bitmapTexture == null) {
+-            bitmapTexture = new Texture(bitmap);
++        if (bitmapSourceTexture == null) {
++            bitmapSourceTexture = new Texture(bitmap);
++            bitmapTexture = createBitmapTexture();
+         }
+     }
+ 
+     public void setBitmap(Bitmap bitmap, Bitmap blurBitmap) {
+-        if (bitmapTexture == null) {
+-            bitmapTexture = new Texture(bitmap);
++        if (bitmapSourceTexture == null) {
++            bitmapSourceTexture = new Texture(bitmap);
++            bitmapTexture = createBitmapTexture();
+         }
+         if (bitmapBlurTexture == null) {
+             bitmapBlurTexture = new Texture(blurBitmap);
+@@ -1185,7 +1188,11 @@ public class Painting {
+         }
+ 
+         if (bitmapTexture != null) {
+-            bitmapTexture.cleanResources(recycle);
++            bitmapTexture.cleanResources(false);
++            bitmapTexture = null;
++        }
++        if (bitmapSourceTexture != null) {
++            bitmapSourceTexture.cleanResources(recycle);
+         }
+         if (bitmapBlurTexture != null) {
+             bitmapBlurTexture.cleanResources(recycle);
+@@ -1237,12 +1244,38 @@ public class Painting {
+     }
+ 
+     private int getTexture() {
++        if (bitmapTexture == null && bitmapSourceTexture != null) {
++            bitmapTexture = createBitmapTexture();
++        }
+         if (bitmapTexture != null) {
+             return bitmapTexture.texture();
+         }
+         return 0;
+     }
+ 
++    private Texture createBitmapTexture() {
++        Texture texture = new Texture(size);
++        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, getReusableFramebuffer());
++        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, texture.texture(), 0);
++        GLES20.glViewport(0, 0, (int) size.width, (int) size.height);
++
++        Shader shader = shaders.get("unpremultiply");
++        GLES20.glUseProgram(shader.program);
++        GLES20.glUniformMatrix4fv(shader.getUniform("mvpMatrix"), 1, false, FloatBuffer.wrap(projection));
++        GLES20.glUniform1i(shader.getUniform("texture"), 0);
++        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
++        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, bitmapSourceTexture.texture());
++        GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ZERO);
++        GLES20.glVertexAttribPointer(0, 2, GLES20.GL_FLOAT, false, 8, vertexBuffer);
++        GLES20.glEnableVertexAttribArray(0);
++        GLES20.glVertexAttribPointer(1, 2, GLES20.GL_FLOAT, false, 8, textureBuffer);
++        GLES20.glEnableVertexAttribArray(1);
++        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
++        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
++        bitmapSourceTexture.cleanResources(false);
++        return texture;
++    }
++
+     private int getPaintTexture() {
+         if (paintTexture == 0) {
+             paintTexture = Texture.generateTexture(size);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/ShaderSet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/ShaderSet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/ShaderSet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/ShaderSet.java
+@@ -59,6 +59,14 @@ public class ShaderSet {
+         "   gl_FragColor = texture2D(texture, varTexcoord.st, 0.0);" +
+         "   gl_FragColor.rgb *= gl_FragColor.a;" +
+         "}";
++    private static final String PAINT_UNPREMULTIPLY_FSH =
++        "precision highp float;" +
++        "varying vec2 varTexcoord;" +
++        "uniform sampler2D texture;" +
++        "void main (void) {" +
++        "   vec4 color = texture2D(texture, varTexcoord.st, 0.0);" +
++        "   gl_FragColor = color.a > 0.0 ? vec4(color.rgb / color.a, color.a) : vec4(0.0);" +
++        "}";
+     // The editable texture holds absolute alpha, not a mask relative to the PNG's alpha.
+     // Android uploads premultiplied RGB, so change its alpha exactly once.
+     private static final String inu_MASKING_COLOR_FSH =
+@@ -405,6 +413,13 @@ public class ShaderSet {
+         shader.put(UNIFORMS, new String[]{"mvpMatrix", "texture", "alpha"});
+         result.put("blit", Collections.unmodifiableMap(shader));
+ 
++        shader = new HashMap<>();
++        shader.put(VERTEX, PAINT_BLIT_VSH);
++        shader.put(FRAGMENT, PAINT_UNPREMULTIPLY_FSH);
++        shader.put(ATTRIBUTES, new String[]{"inPosition", "inTexcoord"});
++        shader.put(UNIFORMS, new String[]{"mvpMatrix", "texture"});
++        result.put("unpremultiply", Collections.unmodifiableMap(shader));
++
+         shader = new HashMap<>();
+         shader.put(VERTEX, PAINT_BLIT_VSH);
+         shader.put(FRAGMENT, PAINT_MASKING_BLIT_FSH);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Texture.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Texture.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Texture.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Texture.java
+@@ -30,14 +30,12 @@ public class Texture {
+     }
+ 
+     public void cleanResources(boolean recycleBitmap) {
+-        if (texture == 0) {
+-            return;
++        if (texture != 0) {
++            int[] textures = new int[]{texture};
++            GLES20.glDeleteTextures(1, textures, 0);
++            texture = 0;
+         }
+ 
+-        int[] textures = new int[]{texture};
+-        GLES20.glDeleteTextures(1, textures, 0);
+-        texture = 0;
+-
+         if (recycleBitmap && bitmap != null && !bitmap.isRecycled()) {
+             bitmap.recycle();
+         }

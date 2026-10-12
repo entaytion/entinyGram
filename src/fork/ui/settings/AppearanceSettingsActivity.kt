@@ -231,7 +231,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                     }
                 }
             }
-            if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_ACCENT_ICONS, TOGGLE_M3_BOTTOM_TABS)) {
+            if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_ACCENT_ICONS, TOGGLE_M3_BOTTOM_TABS, TOGGLE_MATERIAL_PROFILE_ACTIONS)) {
                 softRebuild()
             }
             listView.adapter.update(true)

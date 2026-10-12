@@ -1908,6 +1908,10 @@
     <string name="InuPluginScopeOnUpdate">відстеження: %1$s</string>
     <string name="InuPluginScopeInterceptUpdate">перехоплення: %1$s</string>
     <string name="InuPluginScopeAllUpdates">усі оновлення</string>
+    <string name="InuPluginScopesMore_one">і ще %1$d</string>
+    <string name="InuPluginScopesMore_few">і ще %1$d</string>
+    <string name="InuPluginScopesMore_many">і ще %1$d</string>
+    <string name="InuPluginScopesMore_other">і ще %1$d</string>
     <string name="InuPluginTrustTitle">Встановлюйте лише довірені плагіни</string>
     <string name="InuPluginTrustInfo">Плагіни працюють у пісочниці й отримують лише заявлені дозволи — їхній список буде на наступному екрані.\nАле навіть із ними плагін може:</string>
     <string name="InuPluginTrust1Title">Діяти від вашого імені</string>

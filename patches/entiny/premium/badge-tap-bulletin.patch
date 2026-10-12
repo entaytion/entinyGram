@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11699,8 +11699,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11702,8 +11702,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  if (leftIcon == null && currentEncryptedChat == null && user.bot_verification_icon != 0 && !desu.inugram.InuConfig.HIDE_VERIFICATION_BADGE.getValue()) {
                      nameTextView[a].setLeftDrawableOutside(true);
                      leftIcon = getBotVerificationDrawable(user.bot_verification_icon, false, a);
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
                  }
                  nameTextView[a].setLeftDrawable(leftIcon);
                  if (a == 1 && (rightIconIsStatus || rightIconIsPremium)) {
-@@ -12021,8 +12028,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12024,8 +12031,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  if (chat.bot_verification_icon != 0 && !desu.inugram.InuConfig.HIDE_VERIFICATION_BADGE.getValue()) {
                      nameTextView[a].setLeftDrawableOutside(true);
                      nameTextView[a].setLeftDrawable(getBotVerificationDrawable(chat.bot_verification_icon, false, a));
