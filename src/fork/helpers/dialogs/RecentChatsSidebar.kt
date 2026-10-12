@@ -45,6 +45,7 @@ object RecentChatsSidebar {
         if (FolderHelper.atBottom() && find<StripView>(fragment)?.active() == true) dp(STRIP_HEIGHT_DP.toFloat()) else 0
 
     fun toggleStrip(fragment: BaseFragment): Boolean {
+        if (!RecentChatsHelper.isEnabled()) return false
         val strip = find<StripView>(fragment) ?: ensure(fragment)?.let { find<StripView>(fragment) } ?: return false
         strip.setShown(!strip.shown)
         return true
@@ -52,6 +53,7 @@ object RecentChatsSidebar {
 
     @JvmStatic
     fun toggleSidebar(fragment: BaseFragment): Boolean {
+        if (!RecentChatsHelper.isEnabled()) return false
         val bar = find<SidebarView>(fragment) ?: ensure(fragment)?.let { find<SidebarView>(fragment) } ?: return false
         bar.setExpanded(!bar.expanded)
         return true
@@ -73,6 +75,7 @@ object RecentChatsSidebar {
 
     @JvmStatic
     fun attach(fragment: BaseFragment, excludeDialogId: Long) {
+        if (!RecentChatsHelper.isEnabled()) return
         val style = InuConfig.RECENT_CHATS_STYLE.value
         if (style != InuConfig.RecentChatsStyleItem.SIDEBAR && style != InuConfig.RecentChatsStyleItem.STRIP) return
         val root = fragment.fragmentView as? ViewGroup ?: return

@@ -28,6 +28,7 @@ import desu.inugram.ui.settings.IosStyleSettingsActivity
 import desu.inugram.ui.settings.MessageDesignSettingsActivity
 import desu.inugram.ui.settings.DrawerSettingsActivity
 import desu.inugram.ui.settings.DrawerMenuOrderActivity
+import desu.inugram.ui.settings.MainScreenSettingsActivity
 import desu.inugram.ui.settings.MenusSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
 import desu.inugram.ui.settings.PillStackSettingsActivity
@@ -84,6 +85,7 @@ object SearchRegistry {
             AiEditorSettingsActivity.PAGE,
             AiSummarySettingsActivity.PAGE,
             AnnoyancesSettingsActivity.PAGE,
+            MainScreenSettingsActivity.PAGE,
             BehaviorSettingsActivity.PAGE,
             TosSettingsActivity.PAGE,
             GhostModeSettingsActivity.PAGE,

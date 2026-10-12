@@ -5,11 +5,14 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.dialogs.RecentChatsHelper
+import org.telegram.messenger.LocaleController
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MediaDataController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
+import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -18,6 +21,15 @@ class RecentChatsSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = getString(R.string.InuRecentChats)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(
+            UItem.asRippleCheck(TOGGLE_ENABLED, LocaleController.getString(R.string.Enable))
+                .setChecked(InuConfig.RECENT_CHATS_ENABLED.value)
+        )
+        items.add(UItem.asShadow(null))
+        if (!InuConfig.RECENT_CHATS_ENABLED.value) {
+            return
+        }
+
         items.add(UItem.asButton(BUTTON_STYLE, getString(R.string.InuRecentChatsStyle), styleLabel(InuConfig.RECENT_CHATS_STYLE.value)))
         items.add(UItem.asButton(BUTTON_LIMIT, getString(R.string.InuRecentChatsLimit), limitLabel(InuConfig.RECENT_CHATS_LIMIT.value)))
         items.add(UItem.asShadow(getString(R.string.InuRecentChatsStyleInfo)))
@@ -50,6 +62,19 @@ class RecentChatsSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
+            TOGGLE_ENABLED -> {
+                val new = InuConfig.RECENT_CHATS_ENABLED.toggle()
+                (view as? TextCheckCell)?.apply {
+                    setChecked(new)
+                    setBackgroundColorAnimated(
+                        new,
+                        Theme.getColor(if (new) Theme.key_windowBackgroundChecked else Theme.key_windowBackgroundUnchecked),
+                    )
+                }
+                listView?.adapter?.update(true)
+                RecentChatsHelper.notifyChanged()
+            }
+
             BUTTON_STYLE -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -93,6 +118,7 @@ class RecentChatsSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val LIMITS = listOf(25, 100, 500, 0)
+        private val TOGGLE_ENABLED = InuUtils.generateId()
         private val BUTTON_STYLE = InuUtils.generateId()
         private val BUTTON_LIMIT = InuUtils.generateId()
         private val TOGGLE_HIDE_SHORTCUTS = InuUtils.generateId()
@@ -105,6 +131,7 @@ class RecentChatsSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_recent,
             factory = ::RecentChatsSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("recent-chats-toggle", R.string.InuRecentChats, TOGGLE_ENABLED),
                 SearchRegistry.Entry("recent-chats-style", R.string.InuRecentChatsStyle, BUTTON_STYLE),
                 SearchRegistry.Entry("recent-chats-limit", R.string.InuRecentChatsLimit, BUTTON_LIMIT),
                 SearchRegistry.Entry("hide-recent-chats-shortcuts", R.string.InuHideRecentChatsShortcuts, TOGGLE_HIDE_SHORTCUTS),

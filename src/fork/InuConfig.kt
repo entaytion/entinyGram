@@ -1860,6 +1860,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ACCOUNT_SWITCH_SHORTCUT = BoolItem("account_switch_shortcut", false)
 
     @JvmField
+    val RECENT_CHATS_ENABLED = BoolItem("recent_chats_enabled", false)
+
+    @JvmField
     val HIDE_RECENT_CHATS_SHORTCUTS = BoolItem("hide_recent_chats_shortcuts", false)
 
     class RecentChatsStyleItem : IntItem("recent_chats_style", POPUP) {

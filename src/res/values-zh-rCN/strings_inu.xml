@@ -2,10 +2,9 @@
 <resources>
     <string name="InuOpenInDiscussion">在讨论中打开</string>
     <string name="InuBanUserConfirm">将 %1$s 从本群封禁？</string>
-    <string name="InuSettings">Inugram 设置</string>
+    <string name="InuSettings">entinyGram 设置</string>
     <string name="InuSettingsInfo">汪汪在干啥？</string>
     <string name="InuGeneral">通用</string>
-    <string name="InuMiscellaneous">杂项</string>
     <string name="InuWideChannelPosts">宽屏帖子</string>
     <string name="InuWideChannelPostsFooter">频道帖子和转发将使用全部可用宽度。</string>
     <string name="InuWideChannelPostsPreviewText">新闻、照片和视频</string>
@@ -68,7 +67,6 @@
     <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">聊天与界面</string>
     <string name="InuAnnoyancesChannels">频道与推荐</string>
-    <string name="InuAnnoyancesMedia">媒体</string>
     <string name="InuAnnoyancesAi">人工智能</string>
     <string name="InuAnnoyancesHints">提示与提醒</string>
     <string name="InuMessages">消息</string>
@@ -180,7 +178,6 @@
     <string name="InuPredictiveBackStock">原版</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
     <string name="InuHideAiFeatures">隐藏 AI 功能</string>
-    <string name="InuHideAiEditor">AI 编辑器按钮</string>
     <string name="InuHideMessageSummary">消息摘要按钮</string>
     <string name="InuHideIvSummary">Instant View 摘要</string>
     <string name="InuClearHints">清除所有提示</string>
@@ -194,7 +191,7 @@
     <string name="InuStickerTimeModeHideTime">仅隐藏时间</string>
     <string name="InuStickerTimeModeHideIncoming">仅隐藏收到的</string>
     <string name="InuStickerTimeModeHideCompletely">完全隐藏</string>
-    <string name="InuStickerSizeDialogMessage">好狗狗！</string>
+    <string name="InuStickerSizeDialogMessage">我喜欢天线！</string>
     <string name="InuBubbleTails">气泡尾巴</string>
     <string name="InuSendAsRoundVideo">以圆形视频发送</string>
     <string name="InuMiscPreviewForwardedFrom">狗狗</string>
@@ -445,7 +442,6 @@
     <string name="InuForwardHeaderMode">转发标题</string>
     <string name="InuForwardHeaderModeRegular">常规</string>
     <string name="InuForwardHeaderModeIcon">图标</string>
-    <string name="InuForwardHeaderModeIconNoTimeInfo">“显示转发时间”关闭时与紧凑模式相同</string>
     <string name="InuForwardHeaderModeCompact">紧凑</string>
     <string name="InuShowForwardsCount">显示转发次数</string>
     <string name="InuCompactEdited">紧凑编辑指示器</string>
@@ -522,7 +518,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">更新频道</string>
     <string name="InuUpdates">更新</string>
-    <string name="InuUpdateBetaWarning">这是测试版更新，可能不稳定。</string>
     <string name="InuUpdateInstalling">正在安装更新</string>
     <string name="InuUpdateInstallingHint">安装完成后应用将重启</string>
     <string name="InuUpdateInstallingNotificationHint">更新安装完成后会通知你</string>
@@ -577,7 +572,6 @@
     <string name="InuReorderAccountsInfo">长按账号并拖动来重新排序。该顺序应用于设置列表和账号切换器。</string>
     <string name="InuCreateAsSupergroup">创建为超级群</string>
     <string name="InuFeed">动态</string>
-    <string name="InuFeedToggleInfo">将动态添加到菜单和底部标签页。默认关闭；底部标签页需要重启应用</string>
     <string name="InuFeedEmpty">全部已读</string>
     <string name="InuFeedManageChannels">管理频道</string>
     <string name="InuFeedMarkAllRead">全部标为已读</string>
@@ -606,7 +600,6 @@
     <string name="InuCopyButtonText">复制「%1$s」</string>
     <string name="InuCopyCallbackData">复制回调数据</string>
     <string name="InuCallbackDataCopied">回调数据已复制</string>
-    <string name="InuNetwork">网络</string>
     <string name="InuAutoDisableProxyOnVpn">VPN 激活时禁用代理</string>
     <string name="InuProxyImportFromClipboard">从剪贴板导入</string>
     <string name="InuProxyImportNothing">剪贴板中没有新的代理链接</string>
@@ -620,7 +613,7 @@
     <string name="InuMentionInsertTitle">插入提及</string>
     <string name="InuPasscode">密码锁</string>
     <string name="InuPasscodeNeeded">请先设置 Telegram 密码锁。</string>
-    <string name="InuPasscodeShowInSettings">在 inugram 设置中显示</string>
+    <string name="InuPasscodeShowInSettings">在 entinyGram 设置中显示</string>
     <string name="InuPasscodeShowInSettingsInfo">关闭时，本页**只能**通过下方链接打开。请立即保存 —— 一旦生成将不再更改。</string>
     <string name="InuPasscodeAccountsInfo">每个账号可以有自己的密码。在锁屏输入它会解锁应用并切换到该账号。</string>
     <string name="InuPasscodeStateNone">未设置</string>
@@ -659,11 +652,11 @@
     <string name="InuMenuBottomRowFull">快捷操作栏已满 (最多 4 个)</string>
     <string name="InuPrivacySecurity">隐私与安全</string>
     <string name="InuPerAccountPasscode">每个账号独立密码</string>
-    <string name="InuHideInugramSettings">隐藏 inugram 设置</string>
+    <string name="InuHideInugramSettings">隐藏 entinyGram 设置</string>
     <string name="InuParanoiaDisableNotifications">禁用通知</string>
     <string name="InuParanoiaHideOtherAccounts">隐藏其他账号</string>
     <string name="InuParanoiaDisguise">伪装成 Telegram</string>
-    <string name="InuParanoiaDisguiseInfo">仅更改启动器图标和名称。由于 Android 限制，通知和应用内名称仍显示「Inugram」。</string>
+    <string name="InuParanoiaDisguiseInfo">仅更改启动器图标和名称；通知中仍会显示「entinyGram」。</string>
     <string name="InuParanoiaMode">偏执模式</string>
     <string name="InuParanoiaModeInfo">偏执模式让你为他人查看手机做好「准备」：隐藏任何「危险」聊天，并可选择伪装成原版应用。</string>
     <string name="InuParanoiaLauncherShortcut">启动器快捷方式</string>
@@ -752,7 +745,7 @@
     <string name="InuConfirmReactionText">在 **%2$s** 发送 %1$s 回应？</string>
     <string name="InuNotificationIcon">通知图标</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">Inugram</string>
+    <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNothingToTranslate">没有可翻译的消息。</string>
     <string name="InuAlreadyInTargetLanguage">此消息已是 %1$s。</string>
     <string name="InuVoiceRecorder">语音 / 圆形录制</string>
@@ -777,12 +770,12 @@
     <string name="InuParanoiaWhitelist">白名单模式</string>
     <string name="InuBotSettings">机器人设置</string>
     <string name="InuBotHelp">机器人帮助</string>
-    <string name="InuCrashTitle">Inugram 上次崩溃了</string>
+    <string name="InuCrashTitle">entinyGram 上次崩溃了</string>
     <string name="InuCrashDesc">抱歉。你可以与开发者分享崩溃日志以帮助修复。</string>
     <string name="InuCrashShare">分享崩溃日志</string>
     <string name="InuCrashDiscard">丢弃</string>
     <string name="InuCrashChannel">崩溃恢复</string>
-    <string name="InuCrashNotifTitle">Inugram 崩溃了</string>
+    <string name="InuCrashNotifTitle">entinyGram 崩溃了</string>
     <string name="InuCrashNotifText">点击重启</string>
     <string name="InuLogs">调试</string>
     <string name="InuLogsEnabled">调试模式</string>
@@ -882,22 +875,11 @@
     <string name="InuStripTrackingParamsOnOpen">打开链接时</string>
     <string name="InuStripTrackingParamsOnPaste">粘贴时</string>
     <string name="InuStripTrackingParamsSourceRow">过滤器源</string>
-    <string name="InuCrashTitleOom">Inugram 内存不足</string>
+    <string name="InuCrashTitleOom">entinyGram 内存不足</string>
     <string name="InuCrashDescOom">抱歉。崩溃日志对内存不足问题帮助不大 —— 堆转储才有用。</string>
     <string name="InuCrashDescHeapDump">同时保存了堆转储。请勿分享！里面包含隐私数据！如果愿意，可以自己查看一下，并把你的发现告诉开发者——会非常有帮助。</string>
-    <string name="InuCrashOomEnableLogs">在 Inugram 设置 > 关于 中启用调试模式，以便在今后每次内存不足时生成堆转储。</string>
+    <string name="InuCrashOomEnableLogs">在 entinyGram 设置 > 关于 中启用调试模式，以便在今后每次内存不足时生成堆转储。</string>
     <string name="InuCrashShareHeapDump">保存堆转储</string>
-    <string name="InuDeleteOwnMessages">删除我的消息</string>
-    <string name="InuDeleteOwnMessagesSearching">正在查找你的消息…</string>
-    <string name="InuDeleteOwnMessagesFoundProgress">找到 %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesNone">此聊天中没有你的消息</string>
-    <string name="InuDeleteOwnMessagesConfirm_one">删除你的 %d 条消息？此操作无法撤销。</string>
-    <string name="InuDeleteOwnMessagesConfirm_other">删除你的 %d 条消息？此操作无法撤销。</string>
-    <string name="InuDeleteOwnMessagesDeleting">已删除 %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesDone_one">已删除 %d 条消息</string>
-    <string name="InuDeleteOwnMessagesDone_other">已删除 %d 条消息</string>
-    <string name="InuDeleteOwnMessagesError">错误: %1$s</string>
-    <string name="InuDeleteOwnMessagesFloodWait">速率受限，等待 %d 秒…</string>
     <string name="InuBiometricConfirm">生物识别确认</string>
     <string name="InuBiometricConfirmTitle">确认你的身份</string>
     <string name="InuBiometricConfirmDeleteChat">确认删除聊天</string>
@@ -919,7 +901,6 @@
     <string name="InuAiCopy">复制</string>
     <string name="InuAiCustomPrompt">自定义提示词</string>
     <string name="InuAiEmoji">表情符号</string>
-    <string name="InuAiEndpointModel">模型</string>
     <string name="InuAiEndpointUrl">终端 URL</string>
     <string name="InuAiError">请求失败：%1$s</string>
     <string name="InuAiGenerating">生成中…</string>
@@ -950,7 +931,6 @@
     <string name="InuCacheTtlMonth">1 个月前</string>
     <string name="InuCacheTtlNever">从不（永久保留）</string>
     <string name="InuCacheTtlWeek">1 周前</string>
-    <string name="InuCategories">分类</string>
     <string name="InuCenterTitleChats">同时在聊天/频道中居中</string>
     <string name="InuClearCache">清除缓存</string>
     <string name="InuClearDeletedCache">清除已删除消息缓存</string>
@@ -966,8 +946,6 @@
     <string name="InuClearDeletedCacheEmpty">已删除消息缓存为空</string>
     <string name="InuClearDeletedCacheHint">长按聊天可逐条查看已保存的消息和媒体并单独删除</string>
     <string name="InuDataBackup">备份与同步</string>
-    <string name="InuBuildFull">完整版</string>
-    <string name="InuBuildPluginless">无插件版</string>
     <string name="InuDownloadingStory">正在下载故事…</string>
     <string name="InuEditHistory">编辑历史</string>
     <string name="InuSuppressScreenshotNotification">隐藏截图通知</string>
@@ -1027,10 +1005,8 @@
     <string name="InuAiEditorButtonSetupInfo">请先在 AI 服务中添加 API 密钥；此按钮在撰写消息时生效。</string>
     <string name="InuAiInsertQuote">将回答作为引用插入</string>
     <string name="InuAiOnlyAnswer">仅显示回答</string>
-    <string name="InuAiProviderCustom">自定义</string>
     <string name="InuAiRoles">角色</string>
     <string name="InuAiRolesAssistant">助手</string>
-    <string name="InuAiSectionGeneral">常规</string>
     <string name="InuAiSectionGeneration">回复</string>
     <string name="InuAiSectionTemperature">温度</string>
     <string name="InuAiStream">流式传输回答</string>
@@ -1055,11 +1031,9 @@
     <string name="InuAiSummaryTemperatureInfo">数值越低，摘要越贴近原文。在你修改之前使用编辑器的温度。</string>
     <string name="InuAiTranscribe">语音转文字 (转录)</string>
     <string name="InuAiTranscribeAccountId">Account ID</string>
-    <string name="InuAiTranscribeApiKey">API 密钥</string>
     <string name="InuAiTranscribeApiToken">API 令牌</string>
     <string name="InuAiTranscribeFailed">转录失败：%1$s</string>
     <string name="InuAiTranscribeLanguage">语音语言</string>
-    <string name="InuAiTranscribeLanguageInfo">语音消息所用语言（如 en、uk、ru）。留空则自动检测。</string>
     <string name="InuAiTranscribeErrorDownload">无法下载该语音消息。</string>
     <string name="InuAiTranscribeErrorNoAudio">此消息没有可转写的音频。</string>
     <string name="InuAiTranscribeErrorEmpty">服务商返回了空的转写结果。</string>
@@ -1172,7 +1146,6 @@
     <string name="InuLocalFolders">本地文件夹</string>
     <string name="InuLocalFoldersInfo">可创建超出 Telegram 限制的文件夹，超出部分仅保存在本设备。</string>
     <string name="InuPillStack">Pill Stack</string>
-    <string name="InuPillStackInfo">聊天搜索栏中的小型交互药丸\n非岛式全局搜索时不生效</string>
     <string name="InuPillStackVisibleCount">同时显示数量</string>
     <string name="InuPillStackClock">时钟</string>
     <string name="InuPillStackLastSeen">最后在线</string>
@@ -1332,11 +1305,6 @@
     <string name="InuNotificationIconOldEntinygram">旧版 entinyGram</string>
     <string name="InuNotificationIconInfo">在小米（MIUI/HyperOS）上，系统可能会把此图标替换为应用图标，因此所选图标可能不会显示</string>
     <string name="InuPoweredByProvider">翻译由 %1$s 提供支持。</string>
-    <string name="InuTranslationProvider">翻译服务</string>
-    <string name="InuTranslationProviderTelegram">Telegram</string>
-    <string name="InuTranslationProviderFromPlugin">来自 %1$s</string>
-    <string name="InuTranslationProviderUnavailable">不可用</string>
-    <string name="InuTranslationProviderInfo">你可以将其他翻译服务安装为**插件 >**</string>
     <string name="InuProfilePhotosDeleted">已删除所有个人头像</string>
     <string name="InuProfilePhotosDeletedCount">已删除 %1$d 张头像</string>
     <string name="InuProfilePhotosSelected">已选择：%1$d</string>
@@ -1451,19 +1419,10 @@
     <string name="InuRecentChatsUsers">用户</string>
     <string name="InuRecentChatsEmpty">暂无内容</string>
     <string name="InuAiProvidersTitle">AI 提供商</string>
-    <string name="InuAiProvidersUniversalDesc">名称前的图标显示支持范围（∞ 聊天+语音，键盘仅聊天，麦克风仅语音）——点击配置，再为每个范围选择启用项。</string>
     <string name="InuAiProvidersActiveForChat">用于聊天</string>
     <string name="InuAiProvidersActiveForVoice">用于语音</string>
-    <string name="InuAiProvidersActiveBoth">聊天 + 语音</string>
-    <string name="InuAiProvidersSameModel">两者使用相同模型</string>
-    <string name="InuAiProvidersChatModelHint">聊天模型</string>
-    <string name="InuAiProvidersVoiceModelHint">语音模型</string>
-    <string name="InuAiProvidersOpenRouterInfo">通过一个 API 访问数百个模型。从 OpenRouter 获取密钥：</string>
-    <string name="InuAiProviderCustomNameHint">名称（可选）</string>
-    <string name="InuAiRolesScreenDesc">保存的 AI 角色设想（\"你是 X\"）。点击切换，点击当前激活的角色可重命名。</string>
     <string name="InuAiRoleNew">新建角色</string>
     <string name="InuAiRoleNameHint">名称</string>
-    <string name="InuAiRolePromptHint">自定义提示词（可选）</string>
     <string name="InuAiRolePromptDesc">设置后，此完整提示词将完全替换 \"你是某某\" 那行。</string>
     <string name="InuAiRoleDeleteConfirm">删除此角色？</string>
     <string name="InuAiRolesSubtitle">AI 在编辑器和摘要中扮演的角色。选择一个现成的，或编写你自己的提示词。</string>
@@ -1477,11 +1436,6 @@
     <string name="InuAiSummaryFailed">摘要失败：%1$s</string>
     <string name="InuAiInsertQuoteInfo">在 AI 编辑器中点击“使用”时，结果会以引用块形式替换草稿。关闭时以纯文本替换草稿。</string>
     <string name="InuAiOnlyAnswerInfo">适用于推理模型：隐藏思考过程，只保留最终回答。关闭时，思考内容会显示在回答上方的思考气泡之后。</string>
-    <string name="InuAiTranscribeGroqInfo">使用 Whisper Large v3 快速、免费转录。从 Groq 控制台获取免费密钥：</string>
-    <string name="InuAiTranscribeGeminiInfo">通过 Gemini 进行多模态音频转录。从 Google AI Studio 获取密钥：</string>
-    <string name="InuAiTranscribeOpenAiInfo">官方 OpenAI Whisper 转录。从 OpenAI 仪表板获取密钥：</string>
-    <string name="InuAiTranscribeCfInfo">需要 Cloudflare 账户 ID 和作用域为 Workers AI 的 API 令牌。在此管理令牌：</string>
-    <string name="InuAiTranscribeCustomInfo">输入任何兼容 OpenAI 的 /v1/audio/transcriptions 端点。</string>
     <string name="InuAiChatCustomInfo">任何兼容 OpenAI 的 API，例如 https://host/v1（也可填写完整的 /chat/completions 地址）。本地路由器可不填 API 密钥。</string>
     <string name="InuAiProvidersSubtitle">连接你自己的 AI 服务，用于编辑器、摘要和语音转文字。</string>
     <string name="InuAiProviderAdd">添加提供商</string>
@@ -1502,8 +1456,6 @@
     <string name="InuAiModelPickerTitle">选择模型</string>
     <string name="InuAiModelsLoading">正在加载模型…</string>
     <string name="InuAiModelEnterManually">手动输入模型</string>
-    <string name="InuAiTranscribeFetchModels">获取可用模型</string>
-    <string name="InuAiTranscribeFetchModelsEmpty">未找到模型</string>
     <string name="InuAiTranscribeFetchModelsFailed">无法获取模型：%1$s</string>
     <string name="InuBurnOneTime">销毁</string>
     <string name="InuGhostAutoOffline">自动切换为离线</string>
@@ -1807,7 +1759,7 @@
     <string name="InuPluginsErrorNoManifest">不是有效插件（缺少元数据头）</string>
     <string name="InuPluginsErrorRead">无法读取所选文件</string>
     <string name="InuPluginsErrorWrite">无法保存插件文件</string>
-    <string name="InuPluginsErrorApiVersion">需要更新版本的 Inugram（插件 API %1$d，此应用为 %2$d）</string>
+    <string name="InuPluginsErrorApiVersion">需要更新版本的 entinyGram（插件 API %1$d，此应用为 %2$d）</string>
     <string name="InuPluginsErrorPlatform">并非为此平台制作（需要 %1$s）</string>
     <string name="InuPluginsErrorBadGrant">请求了无效权限（%1$s）</string>
     <string name="InuPluginsErrorUnconsentedGrants">请求了安装时未经审核的权限（%1$s）；请更新插件以审核这些权限</string>
@@ -1879,4 +1831,9 @@
     <string name="InuBiometricRequireConfirmationPasscode">解锁应用时</string>
     <string name="InuBiometricRequireConfirmationBots">在小程序中</string>
     <string name="InuBiometricRequireConfirmationActions">删除聊天或登出时</string>
+    <string name="InuMainScreen">主屏幕</string>
+    <string name="InuMessagesSummary">双击操作、回应与发送确认</string>
+    <string name="InuPillStackSummary">搜索栏中的交互式小部件</string>
+    <string name="InuRecentChatsSummary">在聊天之间快速切换</string>
+    <string name="InuFeedSummary">频道聚合动态</string>
 </resources>

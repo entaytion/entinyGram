@@ -28,7 +28,6 @@
     <string name="InuSettings">Налаштування entinyGram</string>
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
     <string name="InuGeneral">Загальні</string>
-    <string name="InuMiscellaneous">Різне</string>
     <string name="InuWideChannelPosts">Широкі пости</string>
     <string name="InuWideChannelPostsFooter">Пости каналів та переслані повідомлення займають усю доступну ширину.</string>
     <string name="InuWideChannelPostsPreviewText">Новини, фото та відео</string>
@@ -90,7 +89,6 @@
     <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">Чати та інтерфейс</string>
     <string name="InuAnnoyancesChannels">Канали та рекомендації</string>
-    <string name="InuAnnoyancesMedia">Медіа</string>
     <string name="InuAnnoyancesAi">Штучний інтелект</string>
     <string name="InuAnnoyancesHints">Підказки та нагадування</string>
     <string name="InuMessages">Повідомлення</string>
@@ -247,13 +245,12 @@
     <string name="InuDialogsFabActionOpenSearch">Відкрити пошук</string>
     <string name="InuDialogsFabActionSavedMessages">Збережене</string>
     <string name="InuPillStack">Pill Stack</string>
-    <string name="InuPillStackInfo">Невеликі інтерактивні піллюлі в рядку пошуку чатів\nНеактивні з неострівним глобальним пошуком</string>
     <string name="InuPillStackVisibleCount">Видно одночасно</string>
     <string name="InuPillStackClock">Годинник</string>
     <string name="InuPillStackLastSeen">Був у мережі</string>
     <string name="InuPillStackWeather">Погода</string>
     <string name="InuPillStackProxy">Проксі</string>
-    <string name="InuPillStackRam">RAM</string>
+    <string name="InuPillStackRam">ОЗП</string>
     <string name="InuPillStackNetSpeed">Швидкість мережі</string>
     <string name="InuPillStackDcPing">Пінг дата-центру</string>
     <string name="InuPillStackBattery">Батарея</string>
@@ -317,7 +314,6 @@
     <string name="InuShowHiddenMessages">Показати повідомлення</string>
     <string name="InuSpoilers">Спойлери</string>
     <string name="InuHideAiFeatures">Приховати AI функції</string>
-    <string name="InuHideAiEditor">Кнопка AI редактора</string>
     <string name="InuAiEditorButtonInfo">Показує AI-дії біля поля повідомлення: переписати, продовжити, скоротити або виправити текст.</string>
     <string name="InuAiEditorButtonSetupInfo">Спочатку додайте API-ключ у AI-сервісах; ця кнопка працює під час написання повідомлень.</string>
     <string name="InuAiSummary">AI-резюме</string>
@@ -335,7 +331,7 @@
     <string name="InuStickerTimeModeHideTime">Приховати лише час</string>
     <string name="InuStickerTimeModeHideIncoming">Приховати лише для вхідних</string>
     <string name="InuStickerTimeModeHideCompletely">Приховати повністю</string>
-    <string name="InuStickerSizeDialogMessage">мені подобаються антени</string>
+    <string name="InuStickerSizeDialogMessage">я люблю антени!</string>
     <string name="InuBubbleTails">Хвостики бульбашок повідомлень</string>
     <string name="InuSendAsRoundVideo">Надіслати як кружечок</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
@@ -774,10 +770,7 @@
     <string name="InuCut">Вирізати</string>
     <string name="InuCodeLanguage">Мова коду</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
-    <string name="InuCategories">Категорії</string>
     <string name="InuDataBackup">Резервне копіювання</string>
-    <string name="InuBuildFull">Повна</string>
-    <string name="InuBuildPluginless">Без плагінів</string>
 
     <string name="InuSearchFilter">Фільтр за типом медіа</string>
     <string name="InuSearchFilterPhotos">Фото</string>
@@ -839,7 +832,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Канал оновлень</string>
     <string name="InuUpdates">Оновлення</string>
-    <string name="InuUpdateBetaWarning">Це бетаоновлення, воно може бути нестабільним.</string>
     <string name="InuUpdateInstalling">Встановлення оновлення</string>
     <string name="InuUpdateInstallingHint">Додаток перезапуститься після встановлення</string>
     <string name="InuUpdateInstallingNotificationHint">Ви отримаєте сповіщення після встановлення</string>
@@ -898,7 +890,6 @@
     <string name="InuReorderAccountsInfo">Перетягуйте, щоб змінити порядок акаунтів у списку налаштувань і в перемикачі акаунтів.</string>
     <string name="InuCreateAsSupergroup">Створити як супергрупу</string>
     <string name="InuFeed">Стрічка</string>
-    <string name="InuFeedToggleInfo">Додає стрічку до меню та нижніх вкладок. Вимкнено за замовчуванням; для нижньої вкладки потрібен перезапуск</string>
     <string name="InuFeedEmpty">Усе прочитано</string>
     <string name="InuFeedManageChannels">Керування каналами</string>
     <string name="InuFeedMarkAllRead">Позначити все прочитаним</string>
@@ -927,7 +918,6 @@
     <string name="InuCopyButtonText">Скопіювати \"%1$s\"</string>
     <string name="InuCopyCallbackData">Скопіювати callback data</string>
     <string name="InuCallbackDataCopied">Callback data скопійовано</string>
-    <string name="InuNetwork">Мережа</string>
     <string name="InuAutoDisableProxyOnVpn">Вимикати проксі, коли активний VPN</string>
     <string name="InuProxyImportFromClipboard">Імпорт із буфера обміну</string>
     <string name="InuProxyImportNothing">У буфері обміну немає нових посилань на проксі</string>
@@ -1160,21 +1150,6 @@
     <string name="InuLogsMakeHeapDump">Зробити дамп купи</string>
     <string name="InuLogsMakingHeapDump">Створення дампу купи…</string>
     <string name="InuLogsHeapDumpWarning">**НІКОЛИ** не діліться файлом .hprof — це знімок пам’яті з **чутливими даними** (повідомлення, токени тощо), переглядайте його лише самостійно. Додаток ненадовго зависне під час створення дампу.</string>
-    <string name="InuDeleteOwnMessages">Видалити мої повідомлення</string>
-    <string name="InuDeleteOwnMessagesSearching">Пошук ваших повідомлень…</string>
-    <string name="InuDeleteOwnMessagesFoundProgress">Знайдено %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesNone">У цьому чаті немає ваших повідомлень</string>
-    <string name="InuDeleteOwnMessagesConfirm_one">Видалити %d ваше повідомлення? Цю дію неможливо скасувати.</string>
-    <string name="InuDeleteOwnMessagesConfirm_few">Видалити %d ваших повідомлення? Цю дію неможливо скасувати.</string>
-    <string name="InuDeleteOwnMessagesConfirm_many">Видалити %d ваших повідомлень? Цю дію неможливо скасувати.</string>
-    <string name="InuDeleteOwnMessagesConfirm_other">Видалити %d ваших повідомлень? Цю дію неможливо скасувати.</string>
-    <string name="InuDeleteOwnMessagesDeleting">Видалено %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesDone_one">Видалено %d повідомлення</string>
-    <string name="InuDeleteOwnMessagesDone_few">Видалено %d повідомлення</string>
-    <string name="InuDeleteOwnMessagesDone_many">Видалено %d повідомлень</string>
-    <string name="InuDeleteOwnMessagesDone_other">Видалено %d повідомлень</string>
-    <string name="InuDeleteOwnMessagesError">Помилка: %1$s</string>
-    <string name="InuDeleteOwnMessagesFloodWait">Ліміт запитів, очікуємо %d с…</string>
     <string name="InuBiometricConfirm">Біометричне підтвердження</string>
     <string name="InuBiometricConfirmTitle">Підтвердьте особу</string>
     <string name="InuBiometricExplicitConfirmation">Додаткове підтвердження</string>
@@ -1227,7 +1202,6 @@
     <string name="InuStickerSetRefreshFailed">Не вдалося оновити пакунок</string>
     <string name="InuAiCompose">Штучний інтелект (AI)</string>
     <string name="InuAiEndpointUrl">URL ендпоінта</string>
-    <string name="InuAiEndpointModel">Модель</string>
     <string name="InuAiOpenSettings">Відкрити налаштування</string>
     <string name="InuAiNoEndpoint">Не налаштовано жодного активного API-ендпоінта. Додайте його в Налаштуваннях &gt; AI Compose.</string>
     <string name="InuAiBadEndpoint">В активного ендпоінта немає URL. Відредагуйте його в Налаштуваннях &gt; AI Compose.</string>
@@ -1258,7 +1232,6 @@
     <string name="InuAiTranslateTo">На мову</string>
     <string name="InuAiTranslateRun">Перекласти</string>
     <string name="InuAiChatTitle">AI-чат</string>
-    <string name="InuAiSectionGeneral">Загальні</string>
     <string name="InuAiRoles">Ролі</string>
     <string name="InuAiRolesAssistant">Асистент</string>
     <string name="InuAiSectionGeneration">Відповіді</string>
@@ -1266,10 +1239,8 @@
     <string name="InuAiStreamInfo">Показувати відповідь слово за словом під час генерації, а не чекати на повну відповідь.</string>
     <string name="InuAiOnlyAnswer">Показати лише відповідь</string>
     <string name="InuAiInsertQuote">Вставляти відповідь як цитату</string>
-    <string name="InuAiRolesScreenDesc">Збережені персони, якими ШІ прикидається («Ти — X»). Тапни, щоб перемкнути, тапни активну — щоб перейменувати.</string>
     <string name="InuAiRoleNew">Нова роль</string>
     <string name="InuAiRoleNameHint">Назва</string>
-    <string name="InuAiRolePromptHint">Власний промпт (необов’язково)</string>
     <string name="InuAiRolePromptDesc">Якщо вказано, цей повний промпт повністю замінює рядок «Ти — Назва».</string>
     <string name="InuAiRoleDeleteConfirm">Видалити цю роль?</string>
     <string name="InuAiRolesSubtitle">Персони, якими ШІ діє в редакторі та підсумках. Оберіть готову або напишіть свій промпт.</string>
@@ -1298,18 +1269,10 @@
     <string name="InuAiReasoningMedium">Середня</string>
     <string name="InuAiReasoningHigh">Висока</string>
     <string name="InuAiSummaryTemperatureInfo">Менші значення тримають скорочення ближчими до оригіналу. Поки ви не змінили, використовується температура редактора.</string>
-    <string name="InuAiProviderCustom">Власний</string>
-    <string name="InuAiProviderCustomNameHint">Назва (необов’язково)</string>
     <string name="InuAiApiKeyHint">API Ключ</string>
     <string name="InuAiProvidersTitle">AI-провайдери</string>
-    <string name="InuAiProvidersUniversalDesc">Іконка перед назвою показує підтримку (∞ — чат і голос, клавіатура — лише чат, мікрофон — лише голос) — тапни, щоб налаштувати, і обери активного для кожного сценарію.</string>
     <string name="InuAiProvidersActiveForChat">Активний для чату</string>
     <string name="InuAiProvidersActiveForVoice">Активний для голосу</string>
-    <string name="InuAiProvidersActiveBoth">Чат + Голос</string>
-    <string name="InuAiProvidersSameModel">Використовувати одну модель для обох</string>
-    <string name="InuAiProvidersChatModelHint">Модель для чату</string>
-    <string name="InuAiProvidersVoiceModelHint">Модель для голосу</string>
-    <string name="InuAiProvidersOpenRouterInfo">Доступ до сотень моделей через один API. Отримати ключ на OpenRouter:</string>
     <string name="InuChannelMessages">Канали, де ви можете писати</string>
     <string name="InuSameAsIncoming">Як у вхідних / вихідних</string>
     <string name="InuDownloadingStory">Завантаження історії…</string>
@@ -1318,7 +1281,6 @@
     <string name="InuForwardHeaderModeRegular">Звичайний</string>
     <string name="InuForwardHeaderModeCompact">Компактний</string>
     <string name="InuForwardHeaderModeIcon">Іконка</string>
-    <string name="InuForwardHeaderModeIconNoTimeInfo">Те саме, що й компактний з вимкненим «Показувати час пересилання»</string>
     <string name="InuShowForwardsCount">Показувати кількість пересилань</string>
     <string name="InuPerformanceClass">Клас продуктивності</string>
     <string name="InuPerformanceClassInfo">Не рекомендується змінювати цей параметр, оскільки це може погіршити продуктивність на слабких пристроях</string>
@@ -1517,13 +1479,11 @@
     <string name="InuAiTranscribe">Розпізнавання аудіо (Voice-to-Text)</string>
     <string name="InuAiTranscribeInfo">Розшифровувати голосові та відеоповідомлення через власного AI-провайдера замість телеграмівського — з Premium чи без нього.</string>
     <string name="InuAiTranscribeModel">Модель</string>
-    <string name="InuAiTranscribeApiKey">API ключ</string>
-    <string name="InuAiTranscribeAccountId">Account ID</string>
+    <string name="InuAiTranscribeAccountId">ID акаунту</string>
     <string name="InuAiTranscribeApiToken">API токен</string>
     <string name="InuAiTranscribeNoKey">Голосовий AI-провайдер ще не налаштований. Додайте його в Налаштуваннях &gt; AI &gt; Провайдери.</string>
     <string name="InuAiTranscribeFailed">Помилка розпізнавання: %1$s</string>
     <string name="InuAiTranscribeLanguage">Мова мовлення</string>
-    <string name="InuAiTranscribeLanguageInfo">Мова голосових повідомлень (наприклад en, uk, ru). Порожньо = визначати автоматично.</string>
     <string name="InuAiTranscribeErrorDownload">Не вдалося завантажити голосове повідомлення.</string>
     <string name="InuAiTranscribeErrorNoAudio">У цьому повідомленні немає аудіо для розшифрування.</string>
     <string name="InuAiTranscribeErrorEmpty">Провайдер повернув порожню розшифровку.</string>
@@ -1532,12 +1492,7 @@
     <string name="InuAiTranscribeErrorRateLimited">Провайдер зараз обмежує частоту запитів. Зачекайте трохи й натисніть ще раз.</string>
     <string name="InuAiTranscribeErrorDailyQuota">У цього API-ключа закінчилася безкоштовна квота на сьогодні. Спробуйте завтра, увімкніть оплату або змініть голосового провайдера.</string>
     <string name="InuAiTranscribeErrorNoFreeQuota">Ця модель не має безкоштовної квоти для вашого API-ключа. Виберіть модель Flash, увімкніть оплату в проєкті Google або змініть голосового провайдера.</string>
-    <string name="InuAiTranscribeGroqInfo">Швидке безкоштовне розпізнавання на Whisper Large v3. Отримати безкоштовний ключ у консолі Groq:</string>
-    <string name="InuAiTranscribeGeminiInfo">Мультимодальне розпізнавання аудіо через Gemini. Отримати ключ у Google AI Studio:</string>
-    <string name="InuAiTranscribeOpenAiInfo">Офіційне розпізнавання OpenAI Whisper. Отримати ключ у панелі OpenAI:</string>
-    <string name="InuAiTranscribeCfInfo">Потрібні Cloudflare Account ID та API Token з доступом до Workers AI. Керувати токенами тут:</string>
-    <string name="InuAiTranscribeCustomInfo">Вкажіть будь-який OpenAI-сумісний ендпоінт /v1/audio/transcriptions.</string>
-    <string name="InuAiChatCustomInfo">Будь-яке OpenAI-сумісне API, напр. https://host/v1 (повний URL /chat/completions теж підійде). Ключ API необов\x27язковий для локальних роутерів.</string>
+    <string name="InuAiChatCustomInfo">Будь-яке OpenAI-сумісне API, напр. https://host/v1 (повний URL /chat/completions теж підійде). Ключ API необов’язковий для локальних роутерів.</string>
     <string name="InuAiProvidersSubtitle">Підключіть власні ШІ-сервіси для редактора, підсумків і розпізнавання голосу.</string>
     <string name="InuAiProviderAdd">Додати провайдера</string>
     <string name="InuAiProvidersEmpty">Провайдерів ще немає. Натисніть «Додати провайдера», щоб підключити.</string>
@@ -1557,8 +1512,6 @@
     <string name="InuAiModelPickerTitle">Оберіть модель</string>
     <string name="InuAiModelsLoading">Завантаження моделей…</string>
     <string name="InuAiModelEnterManually">Ввести модель вручну</string>
-    <string name="InuAiTranscribeFetchModels">Отримати список моделей</string>
-    <string name="InuAiTranscribeFetchModelsEmpty">Моделей не знайдено</string>
     <string name="InuAiTranscribeFetchModelsFailed">Не вдалося отримати моделі: %1$s</string>
     <string name="InuLocalPremium">Локальний Telegram Premium</string>
     <string name="InuLocalPremiumInfo">Розблоковує клієнтські Premium-фічі, але серверні (завантаження, ліміти хмари) досі вимагають офіційної підписки.</string>
@@ -1647,11 +1600,6 @@
     <string name="InuNotificationIconOldEntinygram">Старий entinyGram</string>
     <string name="InuNotificationIconInfo">На Xiaomi (MIUI/HyperOS) система може підміняти цю іконку іконкою застосунку, тому вибір там може бути непомітним</string>
     <string name="InuPoweredByProvider">Переклад виконано через %1$s.</string>
-    <string name="InuTranslationProvider">Сервіс перекладу</string>
-    <string name="InuTranslationProviderTelegram">Telegram</string>
-    <string name="InuTranslationProviderFromPlugin">від %1$s</string>
-    <string name="InuTranslationProviderUnavailable">Недоступно</string>
-    <string name="InuTranslationProviderInfo">Додаткові сервіси перекладу можна встановити як **Плагіни >**</string>
     <string name="InuShowDrawerAccounts">Показувати акаунти в меню</string>
     <string name="InuShowDrawerAccountsInfo">Показувати перемикач акаунтів під профілем.</string>
     <string name="InuTranslateDeepLApiKey">API-ключ DeepL</string>
@@ -2008,7 +1956,7 @@
     <string name="InuAppIconBy">від %1$s</string>
     <string name="InuAppIconDescDefault">Класична тарілка entinyGram</string>
     <string name="InuAppIconDescOld">З чого все починалося</string>
-    <string name="InuAppIconDescInuTribute">Уклін оригінальному inuGram</string>
+    <string name="InuAppIconDescInuTribute">Відсилання до витоків проєкту</string>
     <string name="InuAppIconDescRadar">Сканує ефір</string>
     <string name="InuAppIconDescConstellation">Зірки, з’єднані сигналом</string>
     <string name="InuAppIconDescOrbit">Тарілка з супутником на орбіті</string>
@@ -2033,4 +1981,9 @@
     <string name="InuUnreadBadgeOnBackButton">Показати лічильник непрочитаних чатів</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">Показує кількість непрочитаних чатів на кнопці «назад» у чаті.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">Лічильник у стилі iOS</string>
+    <string name="InuMainScreen">Головний екран</string>
+    <string name="InuMessagesSummary">Подвійний тап, реакції та підтвердження</string>
+    <string name="InuPillStackSummary">Інтерактивні віджети в рядку пошуку</string>
+    <string name="InuRecentChatsSummary">Швидке перемикання між чатами</string>
+    <string name="InuFeedSummary">Агрегатор дописів із каналів</string>
 </resources>

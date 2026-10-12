@@ -9,12 +9,15 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.feed.FeedChannelSet
+import desu.inugram.helpers.feed.FeedHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBar
 import org.telegram.ui.ActionBar.ActionBarMenuItem
+import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import java.util.Locale
@@ -27,7 +30,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
     private var query: String? = null
     private var searching = false
 
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuFeedManageChannels)
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuFeed)
 
     override fun createView(context: Context): View {
         val view = super.createView(context)
@@ -113,10 +116,20 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
         val q = query
         val noQuery = q.isNullOrEmpty()
         if (noQuery) {
+            items.add(
+                UItem.asRippleCheck(TOGGLE_FEED_ENABLED, LocaleController.getString(R.string.Enable))
+                    .setChecked(FeedHelper.isEnabled())
+            )
+            items.add(UItem.asShadow(null))
+            if (!FeedHelper.isEnabled()) {
+                return
+            }
             items.add(UItem.asCheck(TOGGLE_INCLUDE_ARCHIVED, LocaleController.getString(R.string.InuFeedIncludeArchived)).setChecked(InuConfig.FEED_INCLUDE_ARCHIVED.value))
             items.add(mkTwoLineCheckItem(TOGGLE_NEWEST_ON_TOP, R.string.InuFeedNewestOnTop, R.string.InuFeedNewestOnTopInfo, InuConfig.FEED_NEWEST_ON_TOP.value))
             items.add(mkTwoLineCheckItem(TOGGLE_MARK_READ_ON_SCROLL, R.string.InuFeedMarkReadOnScroll, R.string.InuFeedMarkReadOnScrollInfo, InuConfig.FEED_MARK_READ_ON_SCROLL.value))
             items.add(UItem.asShadow(null))
+        } else if (!FeedHelper.isEnabled()) {
+            return
         }
 
         val shown = ArrayList<UItem>()
@@ -145,6 +158,19 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         val chat = item.`object` as? TLRPC.Chat
         when {
+            item.id == TOGGLE_FEED_ENABLED -> {
+                val new = !FeedHelper.isEnabled()
+                FeedHelper.setEnabled(new)
+                (view as? TextCheckCell)?.apply {
+                    setChecked(new)
+                    setBackgroundColorAnimated(
+                        new,
+                        Theme.getColor(if (new) Theme.key_windowBackgroundChecked else Theme.key_windowBackgroundUnchecked),
+                    )
+                }
+                listView?.adapter?.update(true)
+                showRestartBulletin()
+            }
             item.id == TOGGLE_INCLUDE_ARCHIVED -> {
                 InuConfig.FEED_INCLUDE_ARCHIVED.value = !InuConfig.FEED_INCLUDE_ARCHIVED.value
                 FeedChannelSet.invalidate()
@@ -176,6 +202,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
         private const val MENU_DESELECT_ALL = 2
         private const val MENU_OTHER = 3
 
+        private val TOGGLE_FEED_ENABLED = InuUtils.generateId()
         private val TOGGLE_INCLUDE_ARCHIVED = InuUtils.generateId()
         private val TOGGLE_NEWEST_ON_TOP = InuUtils.generateId()
         private val TOGGLE_MARK_READ_ON_SCROLL = InuUtils.generateId()
@@ -183,11 +210,11 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
         @JvmField
         val PAGE = SearchRegistry.Page(
             slug = "feed-channels",
-            titleRes = R.string.InuFeedManageChannels,
+            titleRes = R.string.InuFeed,
             iconRes = R.drawable.msg_channel,
             factory = ::FeedExcludedChannelsSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("feed", R.string.InuFeed),
+                SearchRegistry.Entry("feed-toggle", R.string.InuFeed, TOGGLE_FEED_ENABLED),
                 SearchRegistry.Entry("feed-include-archived", R.string.InuFeedIncludeArchived, TOGGLE_INCLUDE_ARCHIVED),
                 SearchRegistry.Entry("feed-newest-on-top", R.string.InuFeedNewestOnTop, TOGGLE_NEWEST_ON_TOP),
                 SearchRegistry.Entry("feed-mark-read-on-scroll", R.string.InuFeedMarkReadOnScroll, TOGGLE_MARK_READ_ON_SCROLL),

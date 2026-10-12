@@ -30,6 +30,16 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
     private var chatInputMaxLinesSlider: SliderCell? = null
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(
+            mkTwoLineEntry(
+                BUTTON_MESSAGES,
+                R.drawable.msg_discussion,
+                LocaleController.getString(R.string.InuMessages),
+                LocaleController.getString(R.string.InuMessagesSummary),
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         super.fillItems(items, adapter)
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuGeneral)))
@@ -100,30 +110,6 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
                 )
             )
         }
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SHOW_MUTUAL_CONTACT_ICON,
-                R.string.InuShowMutualContactIcon,
-                R.string.InuShowMutualContactIconInfo,
-                InuConfig.SHOW_MUTUAL_CONTACT_ICON.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS,
-                R.string.InuShowMutualContactInChats,
-                R.string.InuShowMutualContactInChatsInfo,
-                InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_ONLINE_DOTS,
-                R.string.InuOnlineDots,
-                R.string.InuOnlineDotsInfo,
-                InuConfig.PRESENCE_COLOR_DOTS.value,
-            )
-        )
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SEARCH_FROM_GLOBAL,
@@ -366,6 +352,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         super.onClick(item, view, position, x, y)
         when (item.id) {
+            BUTTON_MESSAGES -> presentFragment(MessagesSettingsActivity())
             TOGGLE_HIDE_KEYBOARD_ON_SCROLL -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_KEYBOARD_ON_SCROLL.toggle()
             TOGGLE_KEEP_KEYBOARD_WHILE_TYPING -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.KEEP_KEYBOARD_WHILE_TYPING.toggle()
             TOGGLE_DISABLE_PULL_TO_NEXT -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_PULL_TO_NEXT.toggle()
@@ -485,7 +472,6 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
             TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.toggle()
             TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER.toggle()
-            TOGGLE_ONLINE_DOTS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.PRESENCE_COLOR_DOTS.toggle()
 
             BUTTON_FORMATTING_POPUP -> {
                 val isSwitch = if (LocaleController.isRTL)
@@ -501,12 +487,11 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
             }
 
             TOGGLE_SEARCH_FROM_GLOBAL -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEARCH_FROM_GLOBAL.toggle()
-            TOGGLE_SHOW_MUTUAL_CONTACT_ICON -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_ICON.toggle()
-            TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.toggle()
         }
     }
 
     companion object {
+        private val BUTTON_MESSAGES = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
         private val TOGGLE_KEEP_KEYBOARD_WHILE_TYPING = InuUtils.generateId()
         private val TOGGLE_DISABLE_PULL_TO_NEXT = InuUtils.generateId()
@@ -556,11 +541,8 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS = InuUtils.generateId()
         private val TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER = InuUtils.generateId()
-        private val TOGGLE_ONLINE_DOTS = InuUtils.generateId()
         private val BUTTON_FORMATTING_POPUP = InuUtils.generateId()
         private val TOGGLE_SEARCH_FROM_GLOBAL = InuUtils.generateId()
-        private val TOGGLE_SHOW_MUTUAL_CONTACT_ICON = InuUtils.generateId()
-        private val TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS = InuUtils.generateId()
         private val TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN = InuUtils.generateId()
 
         private fun mentionSeparatorLabel(value: String): String = when (value) {
@@ -586,6 +568,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
             factory = ::CategoryChatsSettingsActivity,
             aliases = listOf("dialogs"),
             entries = DialogsSettingsActivity.PAGE.entries + listOf(
+                SearchRegistry.Entry("messages-open", R.string.InuMessages, BUTTON_MESSAGES),
                 SearchRegistry.Entry("mention-separator-bots", R.string.InuMentionSeparatorBots, TOGGLE_MENTION_SEPARATOR_BOTS),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),
                 SearchRegistry.Entry("keep-keyboard-while-typing", R.string.InuKeepKeyboardWhileTyping, TOGGLE_KEEP_KEYBOARD_WHILE_TYPING),
@@ -618,11 +601,8 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
                 SearchRegistry.Entry("round-recorder-exposure-button", R.string.InuRoundRecorderExposureButton, TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON),
                 SearchRegistry.Entry("round-recorder-exposure-levels", R.string.InuRoundRecorderExposureLevels, TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS),
                 SearchRegistry.Entry("suggest-custom-emoji-after", R.string.InuSuggestCustomEmojiAfter, TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER),
-                SearchRegistry.Entry("online-dots", R.string.InuOnlineDots, TOGGLE_ONLINE_DOTS),
                 SearchRegistry.Entry("formatting-popup", R.string.InuFormattingPopup, BUTTON_FORMATTING_POPUP),
                 SearchRegistry.Entry("search-from-global", R.string.InuSearchFromGlobal, TOGGLE_SEARCH_FROM_GLOBAL),
-                SearchRegistry.Entry("show-mutual-contact-icon", R.string.InuShowMutualContactIcon, TOGGLE_SHOW_MUTUAL_CONTACT_ICON),
-                SearchRegistry.Entry("show-mutual-contact-in-chats", R.string.InuShowMutualContactInChats, TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS),
                 SearchRegistry.Entry("send-to-discuss-without-join", R.string.InuSendToDiscussWithoutJoin, TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN),
             ),
         )

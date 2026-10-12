@@ -12,10 +12,9 @@
     <string name="InuDrawerM3SectionsInfo">Yan menü öğelerini yuvarlatılmış Material 3 kartları olarak gruplar.</string>
     <string name="InuDrawerKeepOptionsMenu">Üç nokta menüsünü koru</string>
     <string name="InuDrawerKeepOptionsMenuInfo">Yan menüyle birlikte sohbet listesi menü düğmesini göster</string>
-    <string name="InuSettings">Inugram Ayarları</string>
+    <string name="InuSettings">entinyGram Ayarları</string>
     <string name="InuSettingsInfo">ne yapıyor bu köpek?</string>
     <string name="InuGeneral">Genel</string>
-    <string name="InuMiscellaneous">Çeşitli</string>
     <string name="InuWideChannelPosts">Geniş gönderiler</string>
     <string name="InuWideChannelPostsFooter">Kanal gönderileri ve iletilen mesajlar kullanılabilir tüm genişliği kaplar.</string>
     <string name="InuWideChannelPostsPreviewText">Haberler, fotoğraflar ve videolar</string>
@@ -78,7 +77,6 @@
     <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">Sohbetler ve Arayüz</string>
     <string name="InuAnnoyancesChannels">Kanallar ve Öneriler</string>
-    <string name="InuAnnoyancesMedia">Medya</string>
     <string name="InuAnnoyancesAi">Yapay Zeka</string>
     <string name="InuAnnoyancesHints">İpuçları ve Hatırlatıcılar</string>
     <string name="InuMessages">Mesajlar</string>
@@ -282,7 +280,6 @@
     <string name="InuShowHiddenMessages">Mesajları göster</string>
     <string name="InuSpoilers">Sürprizler (Spoilers)</string>
     <string name="InuHideAiFeatures">Yapay zeka özelliklerini gizle</string>
-    <string name="InuHideAiEditor">Yapay zeka düzenleyici düğmesi</string>
     <string name="InuHideMessageSummary">Mesaj özeti düğmesi</string>
     <string name="InuHideIvSummary">Anında Görünüm özeti</string>
     <string name="InuClearHints">Tüm ipuçlarını kapat</string>
@@ -296,7 +293,7 @@
     <string name="InuStickerTimeModeHideTime">Sadece saati gizle</string>
     <string name="InuStickerTimeModeHideIncoming">Sadece gelenler için gizle</string>
     <string name="InuStickerTimeModeHideCompletely">Tamamen gizle</string>
-    <string name="InuStickerSizeDialogMessage">aferin köpeğe!</string>
+    <string name="InuStickerSizeDialogMessage">antenleri severim!</string>
     <string name="InuBubbleTails">Baloncuk kuyrukları</string>
     <string name="InuSendAsRoundVideo">Yuvarlak video olarak gönder</string>
     <string name="InuMiscPreviewForwardedFrom">köpekçik</string>
@@ -390,7 +387,7 @@
     <string name="InuConfirmReactionText">**%2$s** sohbetine %1$s tepkisi gönderilsin mi?</string>
     <string name="InuNotificationIcon">Bildirim simgesi</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">Inugram</string>
+    <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuDisableChatBubbles">Android bildirim balonlarını devre dışı bırak</string>
     <string name="InuKeepChatsInStack">Önceki sohbetleri açık tut</string>
     <string name="InuKeepChatsInStackInfo">Başka bir sohbet açmak arkadaki sohbetleri kapatmaz</string>
@@ -601,7 +598,6 @@
     <string name="InuForwardHeaderMode">İletim başlığı</string>
     <string name="InuForwardHeaderModeRegular">Normal</string>
     <string name="InuForwardHeaderModeIcon">Simge</string>
-    <string name="InuForwardHeaderModeIconNoTimeInfo">&quot;İletilme zamanını göster&quot; kapalıyken Kompakt ile aynıdır</string>
     <string name="InuForwardHeaderModeCompact">Kompakt</string>
     <string name="InuShowForwardsCount">Yönlendirme sayısını göster</string>
     <string name="InuCompactEdited">Küçük düzenlendi göstergesi</string>
@@ -681,7 +677,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Güncelleme kanalı</string>
     <string name="InuUpdates">Güncellemeler</string>
-    <string name="InuUpdateBetaWarning">Bu bir beta güncellemesidir ve kararsız olabilir.</string>
     <string name="InuUpdateInstalling">Güncelleme yükleniyor</string>
     <string name="InuUpdateInstallingHint">Uygulama yüklendikten sonra yeniden başlatılacak</string>
     <string name="InuUpdateInstallingNotificationHint">Güncelleme yüklendiğinde bilgilendirileceksiniz</string>
@@ -736,7 +731,6 @@
     <string name="InuReorderAccountsInfo">Yeniden sıralamak için bir hesaba uzun basın ve sürükleyin. Bu sıra ayarlar listesi ve hesap seçici için geçerlidir.</string>
     <string name="InuCreateAsSupergroup">Süper grup olarak oluştur</string>
     <string name="InuFeed">Akış</string>
-    <string name="InuFeedToggleInfo">Akışı menülere ve alt sekmelere ekler. Varsayılan olarak kapalıdır; alt sekme için uygulamanın yeniden başlatılması gerekir</string>
     <string name="InuFeedEmpty">Hepsi okundu</string>
     <string name="InuFeedManageChannels">Kanalları yönet</string>
     <string name="InuFeedMarkAllRead">Tümünü okundu işaretle</string>
@@ -765,7 +759,6 @@
     <string name="InuCopyButtonText">\"%1$s\" kopyala</string>
     <string name="InuCopyCallbackData">Geri çağırma (callback) verisini kopyala</string>
     <string name="InuCallbackDataCopied">Geri çağırma verisi kopyalandı</string>
-    <string name="InuNetwork">Ağ</string>
     <string name="InuAutoDisableProxyOnVpn">VPN etkin olduğunda proxy\'yi devre dışı bırak</string>
     <string name="InuProxyImportFromClipboard">Panodan içe aktar</string>
     <string name="InuProxyImportNothing">Panoda yeni proxy bağlantısı bulunamadı</string>
@@ -779,7 +772,7 @@
     <string name="InuMentionInsertTitle">Bahsetme ekle</string>
     <string name="InuPasscode">Parola</string>
     <string name="InuPasscodeNeeded">Önce bir Telegram parolası ayarlayın.</string>
-    <string name="InuPasscodeShowInSettings">Inugram ayarlarında göster</string>
+    <string name="InuPasscodeShowInSettings">entinyGram ayarlarında göster</string>
     <string name="InuPasscodeShowInSettingsInfo">Kapalı olduğunda, bu sayfa **yalnızca** aşağıdaki bağlantı üzerinden açılabilir. Şimdi kaydedin — bir kez oluşturulduktan sonra değişmez.</string>
     <string name="InuPasscodeAccountsInfo">Her hesabın kendine ait bir parolası olabilir. Kilit ekranında bu parolayı girmek uygulamanın kilidini açar ve o hesaba geçiş yapar.</string>
     <string name="InuPasscodeStateNone">Yapılandırılmadı</string>
@@ -830,12 +823,12 @@
     <string name="InuGoToMessagePrompt">Mesaj Kimliği (ID)</string>
     <string name="InuPrivacySecurity">Gizlilik &amp; Güvenlik</string>
     <string name="InuPerAccountPasscode">Hesap başına parola</string>
-    <string name="InuHideInugramSettings">Inugram ayarlarını gizle</string>
+    <string name="InuHideInugramSettings">entinyGram ayarlarını gizle</string>
     <string name="InuParanoiaDisableNotifications">Bildirimleri devre dışı bırak</string>
     <string name="InuParanoiaHideOtherAccounts">Diğer hesapları gizle</string>
     <string name="InuParanoiaHideFolders">Klasörleri gizle</string>
     <string name="InuParanoiaDisguise">Telegram olarak gizle</string>
-    <string name="InuParanoiaDisguiseInfo">Yalnızca başlatıcı simgesi ve adı değişir. Android kısıtlamaları nedeniyle bildirimler ve uygulama içi ad hâlâ \"Inugram\" olarak görünür.</string>
+    <string name="InuParanoiaDisguiseInfo">Yalnızca başlatıcı simgesi ve adı değişir; bildirimlerde hâlâ \"entinyGram\" görünür.</string>
     <string name="InuParanoiaMode">Paranoia modu</string>
     <string name="InuParanoiaModeInfo">Paranoia modu, \"tehlikeli\" sohbetleri gizleyerek ve isteğe bağlı olarak varsayılan uygulama gibi görünerek bir başkasının telefonunuzu kontrol etmesine \"hazırlıklı\" olmanızı sağlar.</string>
     <string name="InuParanoiaLauncherShortcut">Başlatıcı kısayolu</string>
@@ -858,17 +851,17 @@
     <string name="InuParanoiaExit">Paranoia modundan çık</string>
     <string name="InuBotSettings">Bot Ayarları</string>
     <string name="InuBotHelp">Bot Yardımı</string>
-    <string name="InuCrashTitle">Inugram geçen sefer çöktü</string>
-    <string name="InuCrashTitleOom">Inugram bellek yetersizliği yaşadı</string>
+    <string name="InuCrashTitle">entinyGram geçen sefer çöktü</string>
+    <string name="InuCrashTitleOom">entinyGram bellek yetersizliği yaşadı</string>
     <string name="InuCrashDesc">Bunun için üzgünüz. Düzeltilmesine yardımcı olmak için çökme günlüğünü geliştiriciyle paylaşabilirsiniz.</string>
     <string name="InuCrashDescOom">Bunun için üzgünüz. Çökme günlükleri bellek yetersizliği sorunları için pek yararlı değildir — bellek dökümü (heap dump) daha çok yardımcı olur.</string>
     <string name="InuCrashDescHeapDump">Bir bellek dökümü de kaydedildi. BUNU PAYLAŞMAYIN! Özel veriler içerir! İsterseniz kendiniz inceleyin ve bulgularınızı paylaşın — bu çok yardımcı olur.</string>
-    <string name="InuCrashOomEnableLogs">Gelecekteki her OOM durumunda bellek dökümü oluşturmak için Inugram Ayarları > Hakkında bölümünden hata ayıklama modunu etkinleştirin.</string>
+    <string name="InuCrashOomEnableLogs">Gelecekteki her OOM durumunda bellek dökümü oluşturmak için entinyGram Ayarları > Hakkında bölümünden hata ayıklama modunu etkinleştirin.</string>
     <string name="InuCrashShare">Çökme günlüğünü paylaş</string>
     <string name="InuCrashShareHeapDump">Bellek dökümünü kaydet</string>
     <string name="InuCrashDiscard">Vazgeç</string>
     <string name="InuCrashChannel">Çökme kurtarma</string>
-    <string name="InuCrashNotifTitle">Inugram çöktü</string>
+    <string name="InuCrashNotifTitle">entinyGram çöktü</string>
     <string name="InuCrashNotifText">Yeniden başlatmak için dokunun</string>
     <string name="InuLogs">Hata Ayıklama</string>
     <string name="InuLogsEnabled">Hata ayıklama modu</string>
@@ -887,17 +880,6 @@
     <string name="InuLogsMakeHeapDump">Bellek dökümü (heap dump) oluştur</string>
     <string name="InuLogsMakingHeapDump">Bellek dökümü oluşturuluyor…</string>
     <string name="InuLogsHeapDumpWarning">Oluşturulan .hprof dosyasını **ASLA** hiç kimseyle paylaşmayın — bu dosya uygulamanın bellek anlık görüntüsüdür ve **hassas bilgiler** (mesajlar, jetonlar vb.) içerir.\n\nYalnızca **KENDİNİZ** inceleyin.\n\nUygulama bir süreliğine donacaktır.</string>
-    <string name="InuDeleteOwnMessages">Mesajlarımı sil</string>
-    <string name="InuDeleteOwnMessagesSearching">Mesajlarınız aranıyor…</string>
-    <string name="InuDeleteOwnMessagesFoundProgress">Bulunan: %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesNone">Bu sohbette sizden gelen mesaj bulunamadı</string>
-    <string name="InuDeleteOwnMessagesConfirm_one">Kendi gönderdiğiniz %d mesaj silinsin mi? Bu işlem geri alınamaz.</string>
-    <string name="InuDeleteOwnMessagesConfirm_other">Kendi gönderdiğiniz %d mesaj silinsin mi? Bu işlem geri alınamaz.</string>
-    <string name="InuDeleteOwnMessagesDeleting">Silinen: %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesDone_one">%d mesaj silindi</string>
-    <string name="InuDeleteOwnMessagesDone_other">%d mesaj silindi</string>
-    <string name="InuDeleteOwnMessagesError">Hata: %1$s</string>
-    <string name="InuDeleteOwnMessagesFloodWait">İstek sınırı aşıldı, %d saniye bekleniyor…</string>
     <string name="InuBiometricConfirm">Biyometrik doğrulama</string>
     <string name="InuBiometricConfirmTitle">Kimliğinizi doğrulayın</string>
     <string name="InuBiometricConfirmDeleteChat">Sohbet silmeyi onayla</string>
@@ -919,7 +901,6 @@
     <string name="InuAiCopy">Kopyala</string>
     <string name="InuAiCustomPrompt">Özel komut</string>
     <string name="InuAiEmoji">Emoji</string>
-    <string name="InuAiEndpointModel">Model</string>
     <string name="InuAiEndpointUrl">Uç nokta URL\'si</string>
     <string name="InuAiError">İstek başarısız: %1$s</string>
     <string name="InuAiGenerating">Oluşturuluyor…</string>
@@ -950,7 +931,6 @@
     <string name="InuCacheTtlMonth">1 aydan eski</string>
     <string name="InuCacheTtlNever">Asla (sürekli tut)</string>
     <string name="InuCacheTtlWeek">1 haftadan eski</string>
-    <string name="InuCategories">Kategoriler</string>
     <string name="InuCenterTitleChats">Sohbetlerde/kanallarda da ortala</string>
     <string name="InuClearCache">Önbelleği temizle</string>
     <string name="InuClearDeletedCache">Silinen mesaj önbelleğini temizle</string>
@@ -966,8 +946,6 @@
     <string name="InuClearDeletedCacheEmpty">Silinen mesaj önbelleği boş</string>
     <string name="InuClearDeletedCacheHint">Kayıtlı mesajları ve medyayı tek tek görüp silmek için bir sohbete uzun basın</string>
     <string name="InuDataBackup">Yedekleme ve Senkronizasyon</string>
-    <string name="InuBuildFull">Tam</string>
-    <string name="InuBuildPluginless">Eklentisiz</string>
     <string name="InuDownloadingStory">Hikaye indiriliyor…</string>
     <string name="InuEditHistory">Düzenleme geçmişi</string>
     <string name="InuSuppressScreenshotNotification">Ekran görüntüsü bildirimlerini gizle</string>
@@ -1027,10 +1005,8 @@
     <string name="InuAiEditorButtonSetupInfo">Önce AI Hizmetleri\'nde bir API anahtarı ekleyin; bu düğme mesaj yazarken çalışır.</string>
     <string name="InuAiInsertQuote">Yanıtı alıntı olarak ekle</string>
     <string name="InuAiOnlyAnswer">Yalnızca yanıtı göster</string>
-    <string name="InuAiProviderCustom">Özel</string>
     <string name="InuAiRoles">Roller</string>
     <string name="InuAiRolesAssistant">Asistan</string>
-    <string name="InuAiSectionGeneral">Genel</string>
     <string name="InuAiSectionGeneration">Yanıtlar</string>
     <string name="InuAiSectionTemperature">Sıcaklık (Temperature)</string>
     <string name="InuAiStream">Akışlı yanıt</string>
@@ -1055,11 +1031,9 @@
     <string name="InuAiSummaryTemperatureInfo">Düşük değerler özetleri orijinale daha yakın tutar. Siz değiştirene kadar düzenleyici sıcaklığı kullanılır.</string>
     <string name="InuAiTranscribe">Sesi Metne Dönüştür (Transkripsiyon)</string>
     <string name="InuAiTranscribeAccountId">Account ID</string>
-    <string name="InuAiTranscribeApiKey">API anahtarı</string>
     <string name="InuAiTranscribeApiToken">API belirteci</string>
     <string name="InuAiTranscribeFailed">Metne dönüştürme başarısız: %1$s</string>
     <string name="InuAiTranscribeLanguage">Konuşma dili</string>
-    <string name="InuAiTranscribeLanguageInfo">Sesli mesajlarda konuşulan dil (örn. en, uk, ru). Boş = otomatik algılama.</string>
     <string name="InuAiTranscribeErrorDownload">Sesli mesaj indirilemedi.</string>
     <string name="InuAiTranscribeErrorNoAudio">Bu mesajda deşifre edilecek ses yok.</string>
     <string name="InuAiTranscribeErrorEmpty">Sağlayıcı boş bir deşifre döndürdü.</string>
@@ -1172,7 +1146,6 @@
     <string name="InuLocalFolders">Yerel klasörler</string>
     <string name="InuLocalFoldersInfo">Telegram sınırının ötesinde klasör oluştur. Fazla klasörler bu cihazda kalır.</string>
     <string name="InuPillStack">Pill Stack</string>
-    <string name="InuPillStackInfo">Sohbet arama çubuğunda küçük etkileşimli piller\nGenel arama adacık düzeninde değilken etkin değil</string>
     <string name="InuPillStackVisibleCount">Aynı anda görünen</string>
     <string name="InuPillStackClock">Saat</string>
     <string name="InuPillStackLastSeen">Son görülme</string>
@@ -1332,11 +1305,6 @@
     <string name="InuNotificationIconOldEntinygram">Eski entinyGram</string>
     <string name="InuNotificationIconInfo">Xiaomi cihazlarda (MIUI/HyperOS) sistem bu simgeyi uygulama simgesiyle değiştirebilir; bu nedenle seçim orada görünmeyebilir</string>
     <string name="InuPoweredByProvider">Çeviriler %1$s tarafından desteklenmektedir.</string>
-    <string name="InuTranslationProvider">Çeviri sağlayıcısı</string>
-    <string name="InuTranslationProviderTelegram">Telegram</string>
-    <string name="InuTranslationProviderFromPlugin">%1$s tarafından</string>
-    <string name="InuTranslationProviderUnavailable">Kullanılamıyor</string>
-    <string name="InuTranslationProviderInfo">Ek çeviri hizmetlerini **Eklentiler >** bölümünden yükleyebilirsiniz</string>
     <string name="InuProfilePhotosDeleted">Tüm profil fotoğrafları silindi</string>
     <string name="InuProfilePhotosDeletedCount">%1$d profil fotoğrafı silindi</string>
     <string name="InuProfilePhotosSelected">Seçilen: %1$d</string>
@@ -1451,19 +1419,10 @@
     <string name="InuRecentChatsUsers">Kullanıcılar</string>
     <string name="InuRecentChatsEmpty">Henüz boş</string>
     <string name="InuAiProvidersTitle">YZ Sağlayıcıları</string>
-    <string name="InuAiProvidersUniversalDesc">Adın önündeki simge desteği gösterir (∞ sohbet+ses, klavye yalnızca sohbet, mikrofon yalnızca ses) — dokunup yapılandırın, ardından her kapsam için birini etkinleştirin.</string>
     <string name="InuAiProvidersActiveForChat">Sohbet için etkin</string>
     <string name="InuAiProvidersActiveForVoice">Ses için etkin</string>
-    <string name="InuAiProvidersActiveBoth">Sohbet + Ses</string>
-    <string name="InuAiProvidersSameModel">Her ikisi için aynı modeli kullan</string>
-    <string name="InuAiProvidersChatModelHint">Sohbet modeli</string>
-    <string name="InuAiProvidersVoiceModelHint">Ses modeli</string>
-    <string name="InuAiProvidersOpenRouterInfo">Tek bir API ile yüzlerce modele erişin. OpenRouter\'dan bir anahtar alın:</string>
-    <string name="InuAiProviderCustomNameHint">Ad (isteğe bağlı)</string>
-    <string name="InuAiRolesScreenDesc">YZ\'nin canlandırması istenen kayıtlı kişilikler (\"Sen X\'sin\"). Değiştirmek için dokunun, yeniden adlandırmak için etkin olana dokunun.</string>
     <string name="InuAiRoleNew">Yeni rol</string>
     <string name="InuAiRoleNameHint">Ad</string>
-    <string name="InuAiRolePromptHint">Özel istem (isteğe bağlı)</string>
     <string name="InuAiRolePromptDesc">Ayarlanırsa bu tam istem, \"Sen X\'sin\" satırının yerini tamamen alır.</string>
     <string name="InuAiRoleDeleteConfirm">Bu rol silinsin mi?</string>
     <string name="InuAiRolesSubtitle">Yapay zekânın düzenleyicide ve özetlerde üstlendiği kişilikler. Birini seçin veya kendi isteminizi yazın.</string>
@@ -1477,11 +1436,6 @@
     <string name="InuAiSummaryFailed">Özet başarısız: %1$s</string>
     <string name="InuAiInsertQuoteInfo">Yapay zeka düzenleyicide Kullan seçeneğine dokunduğunuzda sonuç taslağınızın yerine alıntı bloğu olarak geçer. Kapalıyken düz metin olarak geçer.</string>
     <string name="InuAiOnlyAnswerInfo">Akıl yürüten modeller için: düşünme sürecini gizler, yalnızca son yanıtı bırakır. Kapalıyken düşünme, yanıtın üstünde düşünce balonundan sonra görünür.</string>
-    <string name="InuAiTranscribeGroqInfo">Hızlı, ücretsiz Whisper Large v3 transkripsiyonu. Groq konsolundan ücretsiz bir anahtar alın:</string>
-    <string name="InuAiTranscribeGeminiInfo">Gemini aracılığıyla çok modlu ses transkripsiyonu. Google AI Studio\'dan bir anahtar alın:</string>
-    <string name="InuAiTranscribeOpenAiInfo">Resmi OpenAI Whisper transkripsiyonu. OpenAI kontrol panelinden bir anahtar alın:</string>
-    <string name="InuAiTranscribeCfInfo">Bir Cloudflare Hesap Kimliği ve Workers AI kapsamlı bir API Belirteci gerektirir. Belirteçleri buradan yönetin:</string>
-    <string name="InuAiTranscribeCustomInfo">Herhangi bir OpenAI uyumlu /v1/audio/transcriptions uç noktası girin.</string>
     <string name="InuAiChatCustomInfo">OpenAI uyumlu herhangi bir API, örn. https://host/v1 (tam /chat/completions adresi de olur). Yerel yönlendiriciler için API anahtarı isteğe bağlıdır.</string>
     <string name="InuAiProvidersSubtitle">Düzenleyici, özetler ve ses yazıya çevirme için kendi yapay zekâ hizmetlerinizi bağlayın.</string>
     <string name="InuAiProviderAdd">Sağlayıcı ekle</string>
@@ -1502,8 +1456,6 @@
     <string name="InuAiModelPickerTitle">Model seçin</string>
     <string name="InuAiModelsLoading">Modeller yükleniyor…</string>
     <string name="InuAiModelEnterManually">Modeli elle gir</string>
-    <string name="InuAiTranscribeFetchModels">Kullanılabilir modelleri getir</string>
-    <string name="InuAiTranscribeFetchModelsEmpty">Model bulunamadı</string>
     <string name="InuAiTranscribeFetchModelsFailed">Modeller alınamadı: %1$s</string>
     <string name="InuBurnOneTime">Yok et</string>
     <string name="InuGhostAutoOffline">Otomatik olarak çevrimdışı ol</string>
@@ -1808,7 +1760,7 @@
     <string name="InuPluginsErrorNoManifest">Geçerli bir eklenti değil (meta veri başlığı eksik)</string>
     <string name="InuPluginsErrorRead">Seçilen dosya okunamadı</string>
     <string name="InuPluginsErrorWrite">Eklenti dosyası kaydedilemedi</string>
-    <string name="InuPluginsErrorApiVersion">Daha yeni bir Inugram gerekiyor (eklenti API\'si %1$d, bu uygulamada %2$d)</string>
+    <string name="InuPluginsErrorApiVersion">Daha yeni bir entinyGram gerekiyor (eklenti API\'si %1$d, bu uygulamada %2$d)</string>
     <string name="InuPluginsErrorPlatform">Bu platform için yapılmamış (%1$s gerekiyor)</string>
     <string name="InuPluginsErrorBadGrant">Geçersiz izinler istendi (%1$s)</string>
     <string name="InuPluginsErrorUnconsentedGrants">Yükleme sırasında incelenmeyen izinler istiyor (%1$s); incelemek için eklentiyi güncelleyin</string>
@@ -1881,4 +1833,9 @@
     <string name="InuBiometricRequireConfirmationPasscode">Uygulamanın kilidini açarken</string>
     <string name="InuBiometricRequireConfirmationBots">Mini uygulamalarda</string>
     <string name="InuBiometricRequireConfirmationActions">Sohbetleri silerken veya çıkış yaparken</string>
+    <string name="InuMainScreen">Ana ekran</string>
+    <string name="InuMessagesSummary">Çift dokunma eylemleri, tepkiler ve onaylar</string>
+    <string name="InuPillStackSummary">Arama çubuğunda etkileşimli widget\'lar</string>
+    <string name="InuRecentChatsSummary">Sohbetler arasında hızlı geçiş</string>
+    <string name="InuFeedSummary">Kanallarınızdan toplanan gönderiler</string>
 </resources>

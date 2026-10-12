@@ -52,7 +52,7 @@ git config --global user.email "your@email"
 
 ### Windows Developer Mode (required for symlinks)
 
-`bun run setup` creates symlinks (`src/kotlin`, `src/res` → `worktree/...`). By default
+`bun run setup` creates symlinks (`src/fork`, `src/res` → `worktree/...`). By default
 Windows only allows creating symlinks with administrator rights. To allow a regular user
 account to do this, enable Developer Mode:
 
@@ -80,7 +80,7 @@ bun run setup
 This will:
 1. Clone stock Telegram into `worktree/` (branch `inugram`).
 2. Initialize stgit and apply every patch from `series` (~399 patches).
-3. Symlink `src/kotlin` / `src/res` into the right places under `worktree/`.
+3. Symlink `src/fork` / `src/res` into the right places under `worktree/`.
 4. Generate icon drawables from `ICON_SELECTION`.
 
 A successful run ends with `ok Setup complete`.

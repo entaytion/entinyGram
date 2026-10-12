@@ -45,16 +45,11 @@ class PillStackSettingsActivity : SettingsPageActivity() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_MASTER,
-                R.string.InuPillStack,
-                R.string.InuPillStackInfo,
-                InuConfig.PILL_STACK_ENABLED.value,
-                experimental = true
-            )
+            UItem.asRippleCheck(TOGGLE_MASTER, LocaleController.getString(R.string.Enable))
+                .setChecked(InuConfig.PILL_STACK_ENABLED.value)
         )
+        items.add(UItem.asShadow(null))
         if (!InuConfig.PILL_STACK_ENABLED.value) {
-            items.add(UItem.asShadow(null))
             return
         }
 
@@ -185,7 +180,13 @@ class PillStackSettingsActivity : SettingsPageActivity() {
         when {
             item.id == TOGGLE_MASTER -> {
                 val new = InuConfig.PILL_STACK_ENABLED.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
+                (view as? TextCheckCell)?.apply {
+                    setChecked(new)
+                    setBackgroundColorAnimated(
+                        new,
+                        Theme.getColor(if (new) Theme.key_windowBackgroundChecked else Theme.key_windowBackgroundUnchecked),
+                    )
+                }
                 listView?.adapter?.update(true)
             }
 

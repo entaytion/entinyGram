@@ -77,8 +77,11 @@ object RecentChatsHelper {
     }
 
     @JvmStatic
+    fun isEnabled(): Boolean = InuConfig.RECENT_CHATS_ENABLED.value
+
+    @JvmStatic
     fun addToRecentDialogs(account: Int, dialogId: Long) {
-        if (dialogId == 0L) return
+        if (!isEnabled() || dialogId == 0L) return
         synchronized(cache) {
             val list = listFor(account)
             list.remove(dialogId)
@@ -144,6 +147,7 @@ object RecentChatsHelper {
 
     @JvmStatic
     fun show(fragment: BaseFragment, anchor: View) {
+        if (!isEnabled()) return
         when (InuConfig.RECENT_CHATS_STYLE.value) {
             InuConfig.RecentChatsStyleItem.POPUP -> showPopup(fragment, anchor)
             InuConfig.RecentChatsStyleItem.SIDEBAR -> if (!RecentChatsSidebar.toggleSidebar(fragment)) showPopup(fragment, anchor)

@@ -19,7 +19,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val ctx = context ?: return
         if (previewCell == null) {
-            previewCell = ChatHeaderPreviewCell(ctx)
+            previewCell = ChatHeaderPreviewCell(ctx, this)
         }
         items.add(UItem.asCustom(previewCell))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuChatHeaderSettingsInfo)))

@@ -22,7 +22,6 @@
     <string name="InuSettings">تنظیمات entinyGram</string>
     <string name="InuSettingsInfo">از میان خاک و باد، دنبال تو می‌آیم</string>
     <string name="InuGeneral">عمومی</string>
-    <string name="InuMiscellaneous">متفرقه</string>
     <string name="InuWideChannelPosts">پست‌های عریض</string>
     <string name="InuWideChannelPostsFooter">پست‌ها و بازارسال‌های کانال از تمام عرض موجود استفاده می‌کنند.</string>
     <string name="InuWideChannelPostsPreviewText">اخبار، عکس‌ها و ویدیوها</string>
@@ -85,7 +84,6 @@
     <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">گفتگوها و رابط کاربری</string>
     <string name="InuAnnoyancesChannels">کانال‌ها و پیشنهادها</string>
-    <string name="InuAnnoyancesMedia">رسانه</string>
     <string name="InuAnnoyancesAi">هوش مصنوعی</string>
     <string name="InuAnnoyancesHints">راهنماها و پیشنهادها</string>
     <string name="InuMessages">پیام‌ها</string>
@@ -304,7 +302,6 @@
     <string name="InuDialogsFabActionOpenSearch">باز کردن جستجو</string>
     <string name="InuDialogsFabActionSavedMessages">پیام‌های ذخیره‌شده</string>
     <string name="InuPillStack">قرص‌های اطلاعات</string>
-    <string name="InuPillStackInfo">قرص‌های تعاملی کوچک در نوار جستجوی گفتگوها\nبا جستجوی سراسری غیرجزیره‌ای فعال نیست</string>
     <string name="InuPillStackVisibleCount">تعداد نمایش هم‌زمان</string>
     <string name="InuPillStackClock">ساعت</string>
     <string name="InuPillStackLastSeen">آخرین بازدید</string>
@@ -374,7 +371,6 @@
     <string name="InuShowHiddenMessages">نمایش پیام‌ها</string>
     <string name="InuSpoilers">اسپویلرها</string>
     <string name="InuHideAiFeatures">پنهان کردن قابلیت‌های هوش مصنوعی</string>
-    <string name="InuHideAiEditor">دکمه ویرایشگر هوش مصنوعی</string>
     <string name="InuAiEditorButtonInfo">کنش‌های هوش مصنوعی را کنار کادر پیام برای بازنویسی، ادامه دادن، خلاصه‌سازی و اصلاح متن نشان می‌دهد.</string>
     <string name="InuAiEditorButtonSetupInfo">ابتدا در سرویس‌های هوش مصنوعی یک کلید API اضافه کنید؛ این دکمه هنگام نوشتن کار می‌کند.</string>
     <string name="InuAiSummary">خلاصه‌های هوش مصنوعی</string>
@@ -392,7 +388,7 @@
     <string name="InuStickerTimeModeHideTime">فقط پنهان کردن ساعت</string>
     <string name="InuStickerTimeModeHideIncoming">پنهان فقط برای دریافتی</string>
     <string name="InuStickerTimeModeHideCompletely">پنهان کامل</string>
-    <string name="InuStickerSizeDialogMessage">من آنتن دوست دارم</string>
+    <string name="InuStickerSizeDialogMessage">من عاشق آنتن‌ها هستم!</string>
     <string name="InuBubbleTails">دنباله حباب‌ها</string>
     <string name="InuSendAsRoundVideo">ارسال به‌صورت ویدیوی گرد</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
@@ -561,11 +557,6 @@
     <string name="InuTranslateProviderFailed">ترجمه ناموفق بود: %1$s. کمی بعد دوباره تلاش کنید.</string>
     <string name="InuTranslateGoogleBlocked">گوگل ترجمه را از این شبکه مسدود کرده است (HTTP 429). اتصال را عوض کنید یا ارائه‌دهنده دیگری انتخاب کنید.</string>
     <string name="InuPoweredByProvider">ترجمه‌ها توسط %1$s انجام می‌شوند.</string>
-    <string name="InuTranslationProvider">سرویس ترجمه</string>
-    <string name="InuTranslationProviderTelegram">Telegram</string>
-    <string name="InuTranslationProviderFromPlugin">از %1$s</string>
-    <string name="InuTranslationProviderUnavailable">در دسترس نیست</string>
-    <string name="InuTranslationProviderInfo">می‌توانید سرویس‌های ترجمهٔ بیشتری را از طریق **افزونه‌ها >** نصب کنید</string>
     <string name="InuHideReactionEntry">پنهان کردن انیمیشن ظاهر شدن واکنش</string>
     <string name="InuHideReactionEntryInfo">…وقتی واکنشی به پیام اضافه می‌شود</string>
     <string name="InuMutualContact">مخاطب دوطرفه</string>
@@ -845,7 +836,6 @@
     <string name="InuForwardHeaderMode">سرصفحه بازارسال</string>
     <string name="InuForwardHeaderModeRegular">عادی</string>
     <string name="InuForwardHeaderModeIcon">نماد</string>
-    <string name="InuForwardHeaderModeIconNoTimeInfo">مانند فشرده با خاموش بودن «نمایش زمان بازارسال»</string>
     <string name="InuForwardHeaderModeCompact">فشرده</string>
     <string name="InuShowForwardsCount">نمایش تعداد بازارسال</string>
     <string name="InuCompactEdited">نشانگر ویرایش فشرده</string>
@@ -893,10 +883,7 @@
     <string name="InuCut">برش</string>
     <string name="InuCodeLanguage">زبان کد</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
-    <string name="InuCategories">دسته‌ها</string>
     <string name="InuDataBackup">پشتیبان‌گیری و همگام‌سازی</string>
-    <string name="InuBuildFull">کامل</string>
-    <string name="InuBuildPluginless">بدون افزونه</string>
 
     <string name="InuSearchFilter">فیلتر بر اساس رسانه</string>
     <string name="InuSearchFilterPhotos">عکس‌ها</string>
@@ -959,7 +946,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">کانال به‌روزرسانی‌ها</string>
     <string name="InuUpdates">به‌روزرسانی‌ها</string>
-    <string name="InuUpdateBetaWarning">این یک به‌روزرسانی آزمایشی است و ممکن است ناپایدار باشد.</string>
     <string name="InuUpdateInstalling">در حال نصب به‌روزرسانی</string>
     <string name="InuUpdateInstallingHint">برنامه پس از نصب دوباره اجرا می‌شود</string>
     <string name="InuUpdateInstallingNotificationHint">پس از نصب به‌روزرسانی به شما اطلاع داده می‌شود</string>
@@ -1014,7 +1000,6 @@
     <string name="InuReorderAccountsInfo">برای تغییر ترتیب حساب‌ها در فهرست تنظیمات و انتخابگر حساب بکشید.</string>
     <string name="InuCreateAsSupergroup">ساخت به‌عنوان ابرگروه</string>
     <string name="InuFeed">فید</string>
-    <string name="InuFeedToggleInfo">فید را به منوها و زبانه‌های پایین اضافه می‌کند. به‌طور پیش‌فرض خاموش است؛ زبانه پایین نیاز به راه‌اندازی مجدد برنامه دارد</string>
     <string name="InuFeedEmpty">همه چیز را دیده‌اید</string>
     <string name="InuFeedManageChannels">مدیریت کانال‌ها</string>
     <string name="InuFeedMarkAllRead">علامت‌گذاری همه به‌عنوان خوانده‌شده</string>
@@ -1043,7 +1028,6 @@
     <string name="InuCopyButtonText">کپی «%1$s»</string>
     <string name="InuCopyCallbackData">کپی داده callback</string>
     <string name="InuCallbackDataCopied">داده callback کپی شد</string>
-    <string name="InuNetwork">شبکه</string>
     <string name="InuAutoDisableProxyOnVpn">غیرفعال کردن پروکسی هنگام فعال بودن VPN</string>
     <string name="InuProxyImportFromClipboard">درون‌ریزی از کلیپ‌بورد</string>
     <string name="InuProxyImportNothing">پیوند پروکسی جدیدی در کلیپ‌بورد پیدا نشد</string>
@@ -1189,17 +1173,6 @@
     <string name="InuLogsMakingHeapDump">در حال ساخت تخلیه حافظه…</string>
     <string name="InuLogsHeapDumpWarning">فایل .hprof را **هرگز** به اشتراک نگذارید — این یک عکس فوری از حافظه است که **حاوی داده‌های حساس** (پیام‌ها، توکن‌ها و غیره) است و فقط خودتان باید آن را بررسی کنید. هنگام ساخت، برنامه کوتاه‌مدت یخ می‌زند.</string>
 
-    <string name="InuDeleteOwnMessages">حذف پیام‌های من</string>
-    <string name="InuDeleteOwnMessagesSearching">در حال جستجوی پیام‌های شما…</string>
-    <string name="InuDeleteOwnMessagesFoundProgress">%1$d / %2$d پیدا شد</string>
-    <string name="InuDeleteOwnMessagesNone">هیچ پیامی از شما در این گفتگو نیست</string>
-    <string name="InuDeleteOwnMessagesConfirm_one">%d پیام از خودتان حذف شود؟ این کار قابل بازگشت نیست.</string>
-    <string name="InuDeleteOwnMessagesConfirm_other">%d پیام از خودتان حذف شود؟ این کار قابل بازگشت نیست.</string>
-    <string name="InuDeleteOwnMessagesDeleting">%1$d / %2$d حذف شد</string>
-    <string name="InuDeleteOwnMessagesDone_one">%d پیام حذف شد</string>
-    <string name="InuDeleteOwnMessagesDone_other">%d پیام حذف شد</string>
-    <string name="InuDeleteOwnMessagesError">خطا: %1$s</string>
-    <string name="InuDeleteOwnMessagesFloodWait">محدودیت نرخ، انتظار برای %d ثانیه…</string>
     <string name="InuBiometricConfirm">تأیید بیومتریک</string>
     <string name="InuBiometricConfirmTitle">هویت خود را تأیید کنید</string>
     <string name="InuBiometricConfirmDeleteChat">تأیید حذف گفتگوها</string>
@@ -1322,7 +1295,6 @@
     <string name="InuStickerSetRefreshFailed">تازه‌سازی بسته ممکن نشد</string>
     <string name="InuAiCompose">هوش مصنوعی (AI)</string>
     <string name="InuAiEndpointUrl">نشانی نقطه پایانی</string>
-    <string name="InuAiEndpointModel">مدل</string>
     <string name="InuAiOpenSettings">باز کردن تنظیمات</string>
     <string name="InuAiNoEndpoint">هیچ نقطه پایانی API فعالی تنظیم نشده است. یکی در تنظیمات &gt; نوشتن با هوش مصنوعی اضافه کنید.</string>
     <string name="InuAiBadEndpoint">نقطه پایانی فعال نشانی ندارد. آن را در تنظیمات &gt; نوشتن با هوش مصنوعی ویرایش کنید.</string>
@@ -1353,7 +1325,6 @@
     <string name="InuAiTranslateTo">به</string>
     <string name="InuAiTranslateRun">ترجمه</string>
     <string name="InuAiChatTitle">گفتگوی هوش مصنوعی</string>
-    <string name="InuAiSectionGeneral">عمومی</string>
     <string name="InuAiRoles">نقش‌ها</string>
     <string name="InuAiRolesAssistant">دستیار</string>
     <string name="InuAiSectionGeneration">پاسخ‌ها</string>
@@ -1363,10 +1334,8 @@
     <string name="InuAiOnlyAnswerInfo">برای مدل‌های استدلالی: تفکر را پنهان می‌کند و فقط پاسخ نهایی را نگه می‌دارد. اگر خاموش باشد، تفکر بالای پاسخ بعد از حباب فکر نمایش داده می‌شود.</string>
     <string name="InuAiInsertQuote">درج پاسخ به‌صورت نقل‌قول</string>
     <string name="InuAiInsertQuoteInfo">وقتی در ویرایشگر هوش مصنوعی «استفاده» را می‌زنید، نتیجه به‌صورت نقل‌قول جای پیش‌نویس شما را می‌گیرد. اگر خاموش باشد، به‌صورت متن ساده جایگزین می‌شود.</string>
-    <string name="InuAiRolesScreenDesc">شخصیت‌های ذخیره‌شده‌ای که به هوش مصنوعی گفته می‌شود نقششان را بازی کند («تو X هستی»). برای تعویض ضربه بزنید، برای تغییر نام نقش فعال دوباره ضربه بزنید.</string>
     <string name="InuAiRoleNew">نقش جدید</string>
     <string name="InuAiRoleNameHint">نام</string>
-    <string name="InuAiRolePromptHint">پرامپت سفارشی (اختیاری)</string>
     <string name="InuAiRolePromptDesc">اگر تنظیم شود، این پرامپت کامل خط «تو نام هستی» را به‌کلی جایگزین می‌کند.</string>
     <string name="InuAiRoleDeleteConfirm">این نقش حذف شود؟</string>
     <string name="InuAiRolesSubtitle">شخصیت‌هایی که هوش مصنوعی در ویرایشگر و خلاصه‌ها بازی می‌کند. یکی را انتخاب کنید یا پرامپت خودتان را بنویسید.</string>
@@ -1396,18 +1365,10 @@
     <string name="InuAiReasoningMedium">متوسط</string>
     <string name="InuAiReasoningHigh">زیاد</string>
     <string name="InuAiSummaryTemperatureInfo">مقادیر کمتر خلاصه‌ها را به متن اصلی نزدیک‌تر نگه می‌دارد. تا زمانی که تغییر ندهید دمای ویرایشگر استفاده می‌شود.</string>
-    <string name="InuAiProviderCustom">سفارشی</string>
-    <string name="InuAiProviderCustomNameHint">نام (اختیاری)</string>
     <string name="InuAiApiKeyHint">کلید API</string>
     <string name="InuAiProvidersTitle">ارائه‌دهندگان هوش مصنوعی</string>
-    <string name="InuAiProvidersUniversalDesc">نماد پیش از هر نام نشان می‌دهد چه چیزی را پشتیبانی می‌کند (∞ گفتگو+صدا، صفحه‌کلید فقط گفتگو، میکروفون فقط صدا) — برای پیکربندی ضربه بزنید، سپس برای هر حوزه یک مورد فعال انتخاب کنید.</string>
     <string name="InuAiProvidersActiveForChat">فعال برای گفتگو</string>
     <string name="InuAiProvidersActiveForVoice">فعال برای صدا</string>
-    <string name="InuAiProvidersActiveBoth">گفتگو + صدا</string>
-    <string name="InuAiProvidersSameModel">استفاده از یک مدل برای هر دو</string>
-    <string name="InuAiProvidersChatModelHint">مدل گفتگو</string>
-    <string name="InuAiProvidersVoiceModelHint">مدل صدا</string>
-    <string name="InuAiProvidersOpenRouterInfo">دسترسی به صدها مدل از طریق یک API. کلید را از OpenRouter بگیرید:</string>
     <string name="InuEditHistoryDiff">برجسته کردن تغییرات متن (تفاوت)</string>
     <string name="InuEditHistoryDiffInfo">در تاریخچه ویرایش، متن حذف‌شده با خط قرمز و متن افزوده‌شده با سبز نشان داده شود</string>
     <string name="InuNoEditHistory">تاریخچه ویرایشی برای این پیام ثبت نشده است</string>
@@ -1513,13 +1474,11 @@
     <string name="InuAiTranscribe">تبدیل گفتار به متن (رونویسی)</string>
     <string name="InuAiTranscribeInfo">پیام‌های صوتی و تصویری را از طریق ارائه‌دهنده هوش مصنوعی خودتان و نه تلگرام رونویسی کنید، با پریمیوم یا بدون آن.</string>
     <string name="InuAiTranscribeModel">مدل</string>
-    <string name="InuAiTranscribeApiKey">کلید API</string>
     <string name="InuAiTranscribeAccountId">شناسه حساب</string>
     <string name="InuAiTranscribeApiToken">توکن API</string>
     <string name="InuAiTranscribeNoKey">هنوز هیچ ارائه‌دهنده هوش مصنوعی برای صدا تنظیم نشده است. یکی در تنظیمات &gt; هوش مصنوعی &gt; ارائه‌دهندگان اضافه کنید.</string>
     <string name="InuAiTranscribeFailed">رونویسی ناموفق بود: %1$s</string>
     <string name="InuAiTranscribeLanguage">زبان گفتار</string>
-    <string name="InuAiTranscribeLanguageInfo">زبانی که در پیام‌های صوتی گفته می‌شود (مثلاً en، uk، ru، fa). خالی = تشخیص خودکار.</string>
     <string name="InuAiTranscribeErrorDownload">دانلود پیام صوتی ممکن نشد.</string>
     <string name="InuAiTranscribeErrorNoAudio">این پیام صدایی برای رونویسی ندارد.</string>
     <string name="InuAiTranscribeErrorEmpty">ارائه‌دهنده رونویسی خالی برگرداند.</string>
@@ -1528,11 +1487,6 @@
     <string name="InuAiTranscribeErrorRateLimited">ارائه‌دهنده همین حالا درخواست‌ها را محدود می‌کند. کمی صبر کنید و دوباره ضربه بزنید.</string>
     <string name="InuAiTranscribeErrorDailyQuota">این کلید API سهمیه رایگان امروز خود را مصرف کرده است. فردا دوباره امتحان کنید، صورت‌حساب را فعال کنید یا ارائه‌دهنده صدا را عوض کنید.</string>
     <string name="InuAiTranscribeErrorNoFreeQuota">این مدل روی کلید API شما سهمیه رایگان ندارد. یک مدل Flash انتخاب کنید، صورت‌حساب پروژه گوگل را فعال کنید یا ارائه‌دهنده صدا را عوض کنید.</string>
-    <string name="InuAiTranscribeGroqInfo">رونویسی سریع و رایگان Whisper Large v3. یک کلید رایگان از کنسول Groq بگیرید:</string>
-    <string name="InuAiTranscribeGeminiInfo">رونویسی صوتی چندوجهی از طریق Gemini. کلید را از Google AI Studio بگیرید:</string>
-    <string name="InuAiTranscribeOpenAiInfo">رونویسی رسمی OpenAI Whisper. کلید را از داشبورد OpenAI بگیرید:</string>
-    <string name="InuAiTranscribeCfInfo">به شناسه حساب Cloudflare و یک توکن API با دامنه Workers AI نیاز دارد. توکن‌ها را اینجا مدیریت کنید:</string>
-    <string name="InuAiTranscribeCustomInfo">هر نقطه پایانی /v1/audio/transcriptions سازگار با OpenAI را وارد کنید.</string>
     <string name="InuAiChatCustomInfo">هر API سازگار با OpenAI، مثلاً https://host/v1 (نشانی کامل /chat/completions هم کار می‌کند). کلید API برای روترهای محلی اختیاری است.</string>
     <string name="InuAiProvidersSubtitle">سرویس‌های هوش مصنوعی خودتان را برای ویرایشگر، خلاصه‌ها و رونویسی صدا وصل کنید.</string>
     <string name="InuAiProviderAdd">افزودن ارائه‌دهنده</string>
@@ -1553,8 +1507,6 @@
     <string name="InuAiModelPickerTitle">انتخاب مدل</string>
     <string name="InuAiModelsLoading">در حال بارگیری مدل‌ها…</string>
     <string name="InuAiModelEnterManually">وارد کردن دستی مدل</string>
-    <string name="InuAiTranscribeFetchModels">دریافت مدل‌های موجود</string>
-    <string name="InuAiTranscribeFetchModelsEmpty">مدلی پیدا نشد</string>
     <string name="InuAiTranscribeFetchModelsFailed">دریافت مدل‌ها ممکن نشد: %1$s</string>
     <string name="InuLocalPremium">پریمیوم تلگرام محلی</string>
     <string name="InuLocalPremiumInfo">مزایای پریمیوم سمت کلاینت را باز می‌کند، اما مزایای سمت سرور (بارگذاری‌ها، سقف‌های ابری) همچنان به اشتراک رسمی نیاز دارند.</string>
@@ -1908,4 +1860,9 @@
     <string name="InuUnreadBadgeOnBackButton">نمایش شمارنده چت‌های خوانده‌نشده</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">تعداد چت‌های خوانده‌نشده را روی دکمه بازگشت در چت نمایش می‌دهد</string>
     <string name="InuUnreadBadgeOnBackButtonIos">شمارنده به سبک iOS</string>
+    <string name="InuMainScreen">صفحه اصلی</string>
+    <string name="InuMessagesSummary">اقدامات دوبار ضربه، واکنش‌ها و تاییدیه‌ها</string>
+    <string name="InuPillStackSummary">ابزارک‌های تعاملی در نوار جستجو</string>
+    <string name="InuRecentChatsSummary">جابجایی سریع بین گفتگوها</string>
+    <string name="InuFeedSummary">پست‌های تجمیع‌شده از کانال‌های شما</string>
 </resources>

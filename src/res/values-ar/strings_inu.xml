@@ -22,7 +22,6 @@
     <string name="InuSettings">إعدادات entinyGram</string>
     <string name="InuSettingsInfo">عبر الأرض والرياح أتبعك</string>
     <string name="InuGeneral">عام</string>
-    <string name="InuMiscellaneous">متفرقات</string>
     <string name="InuWideChannelPosts">منشورات عريضة</string>
     <string name="InuWideChannelPostsFooter">منشورات القنوات والرسائل المعاد توجيهها تستخدم العرض المتاح كاملاً.</string>
     <string name="InuWideChannelPostsPreviewText">أخبار وصور وفيديوهات</string>
@@ -85,7 +84,6 @@
     <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">المحادثات &amp; الواجهة</string>
     <string name="InuAnnoyancesChannels">القنوات &amp; التوصيات</string>
-    <string name="InuAnnoyancesMedia">الوسائط</string>
     <string name="InuAnnoyancesAi">الذكاء الاصطناعي</string>
     <string name="InuAnnoyancesHints">التلميحات &amp; الاقتراحات</string>
     <string name="InuMessages">الرسائل</string>
@@ -304,7 +302,6 @@
     <string name="InuDialogsFabActionOpenSearch">فتح البحث</string>
     <string name="InuDialogsFabActionSavedMessages">الرسائل المحفوظة</string>
     <string name="InuPillStack">كبسولات المعلومات</string>
-    <string name="InuPillStackInfo">كبسولات تفاعلية صغيرة في شريط بحث المحادثات\nلا تعمل مع البحث العام في الواجهة الكلاسيكية</string>
     <string name="InuPillStackVisibleCount">المعروض دفعة واحدة</string>
     <string name="InuPillStackClock">الساعة</string>
     <string name="InuPillStackLastSeen">آخر ظهور</string>
@@ -374,7 +371,6 @@
     <string name="InuShowHiddenMessages">إظهار الرسائل</string>
     <string name="InuSpoilers">المحتوى المخفي</string>
     <string name="InuHideAiFeatures">إخفاء ميزات الذكاء الاصطناعي</string>
-    <string name="InuHideAiEditor">زر محرر الذكاء الاصطناعي</string>
     <string name="InuAiEditorButtonInfo">يعرض إجراءات الذكاء الاصطناعي بجانب حقل الرسالة لإعادة الصياغة والمتابعة والتلخيص وتصحيح النص.</string>
     <string name="InuAiEditorButtonSetupInfo">أضف مفتاح API في خدمات الذكاء الاصطناعي أولاً؛ يعمل هذا الزر أثناء الكتابة.</string>
     <string name="InuAiSummary">ملخصات الذكاء الاصطناعي</string>
@@ -392,7 +388,7 @@
     <string name="InuStickerTimeModeHideTime">إخفاء الوقت فقط</string>
     <string name="InuStickerTimeModeHideIncoming">إخفاء للواردة فقط</string>
     <string name="InuStickerTimeModeHideCompletely">إخفاء كلياً</string>
-    <string name="InuStickerSizeDialogMessage">أحب الهوائيات</string>
+    <string name="InuStickerSizeDialogMessage">أحب الهوائيات!</string>
     <string name="InuBubbleTails">ذيول الفقاعات</string>
     <string name="InuSendAsRoundVideo">إرسال كفيديو دائري</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
@@ -561,11 +557,6 @@
     <string name="InuTranslateProviderFailed">فشلت الترجمة: %1$s. حاول مجدداً بعد لحظة.</string>
     <string name="InuTranslateGoogleBlocked">يحظر Google الترجمة من هذه الشبكة (HTTP 429). غيّر الاتصال أو اختر مزوداً آخر.</string>
     <string name="InuPoweredByProvider">الترجمات مقدَّمة من %1$s.</string>
-    <string name="InuTranslationProvider">مزوّد الترجمة</string>
-    <string name="InuTranslationProviderTelegram">Telegram</string>
-    <string name="InuTranslationProviderFromPlugin">من %1$s</string>
-    <string name="InuTranslationProviderUnavailable">غير متاح</string>
-    <string name="InuTranslationProviderInfo">يمكنك تثبيت خدمات ترجمة إضافية عبر **الإضافات >**</string>
     <string name="InuHideReactionEntry">إخفاء حركة ظهور التفاعل</string>
     <string name="InuHideReactionEntryInfo">…عند إضافة تفاعل إلى رسالة</string>
     <string name="InuMutualContact">جهة اتصال متبادلة</string>
@@ -845,7 +836,6 @@
     <string name="InuForwardHeaderMode">ترويسة إعادة التوجيه</string>
     <string name="InuForwardHeaderModeRegular">عادية</string>
     <string name="InuForwardHeaderModeIcon">أيقونة</string>
-    <string name="InuForwardHeaderModeIconNoTimeInfo">مثل المضغوطة مع إيقاف &quot;إظهار وقت إعادة التوجيه&quot;</string>
     <string name="InuForwardHeaderModeCompact">مضغوطة</string>
     <string name="InuShowForwardsCount">إظهار عدد مرات إعادة التوجيه</string>
     <string name="InuCompactEdited">مؤشر تعديل مضغوط</string>
@@ -893,10 +883,7 @@
     <string name="InuCut">قص</string>
     <string name="InuCodeLanguage">لغة الشيفرة</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
-    <string name="InuCategories">الفئات</string>
     <string name="InuDataBackup">النسخ الاحتياطي &amp; المزامنة</string>
-    <string name="InuBuildFull">كاملة</string>
-    <string name="InuBuildPluginless">بدون إضافات</string>
 
     <string name="InuSearchFilter">التصفية حسب الوسائط</string>
     <string name="InuSearchFilterPhotos">الصور</string>
@@ -959,7 +946,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">قناة التحديثات</string>
     <string name="InuUpdates">التحديثات</string>
-    <string name="InuUpdateBetaWarning">هذا تحديث تجريبي وقد يكون غير مستقر.</string>
     <string name="InuUpdateInstalling">جارٍ تثبيت التحديث</string>
     <string name="InuUpdateInstallingHint">سيُعاد تشغيل التطبيق بعد التثبيت</string>
     <string name="InuUpdateInstallingNotificationHint">سيصلك إشعار عند اكتمال تثبيت التحديث</string>
@@ -1022,7 +1008,6 @@
     <string name="InuReorderAccountsInfo">اسحب لإعادة ترتيب الحسابات في قائمة الإعدادات ومنتقي الحساب.</string>
     <string name="InuCreateAsSupergroup">الإنشاء كمجموعة خارقة</string>
     <string name="InuFeed">الخلاصة</string>
-    <string name="InuFeedToggleInfo">يضيف الخلاصة إلى القوائم وعلامات التبويب السفلية. معطّلة افتراضياً؛ علامة التبويب السفلية تتطلب إعادة تشغيل التطبيق</string>
     <string name="InuFeedEmpty">لقد اطلعت على كل شيء</string>
     <string name="InuFeedManageChannels">إدارة القنوات</string>
     <string name="InuFeedMarkAllRead">تحديد الكل كمقروء</string>
@@ -1051,7 +1036,6 @@
     <string name="InuCopyButtonText">نسخ \"%1$s\"</string>
     <string name="InuCopyCallbackData">نسخ بيانات الاستدعاء</string>
     <string name="InuCallbackDataCopied">تم نسخ بيانات الاستدعاء</string>
-    <string name="InuNetwork">الشبكة</string>
     <string name="InuAutoDisableProxyOnVpn">تعطيل البروكسي عند تشغيل VPN</string>
     <string name="InuProxyImportFromClipboard">استيراد من الحافظة</string>
     <string name="InuProxyImportNothing">لا توجد روابط وكيل جديدة في الحافظة</string>
@@ -1197,25 +1181,10 @@
     <string name="InuLogsMakingHeapDump">جارٍ إنشاء تفريغ الذاكرة…</string>
     <string name="InuLogsHeapDumpWarning">**لا** تشارك ملف .hprof أبداً — إنه لقطة للذاكرة **تحتوي على بيانات حساسة** (رسائل ورموز وغيرها) ويجب أن تفحصها بنفسك فقط. سيتجمد التطبيق لفترة وجيزة أثناء إنشائها.</string>
 
-    <string name="InuDeleteOwnMessages">حذف رسائلي</string>
-    <string name="InuDeleteOwnMessagesSearching">جارٍ البحث عن رسائلك…</string>
-    <string name="InuDeleteOwnMessagesFoundProgress">تم العثور على %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesNone">لا توجد رسائل منك في هذه المحادثة</string>
     <string name="InuDeleteOwnMessagesConfirm_zero">حذف %d رسالة منك؟ لا يمكن التراجع عن هذا.</string>
-    <string name="InuDeleteOwnMessagesConfirm_one">حذف رسالة واحدة منك؟ لا يمكن التراجع عن هذا.</string>
     <string name="InuDeleteOwnMessagesConfirm_two">حذف رسالتين منك؟ لا يمكن التراجع عن هذا.</string>
-    <string name="InuDeleteOwnMessagesConfirm_few">حذف %d رسائل منك؟ لا يمكن التراجع عن هذا.</string>
-    <string name="InuDeleteOwnMessagesConfirm_many">حذف %d رسالة منك؟ لا يمكن التراجع عن هذا.</string>
-    <string name="InuDeleteOwnMessagesConfirm_other">حذف %d رسالة منك؟ لا يمكن التراجع عن هذا.</string>
-    <string name="InuDeleteOwnMessagesDeleting">تم حذف %1$d / %2$d</string>
     <string name="InuDeleteOwnMessagesDone_zero">لم تُحذف أي رسالة</string>
-    <string name="InuDeleteOwnMessagesDone_one">حُذفت رسالة واحدة</string>
     <string name="InuDeleteOwnMessagesDone_two">حُذفت رسالتان</string>
-    <string name="InuDeleteOwnMessagesDone_few">حُذفت %d رسائل</string>
-    <string name="InuDeleteOwnMessagesDone_many">حُذفت %d رسالة</string>
-    <string name="InuDeleteOwnMessagesDone_other">حُذفت %d رسالة</string>
-    <string name="InuDeleteOwnMessagesError">خطأ: %1$s</string>
-    <string name="InuDeleteOwnMessagesFloodWait">تم تقييد المعدل، الانتظار %dث…</string>
     <string name="InuBiometricConfirm">التأكيد البيومتري</string>
     <string name="InuBiometricConfirmTitle">أكّد هويتك</string>
     <string name="InuBiometricConfirmDeleteChat">تأكيد حذف المحادثات</string>
@@ -1338,7 +1307,6 @@
     <string name="InuStickerSetRefreshFailed">تعذّر تحديث الحزمة</string>
     <string name="InuAiCompose">الذكاء الاصطناعي (AI)</string>
     <string name="InuAiEndpointUrl">عنوان نقطة النهاية</string>
-    <string name="InuAiEndpointModel">النموذج</string>
     <string name="InuAiOpenSettings">فتح الإعدادات</string>
     <string name="InuAiNoEndpoint">لم تُضبط نقطة نهاية API نشطة. أضف واحدة في الإعدادات &gt; كتابة بالذكاء الاصطناعي.</string>
     <string name="InuAiBadEndpoint">نقطة النهاية النشطة بلا عنوان. عدّلها في الإعدادات &gt; كتابة بالذكاء الاصطناعي.</string>
@@ -1369,7 +1337,6 @@
     <string name="InuAiTranslateTo">إلى</string>
     <string name="InuAiTranslateRun">ترجمة</string>
     <string name="InuAiChatTitle">دردشة الذكاء الاصطناعي</string>
-    <string name="InuAiSectionGeneral">عام</string>
     <string name="InuAiRoles">الأدوار</string>
     <string name="InuAiRolesAssistant">المساعد</string>
     <string name="InuAiSectionGeneration">الردود</string>
@@ -1379,10 +1346,8 @@
     <string name="InuAiOnlyAnswerInfo">للنماذج المفكّرة: يخفي التفكير ويُبقي الإجابة النهائية فقط. عند الإيقاف يظهر التفكير فوق الإجابة بعد فقاعة الفكر.</string>
     <string name="InuAiInsertQuote">إدراج الاستجابة كاقتباس</string>
     <string name="InuAiInsertQuoteInfo">عند الضغط على «استخدام» في محرر الذكاء الاصطناعي تحل النتيجة محل مسودتك ككتلة اقتباس. عند الإيقاف تحل محلها كنص عادي.</string>
-    <string name="InuAiRolesScreenDesc">شخصيات محفوظة يُطلب من الذكاء الاصطناعي تجسيدها (\"أنت X\"). انقر للتبديل، وانقر على النشطة لإعادة تسميتها.</string>
     <string name="InuAiRoleNew">دور جديد</string>
     <string name="InuAiRoleNameHint">الاسم</string>
-    <string name="InuAiRolePromptHint">موجّه مخصص (اختياري)</string>
     <string name="InuAiRolePromptDesc">إذا حُدد، يحل هذا الموجّه الكامل بالكامل محل سطر \"أنت الاسم\".</string>
     <string name="InuAiRoleDeleteConfirm">حذف هذا الدور؟</string>
     <string name="InuAiRolesSubtitle">شخصيات يتقمصها الذكاء الاصطناعي في المحرر والملخصات. اختر واحدة أو اكتب موجّهك الخاص.</string>
@@ -1412,18 +1377,10 @@
     <string name="InuAiReasoningMedium">متوسط</string>
     <string name="InuAiReasoningHigh">مرتفع</string>
     <string name="InuAiSummaryTemperatureInfo">القيم الأقل تُبقي الملخصات أقرب إلى الأصل. حتى تغيّرها تُستخدم درجة حرارة المحرر.</string>
-    <string name="InuAiProviderCustom">مخصص</string>
-    <string name="InuAiProviderCustomNameHint">الاسم (اختياري)</string>
     <string name="InuAiApiKeyHint">مفتاح API</string>
     <string name="InuAiProvidersTitle">مزودو الذكاء الاصطناعي</string>
-    <string name="InuAiProvidersUniversalDesc">تُظهر الأيقونة قبل كل اسم ما يدعمه (∞ دردشة+صوت، لوحة مفاتيح للدردشة فقط، ميكروفون للصوت فقط) — انقر للضبط، ثم اختر مزوداً نشطاً لكل نطاق.</string>
     <string name="InuAiProvidersActiveForChat">نشط للدردشة</string>
     <string name="InuAiProvidersActiveForVoice">نشط للصوت</string>
-    <string name="InuAiProvidersActiveBoth">دردشة + صوت</string>
-    <string name="InuAiProvidersSameModel">استخدام النموذج نفسه للاثنين</string>
-    <string name="InuAiProvidersChatModelHint">نموذج الدردشة</string>
-    <string name="InuAiProvidersVoiceModelHint">نموذج الصوت</string>
-    <string name="InuAiProvidersOpenRouterInfo">وصول إلى مئات النماذج عبر واجهة API واحدة. احصل على مفتاح من OpenRouter:</string>
     <string name="InuEditHistoryDiff">إبراز تغييرات النص (الفروقات)</string>
     <string name="InuEditHistoryDiffInfo">إظهار خط أحمر على النص المحذوف وأخضر على النص المضاف في سجل التعديلات</string>
     <string name="InuNoEditHistory">لا يوجد سجل تعديلات مسجَّل لهذه الرسالة</string>
@@ -1529,13 +1486,11 @@
     <string name="InuAiTranscribe">تحويل الصوت إلى نص (النسخ)</string>
     <string name="InuAiTranscribeInfo">انسخ الرسائل الصوتية والمرئية عبر مزود الذكاء الاصطناعي الخاص بك بدلاً من مزود Telegram، مع Premium أو بدونه.</string>
     <string name="InuAiTranscribeModel">النموذج</string>
-    <string name="InuAiTranscribeApiKey">مفتاح API</string>
     <string name="InuAiTranscribeAccountId">معرّف الحساب</string>
     <string name="InuAiTranscribeApiToken">رمز API</string>
     <string name="InuAiTranscribeNoKey">لم يُضبط أي مزود ذكاء اصطناعي للصوت بعد. أضف واحداً في الإعدادات &gt; الذكاء الاصطناعي &gt; المزودون.</string>
     <string name="InuAiTranscribeFailed">فشل النسخ: %1$s</string>
     <string name="InuAiTranscribeLanguage">اللغة المنطوقة</string>
-    <string name="InuAiTranscribeLanguageInfo">اللغة المنطوقة في الرسائل الصوتية (مثل en وuk وru وar). فارغ = اكتشاف تلقائي.</string>
     <string name="InuAiTranscribeErrorDownload">تعذّر تنزيل الرسالة الصوتية.</string>
     <string name="InuAiTranscribeErrorNoAudio">لا يوجد صوت في هذه الرسالة لنسخه.</string>
     <string name="InuAiTranscribeErrorEmpty">أعاد المزود نسخاً فارغاً.</string>
@@ -1544,11 +1499,6 @@
     <string name="InuAiTranscribeErrorRateLimited">المزود يقيّد الطلبات حالياً. انتظر لحظة وانقر مجدداً.</string>
     <string name="InuAiTranscribeErrorDailyQuota">استنفد مفتاح API هذا حصته المجانية لليوم. حاول غداً، أو فعّل الفوترة، أو بدّل مزود الصوت.</string>
     <string name="InuAiTranscribeErrorNoFreeQuota">لا توجد حصة مجانية لهذا النموذج على مفتاح API الخاص بك. اختر نموذج Flash، أو فعّل الفوترة في مشروع Google، أو بدّل مزود الصوت.</string>
-    <string name="InuAiTranscribeGroqInfo">نسخ سريع ومجاني بنموذج Whisper Large v3. احصل على مفتاح مجاني من وحدة تحكم Groq:</string>
-    <string name="InuAiTranscribeGeminiInfo">نسخ صوتي متعدد الوسائط عبر Gemini. احصل على مفتاح من Google AI Studio:</string>
-    <string name="InuAiTranscribeOpenAiInfo">نسخ رسمي بنموذج OpenAI Whisper. احصل على مفتاح من لوحة تحكم OpenAI:</string>
-    <string name="InuAiTranscribeCfInfo">يتطلب معرّف حساب Cloudflare ورمز API بنطاق Workers AI. أدِر الرموز هنا:</string>
-    <string name="InuAiTranscribeCustomInfo">أدخل أي نقطة نهاية /v1/audio/transcriptions متوافقة مع OpenAI.</string>
     <string name="InuAiChatCustomInfo">أي واجهة API متوافقة مع OpenAI، مثل https://host/v1 (وعنوان /chat/completions الكامل يعمل أيضاً). مفتاح API اختياري للموجّهات المحلية.</string>
     <string name="InuAiProvidersSubtitle">اربط خدمات الذكاء الاصطناعي الخاصة بك للمحرر والملخصات ونسخ الصوت.</string>
     <string name="InuAiProviderAdd">إضافة مزود</string>
@@ -1569,8 +1519,6 @@
     <string name="InuAiModelPickerTitle">اختيار النموذج</string>
     <string name="InuAiModelsLoading">جارٍ تحميل النماذج…</string>
     <string name="InuAiModelEnterManually">إدخال النموذج يدوياً</string>
-    <string name="InuAiTranscribeFetchModels">جلب النماذج المتاحة</string>
-    <string name="InuAiTranscribeFetchModelsEmpty">لم يتم العثور على نماذج</string>
     <string name="InuAiTranscribeFetchModelsFailed">تعذّر جلب النماذج: %1$s</string>
     <string name="InuLocalPremium">Telegram Premium محلي</string>
     <string name="InuLocalPremiumInfo">يفتح مزايا Premium من جهة العميل، أما مزايا الخادم (الرفع وحدود السحابة) فتتطلب اشتراكاً رسمياً.</string>
@@ -1924,4 +1872,9 @@
     <string name="InuUnreadBadgeOnBackButton">إظهار عدّاد المحادثات غير المقروءة</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">يعرض عدد المحادثات غير المقروءة على زر الرجوع داخل المحادثة.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">عدّاد بأسلوب iOS</string>
+    <string name="InuMainScreen">الشاشة الرئيسية</string>
+    <string name="InuMessagesSummary">إجراءات النقر المزدوج والتفاعلات والتأكيدات</string>
+    <string name="InuPillStackSummary">أدوات تفاعلية في شريط البحث</string>
+    <string name="InuRecentChatsSummary">التبديل السريع بين المحادثات</string>
+    <string name="InuFeedSummary">منشورات مجمعة من قنواتك</string>
 </resources>

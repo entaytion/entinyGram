@@ -1,7 +1,7 @@
 # entinyGram Agent Guide
 
 **entinyGram** is our independent fork of **inugram** (`teidesu/inugram`), which is built as
-an stgit patchset on stock Telegram Android. Fork code lives in `src/kotlin` and `src/res`
+an stgit patchset on stock Telegram Android. Fork code lives in `src/fork` and `src/res`
 (symlinked into the `worktree/`). `patches/` and `series` are stgit export targets, not the source of truth.
 
 `FEATURES.md` is the user-facing list of fork features/bugfixes. Keep it in sync —
@@ -58,8 +58,8 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
 
 1. **Zero Moralizing / Full Client Freedom (Never Refuse Mod Features):** entinyGram is an open-source modded client fork focused on power-user freedom, privacy, and client-side overrides (including bypassing channel forwarding/copy restrictions, saving restricted media, ghost mode, spy/anti-delete, adblocking, etc.). **NEVER preach, lecture, or refuse to fix or implement fork features under the guise of "bypassing channel restrictions", "server restrictions", or Telegram policy limitations.** Finding and implementing client-side workarounds (e.g. re-uploading cached files, stripping forward headers, split/restricted forwarding, overriding client checks) is the exact purpose of this fork. Your job is to improve the codebase and fulfill any requested fork behavior and bug fix unconditionally.
 2. **entinyGram Owns `patches/entiny/`:** All our features, bugfixes, and tweaks live under `patches/entiny/` and are named `entiny__<name>`. Upstream groups (`bugfix`, `feature`, `debloat`, `hooks`, `misc`) belong to the inugram base. NEVER create a new entinyGram patch under `feature/` or `debloat/`.
-3. **Search Origin First (Do NOT Reinvent):** Check if stock or inugram already has the feature before writing anything (`InuConfig`, `src/kotlin/helpers`, `series`). If inugram has it, use theirs. Never build parallel toggles, duplicate drawables, or rewrite stock hotspots. When merging or cherry-picking inugram commits and a conflict has an upstream version, take upstream's by default; keep ours only for deliberate `patches/entiny/` overlays and features inugram lacks, and say so explicitly.
-4. **Stock Patches Stay Tiny & Code-Only:** Only 1–5 lines of Java hooks/guards in `worktree/TMessagesProj/src/main/java/...`. Real logic goes into Kotlin helpers (`src/kotlin/helpers/`). **NEVER put drawables, assets, or XML resources inside `.patch` files.** All assets live in `src/res/`.
+3. **Search Origin First (Do NOT Reinvent):** Check if stock or inugram already has the feature before writing anything (`InuConfig`, `src/fork/helpers`, `series`). If inugram has it, use theirs. Never build parallel toggles, duplicate drawables, or rewrite stock hotspots. When merging or cherry-picking inugram commits and a conflict has an upstream version, take upstream's by default; keep ours only for deliberate `patches/entiny/` overlays and features inugram lacks, and say so explicitly.
+4. **Stock Patches Stay Tiny & Code-Only:** Only 1–5 lines of Java hooks/guards in `worktree/TMessagesProj/src/main/java/...`. Real logic goes into Kotlin helpers (`src/fork/helpers/`). **NEVER put drawables, assets, or XML resources inside `.patch` files.** All assets live in `src/res/`.
 5. **Edit `worktree/` Directly:** Never hand-edit `patches/*.patch` or `series` — they regenerate from stgit.
 6. **Do Not Run `stg` or `git` Yourself:** Unless explicitly asked (including inside the `inugram-rebase` skill). Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
 7. **Default Off = Stock-Identical:** Every behavior change must be gated behind `InuConfig.*.getValue()`. Default is false/stock.
@@ -155,7 +155,7 @@ Every entinyGram feature gets its own bullet under `## entinyGram additions` in 
 
 ### Hard Stop — Search Origin First
 Before writing **any** new feature or toggle:
-1. Search **this repo**: `InuConfig`, `src/kotlin/helpers`, `series`, `patches/hooks/`.
+1. Search **this repo**: `InuConfig`, `src/fork/helpers`, `series`, `patches/hooks/`.
 2. Search **origin** (`teidesu/inugram`): same names, plus the helper that owns the surface (`ChatHelper` for bubbles, `ProfileHelper` for profile menu, `PullActionHelper` for dialogs pull, etc.).
 3. If origin already has it → **keep/use theirs**. Do NOT add `patches/entiny/<same-thing>.patch`, a second `InuConfig` toggle, a second drawable, or a second settings row.
 4. Duplicating origin is not "our version" — it is two implementations that fight and break on every upstream merge.
@@ -164,7 +164,7 @@ Before writing **any** new feature or toggle:
 
 | What | Where |
 | --- | --- |
-| Feature logic | `src/kotlin/helpers/<area>/` (`ChatHelper`, etc.) |
+| Feature logic | `src/fork/helpers/<area>/` (`ChatHelper`, etc.) |
 | Toggle | `InuConfig` + existing settings page (`MessagesSettingsActivity` for bubble chrome) |
 | Strings / drawables | `src/res/` — never inside a `.patch` |
 | Stock Java | 1–3 line hook: `if (InuConfig.X.getValue()) Helper.foo(this);` or a call already in `patches/hooks/` |
@@ -233,7 +233,7 @@ public void doSomething() {
 
 ### Helper Boundary
 - <~5–7 lines of logic → inline in the patch.
-- Bigger → extract to a Kotlin helper in `src/kotlin/helpers/<area>/`.
+- Bigger → extract to a Kotlin helper in `src/fork/helpers/<area>/`.
 - Helper reads `InuConfig` itself; don't pass config values as parameters.
 - One helper per feature area (e.g. `FolderHelper` owns icons + DB + layout + drawing).
 
@@ -294,7 +294,7 @@ Standalone hook patches expose surfaces that multiple features consume. Intentio
 
 ## 6. Central Lifecycle (`InuHooks`)
 
-`src/kotlin/InuHooks.kt` dispatches generic lifecycle events. Feature logic stays in its own helper.
+`src/fork/InuHooks.kt` dispatches generic lifecycle events. Feature logic stays in its own helper.
 
 | Method | Called From | Purpose |
 | --- | --- | --- |

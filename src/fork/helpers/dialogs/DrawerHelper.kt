@@ -777,8 +777,10 @@ object DrawerHelper {
                 DialogsMenuConfig.Item.ARCHIVE -> io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) {
                     instance.presentFragment(DialogsActivity(Bundle().apply { putInt("folderId", 1) }))
                 }
-                DialogsMenuConfig.Item.RECENT_CHATS -> io.add(R.drawable.msg_recent_solar, getString(R.string.InuRecentChats)) {
-                    RecentChatsHelper.show(instance, instance.getActionBar())
+                DialogsMenuConfig.Item.RECENT_CHATS -> if (RecentChatsHelper.isEnabled()) {
+                    io.add(R.drawable.msg_recent_solar, getString(R.string.InuRecentChats)) {
+                        RecentChatsHelper.show(instance, instance.getActionBar())
+                    }
                 }
                 DialogsMenuConfig.Item.CLEAR_CACHE -> io.add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearCache)) {
                     showClearCacheOptions(instance)

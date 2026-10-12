@@ -44,7 +44,7 @@ async function findDeadStrings(): Promise<{ dead: string[], total: number }> {
   for (const m of baseXml.matchAll(STRING_KEY_RE)) declared.add(m[1])
 
   const sourceFiles: string[] = []
-  for (const dir of ['src/fork', 'src/kotlin', 'src/kotlin-app']) {
+  for (const dir of ['src/fork', 'src/fork-app', 'src/kotlin', 'src/kotlin-app']) {
     const full = join(rootDir, dir)
     try {
       await walk(full, sourceFiles, ['.kt'])
@@ -84,7 +84,7 @@ async function findDeadStrings(): Promise<{ dead: string[], total: number }> {
 
 async function main() {
   const files: string[] = []
-  for (const dir of ['src/fork', 'src/kotlin']) {
+  for (const dir of ['src/fork', 'src/fork-app', 'src/kotlin']) {
     const full = join(rootDir, dir)
     try {
       await walk(full, files)

@@ -104,8 +104,8 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuRootInterface)))
         items.add(mkSubPageButton(CAT_APPEARANCE, R.drawable.msg_palette, LocaleController.getString(R.string.InuCategoryAppearance)))
         items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_viewchats, LocaleController.getString(R.string.InuCategoryChats)))
-        items.add(mkSubPageButton(CAT_MESSAGES, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessages)))
         items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_shield_cancel, LocaleController.getString(R.string.InuAnnoyances)))
+        items.add(mkSubPageButton(CAT_MAIN_SCREEN, R.drawable.msg_home_solar, LocaleController.getString(R.string.InuMainScreen)))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuRootPrivacy)))
@@ -157,12 +157,12 @@ class InuSettingsActivity : SettingsPageActivity() {
         when (item.id) {
             CAT_APPEARANCE -> presentFragment(AppearanceSettingsActivity())
             CAT_CHATS -> presentFragment(CategoryChatsSettingsActivity())
-            CAT_MESSAGES -> presentFragment(MessagesSettingsActivity())
             CAT_AI -> presentFragment(AiSettingsActivity())
             CAT_TRANSLATOR -> presentFragment(TranslatorSettingsActivity())
             CAT_BEHAVIOR -> presentFragment(BehaviorSettingsActivity())
             CAT_PRIVACY -> presentFragment(PrivacySecurityActivity())
             CAT_ANNOYANCES -> presentFragment(AnnoyancesSettingsActivity())
+            CAT_MAIN_SCREEN -> presentFragment(MainScreenSettingsActivity())
             BUTTON_TOS -> presentFragment(TosSettingsActivity())
             // #if PLUGINS
             BUTTON_PLUGINS -> presentFragment(PluginsActivity())
@@ -177,7 +177,7 @@ class InuSettingsActivity : SettingsPageActivity() {
     companion object {
         private val CAT_APPEARANCE = InuUtils.generateId()
         private val CAT_CHATS = InuUtils.generateId()
-        private val CAT_MESSAGES = InuUtils.generateId()
+        private val CAT_MAIN_SCREEN = InuUtils.generateId()
         private val CAT_AI = InuUtils.generateId()
         private val CAT_TRANSLATOR = InuUtils.generateId()
         private val CAT_BEHAVIOR = InuUtils.generateId()

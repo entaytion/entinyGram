@@ -69,7 +69,6 @@
     <string name="InuSettings">entinyGram Settings</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuGeneral">General</string>
-    <string name="InuMiscellaneous">Miscellaneous</string>
     <string name="InuWideChannelPosts">Wide posts</string>
     <string name="InuWideChannelPostsFooter">Channel posts and forwards use the available width.</string>
     <string name="InuWideChannelPostsPreviewText">News, photos and videos</string>
@@ -137,7 +136,6 @@
     <string name="InuAnnoyancesPremium">Telegram Premium</string>
     <string name="InuAnnoyancesInterface">Chats &amp; Interface</string>
     <string name="InuAnnoyancesChannels">Channels &amp; Recommendations</string>
-    <string name="InuAnnoyancesMedia">Media</string>
     <string name="InuAnnoyancesAi">Artificial Intelligence</string>
     <string name="InuAnnoyancesHints">Hints &amp; Prompts</string>
     <string name="InuMessages">Messages</string>
@@ -387,7 +385,6 @@
     <string name="InuDialogsFabActionOpenSearch">Open search</string>
     <string name="InuDialogsFabActionSavedMessages">Saved messages</string>
     <string name="InuPillStack">Pill Stack</string>
-    <string name="InuPillStackInfo">Small interactive pills in the chats search bar\nNot active with non-island global search</string>
     <string name="InuPillStackVisibleCount">Visible at once</string>
     <string name="InuPillStackClock">Clock</string>
     <string name="InuPillStackLastSeen">Last seen</string>
@@ -457,7 +454,6 @@
     <string name="InuShowHiddenMessages">Show messages</string>
     <string name="InuSpoilers">Spoilers</string>
     <string name="InuHideAiFeatures">Hide AI features</string>
-    <string name="InuHideAiEditor">AI editor button</string>
     <string name="InuAiEditorButtonInfo">Shows AI actions next to the message field for rewriting, continuing, summarizing, and fixing text.</string>
     <string name="InuAiEditorButtonSetupInfo">Add an API key in AI Services first; this button works while composing.</string>
     <string name="InuAiSummary">AI summaries</string>
@@ -475,7 +471,7 @@
     <string name="InuStickerTimeModeHideTime">Hide only time</string>
     <string name="InuStickerTimeModeHideIncoming">Hide only for incoming</string>
     <string name="InuStickerTimeModeHideCompletely">Hide completely</string>
-    <string name="InuStickerSizeDialogMessage">i like antennas</string>
+    <string name="InuStickerSizeDialogMessage">i love antennas!</string>
     <string name="InuBubbleTails">Bubble tails</string>
     <string name="InuSendAsRoundVideo">Send as round video</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
@@ -653,11 +649,6 @@
     <string name="InuForwardTooLarge">File is over your upload limit (%1$s), can\'t forward it.</string>
     <string name="InuTranslateGoogleBlocked">Google is blocking translation from this network (HTTP 429). Change connection or pick another provider.</string>
     <string name="InuPoweredByProvider">Translations are powered by %1$s.</string>
-    <string name="InuTranslationProvider">Translation provider</string>
-    <string name="InuTranslationProviderTelegram">Telegram</string>
-    <string name="InuTranslationProviderFromPlugin">from %1$s</string>
-    <string name="InuTranslationProviderUnavailable">Unavailable</string>
-    <string name="InuTranslationProviderInfo">You can install additional translation services as **Plugins >**</string>
     <string name="InuHideReactionEntry">Hide reaction appear animation</string>
     <string name="InuHideReactionEntryInfo">…when a reaction is added to a message</string>
     <string name="InuMutualContact">Mutual contact</string>
@@ -940,7 +931,6 @@
     <string name="InuForwardHeaderMode">Forward header</string>
     <string name="InuForwardHeaderModeRegular">Regular</string>
     <string name="InuForwardHeaderModeIcon">Icon</string>
-    <string name="InuForwardHeaderModeIconNoTimeInfo">Same as Compact with &quot;Show forward time&quot; off</string>
     <string name="InuForwardHeaderModeCompact">Compact</string>
     <string name="InuShowForwardsCount">Show forward count</string>
     <string name="InuCompactEdited">Compact edit indicator</string>
@@ -992,10 +982,7 @@
     <string name="InuCut">Cut</string>
     <string name="InuCodeLanguage">Code language</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
-    <string name="InuCategories">Categories</string>
     <string name="InuDataBackup">Backup &amp; Sync</string>
-    <string name="InuBuildFull">Full</string>
-    <string name="InuBuildPluginless">Pluginless</string>
 
     <string name="InuSearchFilter">Filter by media</string>
     <string name="InuSearchFilterPhotos">Photos</string>
@@ -1058,7 +1045,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Updates channel</string>
     <string name="InuUpdates">Updates</string>
-    <string name="InuUpdateBetaWarning">This is a beta update and may be unstable.</string>
     <string name="InuUpdateInstalling">Installing update</string>
     <string name="InuUpdateInstallingHint">App will relaunch after installation</string>
     <string name="InuUpdateInstallingNotificationHint">You\'ll be notified once the update is installed</string>
@@ -1118,7 +1104,6 @@
     <string name="InuReorderAccountsInfo">Drag to reorder accounts in the settings list and the account picker.</string>
     <string name="InuCreateAsSupergroup">Create as supergroup</string>
     <string name="InuFeed">Feed</string>
-    <string name="InuFeedToggleInfo">Adds the feed to menus and bottom tabs. Off by default; the bottom tab needs an app restart</string>
     <string name="InuFeedEmpty">You\'re all caught up</string>
     <string name="InuFeedManageChannels">Manage channels</string>
     <string name="InuFeedMarkAllRead">Mark all read</string>
@@ -1147,7 +1132,6 @@
     <string name="InuCopyButtonText">Copy \"%1$s\"</string>
     <string name="InuCopyCallbackData">Copy callback data</string>
     <string name="InuCallbackDataCopied">Callback data copied</string>
-    <string name="InuNetwork">Network</string>
     <string name="InuAutoDisableProxyOnVpn">Disable proxy when VPN is active</string>
     <string name="InuProxyImportFromClipboard">Import from clipboard</string>
     <string name="InuProxyImportNothing">No new proxy links found in clipboard</string>
@@ -1297,21 +1281,6 @@
     <string name="InuLogsMakingHeapDump">Making a heap dump…</string>
     <string name="InuLogsHeapDumpWarning">**NEVER** share the .hprof file — it\'s a memory snapshot **containing sensitive data** (messages, tokens, etc.) and should only be inspected by yourself. The app will freeze briefly while it\'s created.</string>
 
-    <string name="InuDeleteOwnMessages">Delete my messages</string>
-    <string name="InuDeleteOwnMessagesSearching">Looking for your messages…</string>
-    <string name="InuDeleteOwnMessagesFoundProgress">Found %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesNone">No messages from you in this chat</string>
-    <string name="InuDeleteOwnMessagesConfirm_one">Delete %d message from yourself? This cannot be undone.</string>
-    <string name="InuDeleteOwnMessagesConfirm_few">Delete %d messages from yourself? This cannot be undone.</string>
-    <string name="InuDeleteOwnMessagesConfirm_many">Delete %d messages from yourself? This cannot be undone.</string>
-    <string name="InuDeleteOwnMessagesConfirm_other">Delete %d messages from yourself? This cannot be undone.</string>
-    <string name="InuDeleteOwnMessagesDeleting">Deleted %1$d / %2$d</string>
-    <string name="InuDeleteOwnMessagesDone_one">%d message deleted</string>
-    <string name="InuDeleteOwnMessagesDone_few">%d messages deleted</string>
-    <string name="InuDeleteOwnMessagesDone_many">%d messages deleted</string>
-    <string name="InuDeleteOwnMessagesDone_other">%d messages deleted</string>
-    <string name="InuDeleteOwnMessagesError">Error: %1$s</string>
-    <string name="InuDeleteOwnMessagesFloodWait">Rate limited, waiting for %ds…</string>
     <string name="InuBiometricConfirm">Biometric confirmation</string>
     <string name="InuBiometricConfirmTitle">Confirm your identity</string>
     <string name="InuBiometricExplicitConfirmation">Extra confirmation</string>
@@ -1453,7 +1422,6 @@
     <string name="InuStickerSetRefreshFailed">Couldn\'t refresh the pack</string>
     <string name="InuAiCompose">Artificial intelligence (AI)</string>
     <string name="InuAiEndpointUrl">Endpoint URL</string>
-    <string name="InuAiEndpointModel">Model</string>
     <string name="InuAiOpenSettings">Open settings</string>
     <string name="InuAiNoEndpoint">No active API endpoint configured. Add one in Settings &gt; AI Compose.</string>
     <string name="InuAiBadEndpoint">The active endpoint has no URL. Edit it in Settings &gt; AI Compose.</string>
@@ -1484,7 +1452,6 @@
     <string name="InuAiTranslateTo">To</string>
     <string name="InuAiTranslateRun">Translate</string>
     <string name="InuAiChatTitle">AI Chat</string>
-    <string name="InuAiSectionGeneral">General</string>
     <string name="InuAiRoles">Roles</string>
     <string name="InuAiRolesAssistant">Assistant</string>
     <string name="InuAiSectionGeneration">Answers</string>
@@ -1494,10 +1461,8 @@
     <string name="InuAiOnlyAnswerInfo">For reasoning models: hide the thinking and keep just the final answer. When off, the thinking is shown above the answer after the thought bubble.</string>
     <string name="InuAiInsertQuote">Insert response as quote</string>
     <string name="InuAiInsertQuoteInfo">When you tap Use in the AI editor, the result replaces your draft as a quote block. When off, it replaces the draft as plain text.</string>
-    <string name="InuAiRolesScreenDesc">Saved personas the AI is told to act as (\"You are X\"). Tap to switch, tap the active one to rename it.</string>
     <string name="InuAiRoleNew">New role</string>
     <string name="InuAiRoleNameHint">Name</string>
-    <string name="InuAiRolePromptHint">Custom prompt (optional)</string>
     <string name="InuAiRolePromptDesc">If set, this full prompt replaces the \"You are Name\" line entirely.</string>
     <string name="InuAiRoleDeleteConfirm">Delete this role?</string>
     <string name="InuAiRolesSubtitle">Personas the AI acts as in the editor and summaries. Pick one or write your own prompt.</string>
@@ -1527,18 +1492,10 @@
     <string name="InuAiReasoningMedium">Medium</string>
     <string name="InuAiReasoningHigh">High</string>
     <string name="InuAiSummaryTemperatureInfo">Lower values keep summaries closer to the original. Until you change it, the editor temperature is used.</string>
-    <string name="InuAiProviderCustom">Custom</string>
-    <string name="InuAiProviderCustomNameHint">Name (optional)</string>
     <string name="InuAiApiKeyHint">API Key</string>
     <string name="InuAiProvidersTitle">AI Providers</string>
-    <string name="InuAiProvidersUniversalDesc">The icon before each name shows what it supports (∞ chat+voice, keyboard chat-only, mic voice-only) — tap to configure, then pick an active one per scope.</string>
     <string name="InuAiProvidersActiveForChat">Active for Chat</string>
     <string name="InuAiProvidersActiveForVoice">Active for Voice</string>
-    <string name="InuAiProvidersActiveBoth">Chat + Voice</string>
-    <string name="InuAiProvidersSameModel">Use the same model for both</string>
-    <string name="InuAiProvidersChatModelHint">Chat model</string>
-    <string name="InuAiProvidersVoiceModelHint">Voice model</string>
-    <string name="InuAiProvidersOpenRouterInfo">Access to hundreds of models through one API. Get a key from OpenRouter:</string>
     <string name="InuEditHistoryDiff">Highlight Text Changes (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Show red strikethrough for deleted text and green for added text in edit history</string>
     <string name="InuNoEditHistory">No edit history recorded for this message</string>
@@ -1645,13 +1602,11 @@
     <string name="InuAiTranscribe">Voice-to-Text (Transcription)</string>
     <string name="InuAiTranscribeInfo">Transcribe voice and video messages through your own AI provider instead of Telegram\'s, with or without Premium.</string>
     <string name="InuAiTranscribeModel">Model</string>
-    <string name="InuAiTranscribeApiKey">API key</string>
     <string name="InuAiTranscribeAccountId">Account ID</string>
     <string name="InuAiTranscribeApiToken">API token</string>
     <string name="InuAiTranscribeNoKey">No AI provider is set up for voice yet. Add one in Settings &gt; AI &gt; Providers.</string>
     <string name="InuAiTranscribeFailed">Transcription failed: %1$s</string>
     <string name="InuAiTranscribeLanguage">Spoken language</string>
-    <string name="InuAiTranscribeLanguageInfo">Language spoken in voice messages (e.g. en, uk, ru). Empty = auto-detect.</string>
     <string name="InuAiTranscribeErrorDownload">Could not download the voice message.</string>
     <string name="InuAiTranscribeErrorNoAudio">This message has no audio to transcribe.</string>
     <string name="InuAiTranscribeErrorEmpty">The provider returned an empty transcription.</string>
@@ -1660,11 +1615,6 @@
     <string name="InuAiTranscribeErrorRateLimited">The provider is rate-limiting requests right now. Wait a moment and tap again.</string>
     <string name="InuAiTranscribeErrorDailyQuota">This API key has used up its free quota for today. Try again tomorrow, enable billing, or switch the voice provider.</string>
     <string name="InuAiTranscribeErrorNoFreeQuota">This model has no free quota on your API key. Pick a Flash model, enable billing on the Google project, or switch the voice provider.</string>
-    <string name="InuAiTranscribeGroqInfo">Fast, free Whisper Large v3 transcription. Get a free key from the Groq console:</string>
-    <string name="InuAiTranscribeGeminiInfo">Multimodal audio transcription via Gemini. Get a key from Google AI Studio:</string>
-    <string name="InuAiTranscribeOpenAiInfo">Official OpenAI Whisper transcription. Get a key from the OpenAI dashboard:</string>
-    <string name="InuAiTranscribeCfInfo">Requires a Cloudflare Account ID and an API Token scoped to Workers AI. Manage tokens here:</string>
-    <string name="InuAiTranscribeCustomInfo">Enter any OpenAI-compatible /v1/audio/transcriptions endpoint.</string>
     <string name="InuAiChatCustomInfo">Any OpenAI-compatible API, e.g. https://host/v1 (a full /chat/completions URL works too). The API key is optional for local routers.</string>
     <string name="InuAiProvidersSubtitle">Connect your own AI services for the editor, summaries and voice transcription.</string>
     <string name="InuAiProviderAdd">Add provider</string>
@@ -1685,8 +1635,6 @@
     <string name="InuAiModelPickerTitle">Select model</string>
     <string name="InuAiModelsLoading">Loading models…</string>
     <string name="InuAiModelEnterManually">Enter model manually</string>
-    <string name="InuAiTranscribeFetchModels">Fetch available models</string>
-    <string name="InuAiTranscribeFetchModelsEmpty">No models found</string>
     <string name="InuAiTranscribeFetchModelsFailed">Couldn\'t fetch models: %1$s</string>
     <string name="InuLocalPremium">Local Telegram Premium</string>
     <string name="InuLocalPremiumInfo">Unlocks client-side Premium perks, but server-side ones (uploads, cloud limits) still need an official subscription.</string>
@@ -2008,7 +1956,7 @@
     <string name="InuAppIconBy">by %1$s</string>
     <string name="InuAppIconDescDefault">The classic entinyGram dish</string>
     <string name="InuAppIconDescOld">Where it all began</string>
-    <string name="InuAppIconDescInuTribute">A nod to the original inuGram</string>
+    <string name="InuAppIconDescInuTribute">A nod to the project\'s roots</string>
     <string name="InuAppIconDescRadar">Sweeping the airwaves</string>
     <string name="InuAppIconDescConstellation">Stars linked by signal</string>
     <string name="InuAppIconDescOrbit">A dish circled by a satellite</string>
@@ -2033,4 +1981,9 @@
     <string name="InuUnreadBadgeOnBackButton">Show unread chats counter</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">Show the number of unread chats on the back button in a chat.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">iOS-styled counter</string>
+    <string name="InuMainScreen">Main screen</string>
+    <string name="InuMessagesSummary">Double-tap actions, reactions and confirmations</string>
+    <string name="InuPillStackSummary">Interactive widgets in search bar</string>
+    <string name="InuRecentChatsSummary">Quick chat switcher bar</string>
+    <string name="InuFeedSummary">Aggregated posts from your channels</string>
 </resources>
