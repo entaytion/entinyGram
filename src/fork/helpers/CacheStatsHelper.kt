@@ -27,7 +27,7 @@ object CacheStatsHelper {
             val reactions = InuDatabaseHelper.getTableStat(db, "inu_deleted_reactions", null, 40L)
             val recent = InuDatabaseHelper.getTableStat(db, "inu_recent_dialogs", null, 16L)
             val presence = InuDatabaseHelper.getPresenceLogsStats(db)
-            val media = SavedMessagesHelper.getSavedMediaDir().let(::filesIn)
+            val media = SavedMessagesHelper.getSavedMediaDir(account).let(::filesIn)
             val temp = tempDirs().flatMap(::filesIn)
             val logs = logFiles()
             val pills = listOf(InuConfig.PILL_STACK_RATE_CACHE.value, InuConfig.PILL_STACK_GOLD_CACHE.value).filter { it.isNotEmpty() }
@@ -53,7 +53,8 @@ object CacheStatsHelper {
             Kind.REACTIONS -> onStorage(account, onDone) { InuDatabaseHelper.clearDeletedReactions(it) }
             Kind.MEDIA -> onStorage(account, onDone) {
                 InuDatabaseHelper.detachSavedMedia(it)
-                SavedMessagesHelper.getSavedMediaDir().listFiles()?.filter { f -> f.isFile && f.name != ".nomedia" }?.forEach { f -> f.delete() }
+                SavedMessagesHelper.getSavedMediaDir(account).listFiles()?.filter { f -> f.isFile && f.name != ".nomedia" }?.forEach { f -> f.delete() }
+                SavedMessagesHelper.invalidateMediaCache(account)
             }
             Kind.PRESENCE -> PresenceHelper.clearLogs(account, null, onDone)
             Kind.RECENT -> {

@@ -1121,7 +1121,7 @@
     <string name="InuAiTranslateTo">На %s</string>
     <string name="InuAiTranslateRun">Перевести</string>
     <string name="InuSelfDestructMedia">Самоуничтожающиеся медиа</string>
-    <string name="InuAntiDeletion">Анти-удаление</string>
+    <string name="InuAntiDeletion">Сохранение сообщений</string>
     <string name="InuSaveSelfDestructMedia">Сохранять секретные медиа</string>
     <string name="InuSaveSelfDestructText">Сохранять самоуничтожающийся текст</string>
     <string name="InuSaveViewOnceMedia">Сохранять одноразовые медиа</string>

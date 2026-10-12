@@ -29,6 +29,9 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - custom styling for deleted messages
   - full-text search and a browsable archive of everything saved, with sender names in groups
   - cache TTL and automatic expiration
+  - preserve repeated revisions and formatting changes, with private account-isolated media archives
+  - open private archived media without crashing
+  - separate settings sections for deleted messages, edit history and self-destructing media
   - export the archive to a JSON file
 - 📡 **self-destructing & expiring media**:
   - save view-once photos, videos, video notes and voice notes, optionally straight to the gallery when you open them

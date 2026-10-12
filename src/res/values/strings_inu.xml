@@ -1332,7 +1332,7 @@
 
     <string name="InuTOS">Restricted features</string>
     <string name="InuSelfDestructMedia">Self-destructing media</string>
-    <string name="InuAntiDeletion">Anti-deletion</string>
+    <string name="InuAntiDeletion">Message preservation</string>
     <string name="InuSaveSelfDestructMedia">Keep secret media</string>
     <string name="InuSaveSelfDestructText">Keep self-destructing text</string>
     <string name="InuSaveViewOnceMedia">Keep view-once media</string>

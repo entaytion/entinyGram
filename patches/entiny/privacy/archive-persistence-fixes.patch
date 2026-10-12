@@ -1,0 +1,86 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 12 Oct 2026 18:02:34 +0300
+Subject: [*] archive persistence fixes
+
+---
+ .../java/org/telegram/messenger/MessagesController.java   | 4 ++--
+ .../main/java/org/telegram/messenger/MessagesStorage.java | 2 +-
+ .../java/org/telegram/messenger/SendMessagesHelper.java   | 2 +-
+ .../java/org/telegram/ui/Components/AlertsCreator.java    | 8 ++++----
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -9359,13 +9359,13 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
+-        boolean hasPendingKeepLocal = messages != null && desu.inugram.helpers.chat.SavedMessagesHelper.hasPendingKeepLocal(dialogId, messages);
++        boolean hasPendingKeepLocal = messages != null && desu.inugram.helpers.chat.SavedMessagesHelper.hasPendingKeepLocal(currentAccount, dialogId, messages);
+         if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue() || hasPendingKeepLocal) {
+             if (messages != null) {
+                 ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
+                 for (int a = 0; a < messages.size(); a++) {
+                     int id = messages.get(a);
+-                    boolean forceSave = desu.inugram.helpers.chat.SavedMessagesHelper.consumeKeepLocalRequest(dialogId, id);
++                    boolean forceSave = desu.inugram.helpers.chat.SavedMessagesHelper.consumeKeepLocalRequest(currentAccount, dialogId, id);
+                     MessageObject found = null;
+                     if (objs != null) {
+                         for (int i = 0; i < objs.size(); ++i) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -16482,7 +16482,7 @@ public class MessagesStorage extends BaseController {
+                                         // dialogMessagesByIds only tracks each dialog's current preview
+                                         // message; fall back to the shadow cache for any other message
+                                         // in a chat the user hasn't opened.
+-                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, MessageObject.getDialogId(message), message.id, message.message, message.media != null);
++                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, MessageObject.getDialogId(message), message.id, message);
+                                     }
+                                 }
+                                 continue;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -1700,7 +1700,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             } else if (scheduled) {
+                 mode = ChatActivity.MODE_SCHEDULED;
+             }
+-            desu.inugram.helpers.chat.SavedMessagesHelper.requestPermanentDelete(dialogId, messageIds);
++            desu.inugram.helpers.chat.SavedMessagesHelper.requestPermanentDelete(currentAccount, dialogId, messageIds);
+             getMessagesController().deleteMessages(messageIds, null, null, dialogId, topicId, false, mode);
+         }
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+@@ -8215,9 +8215,9 @@ public class AlertsCreator {
+                     thisDialogId = mergeDialogId;
+                 }
+                 if (keepLocal[0]) {
+-                    desu.inugram.helpers.chat.SavedMessagesHelper.requestKeepLocal(thisDialogId, ids);
++                    desu.inugram.helpers.chat.SavedMessagesHelper.requestKeepLocal(currentAccount, thisDialogId, ids);
+                 }
+-                desu.inugram.helpers.chat.SavedMessagesHelper.requestPermanentDelete(thisDialogId, ids);
++                desu.inugram.helpers.chat.SavedMessagesHelper.requestPermanentDelete(currentAccount, thisDialogId, ids);
+                 desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, thisDialogId, ids, deletePermanently[0], fragment);
+                 if (!ids.isEmpty()) {
+                     MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, thisDialogId, topicId, deleteForAll[0], mode);
+@@ -8243,9 +8243,9 @@ public class AlertsCreator {
+                     }
+                     long deleteDialogId = (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId;
+                     if (keepLocal[0]) {
+-                        desu.inugram.helpers.chat.SavedMessagesHelper.requestKeepLocal(deleteDialogId, ids);
++                        desu.inugram.helpers.chat.SavedMessagesHelper.requestKeepLocal(currentAccount, deleteDialogId, ids);
+                     }
+-                    desu.inugram.helpers.chat.SavedMessagesHelper.requestPermanentDelete(deleteDialogId, ids);
++                    desu.inugram.helpers.chat.SavedMessagesHelper.requestPermanentDelete(currentAccount, deleteDialogId, ids);
+                     desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, deleteDialogId, ids, deletePermanently[0], fragment);
+                     MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, deleteDialogId, topicId, deleteForAll[0], mode);
+                     selectedMessages[a].clear();

@@ -76,14 +76,16 @@ class DeletedMessageSearchActivity : SettingsPageActivity() {
             listView?.adapter?.update(true)
             return
         }
-        val account = UserConfig.selectedAccount
+        val account = currentAccount
+        val requestedQuery = query
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            val deleted = InuDatabaseHelper.searchDeletedMessages(db, query)
-            val edited = InuDatabaseHelper.searchEditHistory(db, query)
+            val deleted = InuDatabaseHelper.searchDeletedMessages(db, requestedQuery)
+            val edited = InuDatabaseHelper.searchEditHistory(db, requestedQuery)
             val merged = (deleted + edited).sortedByDescending { it.date }
             AndroidUtilities.runOnUIThread {
+                if (query != requestedQuery || currentAccount != account) return@runOnUIThread
                 results = merged
                 listView?.adapter?.update(true)
             }

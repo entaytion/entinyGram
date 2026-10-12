@@ -1077,7 +1077,7 @@
     <string name="InuAiTranscribeNoKey">音声用の AI プロバイダーがまだ設定されていません。設定 &gt; AI &gt; プロバイダー で追加してください。</string>
     <string name="InuDisableFlagSecure">FLAG_SECUREを無効化</string>
     <string name="InuDisableFlagSecureInfo">スクリーンショット禁止を解除し、秘密チャット、消えるメディア、保護されたチャンネルでのスクショや画面録画を許可します。</string>
-    <string name="InuAntiDeletion">削除防止</string>
+    <string name="InuAntiDeletion">メッセージの保存</string>
     <string name="InuAppIconOldEntinygram">旧 entinyGram</string>
     <string name="InuCategoryAppearance">デザイン</string>
     <string name="InuCategoryBackup">詳細設定</string>

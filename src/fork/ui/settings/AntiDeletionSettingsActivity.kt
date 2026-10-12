@@ -36,20 +36,17 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         sectionId = SECTION_DELETED_CATEGORIES,
     ).apply { expanded = true }
 
-    private val selfDestructGroup = ExpandableBoolGroup(
-        LocaleController.getString(R.string.InuSelfDestructMedia),
-        listOf(
+    private val selfDestructOptions = listOf(
             ExpandableBoolGroup.Option(R.string.InuSaveViewOnceMedia, InuConfig.SAVE_VIEW_ONCE_MEDIA, TOGGLE_SAVE_VIEW_ONCE_MEDIA),
             ExpandableBoolGroup.Option(R.string.InuSaveTimedMessages, InuConfig.SAVE_TIMED_MESSAGES, TOGGLE_SAVE_TIMED_MESSAGES),
             ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructMedia, InuConfig.SAVE_SELF_DESTRUCT_MEDIA, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
             ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructText, InuConfig.SAVE_SELF_DESTRUCT_TEXT, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
             ExpandableBoolGroup.Option(R.string.InuViewOnceShowNormal, InuConfig.VIEW_ONCE_SHOW_NORMAL, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
             ExpandableBoolGroup.Option(R.string.InuAutoSaveOneTime, InuConfig.AUTO_SAVE_ONE_TIME, TOGGLE_AUTO_SAVE_ONE_TIME),
-        ),
-        sectionId = SECTION_SELF_DESTRUCT_SAVE,
-    ).apply { expanded = true }
+    )
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuSaveDeletedMessages)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SAVE_DELETED_MESSAGES,
@@ -98,6 +95,8 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             deletedCategoriesGroup.addTo(items) { listView?.adapter?.update(true) }
         }
 
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuEditHistory)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SAVE_EDITED_MESSAGES,
@@ -117,9 +116,14 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             )
         }
 
-        selfDestructGroup.addTo(items) { listView?.adapter?.update(true) }
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuSelfDestructMedia)).apply { id = SECTION_SELF_DESTRUCT_SAVE })
+        for (option in selfDestructOptions) {
+            items.add(UItem.asCheck(option.id, LocaleController.getString(option.labelRes)).setChecked(option.config.value))
+        }
 
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
+            items.add(UItem.asShadow(null))
             items.add(mkSubPageButton(BUTTON_SEARCH, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuDeletedMessageSearch)))
             items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuExportArchive)))
         }
@@ -127,7 +131,12 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (deletedCategoriesGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
-        if (selfDestructGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
+        val mediaOption = selfDestructOptions.firstOrNull { it.id == item.id }
+        if (mediaOption != null) {
+            mediaOption.config.toggle()
+            listView?.adapter?.update(true)
+            return
+        }
         when (item.id) {
             TOGGLE_SAVE_DELETED_MESSAGES -> {
                 val new = InuConfig.SAVE_DELETED_MESSAGES.toggle()

@@ -1073,7 +1073,7 @@
     <string name="InuAiTranscribeNoKey">尚未为语音配置 AI 服务商。请在 设置 &gt; AI &gt; 服务商 中添加。</string>
     <string name="InuDisableFlagSecure">禁用 FLAG_SECURE</string>
     <string name="InuDisableFlagSecureInfo">解除截图限制：允许在私密聊天、阅后即焚媒体和受保护频道中截图和录屏。</string>
-    <string name="InuAntiDeletion">防撤回</string>
+    <string name="InuAntiDeletion">消息保存</string>
     <string name="InuAppIconOldEntinygram">旧版 entinyGram</string>
     <string name="InuCategoryAppearance">设计</string>
     <string name="InuCategoryBackup">其他设置</string>

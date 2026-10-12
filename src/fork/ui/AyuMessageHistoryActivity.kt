@@ -126,16 +126,14 @@ class AyuMessageHistoryActivity(
             historyEntries.clear()
             for (entry in list) {
                 val media = entry.mediaPath?.takeIf { it.isNotBlank() }
-                if (entry.text.isBlank() && media == null) continue
-                val last = historyEntries.lastOrNull()
-                if (last != null && last.text.trim() == entry.text.trim() && last.mediaPath == media) continue
-                historyEntries.add(EditEntry(entry.timestamp, entry.text, media, entry.entities, entry.media))
+                if (entry.text.isEmpty() && media == null && entry.media == null) continue
+                historyEntries.add(EditEntry(entry.timestamp, entry.text, media, entry.entities, entry.media, rowId = entry.rowId))
             }
 
             // entiny: use raw message rather than messageText because entity offsets address the unformatted raw string
             val owner = targetMessageObject.messageOwner
             val rawCurrent = owner?.message ?: ""
-            val currentText = if (rawCurrent.isNotEmpty()) rawCurrent else targetMessageObject.messageText?.toString().orEmpty()
+            val currentText = rawCurrent
             val currentEntities = if (currentText == rawCurrent) owner?.entities else null
             val editDate = owner?.edit_date ?: 0
             val currentDate = when {
@@ -144,12 +142,9 @@ class AyuMessageHistoryActivity(
                 else -> System.currentTimeMillis() / 1000
             }
             currentVersionIndex = -1
-            if (currentText.isNotBlank()) {
-                val alreadyPresent = historyEntries.any { it.text.trim() == currentText.trim() && it.mediaPath == null }
-                if (!alreadyPresent) {
-                    currentVersionIndex = historyEntries.size
-                    historyEntries.add(EditEntry(currentDate, currentText, null, currentEntities, owner?.media))
-                }
+            if (currentText.isNotEmpty() || owner?.media != null) {
+                currentVersionIndex = historyEntries.size
+                historyEntries.add(EditEntry(currentDate, currentText, null, currentEntities, owner?.media))
             }
 
             loaded = true
@@ -327,7 +322,7 @@ class AyuMessageHistoryActivity(
             currentAccount,
             targetMessageObject.getDialogId(),
             targetMessageObject.id,
-            entry.timestamp,
+            entry.rowId,
         )
     }
 

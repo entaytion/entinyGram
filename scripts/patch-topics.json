@@ -12,6 +12,7 @@
   "app-icon-picker": "ui",
   "archive-biometric-lock": "privacy",
   "archive-lock-once": "privacy",
+  "archive-persistence-fixes": "privacy",
   "attach-camera-square": "chat",
   "auto-marquee": "ui",
   "auto-save-one-time": "media",

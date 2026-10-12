@@ -1215,7 +1215,7 @@
 
     <string name="InuTOS">قابلیت‌های محدودشده</string>
     <string name="InuSelfDestructMedia">رسانه خودمخرب</string>
-    <string name="InuAntiDeletion">ضدحذف</string>
+    <string name="InuAntiDeletion">نگهداری پیام‌ها</string>
     <string name="InuSaveSelfDestructMedia">نگه داشتن رسانه مخفی</string>
     <string name="InuSaveSelfDestructText">نگه داشتن متن خودمخرب</string>
     <string name="InuSaveViewOnceMedia">نگه داشتن رسانه یک‌بار مشاهده</string>

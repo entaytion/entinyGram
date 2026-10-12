@@ -50,6 +50,11 @@ export interface ForkSyncFile {
 }
 
 export const forkSyncFiles: ForkSyncFile[] = [
+  {
+    source: 'src/res/xml/provider_paths.xml',
+    target: 'TMessagesProj/src/main/res/xml',
+    replace: true,
+  },
   // code
   {
     source: 'src/fork',

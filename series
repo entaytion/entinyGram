@@ -543,3 +543,4 @@ entiny/tabs/movable-chats-tab.patch
 entiny/chat/reply-background.patch
 entiny/chat/unread-badge-on-back-button.patch
 entiny/feed/feed-reading-fixes.patch
+entiny/privacy/archive-persistence-fixes.patch

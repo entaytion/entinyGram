@@ -1073,7 +1073,7 @@
     <string name="InuAiTranscribeNoKey">Ses için henüz bir AI sağlayıcısı ayarlanmadı. Ayarlar &gt; AI &gt; Sağlayıcılar bölümünden ekleyin.</string>
     <string name="InuDisableFlagSecure">FLAG_SECURE\'ı devre dışı bırak</string>
     <string name="InuDisableFlagSecureInfo">Ekran görüntüsü engelini kaldırır: gizli sohbetlerde, süreli medyalarda ve korumalı kanallarda ekran görüntüsü ve video kaydına izin verir.</string>
-    <string name="InuAntiDeletion">Silinmeyi önleme</string>
+    <string name="InuAntiDeletion">Mesajları saklama</string>
     <string name="InuAppIconOldEntinygram">Eski entinyGram</string>
     <string name="InuCategoryAppearance">Tasarım</string>
     <string name="InuCategoryBackup">Ek ayarlar</string>

@@ -1231,7 +1231,7 @@
 
     <string name="InuTOS">الميزات المقيّدة</string>
     <string name="InuSelfDestructMedia">الوسائط ذاتية الحذف</string>
-    <string name="InuAntiDeletion">منع الحذف</string>
+    <string name="InuAntiDeletion">حفظ الرسائل</string>
     <string name="InuSaveSelfDestructMedia">الاحتفاظ بالوسائط السرية</string>
     <string name="InuSaveSelfDestructText">الاحتفاظ بالنص ذاتي الحذف</string>
     <string name="InuSaveViewOnceMedia">الاحتفاظ بوسائط المشاهدة لمرة واحدة</string>
