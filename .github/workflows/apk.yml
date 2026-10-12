@@ -457,6 +457,22 @@ jobs:
             --clobber \
             out/*.apk
 
+      - name: Update assets/changelog.json
+        continue-on-error: true
+        if: ${{ inputs.prerelease != true && inputs.prerelease != 'true' }}
+        run: |
+          if [ -f "out/changelog.json" ]; then
+            git config user.email ci@entinygram
+            git config user.name 'entinygram ci'
+            git pull --rebase origin main || true
+            cp out/changelog.json assets/changelog.json
+            git add assets/changelog.json
+            if ! git diff --cached --quiet; then
+              git commit -m "[=] update changelog.json for ${{ needs.build.outputs.tag }}"
+              git push origin HEAD:main
+            fi
+          fi
+
       - name: Upload to Telegram (CI channel + optional main channel)
         env:
           TELEGRAM_API_ID:       ${{ secrets.TELEGRAM_API_ID }}
@@ -501,8 +517,11 @@ jobs:
         run: |
           next_day_counter=$((${{ needs.build.outputs.day-counter }} + 1))
           gh variable set INU_DAY_STATE --body "${{ needs.build.outputs.date }}:$next_day_counter"
+          head_sha=$(git rev-parse HEAD)
           # LAST_BUILD_SHA moves on every build; LAST_RELEASE_SHA only on stable.
-          gh variable set LAST_BUILD_SHA --body "$GITHUB_SHA"
+          gh variable set LAST_BUILD_SHA --body "$head_sha"
           if [ "$PRE_RELEASE" != 'true' ]; then
-            gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"
+            gh variable set LAST_RELEASE_SHA --body "$head_sha"
           fi
+
+

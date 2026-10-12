@@ -29,6 +29,7 @@ import { forkAuthorEmails } from './config'
 interface Commit { sha: string, author?: string, email?: string, message: string }
 interface BuildInfo {
   verName: string
+  verCode?: number
   repo: string
   commits: Commit[]
 }
@@ -277,9 +278,13 @@ function buildPrompt(info: BuildInfo, commits: Commit[], offered: RegistryEntry[
     'Stay close to the subjects. Do not expand a subject into details from the commit body unless the',
     'subject alone is meaningless; a short subject stays a short line.',
     '',
-    'Sections in "en"/"uk" (full GitHub release notes): "### New Features", "### Bug Fixes", "### Improvements & Polish".',
-    'Anything the user could not do before goes under New Features, not Improvements.',
-    'Omit a section that would be empty. Use "- " for bullets.',
+    'Sections in "en"/"uk" (structured changelog for GitHub & in-app updater):',
+    '  "### Added:", "### Rewrited:", "### Fixed:", "### Deleted:".',
+    '- "### Added:": new user-facing capabilities and features ("[+] " commits).',
+    '- "### Rewrited:": redesigned, reworked, or changed existing features and upstream syncs ("[*] " changes/improvements or "[=] " syncs).',
+    '- "### Fixed:": bug fixes ("[*] " fixes).',
+    '- "### Deleted:": removed features, dead code, or legacy options ("[-] " commits).',
+    'Omit any section that would be empty. Use "• " for bullets under each section.',
     '',
     'Telegram posts go in "tg_uk" (Ukrainian) and "tg_en" (English): the same content in each.',
     '- Plain prose lines, each starting with "– " (en dash and a space). NO "[+]", "[*]", "[-]" or "[=]" markers,',
@@ -307,15 +312,15 @@ function buildPrompt(info: BuildInfo, commits: Commit[], offered: RegistryEntry[
     lines.push(
       '',
       'SETTINGS DEEP LINKS:',
-      'entinyGram has in-app deep links of the form tg://entinySettings/<slug>. In "tg_en" and "tg_uk" only,',
+      'entinyGram has in-app deep links of the form tg://entinySettings/<slug>. In "en", "uk", "tg_en" and "tg_uk",',
       'when a line is exactly about one entry from the list below, put the token {{slug}} where its name',
       'belongs and say what the user gets without repeating that name again in the same line. The token',
       'stands for the name; the build script renders it as a link. Rules for tokens:',
       '- 2 to 5 tokens in the whole post; most lines need none',
       '- only when the entry IS that feature; a related or nearby setting is NOT a match',
       '- if no listed entry is the feature, write plain prose - never pick a slug by guesswork',
-      '- use the SAME token in the same line of "tg_en" and "tg_uk"',
-      '- never write markdown, brackets, a url or a tg:// link yourself; "en" and "uk" stay plain text',
+      '- use the SAME token in the corresponding line of both languages',
+      '- never write markdown, brackets, a url or a tg:// link yourself',
       '',
       'Example shapes (placeholders, not real slugs):',
       '  \u2013 You can now search settings for paranoia, logs and {{slug-one}}.',
@@ -392,7 +397,7 @@ async function callChat(c: Candidate, prompt: string, maxTokens = 3000, deadline
 function dropMetaBullets(text: string): string {
   const kept: string[] = []
   for (const line of text.split('\n')) {
-    const isBullet = /^\s*(-|–|\[[+*\-=]\])\s/.test(line)
+    const isBullet = /^\s*(-|–|•|\[[+*\-=]\])\s/.test(line)
     if (isBullet && META.test(line)) continue
     kept.push(line)
   }
@@ -430,38 +435,56 @@ function combineTg(uk: string, en: string): string {
 function ciList(commits: Commit[], repo: string): string {
   // Syncs, merges, translation uploads and debug-only commits say nothing to someone reading the build list.
   const noise = /^(crowdin|docs:|export patches|merge |sync with|temporary debug|debug )/i
-  return commits.flatMap((c) => {
+  const all = commits.flatMap((c) => {
     const first = c.message.split('\n')[0].trim()
     if (/^\[=\]/.test(first)) return []
     const subject = first.replace(/^\[[+*\-=]\]\s*/, '')
     if (noise.test(subject)) return []
     return [`[${c.sha.slice(0, 7)}](https://github.com/${repo}/commit/${c.sha}): ${subject}`]
-  }).join('\n')
+  })
+  if (all.length > 20) {
+    return [...all.slice(0, 10), '...', ...all.slice(-10)].join('\n')
+  }
+  return all.join('\n')
 }
 
 const joinTg = (uk: string, en: string) => uk && en ? `🇺🇦 UK:\n${uk}\n\n🇺🇸 EN:\n${en}` : ''
 const slugLinks = (t: string) => [...t.matchAll(/tg:\/\/entinySettings\/([\w-]+)/gi)].map(m => m[1]).sort().join(',')
 
+function expandPlainLabels(text: string, entries: RegistryEntry[], field: 'label' | 'labelUk'): string {
+  const bySlug = new Map(entries.map(e => [e.slug, e]))
+  return text.replace(/\{\{\s*([\w-]+)\s*\}\}/g, (_m, slug: string) => {
+    const e = bySlug.get(slug)
+    if (!e) return ''
+    return (field === 'labelUk' ? e.labelUk : e.label) ?? e.label
+  }).replace(/[ \t]{2,}/g, ' ').trim()
+}
+
 function parseNotes(raw: string, offered: RegistryEntry[]) {
   const cleaned = raw.trim().replace(/^```(?:json)?/m, '').replace(/```$/m, '').trim()
   // Some models wrap the JSON in prose or reasoning; take the outermost object.
   const parsed = JSON.parse(cleaned.slice(cleaned.indexOf('{'), cleaned.lastIndexOf('}') + 1))
+  const rawEn = String(parsed.en ?? '').trim()
+  const rawUk = String(parsed.uk ?? '').trim()
   const anchored = {
     en: String(parsed.tg_en ?? '').trim(),
     uk: String(parsed.tg_uk ?? '').trim(),
   }
   const known = new Set(offered.map(e => e.slug))
-  for (const t of [anchored.en, anchored.uk]) {
+  for (const t of [rawEn, rawUk, anchored.en, anchored.uk]) {
     for (const m of t.matchAll(/\{\{\s*([\w-]+)\s*\}\}/g)) {
       if (!known.has(m[1])) console.warn(`release-notes: unknown slug "${m[1]}" requested; token dropped`)
     }
   }
   const tgEn = dropMetaBullets(expandAnchors(anchored.en, offered, 'label').text)
   const tgUk = dropMetaBullets(expandAnchors(anchored.uk, offered, 'labelUk').text)
-  const stripTokens = (t: string) => t.replace(/\{\{\s*[\w-]+\s*\}\}/g, '').replace(/[ \t]{2,}/g, ' ').trim()
+  const changelogEn = dropMetaBullets(expandAnchors(rawEn, offered, 'label').text)
+  const changelogUa = dropMetaBullets(expandAnchors(rawUk, offered, 'labelUk').text)
   return {
-    en: dropMetaBullets(stripTokens(String(parsed.en ?? ''))),
-    uk: dropMetaBullets(stripTokens(String(parsed.uk ?? ''))),
+    en: dropMetaBullets(expandPlainLabels(rawEn, offered, 'label')),
+    uk: dropMetaBullets(expandPlainLabels(rawUk, offered, 'labelUk')),
+    changelog_en: changelogEn,
+    changelog_ua: changelogUa,
     tg_uk: tgUk,
     tg_en: tgEn,
     tg: joinTg(tgUk, tgEn) || String(parsed.tg ?? '').trim(),
@@ -519,7 +542,7 @@ async function aiNotes(candidates: Candidate[], info: BuildInfo, commits: Commit
     } catch (e) {
       lastErr = e
       console.warn(`release-notes: ${c.model} failed: ${e}`)
-      if (/timeout|timed out|aborted|503|UNAVAILABLE|404|NOT_FOUND/i.test(String(e))) skipped.add(c.model)
+      if (/timeout|timed out|aborted| 503 |UNAVAILABLE| 404 |NOT_FOUND/i.test(String(e))) skipped.add(c.model)
     }
   }
   throw lastErr
@@ -558,26 +581,55 @@ function ruleSite(commits: Commit[]): SiteBundle {
   return { en: card, uk: card }
 }
 
-function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string, site: SiteBundle } {
+function ruleFallback(commits: Commit[]): { en: string, uk: string, changelog_en: string, changelog_ua: string, tg_uk: string, tg_en: string, tg: string, site: SiteBundle } {
   if (commits.length === 0) return {
     en: 'No changes in this build.',
     uk: 'У цій збірці змін немає.',
+    changelog_en: '### Fixed:\n• No changes in this build.',
+    changelog_ua: '### Fixed:\n• У цій збірці змін немає.',
     tg_uk: '– Змін немає',
     tg_en: '– No changes',
     tg: combineTg('– Змін немає', '– No changes'),
     site: ruleSite([]),
   }
 
+  const added: string[] = []
+  const rewrited: string[] = []
+  const fixed: string[] = []
+  const deleted: string[] = []
+
   // Commits already carry a "[+] / [*] / [-] / [=]" marker: drop it and keep the wording instead of guessing.
   const lines = commits.map(c => {
     const subject = c.message.split('\n')[0].trim()
     const m = subject.match(/^\[([+*\-=])\]\s*(.*)$/)
+    const marker = m ? m[1] : ''
     const text = m ? m[2] : subjectText(subject)
     const rebase = text.match(/^rebase to (\S+)/i)
-    return rebase ? `– Rebase to ${rebase[1]} (ported by entinyGram)` : `– ${text}`
+    const formatted = rebase ? `Rebase to ${rebase[1]} (ported by entinyGram)` : text
+    if (marker === '+') added.push(`• ${formatted}`)
+    else if (marker === '-') deleted.push(`• ${formatted}`)
+    else if (marker === '=' || /(rework|rewrite|redesign|move|restructure|update|sync|rebase)/i.test(formatted)) rewrited.push(`• ${formatted}`)
+    else fixed.push(`• ${formatted}`)
+    return `– ${formatted}`
   }).join('\n')
 
-  return { en: lines, uk: lines, tg_uk: lines, tg_en: lines, tg: combineTg(lines, lines), site: ruleSite(commits) }
+  const sections: string[] = []
+  if (added.length) sections.push(`### Added:\n${added.join('\n')}`)
+  if (rewrited.length) sections.push(`### Rewrited:\n${rewrited.join('\n')}`)
+  if (fixed.length) sections.push(`### Fixed:\n${fixed.join('\n')}`)
+  if (deleted.length) sections.push(`### Deleted:\n${deleted.join('\n')}`)
+  const structured = sections.join('\n\n') || lines
+
+  return {
+    en: structured,
+    uk: structured,
+    changelog_en: structured,
+    changelog_ua: structured,
+    tg_uk: lines,
+    tg_en: lines,
+    tg: combineTg(lines, lines),
+    site: ruleSite(commits),
+  }
 }
 
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
@@ -597,7 +649,7 @@ try {
   console.warn('release-notes: settings-registry.json not found; deep links disabled')
 }
 
-let notes: { en: string, uk: string, tg_uk: string, tg_en: string, tg: string, tg_ci?: string, site: SiteBundle }
+let notes: { en: string, uk: string, changelog_en: string, changelog_ua: string, tg_uk: string, tg_en: string, tg: string, tg_ci?: string, site: SiteBundle }
 // On a pre-release nothing reads the AI text: the GitHub release step, the website publish and the
 // main-channel post are all skipped, and the CI channel gets the commit list this script also writes.
 const skipAi = process.env.PRE_RELEASE === 'true'
@@ -617,14 +669,43 @@ if (candidates.length > 0) {
 // Upstream commits are deliberately kept away from the model, so their credit line is written here.
 const sync = ours.some(mentionsSync) ? null : upstreamLine(theirs)
 if (sync) {
-  notes.en = append(notes.en, '-', sync.en)
-  notes.uk = append(notes.uk, '-', sync.uk)
+  notes.en = append(notes.en, '•', sync.en)
+  notes.uk = append(notes.uk, '•', sync.uk)
+  notes.changelog_en = append(notes.changelog_en, '•', sync.en)
+  notes.changelog_ua = append(notes.changelog_ua, '•', sync.uk)
   notes.tg_en = append(notes.tg_en, '–', sync.en)
   notes.tg_uk = append(notes.tg_uk, '–', sync.uk)
   console.log(`release-notes: upstream line -> ${sync.en}`)
 }
 
 notes.tg_ci = ciList(commits, info.repo)
+
+if (!skipAi) {
+  try {
+    const assetsChangelogPath = resolve('assets/changelog.json')
+    let existing: Record<string, { ua: string, en: string }> = {}
+    try {
+      existing = JSON.parse(await fs.readFile(assetsChangelogPath, 'utf8'))
+    } catch { }
+    const key = info.verCode ? `entinyGram ${info.verName} (${info.verCode})` : `entinyGram ${info.verName}`
+    const updated: Record<string, { ua: string, en: string }> = {
+      [key]: {
+        ua: notes.changelog_ua || notes.uk,
+        en: notes.changelog_en || notes.en,
+      },
+    }
+    for (const [k, v] of Object.entries(existing)) {
+      if (k !== key) updated[k] = v
+    }
+    const jsonText = JSON.stringify(updated, null, 2) + '\n'
+    await fs.mkdir(resolve('assets'), { recursive: true })
+    await fs.writeFile(assetsChangelogPath, jsonText, 'utf8')
+    await fs.mkdir(artifactDir, { recursive: true })
+    await fs.writeFile(join(artifactDir, 'changelog.json'), jsonText, 'utf8')
+  } catch (e) {
+    console.warn(`release-notes: failed to update assets/changelog.json: ${e}`)
+  }
+}
 
 await fs.mkdir(artifactDir, { recursive: true })
 await fs.writeFile(join(artifactDir, 'release-notes.json'), JSON.stringify(notes, null, 2))

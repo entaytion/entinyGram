@@ -20,6 +20,7 @@ const commits = log.split('\0\0').filter(Boolean).map(c => {
     email: (email ?? '').trim(),
     message: body.join('\0').trim()
   }
-}).filter(c => c.sha)
+}).filter(c => c.sha && c.email !== 'ci@entinygram')
 
 console.log(JSON.stringify(commits))
+

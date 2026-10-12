@@ -182,8 +182,8 @@ try {
     return joinTextWithEntities(parts, '\n\n')
   }
 
-  // Caption limit is 1024 chars; trim lines until it fits, full notes go in a reply.
-  const buildCaption = (notesEntity: ReturnType<typeof html>) => buildPostCaption(html`<blockquote>${notesEntity}</blockquote>`)
+  // Caption limit is 1024 chars; trim lines until it fits, full notes go in a reply only on overflow.
+  const buildCaption = (notesEntity: ReturnType<typeof html>) => buildPostCaption(html`<blockquote expandable>${notesEntity}</blockquote>`)
 
   // Display order: with plugins first, then without. The label doubles as the DOWNLOAD link text.
   const variants: { label: string, file: string, plugins: boolean }[] = []
@@ -195,33 +195,35 @@ try {
   addVariant('ARM64', info.apkFiles[0]?.file, false)
   addVariant('ARM7', info.apkFiles[1]?.file, false)
 
-  let firstPostId: number
-  if (variants.length === 1) {
-    // A single APK keeps the classic post: the commit list is the caption, the rest goes in a reply.
-    let caption = buildCaption(ciHtml)
-    let needsCiFollowup = false
+  let caption = buildCaption(ciHtml)
+  const postCi = tgCi || postEn || postUk
+  const rawLines = postCi.split('\n').map(l => l.trim()).filter(Boolean)
 
-    // Max caption length for Telegram media is 1024 characters. Keep safety margin.
-    if (caption.text.length > 1000) {
-      needsCiFollowup = true
-      const postCi = tgCi || postEn || postUk
-      const rawLines = postCi.split('\n').map(l => l.trim()).filter(Boolean)
-      const keptLines: string[] = []
-      for (const line of rawLines) {
-        const candidateLines = [...keptLines, line, '... (повний список нижче / full changelog below)']
-        const candidateHtml = notesToEntities(candidateLines.join('\n'))
-        const candidateCaption = buildCaption(candidateHtml)
-        if (candidateCaption.text.length > 980) break
-        keptLines.push(line)
-      }
-      if (keptLines.length > 0) {
-        keptLines.push('... (повний список нижче / full changelog below)')
-        caption = buildCaption(notesToEntities(keptLines.join('\n')))
-      } else {
-        caption = buildCaption(html`• Оновлення v${info.verName}\n... (повний список нижче / full changelog below)`)
+  if (rawLines.length > 20) {
+    const trimmed = [...rawLines.slice(0, 10), '...', ...rawLines.slice(-10)]
+    caption = buildCaption(notesToEntities(trimmed.join('\n')))
+  }
+
+  // Max caption length for Telegram media is 1024 characters; shrink N (first N, ..., last N) until it fits.
+  if (caption.text.length > 1000) {
+    const maxN = Math.min(10, Math.floor(rawLines.length / 2))
+    let fitted = false
+    for (let n = maxN; n >= 1; n--) {
+      const candidateLines = [...rawLines.slice(0, n), '...', ...rawLines.slice(-n)]
+      const candidateCaption = buildCaption(notesToEntities(candidateLines.join('\n')))
+      if (candidateCaption.text.length <= 1000) {
+        caption = candidateCaption
+        fitted = true
+        break
       }
     }
+    if (!fitted) {
+      caption = buildCaption(html`• Оновлення v${info.verName}`)
+    }
+  }
 
+  let firstPostId: number
+  if (variants.length === 1) {
     const apkMsg = await tg.sendMedia(channelCI, {
       type: 'document',
       file: `file:${join(artifactDir, variants[0].file)}`,
@@ -229,59 +231,15 @@ try {
       caption,
     })
     firstPostId = apkMsg.id
-
-    if (needsCiFollowup) {
-      console.log('CI caption was truncated to fit 1024 limit; sending full notes in reply...')
-      await tg.sendText(
-        channelCI,
-        html`📝 <b>Changelog v${info.verName}:</b>\n\n<blockquote expandable>${ciHtml}</blockquote>`,
-        { replyTo: apkMsg.id },
-      )
-    }
   } else {
-    // Several APKs go into one album; the caption only says which file is which, the changelog follows as replies.
-    const names = (plugins: boolean) => variants.filter(v => v.plugins === plugins).map(v => v.label.replace(' + plugins', ''))
-    const legend: ReturnType<typeof html>[] = []
-    if (names(true).length) legend.push(html`🔌 <b>With plugins:</b> ${names(true).join(' · ')}`)
-    if (names(false).length) legend.push(html`📦 <b>Without plugins:</b> ${names(false).join(' · ')}`)
-    legend.push(html`📝 Detailed changelog on the website and below`)
-    const albumCaption = buildPostCaption(joinTextWithEntities(legend, '\n'))
-
+    // In Telegram document albums each item renders its caption directly below itself, so the caption goes on the last file.
     const album = await tg.sendMediaGroup(channelCI, variants.map((v, i) => ({
       type: 'document' as const,
       file: `file:${join(artifactDir, v.file)}`,
       fileName: v.file,
-      ...(i === 0 ? { caption: albumCaption } : {}),
+      ...(i === variants.length - 1 ? { caption } : {}),
     })))
     firstPostId = album[0].id
-
-    // The full changelog: a commit list, split into messages that fit the 4096-character limit.
-    const changelogSource = tgCi || postEn || postUk
-    // Telegram counts only the visible text, so a link's URL must not count toward the message limit.
-    const visible = (line: string) => line.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').length
-    const chunks: string[] = []
-    let current: string[] = []
-    let used = 0
-    for (const line of changelogSource.split('\n').map(l => l.trim()).filter(Boolean)) {
-      if (used + visible(line) + 1 > 3800 && current.length) {
-        chunks.push(current.join('\n'))
-        current = []
-        used = 0
-      }
-      current.push(line)
-      used += visible(line) + 1
-    }
-    if (current.length) chunks.push(current.join('\n'))
-    let replyTo = album[0].id
-    for (const [i, chunk] of chunks.entries()) {
-      const tail = i === chunks.length - 1 && compareHtml ? html`\n\n${compareHtml}` : html``
-      const sent = await tg.sendText(
-        channelCI,
-        html`📝 <b>Changelog v${info.verName}${chunks.length > 1 ? ` (${i + 1}/${chunks.length})` : ''}:</b>\n\n<blockquote expandable>${notesToEntities(chunk)}</blockquote>${tail}`,
-        { replyTo },
-      )
-      replyTo = sent.id
-    }
   }
 
   // 2) --ci-only stops here: no main-channel post. Pre-releases are always ci-only (apk.yml).
@@ -290,19 +248,15 @@ try {
   } else {
     const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).trim() : ''
 
-    // Every variant lives in the same CI album, so every DOWNLOAD link points at it (Telegram cannot link a single file).
-    const downloadHtml = variants.length > 1
-      ? html`⬇️ <b>DOWNLOAD:</b> ${joinTextWithEntities(variants.map(v => html`<a href="${postUrl(firstPostId)}"><b>${v.label}</b></a>`), ' · ')}`
-      : html`⬇️ <a href="${postUrl(firstPostId)}">Завантажити / Download</a>`
+    const mainHeader = html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — <a href="${postUrl(firstPostId)}">Завантажити/Download</a>`
     const siteUrl = process.env.SITE_CHANGELOG_URL ?? 'https://entaytion.is-a.dev/entinygram/changelog'
     const siteHtml = html`🌐 <a href="${siteUrl}">Усі нові функції на сайті / See all new features on the website</a>`
     // Discrete blocks joined by a blank line each — no stray empty paragraphs.
     const blocks = [
-      html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate})`,
-      downloadHtml,
+      mainHeader,
       extra ? html`${extra}` : null,
       ukHtml,
-      enHtml ? html`🇬🇧 Eng:\n<blockquote expandable>${enHtml}</blockquote>` : null,
+      enHtml ? html`🇬🇧:\n<blockquote expandable>${enHtml}</blockquote>` : null,
       siteHtml,
       html`🏷️ #release • @entinyGram • @entinyGramChat`,
     ].filter((b): b is NonNullable<typeof b> => b !== null)
@@ -315,8 +269,7 @@ try {
     } else {
       console.log('Main channel post is long; splitting into Ukrainian post and English reply...')
       const post1Blocks = [
-        html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate})`,
-        downloadHtml,
+        mainHeader,
         extra ? html`${extra}` : null,
         ukHtml,
         siteHtml,

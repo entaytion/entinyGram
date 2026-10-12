@@ -4,6 +4,7 @@ import android.os.Build
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.security.ParanoiaHelper
+import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BetaUpdate
@@ -17,14 +18,18 @@ import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
+import org.telegram.messenger.Utilities
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 import kotlin.math.max
 import kotlin.math.min
 
 object UpdateHelper {
     const val USERNAME = "entinyGramCI"
+    private const val CHANGELOG_JSON_URL = "https://raw.githubusercontent.com/entaytion/entinyGram/main/assets/changelog.json"
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
     private const val RESOLVE_BACKOFF_MS = 30L * 60 * 1000
@@ -304,6 +309,18 @@ object UpdateHelper {
         }
     }
 
+    private data class AlbumCaption(
+        val groupedId: Long,
+        val message: String,
+        val entities: ArrayList<TLRPC.MessageEntity>,
+    )
+
+    @Volatile
+    private var lastAlbumCaption: AlbumCaption? = null
+
+    @Volatile
+    private var lastAlbumApkMsg: TLRPC.Message? = null
+
     private fun searchByTag(
         account: Int,
         peerId: Long,
@@ -321,8 +338,40 @@ object UpdateHelper {
             AndroidUtilities.runOnUIThread {
                 if (err != null || resp !is TLRPC.messages_Messages) {
                     callback(emptyList(), err?.text ?: "no response")
-                } else {
-                    callback(resp.messages, null)
+                    return@runOnUIThread
+                }
+                val messages = resp.messages
+                // entiny: in multi-APK albums only one file holds the caption; fetch sibling files (-3..3) so pluginless/plugins both match
+                val albumHeads = messages.filter { it.grouped_id != 0L && extractApkInfo(it) == null }
+                if (albumHeads.isEmpty() || peerId >= 0L) {
+                    callback(messages, null)
+                    return@runOnUIThread
+                }
+                val siblingIds = ArrayList<Int>()
+                for (head in albumHeads) {
+                    for (delta in -3..3) {
+                        if (delta != 0 && head.id + delta > 0) siblingIds.add(head.id + delta)
+                    }
+                }
+                val chReq = TLRPC.TL_channels_getMessages().apply {
+                    channel = mc.getInputChannel(-peerId)
+                    id.addAll(siblingIds)
+                }
+                ConnectionsManager.getInstance(account).sendRequest(chReq) { chResp, _ ->
+                    AndroidUtilities.runOnUIThread {
+                        val combined = ArrayList<TLRPC.Message>(messages)
+                        val extra = (chResp as? TLRPC.messages_Messages)?.messages.orEmpty()
+                        for (sib in extra) {
+                            if (sib.grouped_id == 0L) continue
+                            val head = albumHeads.firstOrNull { it.grouped_id == sib.grouped_id } ?: continue
+                            if (sib.message.isNullOrEmpty()) {
+                                sib.message = head.message
+                                sib.entities = cloneEntities(head.entities)
+                            }
+                            combined.add(sib)
+                        }
+                        callback(combined, null)
+                    }
                 }
             }
         }
@@ -338,8 +387,15 @@ object UpdateHelper {
             return
         }
         val (msg, info) = match
-        val updateObj = applyUpdate(msg, info, currentVerCode, msg.message?.contains("#prerelease") == true)
-        finish(callback, CheckResult.Updated(updateObj))
+        val isBeta = msg.message?.contains("#prerelease") == true
+        val updateObj = applyUpdate(msg, info, currentVerCode, isBeta)
+        if (!isBeta) {
+            fetchChangelogJson(info, updateObj) {
+                finish(callback, CheckResult.Updated(updateObj))
+            }
+        } else {
+            finish(callback, CheckResult.Updated(updateObj))
+        }
     }
 
     @JvmStatic
@@ -352,20 +408,48 @@ object UpdateHelper {
             return
         }
         if (msg.peer_id?.channel_id != channelId) return
-        val text = msg.message ?: return
+        var targetMsg = msg
+        if (msg.grouped_id != 0L) {
+            if (!msg.message.isNullOrEmpty()) {
+                lastAlbumCaption = AlbumCaption(msg.grouped_id, msg.message, cloneEntities(msg.entities))
+                val prevApk = lastAlbumApkMsg
+                if (extractApkInfo(msg) == null && prevApk != null && prevApk.grouped_id == msg.grouped_id) {
+                    prevApk.message = msg.message
+                    prevApk.entities = cloneEntities(msg.entities)
+                    targetMsg = prevApk
+                }
+            } else {
+                if (extractApkInfo(msg) != null) {
+                    lastAlbumApkMsg = msg
+                }
+                val cached = lastAlbumCaption
+                if (cached != null && cached.groupedId == msg.grouped_id) {
+                    msg.message = cached.message
+                    msg.entities = cloneEntities(cached.entities)
+                }
+            }
+        }
+        val text = targetMsg.message ?: return
         val isBeta = text.contains("#prerelease")
         if (isBeta) {
             if (!InuConfig.UPDATES_INCLUDE_BETA.value) return
         } else if (!text.contains("#release")) {
             return
         }
-        val info = extractApkInfo(msg) ?: return
+        val info = extractApkInfo(targetMsg) ?: return
         val currentVerCode = currentVersionCode()
         if (info.verCode <= currentVerCode) return
         AndroidUtilities.runOnUIThread {
-            applyUpdate(msg, info, currentVerCode, isBeta)
-            revealPendingUpdate()
-            InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+            val updateObj = applyUpdate(targetMsg, info, currentVerCode, isBeta)
+            if (!isBeta) {
+                fetchChangelogJson(info, updateObj) {
+                    revealPendingUpdate()
+                    InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+                }
+            } else {
+                revealPendingUpdate()
+                InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+            }
         }
     }
 
@@ -405,6 +489,59 @@ object UpdateHelper {
         pendingIsBeta = isBeta
         pendingSourceMessage = msg
         return updateObj
+    }
+
+    private fun fetchChangelogJson(info: ApkInfo, updateObj: TLRPC.TL_help_appUpdate, onDone: () -> Unit) {
+        Utilities.globalQueue.postRunnable {
+            var fetchedText: String? = null
+            try {
+                val conn = (URL(CHANGELOG_JSON_URL).openConnection() as HttpURLConnection).apply {
+                    connectTimeout = 3500
+                    readTimeout = 3500
+                    requestMethod = "GET"
+                }
+                if (conn.responseCode == 200) {
+                    val body = conn.inputStream.bufferedReader().use { it.readText() }
+                    val root = JSONObject(body)
+                    val exactKey = "entinyGram ${info.appVerName} (${info.verCode})"
+                    var entry = root.optJSONObject(exactKey)
+                    if (entry == null) {
+                        val keys = root.keys()
+                        while (keys.hasNext()) {
+                            val k = keys.next()
+                            if (k.contains("(${info.verCode})")) {
+                                entry = root.optJSONObject(k)
+                                break
+                            }
+                        }
+                    }
+                    if (entry != null) {
+                        val ua = entry.optString("ua").trim()
+                        val en = entry.optString("en").trim()
+                        if (ua.isNotEmpty() || en.isNotEmpty()) {
+                            fetchedText = buildString {
+                                if (ua.isNotEmpty()) append("🇺🇦 UK:\n").append(ua)
+                                if (en.isNotEmpty()) {
+                                    if (isNotEmpty()) append("\n\n")
+                                    append("🇺🇸 EN:\n").append(en)
+                                }
+                            }
+                        }
+                    }
+                }
+                conn.disconnect()
+            } catch (_: Throwable) {
+            }
+            AndroidUtilities.runOnUIThread {
+                if (!fetchedText.isNullOrEmpty()) {
+                    updateObj.text = fetchedText
+                    updateObj.entities = ArrayList()
+                    SharedConfig.saveConfig()
+                    pendingBetaUpdate = BetaUpdate(info.appVerName, info.verCode, updateObj.text)
+                }
+                onDone()
+            }
+        }
     }
 
     private fun cloneEntities(entities: ArrayList<TLRPC.MessageEntity>?): ArrayList<TLRPC.MessageEntity> {
