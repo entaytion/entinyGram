@@ -9,6 +9,9 @@ import org.telegram.messenger.Utilities
 import org.telegram.ui.LaunchActivity
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -117,10 +120,16 @@ object LogsHelper {
         }
     }
 
+    fun stagedFile(kind: String, ext: String, time: Long = System.currentTimeMillis()): File {
+        val dir = AndroidUtilities.getCacheDir().apply { mkdirs() }
+        dir.listFiles { f -> f.name.startsWith("entinygram-$kind-") }?.forEach { it.delete() }
+        val stamp = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date(time))
+        return File(dir, "entinygram-$kind-$stamp.$ext")
+    }
+
     private fun stageCurrentLog(): File? {
         val src = currentLogFile() ?: return null
-        val cacheDir = AndroidUtilities.getCacheDir().apply { mkdirs() }
-        val dst = File(cacheDir, "entinygram-log.txt").apply { if (exists()) delete() }
+        val dst = stagedFile("log", "txt", src.lastModified())
         FileOutputStream(dst).buffered().use { out ->
             out.write(SystemInfo.build().toByteArray(Charsets.UTF_8))
             out.write("\n\n".toByteArray(Charsets.UTF_8))
@@ -139,8 +148,7 @@ object LogsHelper {
 
     private fun stageZip(): File? {
         val dir = AndroidUtilities.getLogsDir() ?: return null
-        val cacheDir = AndroidUtilities.getCacheDir().apply { mkdirs() }
-        val dst = File(cacheDir, "entinygram-logs.zip").apply { if (exists()) delete() }
+        val dst = stagedFile("logs", "zip")
         ZipOutputStream(FileOutputStream(dst).buffered()).use { out ->
             out.putNextEntry(ZipEntry("system_info.txt"))
             out.write(SystemInfo.build().toByteArray(Charsets.UTF_8))

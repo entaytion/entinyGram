@@ -68,9 +68,14 @@ internal object PluginJvmClass {
         fun invoke(self: Any?, args: Array<Any?>): Any? {
             if (closed && returnType == Void.TYPE) return null
             check(!closed) { "defineClass: plugin has unloaded" }
-            return runBudgeted {
-                val result = callback?.invoke(owner, self ?: owner, args)
-                if (returnType == Void.TYPE) null else convert(result, returnType, "result")
+            return try {
+                runBudgeted {
+                    val result = callback?.invoke(owner, self ?: owner, args)
+                    if (returnType == Void.TYPE) null else convert(result, returnType, "result")
+                }
+            } catch (e: IllegalStateException) {
+                // entiny: void callback racing plugin unload must not crash the host
+                if (returnType == Void.TYPE && e.message?.endsWith("plugin has unloaded") == true) null else throw e
             }
         }
 

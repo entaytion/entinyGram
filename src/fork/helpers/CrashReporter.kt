@@ -112,7 +112,7 @@ object CrashReporter {
     fun shareCrashLog(activity: LaunchActivity) {
         val src = getLogFile()
         if (!src.exists()) return
-        val shareable = File(AndroidUtilities.getCacheDir().apply { mkdirs() }, "entinygram-crash.log")
+        val shareable = LogsHelper.stagedFile("crash", "log", src.lastModified())
         src.copyTo(shareable, overwrite = true)
         SharePicker.shareFile(activity, shareable, "text/plain", onSent = ::deleteCrashLog)
     }
@@ -124,7 +124,7 @@ object CrashReporter {
     }
 
     fun dumpAndSaveHeap(activity: LaunchActivity) {
-        val tmp = File(AndroidUtilities.getCacheDir().apply { mkdirs() }, "entinygram-heap-dump.hprof")
+        val tmp = LogsHelper.stagedFile("heap", "hprof")
         Debug.dumpHprofData(tmp.absolutePath)
         saveHprofFile(activity, tmp) { tmp.delete() }
     }
