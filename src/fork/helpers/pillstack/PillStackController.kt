@@ -114,7 +114,7 @@ class PillStackController(
 
         var row = rowLayout
         if (row == null) {
-            row = LinearLayout(host.context)
+            row = PillRow(host.context)
             row.orientation = LinearLayout.HORIZONTAL
             // entiny: row itself is MATCH_PARENT height (like exteraless's single stackView); center the WRAP_CONTENT slots within it.
             row.gravity = Gravity.CENTER_VERTICAL
@@ -222,6 +222,8 @@ class PillStackController(
     fun updateColors() {
         for (slot in slots) slot.updateColors()
     }
+
+    class PillRow(context: android.content.Context) : LinearLayout(context)
 
     companion object {
         private val REFRESH_KEYS = setOf(

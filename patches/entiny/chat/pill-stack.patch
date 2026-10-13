@@ -4,10 +4,24 @@ Date: Thu, 17 Sep 2026 00:05:12 +0300
 Subject: [+] pill stack
 
 ---
+ .../main/java/org/telegram/ui/ActionBar/ActionBarMenu.java | 2 +-
  .../org/telegram/ui/Components/FragmentSearchField.java    | 3 +++
  .../src/main/java/org/telegram/ui/DialogsActivity.java     | 7 +++++++
- 2 files changed, 10 insertions(+)
+ 3 files changed, 11 insertions(+), 1 deletion(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenu.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenu.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenu.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenu.java
+@@ -585,7 +585,7 @@ public class ActionBarMenu extends LinearLayout {
+         float w = 0;
+         for (int i = 0, count = getChildCount(); i < count; i++) {
+             View view = getChildAt(i);
+-            if (view instanceof ActionBarMenuItem && view.getVisibility() == View.VISIBLE) {
++            if ((view instanceof ActionBarMenuItem || view instanceof desu.inugram.helpers.pillstack.PillStackController.PillRow) && view.getVisibility() == View.VISIBLE) {
+                 w += view.getMeasuredWidth() * view.getAlpha();
+             }
+         }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java
