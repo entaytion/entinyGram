@@ -93,6 +93,7 @@ class MainTabsPreviewCell(
                 dragging = false
                 dragStartOrder = visibleOrder()
                 dragStartIndex = dragStartOrder.indexOf(item)
+                parent?.requestDisallowInterceptTouchEvent(true)
             }
             MotionEvent.ACTION_MOVE -> {
                 if (draggedItem == item && dragStartIndex >= 0) {
@@ -115,6 +116,7 @@ class MainTabsPreviewCell(
                     if (newOrder != visibleOrder()) onReorder(newOrder)
                 } else {
                     draggedItem = null
+                    parent?.requestDisallowInterceptTouchEvent(false)
                     if (dragStartIndex >= 0 && item != MainTabsMenuConfig.Item.CHATS) onToggle(item)
                 }
             }
