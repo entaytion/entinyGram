@@ -512,12 +512,16 @@ class MenuOrderRow(context: Context, val mainHeightDp: Int = 50) : LinearLayout(
             cell.valueTextView.paint.measureText(value.toString()) <=
             rowWidth - AndroidUtilities.dp((SUB_LEFT_OFFSET_DP + 103 + cell.leftPadding).toFloat())
         if (fitsInline) {
+            // #if PLUGINS
             cell.subtitleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+            // #endif
             cell.setTextAndValue(label, value, false, false)
             cell.setSubtitle(note)
         } else {
             cell.setText(label, false)
+            // #if PLUGINS
             cell.subtitleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText))
+            // #endif
             cell.setSubtitle(SpannableStringBuilder(value).apply {
                 if (!note.isNullOrEmpty()) {
                     append(" · ")
