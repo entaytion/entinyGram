@@ -79,6 +79,22 @@ object RecentChatsHelper {
     @JvmStatic
     fun isEnabled(): Boolean = InuConfig.RECENT_CHATS_ENABLED.value
 
+    // entiny: the entry is off by default in both menus, so enabling the feature has to switch it on
+    fun showInMenus() {
+        val drawer = InuConfig.DRAWER_MENU_ITEMS.value
+        if (drawer.any { it.item == desu.inugram.helpers.menu.DrawerMenuConfig.Item.RECENT_CHATS && !it.enabled }) {
+            InuConfig.DRAWER_MENU_ITEMS.value = drawer.map {
+                if (it.item == desu.inugram.helpers.menu.DrawerMenuConfig.Item.RECENT_CHATS) it.copy(enabled = true) else it
+            }
+        }
+        val dialogs = InuConfig.DIALOGS_MENU_ITEMS.value
+        if (dialogs.any { it.item == desu.inugram.helpers.menu.DialogsMenuConfig.Item.RECENT_CHATS && !it.enabled }) {
+            InuConfig.DIALOGS_MENU_ITEMS.value = dialogs.map {
+                if (it.item == desu.inugram.helpers.menu.DialogsMenuConfig.Item.RECENT_CHATS) it.copy(enabled = true) else it
+            }
+        }
+    }
+
     @JvmStatic
     fun addToRecentDialogs(account: Int, dialogId: Long) {
         if (!isEnabled() || dialogId == 0L) return

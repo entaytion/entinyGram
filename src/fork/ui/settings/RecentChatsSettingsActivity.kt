@@ -64,6 +64,7 @@ class RecentChatsSettingsActivity : SettingsPageActivity() {
         when (item.id) {
             TOGGLE_ENABLED -> {
                 val new = InuConfig.RECENT_CHATS_ENABLED.toggle()
+                if (new) RecentChatsHelper.showInMenus()
                 (view as? TextCheckCell)?.apply {
                     setChecked(new)
                     setBackgroundColorAnimated(
