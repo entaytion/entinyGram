@@ -861,7 +861,6 @@
     <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNothingToTranslate">Нет сообщений для перевода.</string>
     <string name="InuAlreadyInTargetLanguage">Это сообщение уже на %1$s.</string>
-    <string name="InuVoiceRecorder">Запись голоса / кружочков</string>
     <string name="InuSummarize">Пересказ</string>
     <string name="InuHiddenSendersAndCaptionDescription">Имена отправителей и подписи удалены</string>
     <string name="InuRemoveFromCache">Удалить из кэша</string>
@@ -1909,9 +1908,9 @@
     <string name="InuMaterial3AccentIcons">Иконки акцентного цвета</string>
     <string name="InuAppIconsSelect">Применить иконку</string>
     <string name="InuAppIconsKeep">Оставить текущую иконку</string>
-    <string name="InuAppIconBlush">Blush</string>
+    <string name="InuAppIconBlush">Румянец</string>
     <string name="InuAppIconNoxSky">Nox Sky</string>
-    <string name="InuAppIconInverse">Inverse</string>
+    <string name="InuAppIconInverse">Инверсия</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconAmongUs">Among Us</string>
     <string name="InuAppIconCrimson">Багровый</string>
@@ -1950,4 +1949,17 @@
     <string name="InuFeedSummary">Агрегатор постов из каналов</string>
     <string name="InuEditedArchive">Архив отредактированных</string>
     <string name="InuGroupChatArchives">Сгруппировать архивы в папку entinyGram</string>
+    <string name="InuCameraSound">Камера и звук</string>
+    <string name="InuCameraSoundSummary">Кружочки, камера и запись голоса</string>
+    <string name="InuRoundAudioBitrate">Битрейт звука кружочков</string>
+    <string name="InuRoundAudioSource">Источник звука кружочков</string>
+    <string name="InuRoundAudioSourceCamcorder">Видеокамера</string>
+    <string name="InuRoundAudioSourceMic">Микрофон</string>
+    <string name="InuRoundAudioSourceStandard">Стандартный</string>
+    <string name="InuRoundAudioSourceUnprocessed">Необработанный</string>
+    <string name="InuRoundBitrateDefault">По умолчанию</string>
+    <string name="InuRoundVideos">Кружочки</string>
+    <string name="InuSystemFoldersAddRecommended">Добавить рекомендуемые</string>
+    <string name="InuSystemFoldersInfo">Нажмите на папку, чтобы показать или скрыть её в панели папок. Долгое нажатие удаляет папку. Эти папки хранятся только на этом устройстве.</string>
+    <string name="InuVoiceMessages">Голосовые сообщения</string>
 </resources>

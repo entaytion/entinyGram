@@ -535,7 +535,6 @@
     <string name="InuProfileRegDateCopied">Дату реєстрації та DC скопійовано</string>
     <string name="InuMessageInput">Введення повідомлення</string>
     <string name="InuAttachmentSheet">Панель вкладень</string>
-    <string name="InuVoiceRecorder">Запис голосових / відеоповідомлень</string>
     <string name="InuIconReplacement">Пакет іконок</string>
     <string name="InuIconReplacementOff">За замовчуванням</string>
     <string name="InuIconReplacementSolar">Solar від @Design480</string>
@@ -1954,9 +1953,9 @@
     <string name="InuAppIconsSelect">Застосувати іконку</string>
     <string name="InuAppIconsKeep">Залишити поточну іконку</string>
 
-    <string name="InuAppIconBlush">Blush</string>
+    <string name="InuAppIconBlush">Рум’янець</string>
     <string name="InuAppIconNoxSky">Nox Sky</string>
-    <string name="InuAppIconInverse">Inverse</string>
+    <string name="InuAppIconInverse">Інверсія</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconAmongUs">Among Us</string>
 
@@ -1996,4 +1995,17 @@
     <string name="InuFeedSummary">Агрегатор дописів із каналів</string>
     <string name="InuEditedArchive">Архів відредагованих</string>
     <string name="InuGroupChatArchives">Згрупувати архіви в папку entinyGram</string>
+    <string name="InuCameraSound">Камера і звук</string>
+    <string name="InuCameraSoundSummary">Відеоповідомлення, камера та запис голосу</string>
+    <string name="InuRoundAudioBitrate">Бітрейт звуку відеоповідомлень</string>
+    <string name="InuRoundAudioSource">Джерело звуку відеоповідомлень</string>
+    <string name="InuRoundAudioSourceCamcorder">Відеокамера</string>
+    <string name="InuRoundAudioSourceMic">Мікрофон</string>
+    <string name="InuRoundAudioSourceStandard">Стандартний</string>
+    <string name="InuRoundAudioSourceUnprocessed">Необроблений</string>
+    <string name="InuRoundBitrateDefault">За замовчуванням</string>
+    <string name="InuRoundVideos">Відеоповідомлення</string>
+    <string name="InuSystemFoldersAddRecommended">Додати рекомендовані</string>
+    <string name="InuSystemFoldersInfo">Натисніть на теку, щоб показати або сховати її на панелі тек. Довге натискання видаляє теку. Ці теки зберігаються лише на цьому пристрої.</string>
+    <string name="InuVoiceMessages">Голосові повідомлення</string>
 </resources>
