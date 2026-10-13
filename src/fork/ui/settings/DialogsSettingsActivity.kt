@@ -185,8 +185,9 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(
-            mkTwoLineCheckItem(
+            mkIconCheckItem(
                 TOGGLE_ALWAYS_SHOW_DOWNLOADS,
+                R.drawable.inu_download_arrow,
                 R.string.InuAlwaysShowDownloads,
                 R.string.InuAlwaysShowDownloadsInfo,
                 InuConfig.ALWAYS_SHOW_DOWNLOADS.value
