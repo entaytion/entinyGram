@@ -199,9 +199,9 @@ jobs:
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree-pluginless
         run: |
           # Pre-release and stable builds both compile the release buildType.
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+          ./gradlew --no-daemon :TMessagesProj_App:assembleAfatRelease
           mkdir -p "$GITHUB_WORKSPACE/out"
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
+          cp TMessagesProj_App/build/outputs/apk/afat/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
 
       - name: Build armeabi-v7a
         if: ${{ inputs.build_arm7 == true || inputs.build_arm7 == 'true' }}
@@ -215,8 +215,8 @@ jobs:
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree-pluginless
         run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7 }}"
+          ./gradlew --no-daemon :TMessagesProj_App:assembleAfatRelease
+          cp TMessagesProj_App/build/outputs/apk/afat/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7 }}"
 
       - name: Build arm64-v8a with plugins
         if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
@@ -230,8 +230,8 @@ jobs:
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree
         run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-plugins }}"
+          ./gradlew --no-daemon :TMessagesProj_App:assembleAfatRelease
+          cp TMessagesProj_App/build/outputs/apk/afat/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-plugins }}"
 
       - name: Build armeabi-v7a with plugins
         if: ${{ (inputs.build_plugins == true || inputs.build_plugins == 'true') && (inputs.build_arm7 == true || inputs.build_arm7 == 'true') }}
@@ -245,8 +245,8 @@ jobs:
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree
         run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7-plugins }}"
+          ./gradlew --no-daemon :TMessagesProj_App:assembleAfatRelease
+          cp TMessagesProj_App/build/outputs/apk/afat/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7-plugins }}"
 
       - name: Show ccache stats
         if: always()
