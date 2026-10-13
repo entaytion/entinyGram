@@ -4,8 +4,8 @@ Date: Tue, 1 Sep 2026 11:15:02 +0300
 Subject: Show custom title text on the dialogs list, with an option for the archive
 
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ .../java/org/telegram/ui/DialogsActivity.java | 58 +++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
                      }
                  }
  
-@@ -6933,6 +6949,33 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6933,6 +6949,35 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
@@ -74,15 +74,17 @@ index 0000000..0000000 100644
 +        if (desu.inugram.InuConfig.DIALOGS_TITLE_TEXT.getValue() != desu.inugram.InuConfig.DialogsTitleTextItem.FOLDER) {
 +            return;
 +        }
-+        actionBar.setTitle(filter.isDefault()
-+                ? desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)
-+                : desu.inugram.helpers.dialogs.FolderHelper.getTabInfo(filter).first);
++        desu.inugram.helpers.chat.ChatHelper.folderTitle = filter.isDefault() ? null : desu.inugram.helpers.dialogs.FolderHelper.getTabInfo(filter).first;
++        actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount));
++        if (dialogStoriesCell != null) {
++            dialogStoriesCell.updateItems(true, false);
++        }
 +    }
 +
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6959,6 +7002,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6959,6 +7004,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  

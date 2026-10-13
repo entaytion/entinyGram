@@ -2846,6 +2846,10 @@ object ChatHelper {
     fun getChatInputTextSize(): Float = InuConfig.CHAT_INPUT_TEXT_SIZE.value.toFloat()
 
     @JvmStatic
+    @JvmField
+    @Volatile
+    var folderTitle: CharSequence? = null
+
     fun getDialogsTitle(account: Int): CharSequence {
         val user = UserConfig.getInstance(account).getCurrentUser()
         val baseTitle = when (InuConfig.DIALOGS_TITLE_TEXT.value) {
@@ -2856,6 +2860,7 @@ object ChatHelper {
 
             InuConfig.DialogsTitleTextItem.FIRST_NAME -> getFirstNameOrDefault(user)
             InuConfig.DialogsTitleTextItem.CHATS -> LocaleController.getString(R.string.InuChats)
+            InuConfig.DialogsTitleTextItem.FOLDER -> folderTitle ?: LocaleController.getString(R.string.AppName)
             InuConfig.DialogsTitleTextItem.CUSTOM -> InuConfig.DIALOGS_TITLE_TEXT_CUSTOM_TEXT.value.ifBlank {
                 LocaleController.getString(R.string.AppName)
             }
