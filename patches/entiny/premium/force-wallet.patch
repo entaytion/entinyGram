@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 13 Oct 2026 23:23:34 +0300
+Subject: [+] force wallet availability
+
+---
+ .../java/org/telegram/messenger/AppGlobalConfig.java  | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java
+@@ -110,7 +110,7 @@ public class AppGlobalConfig {
+ 
+     public final ConfigStringSet botAllowedSuffixes = ofStringSet("bot_allowed_suffixes", Collections.singleton("bot"));
+ 
+-    public final ConfigBoolean walletAvailable = ofBoolean("wallet_available", BuildVars.DEBUG_VERSION);
++    public final ConfigBoolean walletAvailable = ofBoolean("wallet_available", BuildVars.DEBUG_VERSION).inu_forceEnabled();
+     public final ConfigBoolean walletPaidMessageRecipientMessageAmountCheck = ofBoolean("wallet_paid_message_recipient_message_amount_check", true);
+     public final ConfigLong walletTransferMinNanos = ofLong("wallet_transfer_min_nanos", 100_000_000);
+     public final ConfigLong walletGaslessMinNanos = ofLong("wallet_gasless_min_nanos", 100_000_000);
+@@ -376,8 +376,15 @@ public class AppGlobalConfig {
+             this.handler = new Internal(name, defaultValue);
+         }
+ 
++        private boolean inu_forced;
++
++        public ConfigBoolean inu_forceEnabled() {
++            inu_forced = true;
++            return this;
++        }
++
+         public boolean get() {
+-            return handler.value;
++            return inu_forced || handler.value;
+         }
+ 
+         private static class Internal implements ConfigInternal {

@@ -80,6 +80,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **translate in send preview** - *inspired by [NagramX](https://github.com/temporaryna/NagramXTurbo)*
 - 📡 **free voice transcription** via Groq Whisper, Gemini Flash, OpenAI or Cloudflare AI
 - 📡 **official-app emulation**: purchases and premium checkout without official app blocks
+- 📡 **wallet for everyone**: the Gram wallet entry is always available - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **raised limits**: pins, favorites and folders
 - 📡 **skip login code countdown** - *inspired by [NiagramX](https://github.com/HSSkyBoy/NiagramX)*
 

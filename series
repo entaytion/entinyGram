@@ -523,3 +523,4 @@ bugfix/forum-title-overlay.patch
 bugfix/animated-drawable-recycle-interrupt.patch
 bugfix/story-reactions-window-keyboard.patch
 entiny/chat/local-message-edit.patch
+entiny/premium/force-wallet.patch
