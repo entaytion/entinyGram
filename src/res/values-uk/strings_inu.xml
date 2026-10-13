@@ -549,6 +549,15 @@
     <string name="InuUpdateInstalledNotification">Оновлення встановлено, натисніть для перезапуску</string>
     <string name="InuUpdateNotificationChannel">Оновлення додатка</string>
     <string name="InuUpdateFailedToInstall">Помилка встановлення (%1$d)</string>
+    <string name="InuUpdateBuildFullInfo">У вас повна збірка. **Перейти на збірку без плагінів &gt;**</string>
+    <string name="InuUpdateBuildPluginlessInfo">У вас збірка без плагінів. **Перейти на повну збірку &gt;**</string>
+    <string name="InuSwitchConfirmFull">Перейти на повну збірку?</string>
+    <string name="InuSwitchConfirmPluginless">Перейти на збірку без плагінів?</string>
+    <string name="InuSwitchPreparing">Пошук збірки</string>
+    <string name="InuSwitchDownloadingFull">Завантаження повної збірки</string>
+    <string name="InuSwitchDownloadingPluginless">Завантаження збірки без плагінів</string>
+    <string name="InuSwitchDownloadFailed">Не вдалося завантажити вибрану збірку</string>
+    <string name="InuSwitchUnavailable">У каналі оновлень збірку не знайдено</string>
     <string name="InuRefetchWebPreview">Оновити прев\'ю посилання</string>
     <string name="InuSendStickers">Надсилати наліпки</string>
     <string name="InuSendGifs">Надсилати GIF</string>
