@@ -9,15 +9,30 @@ Subject: entiny(dialogs): add a Recent Chats quick-switcher
   profile) reachable from the dialogs-screen options menu, with a
   clear-history action - inspired by exteraless/NekoGram BackButtonMenuRecent
 ---
- TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../java/org/telegram/messenger/MediaDataController.java   | 2 +-
+ .../src/main/java/org/telegram/ui/ChatActivity.java        | 5 +++++
+ .../src/main/java/org/telegram/ui/DialogsActivity.java     | 7 ++++++-
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
+@@ -5006,7 +5006,7 @@ public class MediaDataController extends BaseController {
+             maxShortcuts = 5;
+         }
+         ArrayList<TLRPC.TL_topPeer> hintsFinal = new ArrayList<>();
+-        if (SharedConfig.passcodeHash.length() <= 0) {
++        if (SharedConfig.passcodeHash.length() <= 0 && !desu.inugram.InuConfig.HIDE_RECENT_CHATS_SHORTCUTS.getValue()) {
+             for (int a = 0; a < hints.size(); a++) {
+                 hintsFinal.add(hints.get(a));
+                 if (hintsFinal.size() == maxShortcuts - 2) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9005,6 +9005,10 @@ public class ChatActivity extends BaseFragment implements
-             FileLog.d("InuRx[" + classGuid + "] init did=" + dialog_id + " topic=" + getTopicId() + " reactions=" + reactionsMentionCount);
+@@ -9002,6 +9002,10 @@ public class ChatActivity extends BaseFragment implements
+             }
          }
  
 +        if (currentUser != null || currentChat != null) {
@@ -27,3 +42,41 @@ index 0000000..0000000 100644
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
              savedMessagesHint.setMultilineText(true);
+@@ -9130,6 +9134,7 @@ public class ChatActivity extends BaseFragment implements
+         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
+         Timer.finish(t);
+ 
++        desu.inugram.helpers.dialogs.RecentChatsSidebar.attach(this, getDialogId());
+         return fragmentView;
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -2107,12 +2107,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 additionalPadding += h;
+             }
+ 
++            final int inu_strip = desu.inugram.helpers.dialogs.RecentChatsSidebar.stripTopPush(DialogsActivity.this);
++            t += inu_strip;
++            additionalPadding += inu_strip;
++
+             if (!NonIslandHelper.foldersBar() && !FolderHelper.atBottom()) {
+                 t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+                 additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+             }
+ 
+-            final int b = calculateListViewPaddingBottom();
++            final int b = calculateListViewPaddingBottom() + desu.inugram.helpers.dialogs.RecentChatsSidebar.stripBottomPush(DialogsActivity.this);
+             if (t != topPadding || b != getPaddingBottom()) {
+                 setTopGlowOffset(t);
+                 setPadding(0, t, 0, b);
+@@ -5766,6 +5770,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         checkUi_searchFieldStyle();
+ 
+         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
++        if (!onlySelect && folderId == 0) desu.inugram.helpers.dialogs.RecentChatsSidebar.attach(this, 0);
+         return fragmentView;
+     }
+ 

@@ -153,13 +153,13 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -27222,6 +27222,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -27200,6 +27200,9 @@ public class ChatActivity extends BaseFragment implements
+                 if (messageObject.type >= 0) {
                      messageObject.reactionsChanged |= old.isBotPendingDraft && !messageObject.isBotPendingDraft;
-                     desu.inugram.helpers.chat.ReactionDebugHelper.onMessageObjectReplaced(old, messageObject);
                      messageObject.copyStableParams(old);
 +                    if (old.richLayout != null && messageObject.richLayout != null) {
 +                        messageObject.richLayout.inu_copyState(old.richLayout);
 +                    }
                      messages.set(index, messageObject);
                      if (old != messageObject && (editingMessageObject == old || chatActivityEnterView != null && chatActivityEnterView.editingMessageObject == old)) {
-                         if (desu.inugram.helpers.chat.ReactionDebugHelper.isEnabled()) {
+                         if (editingMessageObject == old) {

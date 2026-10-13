@@ -1,32 +1,68 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Tue, 29 Sep 2026 14:09:12 +0300
+Date: Mon, 28 Sep 2026 00:39:21 +0300
 Subject: [*] readable chat header colors on light wallpapers
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  |  2 +-
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 19 ++++++++++--
  .../java/org/telegram/ui/ChatActivity.java    | 31 ++++++++++++-------
- .../ui/Components/ChatAvatarContainer.java    | 16 +++++++++-
- 3 files changed, 35 insertions(+), 14 deletions(-)
+ .../ui/Components/ChatAvatarContainer.java    | 30 +++++++++---------
+ 3 files changed, 51 insertions(+), 29 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -2558,7 +2558,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2066,7 +2066,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                     contains |= glassDrawableMenu != null && glassDrawableMenu.getBounds().contains(x, y);
+                 }
+ 
+-                if (!contains) {
++                if (!contains && !chatAvatarContainer.inu_isIosMenuSlotAvatar()) {
+                     return false;
+                 }
+             }
+@@ -2558,6 +2558,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
      }
  
--    private boolean inu_hideChatPill() {
 +    public boolean inu_hideChatPill() {
-         return desu.inugram.InuConfig.CHAT_HEADER_NO_PILL.getValue()
-                 && chatAvatarContainer != null
-                 && (chatAvatarContainer.inu_isRealChatHeader()
++        return desu.inugram.InuConfig.CHAT_HEADER_NO_PILL.getValue()
++                && chatAvatarContainer != null
++                && (chatAvatarContainer.inu_isRealChatHeader()
++                || desu.inugram.helpers.InuUtils.isFeedHeader(parentFragment))
++                && !isSearchFieldVisible && !actionModeVisible;
++    }
++
+     @Override
+     protected void dispatchDraw(Canvas canvas) {
+         if (inu_needsUpdateGlassBounds()) {
+@@ -2575,7 +2583,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         final int t = inu_glassTop;
+         final int b = inu_glassBottom;
+ 
+-        if (glassDrawable != null && !glassOnlyBack) {
++        final boolean hideChatPill = inu_hideChatPill();
++        if (hideChatPill && inu_nonIsland) {
++            blurScrimPaint.setColor(getThemedColor(Theme.key_actionBarDefault));
++            canvas.drawRect(0, 0, getWidth(), getHeight(), blurScrimPaint);
++        }
++        if (glassDrawable != null && !glassOnlyBack && !hideChatPill) {
+             if (inu_nonIsland) {
+                 glassDrawable.setBounds(0, 0, getWidth(), getHeight());
+             } else {
+@@ -2798,4 +2811,4 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             invalidate();
+         }
+     }
+-}
+\ No newline at end of file
++}
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17617,6 +17617,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17604,6 +17604,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -36,7 +72,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44048,22 +44051,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -44016,22 +44019,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }
@@ -79,7 +115,49 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -2017,10 +2017,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -833,16 +833,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     }
+ 
+     // entiny: pill width = max(title, subtitle) measured width + each view's own horizontal padding, not SimpleTextView#getTextWidth (stale after a post-measure setText).
+-    private float inu_cachedCenteredTextWidth = -1f;
+-
+-    public void inu_invalidateCenteredTextWidth() {
+-        inu_cachedCenteredTextWidth = -1f;
+-    }
+-
+     public float inu_getCenteredTextWidth() {
+-        if (inu_cachedCenteredTextWidth >= 0) {
+-            return inu_cachedCenteredTextWidth;
+-        }
+         float width = 0;
+         if (titleTextView != null) {
+             width = Math.max(width, titleTextView.getExactWidthIncludeDrawables()
+@@ -858,7 +849,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             width = Math.max(width, animatedSubtitleTextView.getDrawable().getAnimateToWidth()
+                     + animatedSubtitleTextView.getPaddingLeft() + animatedSubtitleTextView.getPaddingRight());
+         }
+-        inu_cachedCenteredTextWidth = width;
+         return width;
+     }
+ 
+@@ -962,7 +952,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     }
+ 
+     // entiny: Saved Messages centers like any other chat header now; only non-chat headers (no dialog yet, reply-comments, Replies pseudo-user) stay excluded.
+-    private boolean inu_isRealChatHeader() {
++    public boolean inu_isRealChatHeader() {
+         return parentFragment != null
+                 && !parentFragment.isReplyChatComment()
+                 && parentFragment.getDialogId() != 0
+@@ -1139,7 +1129,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+ 
+     public void setRightAvatarPadding(int value) {
+         rightAvatarPadding = value;
+-        inu_invalidateCenteredTextWidth();
+     }
+ 
+     public void setCommunityItemVisible(boolean visible) {
+@@ -2017,10 +2006,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private int getThemedColor(int key) {
@@ -105,3 +183,11 @@ index 0000000..0000000 100644
          if (currentTypingDrawable != null) {
              currentTypingDrawable.setColor(getThemedColor(Theme.key_chat_status));
          }
+@@ -2049,7 +2052,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     }
+ 
+     private void checkActionBar(boolean animated) {
+-        inu_invalidateCenteredTextWidth();
+         if (actionBar != null) {
+             actionBar.checkAvatarContainerWidth(animated);
+             if (desu.inugram.helpers.InuUtils.centerChatTitle()) {

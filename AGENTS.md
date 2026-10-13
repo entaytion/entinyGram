@@ -64,6 +64,7 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
 6. **Do Not Run `stg` or `git` Yourself:** Unless explicitly asked (including inside the `inugram-rebase` skill). Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
 7. **Default Off = Stock-Identical:** Every behavior change must be gated behind `InuConfig.*.getValue()`. Default is false/stock.
 8. **Take Over Existing Patches Properly:** When modifying an inherited inugram patch, float and rename it first: `stg float <patch>`, `stg rename <old> entiny__<name>` before refreshing.
+8a. **Fold Into Existing Patches:** If a fix or tweak touches the same feature/files as an existing `entiny__` patch, squash it into that patch (`stg squash -n <existing> -m "<existing subject>" <existing> <new>`) instead of leaving a new tiny patch. Create a new patch only for a genuinely new feature.
 9. **Never Touch Stock Hotspots for Metadata:** Bubble metadata (time, views, forwards, edited, deleted) MUST go through `ChatHelper.timePrefix`, `ChatHelper.extraTimeWidth`, and `ChatHelper.timeAdditionsHash`. Never patch `ChatMessageCell.java` for this.
 10. **Untouchables:**
    - Never touch `TLRPC.java` (auto-generated, rebasing is hell).

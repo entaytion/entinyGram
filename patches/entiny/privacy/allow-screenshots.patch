@@ -100,7 +100,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
-@@ -7138,6 +7138,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -7141,6 +7141,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
          }
  
          public boolean allowScreenshots() {

@@ -30,7 +30,7 @@ index 0000000..0000000 100644
          tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
          tabsViewWrapper.setClipToPadding(false);
          M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
-@@ -1210,6 +1211,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1234,6 +1235,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
      private void repositionSearchButton() {
          if (tabsView == null || tabsViewWrapper == null || tabsBarContainer == null) return;

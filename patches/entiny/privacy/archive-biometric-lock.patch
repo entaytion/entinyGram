@@ -15,7 +15,7 @@ index 0000000..0000000 100644
      @Override
      public void onResume() {
          super.onResume();
-+        if (desu.inugram.helpers.security.ArchiveLockHelper.shouldGate(folderId)) {
++        if (desu.inugram.helpers.security.ArchiveLockHelper.shouldGate(this, folderId)) {
 +            if (fragmentView != null) {
 +                fragmentView.setAlpha(0f);
 +            }

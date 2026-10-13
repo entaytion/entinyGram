@@ -8,19 +8,20 @@ Subject: [*] translator logic
  .../telegram/messenger/LanguageDetector.java  |  54 ++++
  .../messenger/MediaDataController.java        |   2 +-
  .../org/telegram/messenger/MessageObject.java |  13 +-
- .../messenger/TranslateController.java        | 217 +++++++++++----
+ .../messenger/TranslateController.java        | 221 +++++++++++----
  .../telegram/tgnet/ConnectionsManager.java    |   9 +
  .../java/org/telegram/ui/ArticleViewer.java   |  17 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |  42 ++-
  .../ui/Cells/TextSelectionHelper.java         |   1 +
  .../java/org/telegram/ui/ChatActivity.java    | 217 ++-------------
+ .../ui/Components/ChatActivityEnterView.java  |   1 +
  .../ui/Components/TranslateAlert2.java        |  24 +-
- .../ui/Components/TranslateAlert3.java        |  10 +-
+ .../ui/Components/TranslateAlert3.java        |  63 ++++-
  .../ui/Components/TranslateButton.java        |  32 ++-
  .../telegram/ui/LanguageSelectActivity.java   | 259 ++----------------
  .../ui/RestrictedLanguagesSelectActivity.java |  45 ++-
  .../org/telegram/ui/web/WebActionBar.java     |   3 +
- 15 files changed, 408 insertions(+), 537 deletions(-)
+ 16 files changed, 460 insertions(+), 543 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
 index 0000000..0000000 100644
@@ -457,6 +458,15 @@ index 0000000..0000000 100644
                      final String toLanguage = pendingTranslation1.language;
                      for (int i = 0; i < pendingTranslation1.messageIds.size(); ++i) {
                          final int id = pendingTranslation1.messageIds.get(i);
+@@ -1116,7 +1173,7 @@ public class TranslateController extends BaseController {
+                                 _callback.run(isTranscription, id, resultWithEntities, toLanguage);
+                             } else {
+                                 toggleTranslatingDialog(dialogId, false);
+-                                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
++                                if (desu.inugram.helpers.translate.TranslateHelper.allowFailureBulletin()) NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
+                             }
+                         });
+                     }
 @@ -1142,7 +1199,7 @@ public class TranslateController extends BaseController {
                  }*/
  
@@ -491,8 +501,9 @@ index 0000000..0000000 100644
                                      _callback.run(isTranscription, id, resultWithEntities, toLanguage);
                                  } else {
 -                                    toggleTranslatingDialog(dialogId, false);
+-                                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
 +                                    _callback.run(isTranscription, id, null, toLanguage);
-                                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
++                                    if (desu.inugram.helpers.translate.TranslateHelper.allowFailureBulletin()) NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
                                  }
                              });
                          }
@@ -1244,6 +1255,18 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.TranslateMessage));
                      options.add(OPTION_TRANSLATE);
                      icons.add(R.drawable.msg_translate);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -5203,6 +5203,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 }
+             });
+         }
++        desu.inugram.helpers.chat.ChatInputMenuHelper.addPreviewTranslateItem(this, options);
+         options.setupSelectors();
+         if (sendWhenOnlineButton != null) {
+             TLRPC.User user = parentFragment == null ? null : parentFragment.getCurrentUser();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
@@ -1323,7 +1346,119 @@ index 0000000..0000000 100644
                  MessagesController.getInstance(currentAccount).getTranslateController().toggleTranslatingDialog(dialogId);
                  dismiss();
              }
-@@ -419,12 +412,13 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -161,6 +154,8 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+     private CharSequence translated;
+ 
+     private Utilities.Callback<CharSequence> onUseListener;
++    private Utilities.Callback2<String, Utilities.Callback<CharSequence>> translationRequest;
++    private int customRequestGeneration;
+ 
+     private String from_lang;
+     private String to_lang;
+@@ -208,6 +203,10 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         this.onUseListener = onUse;
+         return this;
+     }
++    public TranslateAlert3 setTranslationRequest(Utilities.Callback2<String, Utilities.Callback<CharSequence>> request) {
++        this.translationRequest = request;
++        return this;
++    }
+     public TranslateAlert3 setNoforwards(boolean noforwards) {
+         this.noforwards = noforwards;
+         return this;
+@@ -249,7 +248,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+                 cancelRequest();
+                 tone = newTone;
+                 TranslateAlert2.setToLanguage(to_lang);
+-                requestTranslate();
++                startTranslation();
+             });
+         }
+ 
+@@ -263,13 +262,23 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         if (!TextUtils.isEmpty(to_lang)) {
+             addChecked(o, list, true, TranslateAlert2.capitalFirst(TranslateAlert2.languageName(to_lang)), null);
+         }
++        final String appLanguage = TranslateController.currentLanguage();
++        if (!TextUtils.isEmpty(appLanguage) && !TextUtils.equals(appLanguage, to_lang)
++                && suggestedLanguages.stream().noneMatch(language -> TextUtils.equals(language.code, appLanguage))) {
++            addChecked(o, list, false, TranslateAlert2.capitalFirst(TranslateAlert2.languageName(appLanguage)), () -> {
++                cancelRequest();
++                to_lang = appLanguage;
++                TranslateAlert2.setToLanguage(to_lang);
++                startTranslation();
++            });
++        }
+         for (final TranslateController.Language lng : suggestedLanguages) {
+             if (!TextUtils.equals(lng.code, to_lang)) {
+                 addChecked(o, list, false, lng.displayName, () -> {
+                     cancelRequest();
+                     to_lang = lng.code;
+                     TranslateAlert2.setToLanguage(to_lang);
+-                    requestTranslate();
++                    startTranslation();
+                 });
+             }
+         }
+@@ -279,11 +288,12 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         list.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
+ 
+         for (final TranslateController.Language lng : allLanguages) {
++            if (TextUtils.equals(lng.code, to_lang)) continue;
+             addChecked(o, list, TextUtils.equals(lng.code, to_lang), lng.displayName, () -> {
+                 cancelRequest();
+                 to_lang = lng.code;
+                 TranslateAlert2.setToLanguage(to_lang);
+-                requestTranslate();
++                startTranslation();
+             });
+         }
+ 
+@@ -357,7 +367,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         }
+ 
+         adapter.update(false);
+-        requestTranslate();
++        startTranslation();
+ 
+         if (onUseListener != null) {
+             button.setText("Use This Translation");
+@@ -368,6 +378,34 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         }
+     }
+ 
++    private void startTranslation() {
++        if (translationRequest == null) requestTranslate();
++        else requestCustomTranslate();
++    }
++
++    private void requestCustomTranslate() {
++        final int generation = ++customRequestGeneration;
++        if (onUseListener != null) button.setLoading(true);
++        final SpannableStringBuilder loadingText = new SpannableStringBuilder(getString(R.string.Loading));
++        loadingText.setSpan(new LoadingSpan(null, dp(120), 0), 0, loadingText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
++        translated = loadingText;
++        translatedLoading = true;
++        adapter.update(true);
++        translationRequest.run(to_lang, result -> AndroidUtilities.runOnUIThread(() -> {
++            if (isDismissed() || generation != customRequestGeneration) return;
++            button.setLoading(false);
++            if (result == null || result.length() == 0) {
++                translated = null;
++                button.setText(getString(R.string.OK));
++                button.setOnClickListener(v -> dismiss());
++            } else {
++                translated = result;
++                translatedLoading = false;
++            }
++            adapter.update(true);
++        }));
++    }
++
+     private int requestId = -1;
+     private void requestTranslate() {
+         final TLRPC.TL_textWithEntities fromText = new TLRPC.TL_textWithEntities();
+@@ -419,12 +457,13 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
              final TLRPC.TL_messages_translateText req = new TLRPC.TL_messages_translateText();
              req.to_lang = to_lang;
  

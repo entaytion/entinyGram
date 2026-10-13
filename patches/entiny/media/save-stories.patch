@@ -4,14 +4,24 @@ Date: Sun, 26 Jul 2026 01:27:04 +0300
 Subject: allow saving any story to gallery without premium requirement
 
 ---
- .../telegram/ui/Stories/PeerStoriesView.java  | 45 +++++++------------
- 1 file changed, 16 insertions(+), 29 deletions(-)
+ .../telegram/ui/Stories/PeerStoriesView.java  | 48 ++++++++-----------
+ 1 file changed, 19 insertions(+), 29 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
-@@ -2068,40 +2068,14 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -790,6 +790,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+             private void drawLines(Canvas canvas) {
+                 if (imageReceiver.hasNotThumb() || (currentStory.isVideo && playerSharedScope.firstFrameRendered || currentStory.isLive && playerSharedScope.firstFrameRendered)) {
+                     currentStory.checkSendView();
++                    if (isActive && currentStory.storyItem != null && desu.inugram.InuConfig.AUTO_SAVE_STORIES.getValue()) {
++                        desu.inugram.helpers.media.StoryAutoSaveHelper.onStoryShown(getContext(), currentAccount, dialogId, currentStory.storyItem.id, currentStory.getPath(), currentStory.isVideo());
++                    }
+                 }
+ 
+                 float timeProgress = 0;
+@@ -2068,40 +2071,14 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                              createQualityItem(popupLayout);
                          }
  
@@ -54,7 +64,7 @@ index 0000000..0000000 100644
                              }
                          }
  
-@@ -3747,6 +3721,15 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -3747,6 +3724,15 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
              MediaController.saveFile(f.toString(), getContext(), isVideo ? 1 : 0, null, null, uri -> {
                  BulletinFactory.createSaveToGalleryBulletin(storyContainer, isVideo, resourcesProvider).show();
              });
@@ -70,7 +80,7 @@ index 0000000..0000000 100644
          } else {
              showDownloadAlert();
          }
-@@ -7121,7 +7104,11 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -7121,7 +7107,11 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
              }
              if (storyItem != null) {
                  if (storyItem.media != null && storyItem.media.getDocument() != null) {

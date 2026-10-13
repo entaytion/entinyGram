@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -27859,6 +27859,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -27834,6 +27834,9 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void checkGroupEmojiPackHint() {
@@ -24,7 +24,7 @@ index 0000000..0000000 100644
          if (groupEmojiPackHint == null && ChatObject.isMegagroup(currentChat)) {
              final TLRPC.ChatFull chatFull = getMessagesController().getChatFull(currentChat.id);
              if (chatFull == null || chatActivityEnterView == null || getContext() == null) {
-@@ -28525,6 +28528,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -28500,6 +28503,10 @@ public class ChatActivity extends BaseFragment implements
  
          bottomOverlayChatText.setTextColorKey(accentTextButton ? Theme.key_featuredStickers_buttonText : Theme.key_glass_defaultText);
  
@@ -39,7 +39,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -11051,6 +11051,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -11052,6 +11052,15 @@ public class ChatActivityEnterView extends FrameLayout implements
      }
  
      public void updateGiftButton(boolean animated) {

@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -33682,6 +33682,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -33654,6 +33654,10 @@ public class ChatActivity extends BaseFragment implements
      }
  
      public void saveMessageToGallery(MessageObject messageObject) {
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
          String path = messageObject.messageOwner.attachPath;
          if (!TextUtils.isEmpty(path)) {
              File temp = new File(path);
-@@ -33725,11 +33729,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -33697,11 +33701,11 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
              if (!TextUtils.isEmpty(videoPath)) {

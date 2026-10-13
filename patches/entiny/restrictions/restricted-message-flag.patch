@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8507,7 +8507,7 @@ public class MessageObject {
+@@ -8504,7 +8504,7 @@ public class MessageObject {
              return false;
          } else if (searchType == ChatActivity.SEARCH_PUBLIC_POSTS) {
              return true;
@@ -24,7 +24,7 @@ index 0000000..0000000 100644
              return false;
          } else if (messageOwner.fwd_from != null && !isOutOwner() && messageOwner.fwd_from.saved_from_peer != null && getDialogId() == UserConfig.getInstance(currentAccount).getClientUserId()) {
              return true;
-@@ -8789,7 +8789,7 @@ public class MessageObject {
+@@ -8786,7 +8786,7 @@ public class MessageObject {
              return;
          }
          boolean hasUrls = applyEntities();
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
          if (!noforwards) {
              final long dialogId = getDialogId();
              noforwards = MessagesController.getInstance(currentAccount).isPeerNoForwards(dialogId);
-@@ -9285,7 +9285,7 @@ public class MessageObject {
+@@ -9282,7 +9282,7 @@ public class MessageObject {
          public TextLayoutBlocks(MessageObject messageObject, @NonNull CharSequence text, TextPaint textPaint, int width) {
              this.text = text;
              textWidth = 0;
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              );
          }
  
-@@ -13605,7 +13605,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13599,7 +13599,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void showTextSelectionHint(MessageObject messageObject) {
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
              return;
          }
          CharSequence text;
-@@ -19782,7 +19782,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19773,7 +19773,7 @@ public class ChatActivity extends BaseFragment implements
                                  MessageObject msg = selectedMessagesIds[a].valueAt(i);
                                  if (msg == null) continue;
                                  if (msg.isVoiceOnce() || msg.isRoundOnce()) continue;
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
                                  if (msg.isVoice() || msg.isRoundVideo())
                                      show = true;
                              }
-@@ -31592,7 +31592,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -31567,7 +31567,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
          boolean noforwardsOrPaidMedia = noforwards || message.type == MessageObject.TYPE_PAID_MEDIA;
          boolean allowUnpin = message.getDialogId() != mergeDialogId && allowPin && (pinnedMessageObjects.containsKey(message.getId()) || groupedMessages != null && !groupedMessages.messages.isEmpty() && pinnedMessageObjects.containsKey(groupedMessages.messages.get(0).getId())) && !message.isExpiredStory();
          boolean allowEdit = message.canEditMessage(currentChat) && !chatActivityEnterView.hasAudioToSend() && message.getDialogId() != mergeDialogId && message.type != MessageObject.TYPE_STORY && message.type != MessageObject.TYPE_POLL;
-@@ -34288,7 +34288,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34260,7 +34260,7 @@ public class ChatActivity extends BaseFragment implements
                  break;
              }
              case OPTION_REPLY: {
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  if (selectedObject != null && currentChat != null && (!ChatHelper.isEffectivelyInChat(currentChat) && !ChatObject.isMonoForum(currentChat) && !isThreadChat() || ChatObject.isChannel(currentChat) && !ChatObject.canPost(currentChat) && !currentChat.megagroup || !ChatObject.canSendMessages(currentChat))) {
-@@ -37476,7 +37476,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37448,7 +37448,7 @@ public class ChatActivity extends BaseFragment implements
                      builder.setTitleMultipleLines(true);
                  }
                  final int finalTimestamp = timestamp;
@@ -100,7 +100,7 @@ index 0000000..0000000 100644
                  builder.setItems(noforwards ? new CharSequence[] {LocaleController.getString(R.string.Open)} : new CharSequence[]{LocaleController.getString(R.string.Open), LocaleController.getString(R.string.Copy)}, (dialog, which) -> {
                      if (which == 0) {
                          if (str.startsWith("video?")) {
-@@ -37853,7 +37853,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37825,7 +37825,7 @@ public class ChatActivity extends BaseFragment implements
          if (url == null || getParentActivity() == null) {
              return;
          }
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
          if (url instanceof URLSpanMono) {
              if (!noforwards || getDialogId() == UserObject.VERIFY) {
                  ((URLSpanMono) url).copyToClipboard();
-@@ -40842,7 +40842,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40814,7 +40814,7 @@ public class ChatActivity extends BaseFragment implements
                  && messageObject.messageOwner != null
                  && chatMode != MODE_SCHEDULED
                  && !isPeerNoForwards()
@@ -118,7 +118,7 @@ index 0000000..0000000 100644
                  && messageObject.type != MessageObject.TYPE_PAID_MEDIA;
          }
  
-@@ -47125,7 +47125,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47097,7 +47097,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
@@ -157,7 +157,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -14332,7 +14332,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14328,7 +14328,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
          animatorPollAttachButtonsVisibility.setValue(sendPhotoTypeIsPollMediaEdit, false);
  
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
          if (messageObject != null && messages == null) {
              if (messageObject.messageOwner != null && MessageObject.getMedia(messageObject.messageOwner) instanceof TLRPC.TL_messageMediaWebPage && MessageObject.getMedia(messageObject.messageOwner).webpage != null) {
                  TLRPC.WebPage webPage = MessageObject.getMedia(messageObject.messageOwner).webpage;
-@@ -14786,7 +14786,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14782,7 +14782,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              desu.inugram.helpers.media.PhotoViewerHelper.setFooter(menuItem, newMessageObject);
  
              boolean isInvoice = newMessageObject.isInvoice();
@@ -175,7 +175,7 @@ index 0000000..0000000 100644
              if ((isVideo || desu.inugram.helpers.media.PhotoViewerHelper.gifAsVideo(newMessageObject)) && !isLivePhoto) {
                  bottomLayout.setVisibility(View.VISIBLE);
                  bottomLayout.setTag(1);
-@@ -15920,7 +15920,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15916,7 +15916,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  return;
              }
              MessageObject newMessageObject = imagesArr.get(currentIndex);
@@ -184,7 +184,7 @@ index 0000000..0000000 100644
              sameImage = (init || force) && currentMessageObject != null && currentMessageObject.getId() == newMessageObject.getId();
              if (sameImage) {
                  newMessageObject.putInDownloadsStore = currentMessageObject.putInDownloadsStore;
-@@ -17720,7 +17720,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -17716,7 +17716,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              if (chatActivity != null && chatActivity.getCurrentEncryptedChat() != null ||
                  avatarsDialogId != 0 && MessagesController.getInstance(currentAccount).isPeerNoForwards(avatarsDialogId) ||
                  messageObject != null && (MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) ||

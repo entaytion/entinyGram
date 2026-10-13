@@ -9,10 +9,10 @@ Subject: Add customizable bottom tabs: independent Contacts/Settings/Calls/Profi
 - added a standalone "Show tab titles" toggle (GlassTabView.setMainTabsCompact already supported hiding just the title, previously only reachable via compact mode)
 - MainTabsHelper.enabledOrder() is snapshotted for the process lifetime: MainTabsActivity builds its ViewPager positions once at creation, so a live re-read after a mid-session toggle (before the user restarts) desynced the tab bar from the ViewPager position count and crashed in ViewPagerFixed.scrollToPosition with a null fragment
 ---
- .../java/org/telegram/ui/CallLogActivity.java | 12 ++--
+ .../java/org/telegram/ui/CallLogActivity.java | 12 +--
  .../java/org/telegram/ui/DialogsActivity.java |  2 +-
- .../org/telegram/ui/MainTabsActivity.java     | 72 ++++---------------
- 3 files changed, 21 insertions(+), 65 deletions(-)
+ .../org/telegram/ui/MainTabsActivity.java     | 74 ++++---------------
+ 3 files changed, 22 insertions(+), 66 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java
 index 0000000..0000000 100644
@@ -126,6 +126,15 @@ index 0000000..0000000 100644
  
          selectTab(viewPager.getCurrentPosition(), false);
  
+@@ -436,7 +429,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             return;
+         }
+ 
+-        final int unreadCount = MessagesStorage.getInstance(currentAccount).getMainUnreadCount();
++        final int unreadCount = desu.inugram.InuConfig.FOLDERS_UNREAD_COUNTER_MODE.getValue() == desu.inugram.InuConfig.FoldersUnreadCounterModeItem.HIDE ? 0 : MessagesStorage.getInstance(currentAccount).getMainUnreadCount();
+         if (unreadCount > 0) {
+             final String unreadCountFmt = LocaleController.formatNumber(unreadCount, ',');
+             tabs[INDEX_CHATS].setCounter(unreadCountFmt, false, animated);
 @@ -470,19 +463,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (getContext() == null || getParentActivity() == null) return false;
          final ItemOptions o = ItemOptions.makeOptions(this, anchor);
