@@ -6,7 +6,6 @@ import android.widget.LinearLayout
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.dialogs.DialogsFabHelper
-import desu.inugram.helpers.dialogs.SystemFoldersHelper
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.menu.MainTabsMenuConfig
@@ -100,10 +99,10 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         )
 
         items.add(
-            UItem.asCheck(
-                TOGGLE_SYSTEM_FOLDERS,
+            mkSubPageButton(
+                BUTTON_SYSTEM_FOLDERS,
                 LocaleController.getString(R.string.InuSystemFolders),
-            ).setChecked(InuConfig.SYSTEM_FOLDERS.value)
+            )
         )
 
         items.add(
@@ -371,11 +370,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 showRestartBulletin()
             }
 
-            TOGGLE_SYSTEM_FOLDERS -> {
-                val new = InuConfig.SYSTEM_FOLDERS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                SystemFoldersHelper.sync(UserConfig.selectedAccount)
-            }
+            BUTTON_SYSTEM_FOLDERS -> presentFragment(SystemFoldersSettingsActivity())
 
             TOGGLE_HIDE_ARCHIVE -> {
                 val new = InuConfig.HIDE_ARCHIVE_FROM_CHAT_LIST.toggle()
@@ -677,7 +672,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_TAB_INDICATOR_STROKE = InuUtils.generateId()
         private val BUTTON_FOLDERS_UNREAD_COUNTER_MODE = InuUtils.generateId()
         private val TOGGLE_FOLDERS_AT_BOTTOM = InuUtils.generateId()
-        private val TOGGLE_SYSTEM_FOLDERS = InuUtils.generateId()
+        private val BUTTON_SYSTEM_FOLDERS = InuUtils.generateId()
         private val TOGGLE_HIDE_ARCHIVE = InuUtils.generateId()
         private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
         private val TOGGLE_OLD_MENTION_INDICATOR = InuUtils.generateId()
@@ -743,7 +738,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-all-chats-tab", R.string.InuHideAllChatsTab, TOGGLE_HIDE_ALL_CHATS_TAB),
                 SearchRegistry.Entry("remember-selected-folder", R.string.InuRememberSelectedFolder, TOGGLE_REMEMBER_SELECTED_FOLDER),
                 SearchRegistry.Entry("folders-at-bottom", R.string.InuFoldersAtBottom, TOGGLE_FOLDERS_AT_BOTTOM),
-                SearchRegistry.Entry("system-folders", R.string.InuSystemFolders, TOGGLE_SYSTEM_FOLDERS),
+                SearchRegistry.Entry("system-folders", R.string.InuSystemFolders, BUTTON_SYSTEM_FOLDERS),
                 SearchRegistry.Entry("hide-archive", R.string.InuHideArchive, TOGGLE_HIDE_ARCHIVE),
                 SearchRegistry.Entry("title-text", R.string.InuTitleText, BUTTON_TITLE_TEXT),
                 SearchRegistry.Entry("title-text-override-archive", R.string.InuTitleTextOverrideArchive, TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE),

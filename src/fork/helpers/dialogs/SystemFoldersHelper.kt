@@ -6,11 +6,13 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
+import org.telegram.messenger.UserConfig
 
-// entiny: virtual system folders are recomputed on every sync and never persisted, so they are not saved to the db or pushed to server
+// entiny: virtual folders live only in memory + InuConfig state; ids >= LOCAL_FILTER_ID_BASE keep them out of every server order request
 object SystemFoldersHelper {
 
     const val SYSTEM_FILTER_ID_BASE = 200000
+    private const val EMPTY_MARK = "-"
 
     enum class Type(val flags: Int, val titleRes: Int) {
         ADMINISTRATOR(MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS, R.string.InuSystemFolderAdministrator),
@@ -21,6 +23,8 @@ object SystemFoldersHelper {
 
         val id: Int get() = SYSTEM_FILTER_ID_BASE + ordinal
     }
+
+    class Entry(val type: Type, var enabled: Boolean, var pos: Int)
 
     @JvmStatic
     fun isSystem(filterId: Int): Boolean = filterId >= SYSTEM_FILTER_ID_BASE && filterId < SYSTEM_FILTER_ID_BASE + Type.entries.size
@@ -35,23 +39,110 @@ object SystemFoldersHelper {
         return chat.creator || ChatObject.hasAdminRights(chat)
     }
 
+    fun entries(): MutableList<Entry> {
+        val raw = InuConfig.SYSTEM_FOLDERS_STATE.value
+        if (raw.isEmpty()) return Type.entries.map { Entry(it, false, -1) }.toMutableList()
+        if (raw == EMPTY_MARK) return mutableListOf()
+        val result = ArrayList<Entry>()
+        for (part in raw.split(',')) {
+            val fields = part.split(':')
+            val type = Type.entries.firstOrNull { it.name == fields.getOrNull(0) } ?: continue
+            if (result.any { it.type == type }) continue
+            result.add(Entry(type, fields.getOrNull(1) == "1", fields.getOrNull(2)?.toIntOrNull() ?: -1))
+        }
+        return result
+    }
+
+    private fun save(list: List<Entry>) {
+        InuConfig.SYSTEM_FOLDERS_STATE.value =
+            if (list.isEmpty()) EMPTY_MARK else list.joinToString(",") { "${it.type.name}:${if (it.enabled) 1 else 0}:${it.pos}" }
+    }
+
+    fun missingTypes(): List<Type> {
+        val present = entries().map { it.type }
+        return Type.entries.filter { it !in present }
+    }
+
+    fun setEnabled(type: Type, enabled: Boolean) {
+        val list = entries()
+        val entry = list.firstOrNull { it.type == type } ?: return
+        entry.enabled = enabled
+        save(list)
+        syncAll()
+    }
+
+    fun delete(type: Type) {
+        val list = entries()
+        if (!list.removeAll { it.type == type }) return
+        save(list)
+        syncAll()
+    }
+
+    fun addRecommended() {
+        val list = entries()
+        for (type in missingTypes()) list.add(Entry(type, false, -1))
+        list.sortBy { it.type.ordinal }
+        save(list)
+        syncAll()
+    }
+
+    @JvmStatic
+    fun onRemovedByUser(filterId: Int) {
+        val type = Type.entries.firstOrNull { it.id == filterId } ?: return
+        delete(type)
+    }
+
+    @JvmStatic
+    fun captureOrder(account: Int) {
+        val filters = MessagesController.getInstance(account).dialogFilters
+        val list = entries()
+        var changed = false
+        for (entry in list) {
+            val index = filters.indexOfFirst { it.id == entry.type.id }
+            if (index >= 0 && entry.pos != index) {
+                entry.pos = index
+                changed = true
+            }
+        }
+        if (changed) save(list)
+    }
+
+    @JvmStatic
+    fun syncAll() {
+        for (i in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
+            if (UserConfig.getInstance(i).isClientActivated) sync(i)
+        }
+    }
+
     @JvmStatic
     fun sync(account: Int) {
         val controller = MessagesController.getInstance(account)
-        val enabled = InuConfig.SYSTEM_FOLDERS.value
+        if (!controller.dialogFiltersLoaded) return
+        val list = entries()
+        var changed = false
         for (type in Type.entries) {
-            val existing = controller.dialogFiltersById.get(type.id)
-            if (enabled && existing == null) {
-                val filter = MessagesController.DialogFilter()
-                filter.id = type.id
-                filter.name = LocaleController.getString(type.titleRes)
-                filter.flags = type.flags
-                controller.addFilter(filter, false)
-            } else if (!enabled && existing != null) {
-                controller.dialogFilters.remove(existing)
-                controller.dialogFiltersById.remove(type.id)
-            }
+            val existing = controller.dialogFiltersById.get(type.id) ?: continue
+            if (list.any { it.type == type && it.enabled }) continue
+            controller.dialogFilters.remove(existing)
+            controller.dialogFiltersById.remove(type.id)
+            changed = true
         }
-        NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.dialogFiltersUpdated)
+        for (entry in list.filter { it.enabled }.sortedBy { if (it.pos < 0) Int.MAX_VALUE else it.pos }) {
+            if (controller.dialogFiltersById.get(entry.type.id) != null) continue
+            val filter = MessagesController.DialogFilter()
+            filter.id = entry.type.id
+            filter.name = LocaleController.getString(entry.type.titleRes)
+            filter.flags = entry.type.flags
+            val filters = controller.dialogFilters
+            filter.order = (filters.maxOfOrNull { it.order } ?: 0) + 1
+            val minIndex = if (filters.firstOrNull()?.isDefault == true) 1 else 0
+            val index = if (entry.pos < 0) filters.size else entry.pos.coerceIn(minIndex, filters.size)
+            filters.add(index, filter)
+            controller.dialogFiltersById.put(filter.id, filter)
+            changed = true
+        }
+        if (changed) {
+            NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.dialogFiltersUpdated)
+        }
     }
 }

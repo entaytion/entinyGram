@@ -86,7 +86,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 ### appearance & customization
 
 - 📡 **chat header preview**: real chat header with your avatar and wallpaper in settings - *inspired by [Finegram](https://github.com/Th3Nekit/Finegram) (@Th3Nekit)*
-- 📡 **system folders**: Administrator, Bots, Unread, Groups and Channels tabs in the folder bar - *inspired by [NagramXF](https://github.com/Keeperorowner/NagramXF)*
+- 📡 **system folders**: Administrator, Bots, Unread, Groups and Channels tabs in the folder bar, each switchable and removable on this device - *inspired by [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **fix folder opening empty**: switching to a folder tab always shows its chats on the first try
 - 📡 **avatar corners**: adjustable radius - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **clown avatar for blocked users**: blocked users show 🤡 (or 💩 / 💀) instead of their photo - *ported from [NiagramX](https://github.com/HSSkyBoy/NiagramX)*

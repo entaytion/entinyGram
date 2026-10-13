@@ -545,6 +545,8 @@
     <string name="InuRememberSelectedFolderInfo">Reopen the last active folder when returning to the chat list.</string>
     <string name="InuFoldersAtBottom">Move Folders to Bottom</string>
     <string name="InuSystemFolders">System Folders</string>
+    <string name="InuSystemFoldersAddRecommended">Add recommended</string>
+    <string name="InuSystemFoldersInfo">Tap a folder to show or hide it in the folder bar. Long-press to delete it. These folders stay on this device.</string>
     <string name="InuSystemFolderAdministrator">Administrator</string>
     <string name="InuSystemFolderBots">Bots</string>
     <string name="InuSystemFolderUnread">Unread</string>
