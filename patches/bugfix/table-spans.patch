@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayou
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-@@ -4195,14 +4195,7 @@ public class RichMessageLayout {
+@@ -4203,14 +4203,7 @@ public class RichMessageLayout {
              }
              tableLayout.setMinimumCellHeight(dp(block.compact ? 18 : 36));
  
@@ -54,7 +54,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TableLayout.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TableLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TableLayout.java
-@@ -412,6 +412,23 @@ public class TableLayout extends View {
+@@ -413,6 +413,23 @@ public class TableLayout extends View {
  
      private ArrayList<Child> childrens = new ArrayList<>();
  

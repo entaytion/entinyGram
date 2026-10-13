@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp b/TMessagesProj/jni/
 index 0000000..0000000 100644
 --- a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
 +++ b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
-@@ -135,24 +135,28 @@ ConnectionsManager::~ConnectionsManager() {
+@@ -136,24 +136,28 @@ ConnectionsManager::~ConnectionsManager() {
      pthread_mutex_destroy(&mutex);
  }
  
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
 --- a/TMessagesProj/jni/tgnet/Defines.h
 +++ b/TMessagesProj/jni/tgnet/Defines.h
 @@ -27,7 +27,7 @@
- #define DOWNLOAD_CONNECTIONS_COUNT 2
+ #define DOWNLOAD_CONNECTIONS_COUNT 8
  #define UPLOAD_CONNECTIONS_COUNT 4
  #define CONNECTION_BACKGROUND_KEEP_TIME 10000
 -#define MAX_ACCOUNT_COUNT 5

@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -59,6 +59,7 @@ dependencies {
+@@ -64,6 +64,7 @@ dependencies {
      compileOnly 'org.checkerframework:checker-compat-qual:2.5.0'
      compileOnly 'com.google.j2objc:j2objc-annotations:2.8'
      implementation 'com.google.firebase:firebase-messaging:22.0.0'
@@ -28,7 +28,7 @@ diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -1072,6 +1072,12 @@
+@@ -1084,6 +1084,12 @@
              android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
              android:value="org.telegram.messenger.chromecast.ChromecastOptionsProvider" />
  

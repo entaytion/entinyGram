@@ -4,9 +4,13 @@ Date: Sat, 5 Sep 2026 20:39:19 +0300
 Subject: Add 60 FPS round video, exposure lock, and exposure compensation buttons
 
 ---
- .../messenger/camera/Camera2Session.java      | 75 ++++++++++++++-
- .../ui/Components/InstantCameraView.java      | 94 +++++++++++++++----
- 2 files changed, 151 insertions(+), 18 deletions(-)
+ .../messenger/camera/Camera2Session.java      | 75 +++++++++++++-
+ .../ui/Components/InstantCameraView.java      | 98 +++++++++++++++----
+ .../ui/Components/InstantCameraView2.java     |  6 +-
+ .../RoundVideoCameraController.java           |  1 +
+ .../roundvideo/RoundVideoCodecRecorder.java   |  4 +-
+ .../camera/roundvideo/RoundVideoSession.java  |  3 +-
+ 6 files changed, 161 insertions(+), 26 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
 index 0000000..0000000 100644
@@ -115,7 +119,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCamer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
-@@ -71,6 +71,8 @@ import androidx.media3.exoplayer.ExoPlayer;
+@@ -72,6 +72,8 @@ import androidx.media3.exoplayer.ExoPlayer;
  
  import desu.inugram.helpers.chat.RoundRecorderHelper;
  import desu.inugram.helpers.chat.VoiceRecorderHelper;
@@ -124,7 +128,7 @@ index 0000000..0000000 100644
  import org.telegram.messenger.AndroidUtilities;
  import org.telegram.messenger.ApplicationLoader;
  import org.telegram.messenger.AutoDeleteMediaTask;
-@@ -326,7 +328,22 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -332,7 +334,22 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          buttonsLayout.setOrientation(LinearLayout.HORIZONTAL);
          addView(buttonsLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 56, Gravity.LEFT | Gravity.BOTTOM, 1, 0, 0, 0));
  
@@ -148,7 +152,7 @@ index 0000000..0000000 100644
  
          switchCameraButton = new FlashViews.ImageViewInvertable(context);
          switchCameraButton.setScaleType(ImageView.ScaleType.CENTER);
-@@ -395,12 +412,20 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -401,12 +418,20 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          });
          updateFlash();
  
@@ -169,7 +173,7 @@ index 0000000..0000000 100644
          }
  
          muteImageView = new ImageView(context);
-@@ -671,6 +696,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -677,6 +702,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
              cancelled = recordedTime < 800;
              recording = false;
              RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
@@ -178,7 +182,7 @@ index 0000000..0000000 100644
              updateFlash();
              if (cameraThread != null) {
                  NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStopped, recordingGuid, cancelled ? 4 : 2);
-@@ -1027,6 +1054,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -1039,6 +1066,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
              recording = false;
              flashing = false;
              RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
@@ -187,7 +191,7 @@ index 0000000..0000000 100644
              updateFlash();
              int reason;
              if (cancelled) {
-@@ -1087,6 +1116,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -1099,6 +1128,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          recording = false;
          flashing = false;
          RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
@@ -196,7 +200,7 @@ index 0000000..0000000 100644
          updateFlash();
          NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStopped, recordingGuid, byGesture ? 0 : 6);
          if (cameraThread != null) {
-@@ -1178,6 +1209,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -1208,6 +1239,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          cameraReady = false;
          cameraThread.reinitForNewCamera();
          RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
@@ -205,8 +209,8 @@ index 0000000..0000000 100644
 +        RoundRecorderHelper.syncAeButton(inu_aeButton, camera2SessionCurrent);
      }
  
-     // Old Camera1 API
-@@ -1988,7 +2022,12 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+     private void logLegacyCameraSwitchStage(String stage) {
+@@ -2050,7 +2084,12 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
  
                      textureBuffer = ByteBuffer.allocateDirect(texData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
                      textureBuffer.put(texData).position(0);
@@ -220,7 +224,7 @@ index 0000000..0000000 100644
                      break;
                  }
              }
-@@ -2246,7 +2285,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -2308,7 +2347,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                      buffer.lastWroteBuffer = 0;
                      buffer.results = AudioBufferInfo.MAX_SAMPLES;
                      for (int a = 0; a < AudioBufferInfo.MAX_SAMPLES; a++) {
@@ -229,7 +233,7 @@ index 0000000..0000000 100644
                              audioPresentationTimeUs = System.nanoTime() / 1000;
                          }
  
-@@ -2272,25 +2311,30 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -2334,25 +2373,30 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                              break;
                          }
                          long timestamp;
@@ -267,7 +271,7 @@ index 0000000..0000000 100644
                      }
                      if (buffer.results >= 0 || buffer.last) {
                          if (!running && buffer.results < AudioBufferInfo.MAX_SAMPLES) {
-@@ -2602,7 +2646,12 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -2664,7 +2708,12 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                  }
                  lastTimestamp = timestampNanos;
              } else {
@@ -281,7 +285,7 @@ index 0000000..0000000 100644
                  lastTimestamp = timestampNanos;
              }
              firstVideoFrameSincePause = false;
-@@ -2905,7 +2954,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -2967,7 +3016,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                          videoEditedInfo.encryptedFile = encryptedFile;
                          videoEditedInfo.key = key;
                          videoEditedInfo.iv = iv;
@@ -290,7 +294,7 @@ index 0000000..0000000 100644
                          videoEditedInfo.resultWidth = videoEditedInfo.originalWidth = 360;
                          videoEditedInfo.resultHeight = videoEditedInfo.originalHeight = 360;
                          videoEditedInfo.originalPath = videoFile.getAbsolutePath();
-@@ -3057,7 +3106,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -3119,7 +3168,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                          videoEditedInfo.encryptedFile = encryptedFile;
                          videoEditedInfo.key = key;
                          videoEditedInfo.iv = iv;
@@ -299,7 +303,25 @@ index 0000000..0000000 100644
                          videoEditedInfo.resultWidth = videoEditedInfo.originalWidth = 360;
                          videoEditedInfo.resultHeight = videoEditedInfo.originalHeight = 360;
                          videoEditedInfo.originalPath = videoFile.getAbsolutePath();
-@@ -3222,8 +3271,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -3254,7 +3303,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+                 skippedFirst = false;
+                 skippedTime = 0;
+ 
+-                audioRecorder = new AudioRecord(MediaRecorder.AudioSource.DEFAULT, audioSampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
++                audioRecorder = new AudioRecord(desu.inugram.helpers.chat.RoundRecorderHelper.audioSource(MediaRecorder.AudioSource.DEFAULT), audioSampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+                 audioRecorder.startRecording();
+                 if (BuildVars.LOGS_ENABLED) {
+                     FileLog.d("InstantCamera initied audio record with channels " + audioRecorder.getChannelCount() + " sample rate = " + audioRecorder.getSampleRate() + " bufferSize = " + bufferSize);
+@@ -3271,7 +3320,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+                 audioFormat.setString(MediaFormat.KEY_MIME, AUDIO_MIME_TYPE);
+                 audioFormat.setInteger(MediaFormat.KEY_SAMPLE_RATE, audioSampleRate);
+                 audioFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
+-                audioFormat.setInteger(MediaFormat.KEY_BIT_RATE, MessagesController.getInstance(currentAccount).roundAudioBitrate * 1024);
++                audioFormat.setInteger(MediaFormat.KEY_BIT_RATE, desu.inugram.helpers.chat.RoundRecorderHelper.audioBitrate(MessagesController.getInstance(currentAccount).roundAudioBitrate * 1024));
+                 audioFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 2048 * AudioBufferInfo.MAX_SAMPLES);
+ 
+                 audioEncoder = MediaCodec.createEncoderByType(AUDIO_MIME_TYPE);
+@@ -3284,8 +3333,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                  MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, videoWidth, videoHeight);
  
                  format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
@@ -310,7 +332,7 @@ index 0000000..0000000 100644
                  format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
  
                  videoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-@@ -3267,6 +3316,11 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -3329,6 +3378,11 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                      recording = true;
                      RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
                      RoundRecorderHelper.setSliderVisible(inu_zoomSlider, true);
@@ -322,7 +344,7 @@ index 0000000..0000000 100644
                      updateFlash();
                      invalidate();
                      NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStarted, recordingGuid, false);
-@@ -3818,6 +3872,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -3880,6 +3934,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                  cameraSession.setZoom(zoom);
              }
              if (inu_zoomSlider != null) inu_zoomSlider.setZoom(t, false);
@@ -330,7 +352,7 @@ index 0000000..0000000 100644
          } else if ((ev.getActionMasked() == MotionEvent.ACTION_UP || (ev.getActionMasked() == MotionEvent.ACTION_POINTER_UP && checkPointerIds(ev)) || ev.getActionMasked() == MotionEvent.ACTION_CANCEL) && isInPinchToZoomTouchMode) {
              isInPinchToZoomTouchMode = false;
              finishZoom();
-@@ -3827,6 +3882,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -3889,6 +3944,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
  
      ValueAnimator finishZoomTransition;
      private ZoomControlView inu_zoomSlider;
@@ -340,7 +362,7 @@ index 0000000..0000000 100644
      private float inu_pinchStartT = 0f;
  
      public void finishZoom() {
-@@ -3834,7 +3892,10 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -3896,7 +3954,10 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
              return;
          }
  
@@ -352,7 +374,7 @@ index 0000000..0000000 100644
  
          float zoom;
          if (useCamera2) {
-@@ -3858,6 +3919,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -3920,6 +3981,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                      }
                  }
                  if (inu_zoomSlider != null) inu_zoomSlider.setZoom(t, false);
@@ -360,3 +382,73 @@ index 0000000..0000000 100644
              });
              finishZoomTransition.addListener(new AnimatorListenerAdapter() {
                  @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
+@@ -378,14 +378,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+         progressView.setProgress(0f);
+         showInitialPlaceholder();
+         upload = new TelegramRoundVideoUpload(currentAccount, secretChat);
+-        activeOutputResolution = SharedSettings.roundVideoOutputResolution.get();
++        activeOutputResolution = desu.inugram.helpers.chat.RoundRecorderHelper.outputResolution(SharedSettings.roundVideoOutputResolution.get());
+         session = new RoundVideoSession.Builder(getContext(), textureView)
+                 .setOutputDirectory(new File(ApplicationLoader.getFilesDirFixed(), "cache"))
+                 .setInitialFacing(SharedSettings.roundVideoLastCamera.get())
+                 .setOutputResolution(activeOutputResolution)
+-                .setVideoBitrate(SharedSettings.roundVideoVideoBitrate.get())
++                .setVideoBitrate(desu.inugram.helpers.chat.RoundRecorderHelper.videoBitrate(SharedSettings.roundVideoVideoBitrate.get()))
+                 .setCameraResolution(SharedSettings.roundVideoCameraResolution.get())
+-                .setFrameRate(SharedSettings.roundVideoFrameRate.get())
++                .setFrameRate(desu.inugram.helpers.chat.RoundRecorderHelper.frameRate(activeOutputResolution, SharedSettings.roundVideoFrameRate.get()))
+                 .setCompositionEnabled(SharedSettings.roundVideoComposition.get())
+                 .setListener(sessionListener)
+                 .setOutputListener(upload)
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCameraController.java b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCameraController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCameraController.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCameraController.java
+@@ -2771,6 +2771,7 @@ final class RoundVideoCameraController {
+         if (cameraResolution == RoundVideoSession.CameraResolution.LOW) {
+             return outputResolution.getSize();
+         }
++        if (outputResolution == RoundVideoSession.OutputResolution.P720) return 720;
+         if (outputResolution == RoundVideoSession.OutputResolution.P480) {
+             return cameraResolution == RoundVideoSession.CameraResolution.HIGH ? 960 : 720;
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCodecRecorder.java b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCodecRecorder.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCodecRecorder.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCodecRecorder.java
+@@ -274,7 +274,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
+         int audioBufferSize = Math.max(minBufferSize * 4, 16_384);
+         MediaFormat format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, AUDIO_SAMPLE_RATE, 1);
+         format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
+-        format.setInteger(MediaFormat.KEY_BIT_RATE, AUDIO_BIT_RATE);
++        format.setInteger(MediaFormat.KEY_BIT_RATE, desu.inugram.helpers.chat.RoundRecorderHelper.audioBitrate(AUDIO_BIT_RATE));
+         format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, audioBufferSize);
+         audioCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
+         diagnostics.log("audio encoder configure: codec=" + audioCodec.getName()
+@@ -282,7 +282,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
+                 + ", minBufferSize=" + minBufferSize
+                 + ", audioBufferSize=" + audioBufferSize);
+         audioCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+-        audioRecord = new AudioRecord(MediaRecorder.AudioSource.CAMCORDER, AUDIO_SAMPLE_RATE,
++        audioRecord = new AudioRecord(desu.inugram.helpers.chat.RoundRecorderHelper.audioSource(MediaRecorder.AudioSource.CAMCORDER), AUDIO_SAMPLE_RATE,
+                 AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, audioBufferSize);
+         if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) throw new IllegalStateException("Unable to initialize AudioRecord");
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoSession.java b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoSession.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoSession.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoSession.java
+@@ -36,7 +36,8 @@ public final class RoundVideoSession {
+         /** 480 x 480 output. */
+         P480(480),
+         /** 360 x 360 output. */
+-        P360(360);
++        P360(360),
++        P720(720);
+ 
+         private final int size;
+ 

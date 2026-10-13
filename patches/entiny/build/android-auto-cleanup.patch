@@ -19,7 +19,7 @@ diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -734,25 +734,6 @@
+@@ -746,25 +746,6 @@
  
          <meta-data android:name="com.google.android.gms.wallet.api.enabled" android:value="true" />
  

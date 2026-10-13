@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -27834,6 +27834,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -27945,6 +27945,9 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void checkGroupEmojiPackHint() {
@@ -24,7 +24,7 @@ index 0000000..0000000 100644
          if (groupEmojiPackHint == null && ChatObject.isMegagroup(currentChat)) {
              final TLRPC.ChatFull chatFull = getMessagesController().getChatFull(currentChat.id);
              if (chatFull == null || chatActivityEnterView == null || getContext() == null) {
-@@ -28500,6 +28503,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -28611,6 +28614,10 @@ public class ChatActivity extends BaseFragment implements
  
          bottomOverlayChatText.setTextColorKey(accentTextButton ? Theme.key_featuredStickers_buttonText : Theme.key_glass_defaultText);
  
@@ -71,7 +71,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -1383,7 +1383,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -1385,7 +1385,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      backgroundPaint.setAlpha((int) (0xFF * progressToGradient));
                      canvas.drawRect(0, 0, getMeasuredWidth(), y1, backgroundPaint);
                  }
@@ -80,7 +80,7 @@ index 0000000..0000000 100644
                      final float loadedScale = emojiLoadedT.set(isEmojiLoaded());
                      boolean shoudIgnore = openAnimationInProgress && playProfileAnimation == 2;
                      if (!shoudIgnore && loadedScale > 0 && avatarContainer != null) {
-@@ -5719,6 +5719,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5723,6 +5723,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          checkPhotoDescriptionAlpha();
          avatarContainer2.addView(animatedStatusView);
  
@@ -88,7 +88,7 @@ index 0000000..0000000 100644
          ratingView = new StarRatingView(context);
          ratingView.setLayoutParams(LayoutHelper.createFrame(32, 32, Gravity.LEFT, 109 - 6, -2, 0, 0));
          ratingView.setResourcesProvider(resourcesProvider);
-@@ -5733,6 +5734,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5737,6 +5738,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          avatarContainer2.addView(ratingView);
@@ -96,7 +96,7 @@ index 0000000..0000000 100644
  
          mediaCounterTextView = new AudioPlayerAlert.ClippingTextViewSwitcher(context) {
              @Override
-@@ -5779,8 +5781,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5783,8 +5785,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarImage.setHasStories(needInsetForStories());
          }
          avatarContainer2.addView(storyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
@@ -107,7 +107,7 @@ index 0000000..0000000 100644
          updateProfileData(true);
  
          writeButton = new RLottieImageView(context);
-@@ -9251,9 +9255,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9255,9 +9259,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
                  if (chatId != 0) {
                      boolean gift = !BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
@@ -119,7 +119,7 @@ index 0000000..0000000 100644
                      }
                  }
              }
-@@ -9680,6 +9684,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9684,6 +9688,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          updateProfileData(true);
@@ -127,7 +127,7 @@ index 0000000..0000000 100644
          fixLayout();
          if (nameTextView[1] != null) {
              setParentActivityTitle(nameTextView[1].getText());
-@@ -10462,9 +10467,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10466,9 +10471,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          inu_fetchLinkedChannelMessage();
          if (chatId != 0) {
              boolean gift = !BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
@@ -139,7 +139,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -11286,6 +11291,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11290,6 +11295,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private Drawable getPremiumCrossfadeDrawable(int a) {
@@ -149,7 +149,7 @@ index 0000000..0000000 100644
          if (premiumCrossfadeDrawable[a] == null) {
              premiumStarDrawable[a] = ContextCompat.getDrawable(getParentActivity(), R.drawable.msg_premium_liststar).mutate();
              int color = getThemedColor(Theme.key_profile_verifiedBackground);
-@@ -11337,11 +11345,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11341,11 +11349,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          } else if (emojiStatus instanceof TLRPC.TL_emojiStatusCollectible) {
              final TLRPC.TL_emojiStatusCollectible status = (TLRPC.TL_emojiStatusCollectible) emojiStatus;
              if ((status.flags & 1) == 0 || status.until > (int) (System.currentTimeMillis() / 1000)) {
@@ -164,7 +164,7 @@ index 0000000..0000000 100644
              } else {
                  emojiStatusDrawable[a].set(getPremiumCrossfadeDrawable(a), animated);
                  emojiStatusDrawable[a].setParticles(false, animated);
-@@ -11487,23 +11496,27 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11491,23 +11500,27 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
              avatarDrawable.setInfo(currentAccount, user);
  
@@ -195,7 +195,7 @@ index 0000000..0000000 100644
  
  
              final ImageLocation imageLocation = ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_BIG);
-@@ -11657,7 +11670,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11661,7 +11674,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          rightIconIsPremium = false;
                          nameTextView[a].setRightDrawable(getEmojiStatusDrawable(user.emoji_status, false, false, a));
                          nameTextViewRightDrawableContentDescription = LocaleController.getString(R.string.AccDescrPremium);
@@ -204,7 +204,7 @@ index 0000000..0000000 100644
                          rightIconIsStatus = false;
                          rightIconIsPremium = true;
                          nameTextView[a].setRightDrawable(getEmojiStatusDrawable(null, false, false, a));
-@@ -11678,7 +11691,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11682,7 +11695,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          rightIconIsStatus = true;
                          rightIconIsPremium = false;
                          nameTextView[a].setRightDrawable(getEmojiStatusDrawable(user.emoji_status, true, !ProfileHelper.reduceMotion(), a));
@@ -213,7 +213,7 @@ index 0000000..0000000 100644
                          rightIconIsStatus = false;
                          rightIconIsPremium = true;
                          nameTextView[a].setRightDrawable(getEmojiStatusDrawable(null, true, !ProfileHelper.reduceMotion(), a));
-@@ -11686,7 +11699,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11690,7 +11703,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          nameTextView[a].setRightDrawable(null);
                      }
                  }
@@ -222,7 +222,7 @@ index 0000000..0000000 100644
                      nameTextView[a].setLeftDrawableOutside(true);
                      leftIcon = getBotVerificationDrawable(user.bot_verification_icon, false, a);
                  } else {
-@@ -11806,20 +11819,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11810,20 +11823,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  flagSecure.invalidate();
              }
  
@@ -250,7 +250,7 @@ index 0000000..0000000 100644
  
              if (isTopic) {
                  topic = getMessagesController().getTopicsController().findTopic(chatId, topicId);
-@@ -12004,7 +12021,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12008,7 +12025,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          nameTextView[a].setRightDrawable(null);
                      }
                  }
@@ -259,7 +259,7 @@ index 0000000..0000000 100644
                      nameTextView[a].setLeftDrawableOutside(true);
                      nameTextView[a].setLeftDrawable(getBotVerificationDrawable(chat.bot_verification_icon, false, a));
                  } else {
-@@ -12367,7 +12384,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12371,7 +12388,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  if (!UserObject.isDeleted(user) && !isBot && currentEncryptedChat == null && !userBlocked && userId != 333000 && userId != 777000 && userId != 42777) {
                      if (!BuildVars.IS_BILLING_UNAVAILABLE && !user.self && !user.bot && !MessagesController.isSupportUser(user) && !getMessagesController().premiumPurchaseBlocked()) {
                          StarsController.getInstance(currentAccount).loadStarGifts();
@@ -268,8 +268,8 @@ index 0000000..0000000 100644
 +                        }
                          giftAction = true;
                      }
-                     otherItem.addSubItem(start_secret_chat, R.drawable.msg_secret, LocaleController.getString(R.string.StartEncryptedChat));
-@@ -12420,10 +12439,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     if (getMessagesController().config.walletAvailable.get() && !MessagesController.isSupportUser(user) && !UserObject.isService(user.id)) {
+@@ -12427,10 +12446,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      callItemVisible = call != null;
                      voiceChatAction = call != null || voiceChatAction;
                  }
@@ -283,7 +283,7 @@ index 0000000..0000000 100644
                      otherItem.addSubItem(channel_stories, R.drawable.msg_archive, LocaleController.getString(R.string.OpenChannelArchiveStories));
                  }
                  if (chat.megagroup) {
-@@ -12456,8 +12478,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12463,8 +12485,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      }
                      if (!BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked()) {
                          StarsController.getInstance(currentAccount).loadStarGifts();
@@ -294,7 +294,7 @@ index 0000000..0000000 100644
                          giftAction = true;
                      }
                      if (chatInfo != null && chatInfo.linked_chat_id != 0) {
-@@ -12545,11 +12569,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12552,11 +12576,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              actionsView.set(ProfileActionsView.KEY_VIDEO, videoCallItemVisible);
              actionsView.set(ProfileActionsView.KEY_DISCUSS, discussAction);
              actionsView.set(ProfileActionsView.KEY_LEAVE, leaveAction);

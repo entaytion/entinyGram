@@ -248,7 +248,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -4358,7 +4358,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4416,7 +4416,7 @@ public class NotificationsController extends BaseController implements Notificat
  
          InuDialogNotificationSettings result = new InuDialogNotificationSettings();
          result.notifyDisabled = notifyDisabled;
@@ -261,8 +261,8 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayou
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-@@ -48,7 +48,7 @@ import android.text.style.URLSpan;
- import android.util.Log;
+@@ -47,7 +47,7 @@ import android.text.style.ReplacementSpan;
+ import android.text.style.URLSpan;
  import android.util.TypedValue;
  import android.view.Gravity;
 -import android.view.HapticFeedbackConstants;
@@ -329,7 +329,7 @@ index 0000000..0000000 100755
  	public static final int CALL_MIN_LAYER = 65;
  
  	public static final int STATE_HANGING_UP = 10;
-@@ -4129,7 +4134,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4128,7 +4133,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  				} else {
  					vibrate = prefs.getInt("vibrate_calls", 0);
  				}
@@ -433,7 +433,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -45,7 +45,7 @@ import android.text.style.ClickableSpan;
+@@ -46,7 +46,7 @@ import android.text.style.ClickableSpan;
  import android.text.style.ReplacementSpan;
  import android.text.style.StyleSpan;
  import android.view.Gravity;
@@ -792,9 +792,9 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCamer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
-@@ -50,7 +50,7 @@ import android.os.Handler;
- import android.os.Looper;
+@@ -51,7 +51,7 @@ import android.os.Looper;
  import android.os.Message;
+ import android.os.SystemClock;
  import android.view.Gravity;
 -import android.view.HapticFeedbackConstants;
 +import desu.inugram.helpers.vibration.HapticFeedbackConstants;
@@ -1303,7 +1303,7 @@ index 0000000..0000000 100644
  import android.view.KeyEvent;
  import android.view.Menu;
  import android.view.MotionEvent;
-@@ -257,6 +257,12 @@ import java.util.zip.ZipEntry;
+@@ -260,6 +260,12 @@ import java.util.zip.ZipEntry;
  import java.util.zip.ZipInputStream;
  
  public class LaunchActivity extends BasePermissionsActivity implements INavigationLayout.INavigationLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, IPipActivity {
@@ -1463,7 +1463,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
-@@ -33,7 +33,7 @@ import android.text.Spanned;
+@@ -34,7 +34,7 @@ import android.text.Spanned;
  import android.text.TextUtils;
  import android.util.TypedValue;
  import android.view.Gravity;

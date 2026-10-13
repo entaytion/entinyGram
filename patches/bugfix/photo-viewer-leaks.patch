@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/Blurre
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/BlurredBackgroundDrawableViewFactory.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/BlurredBackgroundDrawableViewFactory.java
-@@ -58,6 +58,12 @@ public class BlurredBackgroundDrawableViewFactory {
+@@ -60,6 +60,12 @@ public class BlurredBackgroundDrawableViewFactory {
          this.linkedViews = linkedViews;
      }
  
@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -12212,6 +12212,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -12217,6 +12217,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  animatorX.addUpdateListener(animation -> photoPaintView.setOffsetTranslationX((Float) animation.getAnimatedValue()));
                  paintingOverlay.showAll();
                  containerView.invalidate();
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                  photoPaintView.shutdown();
                  animators.add(animatorY);
                  animators.add(animatorX);
-@@ -18236,6 +18243,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18241,6 +18248,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  editorDoneLayout.setVisibility(View.GONE);
                  photoCropView.setVisibility(View.GONE);
              } else if (currentEditMode == EDIT_MODE_PAINT) {
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
                  photoPaintView.shutdown();
                  containerView.removeView(photoPaintView.getView());
                  photoPaintView = null;
-@@ -18758,6 +18772,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18763,6 +18777,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              currentThumb = null;
          }
          animatingImageView.setImageBitmap(null);

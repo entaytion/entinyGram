@@ -83,7 +83,7 @@ index 0000000..0000000 100644
          isPart = false;
  
          richMessage = null;
-@@ -7452,6 +7456,7 @@ public class RichMessageLayout {
+@@ -7460,6 +7464,7 @@ public class RichMessageLayout {
              this.currentMessageObject = root.audioBlocks.get(block);
              this.currentDocument = currentMessageObject != null ? currentMessageObject.getDocument() : null;
              this.observerTag = DownloadController.getInstance(root.currentAccount).generateObserverTag();
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
  
              radialProgress = new RadialProgress2(null);
              radialProgress.setCircleRadius(dp(24));
-@@ -7794,6 +7799,7 @@ public class RichMessageLayout {
+@@ -7802,6 +7807,7 @@ public class RichMessageLayout {
              this.previewX = root.padLeft + dp(10);
              this.hasPreview = MessageObject.isDocumentHasThumb(document);
              observerTag = DownloadController.getInstance(root.currentAccount).generateObserverTag();
@@ -115,7 +115,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -7973,6 +7973,7 @@ public class Theme {
+@@ -7978,6 +7978,7 @@ public class Theme {
          dialogs_tagTextPaint.setTextSize(dp(10));
          dialogs_searchNamePaint.setTextSize(dp(16));
          dialogs_searchNameEncryptedPaint.setTextSize(dp(16));
@@ -123,7 +123,7 @@ index 0000000..0000000 100644
      }
  
      public static void applyDialogsTheme() {
-@@ -8225,6 +8226,7 @@ public class Theme {
+@@ -8230,6 +8231,7 @@ public class Theme {
              addChatPaint(key_paint_chatComposeBackground, chat_composeBackgroundPaint, key_chat_messagePanelBackground);
              addChatPaint(key_paint_chatTimeBackground, chat_timeBackgroundPaint, key_chat_mediaTimeBackground);
          }
@@ -131,7 +131,7 @@ index 0000000..0000000 100644
      }
  
      public static void createChatResources(Context context, boolean fontsOnly) {
-@@ -8932,6 +8934,7 @@ public class Theme {
+@@ -8937,6 +8939,7 @@ public class Theme {
          }
  
          profile_aboutTextPaint.setTextSize(dp(16));
@@ -167,10 +167,10 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedText
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedTextView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedTextView.java
-@@ -174,6 +174,7 @@ public class AnimatedTextView extends View {
-             this.preserveIndex = preserveIndex;
+@@ -226,6 +226,7 @@ public class AnimatedTextView extends View {
              this.startFromEnd = startFromEnd;
              this.enforceByLetter = enforceByLetter;
+             this.startEndDiff = startEndDiff;
 +            desu.inugram.helpers.font.FontHelper.applyDefaultFont(textPaint);
          }
  

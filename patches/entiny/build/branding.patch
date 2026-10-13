@@ -52,7 +52,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -100,7 +100,9 @@ dependencies {
+@@ -105,7 +105,9 @@ dependencies {
      api project(':jlatexmath')
  
      // inu
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
      androidTestImplementation 'androidx.test:runner:1.6.2'
      androidTestImplementation 'junit:junit:4.13.2'
      androidTestImplementation "org.jetbrains.kotlin:kotlin-test:2.1.20"
-@@ -195,6 +197,12 @@ android {
+@@ -192,6 +194,12 @@ android {
          sourceSets.androidTest.jniLibs.srcDirs += ["$rootDir/TMessagesProj_App/build/inuTestJniLibs"]
      }
  
@@ -224,7 +224,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -3669,7 +3669,7 @@ public class AndroidUtilities {
+@@ -3679,7 +3679,7 @@ public class AndroidUtilities {
          }
          File storageDir = null;
          if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
@@ -325,7 +325,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
-@@ -2445,14 +2445,14 @@ public class ImageLoader {
+@@ -2469,14 +2469,14 @@ public class ImageLoader {
                      try {
                          if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
                              publicMediaDir = getPublicStorageDir();
@@ -342,7 +342,7 @@ index 0000000..0000000 100644
                  } else {
                      boolean isSdCard = !TextUtils.isEmpty(SharedConfig.storageCacheDir) && path.getAbsolutePath().startsWith(SharedConfig.storageCacheDir);
                      if (!isSdCard) {
-@@ -2461,7 +2461,7 @@ public class ImageLoader {
+@@ -2485,7 +2485,7 @@ public class ImageLoader {
                              path = ApplicationLoader.applicationContext.getExternalFilesDir(null);
                          }
                      }
@@ -351,7 +351,7 @@ index 0000000..0000000 100644
                  }
                  telegramPath.mkdirs();
  
-@@ -2471,7 +2471,7 @@ public class ImageLoader {
+@@ -2495,7 +2495,7 @@ public class ImageLoader {
                          File dir = dirs.get(a);
                          if (dir != null && !TextUtils.isEmpty(SharedConfig.storageCacheDir) && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
                              path = dir;
@@ -503,7 +503,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
-@@ -1535,10 +1535,10 @@ public class SharedConfig {
+@@ -1539,10 +1539,10 @@ public class SharedConfig {
      public static void checkSaveToGalleryFiles() {
          Utilities.globalQueue.postRunnable(() -> {
              try {
@@ -567,7 +567,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3511,12 +3511,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3512,12 +3512,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                  statusDrawable.center = true;
@@ -584,7 +584,7 @@ index 0000000..0000000 100644
                  updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
              }
              if (folderId == 0) {
-@@ -14427,4 +14431,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14434,4 +14438,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          return true;
      }
  
@@ -1003,7 +1003,7 @@ index 0000000..0000000 100644
      <string name="LanguageName">English</string>
      <string name="English">English</string>
      <string name="LanguageNameInEnglish">English</string>
-@@ -2763,8 +2763,8 @@
+@@ -2765,8 +2765,8 @@
      <string name="AuthAnotherClientUrl">This code can be used to allow someone to log in to your Telegram account.\n\nTo confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and scan the code.</string>
      <string name="QRCodePermissionNoCameraWithHint">**Telegram** needs camera access so that you can scan QR codes. Tap Settings -> Permissions, and turn **Camera** on.</string>
      <string name="SetProfilePhoto">Set Profile Photo</string>
@@ -1014,7 +1014,7 @@ index 0000000..0000000 100644
      <string name="AppUpdateVersionAndSize">Version %1$s • %2$s</string>
      <string name="AppBetaUpdateVersion">Version %1$s (%2$s)</string>
      <string name="AppUpdateDownloading">Downloading %1$d%%...</string>
-@@ -4199,7 +4199,7 @@
+@@ -4202,7 +4202,7 @@
      <string name="ViewMessageStatistic">Message Statistic</string>
      <string name="ViewMessage">Open Message</string>
      <!--Intro view-->
@@ -1058,5 +1058,5 @@ index 0000000..0000000 100644
 -    defaultConfig.applicationId = "desu.inugram"
 +    defaultConfig.applicationId = "ua.entaytion.entinygram"
  
-     sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
  
+     packaging {

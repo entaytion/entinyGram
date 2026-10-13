@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -298,8 +298,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -301,8 +301,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
      private final PipActivityController pipActivityController = new PipActivityController(this);
      private final IPipActivityHandler pipActivityHandler = pipActivityController.getHandler();
  
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
      public ActionBarLayout actionBarLayout;
      private ActionBarLayout layersActionBarLayout;
      public ActionBarLayout rightActionBarLayout;
-@@ -7014,6 +7014,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7020,6 +7020,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              onResumeStaticCallback.run();
              onResumeStaticCallback = null;
          }
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
          if (Theme.selectedAutoNightType == Theme.AUTO_NIGHT_TYPE_SYSTEM) {
              Theme.checkAutoNightThemeConditions();
          }
-@@ -7448,6 +7449,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7454,6 +7455,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                      }
                      themeSwitchImageView.setImageBitmap(bitmap);
                      themeSwitchImageView.setVisibility(View.VISIBLE);

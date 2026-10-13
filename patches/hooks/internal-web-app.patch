@@ -4,20 +4,20 @@ Date: Sun, 19 Apr 2026 09:52:49 +0300
 Subject: added some infra for internal web apps (mostly ported from nekogram)
 
 ---
- .../java/org/telegram/ui/ActionBar/BottomSheetTabs.java  | 1 +
- .../org/telegram/ui/bots/BotWebViewAttachedSheet.java    | 9 +++++++--
- .../main/java/org/telegram/ui/bots/BotWebViewSheet.java  | 8 ++++----
- .../java/org/telegram/ui/bots/WebViewRequestProps.java   | 1 +
- 4 files changed, 13 insertions(+), 6 deletions(-)
+ .../org/telegram/ui/ActionBar/BottomSheetTabs.java     |  1 +
+ .../org/telegram/ui/bots/BotWebViewAttachedSheet.java  |  9 +++++++--
+ .../java/org/telegram/ui/bots/BotWebViewSheet.java     | 10 ++++++----
+ .../java/org/telegram/ui/bots/WebViewRequestProps.java |  1 +
+ 4 files changed, 15 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheetTabs.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheetTabs.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheetTabs.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheetTabs.java
-@@ -1021,6 +1021,7 @@ public class BottomSheetTabs extends FrameLayout {
-                 return title;
+@@ -1026,6 +1026,7 @@ public class BottomSheetTabs extends FrameLayout {
+             if (props.type == BotWebViewSheet.TYPE_FAKE_WEB_VIEW) {
+                 return props.buttonText;
              }
-             if (props == null) return "";
 +            if (props.inu_internalType != 0) return desu.inugram.helpers.WebAppHelper.getInternalBotName(props);
              TLRPC.User user = MessagesController.getInstance(props.currentAccount).getUser(props.botId);
              return UserObject.getUserName(user);
@@ -58,37 +58,39 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotWebViewSheet.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotWebViewSheet.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotWebViewSheet.java
-@@ -1362,7 +1362,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
-         this.currentWebApp = props.app;
+@@ -1377,7 +1377,9 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
  
-         final TLRPC.User userbot = MessagesController.getInstance(currentAccount).getUser(botId);
--        CharSequence title = UserObject.getUserName(userbot);
-+        CharSequence title = props.inu_internalType > 0 ? desu.inugram.helpers.WebAppHelper.getInternalBotName(props) : UserObject.getUserName(userbot);
+         final boolean fakeWebView = props.type == TYPE_FAKE_WEB_VIEW;
+         final TLRPC.User userbot = fakeWebView ? null : MessagesController.getInstance(currentAccount).getUser(botId);
+-        CharSequence title = fakeWebView ? props.buttonText : UserObject.getUserName(userbot);
++        CharSequence title = fakeWebView ? props.buttonText
++            : props.inu_internalType > 0 ? desu.inugram.helpers.WebAppHelper.getInternalBotName(props)
++            : UserObject.getUserName(userbot);
          try {
              TextPaint tp = new TextPaint();
              tp.setTextSize(dp(20));
-@@ -1696,7 +1696,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
+@@ -1742,7 +1744,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
              o.addGap();
          }
          o
--            .addIf(onVerifiedAge == null, R.drawable.msg_bot, LocaleController.getString(R.string.BotWebViewOpenBot), () -> {
-+            .addIf(onVerifiedAge == null && requestProps.inu_internalType == 0, R.drawable.msg_bot, LocaleController.getString(R.string.BotWebViewOpenBot), () -> {
+-            .addIf(onVerifiedAge == null && !fakeWebView, R.drawable.msg_bot, LocaleController.getString(R.string.BotWebViewOpenBot), () -> {
++            .addIf(onVerifiedAge == null && !fakeWebView && requestProps.inu_internalType == 0, R.drawable.msg_bot, LocaleController.getString(R.string.BotWebViewOpenBot), () -> {
                  if (parentActivity instanceof LaunchActivity) {
                      ((LaunchActivity) parentActivity).presentFragment(ChatActivity.of(botId));
                  }
-@@ -1719,10 +1719,10 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
-                 webViewContainer.loadFlickerAndSettingsItem(currentAccount, botId, null);
+@@ -1767,10 +1769,10 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
+                 }
                  webViewContainer.reload();
              })
 -            .addIf(onVerifiedAge == null && userbot != null && userbot.bot_has_main_app, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut), () -> {
 +            .addIf(onVerifiedAge == null && userbot != null && userbot.bot_has_main_app && requestProps.inu_internalType == 0, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut), () -> {
                  MediaDataController.getInstance(currentAccount).installShortcut(botId, MediaDataController.SHORTCUT_TYPE_ATTACHED_BOT);
              })
--            .addIf(onVerifiedAge == null, R.drawable.menu_intro, LocaleController.getString(R.string.BotWebViewToS), () -> {
-+            .addIf(onVerifiedAge == null && requestProps.inu_internalType == 0, R.drawable.menu_intro, LocaleController.getString(R.string.BotWebViewToS), () -> {
+-            .addIf(onVerifiedAge == null && !fakeWebView, R.drawable.menu_intro, LocaleController.getString(R.string.BotWebViewToS), () -> {
++            .addIf(onVerifiedAge == null && !fakeWebView && requestProps.inu_internalType == 0, R.drawable.menu_intro, LocaleController.getString(R.string.BotWebViewToS), () -> {
                  Browser.openUrl(getContext(), LocaleController.getString(R.string.BotWebViewToSLink));
              })
-             .addIf(onVerifiedAge == null, R.drawable.msg_report, LocaleController.getString(R.string.BotWebViewReportBot), () -> {
+             .addIf(onVerifiedAge == null && !fakeWebView, R.drawable.msg_report, LocaleController.getString(R.string.BotWebViewReportBot), () -> {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/bots/WebViewRequestProps.java b/TMessagesProj/src/main/java/org/telegram/ui/bots/WebViewRequestProps.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/bots/WebViewRequestProps.java

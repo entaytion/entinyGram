@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -19639,7 +19639,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19750,7 +19750,7 @@ public class ChatActivity extends BaseFragment implements
              if (currentUser.self) {
                  avatarContainer.setTitle(LocaleController.getString(R.string.SavedMessages));
              } else if (!MessagesController.isSupportUser(currentUser) && getContactsController().contactsDict.get(currentUser.id) == null && (getContactsController().contactsDict.size() != 0 || !getContactsController().isLoadingContacts())) {
@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11419,7 +11419,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11423,7 +11423,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      nameTextView[a].setText(titleTextView.getText());
                      nameTextView[a].setRightDrawable(titleTextView.getRightDrawable());
                      nameTextView[a].setRightDrawable2(titleTextView.getRightDrawable2());

@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -1907,10 +1907,10 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2065,10 +2065,10 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      public void sendSticker(TLRPC.Document document, String query, long peer, CharSequence caption, VideoEditedInfo videoEditedInfo, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, MessageObject.SendAnimationData sendAnimationData, boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean updateStickersOrder, Object parentObject, SendMessageChatArguments sendMessageChatArguments, long stars, long monoForumPeerId, MessageSuggestionParams suggestionParams) {
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
          if (document == null) {
              return;
          }
-@@ -2032,6 +2032,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2190,6 +2190,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                      sendMessageParams.suggestionParams = suggestionParams;
                      sendMessageParams.caption = caption != null ? caption.toString() : null;
                      sendMessageParams.invert_media = invertMedia;
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
                      sendMessage(sendMessageParams);
                  });
              });
-@@ -2051,6 +2052,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2209,6 +2210,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              sendMessageParams.monoForumPeer = monoForumPeerId;
              sendMessageParams.suggestionParams = suggestionParams;
              sendMessageParams.invert_media = invertMedia;
@@ -48,7 +48,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -19931,6 +19931,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20042,6 +20042,7 @@ public class ChatActivity extends BaseFragment implements
                  info.entities = entry.entities;
                  info.masks = entry.stickers;
                  info.ttl = entry.ttl;
@@ -141,7 +141,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -2946,6 +2946,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -2947,6 +2947,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      public interface PhotoViewerProvider {
@@ -149,7 +149,7 @@ index 0000000..0000000 100644
          PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview, boolean closing);
          ImageReceiver.BitmapHolder getThumbForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
          void willSwitchFromPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
-@@ -7421,6 +7422,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7422,6 +7423,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  return false;
              }
  
@@ -159,7 +159,7 @@ index 0000000..0000000 100644
              final boolean canEdit = placeProvider != null && placeProvider.canEdit(currentIndex);
              final boolean canReplace = placeProvider != null && placeProvider.canReplace(currentIndex);
              final boolean userIsSelf = UserObject.isUserSelf(user);
-@@ -7447,13 +7451,22 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7448,13 +7452,22 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              final boolean showSchedule = !canEdit && canScheduleMessage && !hasTtl;
              final boolean showWithoutSound = !(canEdit && canReplace) && !userIsSelf;
              final boolean multipleSelected = placeProvider != null && placeProvider.getSelectedCount() > 1;

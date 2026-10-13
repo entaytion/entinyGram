@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
-@@ -1162,6 +1162,9 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
+@@ -1173,6 +1173,9 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
                          launchActivity.onNewIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/" + messagesController.premiumBotUsername + "?start=" + source)), (Browser.Progress) null);
                      } else if (!TextUtils.isEmpty(messagesController.premiumInvoiceSlug)) {
                          launchActivity.onNewIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/$" + messagesController.premiumInvoiceSlug)), (Browser.Progress) null);

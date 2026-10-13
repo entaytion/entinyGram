@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextCapt
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextCaption.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextCaption.java
-@@ -353,7 +353,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -351,7 +351,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
                      }
                  }
                  try {
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
                  } catch (Exception ignore) {}
                  if (delegate != null) {
                      delegate.onSpansChanged();
-@@ -395,6 +395,17 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -393,6 +393,17 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
              protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                  super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(64), MeasureSpec.EXACTLY));
              }
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
          };
          final String def = initial == null ? "" : initial;
          editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-@@ -447,7 +458,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -445,7 +456,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
                  FileLog.e(e);
              }
              if (text != null) {
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                  editText.setSelection(0, editText.getText().length());
              }
              checkPaste.run();
-@@ -472,7 +483,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -470,7 +481,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
                  FileLog.e(e);
              }
              if (text != null) {
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
                  editText.setSelection(0, editText.getText().length());
              }
          }
-@@ -1032,6 +1043,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -1030,6 +1041,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
                      String html = clipData.getItemAt(0).getHtmlText();
                      SpannableStringBuilder pasted = new SpannableStringBuilder(CopyUtilities.fromHTML(html));
                      Emoji.replaceEmoji(pasted, getPaint().getFontMetricsInt(), false, null);
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
                      AnimatedEmojiSpan[] spans = pasted.getSpans(0, pasted.length(), AnimatedEmojiSpan.class);
                      if (spans != null) {
                          for (int k = 0; k < spans.length; ++k) {
-@@ -1057,6 +1069,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -1055,6 +1067,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
                      FileLog.e(e);
                  }
              }
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
          } else if (id == android.R.id.copy) {
              int start = Math.max(0, getSelectionStart());
              int end = Math.min(getText().length(), getSelectionEnd());
-@@ -1089,4 +1102,9 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -1087,4 +1100,9 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
          }
          return super.onTextContextMenuItem(id);
      }
@@ -100,7 +100,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -1700,7 +1700,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1703,7 +1703,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                              if ((text.startsWith("http://") || text.startsWith("https://")) && !TextUtils.isEmpty(subject)) {
                                  text = subject + "\n" + text;
                              }

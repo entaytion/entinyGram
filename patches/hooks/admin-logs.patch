@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -2933,6 +2933,9 @@ public class MessageObject {
+@@ -2935,6 +2935,9 @@ public class MessageObject {
                  message.media.webpage.display_url = "";
                  message.media.webpage.url = "";
              }
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          } else if (event.action instanceof TLRPC.TL_channelAdminLogEventActionChangeEmojiStickerSet) {
              TLRPC.InputStickerSet newPack = ((TLRPC.TL_channelAdminLogEventActionChangeEmojiStickerSet) event.action).new_stickerset;
              TLRPC.InputStickerSet oldPack = ((TLRPC.TL_channelAdminLogEventActionChangeEmojiStickerSet) event.action).new_stickerset;
-@@ -3512,6 +3515,7 @@ public class MessageObject {
+@@ -3514,6 +3517,7 @@ public class MessageObject {
                  messageObject.linkDescription = null;
                  messageObject.generateLinkDescription();
              }

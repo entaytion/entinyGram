@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
-@@ -2071,7 +2071,13 @@ public class ImageLoader {
+@@ -2100,7 +2100,13 @@ public class ImageLoader {
      public ImageLoader() {
          thumbGeneratingQueue.setPriority(Thread.MIN_PRIORITY);
  

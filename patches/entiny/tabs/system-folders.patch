@@ -4,14 +4,15 @@ Date: Fri, 9 Oct 2026 17:59:59 +0300
 Subject: [+] system folders hook in message controller
 
 ---
- .../main/java/org/telegram/messenger/MessagesController.java  | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../main/java/org/telegram/messenger/MessagesController.java | 5 +++++
+ .../main/java/org/telegram/messenger/MessagesStorage.java    | 4 ++++
+ 2 files changed, 9 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1322,6 +1322,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1325,6 +1325,9 @@ public class MessagesController extends BaseController implements NotificationCe
              if (desu.inugram.helpers.dialogs.FolderMembershipHelper.isLocallyIncluded(accountInstance.getCurrentAccount(), id, dialogId)) {
                  return true;
              }
@@ -21,7 +22,7 @@ index 0000000..0000000 100644
              if (d.folder_id != 0 && (flags & DIALOG_FILTER_FLAG_EXCLUDE_ARCHIVED) != 0) {
                  return false;
              }
-@@ -2251,6 +2254,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2255,6 +2258,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      putUsers(users, true);
                      putChats(chats, true);
                      dialogFiltersLoaded = true;
@@ -29,3 +30,33 @@ index 0000000..0000000 100644
                      getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
                      if (remote == 0) {
                          loadRemoteFilters(false);
+@@ -2632,6 +2636,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     public void removeFilter(DialogFilter filter) {
+         dialogFilters.remove(filter);
+         dialogFiltersById.remove(filter.id);
++        desu.inugram.helpers.dialogs.SystemFoldersHelper.onRemovedByUser(filter.id);
+         getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -3680,6 +3680,9 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void saveDialogFilter(MessagesController.DialogFilter filter, boolean atBegin, boolean peers) {
++        if (desu.inugram.helpers.dialogs.SystemFoldersHelper.isSystem(filter.id)) {
++            return;
++        }
+         storageQueue.postRunnable(() -> {
+             saveDialogFilterInternal(filter, atBegin, peers);
+             calcUnreadCounters(false);
+@@ -3719,6 +3722,7 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void saveDialogFiltersOrder() {
++        desu.inugram.helpers.dialogs.SystemFoldersHelper.captureOrder(currentAccount);
+         ArrayList<MessagesController.DialogFilter> filtersFinal = new ArrayList<>(getMessagesController().dialogFilters);
+         storageQueue.postRunnable(() -> {
+             dialogFilters.clear();

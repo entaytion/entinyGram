@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/video/TextureRen
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/video/TextureRenderer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/video/TextureRenderer.java
-@@ -1407,6 +1407,10 @@ public class TextureRenderer {
+@@ -1406,6 +1406,10 @@ public class TextureRenderer {
          } else if (entity.subType == 3) {
              editText.setFrameColor(0);
              editText.setTextColor(entity.color);

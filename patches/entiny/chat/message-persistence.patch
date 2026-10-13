@@ -21,7 +21,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -8114,16 +8114,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8098,16 +8098,20 @@ public class MessagesController extends BaseController implements NotificationCe
              settings.business_bot_manage_url = "https://telegram.org/";
          }
          editor.apply();
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
      }
  
      public void loadPeerSettings(TLRPC.User currentUser, TLRPC.Chat currentChat) {
-@@ -8305,7 +8309,19 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8289,7 +8293,19 @@ public class MessagesController extends BaseController implements NotificationCe
                  if (task != null) {
                      for (int a = 0, N = task.size(); a < N; a++) {
                          ArrayList<Integer> mids = task.valueAt(a);
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (taskMedia != null) {
-@@ -8315,12 +8331,14 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8299,12 +8315,14 @@ public class MessagesController extends BaseController implements NotificationCe
                          long dialogId = taskMedia.keyAt(a);
                          ArrayList<Integer> mids = taskMedia.valueAt(a);
                          if (checkViewer && viewerObject != null && viewerObject.currentAccount == currentAccount && viewerObject.getDialogId() == dialogId && mids.contains(viewerObject.getId())) {
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
                          }
                          if (!mids.isEmpty()) {
                              getMessagesStorage().emptyMessagesMedia(dialogId, mids);
-@@ -9311,6 +9329,33 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9295,6 +9313,33 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
          ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
          if (objs != null) {
              for (int i = 0; i < objs.size(); ++i) {
-@@ -9385,6 +9430,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9369,6 +9414,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  getMessagesStorage().markMessagesAsDeleted(dialogId, messages, true, false, ChatActivity.MODE_WELCOME_MESSAGES, topicId);
              } else {
                  if (channelId == 0) {
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -18721,6 +18767,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18743,6 +18789,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);
@@ -136,16 +136,16 @@ index 0000000..0000000 100644
  
                      ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                      Integer value = read_max.get(message.dialog_id);
-@@ -19571,6 +19618,8 @@ public class MessagesController extends BaseController implements NotificationCe
-                 ImageLoader.saveMessageThumbs(message);
-                 AndroidUtilities.runOnUIThread(()-> getSendMessagesHelper().onMessageEdited(message));
+@@ -19603,6 +19650,8 @@ public class MessagesController extends BaseController implements NotificationCe
+                     }
+                 });
  
 +                desu.inugram.helpers.chat.SavedMessagesHelper.handleMessageEdited(currentAccount, message, dialogMessagesByIds.get(message.id));
 +
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -21170,6 +21219,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21212,6 +21261,10 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -156,7 +156,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21294,6 +21347,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21336,6 +21389,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -276,7 +276,7 @@ index 0000000..0000000 100644
              getMessagesController().deleteMessages(messageIds, null, null, dialogId, topicId, false, mode);
          }
      }
-@@ -2948,6 +2949,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3106,6 +3107,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  messageObject.editingMessageEntities = newMsg.entities;
                  path = newMsg.attachPath;
              } else {
@@ -286,7 +286,7 @@ index 0000000..0000000 100644
                  messageObject.previousMedia = newMsg.media;
                  messageObject.previousMessage = newMsg.message;
                  messageObject.previousMessageEntities = newMsg.entities;
-@@ -3469,6 +3473,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3627,6 +3631,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  req.flags |= TLObject.FLAG_18;
              }
          }
@@ -340,7 +340,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -26613,6 +26613,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -26724,6 +26724,12 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }
                  obj.deleted = true;
@@ -353,7 +353,7 @@ index 0000000..0000000 100644
                  if (obj.scheduled && sent) {
                      obj.scheduledSent = true;
                  }
-@@ -26621,6 +26627,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -26732,6 +26738,18 @@ public class ChatActivity extends BaseFragment implements
                  }
                  int index = chatAdapter != null && chatAdapter.isFiltered && filteredMessagesDict != null ? chatAdapter.filteredMessages.indexOf(filteredMessagesDict.get(mid)) : messages.indexOf(obj);
                  if (index != -1) {
@@ -372,7 +372,7 @@ index 0000000..0000000 100644
                      if (obj.scheduled) {
                          scheduledMessagesCount--;
                          updateScheduled = true;
-@@ -26728,6 +26746,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26839,6 +26857,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      updated = true;
@@ -486,7 +486,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -103,12 +103,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -104,12 +104,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      private static final int INDEX_PROFILE = 4;
  
      private static int indexToPosition(int index) {
@@ -500,7 +500,7 @@ index 0000000..0000000 100644
      }
  
      private static final int ANIMATOR_ID_TABS_VISIBLE = 0;
-@@ -353,7 +348,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -354,7 +349,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              tab.setMainTabsCompact(compact);
          }
  

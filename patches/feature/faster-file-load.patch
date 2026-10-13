@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperatio
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
-@@ -286,7 +286,7 @@ public class FileLoadOperation {
+@@ -299,7 +299,7 @@ public class FileLoadOperation {
      }
  
      private void updateParams() {

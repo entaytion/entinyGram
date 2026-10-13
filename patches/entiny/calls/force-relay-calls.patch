@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService
 index 0000000..0000000 100755
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
-@@ -3417,6 +3417,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -3420,6 +3420,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  			final boolean enableNs = !(sysNsAvailable && serverConfig.useSystemNs);
  			final String logFilePath = BuildVars.DEBUG_VERSION ? VoIPHelper.getLogFilePath("voip" + privateCall.id) : VoIPHelper.getLogFilePath("" + privateCall.id, false);
  			final String statsLogFilePath = VoIPHelper.getLogFilePath("" + privateCall.id, true);

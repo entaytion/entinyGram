@@ -30,15 +30,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -37919,7 +37919,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38046,7 +38046,7 @@ public class ChatActivity extends BaseFragment implements
                      cell.resetPressedLink(-1);
                  }
                  if (!messageObject.isVoice()) {
 -                    showDialog(new AudioPlayerAlert(getContext(), themeDelegate));
 +                    showDialog(desu.inugram.helpers.player.Md3PlayerHelper.create(getContext(), themeDelegate));
                  }
-             } else if (str.startsWith("card:")) {
-                 didLongPressCard(cell, url, str.substring(5));
+             } else if (str.startsWith("tonaddress:")) {
+                 didPressTonAddress(cell, url, str.substring(11));
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java
@@ -103,7 +103,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9147,8 +9147,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9148,8 +9148,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
@@ -114,7 +114,7 @@ index 0000000..0000000 100644
          final float baseTranslationY = top
              - floatingButtonPanOffset;
  
-@@ -14590,7 +14590,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14597,7 +14597,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else if (communityId != 0) {
              return navigationBarHeight + dp(12 + 48 + 12);
          } else {
@@ -123,7 +123,7 @@ index 0000000..0000000 100644
              if (filterTabsView != null && FolderHelper.atBottom()) {
                  bottom += dp(FolderHelper.bottomReservedHeightDp());
              }
-@@ -14656,7 +14656,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14663,7 +14663,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
@@ -136,7 +136,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -3127,7 +3127,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -3130,7 +3130,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              } else if (showPlayer) {
                  if (!actionBarLayout.getFragmentStack().isEmpty()) {
                      BaseFragment fragment = actionBarLayout.getFragmentStack().get(0);
@@ -149,7 +149,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -471,6 +471,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -472,6 +472,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          fadeView.setBackground(fadeDrawable);
  
          contentView.addView(fadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM));
@@ -157,7 +157,7 @@ index 0000000..0000000 100644
  
          tabsViewWrapper = new FrameLayout(context) {
              @Override
-@@ -1184,6 +1185,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1185,6 +1186,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      private void checkUi_fadeView() {
@@ -169,7 +169,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -3914,7 +3914,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3918,7 +3918,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                              MediaController.getInstance().playMessage(savedMusicList.list.get(0));
                          }
                      }

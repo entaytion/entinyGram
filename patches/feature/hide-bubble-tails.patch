@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawab
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
-@@ -76,6 +76,8 @@ public class MessageDrawable extends Drawable {
+@@ -78,6 +78,8 @@ public class MessageDrawable extends Drawable {
              {-1, -1, -1, -1}
      };
      private Drawable[][] backgroundDrawable = new Drawable[4][4];
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      private int[][] backgroundDrawableColor = new int[][]{
              {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff},
              {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff},
-@@ -318,6 +320,16 @@ public class MessageDrawable extends Drawable {
+@@ -326,6 +328,16 @@ public class MessageDrawable extends Drawable {
      }
  
      public Drawable getBackgroundDrawable() {
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
          int newRad;
          if (overrideRoundRadius != 0) {
              newRad = overrideRoundRadius;
-@@ -442,6 +454,13 @@ public class MessageDrawable extends Drawable {
+@@ -452,6 +464,13 @@ public class MessageDrawable extends Drawable {
          if (gradientShader == null && !isSelected && crossfadeFromDrawable == null) {
              return null;
          }
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
          int newRad = dp(SharedConfig.bubbleRadius);
          int idx;
          if (isTopNear && isBottomNear) {
-@@ -674,6 +693,8 @@ public class MessageDrawable extends Drawable {
+@@ -684,6 +703,8 @@ public class MessageDrawable extends Drawable {
                  int radToUse = botButtonsBottom ? nearRad : rad;
                  if (currentType == TYPE_MEDIA) {
                      path.moveTo(bounds.right - dp(8) - radToUse, bounds.bottom - padding);
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                  } else {
                      path.moveTo(bounds.right - dp(2.6f), bounds.bottom - padding);
                  }
-@@ -724,9 +745,16 @@ public class MessageDrawable extends Drawable {
+@@ -734,9 +755,16 @@ public class MessageDrawable extends Drawable {
                  }
              } else {
                  if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
                  } else {
                      path.lineTo(bounds.right - dp(8), top - topY + currentBackgroundHeight);
                  }
-@@ -737,6 +765,8 @@ public class MessageDrawable extends Drawable {
+@@ -747,6 +775,8 @@ public class MessageDrawable extends Drawable {
  
                  if (currentType == TYPE_MEDIA) {
                      path.moveTo(bounds.left + dp(8) + radToUse, bounds.bottom - padding);
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
                  } else {
                      path.moveTo(bounds.left + dp(2.6f), bounds.bottom - padding);
                  }
-@@ -781,9 +811,16 @@ public class MessageDrawable extends Drawable {
+@@ -791,9 +821,16 @@ public class MessageDrawable extends Drawable {
                  }
              } else {
                  if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
@@ -104,7 +104,7 @@ index 0000000..0000000 100644
                  } else {
                      path.lineTo(bounds.left + dp(8), top - topY + currentBackgroundHeight);
                  }
-@@ -853,12 +890,15 @@ public class MessageDrawable extends Drawable {
+@@ -863,12 +900,15 @@ public class MessageDrawable extends Drawable {
          Rect lastRect = new Rect();
          boolean lastDrawFullTop;
          boolean lastDrawFullBottom;

@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -18469,6 +18469,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18491,6 +18491,7 @@ public class MessagesController extends BaseController implements NotificationCe
              if (BuildVars.LOGS_ENABLED && baseUpdate != null) {
                  FileLog.d("process update " + baseUpdate.getClass().getSimpleName());
              }
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
                              passkeyResponse.attestation_object = Base64.decode(response.getString("attestationObject"), Base64.URL_SAFE);
  
                              FileLog.d("AAGUID: " + bytesToHex(Arrays.copyOfRange(passkeyResponse.attestation_object, 67, 67 + 16)));
-@@ -181,20 +188,27 @@ public class PasskeysController {
+@@ -182,20 +189,27 @@ public class PasskeysController {
              }
  
              final String requestJson;
@@ -119,7 +119,7 @@ index 0000000..0000000 100644
                      .build();
  
              try {
-@@ -220,7 +234,7 @@ public class PasskeysController {
+@@ -221,7 +235,7 @@ public class PasskeysController {
                              final JSONObject response = json.getJSONObject("response");
                              final TL_account.inputPasskeyResponseLogin passkeyResponse = new TL_account.inputPasskeyResponseLogin();
                              passkeyResponse.client_data = new TLRPC.TL_dataJSON();

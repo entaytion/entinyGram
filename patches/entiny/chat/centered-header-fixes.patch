@@ -81,7 +81,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -8370,8 +8370,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -8374,8 +8374,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  continue;
              }
  
@@ -92,7 +92,7 @@ index 0000000..0000000 100644
  
              nameTextView[a].setTranslationX(nameX);
              nameTextView[a].setTranslationY(nameY);
-@@ -8731,9 +8731,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -8735,9 +8735,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  float avY = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2.0f - 21 * AndroidUtilities.density + actionBar.getTranslationY();
  //                metaball.setVisibility(View.GONE);
  
@@ -104,7 +104,7 @@ index 0000000..0000000 100644
                  onlineTextView[0].setTranslationY((float) Math.floor(avY) + AndroidUtilities.dp(24));
                  nameTextView[0].setScaleX(1.0f);
                  nameTextView[0].setScaleY(1.0f);
-@@ -8852,7 +8852,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -8856,7 +8856,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  final float avatarBottom = (float) Math.floor(endNameY) + (avatarContainer.getHeight() * avatarContainer.getScaleY() + dpf2(8)) * (openAnimationInProgress ? avatarAnimationProgress : diff);
                  nameY = avatarBottom + dp(1.3f) + dp(7) * diff + titleAnimationsYDiff * (1f - avatarAnimationProgress);
                  onlineY = avatarBottom + dp(24) + (float) Math.floor(11 * AndroidUtilities.density) * diff;
@@ -114,7 +114,7 @@ index 0000000..0000000 100644
  
                  if (showStatusButton != null) {
                      showStatusButton.setAlpha((int) (0xFF * diff));
-@@ -8881,7 +8882,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -8885,7 +8886,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          this.onlineX = onlineX;
                      }
                      nameX = AndroidUtilities.lerp(minimizedX, nameX, diff); //
@@ -123,7 +123,7 @@ index 0000000..0000000 100644
  
                      if (expandAnimator == null || !expandAnimator.isRunning()) {
                          nameTextView[a].setTranslationX(nameX);
-@@ -10005,6 +10006,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10009,6 +10010,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      boolean profileTransitionInProgress;
  
      private float prevAvatarTranslation;
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
  
      private BaseFragment findPreviousChatFragment() {
          if (parentLayout == null || parentLayout.getFragmentStack().size() < 2) {
-@@ -10084,6 +10101,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10088,6 +10105,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
          if (isOpen) {
              prevAvatarTranslation = 0;
@@ -155,7 +155,7 @@ index 0000000..0000000 100644
              for (int i = 0; i < 2; i++) {
                  FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) onlineTextView[i + 1].getLayoutParams();
                  layoutParams.rightMargin = (int) (-21 * AndroidUtilities.density + AndroidUtilities.dp(8));
-@@ -10205,6 +10224,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10209,6 +10228,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          ? (ViewGroup) previousTransitionMainFragment.getFragmentView()
                          : previousTransitionFragment.getContentView();
                      prevAvatarTranslation = ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, previousRoot);
@@ -172,7 +172,7 @@ index 0000000..0000000 100644
                  }
                  if (avatarContainer != null && avatarContainer.getSubtitleTextView() instanceof SimpleTextView && ((SimpleTextView) avatarContainer.getSubtitleTextView()).getLeftDrawable() != null || avatarContainer.statusMadeShorter[0]) {
                      transitionOnlineText = avatarContainer.getSubtitleTextView();
-@@ -10300,6 +10329,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10304,6 +10333,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  ChatAvatarContainer avatarContainer = ((ChatActivity) previousFragment).getAvatarContainer();
                  AndroidUtilities.doOnPreDraw(avatarContainer, () -> {
                      prevAvatarTranslation = ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, (ViewGroup) previousFragment.fragmentView);

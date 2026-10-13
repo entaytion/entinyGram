@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1288,6 +1288,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1291,6 +1291,7 @@ public class MessagesController extends BaseController implements NotificationCe
          public ArrayList<TLRPC.Dialog> dialogsForward = new ArrayList<>();
          public int color;
          public boolean title_noanimate;
@@ -453,7 +453,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -279,6 +279,7 @@ import java.util.List;
+@@ -280,6 +280,7 @@ import java.util.List;
  import java.util.concurrent.ConcurrentHashMap;
  
  import desu.inugram.InuHooks;
@@ -461,7 +461,7 @@ index 0000000..0000000 100644
  import desu.inugram.helpers.dialogs.MainTabsHelper;
  import me.vkryl.android.animator.BoolAnimator;
  import me.vkryl.android.animator.FactorAnimator;
-@@ -3677,6 +3678,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3678,6 +3679,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      if (initialDialogsType == DIALOGS_TYPE_FORWARD) {
                          return 0;
                      }
@@ -471,7 +471,7 @@ index 0000000..0000000 100644
                      if (tabId == filterTabsView.getDefaultTabId()) {
                          return getMessagesStorage().getMainUnreadCount();
                      }
-@@ -6880,12 +6884,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6881,12 +6885,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      selectWithStableId = true;
                  }
                  filterTabsView.removeTabs();
@@ -489,7 +489,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (stableId >= 0) {
-@@ -6908,9 +6915,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6909,9 +6916,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      if (viewPages[a].selectedType >= filters.size()) {
                          viewPages[a].selectedType = filters.size() - 1;
                      }

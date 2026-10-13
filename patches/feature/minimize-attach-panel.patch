@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13715,8 +13715,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -13801,8 +13801,11 @@ public class ChatActivity extends BaseFragment implements
              chatAttachAlert.setMaxSelectedPhotos(-1, true);
          }
          chatAttachAlert.enableDefaultMode();
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
          chatAttachAlert.parentThemeDelegate = themeDelegate;
          showDialog(chatAttachAlert);
      }
-@@ -30146,6 +30149,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30257,6 +30260,7 @@ public class ChatActivity extends BaseFragment implements
          super.onResume();
          checkShowBlur(false);
          inu_updateMenuSlotAvatar();
@@ -64,7 +64,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
-@@ -6061,6 +6061,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -6113,6 +6113,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
      }
  
      public void init() {
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
          writeButton.setEffect(effectId = 0);
          botButtonWasVisible = false;
          botButtonProgressWasVisible = false;
-@@ -6918,6 +6920,24 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -7036,6 +7038,24 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
  
      private boolean confirmationAlertShown = false;
      protected boolean allowPassConfirmationAlert = false;
@@ -98,7 +98,7 @@ index 0000000..0000000 100644
  
      public void dismiss(boolean passConfirmationAlert) {
          if (passConfirmationAlert) {
-@@ -6947,7 +6967,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -7066,7 +7086,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                  return;
              }
              confirmationAlertShown = true;
@@ -107,7 +107,7 @@ index 0000000..0000000 100644
                  new AlertDialog.Builder(baseFragment.getParentActivity(), resourcesProvider)
                      .setTitle(getString(R.string.DiscardSelectionAlertTitle))
                      .setMessage(getString(R.string.DiscardSelectionAlertMessage))
-@@ -6967,8 +6987,16 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -7086,8 +7106,16 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                      })
                      .setOnPreDismissListener(di -> {
                          confirmationAlertShown = false;

@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -14136,7 +14136,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -14222,7 +14222,11 @@ public class ChatActivity extends BaseFragment implements
      }
  
      public void searchLinks(final CharSequence charSequence, final boolean force) {
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
              return;
          }
          if (currentChat != null && !ChatObject.canSendEmbed(currentChat)) {
-@@ -14151,6 +14155,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -14237,6 +14241,12 @@ public class ChatActivity extends BaseFragment implements
              return;
          }
          checkEditLinkRemoved(charSequence);
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
          if (force && foundWebPage != null && !(foundWebPage instanceof TLRPC.TL_webPagePending)) {
              if (foundWebPage.url != null) {
                  int index = TextUtils.indexOf(charSequence, foundWebPage.url);
-@@ -14279,6 +14289,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -14365,6 +14375,7 @@ public class ChatActivity extends BaseFragment implements
              } else {
                  req.message = textToCheck.toString();
              }
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
              if (foundWebPage != null && req.message.equals(foundWebPage.displayedText)) {
                  return;
              }
-@@ -14324,6 +14335,34 @@ public class ChatActivity extends BaseFragment implements
+@@ -14410,6 +14421,34 @@ public class ChatActivity extends BaseFragment implements
  
      private HashMap<String, TLRPC.WebPage> lastLinkPreviewResults;
  

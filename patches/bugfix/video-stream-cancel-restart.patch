@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperatio
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
-@@ -2258,9 +2258,6 @@ public class FileLoadOperation {
+@@ -2287,9 +2287,6 @@ public class FileLoadOperation {
          if (BuildVars.LOGS_ENABLED && FULL_LOGS) {
              FileLog.d(fileName + " startDownloadRequest");
          }

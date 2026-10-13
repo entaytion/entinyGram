@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp b/TMessagesProj/jni/
 index 0000000..0000000 100644
 --- a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
 +++ b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
-@@ -247,10 +247,11 @@ void ConnectionsManager::select() {
+@@ -248,10 +248,11 @@ void ConnectionsManager::select() {
  
      if (lastPauseTime != 0 && llabs(now - lastPauseTime) >= nextSleepTimeout) {
          bool dontSleep = !requestingSaltsForDc.empty();
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
                      dontSleep = true;
                      break;
                  }
-@@ -259,7 +260,7 @@ void ConnectionsManager::select() {
+@@ -260,7 +261,7 @@ void ConnectionsManager::select() {
          if (!dontSleep) {
              for (auto & iter : requestsQueue) {
                  Request *request = iter.get();
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
                      dontSleep = true;
                      break;
                  }
-@@ -276,7 +277,7 @@ void ConnectionsManager::select() {
+@@ -277,7 +278,7 @@ void ConnectionsManager::select() {
              return;
          } else {
              lastPauseTime = now;
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          }
      }
      if (networkPaused) {
-@@ -3828,6 +3829,7 @@ void ConnectionsManager::resumeNetwork(bool partial) {
+@@ -3862,6 +3863,7 @@ void ConnectionsManager::resumeNetwork(bool partial) {
          } else {
              lastPauseTime = 0;
              lastMonotonicPauseTime = 0;
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
              lastSystemPauseTime = 0;
              networkPaused = false;
              if (LOGS_ENABLED) DEBUG_D("wakeup network account%u", instanceNum);
-@@ -3848,7 +3850,7 @@ void ConnectionsManager::pauseNetwork() {
+@@ -3882,7 +3884,7 @@ void ConnectionsManager::pauseNetwork() {
      if (lastPauseTime != 0) {
          return;
      }
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
 --- a/TMessagesProj/jni/tgnet/Defines.h
 +++ b/TMessagesProj/jni/tgnet/Defines.h
 @@ -27,6 +27,7 @@
- #define DOWNLOAD_CONNECTIONS_COUNT 2
+ #define DOWNLOAD_CONNECTIONS_COUNT 8
  #define UPLOAD_CONNECTIONS_COUNT 4
  #define CONNECTION_BACKGROUND_KEEP_TIME 10000
 +#define INU_CONNECTION_BACKGROUND_PENDING_KEEP_TIME 120000

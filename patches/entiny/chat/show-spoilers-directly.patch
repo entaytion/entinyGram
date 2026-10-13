@@ -17,7 +17,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -644,6 +644,14 @@ public class MessageObject {
+@@ -646,6 +646,14 @@ public class MessageObject {
      }
  
      public boolean hasMediaSpoilers() {
@@ -59,10 +59,10 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/Spo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilersTextView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilersTextView.java
-@@ -186,7 +186,7 @@ public class SpoilersTextView extends TextView implements TextSelectionHelper.Si
- 
-     @Override
-     public void setText(CharSequence text, BufferType type) {
+@@ -217,7 +217,7 @@ public class SpoilersTextView extends TextView implements TextSelectionHelper.Si
+         revealGeneration++;
+         revealPending = false;
+         revealInProgress = false;
 -        isSpoilersRevealed = false;
 +        isSpoilersRevealed = desu.inugram.InuConfig.SHOW_SPOILERS_DIRECTLY.getValue();
          super.setText(text, type);

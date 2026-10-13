@@ -4,10 +4,10 @@ Date: Mon, 28 Sep 2026 00:39:21 +0300
 Subject: [*] readable chat header colors on light wallpapers
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 19 ++++++++++--
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 17 ++++++++--
  .../java/org/telegram/ui/ChatActivity.java    | 31 ++++++++++++-------
  .../ui/Components/ChatAvatarContainer.java    | 30 +++++++++---------
- 3 files changed, 51 insertions(+), 29 deletions(-)
+ 3 files changed, 50 insertions(+), 28 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
                      return false;
                  }
              }
-@@ -2558,6 +2558,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2566,6 +2566,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
      }
  
@@ -37,32 +37,25 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          if (inu_needsUpdateGlassBounds()) {
-@@ -2575,7 +2583,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2583,7 +2591,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int t = inu_glassTop;
          final int b = inu_glassBottom;
  
--        if (glassDrawable != null && !glassOnlyBack) {
+-        if (glassDrawable != null && !glassOnlyBack && drawGlassTitle) {
 +        final boolean hideChatPill = inu_hideChatPill();
 +        if (hideChatPill && inu_nonIsland) {
 +            blurScrimPaint.setColor(getThemedColor(Theme.key_actionBarDefault));
 +            canvas.drawRect(0, 0, getWidth(), getHeight(), blurScrimPaint);
 +        }
-+        if (glassDrawable != null && !glassOnlyBack && !hideChatPill) {
-             if (inu_nonIsland) {
-                 glassDrawable.setBounds(0, 0, getWidth(), getHeight());
-             } else {
-@@ -2798,4 +2811,4 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-             invalidate();
-         }
-     }
--}
-\ No newline at end of file
-+}
++        if (glassDrawable != null && !glassOnlyBack && drawGlassTitle && !hideChatPill) {
+             final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
+             final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17604,6 +17604,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17715,6 +17715,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -72,7 +65,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44016,22 +44019,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -44148,22 +44151,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }

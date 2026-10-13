@@ -66,7 +66,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14005,7 +14005,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14012,7 +14012,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          }
@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -92,9 +92,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -93,9 +93,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
      public static final int TABS_COUNT = 4;
      private static final int POSITION_CHATS = 0;
@@ -89,7 +89,7 @@ index 0000000..0000000 100644
  
      private static final int INDEX_CHATS = 0;
      private static final int INDEX_CONTACTS = 1;
-@@ -112,7 +109,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -113,7 +110,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
  
      private IUpdateLayout updateLayout;
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
  
      private UpdateLayoutWrapper updateLayoutWrapper;
      private FrameLayout tabsViewWrapper;
-@@ -319,7 +315,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -320,7 +316,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          final boolean compact = MainTabsHelper.isCompact();
          final int mainTabsMargin = MainTabsHelper.getMainTabsMargin();
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
          final int tabsViewWidth = MainTabsHelper.getTabsViewWidth();
  
          tabsView = new MainTabsLayout(context, resourceProvider);
-@@ -345,7 +340,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -346,7 +341,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsView.addTabToIgnoreClick(tabs[INDEX_PROFILE]);
          tabsView.addTabToIgnoreClick(tabs[INDEX_CALLS]);
          for (GlassTabView tab : tabs) {
@@ -114,7 +114,7 @@ index 0000000..0000000 100644
          }
  
          final int[] inu_visualOrder = MainTabsHelper.visualOrder();
-@@ -376,10 +371,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -377,10 +372,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              });
  
              tabsView.addView(tabs[index]);
@@ -126,7 +126,7 @@ index 0000000..0000000 100644
  
          selectTab(viewPager.getCurrentPosition(), false);
  
-@@ -436,7 +429,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -437,7 +430,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              return;
          }
  
@@ -135,7 +135,7 @@ index 0000000..0000000 100644
          if (unreadCount > 0) {
              final String unreadCountFmt = LocaleController.formatNumber(unreadCount, ',');
              tabs[INDEX_CHATS].setCounter(unreadCountFmt, false, animated);
-@@ -470,19 +463,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -471,19 +464,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (getContext() == null || getParentActivity() == null) return false;
          final ItemOptions o = ItemOptions.makeOptions(this, anchor);
          o.add(R.drawable.menu_call_create, getString(R.string.GroupCallCreate2), () -> CallLogActivity.openCreateCall(this));
@@ -155,7 +155,7 @@ index 0000000..0000000 100644
          o.setBlur(true);
          o.translate(0, -dp(4));
          final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
-@@ -758,12 +738,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -759,12 +739,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          if (viewPager != null) {
              final int currentPosition = viewPager.getCurrentPosition();
@@ -169,7 +169,7 @@ index 0000000..0000000 100644
              if (currentPosition != profile) {
                  dropFragmentAtPosition(profile);
              }
-@@ -834,29 +809,29 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -835,29 +810,29 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
      @Override
      protected BaseFragment createBaseFragmentAt(int position) {
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
              Bundle args = new Bundle();
              args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
              args.putBoolean("my_profile", true);
-@@ -1030,17 +1005,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1031,17 +1006,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              }
          } else if (id == NotificationCenter.needSetDayNightTheme) {
              clearAllHiddenFragments();
@@ -227,7 +227,7 @@ index 0000000..0000000 100644
          } else if (id == NotificationCenter.mainUserInfoChanged) {
              if (tabs != null && tabs[INDEX_PROFILE] != null) {
                  tabs[INDEX_PROFILE].updateUserAvatar(currentAccount);
-@@ -1061,7 +1025,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1062,7 +1026,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              .add(NotificationCenter.fileLoadFailed)
              .add(NotificationCenter.notificationsCountUpdated)
              .add(NotificationCenter.updateInterfaces)
@@ -235,7 +235,7 @@ index 0000000..0000000 100644
              .add(NotificationCenter.mainUserInfoChanged)
              .add(NotificationCenter.contactsPermissionBadgeCheck)
              .addGlobal(NotificationCenter.appUpdateAvailable)
-@@ -1102,7 +1065,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1103,7 +1066,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          }
  
          final float animatedPosition = viewPager.getPositionAnimated();
@@ -244,7 +244,7 @@ index 0000000..0000000 100644
          final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
          float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
          if (tabletLayout) {
-@@ -1135,13 +1098,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1136,13 +1099,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
      }
  

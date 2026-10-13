@@ -37,7 +37,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -11647,7 +11647,7 @@ public class MessageObject {
+@@ -11690,7 +11690,7 @@ public class MessageObject {
      public boolean canForwardMessage() {
          if (isQuickReply()) return false;
          if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
@@ -50,7 +50,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6700,6 +6700,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6684,6 +6684,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isChatNoForwards(TLRPC.Chat chat) {
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
          if (chat == null) {
              return false;
          }
-@@ -6725,6 +6726,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6709,6 +6710,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isUserNoForwards(TLRPC.UserFull userFull) {
@@ -70,7 +70,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2110,6 +2110,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2268,6 +2268,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  });
                  return 0;
              }
@@ -103,7 +103,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3506,7 +3506,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -3555,7 +3555,7 @@ public class ChatActivity extends BaseFragment implements
              if (chatActivity != null && chatActivity.getDialogId() == UserObject.VERIFY) {
                  return false;
              }
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
                  chatActivity != null && chatActivity.isPeerNoForwards() ||
                  selectedView != null && selectedView.getMessageObject() != null && selectedView.getMessageObject().messageOwner != null && selectedView.getMessageObject().messageOwner.noforwards
              );
-@@ -10398,7 +10398,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -10466,7 +10466,7 @@ public class ChatActivity extends BaseFragment implements
          }
          ChatActionsHelper.addActionModeItems(this, actionMode, edit);
          actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
@@ -121,7 +121,7 @@ index 0000000..0000000 100644
          actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -12269,6 +12269,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12337,6 +12337,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private boolean hasSelectedNoforwardsMessage() {
@@ -129,7 +129,7 @@ index 0000000..0000000 100644
          try {
              for (int i = 0; i < selectedMessagesIds.length; ++i) {
                  for (int j = 0; j < selectedMessagesIds[i].size(); ++j) {
-@@ -19419,7 +19420,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19530,7 +19531,7 @@ public class ChatActivity extends BaseFragment implements
                  int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
                  if (copyItem != null) {
                      copyVisible = copyItem.getVisibility();

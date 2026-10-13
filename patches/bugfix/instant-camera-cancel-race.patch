@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCamer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
-@@ -2374,6 +2374,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -2436,6 +2436,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          }
  
          public void stopRecording(int send, SendOptions options) {

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -95,7 +95,6 @@ import me.vkryl.android.animator.FactorAnimator;
+@@ -96,7 +96,6 @@ import me.vkryl.android.animator.FactorAnimator;
  public class MainTabsActivity extends ViewPagerActivity implements NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target {
  
      public static final int TABS_COUNT = 4;
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  
      private static final int INDEX_CHATS = 0;
      private static final int INDEX_CONTACTS = 1;
-@@ -395,9 +394,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -396,9 +395,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                          searchLongPressHandled[0] = false;
                          return;
                      }
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
                      }
                      if (dialogsActivity != null && dialogsActivity.searchItem != null) {
                          dialogsActivity.searchItem.performClick();
-@@ -692,15 +691,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -693,15 +692,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      private void openFolder(int folderId) {
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -826,7 +825,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -827,7 +826,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              if (currentPosition != profile) {
                  dropFragmentAtPosition(profile);
              }
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
                  dialogsActivity.scrollToFolder(pendingFolderId);
                  pendingFolderId = null;
              }
-@@ -859,7 +858,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -860,7 +859,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
      @Override
      protected int getStartPosition() {
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
      }
  
      private DialogsActivity dialogsActivity;
-@@ -887,7 +886,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -888,7 +887,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          bundle.putBoolean("hasMainTabs", true);
          dialogsActivity = new DialogsActivity(bundle);
          dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
          return dialogsActivity;
      }
  
-@@ -944,9 +943,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -945,9 +944,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      public void inu_openChatsAtFilter(int filterIndex) {

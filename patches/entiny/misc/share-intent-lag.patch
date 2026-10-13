@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -1778,7 +1778,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1781,7 +1781,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                      if (exportingChatUri == null) {
                                          path = AndroidUtilities.getPath(uri);
                                          if (!BuildVars.NO_SCOPED_STORAGE) {

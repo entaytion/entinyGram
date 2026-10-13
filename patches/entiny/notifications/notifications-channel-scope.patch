@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -3992,7 +3992,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4050,7 +4050,7 @@ public class NotificationsController extends BaseController implements Notificat
                          shouldOverwrite = true;
                      } else if (!newSettingsHash.equals(settings)) {
                          SharedPreferences.Editor editor = null;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                              editor = preferences.edit();
                              if (isDefault) {
                                  if (!isInApp) {
-@@ -4010,12 +4010,12 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4068,12 +4068,12 @@ public class NotificationsController extends BaseController implements Notificat
                                  if (type == TYPE_STORIES) {
                                      editor.putBoolean("stories_" + NotificationsController.getSharedPrefKey(dialogId, 0), false);
                                  } else {
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
                              if (!isInApp) {
                                  editor = preferences.edit();
                                  int priority;
-@@ -4052,9 +4052,10 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4110,9 +4110,10 @@ public class NotificationsController extends BaseController implements Notificat
                                      if (type == TYPE_STORIES) {
                                          editor.putBoolean("stories_" + dialogId, true);
                                      } else {
@@ -50,7 +50,7 @@ index 0000000..0000000 100644
                                      }
                                  }
                              }
-@@ -4218,7 +4219,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4276,7 +4277,7 @@ public class NotificationsController extends BaseController implements Notificat
  
          String defaultPath = Settings.System.DEFAULT_NOTIFICATION_URI.getPath();
  

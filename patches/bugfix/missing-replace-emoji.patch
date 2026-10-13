@@ -123,7 +123,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
-@@ -1741,6 +1741,8 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+@@ -1844,6 +1844,8 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
  
              text = Emoji.replaceEmoji(text, paint.getFontMetricsInt(), false, null,
                  DynamicDrawableSpan.ALIGN_BOTTOM, 0.85f, 0);
@@ -136,7 +136,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -2658,6 +2658,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -2695,6 +2695,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              }
          } else if ((useForceThreeLines || SharedConfig.useThreeLinesLayout) && !hasTags() && messageNameString != null && (currentDialogFolderId == 0 || currentDialogFolderDialogsCount == 1)) {
              try {
@@ -376,7 +376,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -11321,7 +11321,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -11389,7 +11389,7 @@ public class ChatActivity extends BaseFragment implements
          String from = LocaleController.getString(R.string.SearchFrom);
          Spannable spannable = new SpannableString(from + " " + name);
          spannable.setSpan(new ForegroundColorSpan(getThemedColor(Theme.key_actionBarDefaultSubtitle)), from.length() + 1, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -385,7 +385,7 @@ index 0000000..0000000 100644
          mentionContainer.getAdapter().searchUsernameOrHashtag(null, 0, null, false, true);
          searchItem.setSearchFieldHint(null);
          searchItem.clearSearchText();
-@@ -15431,11 +15431,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -15517,11 +15517,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          }
                          if (userNamesCount == 1) {
@@ -399,7 +399,7 @@ index 0000000..0000000 100644
                      }
                  }
                  replyObjectHintTextView.setText(LocaleController.getString(R.string.TapForForwardingOptions));
-@@ -15467,20 +15467,20 @@ public class ChatActivity extends BaseFragment implements
+@@ -15553,20 +15553,20 @@ public class ChatActivity extends BaseFragment implements
                      replyObjectTextView.setText(pendingLinkSearchString);
                  } else {
                      if (webPage.site_name != null) {
@@ -426,7 +426,7 @@ index 0000000..0000000 100644
                      }
                      chatActivityEnterView.setWebPage(webPage, true);
                  }
-@@ -22017,6 +22017,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -22128,6 +22128,10 @@ public class ChatActivity extends BaseFragment implements
              if (chatListView != null) {
                  chatListView.invalidateViews();
              }
@@ -437,7 +437,7 @@ index 0000000..0000000 100644
              if (alertTextView != null) {
                  alertTextView.invalidate();
              }
-@@ -28787,6 +28791,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28898,6 +28902,7 @@ public class ChatActivity extends BaseFragment implements
                  pinnedMessageObject.updateTranslation(false);
                  if (pinnedMessageObject.type == MessageObject.TYPE_MUSIC) {
                      pinnedText = String.format("%s - %s", pinnedMessageObject.getMusicAuthor(), pinnedMessageObject.getMusicTitle());
@@ -445,7 +445,7 @@ index 0000000..0000000 100644
                  } else if (pinnedMessageObject.type == MessageObject.TYPE_POLL) {
                      if (pinnedMessageObject.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
                          TLRPC.TL_messageMediaPoll poll = (TLRPC.TL_messageMediaPoll) pinnedMessageObject.messageOwner.media;
-@@ -40509,15 +40514,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -40641,15 +40646,16 @@ public class ChatActivity extends BaseFragment implements
                  userButton.addView(imageView, LayoutHelper.createFrame(34, 34, Gravity.LEFT | Gravity.CENTER_VERTICAL, 13, 0, 0, 0));
  
                  final TextView titleText = new TextView(getContext());
@@ -509,7 +509,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
-@@ -586,13 +586,14 @@ public class ItemOptions {
+@@ -597,13 +597,14 @@ public class ItemOptions {
  
          ActionBarMenuSubItem subItem = new ActionBarMenuSubItem(context, false, false, resourcesProvider);
          subItem.setPadding(dp(18), 0, dp(18), 0);
@@ -526,7 +526,7 @@ index 0000000..0000000 100644
              if (user.id == UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId()) {
                  subItem.setSubtext(getString(R.string.VoipGroupPersonalAccount));
              } else if (UserObject.isBot(user)) {
-@@ -649,7 +650,8 @@ public class ItemOptions {
+@@ -660,7 +661,8 @@ public class ItemOptions {
  
          ActionBarMenuSubItem subItem = new ActionBarMenuSubItem(context, false, false, resourcesProvider);
          subItem.setPadding(dp(18), 0, dp(18), 0);
@@ -536,7 +536,7 @@ index 0000000..0000000 100644
  
          subItem.setClipToPadding(false);
          subItem.textView.setPadding(subItem.checkViewLeft ? (subItem.checkView != null ? dp(43) : 0) : dp(43), 0, subItem.checkViewLeft ? dp(43) : (subItem.checkView != null ? dp(43) : 0), 0);
-@@ -875,15 +877,16 @@ public class ItemOptions {
+@@ -886,15 +888,16 @@ public class ItemOptions {
          userButton.addView(imageView, LayoutHelper.createFrame(34, 34, Gravity.LEFT | Gravity.CENTER_VERTICAL, 13, 0, 0, 0));
  
          final TextView titleText = new TextView(context);
@@ -677,7 +677,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -748,9 +748,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -749,9 +749,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          final TextView textView = new TextView(getContext());
          textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
          textView.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
@@ -768,7 +768,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -15271,6 +15271,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15276,6 +15276,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              navigationBar.setBackgroundColor(fancyShadows ? (sendPhotoType == SELECT_TYPE_STICKER ? 0x66000000 : 0) : (sendPhotoType == SELECT_TYPE_STICKER ? 0xFF000000 : 0x7f000000));
          }
          if (title != null) {
@@ -780,7 +780,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -456,6 +456,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -461,6 +461,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          titleView.setGravity(Gravity.CENTER);
          titleView.setSingleLine();
          titleView.setEllipsize(TextUtils.TruncateAt.END);
@@ -788,7 +788,7 @@ index 0000000..0000000 100644
          topView.addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 16, 138.333f - 12, 16, 0));
  
          subtitleView = new TextView(context);
-@@ -532,7 +533,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -537,7 +538,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          avatarDrawable.setInfo(user);
          avatarView.setForUserOrChat(user, avatarDrawable);
@@ -797,7 +797,7 @@ index 0000000..0000000 100644
          final StringBuilder sb = new StringBuilder();
          if (user != null) {
              sb.append(PhoneFormat.getInstance().format("+" + user.phone));
-@@ -983,6 +984,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -991,6 +992,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              textView.setTextSize(15);
              textView.setTypeface(AndroidUtilities.bold());
              textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
@@ -805,7 +805,7 @@ index 0000000..0000000 100644
  
              botDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(textView, dp(24), AnimatedEmojiDrawable.CACHE_TYPE_EMOJI_STATUS);
              emojiStatusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(textView, dp(24), AnimatedEmojiDrawable.CACHE_TYPE_EMOJI_STATUS);
-@@ -1046,7 +1048,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1054,7 +1056,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              avatarDrawable.setInfo(account, user);
              avatarView.getImageReceiver().setCurrentAccount(account);
              avatarView.setForUserOrChat(user, avatarDrawable);

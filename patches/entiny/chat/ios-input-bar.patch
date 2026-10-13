@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -409,6 +409,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -419,6 +419,8 @@ public class ChatActivity extends BaseFragment implements
  
      private BlurredBackgroundColorProviderThemed blurredBackgroundColorProvider;
      private BlurredBackgroundColorProviderThemed blurredBackgroundColorProviderWhite;
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
  
      private final ReferenceList<View> glassAttachedViews = new ReferenceList<>();
      private final ReferenceList<BlurredBackgroundDrawable> glassAttachedDrawables = new ReferenceList<>();
-@@ -3628,6 +3630,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -3677,6 +3679,18 @@ public class ChatActivity extends BaseFragment implements
                  return super.getBackgroundColor();
              }
          };
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  
          if (textSelectionHelper == null) {
              Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
-@@ -8000,6 +8014,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8054,6 +8068,10 @@ public class ChatActivity extends BaseFragment implements
              public void setVisibility(int visibility) {
                  super.setVisibility(visibility);
                  bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -8214,7 +8232,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8268,7 +8286,10 @@ public class ChatActivity extends BaseFragment implements
          chatActivityEnterView.setViewParentForEmoji(chatInputInAppContainer);
          checkSendButtonBlockedByTyping(false);
  
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -43044,6 +43065,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -43176,6 +43197,12 @@ public class ChatActivity extends BaseFragment implements
              if (blurredBackgroundColorProviderWhite != null) {
                  blurredBackgroundColorProviderWhite.updateColors();
              }

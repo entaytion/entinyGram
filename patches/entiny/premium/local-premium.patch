@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -923,10 +923,13 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -926,10 +926,13 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isPremiumUser(TLRPC.User currentUser) {
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
          return transcribeButtonPressed >= 2;
      }
  
-@@ -2629,6 +2632,8 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2600,6 +2603,8 @@ public class MessagesController extends BaseController implements NotificationCe
              TLRPC.User user = getUserConfig().getCurrentUser();
              if (user != null) {
                  user.emoji_status = new_emoji_status;
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                  getNotificationCenter().postNotificationName(NotificationCenter.userEmojiStatusUpdated, user);
              }
          } else {
-@@ -6865,6 +6870,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6849,6 +6854,7 @@ public class MessagesController extends BaseController implements NotificationCe
          if (user == null) {
              return false;
          }
@@ -106,7 +106,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1061,7 +1061,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1069,7 +1069,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              emojiStatusDrawable.setColor(Theme.getColor(Theme.key_profile_verifiedBackground, resourcesProvider));
              if (emojiStatusId != null) {
                  emojiStatusDrawable.set(emojiStatusId, false);

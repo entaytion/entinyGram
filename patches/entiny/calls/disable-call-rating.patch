@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService
 index 0000000..0000000 100755
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
-@@ -1809,6 +1809,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -1812,6 +1812,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  	}
  
  	private void startRatingActivity() {

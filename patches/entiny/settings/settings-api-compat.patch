@@ -31,7 +31,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAda
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
-@@ -1050,7 +1050,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
+@@ -1051,7 +1051,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
              case VIEW_TYPE_SWITCH:
              case VIEW_TYPE_EXPANDABLE_SWITCH:
                  TextCheckCell2 switchCell = (TextCheckCell2) holder.itemView;
@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -683,13 +683,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -688,13 +688,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              items.add(UItem.asShadow(null));
          }
  
@@ -58,5 +58,5 @@ index 0000000..0000000 100644
 +        // inu: the accounts list is hidden entirely - switching happens from the drawer/avatar
 +        // (ported from inugram PR #34, made unconditional)
  
-         if (!desu.inugram.helpers.security.ParanoiaHelper.shouldHideSettings()) {
-             items.add(SettingCell.Factory.of(99, IconBackgroundColors.ENTINY.top, IconBackgroundColors.ENTINY.bottom, R.drawable.icon_settings_inu, getString(R.string.InuSettings), getString(R.string.InuSettingsInfo)));
+         final boolean walletAbove = getConnectionsManager().getCurrentTime() - 1791538462 < 4 * 7 * 24 * 60 * 60;
+         if (walletAbove && getMessagesController().config.walletAvailable.get()) {

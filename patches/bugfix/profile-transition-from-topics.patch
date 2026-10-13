@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -5505,6 +5505,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5509,6 +5509,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          communityItem = new ImageView(context);
          communityItem.setScaleType(ImageView.ScaleType.CENTER);
          communityItem.setAlpha(0f);
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          communityItem.setImageDrawable(communityArrowDrawable = new CommunityArrowDrawable().withCircle());
          frameLayout.addView(communityItem, LayoutHelper.createFrame(16, 16, Gravity.TOP | Gravity.LEFT));
  
-@@ -9574,6 +9575,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9578,6 +9579,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
          if (visible) {
              communityItem.setTag(1);
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
              communityItem.setVisibility(View.VISIBLE);
          } else {
              communityItem.setTag(null);
-@@ -9997,6 +9999,27 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10001,6 +10003,27 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
      private float prevAvatarTranslation;
  
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
      @Override
      public AnimatorSet onCustomTransitionAnimation(final boolean isOpen, final Runnable callback) {
          if (hasMainTabs) {
-@@ -10009,9 +10032,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10013,9 +10036,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return null;
          }
  
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
          if (timeItem != null) {
              timeItem.setAlpha(1.0f);
          }
-@@ -10026,18 +10046,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10030,18 +10050,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              starBgItem.setScaleY(1.0f);
          }
          previousTransitionMainFragment = null;
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
          }
  
          final ActionBar previousActionBar;
-@@ -10049,8 +10060,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10053,8 +10064,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          final boolean fromChat = previousTransitionFragment instanceof ChatActivity && ((ChatActivity) previousTransitionFragment).getCurrentChat() != null;
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
              updateTimeItem();
              updateStar();
          }
-@@ -10183,7 +10194,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10187,7 +10198,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              if (previousTransitionFragment != null) {
                  ChatAvatarContainer avatarContainer = previousTransitionFragment.getAvatarContainer();
                  if (avatarContainer != null) {
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
                  }
                  if (avatarContainer != null && avatarContainer.getSubtitleTextView() instanceof SimpleTextView && ((SimpleTextView) avatarContainer.getSubtitleTextView()).getLeftDrawable() != null || avatarContainer.statusMadeShorter[0]) {
                      transitionOnlineText = avatarContainer.getSubtitleTextView();
-@@ -11431,20 +11445,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11435,20 +11449,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              onlineTextOverride = null;
          }
  

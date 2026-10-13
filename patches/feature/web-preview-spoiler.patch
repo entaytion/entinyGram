@@ -222,7 +222,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -5742,10 +5742,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -5794,10 +5794,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              hasVideoThumb = hasVideoThumb || (message.isVideo() || message.isRoundVideo());
              if (thumbsCount < 3) {
                  thumbsCount++;

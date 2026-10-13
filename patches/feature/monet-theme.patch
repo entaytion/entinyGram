@@ -4,105 +4,21 @@ Date: Mon, 20 Apr 2026 10:55:44 +0300
 Subject: monet theme, almost directly ported from NagramX
 
 ---
- .../telegram/messenger/CodeHighlighting.java  | 24 ++++--
  .../org/telegram/messenger/MessageObject.java | 10 +--
  .../messenger/MessagesController.java         | 24 +++---
  .../telegram/messenger/RichMessageLayout.java |  2 +-
- .../java/org/telegram/ui/ActionBar/Theme.java | 77 ++++++++++++++++++-
+ .../java/org/telegram/ui/ActionBar/Theme.java | 76 ++++++++++++++++++-
  .../telegram/ui/ActionBar/ThemeColors.java    | 14 ++++
  .../telegram/ui/Cells/ChatMessageCell.java    |  4 +-
  .../ui/Components/AvatarDrawable.java         |  2 +-
  .../java/org/telegram/ui/DialogsActivity.java |  4 +
- 9 files changed, 133 insertions(+), 28 deletions(-)
+ 8 files changed, 113 insertions(+), 23 deletions(-)
 
-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java b/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java
-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java
-@@ -109,9 +109,14 @@ public class CodeHighlighting {
- 
-     public static class ColorSpan extends CharacterStyle {
-         public int group;
-+        public boolean inu_out;
-         public ColorSpan(int match) {
-             this.group = match;
-         }
-+        public ColorSpan(int match, boolean inu_out) {
-+            this.group = match;
-+            this.inu_out = inu_out;
-+        }
- 
-         public int getColorKey() {
-             switch (this.group) {
-@@ -128,7 +133,8 @@ public class CodeHighlighting {
- 
-         @Override
-         public void updateDrawState(TextPaint tp) {
--            tp.setColor(Theme.getColor(getColorKey()));
-+            final int key = getColorKey();
-+            tp.setColor(Theme.getColor(inu_out ? desu.inugram.helpers.theme.MonetHelper.getOutCodeColorKey(key) : key));
-         }
-     }
- 
-@@ -220,10 +226,14 @@ public class CodeHighlighting {
-     }
- 
-     public static SpannableString getHighlighted(CharSequence text, String language) {
-+        return getHighlighted(text, language, false);
-+    }
-+
-+    public static SpannableString getHighlighted(CharSequence text, String language, boolean inu_out) {
-         if (TextUtils.isEmpty(language)) {
-             return new SpannableString(text);
-         }
--        final String key = language + "`" + text;
-+        final String key = language + "`" + (inu_out ? "1" : "0") + "`" + text;
-         Highlighting process = processedHighlighting.get(key);
-         if (process == null) {
-             process = new Highlighting();
-@@ -231,7 +241,7 @@ public class CodeHighlighting {
-             process.language = language;
-             process.result = new LockedSpannableString(text);
- 
--            highlight(process.result, 0, process.result.length(), language, 0, null, true);
-+            highlight(process.result, 0, process.result.length(), language, 0, null, true, inu_out);
- 
-             final Iterator<String> keys = processedHighlighting.keySet().iterator();
-             while (keys.hasNext() && processedHighlighting.size() > 8) {
-@@ -289,6 +299,10 @@ public class CodeHighlighting {
-     }
- 
-     public static void highlight(Spannable text, int start, int end, String lng, int type, TextStyleSpan.TextStyleRun style, boolean smallerSize) {
-+        highlight(text, start, end, lng, type, style, smallerSize, false);
-+    }
-+
-+    public static void highlight(Spannable text, int start, int end, String lng, int type, TextStyleSpan.TextStyleRun style, boolean smallerSize, boolean inu_out) {
-         if (text == null) {
-             return;
-         }
-@@ -315,7 +329,7 @@ public class CodeHighlighting {
-                     long S3 = System.currentTimeMillis();
-                     for (int i = 0; i < spans.size(); ++i) {
-                         CachedToSpan span = spans.get(i);
--                        text.setSpan(new ColorSpan(span.group), span.start, span.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-+                        text.setSpan(new ColorSpan(span.group, inu_out), span.start, span.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                     }
-                     FileLog.d("[CodeHighlighter] applying " + spans.size() + " colorize spans took " + (System.currentTimeMillis() - S3) + "ms in another thread");
-                     AndroidUtilities.runOnUIThread(() -> {
-@@ -327,7 +341,7 @@ public class CodeHighlighting {
-                         long S3 = System.currentTimeMillis();
-                         for (int i = 0; i < spans.size(); ++i) {
-                             CachedToSpan span = spans.get(i);
--                            text.setSpan(new ColorSpan(span.group), span.start, span.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-+                            text.setSpan(new ColorSpan(span.group, inu_out), span.start, span.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                         }
-                         FileLog.d("[CodeHighlighter] applying " + spans.size() + " colorize spans took " + (System.currentTimeMillis() - S3) + "ms");
-                         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded);
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8885,7 +8885,7 @@ public class MessageObject {
+@@ -8928,7 +8928,7 @@ public class MessageObject {
                  if (block.code && !block.quote && textLayout.getText() instanceof Spannable) {
                      SpannableString sb;
                      if (!TextUtils.isEmpty(range.language)) {
@@ -111,7 +27,7 @@ index 0000000..0000000 100644
                      } else {
                          sb = new SpannableString(blockText.toString());
                      }
-@@ -8925,7 +8925,7 @@ public class MessageObject {
+@@ -8968,7 +8968,7 @@ public class MessageObject {
                  try {
                      SpannableString sb;
                      if (block.code && !block.quote) {
@@ -120,7 +36,7 @@ index 0000000..0000000 100644
                      } else {
                          sb = SpannableString.valueOf(blockText);
                      }
-@@ -9348,7 +9348,7 @@ public class MessageObject {
+@@ -9391,7 +9391,7 @@ public class MessageObject {
                      if (block.code && !block.quote && textLayout.getText() instanceof Spannable) {
                          SpannableString sb;
                          if (!TextUtils.isEmpty(range.language)) {
@@ -129,7 +45,7 @@ index 0000000..0000000 100644
                          } else {
                              sb = new SpannableString(text.subSequence(range.start, range.end));
                          }
-@@ -9375,7 +9375,7 @@ public class MessageObject {
+@@ -9418,7 +9418,7 @@ public class MessageObject {
                      try {
                          SpannableString sb;
                          if (block.code && !block.quote) {
@@ -138,7 +54,7 @@ index 0000000..0000000 100644
                          } else {
                              sb = SpannableString.valueOf(text.subSequence(startCharacter, endCharacter));
                          }
-@@ -9391,7 +9391,7 @@ public class MessageObject {
+@@ -9434,7 +9434,7 @@ public class MessageObject {
                  }
  
                  if (block.code && block.textLayout.getText() instanceof Spannable && TextUtils.isEmpty(range.language)) {
@@ -151,7 +67,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -5309,43 +5309,43 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -5292,43 +5292,43 @@ public class MessagesController extends BaseController implements NotificationCe
                  return Theme.getColor(Theme.keys_avatar_nameInMessage[id], resourcesProvider);
              }
              final boolean isDark = resourcesProvider != null ? resourcesProvider.isDark() : Theme.isCurrentThemeDark();
@@ -211,7 +127,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayou
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-@@ -5902,7 +5902,7 @@ public class RichMessageLayout {
+@@ -5910,7 +5910,7 @@ public class RichMessageLayout {
                      }
                  }
                  if (!TextUtils.isEmpty(block.language)) {
@@ -268,10 +184,10 @@ index 0000000..0000000 100644
                  isDark = LIGHT;
              }
              if (isDark == UNKNOWN) {
-@@ -3421,6 +3442,14 @@ public class Theme {
-     public static final int key_telegram_color = colorsCount++;
-     public static final int key_telegram_color_text = colorsCount++;
- 
+@@ -3424,6 +3445,13 @@ public class Theme {
+     public static final int key_wallet_comment = colorsCount++;
+     public static final int key_wallet_out_commentBorder = colorsCount++;
+     public static final int key_wallet_inputCurrency = colorsCount++;
 +    public static final int key_inu_code_out_keyword = colorsCount++;
 +    public static final int key_inu_code_out_operator = colorsCount++;
 +    public static final int key_inu_code_out_constant = colorsCount++;
@@ -279,11 +195,10 @@ index 0000000..0000000 100644
 +    public static final int key_inu_code_out_number = colorsCount++;
 +    public static final int key_inu_code_out_comment = colorsCount++;
 +    public static final int key_inu_code_out_function = colorsCount++;
-+
+ 
      public static final String key_drawable_botInline = "drawableBotInline";
      public static final String key_drawable_botLink = "drawableBotLink";
-     public static final String key_drawable_botWebView = "drawableBotWebView";
-@@ -4010,6 +4039,38 @@ public class Theme {
+@@ -4016,6 +4044,38 @@ public class Theme {
          themes.add(themeInfo);
          themesDict.put("Night", themeInfo);
  
@@ -322,7 +237,7 @@ index 0000000..0000000 100644
          String themesString = themeConfig.getString("themes2", null);
  
          int remoteVersion = themeConfig.getInt("remote_version", 0);
-@@ -4242,6 +4303,8 @@ public class Theme {
+@@ -4248,6 +4308,8 @@ public class Theme {
                      if (accent != null) {
                          info.overrideWallpaper = accent.overrideWallpaper;
                      }
@@ -331,7 +246,7 @@ index 0000000..0000000 100644
                  }
              }
              if (oldEditor != null) {
-@@ -7559,6 +7622,12 @@ public class Theme {
+@@ -7565,6 +7627,12 @@ public class Theme {
              int currentPosition = 0;
              if (assetName != null) {
                  file = getAssetFile(assetName);
@@ -344,7 +259,7 @@ index 0000000..0000000 100644
              }
              stream = new FileInputStream(file);
              int idx;
-@@ -7591,6 +7660,10 @@ public class Theme {
+@@ -7597,6 +7665,10 @@ public class Theme {
                                      } catch (Exception ignore) {
                                          value = Utilities.parseInt(param);
                                      }
@@ -359,7 +274,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java
-@@ -858,6 +858,13 @@ public class ThemeColors {
+@@ -861,6 +861,13 @@ public class ThemeColors {
          defaultColors[key_code_number] = 0xFF327FE5;
          defaultColors[key_code_comment] = 0x80000000;
          defaultColors[key_code_function] = 0xFFF28C39;
@@ -373,7 +288,7 @@ index 0000000..0000000 100644
  
          defaultColors[key_iv_background] = 0xFFFFFFFF;
          defaultColors[key_iv_backgroundGray] = 0xfff0f0f0;
-@@ -1685,6 +1692,13 @@ public class ThemeColors {
+@@ -1691,6 +1698,13 @@ public class ThemeColors {
          colorKeysMap.put(key_code_number, "code_number");
          colorKeysMap.put(key_code_comment, "code_comment");
          colorKeysMap.put(key_code_function, "code_function");
@@ -426,7 +341,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13656,6 +13656,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13657,6 +13657,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private void showItemOptions() {
          ItemOptions io = ItemOptions.makeOptions(this, optionsItem);
          io.setColors(getThemedColor(Theme.key_actionBarDefaultTitle), getThemedColor(Theme.key_actionBarDefaultTitle));

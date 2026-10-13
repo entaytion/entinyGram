@@ -19,13 +19,13 @@ index 0000000..0000000 100644
          INU_CAMERA(TabAnimationType.STATIC, R.drawable.outline_attach_camera_24),
 +        INU_FEED(TabAnimationType.STATIC, R.drawable.msg_channel),
          ARTICLE(R.raw.tab_article, R.raw.tab_article_reverse),
+         GRAM(R.raw.gram, R.raw.gram_reverse),
  
-         BOOSTS(R.raw.boosts, 25, 49),
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14048,6 +14048,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14049,6 +14049,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
              presentFragment(new ChatActivity(args));
          });
@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -99,6 +99,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -100,6 +100,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      private static final int INDEX_SETTINGS = 2;
      private static final int INDEX_CALLS = 3;
      private static final int INDEX_PROFILE = 4;
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
  
      private static int indexToPosition(int index) {
          return MainTabsHelper.indexToPosition(index);
-@@ -327,12 +328,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -328,12 +329,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          M3MainTabsHelper.applyTabsLayout(tabsView);
          MainTabsHelper.applyIosTabsLayout(tabsView);
  
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
          tabs[INDEX_CONTACTS].setOnLongClickListener(this::openContactsSelector);
          tabs[INDEX_CALLS].setOnLongClickListener(this::openCallsSelector);
          desu.inugram.helpers.LongPressDragMenuHelper.attach(tabs[INDEX_PROFILE], this::openAccountSelector);
-@@ -829,6 +831,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -830,6 +832,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              dialogsActivity = new DialogsActivity(args);
              dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
              return dialogsActivity;

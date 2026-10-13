@@ -30,7 +30,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -647,16 +647,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -648,16 +648,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                  accountNumbers.add(a);
              }
          }
@@ -52,7 +52,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -301,6 +301,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -306,6 +306,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                      finishFragment();
                  } else if (id == 2) {
                      presentSettingFragment(new LogoutActivity());
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                  }
              }
          });
-@@ -336,6 +338,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -341,6 +343,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          otherItem = menu.addItem(1, R.drawable.ic_ab_other);
          otherItem.setContentDescription(getString(R.string.AccDescrMoreOptions));
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
          otherItem.addSubItem(2, R.drawable.msg_leave, getString(R.string.LogOut));
  
          search = new ProfileActivity.SearchAdapter(this, context) {
-@@ -498,6 +503,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -503,6 +508,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          return fragmentView = contentView;
      }
  
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
      @Override
      public void onFragmentDestroy() {
          super.onFragmentDestroy();
-@@ -629,16 +640,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -634,16 +645,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                  accountNumbers.add(a);
              }
          }

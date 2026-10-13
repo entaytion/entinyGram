@@ -5,21 +5,21 @@ Subject: build support stuff for fork-specific code: - added kotlin - bumped min
 
 ---
  .gitmodules                                   |   3 +
- TMessagesProj/build.gradle                    | 176 ++++++++-----
+ TMessagesProj/build.gradle                    | 175 +++++++++-------
  TMessagesProj/proguard-rules.pro              |  15 ++
  TMessagesProj/src/main/AndroidManifest.xml    |   7 +
  .../org/telegram/messenger/BuildVars.java     |  12 +-
  .../telegram/tgnet/ConnectionsManager.java    |   2 +-
- .../org/telegram/ui/PaymentFormActivity.java  |  28 +--
- .../org/telegram/ui/SettingsActivity.java     |  24 +-
- TMessagesProj_App/build.gradle                | 236 ++++++++++--------
+ .../org/telegram/ui/PaymentFormActivity.java  |  28 ++-
+ .../org/telegram/ui/SettingsActivity.java     |  24 +--
+ TMessagesProj_App/build.gradle                | 186 +++++++++++++-----
  TMessagesProj_App/jni/CMakeLists.txt          |  10 +
  TMessagesProj_App/jni/lsplant                 |   1 +
  TMessagesProj_AppTests/build.gradle           |   5 +-
  build.gradle                                  |  19 +-
  gradle.properties                             |   2 +-
- settings.gradle                               |  40 ++-
- 15 files changed, 359 insertions(+), 221 deletions(-)
+ settings.gradle                               |  40 +++-
+ 15 files changed, 358 insertions(+), 171 deletions(-)
  create mode 100644 TMessagesProj_App/jni/CMakeLists.txt
  create mode 160000 TMessagesProj_App/jni/lsplant
 
@@ -27,10 +27,10 @@ diff --git a/.gitmodules b/.gitmodules
 index 0000000..0000000 100644
 --- a/.gitmodules
 +++ b/.gitmodules
-@@ -43,3 +43,6 @@
- [submodule "TMessagesProj/jni/third_party/wamr"]
- 	path = TMessagesProj/jni/third_party/wamr
- 	url = https://github.com/wasm-micro-runtime/wasm-micro-runtime.git
+@@ -55,3 +55,6 @@
+ [submodule "TMessagesProj/jni/third_party/libprisma"]
+ 	path = TMessagesProj/jni/third_party/libprisma
+ 	url = https://github.com/TelegramMessenger/libprisma.git
 +[submodule "TMessagesProj_App/jni/lsplant"]
 +	path = TMessagesProj_App/jni/lsplant
 +	url = https://github.com/LSPosed/LSPlant.git
@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -22,6 +22,7 @@ idea {
+@@ -26,6 +26,7 @@ idea {
          ]
      }
  }
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
  
  repositories {
      mavenCentral()
-@@ -38,6 +39,7 @@ configurations.all {
+@@ -42,6 +43,7 @@ configurations.all {
  }
  
  dependencies {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
      implementation 'androidx.core:core:1.16.0'
      implementation 'androidx.palette:palette:1.0.0'
      implementation 'androidx.exifinterface:exifinterface:1.3.6'
-@@ -67,7 +69,7 @@ dependencies {
+@@ -72,7 +74,7 @@ dependencies {
      implementation 'com.google.android.gms:play-services-location:21.0.1'
      implementation 'com.google.android.gms:play-services-wallet:19.1.0'
      implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:8.0.0'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -97,6 +99,14 @@ dependencies {
+@@ -102,11 +104,77 @@ dependencies {
      api project(":TMessagesProj_Modules:media3:media-lib-session")
      api project(':jlatexmath')
  
@@ -77,10 +77,6 @@ index 0000000..0000000 100644
 +
  //    implementation 'com.google.mlkit:translate:17.0.3'
  
-     constraints {
-@@ -108,8 +118,66 @@ dependencies {
-         }
-     }
      implementation 'com.google.android.recaptcha:recaptcha:18.7.1'
 +}
  
@@ -146,10 +142,11 @@ index 0000000..0000000 100644
  }
  
  android {
-@@ -118,10 +186,19 @@ android {
+@@ -114,10 +182,20 @@ android {
+     buildToolsVersion '36.0.0'
      ndkVersion "27.2.12479018"
  
-     sourceSets.main.jniLibs.srcDirs = ['./jni/']
++    sourceSets.main.jniLibs.srcDirs = ['./jni/']
 +    sourceSets.androidTest.kotlin.srcDirs += ['src/androidTest/kotlin']
 +    sourceSets.main.kotlin.srcDir inuGeneratedSources
 +    if (rootProject.ext.inuPluginless) {
@@ -166,7 +163,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -134,24 +211,32 @@ android {
+@@ -130,23 +208,31 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
@@ -177,13 +174,11 @@ index 0000000..0000000 100644
 +        jvmTarget = "1.8"
      }
  
- 
      defaultConfig {
--        minSdkVersion 21
 +        buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
 +        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 +        testInstrumentationRunnerArguments package: "desu.inugram"
-+        minSdkVersion 26
+         minSdkVersion 23
          targetSdkVersion 36
  
 -        vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
@@ -205,7 +200,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -162,64 +247,13 @@ android {
+@@ -157,64 +243,13 @@ android {
              shrinkResources false
              multiDexEnabled true
              ndk.debugSymbolLevel = 'FULL'
@@ -274,7 +269,7 @@ index 0000000..0000000 100644
          }
  
          release {
-@@ -227,12 +261,13 @@ android {
+@@ -222,12 +257,13 @@ android {
              shrinkResources false
              multiDexEnabled true
              ndk.debugSymbolLevel = 'FULL'
@@ -291,7 +286,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -250,7 +285,6 @@ def getProps(String propName) {
+@@ -245,7 +281,6 @@ def getProps(String propName) {
          return "";
      }
  }
@@ -299,7 +294,7 @@ index 0000000..0000000 100644
  
  task checkVisibility {
      doFirst {
-@@ -272,4 +306,10 @@ task checkVisibility {
+@@ -267,4 +302,10 @@ task checkVisibility {
      }
  }
  
@@ -315,7 +310,7 @@ diff --git a/TMessagesProj/proguard-rules.pro b/TMessagesProj/proguard-rules.pro
 index 0000000..0000000 100644
 --- a/TMessagesProj/proguard-rules.pro
 +++ b/TMessagesProj/proguard-rules.pro
-@@ -51,6 +51,21 @@
+@@ -55,6 +55,21 @@
  -keep class ru.noties.jlatexmath.** { *; }
  -dontwarn org.scilab.forge.jlatexmath.**
  
@@ -350,7 +345,7 @@ index 0000000..0000000 100644
      <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
      <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
  
-@@ -591,6 +592,12 @@
+@@ -603,6 +604,12 @@
  
          <receiver android:name=".NotificationDismissReceiver" android:exported="false"/>
  
@@ -399,7 +394,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -1052,7 +1052,7 @@ public class ConnectionsManager extends BaseController {
+@@ -1068,7 +1068,7 @@ public class ConnectionsManager extends BaseController {
          if (Build.VERSION.SDK_INT < 19) {
              return USE_IPV4_ONLY;
          }
@@ -494,7 +489,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -922,29 +922,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -930,29 +930,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
      }
  
      public String getVersionName() {
@@ -536,7 +531,7 @@ index 0000000..0000000 100644
  
  repositories {
      mavenCentral()
-@@ -15,20 +16,34 @@ configurations.all {
+@@ -15,19 +16,33 @@ configurations.all {
      exclude group: 'androidx.recyclerview', module: 'recyclerview'
  }
  
@@ -562,7 +557,6 @@ index 0000000..0000000 100644
 -    defaultConfig.applicationId = APP_PACKAGE
 +    defaultConfig.applicationId = "desu.inugram"
  
-     sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
  
 +    packaging {
 +        jniLibs {
@@ -573,7 +567,7 @@ index 0000000..0000000 100644
      lintOptions {
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
-@@ -38,25 +53,18 @@ android {
+@@ -37,25 +52,18 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
@@ -603,7 +597,7 @@ index 0000000..0000000 100644
              storePassword RELEASE_STORE_PASSWORD
              keyAlias RELEASE_KEY_ALIAS
              keyPassword RELEASE_KEY_PASSWORD
-@@ -67,7 +75,7 @@ android {
+@@ -72,7 +80,7 @@ android {
          debug {
              debuggable true
              jniDebuggable true
@@ -612,7 +606,7 @@ index 0000000..0000000 100644
              applicationIdSuffix ".beta"
              minifyEnabled false
              shrinkResources false
-@@ -76,18 +84,6 @@ android {
+@@ -81,18 +89,6 @@ android {
              ndk.debugSymbolLevel = 'FULL'
          }
  
@@ -631,7 +625,7 @@ index 0000000..0000000 100644
          release {
              debuggable false
              jniDebuggable false
-@@ -101,100 +97,50 @@ android {
+@@ -106,15 +102,11 @@ android {
      }
  
      sourceSets.debug {
@@ -648,54 +642,11 @@ index 0000000..0000000 100644
 +        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
      }
  
--    flavorDimensions "minApi"
--
--    productFlavors {
--        bundleAfat {
--            ndk {
--                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
--            }
--            ext {
--                abiVersionCode = 1
--            }
--            buildConfigField "boolean", "BUNDLE", "true"
--        }
--        bundleAfat_SDK23 {
--            ndk {
--                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
--            }
--            sourceSets.debug {
--                manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
--            }
--            sourceSets.release {
--                manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
--            }
--            minSdkVersion 23
--            ext {
--                abiVersionCode = 2
--            }
--            buildConfigField "boolean", "BUNDLE", "true"
--        }
--        afat {
--            ndk {
--                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
--            }
--            sourceSets.debug {
--                manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
--            }
--            sourceSets.release {
--                manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
--            }
--            sourceSets.standalone {
--                manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_standalone.xml'
--            }
--            ext {
--                abiVersionCode = 9
--            }
--            buildConfigField "boolean", "BUNDLE", "false"
--        }
--    }
--
+     flavorDimensions "minApi"
+@@ -149,41 +141,43 @@ android {
+         }
+     }
+ 
 -    defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE)
 +    defaultConfig.versionCode = rootProject.ext.verCode
  
@@ -714,9 +665,8 @@ index 0000000..0000000 100644
      }
  
      defaultConfig {
--        minSdkVersion 21
 +        buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
-+        minSdkVersion 26
+         minSdkVersion 23
          targetSdkVersion 36
 -        versionName APP_VERSION_NAME
 -        ndkVersion "27.2.12479018"
@@ -755,7 +705,7 @@ index 0000000..0000000 100644
      buildFeatures {
          buildConfig = true
      }
-@@ -203,6 +149,98 @@ android {
+@@ -192,6 +186,98 @@ android {
      lintOptions {
          checkReleaseBuilds false
      }
@@ -881,7 +831,7 @@ diff --git a/TMessagesProj_AppTests/build.gradle b/TMessagesProj_AppTests/build.
 index 0000000..0000000 100644
 --- a/TMessagesProj_AppTests/build.gradle
 +++ b/TMessagesProj_AppTests/build.gradle
-@@ -24,8 +24,8 @@ dependencies {
+@@ -35,8 +35,8 @@ dependencies {
      androidTestImplementation 'junit:junit:4.13.2'
      androidTestImplementation 'androidx.test.ext:junit:1.1.5'
      androidTestImplementation 'androidx.test:runner:1.5.2'
@@ -892,7 +842,7 @@ index 0000000..0000000 100644
      androidTestImplementation "com.appmattus.fixture:fixture:1.2.0"
  }
  
-@@ -169,4 +169,3 @@ android {
+@@ -179,4 +179,3 @@ android {
          checkReleaseBuilds false
      }
  }

@@ -20,7 +20,7 @@ index 0000000..0000000 100644
      private String lastSearchText;
      private boolean searchWas;
      private int reqId = 0;
-@@ -1105,6 +1106,11 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1123,6 +1124,11 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
          } else {
              query = null;
          }
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
          filterRecent(query);
          if (!TextUtils.equals(sponsoredQuery, query)) {
              sponsoredQuery = query;
-@@ -1339,7 +1345,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1357,7 +1363,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
      @Override
      public int getItemCount() {
          if (waitingResponseCount == 3) {
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
          }
          int count = 0;
          if (!publicPosts.isEmpty()) {
-@@ -1406,10 +1412,17 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1424,10 +1430,17 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
          if (localMessagesSearchEndReached) {
              localMessagesLoadingRow = count;
          }
@@ -59,7 +59,7 @@ index 0000000..0000000 100644
          if (!publicPosts.isEmpty()) {
              if (i > 0 && i - 1 < publicPosts.size()) {
                  return publicPosts.get(i - 1);
-@@ -1517,6 +1530,10 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1535,6 +1548,10 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
          if (!searchWas) {
              return false;
          }
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
          if (!searchResultHashtags.isEmpty()) {
              return false;
          }
-@@ -1691,6 +1708,9 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1709,6 +1726,9 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                  });
                  messagesEmptyLayout.setQuery(lastMessagesSearchString);
                  break;
@@ -80,7 +80,7 @@ index 0000000..0000000 100644
              case VIEW_TYPE_ADD_BY_PHONE:
              default:
                  view = new TextCell(mContext, 16, false);
-@@ -1762,6 +1782,9 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1780,6 +1800,9 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                      user = MessagesController.getInstance(currentAccount).getUser(encryptedChat.user_id);
                  }
  
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
                  if (!publicPosts.isEmpty()) {
                      position -= publicPosts.size() + 1;
                  }
-@@ -1922,6 +1945,9 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1940,6 +1963,9 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
              }
              case VIEW_TYPE_GRAY_SECTION: {
                  final GraySectionCell cell = (GraySectionCell) holder.itemView;
@@ -100,7 +100,7 @@ index 0000000..0000000 100644
                  if (!searchResultHashtags.isEmpty()) {
                      cell.setText(LocaleController.getString(R.string.Hashtags), LocaleController.getString(R.string.ClearButton), v -> {
                          if (delegate != null) {
-@@ -2173,6 +2199,14 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -2191,6 +2217,14 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                  profileSearchCell.setData(contact, null, ContactsController.formatName(contact.first_name, contact.last_name), PhoneFormat.getInstance().format("+" + contact.shortPhones.get(0)), false, false);
                  break;
              }
@@ -115,7 +115,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -2192,6 +2226,10 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -2210,6 +2244,10 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
  
      @Override
      public int getItemViewType(int i) {
@@ -130,7 +130,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13340,6 +13340,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13341,6 +13341,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          });
          searchViewPager.searchListView.setOnItemClickListener((view, position, x, y) -> {
              Object item = searchViewPager.dialogsSearchAdapter.getItem(position);

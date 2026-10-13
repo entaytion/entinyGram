@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5006,7 +5006,7 @@ public class MediaDataController extends BaseController {
+@@ -5007,7 +5007,7 @@ public class MediaDataController extends BaseController {
              maxShortcuts = 5;
          }
          ArrayList<TLRPC.TL_topPeer> hintsFinal = new ArrayList<>();
@@ -31,7 +31,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9002,6 +9002,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -9056,6 +9056,10 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  
@@ -42,7 +42,7 @@ index 0000000..0000000 100644
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
              savedMessagesHint.setMultilineText(true);
-@@ -9130,6 +9134,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9184,6 +9188,7 @@ public class ChatActivity extends BaseFragment implements
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
          Timer.finish(t);
  
@@ -54,7 +54,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2107,12 +2107,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2108,12 +2108,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  additionalPadding += h;
              }
  
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
              if (t != topPadding || b != getPaddingBottom()) {
                  setTopGlowOffset(t);
                  setPadding(0, t, 0, b);
-@@ -5766,6 +5770,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5767,6 +5771,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          checkUi_searchFieldStyle();
  
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);

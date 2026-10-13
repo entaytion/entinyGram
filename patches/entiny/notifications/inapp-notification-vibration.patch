@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -3988,7 +3988,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4046,7 +4046,7 @@ public class NotificationsController extends BaseController implements Notificat
                      }
                      newSettingsHash = Utilities.MD5(newSettings.toString());
                      newSettings.setLength(0);

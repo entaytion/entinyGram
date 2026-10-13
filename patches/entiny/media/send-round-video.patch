@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -10703,6 +10703,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10861,6 +10861,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (media.isEmpty()) {
              return;
          }
@@ -32,7 +32,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -365,6 +365,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -366,6 +366,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      private boolean allowOrder = true;
  
      private boolean muteVideo;
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
  
      private boolean isUnalivePhoto() {
          if (sendPhotoType == SELECT_TYPE_STICKER) return true;
-@@ -7459,11 +7460,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7460,11 +7461,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              final boolean showSendAsFile = !canEdit && !isCurrentVideo && !captionEdit.hasTimer();
              final boolean showSchedule = !canEdit && canScheduleMessage && !hasTtl;
              final boolean showWithoutSound = !(canEdit && canReplace) && !userIsSelf;
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                  .addIf(canReplace, R.drawable.msg_send, getString(R.string.SendAsNewPhoto), () -> sendPressed(true, 0, 0))
                  .addIf(canReplace, R.drawable.msg_replace, getString(R.string.ReplacePhoto), this::replacePressed)
                  .addIf(showSchedule, R.drawable.msg_calendar2, getString(userIsSelf ? R.string.SetReminder : R.string.ScheduleMessage), this::showScheduleDatePickerDialog)
-@@ -8021,6 +8024,53 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -8022,6 +8025,53 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          sendPressed(false, 0, 0, true, false, false);
      }
  
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
      private void sendPressed(boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean replace, boolean forceDocument, boolean confirmed) {
          if (isCaptionOpen()) {
              return;
-@@ -9897,36 +9947,46 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9898,36 +9948,46 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              videoEditedInfo.resultHeight = resultHeight;
              videoEditedInfo.bitrate = muteVideo || sendPhotoType == SELECT_TYPE_AVATAR ? -1 : bitrate;
          }
@@ -183,7 +183,7 @@ index 0000000..0000000 100644
              }
          }
          if (sendPhotoType == SELECT_TYPE_AVATAR) {
-@@ -9934,6 +9994,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9935,6 +9995,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              videoEditedInfo.originalBitrate = originalBitrate;
          }
          videoEditedInfo.muted = muteVideo || sendPhotoType == SELECT_TYPE_AVATAR;
@@ -191,7 +191,7 @@ index 0000000..0000000 100644
          return videoEditedInfo;
      }
  
-@@ -11460,7 +11521,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11463,7 +11524,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          int[] orientation = null;
          boolean hasChanged = false;
          MediaController.MediaEditState entry = (MediaController.MediaEditState) imagesArrLocals.get(currentIndex);
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
              if (isCurrentVideo) {
                  if (!TextUtils.isEmpty(entry.filterPath)) {
                      bitmap = ImageLoader.loadBitmap(entry.filterPath, null, thumbSize, thumbSize, true);
-@@ -11559,7 +11620,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11562,7 +11623,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              entry.imagePath = null;
          }
  
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
              editState.cropState = entry.cropState;
              editState.croppedPaintPath = entry.croppedPaintPath;
              editState.croppedMediaEntities = entry.croppedMediaEntities;
-@@ -11824,7 +11885,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11829,7 +11890,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          ignoreDidSetImage = true;
          boolean setImage;
          if (isCurrentVideo) {
@@ -218,7 +218,7 @@ index 0000000..0000000 100644
          } else {
              setImage = currentEditMode == EDIT_MODE_FILTER;
          }
-@@ -14159,6 +14220,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14164,6 +14225,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          topCaptionEdit.setTimerVisible(false, false);
          rotateItem.setVisibility(View.GONE);
          mirrorItem.setVisibility(View.GONE);
@@ -226,7 +226,7 @@ index 0000000..0000000 100644
  
          pickerView.getLayoutParams().height = LayoutHelper.WRAP_CONTENT;
          docInfoTextView.setVisibility(View.GONE);
-@@ -15087,6 +15149,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15092,6 +15154,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                              rotateItem.setTag(null);
                              mirrorItem.setVisibility(View.GONE);
                              mirrorItem.setTag(null);
@@ -234,7 +234,7 @@ index 0000000..0000000 100644
                              AndroidUtilities.updateViewVisibilityAnimated(muteButton, false, 1f, animated);
                              AndroidUtilities.updateViewVisibilityAnimated(livePhotoButton, false, 1f, animated);
                              AndroidUtilities.updateViewVisibilityAnimated(editCoverButton, false, 1f, animated);
-@@ -15121,6 +15184,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15126,6 +15189,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                  rotateItem.setTag(1);
                                  mirrorItem.setVisibility(View.VISIBLE);
                                  mirrorItem.setTag(1);
@@ -242,7 +242,7 @@ index 0000000..0000000 100644
                                  AndroidUtilities.updateViewVisibilityAnimated(muteButton, false, 1f, animated);
                                  AndroidUtilities.updateViewVisibilityAnimated(livePhotoButton, false, 1f, animated);
                                  AndroidUtilities.updateViewVisibilityAnimated(editCoverButton, false, 1f, animated);
-@@ -15140,6 +15204,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15145,6 +15209,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  } else {
                      showVideoTimeline(false, animated);
                      videoAvatarTooltip.setVisibility(View.GONE);

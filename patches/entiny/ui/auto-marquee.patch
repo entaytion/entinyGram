@@ -4,7 +4,7 @@ Date: Sun, 23 Aug 2026 23:56:36 +0300
 Subject: feat(chat-header): auto-scrolling marquee for long titles + iOS-style header with centered alignment
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 362 +++++++++++++++--
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 339 +++++++++++++++-
  .../telegram/ui/ActionBar/SimpleTextView.java | 129 +++---
  .../java/org/telegram/ui/ChatActivity.java    |  98 ++++-
  .../BottomSheetWithRecyclerListView.java      |   1 +
@@ -12,7 +12,7 @@ Subject: feat(chat-header): auto-scrolling marquee for long titles + iOS-style h
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../java/org/telegram/ui/ProfileActivity.java |   3 +
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 8 files changed, 862 insertions(+), 126 deletions(-)
+ 8 files changed, 862 insertions(+), 103 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -318,9 +318,9 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2221,8 +2391,163 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
- 
-     public boolean doNotDrawGlassMenu;
+@@ -2229,8 +2399,163 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         }
+     }
  
 +    public void updateGlassBounds(int width, int height) {
 +        updateGlassBounds(width, height, true);
@@ -482,7 +482,7 @@ index 0000000..0000000 100644
          final int p = dp(6);
          final int s = dp(46);
  
-@@ -2232,37 +2557,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2240,8 +2565,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
  
@@ -491,30 +491,9 @@ index 0000000..0000000 100644
 +        final int t = inu_glassTop;
 +        final int b = inu_glassBottom;
  
-         if (glassDrawable != null && !glassOnlyBack) {
--            final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
--            final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
--
--            final int leftDefault = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
--            final int rightDefault = getWidth() - rightOffset;
--            final int widthDefault = rightDefault - leftDefault;
--            final int left, right;
--            if (chatAvatarContainer != null && !inu_nonIsland) {
--                final int width = lerp(Math.min(widthDefault, (int) animatorAvatarContainerWidth.getFactor() + p * 2), widthDefault, Math.max(searchFactor, actionModeFactor));
--                left = (rightDefault + leftDefault - width) / 2;
--                right = left + width;
--
--                final float translationX = left
--                    - ((MarginLayoutParams)(chatAvatarContainer.getLayoutParams())).leftMargin
--                    - chatAvatarContainer.getLeftPadding()
--                    + p + dp(3);
--                chatAvatarContainer.setTranslationX(translationX);
--                chatAvatarContainer.setPivotX((chatAvatarContainer.getMeasuredWidth()) / 2f - translationX );
--            } else {
--                left = leftDefault;
--                right = rightDefault;
--            }
--
+         if (glassDrawable != null && !glassOnlyBack && drawGlassTitle) {
+             final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
+@@ -2270,7 +2595,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              if (inu_nonIsland) {
                  glassDrawable.setBounds(0, 0, getWidth(), getHeight());
              } else {
@@ -758,7 +737,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4156,7 +4156,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -4205,7 +4205,7 @@ public class ChatActivity extends BaseFragment implements
          }
          avatarContainer = new ChatAvatarContainer(context, this, currentEncryptedChat != null, themeDelegate) {
              @Override
@@ -767,7 +746,7 @@ index 0000000..0000000 100644
                  if (currentUser != null && currentUser.linked_community_id != 0) {
                      showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
                      return true;
-@@ -4167,6 +4167,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -4216,6 +4216,16 @@ public class ChatActivity extends BaseFragment implements
                  return false;
              }
  
@@ -784,7 +763,7 @@ index 0000000..0000000 100644
              @Override
              protected boolean useAnimatedSubtitle() {
                  return chatMode == MODE_SAVED;
-@@ -4341,6 +4351,39 @@ public class ChatActivity extends BaseFragment implements
+@@ -4390,6 +4400,39 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
@@ -824,7 +803,7 @@ index 0000000..0000000 100644
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
-@@ -4552,7 +4595,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -4605,7 +4648,11 @@ public class ChatActivity extends BaseFragment implements
  
          if (chatMode == 0 && (!isThreadChat() || isTopic) && !isReport()) {
              attachItem = menu.lazilyAddItem(chat_menu_attach, otherIcon, themeDelegate);
@@ -837,7 +816,7 @@ index 0000000..0000000 100644
              attachItem.setOverrideMenuClick(true);
              attachItem.setAllowCloseAnimation(false);
              attachItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
-@@ -4603,18 +4650,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -4656,18 +4703,14 @@ public class ChatActivity extends BaseFragment implements
              BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
              ChatObject.isForum(currentChat));
  
@@ -860,7 +839,7 @@ index 0000000..0000000 100644
          }
  
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -30040,10 +30083,45 @@ public class ChatActivity extends BaseFragment implements
+@@ -30151,10 +30194,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  
@@ -1451,7 +1430,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3239,6 +3239,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3240,6 +3240,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
@@ -1466,7 +1445,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -5623,6 +5623,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5627,6 +5627,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              nameTextView[a].setPivotX(0);
              nameTextView[a].setPivotY(0);
              nameTextView[a].setAlpha(a == 0 ? 0.0f : 1.0f);

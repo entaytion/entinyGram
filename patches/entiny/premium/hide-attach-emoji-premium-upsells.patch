@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
-@@ -4336,6 +4336,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -4371,6 +4371,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
      }
  
      private void showCaptionLimitBulletin(BaseFragment parentFragment) {
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          if (!(parentFragment instanceof ChatActivity) || !ChatObject.isChannelAndNotMegaGroup(((ChatActivity) parentFragment).getCurrentChat())) {
              return;
          }
-@@ -6672,7 +6675,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -6741,7 +6744,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                          needPremium = !MessagesController.getInstance(currentAccount).storyEntitiesAllowed();
                      }
                      attachButton.glassTabView.setCounter(err ? "!" : null, err, false);

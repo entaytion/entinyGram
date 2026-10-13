@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -698,6 +698,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -703,6 +703,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          // inu: the accounts list is hidden entirely - switching happens from the drawer/avatar
          // (ported from inugram PR #34, made unconditional)
@@ -25,5 +25,5 @@ index 0000000..0000000 100644
 +            items.add(UItem.asShadow(null));
 +        }
  
-         // inu: everything from here down to the version cell is one reorderable/hideable pool
-         // (InuConfig.PROFILE_SETTINGS_ROWS). Separators added here are rebuilt per stock group
+         final boolean walletAbove = getConnectionsManager().getCurrentTime() - 1791538462 < 4 * 7 * 24 * 60 * 60;
+         if (walletAbove && getMessagesController().config.walletAvailable.get()) {

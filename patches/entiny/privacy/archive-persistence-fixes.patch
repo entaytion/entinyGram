@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -9352,13 +9352,13 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9337,13 +9337,13 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
@@ -34,7 +34,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -16479,7 +16479,7 @@ public class MessagesStorage extends BaseController {
+@@ -16483,7 +16483,7 @@ public class MessagesStorage extends BaseController {
                                          // dialogMessagesByIds only tracks each dialog's current preview
                                          // message; fall back to the shadow cache for any other message
                                          // in a chat the user hasn't opened.

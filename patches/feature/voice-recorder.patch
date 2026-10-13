@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13253,15 +13253,33 @@ public class ChatActivity extends BaseFragment implements
+@@ -13339,15 +13339,33 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void showMediaBannedHint() {
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
          try {
              fragmentView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
          } catch (Exception e) {
-@@ -13271,16 +13289,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -13357,16 +13375,16 @@ public class ChatActivity extends BaseFragment implements
          if (mediaBanTooltip == null) {
              mediaBanTooltip = new HintView(getParentActivity(), 9, themeDelegate);
              mediaBanTooltip.setVisibility(View.GONE);
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
                  mediaBanTooltip.setText(ChatObject.getRestrictedErrorText(currentChat, ChatObject.ACTION_SEND_ROUND));
              } else {
                  mediaBanTooltip.setText(ChatObject.getRestrictedErrorText(currentChat, ChatObject.ACTION_SEND_VOICE));
-@@ -13293,7 +13311,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13379,7 +13397,7 @@ public class ChatActivity extends BaseFragment implements
              mediaBanTooltip.setText(LocaleController.getString(R.string.GlobalAttachMediaRestricted));
          } else {
              if (currentChat.banned_rights == null) {
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
              }
              if (AndroidUtilities.isBannedForever(currentChat.banned_rights)) {
                  mediaBanTooltip.setText(LocaleController.getString(R.string.AttachMediaRestrictedForever));
-@@ -13301,14 +13319,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13387,14 +13405,7 @@ public class ChatActivity extends BaseFragment implements
                  mediaBanTooltip.setText(LocaleController.formatString("AttachMediaRestricted", R.string.AttachMediaRestricted, LocaleController.formatDateForBan(currentChat.banned_rights.until_date)));
              }
          }
@@ -297,7 +297,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
-@@ -1096,7 +1096,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -1112,7 +1112,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
      private ChatActivityFadeView fadeView;
  
      private View bottomFadeView;
@@ -310,7 +310,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCamer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
-@@ -69,6 +69,7 @@ import androidx.core.graphics.ColorUtils;
+@@ -70,6 +70,7 @@ import androidx.core.graphics.ColorUtils;
  
  import androidx.media3.exoplayer.ExoPlayer;
  
@@ -318,7 +318,7 @@ index 0000000..0000000 100644
  import org.telegram.messenger.AndroidUtilities;
  import org.telegram.messenger.ApplicationLoader;
  import org.telegram.messenger.AutoDeleteMediaTask;
-@@ -730,9 +731,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+@@ -736,9 +737,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          cameraReady = false;
          selectedCamera = null;
          if (!fromPaused) {

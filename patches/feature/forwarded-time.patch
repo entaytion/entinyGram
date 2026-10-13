@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2264,6 +2264,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2422,6 +2422,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                      } else if (!forwardFromSaved) { //if (!toMyself || !msgObj.isOutOwner())
                          long fromId = msgObj.getFromChatId();
                          newMsg.fwd_from = new TLRPC.TL_messageFwdHeader();

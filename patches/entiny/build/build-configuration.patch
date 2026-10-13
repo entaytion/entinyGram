@@ -6,19 +6,19 @@ Subject: [*] build configuration: AGP 9, gradle and plugin build fixes
 Includes former agp-9 and plugins-gradle-fixes patches.
 ---
  .gitignore                                    |  3 +
- TMessagesProj/build.gradle                    | 77 +++++++++++-------
+ TMessagesProj/build.gradle                    | 72 ++++++++++------
  TMessagesProj/proguard-rules.pro              | 12 ++-
  TMessagesProj/src/main/AndroidManifest.xml    |  6 --
  .../java/org/telegram/ui/LaunchActivity.java  | 21 -----
  .../org/telegram/ui/PaymentFormActivity.java  | 28 ++++---
- TMessagesProj_App/build.gradle                | 80 +++++++++++++------
+ TMessagesProj_App/build.gradle                | 82 ++++++++++++-------
  build.gradle                                  | 52 ++++++++++--
  buildSrc/build.gradle.kts                     |  2 +-
  .../telegram/plugin/TelegramBuildAppPlugin.kt | 14 ----
  gradle.properties                             |  4 +-
  gradle/wrapper/gradle-wrapper.properties      |  2 +-
  settings.gradle                               |  8 +-
- 13 files changed, 187 insertions(+), 122 deletions(-)
+ 13 files changed, 185 insertions(+), 121 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
 index 0000000..0000000 100644
@@ -41,7 +41,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -22,7 +22,6 @@ idea {
+@@ -26,7 +26,6 @@ idea {
          ]
      }
  }
@@ -49,7 +49,7 @@ index 0000000..0000000 100644
  
  repositories {
      mavenCentral()
-@@ -41,6 +40,7 @@ configurations.all {
+@@ -45,6 +44,7 @@ configurations.all {
  dependencies {
      implementation project(':InuCore')
      implementation 'androidx.core:core:1.16.0'
@@ -57,9 +57,9 @@ index 0000000..0000000 100644
      implementation 'androidx.palette:palette:1.0.0'
      implementation 'androidx.exifinterface:exifinterface:1.3.6'
      implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
-@@ -53,15 +53,12 @@ dependencies {
-     implementation "androidx.mediarouter:mediarouter:1.7.0"
+@@ -58,15 +58,12 @@ dependencies {
      implementation 'com.google.zxing:core:3.5.4'
+     implementation 'com.neovisionaries:nv-websocket-client:2.14'
  
 -    implementation 'androidx.car.app:app:1.4.0'
 -    implementation 'androidx.car.app:app-projected:1.4.0'
@@ -74,7 +74,7 @@ index 0000000..0000000 100644
      implementation 'com.google.android.gms:play-services-maps:18.1.0'
      implementation 'com.google.android.gms:play-services-auth:20.4.0'
      implementation 'com.google.android.gms:play-services-vision:20.1.3'
-@@ -69,11 +66,23 @@ dependencies {
+@@ -74,11 +71,23 @@ dependencies {
      implementation 'com.google.android.gms:play-services-location:21.0.1'
      implementation 'com.google.android.gms:play-services-wallet:19.1.0'
      implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
@@ -100,7 +100,7 @@ index 0000000..0000000 100644
  
      implementation 'com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1'
      implementation 'com.google.android.gms:play-services-mlkit-image-labeling:16.0.8'
-@@ -98,9 +107,8 @@ dependencies {
+@@ -103,9 +112,8 @@ dependencies {
      api project(':jlatexmath')
  
      // inu
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
      androidTestImplementation 'androidx.test:runner:1.6.2'
      androidTestImplementation 'junit:junit:4.13.2'
      androidTestImplementation "org.jetbrains.kotlin:kotlin-test:2.1.20"
-@@ -180,24 +188,23 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
+@@ -185,24 +193,23 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
  }
  
  android {
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
      // end inu
  
      externalNativeBuild {
-@@ -207,7 +214,7 @@ android {
+@@ -212,7 +219,7 @@ android {
          }
      }
  
@@ -155,23 +155,18 @@ index 0000000..0000000 100644
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
          disable 'BlockedPrivateApi'
-@@ -218,20 +225,21 @@ android {
+@@ -223,9 +230,6 @@ android {
          targetCompatibility JavaVersion.VERSION_1_8
      }
  
 -    kotlinOptions {
 -        jvmTarget = "1.8"
 -    }
--
  
      defaultConfig {
          buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
-         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-         testInstrumentationRunnerArguments package: "desu.inugram"
--        minSdkVersion 26
--        targetSdkVersion 36
-+        minSdk 26
-+        targetSdk 37
+@@ -235,7 +239,12 @@ android {
+         targetSdkVersion 36
  
          ndk {
 -            abiFilters "arm64-v8a"
@@ -184,7 +179,7 @@ index 0000000..0000000 100644
          }
  
          externalNativeBuild {
-@@ -251,6 +259,7 @@ android {
+@@ -255,6 +264,7 @@ android {
              jniDebuggable true
              shrinkResources false
              multiDexEnabled true
@@ -192,7 +187,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
-@@ -263,9 +272,15 @@ android {
+@@ -267,9 +277,15 @@ android {
  
          release {
              jniDebuggable false
@@ -209,7 +204,7 @@ index 0000000..0000000 100644
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
              buildConfigField "String", "INU_BUILD_TYPE", "\"" + (System.getenv('INU_BUILD_TYPE') ?: 'debug') + "\""
-@@ -276,6 +291,10 @@ android {
+@@ -280,6 +296,10 @@ android {
          }
      }
  
@@ -249,7 +244,7 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -59,8 +62,13 @@
+@@ -63,8 +66,13 @@
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**
@@ -267,7 +262,7 @@ diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -624,12 +624,6 @@
+@@ -636,12 +636,6 @@
              </intent-filter>
          </receiver>
  
@@ -294,7 +289,7 @@ index 0000000..0000000 100644
  
  import org.telegram.PhoneFormat.PhoneFormat;
  import org.telegram.messenger.AccountInstance;
-@@ -1945,15 +1942,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1948,15 +1945,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
                      final LinkManager linkManager = new LinkManager(this, intentAccount[0], progress, openedTelegram);
                      if (linkManager.handle(data)) {
@@ -310,7 +305,7 @@ index 0000000..0000000 100644
                          return true;
                      }
  
-@@ -2862,15 +2850,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -2865,15 +2853,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                  }
                              }
                          }
@@ -419,7 +414,7 @@ index 0000000..0000000 100644
  
  repositories {
      mavenCentral()
-@@ -31,20 +30,33 @@ dependencies {
+@@ -31,19 +30,33 @@ dependencies {
  }
  
  android {
@@ -430,7 +425,6 @@ index 0000000..0000000 100644
  
      defaultConfig.applicationId = "ua.entaytion.entinygram"
  
--    sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
 +    sourceSets.main.jniLibs.directories.clear()
 +    sourceSets.main.jniLibs.directories.add('../TMessagesProj/jni/')
  
@@ -456,7 +450,7 @@ index 0000000..0000000 100644
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
          disable 'BlockedPrivateApi'
-@@ -80,7 +92,7 @@ android {
+@@ -85,7 +98,7 @@ android {
              minifyEnabled false
              shrinkResources false
              multiDexEnabled true
@@ -465,7 +459,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
          }
  
-@@ -88,11 +100,14 @@ android {
+@@ -93,11 +106,14 @@ android {
              debuggable false
              jniDebuggable false
              signingConfig signingConfigs.release
@@ -483,7 +477,17 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -106,21 +121,20 @@ android {
+@@ -131,9 +147,6 @@ android {
+             sourceSets.release {
+                 manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
+             }
+-            sourceSets.standalone {
+-                manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_standalone.xml'
+-            }
+             ext {
+                 abiVersionCode = 9
+             }
+@@ -143,21 +156,20 @@ android {
  
      defaultConfig.versionCode = rootProject.ext.verCode
  
@@ -495,7 +499,7 @@ index 0000000..0000000 100644
 -
      defaultConfig {
          buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
--        minSdkVersion 26
+-        minSdkVersion 23
 -        targetSdkVersion 36
 +        minSdk 26
 +        targetSdk 37
@@ -513,7 +517,7 @@ index 0000000..0000000 100644
          }
  
          if (!rootProject.ext.inuPluginless) externalNativeBuild {
-@@ -146,12 +160,15 @@ android {
+@@ -183,12 +195,15 @@ android {
      }
      namespace 'org.telegram.messenger.regular'
  
@@ -532,7 +536,7 @@ index 0000000..0000000 100644
      }
  }
  
-@@ -171,7 +188,7 @@ tasks.register('unpackShadowhook', Copy) {
+@@ -208,7 +223,7 @@ tasks.register('unpackShadowhook', Copy) {
      into shadowhookJniLibsDir
  }
  
@@ -541,7 +545,7 @@ index 0000000..0000000 100644
  tasks.matching { it.name ==~ /merge.*JniLibFolders/ }.configureEach {
      dependsOn 'unpackShadowhook'
  }
-@@ -201,9 +218,9 @@ inuNativeProfiles.each { buildType, cargoProfile ->
+@@ -238,9 +253,9 @@ inuNativeProfiles.each { buildType, cargoProfile ->
      def outputDir = new File(rustJniLibsDir, buildType)
      tasks.register(taskName, Exec) {
          workingDir rustModuleDir
@@ -553,7 +557,7 @@ index 0000000..0000000 100644
          def ndkHost = prebuilt.listFiles()?.find { it.isDirectory() }
          def libclangCandidates = [
              project.findProperty('libclang.path'),
-@@ -213,16 +230,27 @@ inuNativeProfiles.each { buildType, cargoProfile ->
+@@ -250,16 +265,27 @@ inuNativeProfiles.each { buildType, cargoProfile ->
              '/opt/homebrew/opt/llvm/lib', '/usr/local/opt/llvm/lib',
              '/run/current-system/sw/lib', "${System.getProperty('user.home')}/.nix-profile/lib",
              '/usr/lib/llvm/lib', '/usr/lib',
