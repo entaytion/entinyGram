@@ -1127,10 +1127,10 @@ object ChatActionsHelper {
             }
             val target = group?.captionMessage?.takeIf { !it.messageOwner?.message.isNullOrEmpty() } ?: msg
             val fromLang = target.messageOwner?.originalLanguage
-            val force = InuConfig.FORCE_TRANSLATE.value
-            if (!force && fromLang != null && restricted.contains(fromLang)) continue
+            val bypass = TranslateHelper.bypassesLanguageGate(target)
+            if (!bypass && fromLang != null && restricted.contains(fromLang)) continue
             val toLangValue = if (fromLang == toLang) toLangDefault else toLang
-            if (!force && fromLang != null && fromLang == toLangValue) continue
+            if (!bypass && fromLang != null && fromLang == toLangValue) continue
             if (TranslateHelper.startTranslate(activity, msg, group, fromLang, toLangValue)) {
                 anyStarted = true
             }

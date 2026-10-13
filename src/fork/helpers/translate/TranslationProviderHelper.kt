@@ -12,7 +12,6 @@ import java.util.WeakHashMap
 import java.util.concurrent.ConcurrentHashMap
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.TranslateController
-import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.RequestDelegate
 import org.telegram.tgnet.RequestDelegateTimestamp
@@ -69,10 +68,6 @@ object TranslationProviderHelper {
         // #else
         false
         // #endif
-
-    /** Premium's chat translation, which a provider of the user's own does not need */
-    @JvmStatic
-    fun canTranslateChats(account: Int): Boolean = isActive() || UserConfig.getInstance(account).isPremium
 
     /** stageQueue, from `ConnectionsManager.sendRequestInternal` */
     @JvmStatic

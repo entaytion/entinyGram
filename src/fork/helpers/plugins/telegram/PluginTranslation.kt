@@ -9,6 +9,7 @@ import desu.inugram.helpers.plugins.SessionResource
 import desu.inugram.helpers.plugins.TranslationListener
 import desu.inugram.helpers.plugins.tl.TlFilter
 import desu.inugram.helpers.plugins.tl.TlJson
+import desu.inugram.helpers.translate.engine.TranslationProviders
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.tgnet.TLRPC
@@ -52,7 +53,12 @@ object PluginTranslation : SessionResource {
     /** a removed plugin's provider gives the choice back to Telegram */
     fun retainInstalls(live: Set<String>) {
         val key = InuConfig.TRANSLATION_PROVIDER.value
-        if (key.isNotEmpty() && key.substringBefore(':') !in live) InuConfig.TRANSLATION_PROVIDER.value = ""
+        if (key.isNotEmpty() && key.substringBefore(':') !in live) {
+            InuConfig.TRANSLATION_PROVIDER.value = ""
+            if (InuConfig.TRANSLATE_PROVIDER.value == TranslationProviders.PROVIDER_PLUGIN) {
+                InuConfig.TRANSLATE_PROVIDER.value = TranslationProviders.PROVIDER_TELEGRAM
+            }
+        }
     }
 
     fun findProvider(key: String): Provider? = providers.firstOrNull { it.key == key && it.session.canDispatch() }

@@ -110,6 +110,10 @@ object TranslateHelper {
         isManualTranslated(msg, group) || hasTranslatedWebPage(msg) || hasTranslatedWebPage(group?.captionMessage)
 
     @JvmStatic
+    fun bypassesLanguageGate(msg: MessageObject?): Boolean =
+        InuConfig.FORCE_TRANSLATE.value || (InuConfig.TRANSLATE_OUTGOING.value && msg?.isOutOwner() == true)
+
+    @JvmStatic
     fun hasTranslatableWebPage(msg: MessageObject?): Boolean {
         if (!InuConfig.IN_PLACE_TRANSLATION.value || !InuConfig.TRANSLATE_WEB_PREVIEWS.value) return false
         val wp = getWebPage(msg) ?: return false
@@ -251,7 +255,7 @@ object TranslateHelper {
         fun perform(fromLang: String?) {
             val toLangValue = if (fromLang != null && fromLang == toLang) toLangDefault else toLang
             val srcLang = fromLang?.takeIf { it != "und" } ?: selected.messageOwner?.originalLanguage
-            if (!InuConfig.FORCE_TRANSLATE.value && !(InuConfig.TRANSLATE_OUTGOING.value && selected.isOutOwner()) && srcLang != null && srcLang == toLangValue && !hasTranslatableWebPage(selected)) {
+            if (!bypassesLanguageGate(selected) && srcLang != null && srcLang == toLangValue && !hasTranslatableWebPage(selected)) {
                 val langName = TranslateAlert2.languageName(srcLang)?.let(TranslateAlert2::capitalFirst) ?: srcLang.uppercase()
                 BulletinFactory.of(activity)
                     .createErrorBulletin(LocaleController.formatString(R.string.InuAlreadyInTargetLanguage, langName))
@@ -306,9 +310,9 @@ object TranslateHelper {
         // a case the actual translate call would have allowed (own messages with TRANSLATE_OUTGOING
         // on, when the source language happens to match the target) - previously unreachable from the menu
         fun shouldShowTranslateRow(fromLang: String): Boolean {
+            if (RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(fromLang)) return false
             if (InuConfig.FORCE_TRANSLATE.value) return true
             if (InuConfig.TRANSLATE_OUTGOING.value && selected.isOutOwner()) return true
-            if (RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(fromLang)) return false
             return fromLang != toLang || fromLang == TranslateController.UNKNOWN_LANGUAGE
         }
 
@@ -355,7 +359,7 @@ object TranslateHelper {
         // message gets permanently stuck showing the translating shimmer
         if (target.id < 0) return
         val srcLang = fromLang?.takeIf { it != "und" } ?: owner.originalLanguage
-        if (!InuConfig.FORCE_TRANSLATE.value && !(InuConfig.TRANSLATE_OUTGOING.value && target.isOutOwner()) && srcLang != null && srcLang == toLang) return
+        if (!bypassesLanguageGate(target) && srcLang != null && srcLang == toLang) return
         val account = activity.currentAccount
         val controller = MessagesController.getInstance(account).translateController
         val dialogId = target.dialogId
@@ -451,7 +455,7 @@ object TranslateHelper {
             AndroidUtilities.runOnUIThread {
                 val srcLang = src?.split("_")?.firstOrNull()
                 val dnt = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
-                if (srcLang != null && !InuConfig.FORCE_TRANSLATE.value && !(InuConfig.TRANSLATE_OUTGOING.value && target.isOutOwner()) && (dnt.contains(srcLang) || srcLang == toLang)) {
+                if (srcLang != null && !bypassesLanguageGate(target) && (dnt.contains(srcLang) || srcLang == toLang)) {
                     markLoading(target, false)
                     NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslated, target)
                     return@runOnUIThread
