@@ -303,6 +303,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             TOGGLE_MATERIAL_PROFILE_ACTIONS -> {
                 val new = InuConfig.MATERIAL_PROFILE_ACTIONS.toggle()
                 (view as? TextCheckCell)?.isChecked = new
+                softRebuild()
             }
 
             TOGGLE_M3_NAVIGATION_ANIMATION -> {

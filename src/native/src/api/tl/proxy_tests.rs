@@ -472,10 +472,17 @@ fn vector_length_indexing_push_and_iteration() {
     assert_eq!(len, 2);
     let first: i64 = ctx.eval("vec[0]").unwrap();
     assert_eq!(first, 10);
+    assert!(ctx.eval::<bool, _>("'slice' in vec").unwrap());
+    assert_eq!(ctx.eval::<Vec<i64>, _>("vec.slice(1)").unwrap(), vec![20]);
+    assert_eq!(ctx.eval::<Vec<i64>, _>("vec.map(x => x * 2)").unwrap(), vec![20, 40]);
+    ctx.eval::<(), _>("globalThis.Array = null").unwrap();
+    assert_eq!(ctx.eval::<Vec<i64>, _>("vec.slice(0, 1)").unwrap(), vec![10]);
 
     ctx.eval::<(), _>("vec[2] = 30").unwrap();
     let len2: i64 = ctx.eval("vec.length").unwrap();
     assert_eq!(len2, 3);
+    assert_eq!(ctx.eval::<i64, _>("vec.push(40)").unwrap(), 4);
+    assert_eq!(ctx.eval::<i64, _>("vec.pop()").unwrap(), 40);
 
     let summed: i64 = ctx.eval("[...vec].reduce((a, b) => a + b, 0)").unwrap();
     assert_eq!(summed, 60);
@@ -483,6 +490,16 @@ fn vector_length_indexing_push_and_iteration() {
     ctx.eval::<(), _>("vec.length = 1").unwrap();
     let len3: i64 = ctx.eval("vec.length").unwrap();
     assert_eq!(len3, 1);
+  });
+}
+
+#[test]
+fn an_expired_vector_refuses_array_methods() {
+  let (_rt, ctx, _host, views) = fixture();
+  ctx.with(|ctx| {
+    bind(&ctx, &views, "vec", true, false, ViewLife::Dispatch, 999);
+    let code: String = ctx.eval("try { vec.slice; 'alive' } catch (e) { e.code }").unwrap();
+    assert_eq!(code, "handle-expired");
   });
 }
 

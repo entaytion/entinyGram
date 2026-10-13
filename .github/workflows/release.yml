@@ -2,13 +2,43 @@ name: release
 
 on:
   workflow_dispatch:
+    inputs:
+      skip-changelog-check:
+        description: Allow release without a changelog
+        type: boolean
+        default: false
 
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        if: ${{ !inputs.skip-changelog-check }}
+        with:
+          sparse-checkout: changelogs
+
+      - name: check changelog
+        if: ${{ !inputs.skip-changelog-check }}
+        env:
+          INU_BUILD: ${{ vars.INU_BUILD || '1' }}
+        run: |
+          if [ ! -f "changelogs/$INU_BUILD.md" ]; then
+            echo "::error::changelogs/$INU_BUILD.md is missing"
+            exit 1
+          fi
+
+      - name: bypass changelog check
+        if: ${{ inputs.skip-changelog-check }}
+        run: echo '::warning::changelog check explicitly bypassed'
+
   build:
+    needs: changelog
     uses: ./.github/workflows/build.yml
     secrets: inherit
     permissions:

@@ -171,6 +171,16 @@ object DrawerHelper {
         sm.setOnItemClickListener { view, position ->
             handleItemClick(position, view, drawerLayoutContainer, actionBarLayout, newAdapter)
         }
+        // #if PLUGINS
+        sm.setOnItemLongClickListener { _, position ->
+            val itemId = newAdapter.getId(position)
+            if (itemId < PluginActions.OPTION_BASE) return@setOnItemLongClickListener false
+            val row = PluginActions.rowAt(globalActionRows, itemId) ?: return@setOnItemLongClickListener false
+            val dispatched = PluginActions.dispatch(row, ActionSurface.global(UserConfig.selectedAccount), true)
+            if (dispatched) drawerLayoutContainer.inu_drawer?.closeDrawer(false)
+            dispatched
+        }
+        // #endif
 
         attachAccountReorder(sm, newAdapter)
 

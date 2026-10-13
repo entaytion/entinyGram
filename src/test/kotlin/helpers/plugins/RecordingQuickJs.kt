@@ -16,7 +16,7 @@ class RecordingQuickJs : QuickJs() {
     class WriteResult(val requestId: Long, val resultWire: String)
     class WriteProgress(val requestId: Long, val loaded: Long, val total: Long)
     class Notification(val callbackId: Int, val name: String, val accountId: Int, val args: Array<String>)
-    class ActionDispatch(val kind: Int, val token: Int, val surfaceJson: String)
+    class ActionDispatch(val kind: Int, val token: Int, val secondary: Boolean, val surfaceJson: String)
     class XposedBefore(val dispatchId: Long, val site: Long, val invocation: Array<Any?>) {
         val args: List<Any?> get() = invocation.drop(2)
     }
@@ -221,7 +221,7 @@ class RecordingQuickJs : QuickJs() {
         return onRenderActions?.invoke(kind, surfaceJson)
     }
 
-    override fun dispatchAction(kind: Int, token: Int, surfaceJson: String) {
-        actionDispatches.add(ActionDispatch(kind, token, surfaceJson))
+    override fun dispatchAction(kind: Int, token: Int, secondary: Boolean, surfaceJson: String) {
+        actionDispatches.add(ActionDispatch(kind, token, secondary, surfaceJson))
     }
 }

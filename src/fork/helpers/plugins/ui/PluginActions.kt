@@ -1,5 +1,6 @@
 package desu.inugram.helpers.plugins.ui
 
+import android.view.View
 import desu.inugram.helpers.plugins.PluginLog
 import desu.inugram.helpers.plugins.SessionResource
 import desu.inugram.helpers.plugins.EngineDispatch
@@ -28,6 +29,7 @@ data class ActionRow(
     val text: String,
     val pluginName: String,
     val icon: String?,
+    val hasSecondaryCallback: Boolean,
 )
 
 data class RegisteredActionRow(
@@ -54,6 +56,7 @@ object PluginActions : SessionResource {
     // keep in sync with rust `actions::MESSAGE_PLACEMENT_*`
     const val MESSAGE_PLACEMENT_BUBBLE = 1
     const val MESSAGE_PLACEMENT_SELECTION = 2
+    const val MESSAGE_PLACEMENT_SHARED_MEDIA = 4
     private const val ALL_PLACEMENTS = -1
     private const val PLUGIN_ORDER_PREFIX = "p:"
 
@@ -61,6 +64,7 @@ object PluginActions : SessionResource {
     const val DYNAMIC_TEXT = 1
     const val DYNAMIC_ICON = 2
     const val DYNAMIC_VISIBLE = 4
+    const val HAS_SECONDARY_CALLBACK = 8
     private const val DYNAMIC_PRESENTATION = DYNAMIC_TEXT or DYNAMIC_ICON
     private const val DYNAMIC_ALL = DYNAMIC_PRESENTATION or DYNAMIC_VISIBLE
 
@@ -70,7 +74,6 @@ object PluginActions : SessionResource {
     private val registry = ActionRegistry<QuickJs>()
 
     @Volatile private var counts = IntArray(KIND_COUNT)
-    @Volatile private var selectionCount = 0
     @Volatile private var registeredRows = List(KIND_COUNT) { emptyList<RegisteredActionRow>() }
 
     private val optionIds = HashMap<ActionKey, Int>()
@@ -128,8 +131,8 @@ object PluginActions : SessionResource {
     fun rowAt(rows: List<ActionRow>, optionId: Int): ActionRow? = rows.firstOrNull { optionIdFor(it.key) == optionId }
 
     fun rowCount(kind: Int, placements: Int = getDefaultPlacements(kind)): Int =
-        if (kind == KIND_MESSAGE && placements == MESSAGE_PLACEMENT_SELECTION) selectionCount
-        else counts.getOrElse(kind) { 0 }
+        if (placements == getDefaultPlacements(kind)) counts.getOrElse(kind) { 0 }
+        else registeredRows.getOrElse(kind) { emptyList() }.count { it.placements and placements != 0 }
 
     fun hasRows(kind: Int, placements: Int = getDefaultPlacements(kind)): Boolean = rowCount(kind, placements) > 0
 
@@ -276,6 +279,7 @@ object PluginActions : SessionResource {
                     dynamic.text ?: registration.text ?: return@mapNotNull null,
                     registration.pluginName,
                     if (registration.dynamicFields and DYNAMIC_ICON != 0) dynamic.icon else registration.icon,
+                    registration.dynamicFields and HAS_SECONDARY_CALLBACK != 0,
                 )
             }
             AndroidUtilities.runOnUIThread { onRows(rows) }
@@ -286,10 +290,12 @@ object PluginActions : SessionResource {
      * resolved by key, not by the drawing engine: menus can outlive a reload, and the new engine answers for
      * the same key. An unregistered key does nothing rather than reaching whatever took its token.
      */
-    fun dispatch(row: ActionRow, surface: ActionSurface) {
+    fun dispatch(row: ActionRow, surface: ActionSurface, secondary: Boolean = false): Boolean {
+        if (secondary && !row.hasSecondaryCallback) return false
         EngineDispatch.scheduler.postRunnable {
             val live = registeredRows.getOrElse(row.key.kind) { emptyList() }
                 .firstOrNull { it.key == row.key } ?: return@postRunnable
+            if (secondary && live.dynamicFields and HAS_SECONDARY_CALLBACK == 0) return@postRunnable
             val session = PluginManager.getDispatchTargets()
                 .mapNotNull { plugin -> plugin.session?.takeIf { it.canDispatch() } }
                 .firstOrNull { it.engine === live.owner } ?: return@postRunnable
@@ -299,7 +305,20 @@ object PluginActions : SessionResource {
                 session.log.e("actions", "cannot serialize the action surface", e)
                 return@postRunnable
             }
-            live.owner.dispatchAction(surface.kind, live.token, surfaceJson)
+            live.owner.dispatchAction(surface.kind, live.token, secondary, surfaceJson)
+        }
+        return true
+    }
+
+    fun bindSecondaryCallback(view: View, row: ActionRow, surface: ActionSurface, afterDispatch: () -> Unit = {}) {
+        if (!row.hasSecondaryCallback) {
+            view.setOnLongClickListener(null)
+            return
+        }
+        view.setOnLongClickListener {
+            if (!dispatch(row, surface, true)) return@setOnLongClickListener false
+            afterDispatch()
+            true
         }
     }
 
@@ -315,7 +334,6 @@ object PluginActions : SessionResource {
         }
         if (rows == registeredRows) return
         counts = IntArray(KIND_COUNT) { kind -> rows[kind].count { it.placements and getDefaultPlacements(kind) != 0 } }
-        selectionCount = rows[KIND_MESSAGE].count { it.placements and MESSAGE_PLACEMENT_SELECTION != 0 }
         registeredRows = rows
         if (onCountsChanged.isEmpty()) return
         AndroidUtilities.runOnUIThread { for (redraw in onCountsChanged) redraw() }
@@ -353,7 +371,15 @@ object PluginActions : SessionResource {
 
     private fun getStaticRow(row: RegisteredActionRow): ActionRow? {
         val text = row.text ?: return null
-        return ActionRow(row.owner, row.token, row.key, text, row.pluginName, row.icon)
+        return ActionRow(
+            row.owner,
+            row.token,
+            row.key,
+            text,
+            row.pluginName,
+            row.icon,
+            row.dynamicFields and HAS_SECONDARY_CALLBACK != 0,
+        )
     }
 
     private fun config(kind: Int): PluginActionSettingsConfig = when (kind) {

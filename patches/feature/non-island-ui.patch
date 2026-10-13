@@ -8,7 +8,7 @@ Subject: non-island ui in various parts of the app
  .../ui/ActionBar/ActionBarLayout.java         |   2 +-
  .../telegram/ui/ChannelAdminLogActivity.java  |  21 ++-
  .../java/org/telegram/ui/ChatActivity.java    | 142 ++++++++++------
- .../ui/Components/ChatActivityEnterView.java  |  66 +++++---
+ .../ui/Components/ChatActivityEnterView.java  |  68 +++++---
  ...ChatActivityEnterViewAnimatedIconView.java |  17 +-
  .../ChatActivityTopPanelLayout.java           |  27 +++-
  .../ui/Components/ChatAttachAlert.java        |  20 +++
@@ -25,7 +25,7 @@ Subject: non-island ui in various parts of the app
  .../Components/ScrollSlidingTextTabStrip.java | 116 ++++++++++++-
  .../ui/Components/SearchTagsList.java         |   3 +
  .../ui/Components/SharedMediaLayout.java      |  78 +++++++--
- .../ui/Components/TopicsTabsView.java         |  28 ++--
+ .../ui/Components/TopicsTabsView.java         |  78 +++++----
  .../ui/Components/TranslateButton.java        |   4 +-
  .../ui/Components/ViewPagerFixed.java         |  12 +-
  .../drawable/BlurredBackgroundDrawable.java   |   5 +-
@@ -41,7 +41,7 @@ Subject: non-island ui in various parts of the app
  .../ui/bots/BotCommandsMenuContainer.java     |   4 +-
  .../bots/ChatAttachAlertBotWebViewLayout.java |   5 +-
  .../java/org/telegram/ui/iv/RichEditor.java   |   4 +-
- 37 files changed, 716 insertions(+), 268 deletions(-)
+ 37 files changed, 753 insertions(+), 283 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -367,7 +367,7 @@ index 0000000..0000000 100644
          bottomOverlay.setFocusableInTouchMode(true);
          bottomOverlay.setClickable(true);
 -        chatInputBubbleContainer.addView(bottomOverlay, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 44, Gravity.BOTTOM, 7, 0, 7, 0));
-+        chatInputBubbleContainer.addView(bottomOverlay, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, ChatActivityEnterView.DEFAULT_HEIGHT, Gravity.BOTTOM, 7, 0, 7, 0));
++        chatInputBubbleContainer.addView(bottomOverlay, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, ChatActivityEnterView.DEFAULT_HEIGHT, Gravity.BOTTOM, NonIslandHelper.chatElements() ? 0 : 7, 0, NonIslandHelper.chatElements() ? 0 : 7, NonIslandHelper.chatElements() ? -9 : 0));
  
          bottomOverlayText = new TextView(context);
          bottomOverlayText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
@@ -858,6 +858,15 @@ index 0000000..0000000 100644
          sendButton.setOnClickListener(view -> {
              if ((messageSendPreview != null && messageSendPreview.isShowing()) || (runningAnimationAudio != null && runningAnimationAudio.isRunning()) || moveToSendStateRunnable != null) {
                  return;
+@@ -4492,7 +4495,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 botCommandsMenuContainer.dismiss();
+             }
+         });
+-        messageEditTextContainer.addView(botCommandsMenuButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 32, Gravity.BOTTOM | Gravity.LEFT, 8, 6, 8, 6));
++        messageEditTextContainer.addView(botCommandsMenuButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 32, Gravity.BOTTOM | Gravity.LEFT, 8, (DEFAULT_HEIGHT - 32) / 2f, 8, (DEFAULT_HEIGHT - 32) / 2f));
+         AndroidUtilities.updateViewVisibilityAnimated(botCommandsMenuButton, false, 1f, false);
+         botCommandsMenuButton.setExpanded(true, false);
+     }
 @@ -4703,7 +4706,8 @@ public class ChatActivityEnterView extends FrameLayout implements
                  canvas.clipRect(0, separatorY, getMeasuredWidth(), getMeasuredHeight());
              }
@@ -1896,7 +1905,7 @@ index 0000000..0000000 100644
                      @Override
                      public void getOutline(View view, Outline outline) {
                          outline.setRoundRect(0, dp(50), view.getWidth(), view.getHeight() + dp(24), dp(24));
-@@ -11571,6 +11620,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -11574,6 +11623,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
  
          @Override
          protected void dispatchDraw(@NonNull Canvas canvas) {
@@ -1908,7 +1917,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsVi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java
-@@ -71,6 +71,7 @@ import org.telegram.ui.TopicCreateFragment;
+@@ -23,6 +23,7 @@ import android.graphics.PorterDuffXfermode;
+ import android.graphics.Rect;
+ import android.graphics.RectF;
+ import android.graphics.drawable.Drawable;
++import android.graphics.drawable.GradientDrawable;
+ import android.text.SpannableStringBuilder;
+ import android.text.Spanned;
+ import android.text.TextUtils;
+@@ -71,6 +72,7 @@ import org.telegram.ui.TopicCreateFragment;
  import java.util.ArrayList;
  import java.util.HashSet;
  
@@ -1916,7 +1933,7 @@ index 0000000..0000000 100644
  import me.vkryl.android.animator.BoolAnimator;
  import me.vkryl.android.animator.FactorAnimator;
  import me.vkryl.core.BitwiseUtils;
-@@ -79,8 +80,8 @@ import me.vkryl.core.BitwiseUtils;
+@@ -79,8 +81,8 @@ import me.vkryl.core.BitwiseUtils;
  public class TopicsTabsView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target {
      public static final int ANIMATOR_ID_TOPICS_VISIBILITY = 0;
  
@@ -1927,7 +1944,7 @@ index 0000000..0000000 100644
  
      private final BoolAnimator animatorTopicsVisibility = new BoolAnimator(ANIMATOR_ID_TOPICS_VISIBILITY,
          this, CubicBezierInterpolator.EASE_OUT_QUINT, 380L, true);
-@@ -123,11 +124,12 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+@@ -123,11 +125,12 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
          setClipToPadding(true);
          setWillNotDraw(false);
  
@@ -1942,7 +1959,18 @@ index 0000000..0000000 100644
  
          topTabs = new UniversalRecyclerView(context, currentAccount, 0, this::fillHorizontalTabs, this::onTabClick, this::onTabLongClick, resourcesProvider) {
              private final GradientClip clip = new GradientClip();
-@@ -140,7 +142,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+@@ -135,12 +138,18 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+             private final AnimatedFloat animatedClipR = new AnimatedFloat(this, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
+             private final RectF lineRect = new RectF();
+             private final Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
++            private final GradientDrawable lineDrawable = new GradientDrawable();
+             private final AnimatedFloat animateTab = new AnimatedFloat(this, 420, CubicBezierInterpolator.EASE_OUT_QUINT);
++            {
++                if (NonIslandHelper.chatElements()) {
++                    NonIslandHelper.applyMd3TabsStyle(lineDrawable, this, Theme.getColor(Theme.key_profile_tabSelector, resourcesProvider));
++                }
++            }
+             @Override
              protected void dispatchDraw(Canvas canvas) {
                  final float clipAlphaL = animatedClipL.set(canScrollHorizontally(-1));
                  final float clipAlphaR = animatedClipR.set(canScrollHorizontally(1));
@@ -1951,7 +1979,65 @@ index 0000000..0000000 100644
                  if (needClip) {
                      canvas.saveLayerAlpha(0, 0, getWidth(), getHeight(), 0xFF, Canvas.ALL_SAVE_FLAG);
                  }
-@@ -440,7 +442,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+@@ -168,21 +177,36 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+                     }
+                 }
+                 if (selectedTab != null) {
+-                    lineRect.set(
+-                        selectedTab.getX() + dp(1),
+-                        selectedTab.getY() + dp(4),
+-                        selectedTab.getX() + selectedTab.getWidth() - dp(1),
+-                        selectedTab.getY() + getHeight() - dp(4));
++                    final boolean md3 = NonIslandHelper.chatElements();
++                    if (md3) {
++                        lineRect.set(selectedTab.getX(), 0, selectedTab.getX() + selectedTab.getWidth(), getHeight());
++                    } else {
++                        lineRect.set(
++                            selectedTab.getX() + dp(1),
++                            selectedTab.getY() + dp(4),
++                            selectedTab.getX() + selectedTab.getWidth() - dp(1),
++                            selectedTab.getY() + getHeight() - dp(4));
++                    }
+                     if (fromSelectedTab != null) {
+-                        AndroidUtilities.rectTmp.set(
+-                            fromSelectedTab.getX() + dp(1),
+-                            fromSelectedTab.getY() + dp(4),
+-                            fromSelectedTab.getX() + fromSelectedTab.getWidth() - dp(1),
+-                            fromSelectedTab.getY() + getHeight() - dp(4));
++                        if (md3) {
++                            AndroidUtilities.rectTmp.set(fromSelectedTab.getX(), 0, fromSelectedTab.getX() + fromSelectedTab.getWidth(), getHeight());
++                        } else {
++                            AndroidUtilities.rectTmp.set(
++                                fromSelectedTab.getX() + dp(1),
++                                fromSelectedTab.getY() + dp(4),
++                                fromSelectedTab.getX() + fromSelectedTab.getWidth() - dp(1),
++                                fromSelectedTab.getY() + getHeight() - dp(4));
++                        }
+                         lerp(AndroidUtilities.rectTmp, lineRect, animateTab.set(1.0f), lineRect);
+                     }
+-                    linePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), 31));
+-                    canvas.drawRoundRect(lineRect, dp(14), dp(14), linePaint);
++                    if (md3) {
++                        lineDrawable.setColor(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider));
++                        NonIslandHelper.setMd3TabIndicatorBounds(lineDrawable, lineRect.left, lineRect.width(), getHeight(), 0f);
++                        lineDrawable.draw(canvas);
++                    } else {
++                        linePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), 31));
++                        canvas.drawRoundRect(lineRect, dp(14), dp(14), linePaint);
++                    }
+                 }
+                 if (needClip) {
+                     canvas.save();
+@@ -239,7 +263,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+ 
+             @Override
+             public Integer getSelectorColor(int position) {
+-                return 0;
++                return NonIslandHelper.chatElements() ? Theme.getColor(Theme.key_profile_tabSelector, resourcesProvider) : 0;
+             }
+         };
+         topTabs.listenReorder(this::whenReordered);
+@@ -440,7 +464,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
              sideMenuBackgroundDrawable.setBounds(
                      (int) (sideTabsContainer.getTranslationX()),
                      (int) sideMenuBackgroundMarginTop,
@@ -1960,7 +2046,7 @@ index 0000000..0000000 100644
                      (int) (getMeasuredHeight() - sideMenuBackgroundMarginBottom));
              sideMenuBackgroundDrawable.draw(canvas);
          }
-@@ -448,7 +450,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+@@ -448,7 +472,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
              topMenuBackgroundDrawable.setAlpha((int) (255 * topTabsContainer.getAlpha()));
              topMenuBackgroundDrawable.setBounds(
                      0, (int) topTabsContainer.getTranslationY(),
@@ -1969,7 +2055,7 @@ index 0000000..0000000 100644
              topMenuBackgroundDrawable.draw(canvas);
          }
  
-@@ -480,14 +482,14 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+@@ -480,14 +504,14 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
  
      public void setSideMenuBackgroundDrawable(BlurredBackgroundDrawable sideMenuBackgroundDrawable) {
          this.sideMenuBackgroundDrawable = sideMenuBackgroundDrawable;
@@ -1988,7 +2074,7 @@ index 0000000..0000000 100644
      }
  
  
-@@ -578,9 +580,9 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+@@ -578,9 +602,9 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
          topTabsContainer.setAlpha(lerp(1.0f, 0f, sidemenuT));
          topTabsContainer.setVisibility(((1f - sidemenuT) * animatorTopicsVisibility.getFloatValue()) > 0 ? View.VISIBLE : View.GONE);
          if (topicBottom) {
@@ -2000,6 +2086,13 @@ index 0000000..0000000 100644
          }
      }
  
+@@ -2193,4 +2217,4 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+     public void onFactorChanged(int id, float factor, float fraction, FactorAnimator callee) {
+         updateSidemenuPosition();
+     }
+-}
+\ No newline at end of file
++}
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java

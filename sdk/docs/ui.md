@@ -178,10 +178,15 @@ inu.registerMessageAction({
   icon: inu.icons.common('info'),
   // bubble = on bubble tap
   // selection = multiple messages selected -> ⋮ menu
+  // sharedMedia = files selected in profile's shared media -> ⋮ menu
   placements: ['bubble', 'selection'],
   callback: (ctx) => {
     const words = ctx.messages.reduce((n, m) => n + m.text.split(/\s+/).length, 0)
     inu.ui.toast(`${words} words`)
+  },
+  // long tap
+  secondaryCallback: (ctx) => {
+    inu.ui.toast(`${ctx.messages.length} messages`)
   },
 })
 ```
@@ -202,6 +207,7 @@ and if you can't - keep the getters fast and free of I/O.
   screen calls your `text` and `icon` getters with `null` instead of a context, and never calls
   `visible`. The typings reflect this: those getters take `Ctx | null`.
 - Actions never show in secret chats.
+- `callback` handles taps. Optional `secondaryCallback` handles long taps.
 
 ## Dialogs
 
@@ -266,8 +272,9 @@ The full API is described in the `d.ts` files, but a quick overview:
   - When the user taps "jump to bottom", `(null, 'newer')` is called, asking for the newest (bottommost) page
 - Messages are addressed by a string key, which is by default `${peer}:${id}`
 - Messages can be "synthetic", i.e. not backed by a real server message.
+- `onHeaderTap` handles taps on the chat header.
 - `button: { text, onClick }` can be used to add a button on the bottom of the screen
-- `append`, `replace` and `remove` on the handle allow imperative updates to the page
+- `append`, `replace`, `remove` and `scrollTo` on the handle allow imperative updates to the page
 
 ## Current screen
 

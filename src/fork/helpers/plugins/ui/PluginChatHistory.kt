@@ -49,6 +49,7 @@ object PluginChatHistory : SessionResource {
     private const val OP_REMOVE = 2
     private const val OP_UNREAD_COUNT = 3
     private const val OP_BUTTON = 4
+    private const val OP_SCROLL = 5
 
     private const val ARG_TOKEN = "inu_plugin_history"
     /** header sub-item ids; rust caps a menu at 30 items */
@@ -67,6 +68,7 @@ object PluginChatHistory : SessionResource {
         val avatars: Boolean,
         val iconSpec: String?,
         val reportsRead: Boolean,
+        val hasHeaderTap: Boolean,
         var buttonText: CharSequence?,
         val hasMenu: Boolean,
     ) {
@@ -79,6 +81,7 @@ object PluginChatHistory : SessionResource {
         val menuCells = ArrayList<ActionBarMenuSubItem>()
         var readId = Int.MIN_VALUE
         var readReportScheduled = false
+        var pendingScrollKey: String? = null
         var nextOlderId = ID_BASE
         var nextNewerId = ID_BASE + 1
         var loaded = false
@@ -126,6 +129,7 @@ object PluginChatHistory : SessionResource {
             options.optBoolean("avatars", true),
             options.optString("icon").takeIf { options.has("icon") },
             options.optBoolean("read"),
+            options.optBoolean("headerTap"),
             options.optJSONObject("button")?.takeIf { it.has("text") }?.let { PluginText.formatted(it.getString("text"), it.optJSONArray("textEntities")) },
             options.optBoolean("menu"),
         )
@@ -178,6 +182,16 @@ object PluginChatHistory : SessionResource {
     fun onButtonClick(activity: ChatActivity) {
         val screen = byActivity[activity] ?: return
         EngineDispatch.onEngine(screen.session) { screen.session.engine.chatHistoryButtonClick(screen.historyId) }
+    }
+
+    @JvmStatic
+    fun hasHeaderTap(activity: ChatActivity): Boolean = byActivity[activity]?.hasHeaderTap == true
+
+    @JvmStatic
+    fun handleHeaderTap(activity: ChatActivity): Boolean {
+        val screen = byActivity[activity]?.takeIf { it.hasHeaderTap } ?: return false
+        EngineDispatch.onEngine(screen.session) { screen.session.engine.chatHistoryHeaderTap(screen.historyId) }
+        return true
     }
 
     /** ui thread, once the header exists: a peer draws as itself, any other icon as a glyph on a disc */
@@ -509,6 +523,7 @@ object PluginChatHistory : SessionResource {
         )
         activity.inu_pluginHistoryEnds(screen.olderEnd, screen.newerEnd)
         unreadCount?.let(activity::inu_setPluginUnreadCount)
+        scrollToPending(screen)
     }
 
     private fun assignId(screen: Screen, entry: Entry, id: Int) {
@@ -537,6 +552,13 @@ object PluginChatHistory : SessionResource {
         if (op == OP_UNREAD_COUNT) {
             val count = json.toIntOrNull() ?: return PluginWire.encodePluginError("invalid-argument", "setUnreadCount: not a number")
             AndroidUtilities.runOnUIThread { screen.activity?.inu_setPluginUnreadCount(count) }
+            return null
+        }
+        if (op == OP_SCROLL) {
+            AndroidUtilities.runOnUIThread {
+                screen.pendingScrollKey = json
+                scrollToPending(screen)
+            }
             return null
         }
         val entries: List<Entry>
@@ -589,8 +611,17 @@ object PluginChatHistory : SessionResource {
                 }
             }
             unreadCount?.let(activity::inu_setPluginUnreadCount)
+            scrollToPending(screen)
         }
         return null
+    }
+
+    private fun scrollToPending(screen: Screen) {
+        val key = screen.pendingScrollKey ?: return
+        val id = screen.idsByKey[key] ?: return
+        val activity = screen.activity ?: return
+        screen.pendingScrollKey = null
+        activity.scrollToMessageId(id, 0, false, 0, true, 0)
     }
 
     /** plugin queue */

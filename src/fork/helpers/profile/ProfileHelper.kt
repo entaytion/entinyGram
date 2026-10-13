@@ -320,14 +320,16 @@ object ProfileHelper {
             }
             for (row in rows) {
                 val id = PluginActions.optionIdFor(row.key)
-                if (otherItem.hasSubItem(id)) {
+                val cell = if (otherItem.hasSubItem(id)) {
                     // the cell outlives the engine that drew it, so a reload may have renamed it
-                    (otherItem.getSubItem(id) as? ActionBarMenuSubItem)
-                        ?.setTextAndIcon(row.text, R.drawable.msg_settings_old)
+                    val existing = otherItem.getSubItem(id) as? ActionBarMenuSubItem
+                    existing?.setTextAndIcon(row.text, R.drawable.msg_settings_old)
                     otherItem.showSubItem(id)
+                    existing
                 } else {
                     otherItem.addSubItem(id, R.drawable.msg_settings_old, row.text)
                 }
+                if (cell != null) PluginActions.bindSecondaryCallback(cell, row, state.surface) { otherItem.closeSubMenu() }
             }
             state.shownKeys = keys
         }

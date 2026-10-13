@@ -10,7 +10,7 @@ Subject: md3-style sections redesign
  .../java/org/telegram/ui/Cells/TextCell.java  | 35 ++++++++++--
  .../org/telegram/ui/Cells/TextCheckCell.java  |  6 ++-
  .../ui/Cells/TextDetailSettingsCell.java      |  8 +--
- .../telegram/ui/Cells/TextSettingsCell.java   |  2 +-
+ .../telegram/ui/Cells/TextSettingsCell.java   | 13 +++--
  .../org/telegram/ui/ChannelBoostLayout.java   |  5 ++
  .../telegram/ui/ChatRightsEditActivity.java   |  3 ++
  .../org/telegram/ui/ChatUsersActivity.java    |  6 +++
@@ -25,7 +25,7 @@ Subject: md3-style sections redesign
  .../org/telegram/ui/ProxyListActivity.java    |  5 --
  .../org/telegram/ui/SettingsActivity.java     | 18 +++++++
  .../org/telegram/ui/StatisticActivity.java    |  1 +
- 21 files changed, 174 insertions(+), 31 deletions(-)
+ 21 files changed, 182 insertions(+), 34 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 index 0000000..0000000 100644
@@ -277,6 +277,33 @@ index 0000000..0000000 100644
  
          int availableWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - AndroidUtilities.dp(34);
          int width = betterLayout ? availableWidth : availableWidth / 2;
+@@ -129,7 +129,10 @@ public class TextSettingsCell extends FrameLayout {
+         }
+ 
+         if (imageView.getVisibility() == VISIBLE) {
+-            if (imageViewIsColorful) {
++            if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && !imageViewIsColorful) {
++                int size = AndroidUtilities.dp(22);
++                imageView.measure(MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY));
++            } else if (imageViewIsColorful) {
+                 imageView.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(28), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(28), MeasureSpec.EXACTLY));
+             } else {
+                 imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.AT_MOST));
+@@ -249,10 +252,12 @@ public class TextSettingsCell extends FrameLayout {
+             imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+             imageView.setBackground(null);
+             imageView.setVisibility(VISIBLE);
++            MarginLayoutParams imageParams = (MarginLayoutParams) imageView.getLayoutParams();
++            imageParams.leftMargin = imageParams.rightMargin = AndroidUtilities.dp(desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? 21 : 16);
+             if (LocaleController.isRTL) {
+-                params.rightMargin = AndroidUtilities.dp(58);
++                params.rightMargin = AndroidUtilities.dp(desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? 60 : 58);
+             } else {
+-                params.leftMargin = AndroidUtilities.dp(58);
++                params.leftMargin = AndroidUtilities.dp(desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? 60 : 58);
+             }
+         }
+     }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChannelBoostLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ChannelBoostLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChannelBoostLayout.java

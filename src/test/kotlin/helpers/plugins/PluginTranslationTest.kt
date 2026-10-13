@@ -13,6 +13,7 @@ import org.junit.Test
 import org.telegram.tgnet.RequestDelegate
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
+import org.telegram.tgnet.tl.TL_iv
 
 class PluginTranslationTest {
     private class Answer(val response: TLObject?, val error: TLRPC.TL_error?)
@@ -72,6 +73,29 @@ class PluginTranslationTest {
         assertTrue(entity is TLRPC.TL_messageEntityBold)
         assertEquals(0 to 5, entity.offset to entity.length)
         assertEquals("""["en",null]""", plugin.js("JSON.stringify(__from)"))
+    }
+
+    @Test
+    fun a_rich_message_is_translated_by_the_picked_provider() {
+        val plugin = startProvider("({ texts, from }) => { globalThis.__from = from; return texts.map(t => t.replace('hello', 'hallo')) }", format = "html")
+        val rich = TL_iv.RichMessage().apply {
+            blocks += TL_iv.pageBlockParagraph().apply {
+                text = TL_iv.textBold().apply {
+                    text = TL_iv.textPlain().apply { text = "hello world" }
+                }
+            }
+        }
+        val request = TranslationProviderHelper.createRichRequest(rich, "en", "de")
+        val answer = AtomicReference<Answer?>()
+
+        assertTrue(TranslationProviderHelper.maybeTranslate(0, 7, request, RequestDelegate { response, error -> answer.set(Answer(response, error)) }, null))
+
+        val response = awaitValue("translated") { answer.get() }.response as TLRPC.TL_messages_translatedRichMessage
+        val paragraph = response.result.single().blocks.single() as TL_iv.pageBlockParagraph
+        val bold = paragraph.text as TL_iv.textBold
+        assertEquals("hallo world", (bold.text as TL_iv.textPlain).text)
+        assertEquals("hello world", (((rich.blocks.single() as TL_iv.pageBlockParagraph).text as TL_iv.textBold).text as TL_iv.textPlain).text)
+        assertEquals("""["en"]""", plugin.js("JSON.stringify(__from)"))
     }
 
     @Test

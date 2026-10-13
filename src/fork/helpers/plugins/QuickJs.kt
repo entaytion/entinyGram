@@ -171,6 +171,8 @@ open class QuickJs {
 
     fun chatHistoryButtonClick(historyId: Long) = requireLive { nativeChatHistoryButtonClick(it, historyId) }
 
+    fun chatHistoryHeaderTap(historyId: Long) = requireLive { nativeChatHistoryHeaderTap(it, historyId) }
+
     fun chatHistoryMenu(historyId: Long, requestId: Long) = requireLive { nativeChatHistoryMenu(it, historyId, requestId) }
 
     fun chatHistoryMenuClick(historyId: Long, requestId: Long, index: Int) =
@@ -179,7 +181,8 @@ open class QuickJs {
     /** never call it off [EngineDispatch.scheduler] */
     open fun renderActions(kind: Int, surfaceJson: String): String? = ifLiveOr(null) { nativeRenderActions(it, kind, surfaceJson) }
 
-    open fun dispatchAction(kind: Int, token: Int, surfaceJson: String) = ifLive { nativeDispatchAction(it, kind, token, surfaceJson) }
+    open fun dispatchAction(kind: Int, token: Int, secondary: Boolean, surfaceJson: String) =
+        ifLive { nativeDispatchAction(it, kind, token, secondary, surfaceJson) }
 
     /** answered exactly once through [TranslationListener.translationResult], unless abandoned first */
     open fun dispatchTranslation(token: Int, dispatchId: Long, requestJson: String) =
@@ -305,10 +308,11 @@ open class QuickJs {
     private external fun nativeChatHistoryClosed(ptr: Long, historyId: Long)
     private external fun nativeChatHistoryRead(ptr: Long, historyId: Long, key: String)
     private external fun nativeChatHistoryButtonClick(ptr: Long, historyId: Long)
+    private external fun nativeChatHistoryHeaderTap(ptr: Long, historyId: Long)
     private external fun nativeChatHistoryMenu(ptr: Long, historyId: Long, requestId: Long)
     private external fun nativeChatHistoryMenuClick(ptr: Long, historyId: Long, requestId: Long, index: Int)
     private external fun nativeRenderActions(ptr: Long, kind: Int, surfaceJson: String): String?
-    private external fun nativeDispatchAction(ptr: Long, kind: Int, token: Int, surfaceJson: String)
+    private external fun nativeDispatchAction(ptr: Long, kind: Int, token: Int, secondary: Boolean, surfaceJson: String)
     private external fun nativeDispatchTranslation(ptr: Long, token: Int, dispatchId: Long, requestJson: String)
     private external fun nativeAbandonTranslation(ptr: Long, dispatchId: Long, timedOut: Boolean)
     private external fun nativeDispatchScreenChange(ptr: Long, changeJson: String, stackJson: String)

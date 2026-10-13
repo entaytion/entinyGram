@@ -48,7 +48,7 @@ const FIELD_DECL = new RegExp(`^\\s*${ANNOTATION}public\\s+${ANNOTATION}(?:final
 // the class look abstract - it silently loses its Raw type and its flag layout
 const CONSTRUCTOR_DECL = /^public (?:static final|final static|static) int constructor = (0[xX][0-9a-fA-F]+|-?\d+)/
 const RESPONSE_VECTOR = /return\s+Vector\.(?:TLDeserialize|deserialize)\s*\([^;]*?(?<!::)\b([\w.$]+)::TLdeserialize/
-const RESPONSE_SCALAR = /return\s+([\w.$]+)\.TLdeserialize\s*\(/
+const RESPONSE_SCALAR = /return\s+([\w.$]+)\.(?:TLdeserialize|TLDeserialize(?:Int|Long))\s*\(/
 const STATEMENT_KEYWORDS = /^(?:if|else|for|while|do|switch|return|case|final|int|long|short|byte|float|double|boolean|char|String|var|new)$/
 
 interface Cursor {

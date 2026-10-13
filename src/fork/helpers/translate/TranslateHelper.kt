@@ -13,6 +13,7 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LanguageDetector
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MediaDataController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
@@ -134,19 +135,21 @@ object TranslateHelper {
         val target = group?.captionMessage?.takeIf { !it.messageOwner?.message.isNullOrEmpty() } ?: selected
         val owner = target.messageOwner ?: return false
 
-        val hasBody = !owner.message.isNullOrEmpty()
+        val hasRichMessage = target.type == MessageObject.TYPE_ARTICLE && owner.rich_message != null && target.id >= 0
+        val hasBody = !hasRichMessage && !owner.message.isNullOrEmpty()
         val webPage = if (InuConfig.TRANSLATE_WEB_PREVIEWS.value) getWebPage(target) else null
         val hasWebPage = webPage != null && (
             !webPage.title.isNullOrBlank() || !webPage.description.isNullOrBlank() ||
                 !webPage.site_name.isNullOrBlank() || !webPage.author.isNullOrBlank()
             )
 
-        if (!hasBody && !hasWebPage) return false
+        if (!hasBody && !hasWebPage && !hasRichMessage) return false
 
         activity.dimBehindView(false)
         originals.computeIfAbsent(target.dialogId) { ConcurrentHashMap() }[target.id] = owner.message.orEmpty()
         if (hasBody) startBodyTranslate(activity, target, owner, fromLang, toLang)
         if (hasWebPage) startWebPageTranslate(activity, target, webPage!!, toLang)
+        if (hasRichMessage) startRichMessageTranslate(activity, target, owner, fromLang, toLang)
         return true
     }
 
@@ -201,6 +204,10 @@ object TranslateHelper {
         if (richMessage != null) {
             val fromLang = selected.messageOwner?.originalLanguage
             val toLangValue = if (fromLang != null && fromLang == toLang) toLangDefault else toLang
+            if (startTranslate(activity, selected, group, fromLang, toLangValue)) {
+                updateTranslateHint()
+                return
+            }
             val alert = TranslateAlert2.showAlert(
                 parent, activity, account, inputPeer, messageIdToTranslate[0],
                 fromLang, toLangValue, richMessage, noforwards, null,
@@ -315,6 +322,10 @@ object TranslateHelper {
         val controller = MessagesController.getInstance(account).translateController
         val dialogId = target.dialogId
 
+        if (owner.voiceTranscription == null || !owner.voiceTranscriptionFinal || !owner.voiceTranscriptionOpen) {
+            bodies[dialogId]?.remove(target.id)
+            owner.translatedText = null
+        }
         manual.computeIfAbsent(dialogId) { ConcurrentHashMap.newKeySet() }.add(target.id)
         if (fromLang != null && fromLang != "und" && owner.originalLanguage == null) {
             owner.originalLanguage = fromLang
@@ -339,6 +350,39 @@ object TranslateHelper {
                 storeMergedBody(target, text)
             }
             owner.translatedPoll = null
+            MessagesStorage.getInstance(account).updateMessageCustomParams(dialogId, owner)
+            NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslated, target)
+        }
+    }
+
+    private fun startRichMessageTranslate(
+        activity: ChatActivity,
+        target: MessageObject,
+        owner: TLRPC.Message,
+        fromLang: String?,
+        toLang: String,
+    ) {
+        val account = activity.currentAccount
+        val dialogId = target.dialogId
+        manual.computeIfAbsent(dialogId) { ConcurrentHashMap.newKeySet() }.add(target.id)
+        if (fromLang != null && fromLang != "und" && owner.originalLanguage == null) {
+            owner.originalLanguage = fromLang
+        }
+        NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslating, target)
+        MessagesController.getInstance(account).translateController.pushRichMessageToTranslate(target, toLang) { id, rich, lang ->
+            if (id != target.id || rich == null) {
+                manual[dialogId]?.remove(target.id)
+                NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslated, target)
+                BulletinFactory.of(activity)
+                    .createErrorBulletin(LocaleController.getString(R.string.TranslationFailedAlert1))
+                    .show()
+                return@pushRichMessageToTranslate
+            }
+            owner.translatedToLanguage = lang
+            owner.translatedText = null
+            owner.translatedVoiceTranscription = null
+            owner.translatedPoll = null
+            owner.translatedRichMessage = rich
             MessagesStorage.getInstance(account).updateMessageCustomParams(dialogId, owner)
             NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslated, target)
         }
@@ -562,16 +606,23 @@ object TranslateHelper {
         if (!isManualTranslated(old) && !hasTranslatedWebPage(old)) return
         val oldOwner = old.messageOwner ?: return
         val newOwner = updated.messageOwner ?: return
+        if (oldOwner.translatedRichMessage != null && !MediaDataController.richMessageEquals(oldOwner.rich_message, newOwner.rich_message)) {
+            newOwner.translatedRichMessage = null
+            clearState(updated)
+            updated.updateTranslation(false)
+            return
+        }
         if (!shouldKeepTranslation(updated)) {
             clearState(updated)
             return
         }
-        if (newOwner.translatedText != null || newOwner.translatedVoiceTranscription != null || newOwner.translatedPoll != null) return
+        if (newOwner.translatedText != null || newOwner.translatedVoiceTranscription != null || newOwner.translatedPoll != null || newOwner.translatedRichMessage != null) return
         newOwner.originalLanguage = oldOwner.originalLanguage
         newOwner.translatedToLanguage = oldOwner.translatedToLanguage
         newOwner.translatedText = oldOwner.translatedText
         newOwner.translatedVoiceTranscription = oldOwner.translatedVoiceTranscription
         newOwner.translatedPoll = oldOwner.translatedPoll
+        newOwner.translatedRichMessage = oldOwner.translatedRichMessage
         updated.linkDescription = null
         updated.updateTranslation(false)
     }

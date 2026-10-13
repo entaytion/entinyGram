@@ -13,6 +13,7 @@ import org.telegram.tgnet.TLRPC
 enum class MessageActionSource(val wire: String, val placements: Int) {
     BUBBLE("bubble", PluginActions.MESSAGE_PLACEMENT_BUBBLE),
     SELECTION("selection", PluginActions.MESSAGE_PLACEMENT_SELECTION),
+    SHARED_MEDIA("sharedMedia", PluginActions.MESSAGE_PLACEMENT_SHARED_MEDIA),
 }
 
 /** message snapshots are filtered per plugin */

@@ -362,7 +362,11 @@ object PluginUpdates : SessionResource {
         if (dispatchId != 0L && pendingUpdateDispatches.remove(dispatchId) === batch) {
             stageSession?.engine?.abandonUpdateDispatch(dispatchId, PluginRpc.TIMEOUT_WIRE)
         }
-        (stageSession?.log ?: PluginLog.HOST).w("updates", "an update batch ran past the ${UPDATE_BUDGET_MS}ms budget")
+        val waitingFor = batch.units.getOrNull(batch.index)?.let { unit ->
+            unit.chain.getOrNull(batch.stage - 1)?.takeIf { it.session === stageSession }
+                ?.let { " while waiting for interceptUpdate(${unit.tlName}) callback #${it.callbackId}" }
+        }.orEmpty()
+        (stageSession?.log ?: PluginLog.HOST).w("updates", "an update batch ran past the ${UPDATE_BUDGET_MS}ms budget$waitingFor")
         finishBatch(batch)
     }
 

@@ -12,12 +12,14 @@ import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.PinnedReactionsHelper
+import desu.inugram.helpers.theme.M3SectionsHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.DocumentObject
 import org.telegram.messenger.Emoji
@@ -33,11 +35,13 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_stars.TL_starGiftUnique
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Cells.HeaderCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.AnimatedEmojiDrawable
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LinkSpanDrawable.LinksTextView
 import org.telegram.ui.Components.ListView.AdapterWithDiffUtils
+import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet
 import org.telegram.ui.Components.Reactions.HwEmojis
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble.VisibleReaction
@@ -60,6 +64,19 @@ class PinnedReactionsActivity : SettingsPageActivity() {
     private var stripDragging = false
     private var animatedStripHeight = -1
     private var stripHeightAnimator: ValueAnimator? = null
+    private val stripSectionView by lazy {
+        LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(
+                HeaderCell(context).apply {
+                    setText(LocaleController.getString(R.string.InuPinnedReactionsHeader))
+                    M3SectionsHelper.styleHeaderCell(this)
+                },
+                LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT),
+            )
+            addView(getOrCreateStrip(), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+        }
+    }
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuPinnedReactions)
 
@@ -70,8 +87,12 @@ class PinnedReactionsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuPinnedReactionsInfo)))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuPinnedReactionsHeader)))
-        items.add(UItem.asCustom(getOrCreateStrip()))
+        if (M3SectionsHelper.isEnabled()) {
+            items.add(UItem.asCustom(stripSectionView))
+        } else {
+            items.add(UItem.asHeader(LocaleController.getString(R.string.InuPinnedReactionsHeader)))
+            items.add(UItem.asCustom(getOrCreateStrip()))
+        }
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuPinnedReactionsLimitInfo)))
 
         val pickerHeightDp = (AndroidUtilities.displaySize.y / AndroidUtilities.density / 2f).toInt().coerceAtLeast(280)

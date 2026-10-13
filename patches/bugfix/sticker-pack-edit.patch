@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Nika Krasnova <nika@nikableh.moe>
+Date: Sun, 11 Oct 2026 13:45:13 +0200
+Subject: Fix ignored taps on sticker pack Edit buttons
+
+Keep the header's pressed-state reset from cancelling nested button
+clicks before ACTION_UP. Clear the Create button's long-press listener
+when a recycled header is rebound to Edit.
+---
+ .../main/java/org/telegram/ui/Cells/StickerSetNameCell.java | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/StickerSetNameCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/StickerSetNameCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/StickerSetNameCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/StickerSetNameCell.java
+@@ -199,6 +199,8 @@ public class StickerSetNameCell extends FrameLayout {
+         editView.setVisibility(View.VISIBLE);
+         editView.setText(LocaleController.getString(R.string.EditPack));
+         editView.setOnClickListener(whenClickedEdit);
++        editView.setOnLongClickListener(null);
++        editView.setLongClickable(false);
+     }
+ 
+     public void setCreate(View.OnClickListener whenClickedEdit, View.OnLongClickListener whenLongClickedEdit) {
+@@ -227,6 +229,10 @@ public class StickerSetNameCell extends FrameLayout {
+         buttonView.setOnClickListener(onIconClickListener);
+     }
+ 
++    @Override
++    protected void dispatchSetPressed(boolean pressed) {
++    }
++
+     @Override
+     public void invalidate() {
+         textView.invalidate();

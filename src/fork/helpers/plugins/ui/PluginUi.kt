@@ -227,7 +227,8 @@ object PluginUi : SessionResource {
             val next = when (type) {
                 "chat" -> ChatActivity(Bundle().apply {
                     if (dialogId > 0) putLong("user_id", dialogId) else putLong("chat_id", -dialogId)
-                    options.optInt("topicId").takeIf { it != 0 }?.let { putInt("message_id", it) }
+                    (options.optInt("messageId").takeIf { it != 0 } ?: options.optInt("topicId").takeIf { it != 0 })
+                        ?.let { putInt("message_id", it) }
                 })
                 "profile" -> ProfileActivity.of(dialogId)
                 "dialogs" -> DrawerHelper.createMainFragment()

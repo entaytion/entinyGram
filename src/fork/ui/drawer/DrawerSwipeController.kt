@@ -118,6 +118,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
     @Keep
     fun setDrawerPosition(value: Float) {
         val layout = drawerLayout ?: return
+        if (drawerPosition == 0f && value > 0f) DrawerHelper.notifyDataChanged()
         drawerPosition = maxOf(0f, minOf(value, layout.measuredWidth.toFloat()))
         layout.translationX = drawerPosition
         if (drawerPosition > 0 && drawerListView != null && drawerListView!!.visibility != View.VISIBLE) {

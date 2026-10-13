@@ -1081,13 +1081,13 @@ declare namespace inu {
 
     /**
      * Target for {@link openPage}
-     * - `chat`: open a specific dialog (and optionally topic)
+     * - `chat`: open a specific dialog (and optionally topic), optionally at `messageId`
      * - `profile`: open a specific user/channel's profile
      * - `dialogs`: open a list of dialogs
      * - `settings`: open the settings page
      */
     type PageTarget
-      = | { type: 'chat', dialogId: number, topicId?: number, account?: number }
+      = | { type: 'chat', dialogId: number, topicId?: number, messageId?: number, account?: number }
         | { type: 'profile', dialogId: number, account?: number }
         | { type: 'dialogs', account?: number }
         | { type: 'settings', account?: number }
@@ -1197,6 +1197,8 @@ declare namespace inu {
        * @throws if the button was not declared
        */
       setButton(button: { text: InputText } | null): void
+      /** Scroll to an entry once it is loaded */
+      scrollTo(key: string): void
       /** Close the screen */
       close(): void
       /** A promise that resolves when the user leaves the screen */
@@ -1260,6 +1262,8 @@ declare namespace inu {
        * with the `key` of the newest entry the user has on the screen
        */
       onRead?(key: string): void
+      /** Called when the user taps the chat header */
+      onHeaderTap?(): void
       /**
        * A button on the bottom of the screen (where a Mute/Join button would reside)
        *
@@ -1468,6 +1472,8 @@ declare namespace inu {
       text: string
       /** Subtitle for the switch */
       subtitle?: string
+      /** Allow the label and subtitle to wrap instead of ellipsizing */
+      multiline?: boolean
       /** Icon shown next to the switch */
       icon?: UIIcon
       /** Current switch status */
@@ -1485,6 +1491,8 @@ declare namespace inu {
       /** Button label */
       text: InputText
       subtitle?: InputText
+      /** Allow the label and subtitle to wrap instead of ellipsizing */
+      multiline?: boolean
       /** Icon shown in the button */
       icon?: UIIcon
       /** "Value" of the button */
@@ -1503,6 +1511,8 @@ declare namespace inu {
       id?: string
       /** Label for the button */
       text: InputText
+      /** Allow the label to wrap instead of ellipsizing */
+      multiline?: boolean
       /** Icon shown in the button */
       icon?: UIIcon
       /** Select items */
@@ -1716,10 +1726,10 @@ declare namespace inu {
     dialogId: number
     topicId?: number
   }
-  type MessageActionSource = 'bubble' | 'selection'
+  type MessageActionSource = 'bubble' | 'selection' | 'sharedMedia'
   interface MessageActionContext extends ChatActionContext {
     source: MessageActionSource
-    /** Oldest to newest. A bubble expands its album; a selection contains exactly what the user selected. */
+    /** Oldest to newest. A bubble expands its album; a selection or shared media contains exactly what the user selected. */
     messages: readonly Message[]
   }
 
@@ -1729,6 +1739,8 @@ declare namespace inu {
     icon?: UIIcon | ((ctx: GetterCtx) => UIIcon)
     visible?: (ctx: Ctx) => boolean
     callback: (ctx: Ctx) => void
+    /** Long-tap handler */
+    secondaryCallback?: (ctx: Ctx) => void
   }
 
   interface MessageActionOptions extends ActionOptions<MessageActionContext, MessageActionContext | null> {

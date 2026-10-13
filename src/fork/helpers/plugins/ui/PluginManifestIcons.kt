@@ -66,7 +66,7 @@ object PluginManifestIcons {
         val documentId = uri.getQueryParameter("id")?.toLongOrNull() ?: return false
         view.setColorFilter(null)
         view.setAnimatedEmojiDrawable(
-            AnimatedEmojiDrawable.make(UserConfig.selectedAccount, AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, documentId),
+            AnimatedEmojiDrawable.make(UserConfig.selectedAccount, AnimatedEmojiDrawable.CACHE_TYPE_FORUM_TOPIC_LARGE, documentId),
         )
         return true
     }

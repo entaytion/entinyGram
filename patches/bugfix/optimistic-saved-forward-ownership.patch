@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 12 Oct 2026 02:03:34 +0200
+Subject: fix Saved Messages forward ownership before server confirmation (fixes album layout)
+
+---
+ .../src/main/java/org/telegram/messenger/SendMessagesHelper.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -2308,6 +2308,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                         newMsg.flags = TLRPC.MESSAGE_FLAG_FWD;
+                     }
+                     if (peer == myId && newMsg.fwd_from != null) {
++                        newMsg.fwd_from.saved_out = true;
+                         newMsg.fwd_from.flags |= 16;
+                         newMsg.fwd_from.saved_from_msg_id = msgObj.getId();
+                         newMsg.fwd_from.saved_from_peer = msgObj.messageOwner.peer_id;

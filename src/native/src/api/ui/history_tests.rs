@@ -60,6 +60,7 @@ const OPEN: &str = r#"
     avatars: false,
     icon: inu.icons.avatar(777000),
     onRead: key => { globalThis.__read = key },
+    onHeaderTap: () => { globalThis.__headerTaps = (globalThis.__headerTaps ?? 0) + 1 },
     button: { text: 'Mark read', onClick: () => { globalThis.__clicks = (globalThis.__clicks ?? 0) + 1 } },
     menu: async () => [
       { text: 'Refresh', icon: inu.icons.avatar(42), onClick: () => { globalThis.__menu = 'refresh' } },
@@ -82,11 +83,11 @@ fn open_hands_the_host_the_screen_options_and_returns_a_handle() {
   assert_eq!(opened[0].0, 1);
   assert_eq!(
     opened[0].1,
-    r#"{"title":"Feed","titleEntities":[{"_":"messageEntityBold","offset":0,"length":4}],"subtitle":"two chats","account":1,"synthetic":true,"avatars":false,"icon":"p-1:777000","read":true,"button":{"text":"Mark read"},"menu":true}"#
+    r#"{"title":"Feed","titleEntities":[{"_":"messageEntityBold","offset":0,"length":4}],"subtitle":"two chats","account":1,"synthetic":true,"avatars":false,"icon":"p-1:777000","read":true,"headerTap":true,"button":{"text":"Mark read"},"menu":true}"#
   );
   assert_eq!(
     eval_json(&ctx, "Object.keys(globalThis.__h).sort()"),
-    r#"["append","close","closed","remove","replace","setButton","setUnreadCount"]"#
+    r#"["append","close","closed","remove","replace","scrollTo","setButton","setUnreadCount"]"#
   );
 }
 
@@ -169,6 +170,7 @@ fn updates_are_forwarded_and_refused_once_the_screen_closed() {
       globalThis.__h.setButton({ text: 'Marked' });
       globalThis.__h.setButton(null);
       globalThis.__h.setButton({ text: 'Again' });
+      globalThis.__h.scrollTo('k');
       globalThis.__h.close();
     "#,
   );
@@ -191,8 +193,10 @@ fn updates_are_forwarded_and_refused_once_the_screen_closed() {
     assert_eq!(updates[4], (1, OP_BUTTON, r#"{"text":"Marked"}"#.to_string()));
     assert_eq!(updates[5], (1, OP_BUTTON, "null".to_string()));
     assert_eq!(updates[6], (1, OP_BUTTON, r#"{"text":"Again"}"#.to_string()));
+    assert_eq!(updates[7], (1, OP_SCROLL, "k".to_string()));
 
     assert!(catch_json(&ctx, "globalThis.__h.setUnreadCount(-1)").contains("non-negative"));
+    assert!(catch_json(&ctx, "globalThis.__h.scrollTo(1)").contains("string key"));
     assert_eq!(*host.closed.borrow(), vec![1]);
   }
   assert_eq!(eval_json(&ctx, "globalThis.__closed === true"), "false");
@@ -200,6 +204,8 @@ fn updates_are_forwarded_and_refused_once_the_screen_closed() {
   assert_eq!(eval_json(&ctx, "globalThis.__read"), r#""k""#);
   state.dispatch_button_click(&ctx, 1);
   assert_eq!(eval_json(&ctx, "globalThis.__clicks"), "1");
+  state.dispatch_header_tap(&ctx, 1);
+  assert_eq!(eval_json(&ctx, "globalThis.__headerTaps"), "1");
   state.dispatch_menu(&ctx, 1, 7);
   state.dispatch_menu(&ctx, 1, 8);
   assert_eq!(

@@ -950,7 +950,8 @@ object PluginRpc : SessionResource {
     private fun expireChain(scopeId: Long) {
         val running = chains[scopeId]?.stages?.reversed()?.firstNotNullOfOrNull { pendingDispatches[it] }
         val budget = collapseChain(scopeId, TIMEOUT_WIRE) ?: return
-        (running?.session?.log ?: PluginLog.HOST).w("rpc", "'${budget.method}' ran past the chain's ${RPC_CHAIN_BUDGET_MS}ms budget")
+        val waitingFor = running?.operation?.chain?.getOrNull(running.index)?.let { " while waiting for interceptRpc callback #${it.callbackId}" }.orEmpty()
+        (running?.session?.log ?: PluginLog.HOST).w("rpc", "'${budget.method}' ran past the chain's ${RPC_CHAIN_BUDGET_MS}ms budget$waitingFor")
         val sent = budget.passthrough
         if (sent != null) {
             budget.finalize(sent.response, sent.error, sent.time)

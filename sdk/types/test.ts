@@ -7,6 +7,7 @@ inu.registerSettings(ui.settingsPage({
     ui.header('header'),
     ui.check({
       text: 'check',
+      multiline: true,
       checked: true,
       onChange: (checked) => {
         console.log('check', checked)
@@ -17,6 +18,7 @@ inu.registerSettings(ui.settingsPage({
     }),
     ui.button({
       text: 'button',
+      multiline: true,
       onClick: () => {
         console.log('button click')
       },
@@ -26,6 +28,7 @@ inu.registerSettings(ui.settingsPage({
     }),
     ui.select({
       text: 'select',
+      multiline: true,
       items: ['item1', 'item2', 'item3'],
       selected: 0,
       onChange: (value) => {
@@ -69,6 +72,7 @@ inu.interceptRpc('messages.getHistory', async ({ request: req }, next) => {
   }
   return history
 })
+inu.interceptRpc('stories.readStories', (_, next) => next())
 
 inu.withCurrentAccount((account) => {
   const me = account.getMe()

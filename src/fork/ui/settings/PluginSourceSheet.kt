@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Typeface
+import android.text.Layout
+import android.text.SpannableString
+import android.text.Spanned
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -17,6 +20,7 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.CodeHighlighting
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.BottomSheetWithRecyclerListView
 import org.telegram.ui.Components.BulletinFactory
@@ -76,6 +80,54 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
         }
     }
 
+    private val chunks: List<IntRange> = run {
+        val result = ArrayList<IntRange>()
+        var chunkStart = 0
+        var lines = 0
+        var i = source.indexOf('\n')
+        while (i != -1) {
+            if (++lines == CHUNK_LINES) {
+                result.add(chunkStart until i)
+                chunkStart = i + 1
+                lines = 0
+            }
+            i = source.indexOf('\n', i + 1)
+        }
+        if (chunkStart < source.length || result.isEmpty()) result.add(chunkStart until source.length)
+        result
+    }
+    private var highlightedChunks: List<CharSequence>? = null
+    private var codeWidth = 0
+    private var codeScrollX = 0
+
+    init {
+        if (source.length <= HIGHLIGHT_MAX_LENGTH) {
+            Utilities.searchQueue.postRunnable {
+                val spans = CodeHighlighting.inu_computeSpans(source, "javascript")
+                var first = 0
+                val result = chunks.map { range ->
+                    val end = range.last + 1
+                    val text = SpannableString(source.substring(range.first, end))
+                    while (first < spans.size && spans[first].end <= range.first) first++
+                    var i = first
+                    while (i < spans.size && spans[i].start < end) {
+                        val span = spans[i++]
+                        val spanStart = maxOf(span.start, range.first) - range.first
+                        val spanEnd = minOf(span.end, end) - range.first
+                        if (spanStart < spanEnd) {
+                            text.setSpan(CodeHighlighting.ColorSpan(span.group), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        }
+                    }
+                    text
+                }
+                AndroidUtilities.runOnUIThread {
+                    highlightedChunks = result
+                    recyclerListView.adapter?.notifyItemRangeChanged(1, chunks.size)
+                }
+            }
+        }
+    }
+
     private fun buildCode(context: Context): View {
         val code = TextView(context).apply {
             typeface = Typeface.MONOSPACE
@@ -83,18 +135,40 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             setTextIsSelectable(true)
             setHorizontallyScrolling(true)
-            setPadding(AndroidUtilities.dp(22f), AndroidUtilities.dp(4f), AndroidUtilities.dp(22f), AndroidUtilities.dp(16f))
-            text = source
         }
-        if (source.length <= HIGHLIGHT_MAX_LENGTH) {
-            CodeHighlighting.highlightEditable(source, "javascript") { highlighted ->
-                code.text = highlighted
+        if (codeWidth == 0) {
+            codeWidth = source.lineSequence().maxOf { Layout.getDesiredWidth(it, code.paint) }.toInt() +
+                AndroidUtilities.dp(44f)
+        }
+        code.minWidth = codeWidth
+        return object : HorizontalScrollView(context) {
+            override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
+                super.onScrollChanged(l, t, oldl, oldt)
+                if (codeScrollX == l) return
+                codeScrollX = l
+                for (i in 0 until recyclerListView.childCount) {
+                    val child = recyclerListView.getChildAt(i)
+                    if (child is HorizontalScrollView && child !== this) child.scrollTo(l, 0)
+                }
             }
-        }
-        return HorizontalScrollView(context).apply {
+        }.apply {
             isHorizontalScrollBarEnabled = false
             addView(code, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT.toFloat()))
         }
+    }
+
+    private fun bindCode(view: HorizontalScrollView, index: Int) {
+        val range = chunks[index]
+        (view.getChildAt(0) as TextView).apply {
+            setPadding(
+                AndroidUtilities.dp(22f),
+                if (index == 0) AndroidUtilities.dp(4f) else 0,
+                AndroidUtilities.dp(22f),
+                if (index == chunks.lastIndex) AndroidUtilities.dp(16f) else 0,
+            )
+            text = highlightedChunks?.get(index) ?: source.substring(range.first, range.last + 1)
+        }
+        view.scrollX = codeScrollX
     }
 
     private inner class Adapter : RecyclerListView.SelectionAdapter() {
@@ -106,14 +180,17 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
             return RecyclerListView.Holder(view)
         }
 
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {}
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (position > 0) bindCode(holder.itemView as HorizontalScrollView, position - 1)
+        }
 
-        override fun getItemViewType(position: Int): Int = position
+        override fun getItemViewType(position: Int): Int = if (position == 0) 0 else 1
 
-        override fun getItemCount(): Int = 2
+        override fun getItemCount(): Int = 1 + chunks.size
     }
 
     companion object {
         private const val HIGHLIGHT_MAX_LENGTH = 200_000
+        private const val CHUNK_LINES = 40
     }
 }

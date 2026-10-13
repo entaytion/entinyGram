@@ -843,6 +843,10 @@
     <string name="InuPluginScopeOnUpdate">відстеження %1$s</string>
     <string name="InuPluginScopeInterceptUpdate">перехоплення %1$s</string>
     <string name="InuPluginScopeAllUpdates">усі оновлення</string>
+    <string name="InuPluginScopesMore_one">і ще %1$d</string>
+    <string name="InuPluginScopesMore_few">і ще %1$d</string>
+    <string name="InuPluginScopesMore_many">і ще %1$d</string>
+    <string name="InuPluginScopesMore_other">і ще %1$d</string>
     <string name="InuPluginTrustTitle">Встановлюйте лише плагіни, яким довіряєте</string>
     <string name="InuPluginTrustInfo">Плагіни працюють в ізольованому середовищі та отримують лише заявлені дозволи, перелічені на наступному екрані. Навіть після їх надання плагін може:</string>
     <string name="InuPluginTrust1Title">Діяти від вашого імені</string>

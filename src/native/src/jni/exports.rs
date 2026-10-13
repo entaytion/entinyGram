@@ -532,6 +532,14 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_platform_PluginXposed_0
 }
 
 #[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_platform_PluginXposed_00024Native_nativeHasLoadedLsposed(
+  _env: EnvUnowned,
+  _this: JObject,
+) -> jboolean {
+  xposed::elf::is_lsposed_loaded()
+}
+
+#[no_mangle]
 pub extern "system" fn Java_desu_inugram_helpers_plugins_platform_PluginXposed_00024Native_nativeHook<'local>(
   mut env: EnvUnowned<'local>,
   _this: JObject<'local>,
@@ -907,6 +915,16 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeChatHisto
 }
 
 #[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeChatHistoryHeaderTap(
+  _env: EnvUnowned,
+  _this: JObject,
+  ptr: jlong,
+  history_id: jlong,
+) {
+  with_engine(ptr, (), |engine| engine.history.dispatch_header_tap(&engine.ctx, history_id));
+}
+
+#[no_mangle]
 pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeChatHistoryMenu(
   _env: EnvUnowned,
   _this: JObject,
@@ -963,11 +981,12 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeDispatchA
   ptr: jlong,
   kind: jint,
   token: jint,
+  secondary: jboolean,
   surface_json: JString,
 ) {
   with_engine_env(&mut env, ptr, (), |env, engine| {
     let surface_json = jstring_to_string(env, &surface_json);
-    engine.actions.dispatch(&engine.ctx, kind, token as u32, &surface_json);
+    engine.actions.dispatch(&engine.ctx, kind, token as u32, secondary, &surface_json);
   })
 }
 

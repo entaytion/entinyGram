@@ -56,6 +56,11 @@ abstract class SettingsPageActivity : UniversalFragment() {
             listView.setSections()
             actionBar.setAdaptiveBackground(listView)
             listView.clipToPadding = false
+            listView.setOnItemClickListener { view, position, x, y ->
+                val item = listView.adapter.getItem(position) ?: return@setOnItemClickListener
+                onClick(item, view, position, x, y)
+                listView.adapter.update(true)
+            }
             // pre-scroll before first layout so the row is on-screen at open, no jump after transition.
             if (highlightItemId != -1) {
                 val index = findItemPosition(listView, highlightItemId)

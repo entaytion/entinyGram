@@ -4,7 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -497,8 +500,32 @@ class MenuOrderRow(context: Context, val mainHeightDp: Int = 50) : LinearLayout(
             subWrapper = wrapper
             addView(wrapper, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, subHeightDp))
         }
-        cell.setTextAndValue(label, value, false, false)
-        cell.setSubtitle(note)
+        val rowWidth = width.takeIf { it > 0 }
+            ?: AndroidUtilities.dp((resources.configuration.screenWidthDp - 24).toFloat())
+        val fitsInline = cell.textView.paint.measureText(label.toString()) +
+            cell.valueTextView.paint.measureText(value.toString()) <=
+            rowWidth - AndroidUtilities.dp((SUB_LEFT_OFFSET_DP + 103 + cell.leftPadding).toFloat())
+        if (fitsInline) {
+            cell.subtitleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+            cell.setTextAndValue(label, value, false, false)
+            cell.setSubtitle(note)
+        } else {
+            cell.setText(label, false)
+            cell.subtitleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText))
+            cell.setSubtitle(SpannableStringBuilder(value).apply {
+                if (!note.isNullOrEmpty()) {
+                    append(" · ")
+                    val start = length
+                    append(note)
+                    setSpan(
+                        ForegroundColorSpan(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText)),
+                        start,
+                        length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+                    )
+                }
+            })
+        }
         return cell
     }
 

@@ -46,6 +46,7 @@ object PluginXposed : SessionResource {
 
     /** reached through the C binding `patches-native/lsplant-c-abi.patch` adds. private: `nativeHook` rewrites ART entry points unchecked */
     private object Native {
+        external fun nativeHasLoadedLsposed(): Boolean
         external fun nativeInit(): Boolean
         external fun nativeHook(target: Member, hooker: Any, callback: Method): Member?
         external fun nativeUnhook(target: Member): Boolean
@@ -56,11 +57,17 @@ object PluginXposed : SessionResource {
 
     /** lazy: `nativeInit` prefetches ART symbols and installs its own hooks */
     private var ready: Boolean? = null
+    private var unavailableReason: String? = null
 
     @Synchronized
     private fun ensureReady(): Boolean = ready ?: runCatching {
-        System.loadLibrary("lsplant")
-        Native.nativeInit()
+        if (Native.nativeHasLoadedLsposed()) {
+            unavailableReason = "xposed: Inugram is in LSPosed scope; remove it from every module's scope before using inu.xposed"
+            false
+        } else {
+            System.loadLibrary("lsplant")
+            Native.nativeInit()
+        }
     }.getOrElse {
         PluginLog.HOST.e("xposed", "load xposed libraries failed", it)
         false
@@ -233,7 +240,7 @@ object PluginXposed : SessionResource {
                 }
             }
             if (!ensureReady()) {
-                refuse("unsupported", "xposed: method hooking is unavailable on this device")
+                refuse("unsupported", unavailableReason ?: "xposed: method hooking is unavailable on this device")
             }
             val installed = ArrayList<Long>(targets.size)
             val previous = sites.keys.toSet()

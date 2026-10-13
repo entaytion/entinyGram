@@ -20,7 +20,7 @@ object PluginTranslation : SessionResource {
         val key: String get() = "${session.plugin.id}:$id"
     }
 
-    private class Pending(val session: PluginSession, val done: (ArrayList<TLRPC.TL_textWithEntities>?) -> Unit) {
+    private class Pending(val session: PluginSession, val providerId: String, val done: (ArrayList<TLRPC.TL_textWithEntities>?) -> Unit) {
         lateinit var deadline: DispatchDeadline
     }
 
@@ -95,7 +95,7 @@ object PluginTranslation : SessionResource {
             .put("to", toLang)
         if (tone != null) request.put("tone", tone)
         val dispatchId = nextDispatchId++
-        val entry = Pending(provider.session, done)
+        val entry = Pending(provider.session, provider.id, done)
         entry.deadline = DispatchDeadline(EngineDispatch.scheduler, BUDGET_MS) { expire(dispatchId) }
         pending[dispatchId] = entry
         entry.deadline.resume()
@@ -112,7 +112,7 @@ object PluginTranslation : SessionResource {
 
     private fun expire(dispatchId: Long) {
         val entry = pending.remove(dispatchId) ?: return
-        entry.session.log.w("translation", "a translation ran past its ${BUDGET_MS}ms budget")
+        entry.session.log.w("translation", "provider '${entry.providerId}' ran past its ${BUDGET_MS}ms budget")
         entry.session.engine.abandonTranslation(dispatchId, true)
         entry.done(null)
     }

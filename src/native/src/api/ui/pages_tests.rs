@@ -82,10 +82,10 @@ fn build_full_page(ctx: &Context, host: &Rc<TestUiHost>) -> i64 {
             title: 'Test page',
             items: () => [
               inu.ui.header('General'),
-              inu.ui.check({ text: 'Toggle', subtitle: 'sub', checked: s.on, onChange: v => { s.on = v; } }),
-              inu.ui.button({ text: 'Do it', value: 'now', danger: true, onClick: () => { s.log.push('click'); },
+              inu.ui.check({ text: 'Toggle', subtitle: 'sub', multiline: true, checked: s.on, onChange: v => { s.on = v; } }),
+              inu.ui.button({ text: 'Do it', value: 'now', multiline: true, danger: true, onClick: () => { s.log.push('click'); },
                 onSecondaryClick: () => { s.log.push('long'); } }),
-              inu.ui.select({ text: 'Mode', items: ['a', { text: 'b', subtitle: 'bee' }], selected: s.sel,
+              inu.ui.select({ text: 'Mode', multiline: true, items: ['a', { text: 'b', subtitle: 'bee' }], selected: s.sel,
                 dialog: true, onChange: i => { s.sel = i; } }),
               inu.ui.slider({ text: 'Speed', min: 0, max: 2, step: 1, value: s.speed, default: 1,
                 label: v => v + 'x', onChange: v => { s.speed = v; } }),
@@ -110,7 +110,7 @@ fn full_page_render_serializes_every_element() {
   let json = state.render(&ctx, page_id).expect("render failed");
   assert_eq!(
     json,
-    r#"{"title":"Test page","items":[{"type":"header","key":"t:header:General#1","text":"General"},{"type":"check","key":"t:check:Toggle#1","text":"Toggle","subtitle":"sub","checked":false,"onChange":1},{"type":"button","key":"t:button:Do it#1","text":"Do it","value":"now","danger":true,"onClick":2,"onSecondaryClick":3},{"type":"select","key":"t:select:Mode#1","text":"Mode","items":[{"text":"a"},{"text":"b","subtitle":"bee"}],"selected":0,"dialog":true,"onChange":4},{"type":"slider","key":"t:slider:Speed#1","text":"Speed","min":0,"max":2,"step":1,"value":1,"default":1,"labels":["0x","1x","2x"],"onChange":5},{"type":"separator","key":"t:separator:the end#1","text":"the end"}],"bottomButton":{"key":"b","text":"Save","onClick":6}}"#,
+    r#"{"title":"Test page","items":[{"type":"header","key":"t:header:General#1","text":"General"},{"type":"check","key":"t:check:Toggle#1","text":"Toggle","subtitle":"sub","multiline":true,"checked":false,"onChange":1},{"type":"button","key":"t:button:Do it#1","text":"Do it","value":"now","multiline":true,"danger":true,"onClick":2,"onSecondaryClick":3},{"type":"select","key":"t:select:Mode#1","text":"Mode","multiline":true,"items":[{"text":"a"},{"text":"b","subtitle":"bee"}],"selected":0,"dialog":true,"onChange":4},{"type":"slider","key":"t:slider:Speed#1","text":"Speed","min":0,"max":2,"step":1,"value":1,"default":1,"labels":["0x","1x","2x"],"onChange":5},{"type":"separator","key":"t:separator:the end#1","text":"the end"}],"bottomButton":{"key":"b","text":"Save","onClick":6}}"#,
   );
   assert!(logs.borrow().is_empty(), "unexpected logs: {:?}", logs.borrow());
 }
@@ -425,7 +425,7 @@ fn open_screen_validates_and_reaches_host() {
     ctx
       .eval::<(), _>(
         r#"
-          inu.ui.openPage({ type: 'chat', dialogId: -1001, topicId: 42, account: 2 })
+          inu.ui.openPage({ type: 'chat', dialogId: -1001, topicId: 42, messageId: 50, account: 2 })
           inu.ui.openPage({ type: 'profile', dialogId: 7, account: 2 })
           inu.ui.openPage({ type: 'dialogs', account: 2 })
           inu.ui.openPage({ type: 'settings' })
@@ -436,7 +436,7 @@ fn open_screen_validates_and_reaches_host() {
   assert_eq!(
     *host.opened_screens.borrow(),
     vec![
-      r#"{"type":"chat","accountId":2,"dialogId":-1001,"topicId":42}"#,
+      r#"{"type":"chat","accountId":2,"dialogId":-1001,"topicId":42,"messageId":50}"#,
       r#"{"type":"profile","accountId":2,"dialogId":7}"#,
       r#"{"type":"dialogs","accountId":2}"#,
       r#"{"type":"settings"}"#,
@@ -447,6 +447,8 @@ fn open_screen_validates_and_reaches_host() {
     "inu.ui.openPage({ type: 'other' })",
     "inu.ui.openPage({ type: 'chat', dialogId: 0 })",
     "inu.ui.openPage({ type: 'profile', dialogId: 1, topicId: 2 })",
+    "inu.ui.openPage({ type: 'profile', dialogId: 1, messageId: 2 })",
+    "inu.ui.openPage({ type: 'chat', dialogId: 1, messageId: 1.5 })",
     "inu.ui.openPage({ type: 'profile', dialogId: 1, account: {} })",
   ] {
     assert!(ctx.with(|ctx| ctx.eval::<(), _>(source).is_err()), "accepted {source}");

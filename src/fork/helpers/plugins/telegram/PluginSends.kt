@@ -303,7 +303,13 @@ object PluginSends : SessionResource {
         val dispatchId = pipeline.dispatchId
         if (pending.remove(dispatchId) !== pipeline) return
         val stage = pipeline.stage
-        (stage?.session?.log ?: PluginLog.HOST).w("sends", "a send ran past its ${BUDGET_MS}ms budget and was not sent")
+        val waitingFor = stage?.let {
+            " while waiting for interceptSendMessage(${if (it.uploaded) "uploaded" else "compose"}) callback #${it.callbackId}"
+        }.orEmpty()
+        (stage?.session?.log ?: PluginLog.HOST).w(
+            "sends",
+            "a send ran past its ${BUDGET_MS}ms budget$waitingFor and was not sent",
+        )
         stage?.session?.takeIf { it.isCurrent() }?.engine?.abandonSendDispatch(dispatchId, PluginRpc.TIMEOUT_WIRE)
         finish(pipeline, Outcome.Failed("the interceptors ran past their budget"))
     }

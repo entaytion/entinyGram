@@ -38,9 +38,9 @@ class PluginSettingsActivity(
 
     private sealed class Row(val uid: Int, val secondarySlot: Int) {
         class Header(uid: Int, val text: String) : Row(uid, 0)
-        class Check(uid: Int, val text: CharSequence, val subtitle: CharSequence?, val icon: String?, val formatting: String?, val checked: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
-        class Button(uid: Int, val text: CharSequence, val subtitle: CharSequence?, val value: CharSequence?, val icon: String?, val formatting: String?, val danger: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
-        class Select(uid: Int, val text: CharSequence, val options: List<SelectOption>, val selected: Int, val icon: String?, val formatting: String?, val dialog: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
+        class Check(uid: Int, val text: CharSequence, val subtitle: CharSequence?, val icon: String?, val formatting: String?, val multiline: Boolean, val checked: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
+        class Button(uid: Int, val text: CharSequence, val subtitle: CharSequence?, val value: CharSequence?, val icon: String?, val formatting: String?, val multiline: Boolean, val danger: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
+        class Select(uid: Int, val text: CharSequence, val options: List<SelectOption>, val selected: Int, val icon: String?, val formatting: String?, val multiline: Boolean, val dialog: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
         class Slider(
             uid: Int, val text: String?, val min: Double, val max: Double, val step: Double,
             val value: Double, val default: Double?, val labels: List<String>?, val slot: Int,
@@ -172,30 +172,40 @@ class PluginSettingsActivity(
                 "header" -> Row.Header(uid, o.getString("text"))
                 "separator" -> Row.Separator(uid, formatted(o, "text"))
                 "native" -> Row.Native(uid, o.getLong("handle"))
-                "check" -> Row.Check(
-                    uid, formattedRow(o, "text") ?: "", formattedRow(o, "subtitle"),
-                    o.optString("icon").takeIf { it.isNotEmpty() },
-                    joinEntities(o, "text", "subtitle"),
-                    o.getBoolean("checked"), o.getInt("onChange"), secondary,
-                )
-                "button" -> Row.Button(
-                    uid, formattedRow(o, "text") ?: "",
-                    formattedRow(o, "subtitle"),
-                    formattedRow(o, "value"),
-                    o.optString("icon").takeIf { it.isNotEmpty() },
-                    joinEntities(o, "text", "subtitle", "value"),
-                    o.optBoolean("danger"), o.getInt("onClick"), secondary,
-                )
+                "check" -> {
+                    val multiline = o.optBoolean("multiline")
+                    Row.Check(
+                        uid,
+                        (if (multiline) formatted(o, "text") else formattedRow(o, "text")) ?: "",
+                        if (multiline) formatted(o, "subtitle") else formattedRow(o, "subtitle"),
+                        o.optString("icon").takeIf { it.isNotEmpty() },
+                        joinEntities(o, "text", "subtitle"), multiline,
+                        o.getBoolean("checked"), o.getInt("onChange"), secondary,
+                    )
+                }
+                "button" -> {
+                    val multiline = o.optBoolean("multiline")
+                    Row.Button(
+                        uid,
+                        (if (multiline) formatted(o, "text") else formattedRow(o, "text")) ?: "",
+                        if (multiline) formatted(o, "subtitle") else formattedRow(o, "subtitle"),
+                        formattedRow(o, "value"),
+                        o.optString("icon").takeIf { it.isNotEmpty() },
+                        joinEntities(o, "text", "subtitle", "value"), multiline,
+                        o.optBoolean("danger"), o.getInt("onClick"), secondary,
+                    )
+                }
                 "select" -> {
+                    val multiline = o.optBoolean("multiline")
                     val optionsArr = o.getJSONArray("items")
                     val options = (0 until optionsArr.length()).map { j ->
                         val opt = optionsArr.getJSONObject(j)
                         SelectOption(opt.getString("text"), opt.optString("subtitle").takeIf { it.isNotEmpty() })
                     }
                     Row.Select(
-                        uid, formattedRow(o, "text") ?: "", options, o.getInt("selected"),
+                        uid, (if (multiline) formatted(o, "text") else formattedRow(o, "text")) ?: "", options, o.getInt("selected"),
                         o.optString("icon").takeIf { it.isNotEmpty() },
-                        joinEntities(o, "text"),
+                        joinEntities(o, "text"), multiline,
                         o.optBoolean("dialog"), o.getInt("onChange"), secondary,
                     )
                 }
@@ -248,7 +258,7 @@ class PluginSettingsActivity(
                 is Row.Separator -> UItem.asShadow(row.uid, row.text)
                 is Row.Check -> buildCheck(row)
                 is Row.Button -> buildButton(row)
-                is Row.Select -> ButtonCellFactory.of(row.uid, row.text, row.options[row.selected].text, null, ButtonIcon(row.icon, session.engine), false, row.formatting)
+                is Row.Select -> ButtonCellFactory.of(row.uid, row.text, row.options[row.selected].text, null, ButtonIcon(row.icon, session.engine), false, row.formatting, row.multiline)
                 is Row.Slider -> UItem.asCustom(row.uid, sliderCellFor(row))
                 // the view is the plugin's, not ours: a handle it has since released, or one that
                 // never named a View, drops the row rather than failing the whole render - the
@@ -262,11 +272,11 @@ class PluginSettingsActivity(
 
     private fun buildCheck(row: Row.Check): UItem =
         CheckCellFactory.of(
-            row.uid, row.text, row.subtitle, ButtonIcon(row.icon, session.engine), row.checked, row.formatting,
+            row.uid, row.text, row.subtitle, ButtonIcon(row.icon, session.engine), row.checked, row.formatting, row.multiline,
         )
 
     private fun buildButton(row: Row.Button): UItem =
-        ButtonCellFactory.of(row.uid, row.text, row.value, row.subtitle, ButtonIcon(row.icon, session.engine), row.danger, row.formatting)
+        ButtonCellFactory.of(row.uid, row.text, row.value, row.subtitle, ButtonIcon(row.icon, session.engine), row.danger, row.formatting, row.multiline)
 
     private fun sliderCellFor(row: Row.Slider): SliderCell {
         val configKey = row.configKey()

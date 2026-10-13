@@ -1,5 +1,8 @@
 package desu.inugram.ui.settings
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -37,6 +40,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.BackupImageView
 import org.telegram.ui.Components.ColoredImageSpan
+import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.IconBackgroundColors
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.LinkSpanDrawable
@@ -267,41 +271,74 @@ private val UPDATE_SCOPE_LABELS = mapOf(
     "delete_message" to R.string.InuPluginScopeUpdDeleteMessage,
 )
 
-private fun labeledScopes(scopes: List<String>?, labels: Map<String, Int>): String =
-    (scopes ?: labels.keys.toList()).joinToString(", ") { scope -> labels[scope]?.let(LocaleController::getString) ?: scope }
+private fun grantSubtitle(
+    name: String,
+    scopes: List<String>?,
+    expanded: Boolean,
+    onExpand: () -> Unit,
+): CharSequence? {
+    var moreText: String? = null
+    fun formatScopes(values: List<String>, labels: Map<String, Int> = emptyMap()): String {
+        val shown = if (expanded) values else values.take(COLLAPSED_SCOPE_COUNT)
+        val text = shown.joinToString(", ") { scope -> labels[scope]?.let(LocaleController::getString) ?: scope }
+        val remaining = values.size - shown.size
+        if (remaining == 0) return text
+        moreText = LocaleController.formatPluralString("InuPluginScopesMore", remaining).replace(' ', '\u00a0')
+        return "$text, $moreText"
+    }
 
-private fun grantSubtitle(name: String, scopes: List<String>?): String? = when (name) {
-    "account.read" -> LocaleController.formatString(
-        R.string.InuPluginScopeAccountRead,
-        labeledScopes(scopes, ACCOUNT_READ_SCOPE_LABELS),
-    )
+    val text = when (name) {
+        "account.read" -> LocaleController.formatString(
+            R.string.InuPluginScopeAccountRead,
+            formatScopes(scopes ?: ACCOUNT_READ_SCOPE_LABELS.keys.toList(), ACCOUNT_READ_SCOPE_LABELS),
+        )
 
-    "account.write" -> labeledScopes(scopes, ACCOUNT_WRITE_SCOPE_LABELS)
-    "fetch" -> scopes?.let { LocaleController.formatString(R.string.InuPluginScopeFetch, it.joinToString(", ")) }
-        ?: LocaleController.getString(R.string.InuPluginScopeFetchAny)
+        "account.write" -> formatScopes(scopes ?: ACCOUNT_WRITE_SCOPE_LABELS.keys.toList(), ACCOUNT_WRITE_SCOPE_LABELS)
+        "fetch" -> scopes?.let { LocaleController.formatString(R.string.InuPluginScopeFetch, formatScopes(it)) }
+            ?: LocaleController.getString(R.string.InuPluginScopeFetchAny)
 
-    "invokeRpc" -> LocaleController.formatString(
-        R.string.InuPluginScopeInvokeRpc,
-        scopes?.joinToString(", ") ?: LocaleController.getString(R.string.InuPluginScopeAnyMethod),
-    )
+        "invokeRpc" -> LocaleController.formatString(
+            R.string.InuPluginScopeInvokeRpc,
+            scopes?.let { formatScopes(it) } ?: LocaleController.getString(R.string.InuPluginScopeAnyMethod),
+        )
 
-    "interceptRpc" -> LocaleController.formatString(
-        R.string.InuPluginScopeInterceptRpc,
-        scopes?.joinToString(", ") ?: LocaleController.getString(R.string.InuPluginScopeAnyMethod),
-    )
+        "interceptRpc" -> LocaleController.formatString(
+            R.string.InuPluginScopeInterceptRpc,
+            scopes?.let { formatScopes(it) } ?: LocaleController.getString(R.string.InuPluginScopeAnyMethod),
+        )
 
-    "onUpdate" -> LocaleController.formatString(
-        R.string.InuPluginScopeOnUpdate,
-        scopes?.let { labeledScopes(it, UPDATE_SCOPE_LABELS) } ?: LocaleController.getString(R.string.InuPluginScopeAllUpdates),
-    )
+        "onUpdate" -> LocaleController.formatString(
+            R.string.InuPluginScopeOnUpdate,
+            scopes?.let { formatScopes(it, UPDATE_SCOPE_LABELS) } ?: LocaleController.getString(R.string.InuPluginScopeAllUpdates),
+        )
 
-    "interceptUpdate" -> LocaleController.formatString(
-        R.string.InuPluginScopeInterceptUpdate,
-        scopes?.let { labeledScopes(it, UPDATE_SCOPE_LABELS) } ?: LocaleController.getString(R.string.InuPluginScopeAllUpdates),
-    )
+        "interceptUpdate" -> LocaleController.formatString(
+            R.string.InuPluginScopeInterceptUpdate,
+            scopes?.let { formatScopes(it, UPDATE_SCOPE_LABELS) } ?: LocaleController.getString(R.string.InuPluginScopeAllUpdates),
+        )
 
-    else -> GRANT_INFO[name]?.let(LocaleController::getString)
+        else -> GRANT_INFO[name]?.let(LocaleController::getString)
+    } ?: return null
+    val link = moreText ?: return text
+    val start = text.lastIndexOf(link)
+    if (start < 0) return text
+    return SpannableStringBuilder(text).apply {
+        setSpan(
+            object : ClickableSpan() {
+                override fun onClick(widget: View) = onExpand()
+
+                override fun updateDrawState(ds: TextPaint) {
+                    ds.color = ds.linkColor
+                }
+            },
+            start,
+            start + link.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+        )
+    }
 }
+
+private const val COLLAPSED_SCOPE_COUNT = 3
 
 internal class GrantRowView(context: Context) : LinearLayout(context) {
     private val iconBackground = SettingsActivity.SettingCell.Background()
@@ -316,12 +353,15 @@ internal class GrantRowView(context: Context) : LinearLayout(context) {
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
         textSize = 16f
     }
-    private val subtitle = TextView(context).apply {
+    private val subtitle = LinkSpanDrawable.LinksTextView(context).apply {
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+        setLinkTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteLinkText))
         textSize = 13f
     }
     private val textBlock = LinearLayout(context).apply { orientation = VERTICAL }
     private var needDivider = false
+    private var expandedGrant: String? = null
+    private var expandAnimator: ValueAnimator? = null
 
     init {
         orientation = HORIZONTAL
@@ -349,6 +389,8 @@ internal class GrantRowView(context: Context) : LinearLayout(context) {
      * as the opposite of what happened. The content dims, not the view, so the row keeps its fill.
      */
     fun bind(name: String, scopes: List<String>?, divider: Boolean, dropped: Boolean = false) {
+        expandAnimator?.cancel()
+        if (expandedGrant != null && expandedGrant != name) expandedGrant = null
         val needed = divider && !M3SectionsHelper.isEnabled()
         if (needDivider != needed) {
             needDivider = needed
@@ -367,7 +409,9 @@ internal class GrantRowView(context: Context) : LinearLayout(context) {
             LocaleController.getString(R.string.InuPluginGrantUnknown)
         } else {
             title.text = LocaleController.getString(known.titleRes)
-            grantSubtitle(name, scopes)
+            grantSubtitle(name, scopes, expandedGrant == name) {
+                expand(name, scopes, divider, dropped)
+            }
         }
         val dangerous = tier == GrantTier.DANGEROUS && !dropped
         subtitle.setTextColor(
@@ -380,8 +424,41 @@ internal class GrantRowView(context: Context) : LinearLayout(context) {
         textBlock.alpha = contentAlpha
     }
 
+    private fun expand(name: String, scopes: List<String>?, divider: Boolean, dropped: Boolean) {
+        val fromHeight = height
+        expandedGrant = name
+        bind(name, scopes, divider, dropped)
+        if (fromHeight <= 0 || width <= 0) return
+        measure(
+            View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        )
+        val toHeight = measuredHeight
+        if (toHeight <= fromHeight) return
+        val params = layoutParams ?: return
+        params.height = fromHeight
+        requestLayout()
+        val animator = ValueAnimator.ofInt(fromHeight, toHeight).apply {
+            duration = 200
+            interpolator = CubicBezierInterpolator.DEFAULT
+            addUpdateListener {
+                params.height = it.animatedValue as Int
+                requestLayout()
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    params.height = LayoutHelper.MATCH_PARENT
+                    requestLayout()
+                    expandAnimator = null
+                }
+            })
+        }
+        expandAnimator = animator
+        animator.start()
+    }
+
     /** the explanation, marked with the same triangle the plugin's own row carries */
-    private fun warn(text: String, color: Int): CharSequence {
+    private fun warn(text: CharSequence, color: Int): CharSequence {
         val sb = SpannableStringBuilder("\u200b  ")
         sb.setSpan(
             ColoredImageSpan(R.drawable.inu_tabler_alert_triangle_filled, ColoredImageSpan.ALIGN_CENTER).apply {
@@ -431,6 +508,7 @@ class PluginInfoHeaderView(context: Context) : LinearLayout(context) {
     }
 
     init {
+        isClickable = true
         orientation = VERTICAL
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite))
         setPadding(0, 0, 0, AndroidUtilities.dp(20f))

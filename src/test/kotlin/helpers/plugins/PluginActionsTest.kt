@@ -6,6 +6,7 @@ import desu.inugram.helpers.plugins.ui.ActionSurface
 import desu.inugram.helpers.plugins.ui.MessageActionSource
 import desu.inugram.helpers.plugins.ui.PluginActions
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -160,6 +161,29 @@ class PluginActionsTest {
         assertEquals(1, plugin.js.actionDispatches.size)
         assertEquals(7, plugin.js.actionDispatches[0].token)
         assertEquals(PluginActions.KIND_CHAT, plugin.js.actionDispatches[0].kind)
+        assertFalse(plugin.js.actionDispatches[0].secondary)
+    }
+
+    @Test
+    fun a_primary_only_row_does_not_dispatch_on_long_tap() {
+        val plugin = startPlugin("p")
+        PluginActions.register(
+            plugin.session!!,
+            PluginActions.KIND_CHAT,
+            7,
+            "a",
+            text = "row",
+            dynamicFields = 0,
+        )
+        val rows = ArrayList<ActionRow>()
+        PluginActions.render(PluginActions.KIND_CHAT, chat) { rows.addAll(it) }
+        settle()
+
+        assertTrue(PluginActions.dispatch(rows.single(), chat))
+        assertFalse(PluginActions.dispatch(rows.single(), chat, true))
+        settle()
+        assertEquals(1, plugin.js.actionDispatches.size)
+        assertFalse(plugin.js.actionDispatches.single().secondary)
     }
 
     @Test

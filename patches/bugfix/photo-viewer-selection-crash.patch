@@ -4,19 +4,23 @@ Date: Fri, 9 Oct 2026 03:59:06 +0200
 Subject: hopefully fix PhotoViewer crash when scheduling
 
 ---
- TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java | 2 ++
- 1 file changed, 2 insertions(+)
+ .../src/main/java/org/telegram/ui/PhotoViewer.java          | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -18306,6 +18306,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18306,6 +18306,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      public void closePhoto(boolean animated, boolean fromEditMode) {
-+        selectedPhotosListView.stopScroll();
-+        selectedPhotosAdapter.notifyDataSetChanged();
++        if (selectedPhotosListView != null) {
++            selectedPhotosListView.stopScroll();
++        }
++        if (selectedPhotosAdapter != null) {
++            selectedPhotosAdapter.notifyDataSetChanged();
++        }
          if (stickerMakerView != null) {
              stickerMakerView.isThanosInProgress = false;
              if (cutOutBtn.isCancelState()) {
