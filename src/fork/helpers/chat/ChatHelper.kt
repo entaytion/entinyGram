@@ -629,13 +629,13 @@ object ChatHelper {
             icons.add(R.drawable.msg_share)
         }
 
-        // entiny: burn follows stock read+expire flow server-side; no delete confirm needed, isOut() guard
-        if (selectedObject.isSecretMedia() &&
+        // entiny: burn opens the secret viewer, so it cannot coexist with show-as-regular-photo
+        if (InuConfig.BURN_TIMED_MEDIA.value &&
+            selectedObject.isSecretMedia() &&
             !selectedObject.isOut() &&
-            SelfDestructHelper.shouldPreserveMedia(dialogId) &&
             !InuConfig.VIEW_ONCE_SHOW_NORMAL.value
         ) {
-            items.add(LocaleController.getString(R.string.InuBurnOneTime))
+            items.add(LocaleController.getString(R.string.InuOpenTimedMedia))
             options.add(OPTION_BURN_ONE_TIME)
             icons.add(R.drawable.filled_fire)
         }
@@ -1197,13 +1197,11 @@ object ChatHelper {
             }
 
             OPTION_BURN_ONE_TIME -> {
-                // entiny: populate messageOwner.ttl from media.ttl_seconds so stock secret viewer does not return null
-                val media = selectedObject.messageOwner.media
-                if (selectedObject.messageOwner.ttl <= 0 && media != null && media.ttl_seconds != 0) {
-                    selectedObject.messageOwner.ttl = media.ttl_seconds
+                // entiny: keep mode copies first, the stock viewer empties the local file when it closes
+                if (InuConfig.TIMED_MEDIA_AFTER_VIEW.value == InuConfig.TimedMediaAfterViewItem.KEEP) {
+                    saveOneTimeMedia(activity, selectedObject, copyFirst = true)
                 }
-                // entiny: open secret media viewer to follow normal view-once playback flow before expiring
-                activity.inu_openSecretMediaViewer(selectedObject)
+                openSecretViewer(activity, selectedObject)
             }
 
             OPTION_SAVE_STICKER_TO_DOWNLOADS -> {
@@ -1229,6 +1227,16 @@ object ChatHelper {
     fun autoSaveOneTime(activity: ChatActivity, message: MessageObject) {
         if (!InuConfig.AUTO_SAVE_ONE_TIME.value) return
         saveOneTimeMedia(activity, message, copyFirst = true)
+    }
+
+    private fun openSecretViewer(activity: ChatActivity, message: MessageObject) {
+        // entiny: populate messageOwner.ttl from media.ttl_seconds so stock secret viewer does not return null
+        val media = message.messageOwner.media
+        if (message.messageOwner.ttl <= 0 && media != null && media.ttl_seconds != 0) {
+            message.messageOwner.ttl = media.ttl_seconds
+        }
+        // entiny: open secret media viewer to follow normal view-once playback flow before expiring
+        activity.inu_openSecretMediaViewer(message)
     }
 
     private fun saveOneTimeMedia(activity: ChatActivity, message: MessageObject, copyFirst: Boolean = false) {

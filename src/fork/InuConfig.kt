@@ -1536,6 +1536,19 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val VIEW_ONCE_SHOW_NORMAL = BoolItem("view_once_show_normal", false)
 
     @JvmField
+    val BURN_TIMED_MEDIA = BoolItem("burn_timed_media", false)
+
+    @JvmField
+    val TIMED_MEDIA_AFTER_VIEW = TimedMediaAfterViewItem()
+
+    class TimedMediaAfterViewItem : IntItem("timed_media_after_view", BURN) {
+        companion object {
+            const val BURN = 0
+            const val KEEP = 1
+        }
+    }
+
+    @JvmField
     val AUTO_SAVE_ONE_TIME = BoolItem("auto_save_one_time", false)
 
     @JvmField
