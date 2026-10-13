@@ -151,6 +151,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **send as round video** from the gallery
 - 📡 **round recorder**: zoom buttons, exposure lock and EV buttons - *exposure lock inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - 📡 **60 FPS round video messages**
+- 📡 **round video up to 720p**
+- 📡 **round audio**: pick video bitrate up to 4 Mbps, audio bitrate and microphone source for round videos
 - 📡 **proxy management**: delete failed, ping all, save without connecting
 - 📡 **tap avatar to open profile** from the chat list
 - 📡 **confirm before sending** voice/video messages, stickers and GIFs

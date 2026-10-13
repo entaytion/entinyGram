@@ -29,7 +29,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         ExpandableBoolGroup(
             LocaleController.getString(R.string.InuConfirmBeforeSending),
             listOf(
-                ExpandableBoolGroup.Option(R.string.InuConfirmSendVoice, InuConfig.CONFIRM_SEND_VOICE, TOGGLE_CONFIRM_SEND_VOICE),
                 ExpandableBoolGroup.Option(R.string.InuConfirmSendSticker, InuConfig.CONFIRM_SEND_STICKER, TOGGLE_CONFIRM_SEND_STICKER),
                 ExpandableBoolGroup.Option(R.string.InuConfirmSendGif, InuConfig.CONFIRM_SEND_GIF, TOGGLE_CONFIRM_SEND_GIF),
             ),
@@ -391,7 +390,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CLOWN_AVATAR_BLOCKED_ME = InuUtils.generateId()
         private val TOGGLE_CHAT_REMEMBER_ALL_REPLIES = InuUtils.generateId()
         private val TOGGLE_FORWARD_PRO = InuUtils.generateId()
-        private val TOGGLE_CONFIRM_SEND_VOICE = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_STICKER = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_GIF = InuUtils.generateId()
         private val SECTION_CONFIRM_SEND = InuUtils.generateId()
@@ -445,7 +443,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("chat-remember-all-replies", R.string.InuChatRememberAllReplies, TOGGLE_CHAT_REMEMBER_ALL_REPLIES),
                 SearchRegistry.Entry("instant-mark-reactions-read", R.string.InuInstantMarkReactionsRead, TOGGLE_INSTANT_MARK_REACTIONS_READ),
                 SearchRegistry.Entry("forward-pro", R.string.InuForwardPro, TOGGLE_FORWARD_PRO),
-                SearchRegistry.Entry("confirm-send-voice", R.string.InuConfirmSendVoice, TOGGLE_CONFIRM_SEND_VOICE),
                 SearchRegistry.Entry("confirm-send-sticker", R.string.InuConfirmSendSticker, TOGGLE_CONFIRM_SEND_STICKER),
                 SearchRegistry.Entry("confirm-send-gif", R.string.InuConfirmSendGif, TOGGLE_CONFIRM_SEND_GIF),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),

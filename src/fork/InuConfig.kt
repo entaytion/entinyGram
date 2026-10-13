@@ -1185,6 +1185,18 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val ROUND_RECORDER_EXPOSURE_BACK = FloatItem("round_recorder_exposure_back", 0f)
 
+    @JvmField
+    val ROUND_VIDEO_RESOLUTION = IntItem("round_video_resolution", 0)
+
+    @JvmField
+    val ROUND_VIDEO_BITRATE = IntItem("round_video_bitrate", 0)
+
+    @JvmField
+    val ROUND_AUDIO_BITRATE = IntItem("round_audio_bitrate", 0)
+
+    @JvmField
+    val ROUND_AUDIO_SOURCE = IntItem("round_audio_source", 0)
+
     class NonIslandSplitFromTabBarsItem(key: String) : BoolItem(key, false) {
         override fun read(prefs: SharedPreferences): Boolean {
             if (prefs.contains(key)) return prefs.getBoolean(key, default)

@@ -14,6 +14,7 @@ import desu.inugram.ui.settings.AppearanceSettingsActivity
 import desu.inugram.ui.settings.BackupSettingsActivity
 import desu.inugram.ui.settings.BehaviorSettingsActivity
 import desu.inugram.ui.settings.CacheManagementSettingsActivity
+import desu.inugram.ui.settings.CameraSoundSettingsActivity
 import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import desu.inugram.ui.settings.ChatHeaderSettingsActivity
 import desu.inugram.ui.settings.DatacenterStatusActivity
@@ -79,6 +80,7 @@ object SearchRegistry {
             FontsSettingsActivity.PAGE,
             FontStackActivity.PAGE,
             CategoryChatsSettingsActivity.PAGE,
+            CameraSoundSettingsActivity.PAGE,
             MessagesSettingsActivity.PAGE,
             AiSettingsActivity.PAGE,
             AiVoiceSettingsActivity.PAGE,

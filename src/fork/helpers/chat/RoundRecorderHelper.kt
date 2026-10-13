@@ -2,6 +2,9 @@ package desu.inugram.helpers.chat
 
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCharacteristics
+import android.media.MediaCodecList
+import android.media.MediaFormat
+import org.telegram.utils.camera.roundvideo.RoundVideoSession
 import android.util.Range
 import android.view.Gravity
 import desu.inugram.helpers.vibration.HapticFeedbackConstants
@@ -243,6 +246,57 @@ object RoundRecorderHelper {
         } else {
             defaultBitrate
         }
+    }
+
+    @JvmStatic
+    fun videoBitrate(defaultBps: Int): Int =
+        InuConfig.ROUND_VIDEO_BITRATE.value.takeIf { it > 0 } ?: defaultBps
+
+    @JvmStatic
+    fun outputResolution(default: RoundVideoSession.OutputResolution): RoundVideoSession.OutputResolution {
+        val picked = when (InuConfig.ROUND_VIDEO_RESOLUTION.value) {
+            1 -> RoundVideoSession.OutputResolution.P360
+            2 -> RoundVideoSession.OutputResolution.P480
+            3 -> RoundVideoSession.OutputResolution.P720
+            else -> return default
+        }
+        if (picked == RoundVideoSession.OutputResolution.P720 && !avcEncoderSupports(720, 30)) {
+            return RoundVideoSession.OutputResolution.P480
+        }
+        return picked
+    }
+
+    @JvmStatic
+    fun frameRate(
+        resolution: RoundVideoSession.OutputResolution,
+        default: RoundVideoSession.FrameRate,
+    ): RoundVideoSession.FrameRate {
+        if (resolution == RoundVideoSession.OutputResolution.P720
+            && default == RoundVideoSession.FrameRate.FPS_60
+            && !avcEncoderSupports(720, 60)
+        ) return RoundVideoSession.FrameRate.FPS_30
+        return default
+    }
+
+    private fun avcEncoderSupports(size: Int, fps: Int): Boolean = runCatching {
+        val info = MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos.firstOrNull { codec ->
+            codec.isEncoder && codec.supportedTypes.any { it.equals(MediaFormat.MIMETYPE_VIDEO_AVC, true) }
+        } ?: return@runCatching false
+        info.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_AVC).videoCapabilities
+            .areSizeAndRateSupported(size, size, fps.toDouble())
+    }.getOrDefault(false)
+
+    @JvmStatic
+    fun audioBitrate(defaultBps: Int): Int =
+        InuConfig.ROUND_AUDIO_BITRATE.value.takeIf { it > 0 }?.times(1000) ?: defaultBps
+
+    @JvmStatic
+    fun audioSource(defaultSource: Int): Int = when (InuConfig.ROUND_AUDIO_SOURCE.value) {
+        1 -> android.media.MediaRecorder.AudioSource.DEFAULT
+        2 -> android.media.MediaRecorder.AudioSource.MIC
+        3 -> android.media.MediaRecorder.AudioSource.CAMCORDER
+        4 -> if (android.os.Build.VERSION.SDK_INT >= 24) android.media.MediaRecorder.AudioSource.UNPROCESSED else android.media.MediaRecorder.AudioSource.MIC
+        else -> defaultSource
     }
 
     fun interface SessionProvider {
