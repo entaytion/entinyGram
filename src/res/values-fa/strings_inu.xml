@@ -1865,4 +1865,6 @@
     <string name="InuPillStackSummary">ابزارک‌های تعاملی در نوار جستجو</string>
     <string name="InuRecentChatsSummary">جابجایی سریع بین گفتگوها</string>
     <string name="InuFeedSummary">پست‌های تجمیع‌شده از کانال‌های شما</string>
+    <string name="InuEditedArchive">بایگانی پیام‌های ویرایش‌شده</string>
+    <string name="InuGroupChatArchives">گروه‌بندی بایگانی‌ها در پوشه entinyGram</string>
 </resources>

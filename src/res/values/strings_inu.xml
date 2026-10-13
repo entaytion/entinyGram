@@ -1986,4 +1986,6 @@
     <string name="InuPillStackSummary">Interactive widgets in search bar</string>
     <string name="InuRecentChatsSummary">Quick chat switcher bar</string>
     <string name="InuFeedSummary">Aggregated posts from your channels</string>
+    <string name="InuEditedArchive">Edited archive</string>
+    <string name="InuGroupChatArchives">Group archives in entinyGram folder</string>
 </resources>

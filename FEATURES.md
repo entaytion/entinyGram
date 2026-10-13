@@ -26,6 +26,11 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - save messages and media deleted by the other side (🗑️); your own deletions are never kept
   - per-category controls for private chats, groups, channels and bots
   - save edit history (✏️) with formatting, media and text diff
+  - separate deleted and edited archives with message and media previews, per-chat clearing and bulk chat selection
+  - edited archive hides repeated identical revisions
+  - text and caption diffs between revisions of the same post in edited archives
+  - download missing archived media on tap without background prefetching
+  - preserve downloaded media before deletion cleanup and reject incomplete documents
   - custom styling for deleted messages
   - full-text search and a browsable archive of everything saved, with sender names in groups
   - cache TTL and automatic expiration

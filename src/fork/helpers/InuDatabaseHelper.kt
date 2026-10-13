@@ -422,15 +422,17 @@ object InuDatabaseHelper {
         return DialogCacheStat(0L, 0, 0L)
     }
 
-    fun clearEditHistory(db: SQLiteDatabase) {
+    fun clearEditHistory(db: SQLiteDatabase, dialogIds: Collection<Long>? = null) {
+        if (dialogIds != null && dialogIds.isEmpty()) return
+        val where = if (dialogIds == null) "" else " WHERE dialog_id IN (${dialogIds.joinToString(",")})"
         val paths = ArrayList<String>()
-        val cursor = db.queryFinalized("SELECT media_path FROM inu_edit_history WHERE media_path IS NOT NULL")
+        val cursor = db.queryFinalized("SELECT media_path FROM inu_edit_history$where")
         try {
             while (cursor.next()) cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
         } finally {
             cursor.dispose()
         }
-        db.executeFast("DELETE FROM inu_edit_history").stepThis().dispose()
+        db.executeFast("DELETE FROM inu_edit_history$where").stepThis().dispose()
         deleteUnreferencedMediaFiles(db, paths)
     }
 
@@ -801,6 +803,33 @@ object InuDatabaseHelper {
         return list
     }
 
+    fun loadEditHistoryInDialog(db: SQLiteDatabase, dialogId: Long): List<Pair<Int, EditHistoryRow>> {
+        val list = ArrayList<Pair<Int, EditHistoryRow>>()
+        val cursor = db.queryFinalized(
+            "SELECT date, text, media_path, entities, media, id, msg_id FROM inu_edit_history WHERE dialog_id = ? ORDER BY date ASC, id ASC",
+            dialogId,
+        )
+        try {
+            while (cursor.next()) {
+                val entities = readTl(cursor, 3) { data ->
+                    TLRPC.TL_textWithEntities.TLdeserialize(data, data.readInt32(false), false)?.entities
+                }
+                val media = readTl(cursor, 4) { data ->
+                    TLRPC.MessageMedia.TLdeserialize(data, data.readInt32(false), false)
+                }
+                val row = EditHistoryRow(
+                    cursor.longValue(0), cursor.stringValue(1) ?: "",
+                    if (cursor.isNull(2)) null else cursor.stringValue(2),
+                    entities, media, cursor.longValue(5),
+                )
+                list.add(cursor.intValue(6) to row)
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
     fun deleteEditHistoryEntry(db: SQLiteDatabase, dialogId: Long, msgId: Int, date: Long) {
         val mediaPaths = getMediaPaths(db, "inu_edit_history", "dialog_id = $dialogId AND msg_id = $msgId AND date = ?", date)
         db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id = $msgId AND date = $date").stepThis().dispose()
@@ -865,61 +894,45 @@ object InuDatabaseHelper {
     data class DialogCacheStat(
         val dialogId: Long,
         val count: Int,
-        val estimatedSize: Long
+        val estimatedSize: Long,
+        val mediaSize: Long = 0L
     )
 
-    fun getDeletedMessagesStats(db: SQLiteDatabase): List<DialogCacheStat> {
+    fun getDeletedMessagesStats(db: SQLiteDatabase, edited: Boolean = false): List<DialogCacheStat> {
+        val table = if (edited) "inu_edit_history" else "inu_deleted_messages"
+        val rowSize = if (edited) 150L else 250L
         val map = HashMap<Long, Pair<Int, Long>>()
-        var cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(text)) FROM inu_deleted_messages GROUP BY dialog_id")
+        val cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(text)) FROM $table GROUP BY dialog_id")
         try {
             while (cursor.next()) {
                 val dialogId = cursor.longValue(0)
                 val count = cursor.intValue(1)
                 val textLen = cursor.longValue(2)
-                val estSize = (count * 250L) + textLen
+                val estSize = (count * rowSize) + textLen
                 map[dialogId] = Pair(count, estSize)
             }
         } finally {
             cursor.dispose()
         }
 
-        cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(text)) FROM inu_edit_history GROUP BY dialog_id")
-        try {
-            while (cursor.next()) {
-                val dialogId = cursor.longValue(0)
-                val count = cursor.intValue(1)
-                val textLen = cursor.longValue(2)
-                val estSize = (count * 150L) + textLen
-                val existing = map[dialogId]
-                if (existing != null) {
-                    map[dialogId] = Pair(existing.first + count, existing.second + estSize)
-                } else {
-                    map[dialogId] = Pair(count, estSize)
-                }
-            }
-        } finally {
-            cursor.dispose()
-        }
-
-        val mediaByDialog = getMediaSizeByDialog(db)
+        val mediaByDialog = getMediaSizeByDialog(db, table)
         return map.map { (id, pair) ->
-            DialogCacheStat(id, pair.first, pair.second + (mediaByDialog[id] ?: 0L))
+            val mediaSize = mediaByDialog[id] ?: 0L
+            DialogCacheStat(id, pair.first, pair.second + mediaSize, mediaSize)
         }.sortedByDescending { it.estimatedSize }
     }
 
-    private fun getMediaSizeByDialog(db: SQLiteDatabase): Map<Long, Long> {
+    private fun getMediaSizeByDialog(db: SQLiteDatabase, table: String): Map<Long, Long> {
         val pathsByDialog = HashMap<Long, MutableSet<String>>()
-        for (table in arrayOf("inu_deleted_messages", "inu_edit_history")) {
-            val cursor = db.queryFinalized("SELECT dialog_id, media_path FROM $table WHERE media_path IS NOT NULL")
-            try {
-                while (cursor.next()) {
-                    val dialogId = cursor.longValue(0)
-                    val path = cursor.stringValue(1)
-                    if (!path.isNullOrBlank()) pathsByDialog.getOrPut(dialogId) { HashSet() }.add(path)
-                }
-            } finally {
-                cursor.dispose()
+        val cursor = db.queryFinalized("SELECT dialog_id, media_path FROM $table WHERE media_path IS NOT NULL")
+        try {
+            while (cursor.next()) {
+                val dialogId = cursor.longValue(0)
+                val path = cursor.stringValue(1)
+                if (!path.isNullOrBlank()) pathsByDialog.getOrPut(dialogId) { HashSet() }.add(path)
             }
+        } finally {
+            cursor.dispose()
         }
         return pathsByDialog.mapValues { (_, paths) ->
             paths.sumOf { path -> try { java.io.File(path).length() } catch (_: Throwable) { 0L } }

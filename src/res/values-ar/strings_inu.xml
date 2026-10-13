@@ -1877,4 +1877,6 @@
     <string name="InuPillStackSummary">أدوات تفاعلية في شريط البحث</string>
     <string name="InuRecentChatsSummary">التبديل السريع بين المحادثات</string>
     <string name="InuFeedSummary">منشورات مجمعة من قنواتك</string>
+    <string name="InuEditedArchive">أرشيف الرسائل المعدلة</string>
+    <string name="InuGroupChatArchives">تجميع الأرشيفات في مجلد entinyGram</string>
 </resources>

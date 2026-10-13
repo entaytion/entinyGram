@@ -1836,4 +1836,6 @@
     <string name="InuPillStackSummary">搜索栏中的交互式小部件</string>
     <string name="InuRecentChatsSummary">在聊天之间快速切换</string>
     <string name="InuFeedSummary">频道聚合动态</string>
+    <string name="InuEditedArchive">已编辑消息存档</string>
+    <string name="InuGroupChatArchives">将存档分组到 entinyGram 文件夹</string>
 </resources>

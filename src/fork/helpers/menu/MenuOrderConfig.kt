@@ -170,6 +170,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         TYPING_SPOOF("typing_spoof", listOf(ChatActionsHelper.ACTION_TYPING_SPOOF), R.string.InuTypingSpoof, R.drawable.input_mic),
         REGEX_CHAT_FILTERS("regex_chat_filters", listOf(ChatActionsHelper.ACTION_REGEX_CHAT_FILTERS), R.string.InuRegexChatFilters, R.drawable.msg_block2),
         DELETED_MESSAGES("deleted_messages", listOf(ChatActionsHelper.ACTION_DELETED_MESSAGES), R.string.InuDeletedArchive, R.drawable.msg_delete),
+        EDITED_MESSAGES("edited_messages", listOf(ChatActionsHelper.ACTION_EDITED_MESSAGES), R.string.InuEditedArchive, R.drawable.msg_edit),
         GHOST_MODE("ghost_mode", listOf(ChatActionsHelper.ACTION_GHOST_MODE), R.string.InuGhostMode, R.drawable.inu_ghost),
         CHAT_EXPORT("chat_export", listOf(ChatActionsHelper.ACTION_CHAT_EXPORT), R.string.InuChatExport, R.drawable.msg_share_solar),
         CHAT_LOCAL_NAME("chat_local_name", listOf(ChatActionsHelper.ACTION_CHAT_LOCAL_NAME), R.string.InuLocalName, R.drawable.msg_edit),

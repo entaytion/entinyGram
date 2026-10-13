@@ -14,6 +14,8 @@ import java.io.File
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLoader
+import org.telegram.messenger.ImageLocation
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
@@ -72,15 +74,19 @@ object SavedMessagesHelper {
     }
 
     // entiny: resolve archive paths on main thread but defer heavy media copies to storage queue
-    private data class PendingMediaCopy(val source: File, val target: File)
+    private data class PendingMediaCopy(val source: File, val target: File, val expectedSize: Long = 0L)
 
     private fun planMediaCopy(account: Int, message: TLRPC.Message?): PendingMediaCopy? {
         if (message?.media == null) return null
         return try {
             val fileLoader = FileLoader.getInstance(account) ?: return null
-            val path = fileLoader.getPathToMessage(message)
-            if (path == null || !path.exists() || path.length() <= 0) return null
-            PendingMediaCopy(path, File(getSavedMediaDir(account), "${MessageObject.getDialogId(message)}_${message.id}_${java.util.UUID.randomUUID()}_${path.name}"))
+            val expectedSize = MessageObject.getMedia(message)?.document?.size ?: 0L
+            val path = sequenceOf(
+                message.attachPath?.takeIf { it.isNotBlank() }?.let { File(it) },
+                fileLoader.getPathToMessage(message),
+                fileLoader.getPathToMessage(message, true, true),
+            ).filterNotNull().firstOrNull { it.isFile && it.length() > 0 && (expectedSize <= 0 || it.length() == expectedSize) && !it.name.endsWith(".enc") } ?: return null
+            PendingMediaCopy(path, File(getSavedMediaDir(account), "${MessageObject.getDialogId(message)}_${message.id}_${java.util.UUID.randomUUID()}_${path.name}"), expectedSize)
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "planMediaCopy error", e)
             null
@@ -91,9 +97,11 @@ object SavedMessagesHelper {
         if (plan == null) return null
         val temporary = File(plan.target.parentFile, "${plan.target.name}.partial")
         try {
+            check(plan.expectedSize <= 0 || plan.source.length() == plan.expectedSize)
             if (plan.target.isFile && plan.target.length() == plan.source.length() && plan.target.length() > 0) return plan.target.absolutePath
             plan.source.copyTo(temporary, overwrite = true)
             check(temporary.length() == plan.source.length() && temporary.length() > 0)
+            check(plan.expectedSize <= 0 || temporary.length() == plan.expectedSize)
             check(temporary.renameTo(plan.target))
             return plan.target.absolutePath
         } catch (e: Throwable) {
@@ -102,6 +110,89 @@ object SavedMessagesHelper {
         } finally {
             temporary.delete()
         }
+    }
+
+    fun downloadArchiveMedia(account: Int, message: TLRPC.Message, rowId: Long, deleted: Boolean, callback: (String?) -> Unit): () -> Unit {
+        val loader = FileLoader.getInstance(account)
+        val media = MessageObject.getMedia(message)
+        val document = media?.document
+        val photo = media?.photo
+        val size = photo?.sizes?.let { FileLoader.getClosestPhotoSizeWithSize(it, AndroidUtilities.getPhotoSize()) }
+        val location = if (size != null && photo != null) ImageLocation.getForPhoto(size, photo) else null
+        val name = when {
+            document != null -> FileLoader.getAttachFileName(document)
+            location != null -> FileLoader.getAttachFileName(size)
+            else -> {
+                callback(null)
+                return {}
+            }
+        }
+        val center = NotificationCenter.getInstance(account)
+        var active = true
+        lateinit var observer: NotificationCenter.NotificationCenterDelegate
+        lateinit var timeout: Runnable
+        fun detach() {
+            center.removeObserver(observer, NotificationCenter.fileLoaded)
+            center.removeObserver(observer, NotificationCenter.fileLoadFailed)
+            AndroidUtilities.cancelRunOnUIThread(timeout)
+        }
+        fun finish(success: Boolean) {
+            if (!active) return
+            detach()
+            if (!success) {
+                active = false
+                callback(null)
+                return
+            }
+            val storage = MessagesStorage.getInstance(account)
+            storage.storageQueue.postRunnable {
+                var saved: String? = null
+                try {
+                    val db = storage.database
+                    val table = if (deleted) "inu_deleted_messages" else "inu_edit_history"
+                    val where = if (deleted) "dialog_id = ${MessageObject.getDialogId(message)} AND msg_id = ${message.id}" else "id = $rowId AND dialog_id = ${MessageObject.getDialogId(message)} AND msg_id = ${message.id}"
+                    val cursor = db.queryFinalized("SELECT 1 FROM $table WHERE $where")
+                    val exists = try { cursor.next() } finally { cursor.dispose() }
+                    if (exists) {
+                        saved = runMediaCopy(planMediaCopy(account, message))
+                        if (saved != null) {
+                            val query = db.executeFast("UPDATE $table SET media_path = ? WHERE $where")
+                            try {
+                                query.bindString(1, saved)
+                                query.step()
+                            } finally { query.dispose() }
+                            invalidateMediaCache(account)
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.d(TAG, "archive download save failed", e)
+                    saved = null
+                }
+                AndroidUtilities.runOnUIThread {
+                    if (active) {
+                        active = false
+                        callback(saved)
+                    }
+                }
+            }
+        }
+        observer = object : NotificationCenter.NotificationCenterDelegate {
+            override fun didReceivedNotification(id: Int, currentAccount: Int, vararg args: Any?) {
+                if (args.getOrNull(0) == name) finish(id == NotificationCenter.fileLoaded)
+            }
+        }
+        timeout = Runnable { finish(false) }
+        center.addObserver(observer, NotificationCenter.fileLoaded)
+        center.addObserver(observer, NotificationCenter.fileLoadFailed)
+        AndroidUtilities.runOnUIThread(timeout, 120_000)
+        if (planMediaCopy(account, message) != null) {
+            finish(true)
+        } else if (document != null) {
+            loader.loadFile(document, message, FileLoader.PRIORITY_NORMAL, 1)
+        } else {
+            loader.loadFile(location, message, "jpg", FileLoader.PRIORITY_NORMAL, 1)
+        }
+        return { active = false; detach() }
     }
 
     private val deletedMessageIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
@@ -839,7 +930,7 @@ object SavedMessagesHelper {
         ensureAccountLoaded(account)
         val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
         val snapshot = snapshotMessage(account, dialogId, msgId, fromId, message)
-        val mediaCopy = planMediaCopy(account, message ?: snapshot)
+        val mediaCopy = planMediaCopy(account, snapshot ?: message)
         synchronized(cacheLock) {
             var dialogs = deletedMessageIds.get(account.toLong())
             if (dialogs == null) {
@@ -868,8 +959,8 @@ object SavedMessagesHelper {
         }
 
         val storage = MessagesStorage.getInstance(account) ?: return
-        storage.storageQueue.postRunnable {
-            val db = storage.database ?: return@postRunnable
+        val persist = Runnable {
+            val db = storage.database ?: return@Runnable
             val savedPath = runMediaCopy(mediaCopy)
             InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, archiveText(text, message ?: snapshot), deletionTime.toInt(), savedPath, snapshot)
             if (savedPath != null) synchronized(cacheLock) {
@@ -878,6 +969,7 @@ object SavedMessagesHelper {
                 dialogPaths.put(msgId.toLong(), savedPath)
             }
         }
+        if (Thread.currentThread() === storage.storageQueue) persist.run() else storage.storageQueue.postRunnable(persist)
     }
 
     @JvmStatic
@@ -906,13 +998,17 @@ object SavedMessagesHelper {
         resolved: List<TLRPC.Message>?,
     ) {
         if (!isSaveDeletedEnabled() || messagesByDialogs == null) return
-        val byId = HashMap<Int, TLRPC.Message>()
-        resolved?.forEach { m -> byId[m.id] = m }
+        val byId = HashMap<Pair<Long, Int>, TLRPC.Message>()
+        resolved?.forEach { m ->
+            val dialogId = MessageObject.getDialogId(m)
+            m.dialog_id = dialogId
+            byId[dialogId to m.id] = m
+        }
         for (i in 0 until messagesByDialogs.size()) {
             val dialogId = messagesByDialogs.keyAt(i)
             val mids = messagesByDialogs.valueAt(i) ?: continue
             for (mid in mids) {
-                val message = byId[mid]
+                val message = byId[dialogId to mid]
                 val fromId = message?.from_id?.let { org.telegram.messenger.DialogObject.getPeerDialogId(it) } ?: 0L
                 markMessageDeleted(account, dialogId, mid, fromId, message?.message ?: "", 0, message)
             }
@@ -1059,6 +1155,13 @@ object SavedMessagesHelper {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
+            val last = InuDatabaseHelper.loadEditHistory(db, dialogId, msgId).lastOrNull()
+            if (last != null && last.text == oldText && sameContent(last.entities, last.media, keptEntities, keptMedia)) {
+                synchronized(cacheLock) {
+                    editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
+                }
+                return@postRunnable
+            }
             val savedPath = runMediaCopy(mediaCopy)
             InuDatabaseHelper.saveEditHistory(db, dialogId, msgId, oldText, now.toInt(), savedPath, keptEntities, keptMedia)
             synchronized(cacheLock) {
@@ -1125,7 +1228,7 @@ object SavedMessagesHelper {
         }
     }
 
-    private fun sameContent(oldEntities: ArrayList<TLRPC.MessageEntity>?, oldMedia: TLRPC.MessageMedia?, newEntities: ArrayList<TLRPC.MessageEntity>?, newMedia: TLRPC.MessageMedia?): Boolean {
+    internal fun sameContent(oldEntities: ArrayList<TLRPC.MessageEntity>?, oldMedia: TLRPC.MessageMedia?, newEntities: ArrayList<TLRPC.MessageEntity>?, newMedia: TLRPC.MessageMedia?): Boolean {
         if (!serialized(oldMedia).contentEquals(serialized(newMedia))) return false
         val old = oldEntities.orEmpty()
         val new = newEntities.orEmpty()

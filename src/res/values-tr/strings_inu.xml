@@ -1838,4 +1838,6 @@
     <string name="InuPillStackSummary">Arama çubuğunda etkileşimli widget\'lar</string>
     <string name="InuRecentChatsSummary">Sohbetler arasında hızlı geçiş</string>
     <string name="InuFeedSummary">Kanallarınızdan toplanan gönderiler</string>
+    <string name="InuEditedArchive">Düzenlenen mesaj arşivi</string>
+    <string name="InuGroupChatArchives">Arşivleri entinyGram klasöründe grupla</string>
 </resources>

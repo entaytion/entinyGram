@@ -7,21 +7,16 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.util.TypedValue
 import desu.inugram.InuConfig
-import desu.inugram.ui.AyuMessageHistoryActivity
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.CacheStatsHelper
 import desu.inugram.helpers.CacheStatsHelper.Kind
-import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.SavedMessagesHelper
 import desu.inugram.helpers.security.PresenceHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.MessagesController
-import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
-import org.telegram.messenger.UserObject
 import org.telegram.ui.ActionBar.BottomSheet
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.CheckBoxCell
@@ -56,8 +51,9 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             it.subtext = ttlLabel(InuConfig.PRESENCE_LOGS_TTL.value)
         })
         items.add(UItem.asShadow(null))
-        items.add(UItem.asButton(BUTTON_CLEAR_DELETED_CACHE, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuClearDeletedCache)))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuClearDeletedCacheAlert)))
+        items.add(UItem.asButton(BUTTON_CLEAR_DELETED_CACHE, R.drawable.msg_delete, kindTitle(Kind.DELETED)))
+        items.add(UItem.asButton(BUTTON_EDITED_CACHE, R.drawable.msg_edit, kindTitle(Kind.EDITS)))
+        items.add(UItem.asShadow(null))
     }
 
     private fun ttlLabel(days: Int): String = when (days) {
@@ -173,7 +169,8 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
                 InuConfig.PRESENCE_LOGS_TTL.value = it
                 if (it != InuConfig.PresenceLogsTtlItem.NEVER) PresenceHelper.pruneIfNeeded(UserConfig.selectedAccount)
             }
-            BUTTON_CLEAR_DELETED_CACHE -> showClearDeletedCacheDialog()
+            BUTTON_CLEAR_DELETED_CACHE -> presentFragment(ArchiveCacheActivity(false))
+            BUTTON_EDITED_CACHE -> presentFragment(ArchiveCacheActivity(true))
         }
     }
 
@@ -281,13 +278,13 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
     }
 
     private fun openCategory(kind: Kind) {
+        if (kind == Kind.DELETED || kind == Kind.EDITS) {
+            presentFragment(ArchiveCacheActivity(kind == Kind.EDITS))
+            return
+        }
         val stat = stats.firstOrNull { it.kind == kind } ?: return
         if (stat.count == 0 && stat.size == 0L) {
             BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuClearDeletedCacheEmpty)).show()
-            return
-        }
-        if (kind == Kind.DELETED) {
-            showClearDeletedCacheDialog()
             return
         }
         val row = SheetRow(kindTitle(kind), LocaleController.formatString(R.string.InuCacheEntriesShort, stat.count), stat.size)
@@ -309,47 +306,11 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         }
     }
 
-    private fun showClearDeletedCacheDialog() {
-        val account = UserConfig.selectedAccount
-        val storage = MessagesStorage.getInstance(account) ?: return
-        storage.storageQueue.postRunnable {
-            val db = storage.database ?: return@postRunnable
-            val dialogStats = InuDatabaseHelper.getDeletedMessagesStats(db)
-            AndroidUtilities.runOnUIThread {
-                if (dialogStats.isEmpty()) {
-                    BulletinFactory.of(this)
-                        .createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuClearDeletedCacheEmpty))
-                        .show()
-                    return@runOnUIThread
-                }
-                val controller = MessagesController.getInstance(account)
-                val rows = dialogStats.map { stat ->
-                    val name = if (stat.dialogId == 0L) {
-                        LocaleController.getString(R.string.SavedMessages)
-                    } else {
-                        controller.getUser(stat.dialogId)?.let { UserObject.getUserName(it) }
-                            ?: controller.getChat(-stat.dialogId)?.title
-                            ?: "ID ${stat.dialogId}"
-                    }
-                    SheetRow(name, LocaleController.formatPluralString("messages", stat.count), stat.estimatedSize)
-                }
-                showSelectSheet(LocaleController.getString(R.string.InuClearDeletedCache), rows, withAll = true, onOpen = { index -> presentFragment(AyuMessageHistoryActivity.forDeletedMessagesInDialog(account, dialogStats[index].dialogId)) }) { picked ->
-                    val ids = picked.map { dialogStats[it].dialogId }
-                    SavedMessagesHelper.clearCache(account, if (ids.size == dialogStats.size) null else ids) {
-                        refreshStats()
-                        BulletinFactory.of(this)
-                            .createSimpleBulletin(R.raw.ic_delete, LocaleController.getString(R.string.InuClearDeletedCacheDone))
-                            .show()
-                    }
-                }
-            }
-        }
-    }
-
     companion object {
         private val BUTTON_MESSAGES_TTL = InuUtils.generateId()
         private val BUTTON_LOGS_TTL = InuUtils.generateId()
         private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()
+        private val BUTTON_EDITED_CACHE = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(

@@ -89,6 +89,7 @@ object ChatActionsHelper {
     const val ACTION_CHAT_LOCAL_NAME = 544
     const val ACTION_CHAT_MARK_READ = 545
     const val ACTION_CHAT_DELETE_MY_MESSAGES = 546
+    const val ACTION_EDITED_MESSAGES = 547
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -102,6 +103,37 @@ object ChatActionsHelper {
 
     /** the back row and the gap under it, which every plugin submenu keeps across a rebuild */
     private const val SUBMENU_HEADER_CELLS = 2
+
+    private fun addArchiveItems(activity: ChatActivity, headerItem: ActionBarMenuItem) {
+        val archives = listOf(
+            Triple(ACTION_DELETED_MESSAGES, R.drawable.msg_delete, R.string.InuDeletedArchive),
+            Triple(ACTION_EDITED_MESSAGES, R.drawable.msg_edit, R.string.InuEditedArchive),
+        )
+        if (!InuConfig.GROUP_CHAT_ARCHIVES.value) {
+            for ((id, icon, title) in archives) headerItem.lazilyAddSubItem(id, icon, LocaleController.getString(title))
+            return
+        }
+        val enabled = InuConfig.CHAT_MENU_ITEMS.value.filter { it.enabled }.map { it.item }
+        val visible = archives.filter { ChatMenuConfig.Item.forId(it.first) in enabled }
+        if (visible.isEmpty()) return
+        val popup = headerItem.getPopupLayout()
+        val submenu = ItemOptions.swipeback(popup, activity.resourceProvider)
+        submenu.add(R.drawable.ic_ab_back, LocaleController.getString(R.string.Back)) {
+            popup.swipeBack?.closeForeground()
+        }
+        submenu.addGap()
+        for ((id, icon, title) in visible) {
+            submenu.add(icon, LocaleController.getString(title)) {
+                activity.presentFragment(if (id == ACTION_EDITED_MESSAGES) {
+                    AyuMessageHistoryActivity.forEditedMessagesInDialog(activity.currentAccount, activity.dialogId)
+                } else {
+                    AyuMessageHistoryActivity.forDeletedMessagesInDialog(activity.currentAccount, activity.dialogId)
+                })
+                headerItem.closeSubMenu()
+            }
+        }
+        headerItem.inu_lazilyAddSwipeBackItem(visible.first().first, R.drawable.msg_archive, null, "entinygram", submenu.linearLayout)
+    }
 
     @JvmStatic
     fun reorder(lazyList: ArrayList<ActionBarMenuItem.Item>) {
@@ -211,10 +243,7 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InuRegexChatFilters),
             )
         }
-        headerItem.lazilyAddSubItem(
-            ACTION_DELETED_MESSAGES, R.drawable.msg_delete,
-            LocaleController.getString(R.string.InuDeletedArchive),
-        )
+        addArchiveItems(activity, headerItem)
         if (activity.dialogId != 0L && activity.dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId && !GhostHelper.isChannelDialog(activity.dialogId)) {
             headerItem.lazilyAddSubItem(
                 ACTION_GHOST_MODE, R.drawable.inu_ghost,
@@ -515,6 +544,7 @@ object ChatActionsHelper {
             ACTION_GO_TO_BEGINNING -> ChatHelper.jumpToBeginning(activity)
             ACTION_GO_TO_MESSAGE -> showGoToMessageDialog(activity)
             ACTION_DELETED_MESSAGES -> activity.presentFragment(AyuMessageHistoryActivity.forDeletedMessagesInDialog(activity.currentAccount, activity.dialogId))
+            ACTION_EDITED_MESSAGES -> activity.presentFragment(AyuMessageHistoryActivity.forEditedMessagesInDialog(activity.currentAccount, activity.dialogId))
             ACTION_STATISTICS -> {
                 val chat = activity.currentChat
                 if (chat != null) activity.presentFragment(StatisticActivity.create(chat, false))

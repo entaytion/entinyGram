@@ -1940,4 +1940,6 @@
     <string name="InuPillStackSummary">Интерактивные виджеты в строке поиска</string>
     <string name="InuRecentChatsSummary">Быстрое переключение между чатами</string>
     <string name="InuFeedSummary">Агрегатор постов из каналов</string>
+    <string name="InuEditedArchive">Архив отредактированных</string>
+    <string name="InuGroupChatArchives">Сгруппировать архивы в папку entinyGram</string>
 </resources>

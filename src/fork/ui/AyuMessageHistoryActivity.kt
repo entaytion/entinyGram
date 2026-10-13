@@ -33,6 +33,7 @@ import org.telegram.messenger.R
 import org.telegram.messenger.UserObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBar
+import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ActionBar.ThemeDescription
@@ -47,6 +48,7 @@ class AyuMessageHistoryActivity(
     private val targetMessageObject: MessageObject,
     private val deletedArchiveAuthor: Long? = null,
     private val deletedArchiveDialog: Boolean = false,
+    private val editedArchiveDialog: Boolean = false,
 ) : BaseFragment() {
 
     private val isDeletedArchive: Boolean
@@ -63,9 +65,40 @@ class AyuMessageHistoryActivity(
 
     private val historyEntries = ArrayList<EditEntry>()
     private val messageObjects = ArrayList<MessageObject?>()
+    private val previousEntries = ArrayList<EditEntry?>()
     private var listView: RecyclerListView? = null
     private var emptyView: View? = null
     private var loaded = false
+    private var clearing = false
+    private val mediaDownloads = HashMap<EditEntry, () -> Unit>()
+
+    override fun onFragmentDestroy() {
+        mediaDownloads.values.toList().forEach { it() }
+        mediaDownloads.clear()
+        super.onFragmentDestroy()
+    }
+
+    private fun openArchiveMedia(entry: EditEntry, message: MessageObject) {
+        if (mediaDownloads.containsKey(entry)) return
+        mediaDownloads[entry] = {}
+        val cancel = SavedMessagesHelper.downloadArchiveMedia(currentAccount, message.messageOwner, entry.rowId, isDeletedArchive) { path ->
+            mediaDownloads.remove(entry)
+            if (!isFinished) {
+                if (path == null) {
+                    BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.ErrorOccurred)).show()
+                } else {
+                    val index = historyEntries.indexOf(entry)
+                    if (index >= 0) {
+                        historyEntries[index] = entry.copy(mediaPath = path)
+                        rebuildMessageObjects()
+                        listView?.adapter?.notifyItemChanged(index)
+                    }
+                    AndroidUtilities.openForView(File(path), File(path).name, message.mimeType, parentActivity, null, false)
+                }
+            }
+        }
+        if (mediaDownloads.containsKey(entry)) mediaDownloads[entry] = cancel
+    }
 
     init {
         setCurrentAccount(targetMessageObject.currentAccount)
@@ -78,6 +111,30 @@ class AyuMessageHistoryActivity(
 
     private fun loadHistory() {
         val dialogId = targetMessageObject.getDialogId()
+        if (editedArchiveDialog) {
+            val storage = MessagesStorage.getInstance(currentAccount) ?: return
+            storage.storageQueue.postRunnable {
+                val db = storage.database ?: return@postRunnable
+                val previous = HashMap<Int, InuDatabaseHelper.EditHistoryRow>()
+                val entries = InuDatabaseHelper.loadEditHistoryInDialog(db, dialogId).filter { (msgId, row) ->
+                    val last = previous.put(msgId, row)
+                    last == null || last.text != row.text || last.mediaPath != row.mediaPath ||
+                        !SavedMessagesHelper.sameContent(last.entities, last.media, row.entities, row.media)
+                }.map { (msgId, row) ->
+                    EditEntry(row.date, row.text, row.mediaPath, row.entities, row.media, originalMessageId = msgId, rowId = row.rowId)
+                }
+                AndroidUtilities.runOnUIThread {
+                    historyEntries.clear()
+                    historyEntries.addAll(entries)
+                    loaded = true
+                    rebuildMessageObjects()
+                    listView?.adapter?.notifyDataSetChanged()
+                    updateEmptyView()
+                    if (historyEntries.isNotEmpty()) listView?.scrollToPosition(historyEntries.size - 1)
+                }
+            }
+            return
+        }
         if (isDeletedArchive) {
             val storage = MessagesStorage.getInstance(currentAccount) ?: return
             storage.storageQueue.postRunnable {
@@ -159,8 +216,11 @@ class AyuMessageHistoryActivity(
 
     private fun rebuildMessageObjects() {
         messageObjects.clear()
-        for (i in historyEntries.indices) {
+        previousEntries.clear()
+        val previous = HashMap<Int, EditEntry>()
+        for (entry in historyEntries) {
             messageObjects.add(null)
+            previousEntries.add(previous.put(if (editedArchiveDialog) entry.originalMessageId else targetMessageObject.id, entry))
         }
     }
 
@@ -182,11 +242,16 @@ class AyuMessageHistoryActivity(
         actionBar.setBackButtonImage(R.drawable.ic_ab_back)
         actionBar.setAllowOverlayTitle(true)
         actionBar.setTitle(name)
-        actionBar.setSubtitle(if (isDeletedArchive) LocaleController.getString(R.string.InuDeletedArchive) else "#${targetMessageObject.id}")
+        actionBar.setSubtitle(when {
+            isDeletedArchive -> LocaleController.getString(R.string.InuDeletedArchive)
+            editedArchiveDialog -> LocaleController.getString(R.string.InuEditedArchive)
+            else -> "#${targetMessageObject.id}"
+        })
         actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
             override fun onItemClick(id: Int) {
                 when (id) {
                     -1 -> finishFragment()
+                    MENU_CLEAR_ARCHIVE -> confirmClearArchive()
                     MENU_TOGGLE_DIFF -> {
                         val enabled = InuConfig.SHOW_EDIT_HISTORY_DIFF.toggle()
                         diffItem?.setChecked(enabled)
@@ -196,6 +261,9 @@ class AyuMessageHistoryActivity(
                 }
             }
         })
+        if (deletedArchiveDialog || editedArchiveDialog) {
+            actionBar.createMenu().addItem(MENU_CLEAR_ARCHIVE, R.drawable.inu_tabler_trash_x)
+        }
         if (!isDeletedArchive) {
             diffItem = actionBar.createMenu()
                 .addItem(MENU_MAIN, R.drawable.ic_ab_other)
@@ -275,6 +343,48 @@ class AyuMessageHistoryActivity(
         emptyView?.visibility = if (loaded && historyEntries.isEmpty()) View.VISIBLE else View.GONE
     }
 
+    private fun confirmClearArchive() {
+        if (clearing || !loaded || historyEntries.isEmpty()) return
+        val context = parentActivity ?: return
+        showDialog(AlertDialog.Builder(context)
+            .setTitle(LocaleController.getString(R.string.InuCacheClearAll))
+            .setMessage(LocaleController.getString(if (editedArchiveDialog) R.string.InuEditedArchive else R.string.InuDeletedArchive))
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .setPositiveButton(LocaleController.getString(R.string.Delete)) { _, _ ->
+                if (clearing) return@setPositiveButton
+                clearing = true
+                val ids = listOf(targetMessageObject.getDialogId())
+                val done = Runnable {
+                    clearing = false
+                    if (!isFinished) {
+                        historyEntries.clear()
+                        rebuildMessageObjects()
+                        listView?.adapter?.notifyDataSetChanged()
+                        updateEmptyView()
+                        BulletinFactory.of(this).createSimpleBulletin(R.raw.ic_delete, LocaleController.getString(R.string.InuCacheClearAllDone)).show()
+                    }
+                }
+                if (editedArchiveDialog) {
+                    val storage = MessagesStorage.getInstance(currentAccount)
+                    storage.storageQueue.postRunnable {
+                        val result = runCatching {
+                            InuDatabaseHelper.clearEditHistory(checkNotNull(storage.database), ids)
+                            SavedMessagesHelper.invalidateMediaCache(currentAccount)
+                        }
+                        AndroidUtilities.runOnUIThread {
+                            if (result.isSuccess) done.run() else {
+                                clearing = false
+                                if (!isFinished) BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.ErrorOccurred)).show()
+                            }
+                        }
+                    }
+                } else {
+                    SavedMessagesHelper.clearCache(currentAccount, ids, deletedOnly = true, onDone = done)
+                }
+            }
+            .create())
+    }
+
     private fun showRowMenu(cell: AyuHistoryMessageCell) {
         val entry = cell.currentEntry() ?: return
         val position = cell.currentPosition()
@@ -316,12 +426,13 @@ class AyuMessageHistoryActivity(
         if (position < messageObjects.size) {
             messageObjects[position] = null
         }
+        rebuildMessageObjects()
         listView?.adapter?.notifyDataSetChanged()
         updateEmptyView()
         SavedMessagesHelper.deleteEditHistoryEntry(
             currentAccount,
             targetMessageObject.getDialogId(),
-            targetMessageObject.id,
+            if (editedArchiveDialog) entry.originalMessageId else targetMessageObject.id,
             entry.rowId,
         )
     }
@@ -346,7 +457,7 @@ class AyuMessageHistoryActivity(
             val entry = historyEntries[position]
             var syntheticMsg = messageObjects.getOrNull(position)
             if (syntheticMsg == null) {
-                val prevEntry = if (position > 0) historyEntries[position - 1] else null
+                val prevEntry = previousEntries.getOrNull(position)
                 syntheticMsg = createMessageObjectForEntry(entry, prevEntry, position == currentVersionIndex)
                 if (position < messageObjects.size) {
                     messageObjects[position] = syntheticMsg
@@ -374,7 +485,7 @@ class AyuMessageHistoryActivity(
                 media?.ttl_seconds = 0
                 if (entry.mediaPath == null) attachPath = null
             } ?: TLRPC.TL_message().apply {
-                id = if (isDeletedArchive && entry.originalMessageId != 0) entry.originalMessageId else targetMessageObject.id
+                id = if ((isDeletedArchive || editedArchiveDialog) && entry.originalMessageId != 0) entry.originalMessageId else targetMessageObject.id
                 dialog_id = targetMessageObject.getDialogId()
                 date = entry.timestamp.toInt()
                 message = entry.text
@@ -392,7 +503,7 @@ class AyuMessageHistoryActivity(
             }
 
             // entiny: only stored revisions carry media so text revisions stay TYPE_TEXT and build their text layout
-            val savedFile = entry.mediaPath?.takeIf { it.isNotBlank() }?.let { File(it) }?.takeIf { it.exists() }
+            val savedFile = entry.mediaPath?.takeIf { it.isNotBlank() }?.let { File(it) }?.takeIf { it.isFile && it.length() > 0 }
             val storedMedia = if (archived != null) null else entry.media
             if (archived != null) {
                 if (savedFile != null && archived.media != null) {
@@ -429,6 +540,10 @@ class AyuMessageHistoryActivity(
                 msgObj.messageText = diff
             }
             msgObj.checkLayout()
+            if (diff != null) {
+                msgObj.generateLayout(null)
+                if (msgObj.caption != null) msgObj.caption = diff
+            }
             // entiny: mark as history preview so revisions sharing message id do not inherit deleted styling
             SavedMessagesHelper.markAsHistoryPreview(msgObj)
             return msgObj
@@ -452,14 +567,14 @@ class AyuMessageHistoryActivity(
                 val path: String? = currentEntry.mediaPath
                 if (!path.isNullOrEmpty()) {
                     val file = File(path)
-                    if (file.exists()) {
+                    if (file.isFile && file.length() > 0) {
                         AndroidUtilities.openForView(file, file.name, null, parentActivity, null, false)
                         return@setOnClickListener
                     }
                 }
 
                 if (msgObj != null && msgObj.messageOwner?.media != null) {
-                    AndroidUtilities.openForView(msgObj, parentActivity, null, false)
+                    openArchiveMedia(currentEntry, msgObj)
                 } else if (!TextUtils.isEmpty(currentEntry.text)) {
                     copyTextToClipboard(currentEntry.text)
                 }
@@ -486,7 +601,7 @@ class AyuMessageHistoryActivity(
             super.onLayout(changed, left, top, right, bottom)
             val currentEntry = entry ?: return
             // entiny: legacy fallback points photo image at local file when revision predates media blob
-            if (currentEntry.media != null) return
+            if (currentEntry.media != null || currentEntry.message?.media != null) return
             val path: String? = currentEntry.mediaPath
             if (!path.isNullOrEmpty()) {
                 val file = File(path)
@@ -508,6 +623,7 @@ class AyuMessageHistoryActivity(
         private val IMAGE_EXTENSIONS = setOf("jpg", "jpeg", "png", "webp")
         private const val MENU_MAIN = 1
         private const val MENU_TOGGLE_DIFF = 2
+        private const val MENU_CLEAR_ARCHIVE = 3
 
         fun forDeletedMessagesInDialog(account: Int, dialogId: Long): AyuMessageHistoryActivity {
             val controller = org.telegram.messenger.MessagesController.getInstance(account)
@@ -518,6 +634,16 @@ class AyuMessageHistoryActivity(
                 message = ""
             }
             return AyuMessageHistoryActivity(MessageObject(account, message, false, true), deletedArchiveDialog = true)
+        }
+
+        fun forEditedMessagesInDialog(account: Int, dialogId: Long): AyuMessageHistoryActivity {
+            val message = TLRPC.TL_message().apply {
+                id = 0
+                dialog_id = dialogId
+                peer_id = org.telegram.messenger.MessagesController.getInstance(account).getPeer(dialogId)
+                message = ""
+            }
+            return AyuMessageHistoryActivity(MessageObject(account, message, false, true), editedArchiveDialog = true)
         }
 
         private fun computeDiff(oldText: String, newText: String): CharSequence {

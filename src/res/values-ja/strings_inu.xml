@@ -1836,4 +1836,6 @@
     <string name="InuPillStackSummary">検索バーのインタラクティブウィジェット</string>
     <string name="InuRecentChatsSummary">チャット間の素早い切り替え</string>
     <string name="InuFeedSummary">チャンネル投稿のアグリゲーター</string>
+    <string name="InuEditedArchive">編集済みメッセージのアーカイブ</string>
+    <string name="InuGroupChatArchives">アーカイブをentinyGramフォルダーにまとめる</string>
 </resources>
