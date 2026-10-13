@@ -263,13 +263,14 @@ class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileMenuConfig.Item>(k
         PREMIUM("premium", 11, R.string.TelegramPremium, R.drawable.settings_premium),
         STARS("stars", 12, R.string.TelegramStars, R.drawable.settings_stars),
         TON("ton", 13, R.string.MyTON, R.drawable.settings_gram_24),
-        WALLET("wallet", 0, R.string.InuSettingsRowWallet, R.drawable.settings_wallet),
+        WALLET("wallet", 25, R.string.InuSettingsRowWallet, R.drawable.settings_wallet),
         BUSINESS("business", 15, R.string.TelegramBusiness, R.drawable.settings_business),
         PREMIUM_GIFTING("premium_gifting", 16, R.string.SendAGift, R.drawable.settings_gift),
         QUESTION("question", 17, R.string.AskAQuestion, R.drawable.settings_ask),
         FAQ("faq", 18, R.string.TelegramFAQ, R.drawable.settings_faq),
         FEATURES("features", 23, R.string.TelegramFeatures, R.drawable.settings_features),
-        POLICY("policy", 19, R.string.PrivacyPolicy, R.drawable.settings_policy);
+        POLICY("policy", 19, R.string.PrivacyPolicy, R.drawable.settings_policy),
+        ROUND_VIDEO("round_video", 24, R.string.RoundVideoSettings, R.drawable.msg_video);
 
         companion object {
             private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }

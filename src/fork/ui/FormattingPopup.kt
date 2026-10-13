@@ -26,7 +26,7 @@ import androidx.appcompat.widget.TooltipCompat
 import desu.inugram.InuConfig
 import desu.inugram.ui.FormattingPopupConfig
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.CodeHighlighting
+import org.telegram.utils.code.highlight.CodeHighlighting
 import org.telegram.messenger.LocaleController
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.EditTextBoldCursor

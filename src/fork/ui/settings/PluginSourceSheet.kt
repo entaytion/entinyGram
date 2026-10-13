@@ -17,7 +17,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.CodeHighlighting
+import org.telegram.utils.code.highlight.CodeHighlighting
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
@@ -102,8 +102,9 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
 
     init {
         if (source.length <= HIGHLIGHT_MAX_LENGTH) {
-            Utilities.searchQueue.postRunnable {
-                val spans = CodeHighlighting.inu_computeSpans(source, "javascript")
+            CodeHighlighting.inu_computeSpans(source, "javascript") { computed ->
+              Utilities.searchQueue.postRunnable {
+                val spans = computed.sortedBy { it.start }
                 var first = 0
                 val result = chunks.map { range ->
                     val end = range.last + 1
@@ -124,6 +125,7 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
                     highlightedChunks = result
                     recyclerListView.adapter?.notifyItemRangeChanged(1, chunks.size)
                 }
+              }
             }
         }
     }

@@ -6,23 +6,20 @@ import desu.inugram.helpers.menu.ProfileMenuConfig
 import desu.inugram.helpers.menu.reorderByMenu
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
-import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
 object ProfileSettingsHelper {
 
-    private fun classify(item: UItem): ProfileMenuConfig.Item? =
-        if (item.`object` is TLRPC.TL_attachMenuBot) ProfileMenuConfig.Item.WALLET
-        else ProfileMenuConfig.Item.forSettingsId(item.id)
+    private fun classify(item: UItem): ProfileMenuConfig.Item? = ProfileMenuConfig.Item.forSettingsId(item.id)
 
     // entiny: stock section of a row: 0 inugram, 1 main, 2 premium, 3 help; -1 unknown
     private fun groupOf(item: UItem): Int = when (item.id) {
         99 -> 0
         in 1..3, in 5..10 -> 1
-        in 11..13, 15, 16 -> 2
-        17, 18, 19, 23 -> 3
-        else -> if (item.`object` is TLRPC.TL_attachMenuBot) 2 else -1
+        in 11..13, 15, 16, 25 -> 2
+        17, 18, 19, 23, 24 -> 3
+        else -> -1
     }
 
     @JvmStatic

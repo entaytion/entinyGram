@@ -5,7 +5,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import desu.inugram.helpers.plugins.tl.TlJson
 import org.json.JSONArray
-import org.telegram.messenger.CodeHighlighting
+import org.telegram.utils.code.highlight.CodeHighlighting
 import org.telegram.messenger.Emoji
 import org.telegram.messenger.MessageObject
 import org.telegram.tgnet.TLRPC
