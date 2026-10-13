@@ -171,6 +171,8 @@ open class QuickJs {
 
     fun chatHistoryButtonClick(historyId: Long) = requireLive { nativeChatHistoryButtonClick(it, historyId) }
 
+    fun chatHistoryHeaderTap(historyId: Long) = requireLive { nativeChatHistoryHeaderTap(it, historyId) }
+
     fun chatHistoryMenu(historyId: Long, requestId: Long) = requireLive { nativeChatHistoryMenu(it, historyId, requestId) }
 
     fun chatHistoryMenuClick(historyId: Long, requestId: Long, index: Int) =
@@ -306,6 +308,7 @@ open class QuickJs {
     private external fun nativeChatHistoryClosed(ptr: Long, historyId: Long)
     private external fun nativeChatHistoryRead(ptr: Long, historyId: Long, key: String)
     private external fun nativeChatHistoryButtonClick(ptr: Long, historyId: Long)
+    private external fun nativeChatHistoryHeaderTap(ptr: Long, historyId: Long)
     private external fun nativeChatHistoryMenu(ptr: Long, historyId: Long, requestId: Long)
     private external fun nativeChatHistoryMenuClick(ptr: Long, historyId: Long, requestId: Long, index: Int)
     private external fun nativeRenderActions(ptr: Long, kind: Int, surfaceJson: String): String?

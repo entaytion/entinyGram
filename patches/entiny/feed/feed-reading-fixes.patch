@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -21010,6 +21010,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -21016,6 +21016,10 @@ public class ChatActivity extends BaseFragment implements
              }
          }
          int index = waitingForLoad.indexOf(queryLoadIndex);
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
          long currentUserId = getUserConfig().getClientUserId();
          int mode = (Integer) args[14];
          boolean isCache = (Boolean) args[3];
-@@ -22272,14 +22276,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -22278,14 +22282,7 @@ public class ChatActivity extends BaseFragment implements
              updateSearchUpDownButtonVisibility(true);
          }
          if (isFeedSearch()) {
@@ -50,7 +50,7 @@ index 0000000..0000000 100644
              feedIntegration().onMessagesLoaded();
              feedIntegration().loadReplyMessages(messArr, chatMode, classGuid);
          }
-@@ -22307,6 +22304,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -22313,6 +22310,9 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
          }

@@ -1081,13 +1081,13 @@ declare namespace inu {
 
     /**
      * Target for {@link openPage}
-     * - `chat`: open a specific dialog (and optionally topic)
+     * - `chat`: open a specific dialog (and optionally topic), optionally at `messageId`
      * - `profile`: open a specific user/channel's profile
      * - `dialogs`: open a list of dialogs
      * - `settings`: open the settings page
      */
     type PageTarget
-      = | { type: 'chat', dialogId: number, topicId?: number, account?: number }
+      = | { type: 'chat', dialogId: number, topicId?: number, messageId?: number, account?: number }
         | { type: 'profile', dialogId: number, account?: number }
         | { type: 'dialogs', account?: number }
         | { type: 'settings', account?: number }
@@ -1197,6 +1197,8 @@ declare namespace inu {
        * @throws if the button was not declared
        */
       setButton(button: { text: InputText } | null): void
+      /** Scroll to an entry once it is loaded */
+      scrollTo(key: string): void
       /** Close the screen */
       close(): void
       /** A promise that resolves when the user leaves the screen */
@@ -1260,6 +1262,8 @@ declare namespace inu {
        * with the `key` of the newest entry the user has on the screen
        */
       onRead?(key: string): void
+      /** Called when the user taps the chat header */
+      onHeaderTap?(): void
       /**
        * A button on the bottom of the screen (where a Mute/Join button would reside)
        *

@@ -30,7 +30,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -37941,7 +37941,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37947,7 +37947,7 @@ public class ChatActivity extends BaseFragment implements
                      cell.resetPressedLink(-1);
                  }
                  if (!messageObject.isVoice()) {

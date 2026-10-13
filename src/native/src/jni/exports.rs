@@ -915,6 +915,16 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeChatHisto
 }
 
 #[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeChatHistoryHeaderTap(
+  _env: EnvUnowned,
+  _this: JObject,
+  ptr: jlong,
+  history_id: jlong,
+) {
+  with_engine(ptr, (), |engine| engine.history.dispatch_header_tap(&engine.ctx, history_id));
+}
+
+#[no_mangle]
 pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeChatHistoryMenu(
   _env: EnvUnowned,
   _this: JObject,

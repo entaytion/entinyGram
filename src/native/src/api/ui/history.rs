@@ -23,6 +23,7 @@ pub(crate) const OP_REPLACE: i32 = 1;
 pub(crate) const OP_REMOVE: i32 = 2;
 pub(crate) const OP_UNREAD_COUNT: i32 = 3;
 pub(crate) const OP_BUTTON: i32 = 4;
+pub(crate) const OP_SCROLL: i32 = 5;
 
 /// a page past this builds too many message layouts on the ui thread at once
 const MAX_ENTRIES: usize = 200;
@@ -43,6 +44,7 @@ struct HistoryDef {
   resolve_closed: Persistent<Function<'static>>,
   retained_icon: Option<Persistent<Value<'static>>>,
   on_read: Option<Persistent<Function<'static>>>,
+  on_header_tap: Option<Persistent<Function<'static>>>,
   on_button_click: Option<Persistent<Function<'static>>>,
   menu: Option<Persistent<Function<'static>>>,
   shown_menu: Option<ShownMenu>,
@@ -70,7 +72,7 @@ impl HistoryDef {
   fn release(self, ctx: &Ctx<'_>) {
     let _ = self.load.restore(ctx);
     let _ = self.resolve_closed.restore(ctx);
-    for f in [self.on_read, self.on_button_click, self.menu].into_iter().flatten() {
+    for f in [self.on_read, self.on_header_tap, self.on_button_click, self.menu].into_iter().flatten() {
       let _ = f.restore(ctx);
     }
     if let Some(icon) = self.retained_icon {
@@ -182,6 +184,8 @@ impl HistoryState {
     let load = req_fn(ctx, opts, what, "load")?;
     let on_read = opt_fn(ctx, opts, what, "onRead")?;
     out.set("read", on_read.is_some())?;
+    let on_header_tap = opt_fn(ctx, opts, what, "onHeaderTap")?;
+    out.set("headerTap", on_header_tap.is_some())?;
     let button = field(ctx, opts, what, "button")?;
     let on_button_click = if button.is_undefined() || button.is_null() {
       None
@@ -208,6 +212,7 @@ impl HistoryState {
           resolve_closed: Persistent::save(ctx, resolve_closed),
           retained_icon,
           on_read: on_read.map(|f| Persistent::save(ctx, f)),
+          on_header_tap: on_header_tap.map(|f| Persistent::save(ctx, f)),
           on_button_click: on_button_click.map(|f| Persistent::save(ctx, f)),
           menu: menu.map(|f| Persistent::save(ctx, f)),
           shown_menu: None,
@@ -276,6 +281,18 @@ impl HistoryState {
         write_input_text(&out, "text", req_text(&ctx, button, "setButton", "text")?)?;
         let json = stringify_json(&ctx, out.into_value(), "setButton")?;
         state.update(&ctx, history_id, OP_BUTTON, &json)
+      })?,
+    )?;
+    let state = self.clone();
+    handle.set(
+      "scrollTo",
+      Function::new(ctx.clone(), move |ctx: Ctx<'js>, key: Value<'js>| -> JsResult<()> {
+        state.require_open(&ctx, history_id, "scrollTo")?;
+        let key = key
+          .as_string()
+          .ok_or_else(|| Exception::throw_type(&ctx, "scrollTo: expected a string key"))?
+          .to_string()?;
+        state.update(&ctx, history_id, OP_SCROLL, &key)
       })?,
     )?;
     let state = self.clone();
@@ -424,6 +441,23 @@ impl HistoryState {
           call_callback(&ctx, &self.log, "button onClick callback", &f, ());
         }
         Err(e) => (self.log)(&format!("openChatHistory: failed to restore the button callback: {e:?}")),
+      }
+    });
+    pump_jobs(context, self.log.as_ref());
+  }
+
+  pub fn dispatch_header_tap(self: &Rc<Self>, context: &rquickjs::Context, history_id: i64) {
+    if self.lifecycle.is_unloading() {
+      return;
+    }
+    enter_js(context, |ctx| {
+      let on_header_tap = self.defs.borrow().get(&history_id).and_then(|def| def.on_header_tap.clone());
+      let Some(on_header_tap) = on_header_tap else { return };
+      match on_header_tap.restore(&ctx) {
+        Ok(f) => {
+          call_callback(&ctx, &self.log, "onHeaderTap callback", &f, ());
+        }
+        Err(e) => (self.log)(&format!("openChatHistory: failed to restore onHeaderTap: {e:?}")),
       }
     });
     pump_jobs(context, self.log.as_ref());

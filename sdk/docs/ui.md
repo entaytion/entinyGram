@@ -272,8 +272,9 @@ The full API is described in the `d.ts` files, but a quick overview:
   - When the user taps "jump to bottom", `(null, 'newer')` is called, asking for the newest (bottommost) page
 - Messages are addressed by a string key, which is by default `${peer}:${id}`
 - Messages can be "synthetic", i.e. not backed by a real server message.
+- `onHeaderTap` handles taps on the chat header.
 - `button: { text, onClick }` can be used to add a button on the bottom of the screen
-- `append`, `replace` and `remove` on the handle allow imperative updates to the page
+- `append`, `replace`, `remove` and `scrollTo` on the handle allow imperative updates to the page
 
 ## Current screen
 

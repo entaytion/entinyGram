@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  
          if (textSelectionHelper == null) {
              Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
-@@ -7994,6 +8008,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8000,6 +8014,10 @@ public class ChatActivity extends BaseFragment implements
              public void setVisibility(int visibility) {
                  super.setVisibility(visibility);
                  bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -8208,7 +8226,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8214,7 +8232,10 @@ public class ChatActivity extends BaseFragment implements
          chatActivityEnterView.setViewParentForEmoji(chatInputInAppContainer);
          checkSendButtonBlockedByTyping(false);
  
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -43065,6 +43086,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -43071,6 +43092,12 @@ public class ChatActivity extends BaseFragment implements
              if (blurredBackgroundColorProviderWhite != null) {
                  blurredBackgroundColorProviderWhite.updateColors();
              }

@@ -360,6 +360,10 @@ object TranslateHelper {
         val controller = MessagesController.getInstance(account).translateController
         val dialogId = target.dialogId
 
+        if (owner.voiceTranscription == null || !owner.voiceTranscriptionFinal || !owner.voiceTranscriptionOpen) {
+            bodies[dialogId]?.remove(target.id)
+            owner.translatedText = null
+        }
         manual.computeIfAbsent(dialogId) { ConcurrentHashMap.newKeySet() }.add(target.id)
         if (fromLang != null && fromLang != "und" && owner.originalLanguage == null) {
             owner.originalLanguage = fromLang

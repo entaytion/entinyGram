@@ -591,6 +591,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - chat drifting a few px off the input when hiding the keyboard while a message animation runs (aosp recyclerview bug: end-anchored padding delta applied twice across pre+post layout)
 - crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)
 - crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
+- expanded story reactions no longer remain above the app after dismissing the reply keyboard with the system back gesture
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
 - crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)
 - crash rendering tables in rich messages and instant view with oversized/negative col/rowspans or a row wider than the first (stock sized the grid from raw spans and the first row only)

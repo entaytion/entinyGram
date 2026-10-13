@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 12 Oct 2026 22:18:20 +0200
+Subject: fix story reactions window staying open after keyboard is hidden
+
+---
+ .../src/main/java/org/telegram/ui/Stories/PeerStoriesView.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -7254,6 +7254,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+             }
+             if (!keyboardVisible && reactionsContainerLayout != null) {
+                 reactionsContainerLayout.reset();
++                if (reactionsContainerLayout.getReactionsWindow() != null) {
++                    reactionsContainerLayout.getReactionsWindow().dismissWithAlpha();
++                }
+             }
+             headerView.setEnabled(!keyboardVisible);
+             if (chatActivityEnterView != null) {

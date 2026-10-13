@@ -425,7 +425,7 @@ fn open_screen_validates_and_reaches_host() {
     ctx
       .eval::<(), _>(
         r#"
-          inu.ui.openPage({ type: 'chat', dialogId: -1001, topicId: 42, account: 2 })
+          inu.ui.openPage({ type: 'chat', dialogId: -1001, topicId: 42, messageId: 50, account: 2 })
           inu.ui.openPage({ type: 'profile', dialogId: 7, account: 2 })
           inu.ui.openPage({ type: 'dialogs', account: 2 })
           inu.ui.openPage({ type: 'settings' })
@@ -436,7 +436,7 @@ fn open_screen_validates_and_reaches_host() {
   assert_eq!(
     *host.opened_screens.borrow(),
     vec![
-      r#"{"type":"chat","accountId":2,"dialogId":-1001,"topicId":42}"#,
+      r#"{"type":"chat","accountId":2,"dialogId":-1001,"topicId":42,"messageId":50}"#,
       r#"{"type":"profile","accountId":2,"dialogId":7}"#,
       r#"{"type":"dialogs","accountId":2}"#,
       r#"{"type":"settings"}"#,
@@ -447,6 +447,8 @@ fn open_screen_validates_and_reaches_host() {
     "inu.ui.openPage({ type: 'other' })",
     "inu.ui.openPage({ type: 'chat', dialogId: 0 })",
     "inu.ui.openPage({ type: 'profile', dialogId: 1, topicId: 2 })",
+    "inu.ui.openPage({ type: 'profile', dialogId: 1, messageId: 2 })",
+    "inu.ui.openPage({ type: 'chat', dialogId: 1, messageId: 1.5 })",
     "inu.ui.openPage({ type: 'profile', dialogId: 1, account: {} })",
   ] {
     assert!(ctx.with(|ctx| ctx.eval::<(), _>(source).is_err()), "accepted {source}");

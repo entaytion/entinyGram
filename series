@@ -544,3 +544,6 @@ entiny/chat/reply-background.patch
 entiny/chat/unread-badge-on-back-button.patch
 entiny/feed/feed-reading-fixes.patch
 entiny/privacy/archive-persistence-fixes.patch
+bugfix/forum-title-overlay.patch
+bugfix/animated-drawable-recycle-interrupt.patch
+bugfix/story-reactions-window-keyboard.patch

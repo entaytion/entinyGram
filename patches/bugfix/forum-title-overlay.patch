@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 12 Oct 2026 17:24:41 +0200
+Subject: Fix connection title over forum header
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java      | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -3251,6 +3251,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     @Override
+     public void setTitleOverlayText(String title, int titleId, Runnable action) {
++        if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
++            return;
++        }
+         super.setTitleOverlayText(title, titleId, action);
+         if (actionBar != null && selectAnimatedEmojiDialog != null && selectAnimatedEmojiDialog.getContentView() instanceof SelectAnimatedEmojiDialog) {
+             SimpleTextView textView = actionBar.getTitleTextView();
+@@ -5690,6 +5693,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 updateFilterTabs(false, true);
+                 checkUi_searchFieldHint();
+                 updateDialogsHint();
++                if (!hasFragment() && getParentLayout() != null) {
++                    getParentLayout().updateTitleOverlay();
++                }
+             }
+ 
+             @Override

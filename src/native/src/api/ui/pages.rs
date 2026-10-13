@@ -324,18 +324,21 @@ pub fn install_ui<'js>(
             }
             out.set("dialogId", dialog_id)?;
           }
-          if page.contains_key("topicId")? {
-            if kind != "chat" {
-              return Err(Exception::throw_type(&ctx, "openPage: 'topicId' is only valid for a chat"));
+          for key in ["topicId", "messageId"] {
+            if !page.contains_key(key)? {
+              continue;
             }
-            let topic_id: f64 = page.get("topicId")?;
-            if !topic_id.is_finite() || topic_id.fract() != 0.0 || topic_id < 0.0 || topic_id > i32::MAX as f64 {
+            if kind != "chat" {
+              return Err(Exception::throw_type(&ctx, &format!("openPage: '{key}' is only valid for a chat")));
+            }
+            let id: f64 = page.get(key)?;
+            if !id.is_finite() || id.fract() != 0.0 || id < 0.0 || id > i32::MAX as f64 {
               return Err(Exception::throw_type(
                 &ctx,
-                "openPage: 'topicId' must be a non-negative signed 32-bit integer",
+                &format!("openPage: '{key}' must be a non-negative signed 32-bit integer"),
               ));
             }
-            out.set("topicId", topic_id as i32)?;
+            out.set(key, id as i32)?;
           }
           let json = stringify_json(&ctx, out.into_value(), "openPage: could not serialize the screen")?;
           if let Some(err) = state2.host.ui_open_screen(&json) {

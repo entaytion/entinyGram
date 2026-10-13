@@ -414,7 +414,7 @@ index 0000000..0000000 100644
  
 +    @Override
 +    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-+        if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY && showCustomEmojiReaction() && !visibleReactionsList.isEmpty()) {
++        if (getParent() instanceof ChatScrimPopupContainerLayout && MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY && showCustomEmojiReaction() && !visibleReactionsList.isEmpty()) {
 +            int inu_width = getTotalWidth() + getPaddingLeft() + getPaddingRight() - dp(16);
 +            widthMeasureSpec = MeasureSpec.makeMeasureSpec(inu_width, MeasureSpec.EXACTLY);
 +        }

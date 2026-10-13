@@ -4,9 +4,23 @@ Date: Tue, 28 Apr 2026 15:27:42 +0300
 Subject: add custom resource loader for icon replacement
 
 ---
+ .../ui/Components/ProfileActionsView.java        |  2 +-
  .../java/org/telegram/ui/LaunchActivity.java     | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
+@@ -565,7 +565,7 @@ public class ProfileActionsView extends View {
+                         hit.isLoading = true;
+                         invalidate();
+                     }
+-                    if (hit.supportsAnimate != 0) {
++                    if (hit.supportsAnimate != 0 && desu.inugram.InuConfig.ICON_REPLACEMENT.getValue() == desu.inugram.InuConfig.IconReplacementItem.OFF) {
+                         hit.updateDrawable(true, hit.supportsAnimate);
+                     }
+                     hit.startTime = System.currentTimeMillis();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
