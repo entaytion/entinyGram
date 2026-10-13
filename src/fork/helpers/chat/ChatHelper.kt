@@ -2845,11 +2845,11 @@ object ChatHelper {
     @JvmStatic
     fun getChatInputTextSize(): Float = InuConfig.CHAT_INPUT_TEXT_SIZE.value.toFloat()
 
-    @JvmStatic
     @JvmField
     @Volatile
     var folderTitle: CharSequence? = null
 
+    @JvmStatic
     fun getDialogsTitle(account: Int): CharSequence {
         val user = UserConfig.getInstance(account).getCurrentUser()
         val baseTitle = when (InuConfig.DIALOGS_TITLE_TEXT.value) {
