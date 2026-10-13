@@ -3,6 +3,7 @@ package desu.inugram.helpers.dialogs
 import android.util.SparseArray
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
@@ -24,6 +25,8 @@ object PinHelper {
             synchronized(cache) {
                 cache.put(account, HashMap(loadedMap))
             }
+            // entiny: pins are read off the storage queue, so the list sorted at startup has none of them yet
+            if (loadedMap.isNotEmpty()) AndroidUtilities.runOnUIThread { refresh(account) }
         }
     }
 
