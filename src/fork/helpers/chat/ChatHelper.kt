@@ -163,6 +163,8 @@ object ChatHelper {
     const val OPTION_SET_REMINDER = 531
     const val OPTION_HIDE_MESSAGE = 532
     const val OPTION_PLUGIN_ACTIONS = 533
+    const val OPTION_LOCAL_EDIT = 534
+    const val OPTION_LOCAL_EDIT_RESET = 535
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -498,6 +500,17 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuSetReminder))
             options.add(OPTION_SET_REMINDER)
             icons.add(R.drawable.msg_notifications)
+        }
+
+        if (isMenuItemEnabled(MessageMenuConfig.Item.LOCAL_EDIT) && LocalEditHelper.canEdit(selectedObject)) {
+            items.add(LocaleController.getString(R.string.InuLocalEditMessage))
+            options.add(OPTION_LOCAL_EDIT)
+            icons.add(R.drawable.msg_edit)
+            if (LocalEditHelper.has(selectedObject)) {
+                items.add(LocaleController.getString(R.string.InuLocalEditReset))
+                options.add(OPTION_LOCAL_EDIT_RESET)
+                icons.add(R.drawable.msg_retry)
+            }
         }
 
         if (isMenuItemEnabled(MessageMenuConfig.Item.HIDE_MESSAGE)) {
@@ -1012,6 +1025,10 @@ object ChatHelper {
                 if (selectedObjectGroup != null) messages.addAll(selectedObjectGroup.messages) else messages.add(selectedObject)
                 setReminder(activity, messages)
             }
+
+            OPTION_LOCAL_EDIT -> LocalEditHelper.edit(activity, selectedObject)
+
+            OPTION_LOCAL_EDIT_RESET -> LocalEditHelper.reset(activity, selectedObject)
 
             OPTION_HIDE_MESSAGE -> {
                 val messages = selectedObjectGroup?.messages ?: listOf(selectedObject)

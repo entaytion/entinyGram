@@ -950,6 +950,14 @@
     <string name="InuLocalNamesClearConfirm">Все локальные имена будут удалены, оригиналы вернутся.</string>
     <string name="InuLocalNamesImported">Импортировано: %1$d</string>
     <string name="InuLocalNamesImportFailed">В буфере обмена нет корректных данных</string>
+    <string name="InuLocalMessageEdit">Локальное редактирование сообщений</string>
+    <string name="InuLocalMessageEditInfo">Добавляет «Редактировать локально» в меню сообщения (включи его в порядке меню). Правки видны только на этом устройстве, оригинальный текст сохраняется</string>
+    <string name="InuLocalEditMessage">Редактировать локально</string>
+    <string name="InuLocalEditReset">Сбросить локальную правку</string>
+    <string name="InuLocalEditTitle">Редактирование текста (локально)</string>
+    <string name="InuLocalEditSaved">Сохранено на этом устройстве</string>
+    <string name="InuLocalEditsClear">Сбросить все локальные правки</string>
+    <string name="InuLocalEditsClearConfirm">Все локально изменённые сообщения вернутся к оригинальному тексту.</string>
     <string name="InuLocalNameWas">Оригинал: %1$s</string>
     <string name="InuLocalNameFirst">Имя</string>
     <string name="InuLocalNameLast">Фамилия</string>

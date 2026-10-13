@@ -170,6 +170,14 @@
     <string name="InuLocalNamesClearConfirm">Усі локальні імена буде видалено, оригінали повернуться.</string>
     <string name="InuLocalNamesImported">Імпортовано: %1$d</string>
     <string name="InuLocalNamesImportFailed">У буфері обміну немає коректних даних</string>
+    <string name="InuLocalMessageEdit">Локальне редагування повідомлень</string>
+    <string name="InuLocalMessageEditInfo">Додає «Редагувати локально» в меню повідомлення (увімкни його в порядку меню). Правки видно лише на цьому пристрої, оригінальний текст зберігається</string>
+    <string name="InuLocalEditMessage">Редагувати локально</string>
+    <string name="InuLocalEditReset">Скинути локальну правку</string>
+    <string name="InuLocalEditTitle">Редагування тексту (локально)</string>
+    <string name="InuLocalEditSaved">Збережено на цьому пристрої</string>
+    <string name="InuLocalEditsClear">Скинути всі локальні правки</string>
+    <string name="InuLocalEditsClearConfirm">Усі локально змінені повідомлення повернуться до оригінального тексту.</string>
     <string name="InuLocalNameWas">Оригінал: %1$s</string>
     <string name="InuLocalNameFirst">Ім\'я</string>
     <string name="InuLocalNameLast">Прізвище</string>

@@ -66,6 +66,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **local Telegram Premium**: Premium UI and limits on the client side
 - 📡 **local custom emoji**: send Premium custom emoji without Premium
 - 📡 **local names**: change name, username, photo, bio, verified badge, Premium badge and emoji status of any person, bot, group or channel on your device only, with export and import
+- ✏️ **local message edit**: edit the text of any message on your device only and reset it back anytime, from the message menu - *inspired by Local Message Edit plugin (Pixuz)*
 - 📡 **content protection & forward bypass**:
   - save any story to gallery, or auto-save the ones you view
   - copy and forward from protected chats and channels

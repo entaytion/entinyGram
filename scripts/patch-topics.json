@@ -102,6 +102,7 @@
   "liquid-glass-live-update": "ui",
   "local-custom-emoji": "ui",
   "local-folders": "tabs",
+  "local-message-edit": "chat",
   "local-names": "ui",
   "local-premium": "premium",
   "logs-respect-toggle": "settings",

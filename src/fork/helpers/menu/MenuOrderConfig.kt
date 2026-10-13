@@ -408,6 +408,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         EDIT_HISTORY("edit_history", listOf(ChatHelper.OPTION_EDIT_HISTORY), R.string.InuEditHistory, R.drawable.inu_tabler_file_diff),
         ADD_FILTER("add_filter", listOf(ChatHelper.OPTION_ADD_FILTER), R.string.InuRegexFilterAddFromMessage, R.drawable.inu_tabler_filter),
         SET_REMINDER("set_reminder", listOf(ChatHelper.OPTION_SET_REMINDER), R.string.InuSetReminder, R.drawable.msg_notifications),
+        LOCAL_EDIT("local_edit", listOf(ChatHelper.OPTION_LOCAL_EDIT, ChatHelper.OPTION_LOCAL_EDIT_RESET), R.string.InuLocalEditMessage, R.drawable.msg_edit),
         HIDE_MESSAGE("hide_message", listOf(ChatHelper.OPTION_HIDE_MESSAGE), R.string.InuHideMessage, R.drawable.inu_tabler_eye_off),
         ACTIONS("actions", listOf(ChatHelper.OPTION_PLUGIN_ACTIONS), R.string.InuActions, R.drawable.msg_settings_old),
 
@@ -433,7 +434,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
     override fun itemByKey(key: String): Item? = Item.forKey(key)
 
     companion object {
-        private val OFF_BY_DEFAULT = setOf(Item.REPLY_IN, Item.DETAILS, Item.FORWARD_NO_QUOTE, Item.SUMMARIZE, Item.REMOVE_FROM_CACHE, Item.REPEAT, Item.ADD_FILTER, Item.SET_REMINDER)
+        private val OFF_BY_DEFAULT = setOf(Item.REPLY_IN, Item.DETAILS, Item.FORWARD_NO_QUOTE, Item.SUMMARIZE, Item.REMOVE_FROM_CACHE, Item.REPEAT, Item.ADD_FILTER, Item.SET_REMINDER, Item.LOCAL_EDIT)
     }
 }
 

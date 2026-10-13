@@ -6,12 +6,14 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.helpers.DialogPicker
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.chat.LocalEditHelper
 import desu.inugram.helpers.profile.LocalNameHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
@@ -33,6 +35,19 @@ class LocalNamesSettingsActivity : SettingsPageActivity() {
                 .setChecked(InuConfig.LOCAL_NAMES.value)
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuLocalNamesInfo)))
+
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_LOCAL_MESSAGE_EDIT,
+                R.string.InuLocalMessageEdit,
+                R.string.InuLocalMessageEditInfo,
+                InuConfig.LOCAL_MESSAGE_EDIT.value
+            )
+        )
+        if (LocalEditHelper.count() > 0) {
+            items.add(UItem.asButton(BUTTON_CLEAR_EDITS, R.drawable.msg_delete, LocaleController.getString(R.string.InuLocalEditsClear)))
+        }
+        items.add(UItem.asShadow(null))
 
         val ids = LocalNameHelper.entries(currentAccount)
         if (ids.isNotEmpty()) {
@@ -66,6 +81,25 @@ class LocalNamesSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.LOCAL_NAMES.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 LocalNameHelper.onToggle()
+            }
+
+            item.id == TOGGLE_LOCAL_MESSAGE_EDIT -> {
+                val new = InuConfig.LOCAL_MESSAGE_EDIT.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            item.id == BUTTON_CLEAR_EDITS -> parentActivity?.let { ctx ->
+                showDialog(
+                    AlertDialog.Builder(ctx, resourceProvider)
+                        .setTitle(LocaleController.getString(R.string.InuLocalEditsClear))
+                        .setMessage(LocaleController.getString(R.string.InuLocalEditsClearConfirm))
+                        .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+                        .setPositiveButton(LocaleController.getString(R.string.Delete)) { _, _ ->
+                            LocalEditHelper.clearAll()
+                            refresh()
+                        }
+                        .create()
+                )
             }
 
             item.id == BUTTON_ADD -> DialogPicker.pick(this) { dialogId ->
@@ -134,6 +168,8 @@ class LocalNamesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_EXPORT = InuUtils.generateId()
         private val BUTTON_IMPORT = InuUtils.generateId()
         private val BUTTON_CLEAR = InuUtils.generateId()
+        private val TOGGLE_LOCAL_MESSAGE_EDIT = InuUtils.generateId()
+        private val BUTTON_CLEAR_EDITS = InuUtils.generateId()
         private const val ENTRY_BASE = 25000
     }
 }

@@ -1537,6 +1537,7 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val LOCAL_NAMES = BoolItem("local_names", false)
+    @JvmField val LOCAL_MESSAGE_EDIT = BoolItem("local_message_edit", false)
 
     @JvmField
     val AUTO_SAVE_STORIES = BoolItem("auto_save_stories", false)
