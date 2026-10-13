@@ -16,6 +16,7 @@ import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
+import org.telegram.ui.LaunchActivity
 import org.telegram.ui.Components.ChatActivityEnterView
 import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.ItemOptions
@@ -137,7 +138,8 @@ object ChatInputMenuHelper {
     }
 
     private fun showMenu(enterView: ChatActivityEnterView, anchor: View) {
-        val fragment = enterView.parentFragment ?: return
+        // entiny: the share-to comment field has no parent fragment
+        val fragment = enterView.parentFragment ?: LaunchActivity.getSafeLastFragment() ?: return
         val activity = fragment as? ChatActivity
         val options = ItemOptions.makeOptions(fragment, anchor)
 
