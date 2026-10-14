@@ -154,7 +154,7 @@ index 0000000..0000000 100644
      }
  
      public boolean inu_hideChatPill() {
-@@ -2628,7 +2663,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2605,7 +2640,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              glassDrawable.draw(canvas);
          }
          if (glassDrawableBack != null && hasBackButton && !inu_nonIsland) {
@@ -168,7 +168,7 @@ index 0000000..0000000 100644
              glassDrawableBack.draw(canvas);
          }
          if (glassDrawableMenu != null && menuWidth > 0 && !glassOnlyBack && !doNotDrawGlassMenu && !inu_nonIsland) {
-@@ -2842,4 +2882,242 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2819,4 +2859,242 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              invalidate();
          }
      }
@@ -572,7 +572,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -2996,6 +2996,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -2997,6 +2997,7 @@ public class ChatActivity extends BaseFragment implements
              observersGroup.add(NotificationCenter.didLoadSponsoredMessages);
          }
          observersGroup
@@ -580,7 +580,7 @@ index 0000000..0000000 100644
              .add(NotificationCenter.updatedChatRanks)
              .add(NotificationCenter.premiumFloodWaitReceived)
              .add(NotificationCenter.messagesDidLoad)
-@@ -3801,7 +3802,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -3803,7 +3804,13 @@ public class ChatActivity extends BaseFragment implements
          if (inPreviewMode) {
              actionBar.setBackButtonDrawable(null);
          } else {
@@ -595,7 +595,7 @@ index 0000000..0000000 100644
          }
  
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-@@ -21075,6 +21082,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -21099,6 +21106,8 @@ public class ChatActivity extends BaseFragment implements
      public void didReceivedNotification(int id, int account, final Object... args) {
          if (id == NotificationCenter.messagesDidLoad) {
              didReceivedNotification_messagesDidLoad(id, account, args);
@@ -604,7 +604,7 @@ index 0000000..0000000 100644
          } else {
              didReceivedNotification2(id, account, args);
              didReceivedNotification3(id, account, args);
-@@ -48190,6 +48199,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48245,6 +48254,7 @@ public class ChatActivity extends BaseFragment implements
              avatarContainer.setScaleY(scale);
              avatarContainer.setAlpha(factor);
              avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);

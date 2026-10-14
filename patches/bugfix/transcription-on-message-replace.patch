@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 14 Oct 2026 01:39:11 +0200
+Subject: keep voice transcription when message object is replaced
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java      | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -27515,6 +27515,15 @@ public class ChatActivity extends BaseFragment implements
+                         messageObject.messageOwner.attachPath = old.messageOwner.attachPath;
+                         messageObject.attachPathExists = old.attachPathExists;
+                         messageObject.mediaExists = old.mediaExists;
++                        if (messageObject.messageOwner.voiceTranscription == null && old.messageOwner.voiceTranscription != null) {
++                            messageObject.messageOwner.voiceTranscription = old.messageOwner.voiceTranscription;
++                            messageObject.messageOwner.voiceTranscriptionOpen = old.messageOwner.voiceTranscriptionOpen;
++                            messageObject.messageOwner.voiceTranscriptionRated = old.messageOwner.voiceTranscriptionRated;
++                            messageObject.messageOwner.voiceTranscriptionFinal = old.messageOwner.voiceTranscriptionFinal;
++                            messageObject.messageOwner.voiceTranscriptionForce = old.messageOwner.voiceTranscriptionForce;
++                            messageObject.messageOwner.voiceTranscriptionId = old.messageOwner.voiceTranscriptionId;
++                            messageObject.messageOwner.translatedVoiceTranscription = old.messageOwner.translatedVoiceTranscription;
++                        }
+                     } else {
+                         messageObject.checkMediaExistance();
+                     }

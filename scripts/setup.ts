@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import { join } from 'node:path'
+import { $ } from 'zx'
 import { worktreeDir as defaultWorktreeDir, ICON_SELECTION, patchesDir, rootDir } from './config.js'
 import { generateGrants } from './generate-grants.js'
 import { generateTl } from './generate-tl.js'
@@ -147,7 +148,7 @@ async function ensureAdGuardFilter() {
   // AdGuard URL Tracking filter (list 17). Bundled as an asset; gitignored.
   const target = join(rootDir, 'src/res/assets/adguard_url_tracking.txt')
   if (await fs.stat(target).then(() => true, () => false)) return
-  const url = 'https://filters.adtidy.org/extension/ublock/filters/17.txt'
+  const url = 'https://filters.adtidy.org/android/filters/17.txt'
   step(`Downloading AdGuard URL Tracking filter -> ${target}`)
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Failed to download ${url}: ${res.status} ${res.statusText}`)
@@ -170,9 +171,17 @@ function isPrefix(prefix: string[], full: string[]) {
   return prefix.length <= full.length && prefix.every((name, i) => name === full[i])
 }
 
-async function ensurePatches(expected: string[], seriesEntries: string[]) {
+async function isStackOnCommit(commit: string) {
+  const base = (await cd(worktreeDir)`stg id {base}`).stdout.trim()
+  return base.startsWith(commit)
+}
+
+async function ensurePatches(expected: string[], seriesEntries: string[], commit: string) {
   const repo = cd(worktreeDir)
   const existing = await getAllPatchNames(worktreeDir)
+  if (!await isStackOnCommit(commit)) {
+    throw new Error(`Stack base is not the pinned upstream ${commit} (use --force to reset)`)
+  }
 
   if (existing.length === 0) {
     await importSeries(seriesEntries)
@@ -196,7 +205,7 @@ async function ensurePatches(expected: string[], seriesEntries: string[]) {
   }
 }
 
-async function forceReimportPatches(seriesEntries: string[]) {
+async function forceReimportPatches(seriesEntries: string[], commit: string) {
   const repo = cd(worktreeDir)
 
   await assertCleanWorktree('force-reimport')
@@ -211,6 +220,16 @@ async function forceReimportPatches(seriesEntries: string[]) {
   for (const name of existing.reverse()) {
     step(`Deleting ${name}`)
     await repo`stg delete ${name}`
+  }
+
+  if (!await isStackOnCommit(commit)) {
+    const known = await $({ cwd: worktreeDir, nothrow: true })`git cat-file -e ${commit}^{commit}`
+    if (known.exitCode !== 0) {
+      step(`Fetching upstream ${commit}`)
+      await repo`git fetch upstream ${commit}`
+    }
+    step(`Moving stack base to ${commit}`)
+    await repo`stg rebase ${commit}`
   }
 
   await importSeries(seriesEntries)
@@ -235,9 +254,9 @@ if (ci) {
   const branchExisted = await ensureBranch(commit)
   await ensureStgitStack(commit, branchExisted, force)
   if (force) {
-    await forceReimportPatches(seriesEntries)
+    await forceReimportPatches(seriesEntries, commit)
   } else {
-    await ensurePatches(seriesEntries.map(patchNameFromSeriesEntry), seriesEntries)
+    await ensurePatches(seriesEntries.map(patchNameFromSeriesEntry), seriesEntries, commit)
   }
 }
 

@@ -25,7 +25,7 @@ import java.net.URL
 
 object UrlCleanerHelper {
     private const val FILE = "adguard_url_tracking.txt"
-    private const val FILTER_URL = "https://filters.adtidy.org/extension/ublock/filters/17.txt"
+    private const val FILTER_URL = "https://filters.adtidy.org/android/filters/17.txt"
     private val TIME_UPDATED_RE = Regex("""^!\s*TimeUpdated:\s*(\S+)""", RegexOption.MULTILINE)
 
     @Volatile

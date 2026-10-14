@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 14 Oct 2026 02:44:14 +0200
+Subject: add Open Profile to join request preview menu
+
+---
+ .../ui/Delegates/MemberRequestsDelegate.java    | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Delegates/MemberRequestsDelegate.java b/TMessagesProj/src/main/java/org/telegram/ui/Delegates/MemberRequestsDelegate.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Delegates/MemberRequestsDelegate.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Delegates/MemberRequestsDelegate.java
+@@ -813,6 +813,23 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
+             });
+             popupLayout.addView(sendMsgCell);
+ 
++            ActionBarMenuSubItem openProfileCell = new ActionBarMenuSubItem(context, false, false);
++            openProfileCell.setColors(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon, resourcesProvider));
++            openProfileCell.setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector, resourcesProvider));
++            openProfileCell.setTextAndIcon(LocaleController.getString(R.string.OpenProfile), R.drawable.msg_openprofile);
++            openProfileCell.setOnClickListener((v) -> {
++                if (importer != null) {
++                    isNeedRestoreList = true;
++                    super.dismiss();
++                    fragment.dismissCurrentDialog();
++                    Bundle args = new Bundle();
++                    args.putLong("user_id", importer.user_id);
++                    args.putBoolean("removeFragmentOnChatOpen", false);
++                    fragment.presentFragment(new ProfileActivity(args));
++                }
++            });
++            popupLayout.addView(openProfileCell);
++
+             ActionBarMenuSubItem dismissCell = new ActionBarMenuSubItem(context, false, true);
+             dismissCell.setColors(Theme.getColor(Theme.key_text_RedBold, resourcesProvider), Theme.getColor(Theme.key_text_RedRegular, resourcesProvider));
+             dismissCell.setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector, resourcesProvider));

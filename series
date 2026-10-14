@@ -49,7 +49,6 @@ entiny/ui/id-in-profile.patch
 feature/hide-spoiler-pending.patch
 bugfix/paid-reaction-animation.patch
 feature/folders-display-mode.patch
-hooks/internal-web-app.patch
 hooks/profile-menu.patch
 debloat/disable-chat-themes.patch
 bugfix/attach-panel-perf.patch
@@ -75,7 +74,6 @@ debloat/motion-photos.patch
 feature/long-press-reply-in-replies.patch
 feature/animation-multiplier.patch
 feature/predictive-back.patch
-feature/search-media-type-filter.patch
 debloat/disable-bg-parallax.patch
 feature/no-join-discuss.patch
 feature/voice-recorder.patch
@@ -493,6 +491,7 @@ entiny/settings/logs-respect-toggle.patch
 entiny/ui/hide-chat-avatar.patch
 entiny/media/always-show-downloads.patch
 entiny/privacy/clown-avatar-blocked.patch
+feature/chat-search-filters.patch
 entiny/chat/hide-message.patch
 entiny/notifications/inapp-notification-vibration.patch
 entiny/ui/forum-search-back.patch
@@ -522,5 +521,12 @@ entiny/privacy/archive-persistence-fixes.patch
 bugfix/forum-title-overlay.patch
 bugfix/animated-drawable-recycle-interrupt.patch
 bugfix/story-reactions-window-keyboard.patch
+bugfix/folder-slot-stolen-by-picker.patch
+bugfix/transcription-on-message-replace.patch
+bugfix/sheet-dialog-dismiss.patch
+bugfix/item-options-touch-through.patch
+feature/join-request-open-profile.patch
+feature/join-request-open-page.patch
+bugfix/scrim-menu-theme.patch
 entiny/chat/local-message-edit.patch
 entiny/premium/force-wallet.patch

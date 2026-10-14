@@ -15,10 +15,6 @@ import java.io.File
 
 /** parsing and obfuscation scanning read the whole file, so they run off the ui thread */
 object PluginImportHelper {
-    private const val SUFFIX = ".inu.js"
-
-    fun isPluginFileName(name: String): Boolean = name.lowercase().endsWith(SUFFIX)
-
     fun startImportFromFile(fragment: BaseFragment, file: File) {
         EngineDispatch.scheduler.postRunnable {
             val source = runCatching { file.readText() }.getOrNull()

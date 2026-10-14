@@ -175,7 +175,7 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
     private fun showFontMenu(font: FontId, anchor: View) {
         val faces = FontLibrary.getFontFaces(font)
 
-        val opts = ItemOptions.makeOptions(this, anchor)
+        val opts = ItemOptions.makeOptions(this, anchor).setLongPressSelectionEnabled(false)
         if (faces.isNotEmpty()) {
             val muted = Theme.getColor(Theme.key_windowBackgroundWhiteGrayText)
             for ((label, tf) in faces) {

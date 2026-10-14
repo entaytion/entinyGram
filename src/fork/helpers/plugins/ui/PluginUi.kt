@@ -279,7 +279,7 @@ object PluginUi : SessionResource {
                 return@runOnUIThread
             }
             var clicked = false
-            val opts = ItemOptions.makeOptions(activity, anchorView)
+            val opts = ItemOptions.makeOptions(activity, anchorView).setLongPressSelectionEnabled(false)
             // any `checked` (even false) makes the menu radio-style, aligning every row on the checkmark column
             val radioStyle = items.any { it.checked != null }
             items.forEachIndexed { index, item ->

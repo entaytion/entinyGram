@@ -22,6 +22,10 @@ public object InuUtils {
         return _nextId.getAndIncrement()
     }
 
+    fun parseFloodWaitSeconds(text: String): Int? {
+        if (!text.startsWith("FLOOD_WAIT_") && !text.startsWith("FLOOD_PREMIUM_WAIT_")) return null
+        return text.substringAfter("WAIT_").toIntOrNull()?.coerceAtLeast(1)
+    }
 
     @JvmStatic
     fun setAutofillHint(view: View, hint: String) {

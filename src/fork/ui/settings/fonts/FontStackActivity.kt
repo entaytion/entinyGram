@@ -166,7 +166,7 @@ class FontStackActivity : SettingsPageActivity() {
     }
 
     private fun showRowMenu(token: String, anchor: View) {
-        val opts = ItemOptions.makeOptions(this, anchor)
+        val opts = ItemOptions.makeOptions(this, anchor).setLongPressSelectionEnabled(false)
         if (draft.indexOf(token) > 0) {
             opts.add(R.drawable.msg_text_outlined, LocaleController.getString(R.string.InuFontStackMakePrimary)) {
                 draft.remove(token)

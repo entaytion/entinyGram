@@ -569,6 +569,7 @@ object ProfileHelper {
 
         ItemOptions.makeOptions(fragment, view)
             .setScrimViewBackground(clipBackground)
+            .setLongPressSelectionEnabled(false)
             .add(R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) {
                 AndroidUtilities.addToClipboard(text)
                 if (AndroidUtilities.shouldShowClipboardToast()) {

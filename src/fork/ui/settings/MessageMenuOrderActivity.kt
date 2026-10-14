@@ -129,6 +129,7 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
             return true
         }
         ItemOptions.makeOptions(this, view)
+            .setLongPressSelectionEnabled(false)
             .add(R.drawable.msg_go_down, LocaleController.getString(R.string.InuMenuMoveToBottomRow)) { moveItem(key, true) }
             .show()
         return true

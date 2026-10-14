@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 14 Oct 2026 02:47:42 +0200
+Subject: open full "join requests" page on long tap
+
+---
+ .../ui/Delegates/ChatActivityMemberRequestsDelegate.java     | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Delegates/ChatActivityMemberRequestsDelegate.java b/TMessagesProj/src/main/java/org/telegram/ui/Delegates/ChatActivityMemberRequestsDelegate.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Delegates/ChatActivityMemberRequestsDelegate.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Delegates/ChatActivityMemberRequestsDelegate.java
+@@ -26,6 +26,7 @@ import org.telegram.ui.ChatActivity;
+ import org.telegram.ui.Components.AvatarsImageView;
+ import org.telegram.ui.Components.LayoutHelper;
+ import org.telegram.ui.Components.MemberRequestsBottomSheet;
++import org.telegram.ui.MemberRequestsActivity;
+ 
+ import java.util.List;
+ 
+@@ -68,6 +69,10 @@ public class ChatActivityMemberRequestsDelegate {
+             root = new FrameLayout(fragment.getParentActivity());
+             root.setBackground(Theme.getSelectorDrawable(false));
+             root.setOnClickListener((v) -> showBottomSheet());
++            root.setOnLongClickListener((v) -> {
++                fragment.presentFragment(new MemberRequestsActivity(currentChat.id));
++                return true;
++            });
+             requestsDataLayout = new LinearLayout(fragment.getParentActivity());
+             requestsDataLayout.setOrientation(LinearLayout.HORIZONTAL);
+             root.addView(requestsDataLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP, 0, 0, 36 + 64, 0));

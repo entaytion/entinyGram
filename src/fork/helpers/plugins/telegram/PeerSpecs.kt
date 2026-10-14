@@ -31,6 +31,12 @@ object PeerSpecs {
     fun toMarkedPeerId(controller: MessagesController, dialogId: Long): Long =
         if (dialogId < 0 && ChatObject.isChannel(controller.getChat(-dialogId))) ZERO_CHANNEL_ID + dialogId else dialogId
 
+    fun toMarkedPeerId(peer: TLRPC.Peer): Long = when {
+        peer.channel_id != 0L -> ZERO_CHANNEL_ID - peer.channel_id
+        peer.chat_id != 0L -> -peer.chat_id
+        else -> peer.user_id
+    }
+
     fun controllerFor(accountId: Int): MessagesController? {
         if (!UserConfig.isValidAccount(accountId)) return null
         return MessagesController.getInstance(accountId)

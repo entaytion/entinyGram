@@ -251,7 +251,7 @@ class BackupSettingsActivity : SettingsPageActivity() {
     private fun showAccountPicker(anchor: View) {
         val accounts = activeAccountIndices()
         if (accounts.isEmpty()) return
-        val o = ItemOptions.makeOptions(this, anchor)
+        val o = ItemOptions.makeOptions(this, anchor).setLongPressSelectionEnabled(false)
         o.setDimAlpha(0)
         for (acc in accounts) {
             val view = accountAvatarRow(acc, syncAccount == acc)

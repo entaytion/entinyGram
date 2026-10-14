@@ -737,7 +737,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4205,7 +4205,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -4204,7 +4204,7 @@ public class ChatActivity extends BaseFragment implements
          }
          avatarContainer = new ChatAvatarContainer(context, this, currentEncryptedChat != null, themeDelegate) {
              @Override
@@ -746,7 +746,7 @@ index 0000000..0000000 100644
                  if (currentUser != null && currentUser.linked_community_id != 0) {
                      showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
                      return true;
-@@ -4216,6 +4216,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -4215,6 +4215,16 @@ public class ChatActivity extends BaseFragment implements
                  return false;
              }
  
@@ -763,7 +763,7 @@ index 0000000..0000000 100644
              @Override
              protected boolean useAnimatedSubtitle() {
                  return chatMode == MODE_SAVED;
-@@ -4390,6 +4400,39 @@ public class ChatActivity extends BaseFragment implements
+@@ -4389,6 +4399,39 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
@@ -803,7 +803,7 @@ index 0000000..0000000 100644
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
-@@ -4605,7 +4648,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -4604,7 +4647,11 @@ public class ChatActivity extends BaseFragment implements
  
          if (chatMode == 0 && (!isThreadChat() || isTopic) && !isReport()) {
              attachItem = menu.lazilyAddItem(chat_menu_attach, otherIcon, themeDelegate);
@@ -816,7 +816,7 @@ index 0000000..0000000 100644
              attachItem.setOverrideMenuClick(true);
              attachItem.setAllowCloseAnimation(false);
              attachItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
-@@ -4656,18 +4703,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -4655,18 +4702,14 @@ public class ChatActivity extends BaseFragment implements
              BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
              ChatObject.isForum(currentChat));
  
@@ -839,7 +839,7 @@ index 0000000..0000000 100644
          }
  
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -30151,10 +30194,45 @@ public class ChatActivity extends BaseFragment implements
+@@ -30144,10 +30187,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  

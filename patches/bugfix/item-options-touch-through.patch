@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 14 Oct 2026 02:43:24 +0200
+Subject: block touches behind context menu until its window takes input
+
+---
+ .../main/java/org/telegram/ui/Components/ItemOptions.java   | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
+@@ -2031,6 +2031,12 @@ public class ItemOptions {
+             }
+         }
+ 
++        @Override
++        public boolean onTouchEvent(MotionEvent event) {
++            // the popup window takes input a frame or more after showAtLocation
++            return dimView == this;
++        }
++
+         @Override
+         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+             super.onSizeChanged(w, h, oldw, oldh);

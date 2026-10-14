@@ -59,7 +59,7 @@ interface UiListener {
 
     fun uiChatHistoryClose(historyId: Long)
 
-    /** answers [QuickJs.chatHistoryLoad]: `S` + page json or `E` + message */
+    /** answers [QuickJs.chatHistoryLoadMore] and [QuickJs.chatHistoryLoadAround]: `S` + page json, `N` for no page, or `E` + message */
     fun uiChatHistoryPage(requestId: Long, wire: String)
 
     /** answers [QuickJs.chatHistoryMenu]: `S` + items json or `E` + message */

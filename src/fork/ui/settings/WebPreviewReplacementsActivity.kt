@@ -173,6 +173,7 @@ class WebPreviewReplacementsActivity : SettingsPageActivity() {
     private fun showDeleteDialog(index: Int, view: View) {
         ItemOptions.makeOptions(this, view)
             .setScrimViewBackground(listView.getClipBackground(view))
+            .setLongPressSelectionEnabled(false)
             .add(R.drawable.msg_delete, LocaleController.getString(R.string.Delete)) {
                 replacements.removeAt(index)
                 WebPreviewHelper.save(replacements)

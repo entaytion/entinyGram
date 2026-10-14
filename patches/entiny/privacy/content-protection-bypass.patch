@@ -103,7 +103,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3555,7 +3555,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -3554,7 +3554,7 @@ public class ChatActivity extends BaseFragment implements
              if (chatActivity != null && chatActivity.getDialogId() == UserObject.VERIFY) {
                  return false;
              }
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
                  chatActivity != null && chatActivity.isPeerNoForwards() ||
                  selectedView != null && selectedView.getMessageObject() != null && selectedView.getMessageObject().messageOwner != null && selectedView.getMessageObject().messageOwner.noforwards
              );
-@@ -10466,7 +10466,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -10465,7 +10465,7 @@ public class ChatActivity extends BaseFragment implements
          }
          ChatActionsHelper.addActionModeItems(this, actionMode, edit);
          actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
@@ -121,7 +121,7 @@ index 0000000..0000000 100644
          actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -12337,6 +12337,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12330,6 +12330,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private boolean hasSelectedNoforwardsMessage() {
@@ -129,7 +129,7 @@ index 0000000..0000000 100644
          try {
              for (int i = 0; i < selectedMessagesIds.length; ++i) {
                  for (int j = 0; j < selectedMessagesIds[i].size(); ++j) {
-@@ -19530,7 +19531,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19523,7 +19524,7 @@ public class ChatActivity extends BaseFragment implements
                  int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
                  if (copyItem != null) {
                      copyVisible = copyItem.getVisibility();

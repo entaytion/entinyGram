@@ -250,6 +250,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
         // entiny: anchor to parent FrameLayout so ItemOptions clips to the section background
         val scrim = (anchor.parent as? View) ?: anchor
         val opts = ItemOptions.makeOptions(this, scrim)
+            .setLongPressSelectionEnabled(false)
             .add(R.drawable.msg_download, LocaleController.getString(R.string.InuStripTrackingParamsUpdate)) {
                 fetchLatestStripTrackingParams()
             }

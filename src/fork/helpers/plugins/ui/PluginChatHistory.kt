@@ -9,6 +9,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.SparseArray
+import androidx.collection.LongSparseArray
 import desu.inugram.core.plugins.PluginWire
 import desu.inugram.helpers.chat.ChatHelper
 import org.telegram.messenger.ChatObject
@@ -22,6 +23,7 @@ import desu.inugram.helpers.plugins.tl.TlJson
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.MediaDataController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
@@ -31,6 +33,7 @@ import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.AvatarDrawable
+import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.BackupImageView
 import org.telegram.ui.LaunchActivity
 import java.util.concurrent.ConcurrentHashMap
@@ -56,6 +59,8 @@ object PluginChatHistory : SessionResource {
     private const val MENU_ITEM_BASE = 800_000
     private const val MENU_ITEM_LIMIT = 30
     private const val ID_BASE = Int.MAX_VALUE / 2
+    /** ids between resets: stock keeps stale ones (return-to-message), which must never name a newer entry */
+    private const val WINDOW_GAP = 100_000
 
     private class Screen(
         val session: PluginSession,
@@ -71,11 +76,16 @@ object PluginChatHistory : SessionResource {
         val hasHeaderTap: Boolean,
         var buttonText: CharSequence?,
         val hasMenu: Boolean,
-    ) {
+    ) : NotificationCenter.NotificationCenterDelegate {
         var activity: ChatActivity? = null
         val idsByKey = HashMap<String, Int>()
         val keysById = SparseArray<String>()
+        val messagesById = SparseArray<MessageObject>()
+        val replyKeysById = SparseArray<String>()
         val syntheticIds = HashSet<Int>()
+        val jumps = SparseArray<Jump>()
+        /** entries a reset dropped, kept by key so replies to them still draw their header */
+        var previews = HashMap<String, MessageObject>()
         var pendingMenu = 0L
         var shownMenu = 0L
         val menuCells = ArrayList<ActionBarMenuSubItem>()
@@ -85,17 +95,56 @@ object PluginChatHistory : SessionResource {
         var nextOlderId = ID_BASE
         var nextNewerId = ID_BASE + 1
         var loaded = false
+        var shown = false
         var olderCursor: String? = null
         var newerCursor: String? = null
         var olderEnd = false
         var newerEnd = true
+
+        /** stock's reply loader fills our entries in place but announces them for its own dialog only */
+        override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
+            val owners = args[2] as? LongSparseArray<*> ?: return
+            for (i in 0 until owners.size()) {
+                val byId = owners.valueAt(i) as SparseArray<*>
+                for (j in 0 until byId.size()) {
+                    if ((byId.valueAt(j) as List<*>).any { it is MessageObject && messagesById[it.id] === it }) {
+                        activity?.updateVisibleRows()
+                        return
+                    }
+                }
+            }
+        }
     }
 
-    private class Load(val screen: Screen, val loadIndex: Int, val newer: Boolean, val first: Boolean, val jump: Boolean = false)
+    /**
+     * a `loadMore` page, or a `loadAround` one when [initial] or [reset]. [focusId] marks a jump's answer for the reserved
+     * id of [jump]; [reset] drops every entry once accepted
+     */
+    private class Load(
+        val screen: Screen,
+        val loadIndex: Int,
+        val newer: Boolean = false,
+        val initial: Boolean = false,
+        val reset: Boolean = false,
+        val focusId: Int = 0,
+        val jump: Jump? = null,
+    )
+
+    /**
+     * what a reserved id stands for until stock asks to load around it. [byMessage] keys are `${markedPeer}:${messageId}`
+     * of a telegram reply; [forced] ones come from a reset, which stock scrolls back to without a not-found check
+     */
+    private class Jump(val key: String, val byMessage: Boolean, val forced: Boolean, val fromId: Int = 0, reply: TLRPC.MessageReplyHeader? = null) {
+        val taskId = reply?.takeIf { it.flags and 2048 != 0 }?.todo_item_id
+        val pollOption = if (taskId == null) reply?.poll_option else null
+        val quote = if (taskId == null && pollOption == null && reply?.quote == true) reply.quote_text else null
+        val quoteOffset = reply?.takeIf { quote != null && it.flags and 1024 != 0 }?.quote_offset ?: -1
+    }
 
     private class MenuItem(val text: CharSequence, val icon: String?, val danger: Boolean, val checked: Boolean?)
 
-    private class Entry(val key: String?, val message: MessageObject, val synthetic: Boolean)
+    /** [replyPreview] draws the reply header while the [replyTo] entry is not loaded */
+    private class Entry(val key: String, val replyTo: String?, val replyPreview: MessageObject?, val message: MessageObject, val synthetic: Boolean)
 
     private data class HistoryKey(val session: PluginSession, val historyId: Long)
 
@@ -157,6 +206,7 @@ object PluginChatHistory : SessionResource {
         if (screen.activity != null) return false
         screen.activity = activity
         byActivity[activity] = screen
+        NotificationCenter.getInstance(screen.accountId).addObserver(screen, NotificationCenter.replyMessagesDidLoad)
         return true
     }
 
@@ -182,6 +232,79 @@ object PluginChatHistory : SessionResource {
     fun onButtonClick(activity: ChatActivity) {
         val screen = byActivity[activity] ?: return
         EngineDispatch.onEngine(screen.session) { screen.session.engine.chatHistoryButtonClick(screen.historyId) }
+    }
+
+    /**
+     * ui thread; stock's reply tap handling, with reply targets resolved through entry keys. A real reply without a
+     * message id (only `reply_from`) is left to stock, which reveals its quote or reports it private
+     */
+    @JvmStatic
+    fun handleReplyTap(activity: ChatActivity, message: MessageObject): Boolean {
+        val screen = byActivity[activity] ?: return false
+        val key = getReplyKey(screen, message)
+        if (key == null) return message.id in screen.syntheticIds
+        jumpTo(screen, activity, Jump(key, screen.replyKeysById[message.id] == null, false, message.id, message.messageOwner.reply_to))
+        return true
+    }
+
+    /** ui thread. An entry not loaded gets a reserved id for stock to load around, see [loadAround] */
+    private fun jumpTo(screen: Screen, activity: ChatActivity, jump: Jump) {
+        var id = screen.idsByKey[jump.key]
+        if (id == jump.fromId) return
+        if (id == null) {
+            id = reserveWindow(screen)
+            screen.jumps.put(id, jump)
+        }
+        activity.highlightTaskId = jump.taskId
+        activity.highlightPollOptionId = jump.pollOption
+        if (jump.quote != null) {
+            activity.highlightMessageQuoteFirst = true
+            activity.highlightMessageQuote = jump.quote
+            activity.highlightMessageQuoteOffset = jump.quoteOffset
+            activity.showNoQuoteAlert = true
+        }
+        activity.scrollToMessageId(id, jump.fromId, jump.fromId != 0, 0, false, 0, jump.taskId, jump.pollOption, null)
+    }
+
+    /** a telegram reply opens its source chat, anything else is not found */
+    private fun failJump(activity: ChatActivity, jump: Jump) {
+        if (!jump.byMessage) {
+            BulletinFactory.of(activity).createErrorBulletin(LocaleController.getString(R.string.MessageNotFound)).show()
+            return
+        }
+        LaunchActivity.instance?.openMessage(
+            PeerSpecs.toSimpleDialogId(jump.key.substringBeforeLast(':').toLong()), jump.key.substringAfterLast(':').toInt(),
+            jump.quote, null, 0, jump.quoteOffset, jump.taskId, jump.pollOption,
+        )
+    }
+
+    /** a fresh id region above every id handed out so far; its base is free for a focused entry */
+    private fun reserveWindow(screen: Screen): Int {
+        val base = if (screen.nextNewerId > Int.MAX_VALUE - 2 * WINDOW_GAP) ID_BASE else screen.nextNewerId + WINDOW_GAP
+        screen.nextNewerId = base + WINDOW_GAP
+        return base
+    }
+
+    /**
+     * ui thread, from stock's [ChatActivity.scrollToMessageId] when [id] is not loaded: a reserved jump asks the plugin
+     * for a page around its target, anything else (a stale id) reloads the newest page
+     */
+    @JvmStatic
+    fun loadAround(activity: ChatActivity, loadIndex: Int, id: Int) {
+        val screen = byActivity[activity] ?: return
+        val jump = screen.jumps[id]
+        screen.jumps.remove(id)
+        if (jump == null) return reload(activity, loadIndex)
+        requestAround(Load(screen, loadIndex, reset = true, focusId = id, jump = jump), (if (jump.byMessage) "M" else "K") + jump.key)
+    }
+
+    private fun requestAround(load: Load, target: String) {
+        val screen = load.screen
+        val requestId = nextRequestId.getAndIncrement()
+        pendingLoads[requestId] = load
+        EngineDispatch.onEngine(screen.session, onDropped = { pendingLoads.remove(requestId) }) {
+            screen.session.engine.chatHistoryLoadAround(screen.historyId, requestId, target)
+        }
     }
 
     @JvmStatic
@@ -354,7 +477,7 @@ object PluginChatHistory : SessionResource {
     private val REAL_MESSAGE_OPTIONS = setOf(
         ChatActivity.OPTION_FORWARD, ChatHelper.OPTION_FORWARD_NO_QUOTE, ChatHelper.OPTION_SAVE,
         ChatHelper.OPTION_REPLY_IN, ChatHelper.OPTION_SHOW_IN_CHAT,
-        ChatActivity.OPTION_VIEW_REPLIES_OR_THREAD, ChatActivity.OPTION_COPY_LINK,
+        ChatActivity.OPTION_VIEW_REPLIES_OR_THREAD, ChatActivity.OPTION_COPY_LINK, ChatActivity.OPTION_SEND_MONEY,
     )
 
     /** stock gates view thread and copy link on the screen's chat, which this screen has none of */
@@ -428,109 +551,199 @@ object PluginChatHistory : SessionResource {
 
     private const val READ_REPORT_DELAY_MS = 300L
 
-    /** ui thread. [loadIndex] is the one the activity added to its `waitingForLoad` */
+    /** ui thread. [loadIndex] is the one the activity added to its `waitingForLoad`; the first one places the screen */
     @JvmStatic
-    fun load(activity: ChatActivity, loadIndex: Int, newer: Boolean) = load(activity, loadIndex, newer, false)
-
-    /** ui thread: the pagedown button with newer pages left asks for the newest page, `(null, 'newer')`, like stock's jump */
-    @JvmStatic
-    fun reload(activity: ChatActivity, loadIndex: Int) {
+    fun load(activity: ChatActivity, loadIndex: Int, newer: Boolean) {
         val screen = byActivity[activity] ?: return
-        screen.idsByKey.clear()
-        screen.keysById.clear()
-        screen.syntheticIds.clear()
-        screen.olderCursor = null
-        screen.newerCursor = null
-        screen.loaded = false
-        load(activity, loadIndex, false, true)
-    }
-
-    private fun load(activity: ChatActivity, loadIndex: Int, newer: Boolean, jump: Boolean) {
-        val screen = byActivity[activity] ?: return
-        val load = Load(screen, loadIndex, newer, !newer && !screen.loaded, jump)
-        screen.loaded = true
+        if (!screen.loaded) {
+            screen.loaded = true
+            return requestAround(Load(screen, loadIndex, initial = true), "I")
+        }
+        val load = Load(screen, loadIndex, newer)
+        val cursor = (if (newer) screen.newerCursor else screen.olderCursor)
+            ?: return AndroidUtilities.runOnUIThread { deliver(load, emptyList(), null, null, null, null) }
         val requestId = nextRequestId.getAndIncrement()
         pendingLoads[requestId] = load
-        val cursor = if (newer) screen.newerCursor else screen.olderCursor
         EngineDispatch.onEngine(screen.session, onDropped = { pendingLoads.remove(requestId) }) {
-            screen.session.engine.chatHistoryLoad(screen.historyId, requestId, cursor, newer || jump)
+            screen.session.engine.chatHistoryLoadMore(screen.historyId, requestId, cursor, newer)
         }
     }
 
-    /** plugin queue; `S` + page json or `E` + message */
+    /** ui thread: the pagedown button with newer pages left asks for the newest page, like stock's jump */
+    @JvmStatic
+    fun reload(activity: ChatActivity, loadIndex: Int) {
+        val screen = byActivity[activity] ?: return
+        screen.loaded = true
+        requestAround(Load(screen, loadIndex, reset = true), "L")
+    }
+
+    /** plugin queue; `S` + page json, `N` for no page, or `E` + message */
     fun page(requestId: Long, wire: String) {
         val load = pendingLoads.remove(requestId) ?: return
         var entries: List<Entry> = emptyList()
-        var next: String? = null
+        var older: String? = null
         var newer: String? = null
-        var firstUnread: String? = null
         var unreadCount: Int? = null
+        var focus: String? = null
         if (wire.startsWith("S")) {
             try {
                 val started = android.os.SystemClock.uptimeMillis()
                 val page = JSONObject(wire.substring(1))
                 entries = decodeEntries(load.screen, page)
                 load.screen.session.log.d("chatHistory", "decoded ${entries.size} entries in ${android.os.SystemClock.uptimeMillis() - started} ms")
-                next = page.optString("next").takeIf { page.has("next") }
-                newer = page.optString("newer").takeIf { page.has("newer") }
-                firstUnread = page.optString("firstUnread").takeIf { page.has("firstUnread") }
+                val more = !load.initial && !load.reset
+                fun getCursor(name: String) = page.optString(name).takeIf { page.has(name) }
+                older = getCursor(if (more && !load.newer) "next" else "older")
+                newer = getCursor(if (more && load.newer) "next" else "newer")
                 unreadCount = if (page.has("unreadCount")) page.getInt("unreadCount") else null
+                focus = page.optString("focus").takeIf { page.has("focus") }
             } catch (e: Exception) {
                 load.screen.session.log.e("chatHistory", "bad page", e)
                 entries = emptyList()
             }
-        } else {
+        } else if (wire.startsWith("E")) {
             load.screen.session.log.e("chatHistory", "load failed: ${wire.substring(1)}")
         }
-        AndroidUtilities.runOnUIThread { deliver(load, entries, next, newer, firstUnread, unreadCount) }
+        AndroidUtilities.runOnUIThread { deliver(load, entries, older, newer, unreadCount, focus) }
     }
 
-    /** [firstUnread] is read on the first page only: stock draws its "Unread messages" line before that entry and scrolls there */
-    private fun deliver(load: Load, entries: List<Entry>, next: String?, newer: String?, firstUnread: String?, unreadCount: Int?) {
+    /**
+     * The initial page's [focus] is its first unread entry: stock draws its "Unread messages" line before it and scrolls there.
+     * A page stock no longer waits for (a reset since, a cancelled jump) is dropped before it touches any entry
+     */
+    private fun deliver(load: Load, entries: List<Entry>, older: String?, newer: String?, unreadCount: Int?, focus: String?) {
         val screen = load.screen
         val activity = screen.activity ?: return
-        val messages = ArrayList<MessageObject>(entries.size)
-        for (entry in if (load.newer) entries.asReversed() else entries) {
-            val message = entry.message
-            val key = entry.key ?: "${message.dialogId}:${message.id}"
-            if (screen.idsByKey.containsKey(key)) continue
-            val id = if (load.newer) screen.nextNewerId++ else screen.nextOlderId--
-            screen.idsByKey[key] = id
-            screen.keysById.put(id, key)
-            assignId(screen, entry, id)
-            messages.add(message)
+        if (!activity.inu_acceptsPluginLoad(load.loadIndex)) return
+        val jump = load.jump
+        val focusAt = entries.indexOfFirst { it.key == focus }
+        if (jump != null && focusAt < 0) {
+            val empty = screen.messagesById.size() == 0
+            if (!jump.forced && (jump.byMessage || empty)) failJump(activity, jump)
+            if (jump.forced || empty) return reload(activity, load.loadIndex)
+            return postPage(screen, activity, load, ArrayList(), 3, 0, null)
         }
-        if (load.newer) messages.reverse()
-        val end = next == null || messages.isEmpty()
+        if (load.reset) {
+            val previews = HashMap<String, MessageObject>()
+            for (i in 0 until screen.messagesById.size()) {
+                val message = screen.messagesById.valueAt(i)
+                previews[screen.keysById[message.id]] = message
+                getReplyKey(screen, message)?.let { key -> screen.previews[key]?.let { previews.putIfAbsent(key, it) } }
+            }
+            screen.previews = previews
+            screen.jumps.clear()
+            for (i in 0 until screen.keysById.size()) screen.jumps.put(screen.keysById.keyAt(i), Jump(screen.keysById.valueAt(i), false, true))
+            screen.idsByKey.clear()
+            screen.keysById.clear()
+            screen.messagesById.clear()
+            screen.replyKeysById.clear()
+            screen.syntheticIds.clear()
+            if (jump == null) screen.nextOlderId = reserveWindow(screen)
+        }
+        val messages = ArrayList<MessageObject>(entries.size)
+        if (jump != null) {
+            entries.forEachIndexed { i, entry ->
+                if (screen.idsByKey.containsKey(entry.key)) return@forEachIndexed
+                assignEntry(screen, entry, load.focusId + focusAt - i)
+                messages.add(entry.message)
+            }
+            screen.nextNewerId = maxOf(screen.nextNewerId, load.focusId + focusAt + 1)
+            screen.nextOlderId = load.focusId - (entries.size - focusAt)
+            screen.olderCursor = older
+            screen.olderEnd = older == null
+            screen.newerCursor = newer
+            screen.newerEnd = newer == null
+            return postPage(screen, activity, load, messages, 3, 0, unreadCount)
+        }
+        for (entry in if (load.newer) entries.asReversed() else entries) {
+            if (screen.idsByKey.containsKey(entry.key)) continue
+            assignEntry(screen, entry, if (load.newer) screen.nextNewerId++ else screen.nextOlderId--)
+            messages.add(entry.message)
+        }
         if (load.newer) {
-            screen.newerCursor = next
-            screen.newerEnd = end
+            messages.reverse()
+            screen.newerCursor = newer
+            screen.newerEnd = newer == null || messages.isEmpty()
         } else {
-            screen.olderCursor = next
-            screen.olderEnd = end
-            if (load.first) {
+            screen.olderCursor = older
+            screen.olderEnd = older == null || messages.isEmpty()
+            if (load.initial || load.reset) {
                 screen.newerCursor = newer
-                screen.newerEnd = newer == null || load.jump
+                screen.newerEnd = newer == null
             }
         }
-        val loadType = if (load.first && !load.jump) 2 else if (load.newer) 1 else 0
-        val firstUnreadId = if (loadType == 2 && firstUnread != null) screen.idsByKey[firstUnread] ?: 0 else 0
+        val loadType = if (load.initial) 2 else if (load.newer) 1 else 0
+        val firstUnreadId = if (load.initial && focus != null) screen.idsByKey[focus] ?: 0 else 0
+        postPage(screen, activity, load, messages, loadType, firstUnreadId, unreadCount)
+    }
+
+    private fun postPage(screen: Screen, activity: ChatActivity, load: Load, messages: ArrayList<MessageObject>, loadType: Int, firstUnreadId: Int, unreadCount: Int?) {
+        screen.shown = true
         activity.inu_pluginHistoryEnds(screen.olderEnd, screen.newerEnd)
         NotificationCenter.getInstance(screen.accountId).postNotificationName(
             NotificationCenter.messagesDidLoad,
             0L, messages.size, messages, false, firstUnreadId, 0, if (firstUnreadId != 0) unreadCount ?: 0 else 0, 0, loadType, true,
             activity.classGuid, load.loadIndex, 0, 0, ChatActivity.inu_MODE_PLUGIN_HISTORY,
         )
+        if (resolveReplies(screen)) activity.updateVisibleRows()
+        loadReplies(screen, activity, messages)
         activity.inu_pluginHistoryEnds(screen.olderEnd, screen.newerEnd)
         unreadCount?.let(activity::inu_setPluginUnreadCount)
-        scrollToPending(screen)
+        screen.pendingScrollKey?.let { key ->
+            screen.pendingScrollKey = null
+            jumpTo(screen, activity, Jump(key, false, false))
+        }
     }
 
-    private fun assignId(screen: Screen, entry: Entry, id: Int) {
+    private fun assignEntry(screen: Screen, entry: Entry, id: Int) {
+        screen.idsByKey[entry.key] = id
+        screen.keysById.put(id, entry.key)
         if (entry.synthetic) screen.syntheticIds.add(id) else screen.syntheticIds.remove(id)
         val message = entry.message
         message.messageOwner.realId = message.messageOwner.id
         message.messageOwner.id = id
+        screen.messagesById.put(id, message)
+        if (entry.replyTo != null) screen.replyKeysById.put(id, entry.replyTo) else screen.replyKeysById.remove(id)
+        if (entry.replyPreview != null) screen.previews[entry.replyTo!!] = entry.replyPreview
+    }
+
+    /** an explicit `replyTo`, else a real message's telegram reply target under its default key */
+    private fun getReplyKey(screen: Screen, message: MessageObject): String? {
+        screen.replyKeysById[message.id]?.let { return it }
+        if (message.id in screen.syntheticIds) return null
+        val reply = message.messageOwner.reply_to ?: return null
+        if (reply.reply_to_msg_id == 0) return null
+        val peer = reply.reply_to_peer_id ?: message.messageOwner.peer_id ?: return null
+        return "${PeerSpecs.toMarkedPeerId(peer)}:${reply.reply_to_msg_id}"
+    }
+
+    private fun resolveReplies(screen: Screen): Boolean {
+        var changed = false
+        for (i in 0 until screen.messagesById.size()) {
+            val message = screen.messagesById.valueAt(i)
+            val key = getReplyKey(screen, message)
+            val target = key?.let(screen.idsByKey::get)?.takeIf { it != message.id }?.let(screen.messagesById::get) ?: key?.takeIf { it != screen.keysById[message.id] }?.let(screen.previews::get)
+            if (message.replyMessageObject === target || target == null && screen.replyKeysById[message.id] == null) continue
+            message.replyMessageObject = target
+            message.applyTimestampsHighlightForReplyMsg()
+            when (message.messageOwner.action) {
+                is TLRPC.TL_messageActionPinMessage -> message.generatePinMessageText(null, null)
+                is TLRPC.TL_messageActionGameScore -> message.generateGameMessageText(null)
+                is TLRPC.TL_messageActionPaymentSent -> message.generatePaymentSentMessageText(null, false)
+                is TLRPC.TL_messageActionPaymentSentMe -> message.generatePaymentSentMessageText(null, true)
+                is TLRPC.TL_messageActionSuggestedPostApproval -> message.generateSuggestionApprovalMessageText()
+            }
+            changed = true
+        }
+        return changed
+    }
+
+    /** telegram reply targets missing from the feed, through stock's loader */
+    private fun loadReplies(screen: Screen, activity: ChatActivity, messages: List<MessageObject>) {
+        val loader = MediaDataController.getInstance(screen.accountId)
+        messages.filter { it.replyMessageObject == null && it.id !in screen.syntheticIds && screen.replyKeysById[it.id] == null }
+            .groupBy { it.dialogId }
+            .forEach { (dialogId, group) -> loader.loadReplyMessagesForMessages(ArrayList(group), dialogId, 0, 0, null, activity.classGuid, null) }
     }
 
     /** plugin queue */
@@ -556,8 +769,13 @@ object PluginChatHistory : SessionResource {
         }
         if (op == OP_SCROLL) {
             AndroidUtilities.runOnUIThread {
-                screen.pendingScrollKey = json
-                scrollToPending(screen)
+                val activity = screen.activity
+                if (activity != null && screen.shown) {
+                    screen.pendingScrollKey = null
+                    jumpTo(screen, activity, Jump(json, false, false))
+                } else {
+                    screen.pendingScrollKey = json
+                }
             }
             return null
         }
@@ -584,44 +802,39 @@ object PluginChatHistory : SessionResource {
                 OP_APPEND -> {
                     val messages = ArrayList<MessageObject>()
                     for (entry in entries.asReversed()) {
-                        val key = entry.key ?: "${entry.message.dialogId}:${entry.message.id}"
-                        if (screen.idsByKey.containsKey(key)) continue
-                        val id = screen.nextNewerId++
-                        screen.idsByKey[key] = id
-                        screen.keysById.put(id, key)
-                        assignId(screen, entry, id)
+                        if (screen.idsByKey.containsKey(entry.key)) continue
+                        assignEntry(screen, entry, screen.nextNewerId++)
                         messages.add(entry.message)
                     }
                     if (messages.isNotEmpty()) activity.processNewMessages(messages)
+                    loadReplies(screen, activity, messages)
                 }
                 OP_REPLACE -> {
                     val messages = ArrayList<MessageObject>()
                     for (entry in entries) {
-                        val key = entry.key ?: "${entry.message.dialogId}:${entry.message.id}"
-                        val id = screen.idsByKey[key] ?: continue
-                        assignId(screen, entry, id)
+                        assignEntry(screen, entry, screen.idsByKey[entry.key] ?: continue)
                         messages.add(entry.message)
                     }
                     if (messages.isNotEmpty()) activity.replaceMessageObjects(messages, 0, false)
+                    loadReplies(screen, activity, messages)
                 }
                 OP_REMOVE -> {
                     val ids = ArrayList<Int>()
-                    for (key in keys) screen.idsByKey.remove(key)?.let { ids.add(it); screen.keysById.remove(it); screen.syntheticIds.remove(it) }
+                    for (key in keys) screen.previews.remove(key)
+                    for (key in keys) screen.idsByKey.remove(key)?.let {
+                        ids.add(it)
+                        screen.keysById.remove(it)
+                        screen.messagesById.remove(it)
+                        screen.replyKeysById.remove(it)
+                        screen.syntheticIds.remove(it)
+                    }
                     if (ids.isNotEmpty()) activity.processDeletedMessages(ids, 0L, false)
                 }
             }
+            if (resolveReplies(screen)) activity.updateVisibleRows()
             unreadCount?.let(activity::inu_setPluginUnreadCount)
-            scrollToPending(screen)
         }
         return null
-    }
-
-    private fun scrollToPending(screen: Screen) {
-        val key = screen.pendingScrollKey ?: return
-        val id = screen.idsByKey[key] ?: return
-        val activity = screen.activity ?: return
-        screen.pendingScrollKey = null
-        activity.scrollToMessageId(id, 0, false, 0, true, 0)
     }
 
     /** plugin queue */
@@ -639,6 +852,7 @@ object PluginChatHistory : SessionResource {
         byToken.remove(screen.token)
         screen.activity?.let(byActivity::remove)
         screen.activity = null
+        NotificationCenter.getInstance(screen.accountId).removeObserver(screen, NotificationCenter.replyMessagesDidLoad)
         for (cell in screen.menuCells) PluginIcons.clearIcon(cell.imageView)
         screen.menuCells.clear()
         EngineDispatch.onEngine(screen.session) { screen.session.engine.chatHistoryClosed(screen.historyId) }
@@ -673,13 +887,23 @@ object PluginChatHistory : SessionResource {
         val array = page.getJSONArray("entries")
         return (0 until array.length()).map { i ->
             val entry = array.getJSONObject(i)
-            val message = TlJson.fromJson(entry.getJSONObject("message")) as? TLRPC.Message
-                ?: throw IllegalArgumentException("'message' must be a TL message")
+            val (key, message) = decodeMessage(screen, entry)
+            val reply = entry.optJSONObject("replyTo")?.let { decodeMessage(screen, it) }
             Entry(
-                entry.optString("key").takeIf { entry.has("key") },
-                MessageObject(screen.accountId, message, null, null, null, null, null, true, true, 0, false, false, false, ChatActivity.SEARCH_MY_MESSAGES),
+                key,
+                reply?.first ?: entry.optString("replyTo").takeIf { entry.has("replyTo") },
+                reply?.second,
+                message,
                 entry.optBoolean("synthetic", screen.synthetic),
             )
         }
+    }
+
+    private fun decodeMessage(screen: Screen, entry: JSONObject): Pair<String, MessageObject> {
+        val message = TlJson.fromJson(entry.getJSONObject("message")) as? TLRPC.Message
+            ?: throw IllegalArgumentException("'message' must be a TL message")
+        val key = if (entry.has("key")) entry.getString("key")
+        else "${PeerSpecs.toMarkedPeerId(message.peer_id ?: throw IllegalArgumentException("an entry without 'key' needs 'message.peer_id'"))}:${message.id}"
+        return key to MessageObject(screen.accountId, message, null, null, null, null, null, true, true, 0, false, false, false, ChatActivity.SEARCH_MY_MESSAGES)
     }
 }

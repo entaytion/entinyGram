@@ -66,7 +66,11 @@ const OPEN: &str = r#"
       { text: 'Refresh', icon: inu.icons.avatar(42), onClick: () => { globalThis.__menu = 'refresh' } },
       { text: 'Muted', checked: globalThis.__muted ?? false, danger: true, onClick: () => { globalThis.__muted = true } },
     ],
-    load: (cursor, direction) => {
+    loadAround: target => {
+      globalThis.__loads.push(target);
+      return globalThis.__answer(target);
+    },
+    loadMore: (cursor, direction) => {
       globalThis.__loads.push([cursor, direction]);
       return globalThis.__answer(cursor, direction);
     },
@@ -95,48 +99,92 @@ fn open_hands_the_host_the_screen_options_and_returns_a_handle() {
 fn a_refused_open_throws_and_leaves_no_history_behind() {
   let (_rt, ctx, host, state, _logs) = setup();
   *host.refuse_open.borrow_mut() = Some("Pnot-found\n\n\n\nno such account".to_string());
-  let caught = catch_json(&ctx, "inu.ui.openChatHistory({ title: 'x', load: () => ({ entries: [] }) })");
+  let caught = catch_json(&ctx, "inu.ui.openChatHistory({ title: 'x', loadAround: () => ({ entries: [] }), loadMore: () => ({ entries: [] }) })");
   assert!(caught.contains("not-found"), "{caught}");
   assert!(state.defs.borrow().is_empty());
   let caught = catch_json(
     &ctx,
-    "inu.ui.openChatHistory({ title: 'x', icon: inu.icons.customEmoji('5361751237382052539'), load: () => ({ entries: [] }) })",
+    "inu.ui.openChatHistory({ title: 'x', icon: inu.icons.customEmoji('5361751237382052539'), loadAround: () => ({ entries: [] }), loadMore: () => ({ entries: [] }) })",
   );
   assert!(caught.contains("chat avatar"), "{caught}");
   *host.refuse_open.borrow_mut() = None;
-  eval(&ctx, "globalThis.__hidden = inu.ui.openChatHistory({ title: 'x', button: { onClick: () => {} }, load: () => ({ entries: [] }) })");
+  eval(&ctx, "globalThis.__hidden = inu.ui.openChatHistory({ title: 'x', button: { onClick: () => {} }, loadAround: () => ({ entries: [] }), loadMore: () => ({ entries: [] }) })");
   assert!(host.opened.borrow().last().unwrap().1.contains(r#""button":{}"#));
   eval(&ctx, "globalThis.__hidden.setButton({ text: 'later' })");
   assert_eq!(host.updates.borrow().last().unwrap().2, r#"{"text":"later"}"#);
 }
 
 #[test]
-fn load_is_asked_per_direction_and_its_page_reaches_the_host_serialized() {
+fn load_more_is_asked_per_direction_and_its_page_reaches_the_host_serialized() {
   let (_rt, ctx, host, state, _logs) = setup();
   eval(&ctx, OPEN);
   eval(
     &ctx,
     r#"globalThis.__answer = async (cursor, direction) => ({
-      entries: [{ key: 'a', synthetic: false, message: { _: 'message', id: 5, peer_id: { _: 'peerUser', user_id: 7 }, message: 'hi' } }],
+      entries: [
+        { key: 'a', replyTo: 'b', synthetic: false, message: { _: 'message', id: 5, peer_id: { _: 'peerUser', user_id: 7 }, message: 'hi' } },
+        { replyTo: { key: 'b', synthetic: true, replyTo: 'c', message: { _: 'message', id: 4 } }, message: { _: 'message', id: 6 } },
+      ],
       users: [{ _: 'user', id: 7 }],
       next: direction + ':' + cursor,
+      older: 'o1',
       newer: 'n1',
-      firstUnread: 'a',
+      focus: 'a',
       unreadCount: 3,
     })"#,
   );
-  state.dispatch_load(&ctx, 1, 10, None, false);
-  state.dispatch_load(&ctx, 1, 11, Some("c2"), true);
-  assert_eq!(eval_json(&ctx, "globalThis.__loads"), r#"[[null,"older"],["c2","newer"]]"#);
+  state.dispatch_load_more(&ctx, 1, 10, "c1", false);
+  state.dispatch_load_more(&ctx, 1, 11, "c2", true);
+  assert_eq!(eval_json(&ctx, "globalThis.__loads"), r#"[["c1","older"],["c2","newer"]]"#);
   let pages = host.pages.borrow();
   assert_eq!(pages.len(), 2);
   assert_eq!(pages[0].0, 10);
   assert_eq!(
     pages[0].1,
-    r#"S{"entries":[{"message":{"_":"message","id":5,"peer_id":{"_":"peerUser","user_id":7},"message":"hi"},"key":"a","synthetic":false}],"users":[{"_":"user","id":7}],"next":"older:null","newer":"n1","firstUnread":"a","unreadCount":3}"#
+    r#"S{"entries":[{"message":{"_":"message","id":5,"peer_id":{"_":"peerUser","user_id":7},"message":"hi"},"key":"a","replyTo":"b","synthetic":false},{"message":{"_":"message","id":6},"replyTo":{"message":{"_":"message","id":4},"key":"b"}}],"users":[{"_":"user","id":7}],"next":"older:c1","unreadCount":3}"#
   );
   assert_eq!(pages[1].0, 11);
   assert!(pages[1].1.starts_with("S{"), "{}", pages[1].1);
+}
+
+#[test]
+fn load_around_places_the_start_or_jumps_to_a_key_or_a_message() {
+  let (_rt, ctx, host, state, _logs) = setup();
+  eval(&ctx, OPEN);
+  eval(
+    &ctx,
+    r#"globalThis.__answer = async target => target.key === 'gone' ? null : ({
+      entries: [{ key: 'a', message: { _: 'message', id: 5 } }],
+      next: 'ignored',
+      older: 'o1',
+      newer: 'n1',
+      ...(target === 'newest' ? {} : { focus: 'a' }),
+    })"#,
+  );
+  state.dispatch_load_around(&ctx, 1, 10, "Ka");
+  state.dispatch_load_around(&ctx, 1, 11, "M-1000000000042:7");
+  state.dispatch_load_around(&ctx, 1, 12, "Kgone");
+  state.dispatch_load_around(&ctx, 1, 13, "I");
+  state.dispatch_load_around(&ctx, 1, 14, "L");
+  state.dispatch_load_around(&ctx, 1, 15, "Mnope");
+  eval(&ctx, "globalThis.__answer = async () => ({ entries: [] })");
+  state.dispatch_load_around(&ctx, 1, 16, "Ka");
+  eval(&ctx, "globalThis.__answer = async () => null");
+  state.dispatch_load_around(&ctx, 1, 17, "I");
+  assert_eq!(
+    eval_json(&ctx, "globalThis.__loads"),
+    r#"[{"key":"a"},{"dialogId":-1000000000042,"messageId":7},{"key":"gone"},"initial","newest",{"key":"a"},"initial"]"#
+  );
+  let pages = host.pages.borrow();
+  let focused = r#"S{"entries":[{"message":{"_":"message","id":5},"key":"a"}],"older":"o1","newer":"n1","focus":"a"}"#;
+  assert_eq!(pages[0], (10, focused.to_string()));
+  assert_eq!(pages[1], (11, focused.to_string()));
+  assert_eq!(pages[2], (12, "N".to_string()));
+  assert_eq!(pages[3], (13, focused.to_string()));
+  assert_eq!(pages[4], (14, r#"S{"entries":[{"message":{"_":"message","id":5},"key":"a"}],"older":"o1","newer":"n1"}"#.to_string()));
+  assert!(pages[5].0 == 15 && pages[5].1.starts_with("E"), "{:?}", pages[5]);
+  assert!(pages[6].0 == 16 && pages[6].1.starts_with("E") && pages[6].1.contains("focus"), "{:?}", pages[6]);
+  assert!(pages[7].0 == 17 && pages[7].1.starts_with("E") && pages[7].1.contains("page object"), "{:?}", pages[7]);
 }
 
 #[test]
@@ -144,14 +192,18 @@ fn a_bad_page_or_a_rejected_load_answers_the_host_with_an_error() {
   let (_rt, ctx, host, state, logs) = setup();
   eval(&ctx, OPEN);
   eval(&ctx, "globalThis.__answer = () => ({ entries: [{ message: 'nope' }] })");
-  state.dispatch_load(&ctx, 1, 10, None, false);
+  state.dispatch_load_around(&ctx, 1, 10, "I");
+  eval(&ctx, "globalThis.__answer = () => ({ entries: [{ replyTo: 5, message: { _: 'message', id: 1 } }] })");
+  state.dispatch_load_around(&ctx, 1, 9, "I");
   eval(&ctx, "globalThis.__answer = () => Promise.reject(new Error('boom'))");
-  state.dispatch_load(&ctx, 1, 11, None, false);
+  state.dispatch_load_more(&ctx, 1, 11, "c", false);
   let pages = host.pages.borrow();
   assert_eq!(pages[0].0, 10);
   assert!(pages[0].1.starts_with("E") && pages[0].1.contains("TL message"), "{}", pages[0].1);
-  assert_eq!(pages[1].0, 11);
-  assert!(pages[1].1.starts_with("E") && pages[1].1.contains("boom"), "{}", pages[1].1);
+  assert_eq!(pages[1].0, 9);
+  assert!(pages[1].1.starts_with("E") && pages[1].1.contains("'replyTo' must be a key or an entry"), "{}", pages[1].1);
+  assert_eq!(pages[2].0, 11);
+  assert!(pages[2].1.starts_with("E") && pages[2].1.contains("boom"), "{}", pages[2].1);
   assert!(logs.borrow().iter().any(|line| line.contains("boom")));
 }
 
@@ -223,6 +275,6 @@ fn updates_are_forwarded_and_refused_once_the_screen_closed() {
   assert_eq!(eval_json(&ctx, "globalThis.__closed === true"), "true");
   let caught = catch_json(&ctx, "globalThis.__h.append({ entries: [] })");
   assert!(caught.contains("handle-expired"), "{caught}");
-  state.dispatch_load(&ctx, 1, 12, None, false);
+  state.dispatch_load_around(&ctx, 1, 12, "I");
   assert_eq!(host.pages.borrow().last().unwrap().1, "Ethe chat history was closed");
 }

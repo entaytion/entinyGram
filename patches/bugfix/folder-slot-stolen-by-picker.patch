@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 14 Oct 2026 01:23:37 +0200
+Subject: fix folder showing all chats after forward picker switched folders
+
+---
+ .../java/org/telegram/ui/DialogsActivity.java   | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -7414,6 +7414,23 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         }
+         showFiltersHint();
+         if (viewPages != null) {
++            boolean filtersReselected = false;
++            ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
++            for (int a = viewPages.length - 1; a >= 0; a--) {
++                ViewPage page = viewPages[a];
++                if (page.dialogsType != DIALOGS_TYPE_FOLDER1 && page.dialogsType != DIALOGS_TYPE_FOLDER2 || page.selectedType < 0 || page.selectedType >= filters.size()) {
++                    continue;
++                }
++                MessagesController.DialogFilter filter = filters.get(page.selectedType);
++                int slot = page.dialogsType - DIALOGS_TYPE_FOLDER1;
++                if (!filter.isDefault() && getMessagesController().selectedDialogFilter[slot] != filter) {
++                    getMessagesController().selectDialogFilter(filter, slot);
++                    filtersReselected = true;
++                }
++            }
++            if (filtersReselected) {
++                reloadViewPageDialogs(viewPages[0], false);
++            }
+             for (int a = 0; a < viewPages.length; a++) {
+                 if (viewPages[a].dialogsType == 0 && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN && viewPages[a].layoutManager.findFirstVisibleItemPosition() == 0 && hasHiddenArchive()) {
+                     viewPages[a].layoutManager.scrollToPositionWithOffset(1, (int) scrollYOffset);

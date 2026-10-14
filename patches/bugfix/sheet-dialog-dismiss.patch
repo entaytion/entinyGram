@@ -1,0 +1,81 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 14 Oct 2026 02:29:53 +0200
+Subject: pass dismiss listener to attached sheets showing a dialog
+
+while primarily a bugfix for the plugin engine, this is a genuine stock bug that just wasn't as obvious before plugins
+---
+ .../main/java/org/telegram/ui/ActionBar/BaseFragment.java | 5 ++++-
+ .../ui/Components/Premium/PremiumPreviewBottomSheet.java  | 8 ++++++++
+ .../main/java/org/telegram/ui/Stories/StoryViewer.java    | 8 ++++++++
+ 3 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BaseFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BaseFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BaseFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BaseFragment.java
+@@ -113,6 +113,9 @@ public abstract class BaseFragment {
+ 
+         public boolean onAttachedBackPressed();
+         public boolean showDialog(Dialog dialog);
++        default boolean inu_showDialog(Dialog dialog, Dialog.OnDismissListener onDismissListener) {
++            return showDialog(dialog);
++        }
+ 
+         public void setKeyboardHeightFromParent(int keyboardHeight);
+ 
+@@ -834,7 +837,7 @@ public abstract class BaseFragment {
+         if (sheetsStack != null) {
+             for (int i = sheetsStack.size() - 1; i >= 0; --i) {
+                 if (sheetsStack.get(i).isShown()) {
+-                    if (sheetsStack.get(i).showDialog(dialog)) {
++                    if (sheetsStack.get(i).inu_showDialog(dialog, onDismissListener)) {
+                         return dialog;
+                     }
+                 }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumPreviewBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumPreviewBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumPreviewBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumPreviewBottomSheet.java
+@@ -206,11 +206,19 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
+ 
+     @Override
+     public boolean showDialog(Dialog dialog) {
++        return inu_showDialog(dialog, null);
++    }
++
++    @Override
++    public boolean inu_showDialog(Dialog dialog, Dialog.OnDismissListener onDismissListener) {
+         if (iconTextureView != null) {
+             iconTextureView.setDialogVisible(true);
+         }
+         starParticlesView.setPaused(true);
+         dialog.setOnDismissListener(dialog1 -> {
++            if (onDismissListener != null) {
++                onDismissListener.onDismiss(dialog1);
++            }
+             if (iconTextureView != null) {
+                 iconTextureView.setDialogVisible(false);
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
+@@ -1905,9 +1905,17 @@ public class StoryViewer implements NotificationCenter.NotificationCenterDelegat
+ 
+     @Override
+     public boolean showDialog(Dialog dialog) {
++        return inu_showDialog(dialog, null);
++    }
++
++    @Override
++    public boolean inu_showDialog(Dialog dialog, Dialog.OnDismissListener onDismissListener) {
+         try {
+             currentDialog = dialog;
+             dialog.setOnDismissListener(dialog1 -> {
++                if (onDismissListener != null) {
++                    onDismissListener.onDismiss(dialog1);
++                }
+                 if (dialog1 == currentDialog) {
+                     currentDialog = null;
+                     updatePlayingMode();

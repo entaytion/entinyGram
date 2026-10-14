@@ -206,11 +206,11 @@ declare namespace inu {
     /** If the message belongs to an album, ID of the album */
     get groupedId(): string | null
 
-    /** ID of the dialog where the message was sent */
+    /** Marked peer ID of the dialog where the message was sent */
     get dialogId(): number | null
     /** ID of the topic where the message belongs */
     get topicId(): number | null
-    /** ID of the message sender */
+    /** Marked peer ID of the message sender */
     get senderId(): number | null
     /** Date of the message, as a unix date in seconds */
     get date(): number
@@ -1121,9 +1121,20 @@ declare namespace inu {
        *
        * Required when the same message appears more than once
        *
-       * @default `${peer}:${id}`
+       * @default `${message.dialogId}:${message.id}` (marked peer id)
        */
       key?: string
+      /**
+       * Another entry to show and navigate to as this entry's reply target.
+       * Either a key (as a `string`), or an entry.
+       *
+       * A simple key only shows the reply header when that entry is already loaded,
+       * if you can't guarantee that will be the case - prefer passing an entry instead,
+       * since otherwise the reply header won't show at all.
+       *
+       * When omitted, its Telegram reply target (`.reply_to`) is matched by its default key.
+       */
+      replyTo?: string | Omit<ChatHistoryEntry, 'replyTo' | 'synthetic'>
       /**
        * Whether the message is "synthetic", i.e. not backed by a real server message.
        *
@@ -1143,30 +1154,40 @@ declare namespace inu {
       /** Chats the messages reference that the app may not have cached yet */
       chats?: tl.TypeChat[]
       /**
-       * cursor for the next page **in the requested direction**
-       *
-       * Omit when we have reached the end in this direction
-       */
-      next?: string
-      /**
-       * **Only read from the first page**
-       *
-       * A cursor for the pages newer than it.
-       * When omitted, the screen starts at the bottom and never asks for `'newer'`.
-       */
-      newer?: string
-      /**
-       * **Only read from the first page**
-       *
-       * The key of the first unread entry on the page, to show the "Unread messages" line
-       */
-      firstUnread?: string
-      /**
        * The number of "unread" messages, to be shown on the jump-to-bottom button
        *
        * When omitted, the value stays the same
        */
       unreadCount?: number
+    }
+
+    /** @experimental Subject to breaking changes between releases. */
+    interface ChatHistoryMorePage extends ChatHistoryPage {
+      /**
+       * Cursor for the next page **in the requested direction**
+       *
+       * Omit when we have reached the end in this direction
+       */
+      next?: string
+    }
+
+    /**
+     * A page that replaces the screen's content
+     *
+     * @experimental Subject to breaking changes between releases.
+     */
+    interface ChatHistoryAroundPage extends ChatHistoryPage {
+      /** Cursor for the pages older ("upwards") than this one, omitted at the oldest */
+      older?: string
+      /** Cursor for the pages newer ("downwards") than this one, omitted at the newest */
+      newer?: string
+      /**
+       * Key of the entry to scroll to, which must be on the page
+       *
+       * Required when jumping to an entry. For `'initial'`, the first unread entry, shown below an
+       * "Unread messages" line; omitted, the screen starts at the bottom. Ignored for `'newest'`.
+       */
+      focus?: string
     }
 
     /** @experimental Subject to breaking changes between releases. */
@@ -1176,19 +1197,19 @@ declare namespace inu {
        *
        * Newest first, existing keys are skipped
        */
-      append(page: Omit<ChatHistoryPage, 'next' | 'newer' | 'firstUnread'>): void
+      append(page: ChatHistoryPage): void
       /**
        * Replace some of the items on the page
        *
        * Matched by key, unknown keys are skipped
        */
-      replace(page: Omit<ChatHistoryPage, 'next' | 'newer' | 'firstUnread'>): void
+      replace(page: ChatHistoryPage): void
       /** Remove items from the page by their keys */
       remove(keys: string[]): void
       /**
        * Manually update the number on the jump-to-bottom button
        *
-       * Normally this value is updated from `load`-ed pages and `append`/`replace` via `unreadCount`.
+       * Normally this value is updated from loaded pages and `append`/`replace` via `unreadCount`.
        */
       setUnreadCount(count: number): void
       /**
@@ -1197,7 +1218,11 @@ declare namespace inu {
        * @throws if the button was not declared
        */
       setButton(button: { text: InputText } | null): void
-      /** Scroll to an entry once it is loaded */
+      /**
+       * Scroll to an entry by its key.
+       *
+       * When it is not loaded, the screen jumps there through `loadAround`
+       */
       scrollTo(key: string): void
       /** Close the screen */
       close(): void
@@ -1247,16 +1272,21 @@ declare namespace inu {
        */
       avatars?: boolean
       /**
-       * The data provider for the chat page
+       * Loads the page that replaces the screen's content, called with:
+       * - `'initial'`: when the screen opens, "where should we start?"
+       * - `'newest'`: the newest page, when the user jumps to the bottom
+       * - `{ key }`: an entry that is not loaded, from `scrollTo`, a `replyTo` link, or returning to a message after a jump
+       * - `{ dialogId, messageId }`: the target of a real Telegram reply that is not loaded (`dialogId` is a marked peer id)
        *
-       * It is called with a cursor (anchor) to load from, and a direction to advance:
-       * - `(null, 'older')`: called when the page is opened, "where should we start?" request
-       * - `(null, 'newer')`: the newest page, called when the user jumps to the bottom
-       * - `(cursor, direction)`: the regular call, requesting a page after a `next` (or the first page's `newer`) cursor.
+       * Return `null` when there is no such entry, to mean "not found".
+       */
+      loadAround(target: 'initial' | 'newest' | { key: string } | { dialogId: number, messageId: number }): MaybePromise<ChatHistoryAroundPage | null>
+      /**
+       * Loads the next page after a cursor, in a direction
        *
        * An exception ends that direction.
        */
-      load(cursor: string | null, direction: 'older' | 'newer'): MaybePromise<ChatHistoryPage>
+      loadMore(cursor: string, direction: 'older' | 'newer'): MaybePromise<ChatHistoryMorePage>
       /**
        * Called when a user advances downwards and "reads" a new message,
        * with the `key` of the newest entry the user has on the screen

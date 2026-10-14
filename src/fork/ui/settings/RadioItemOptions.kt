@@ -13,7 +13,7 @@ object RadioItemOptions {
         selectedIndex: Int,
         onSelect: (Int) -> Unit,
     ) {
-        val options = ItemOptions.makeOptions(fragment, anchor)
+        val options = ItemOptions.makeOptions(fragment, anchor).setLongPressSelectionEnabled(false)
         // entiny: guard with handled flag because animated ItemOptions dismiss allows double-tap
         var handled = false
         items.forEachIndexed { index, text ->

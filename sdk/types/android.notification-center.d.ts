@@ -611,6 +611,12 @@ declare namespace inu {
 
       updatedChatbot(): void
 
+      /** `wallet`: `GramWallet`, `session`: `TL_wallet.tonConnectSession` */
+      walletUpdate(wallet: JavaObject, session?: JavaObject): void
+
+      /** `transactions`: `GramWallet.TransactionsList`, `wallet`: `GramWallet` */
+      walletTransactionsUpdate(transactions: JavaObject, wallet: JavaObject): void
+
       /** Global. */
       activeAccountChanged(account: number): void
 

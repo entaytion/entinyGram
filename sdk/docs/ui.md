@@ -254,7 +254,15 @@ history view, with the data fully supplied by the plugin.
 const history = inu.ui.openChatHistory({
   title: 'Edit history',
   synthetic: true,
-  load: async (cursor, direction) => {
+  loadAround: async (target) => {
+    if (typeof target === 'object') return null
+    const page = await store.page(null, 'older')
+    return {
+      entries: page.versions.map(v => ({ key: v.key, message: v.message })),
+      older: page.next,
+    }
+  },
+  loadMore: async (cursor, direction) => {
     const page = await store.page(cursor, direction)
     return {
       entries: page.versions.map(v => ({ key: v.key, message: v.message })),
@@ -267,10 +275,13 @@ history.closed.then(() => console.log('left'))
 
 The full API is described in the `d.ts` files, but a quick overview:
 
-- `load` is called every time the screen needs to load more data.
-  - The first call is usually `(null, 'older')`, requesting the start position of the chat
-  - When the user taps "jump to bottom", `(null, 'newer')` is called, asking for the newest (bottommost) page
-- Messages are addressed by a string key, which is by default `${peer}:${id}`
+- `loadAround(target)` loads the page that replaces the screen's content: `'initial'` when it opens, `'newest'` on "jump to bottom",
+  or an entry that is not loaded (reply taps, `scrollTo`). It returns `older`/`newer` cursors and the `focus` key
+  (the first unread entry for `'initial'`), or `null` for an entry that does not exist.
+- `loadMore(cursor, direction)` loads the next page in a direction, returning its `next` cursor.
+- Messages are addressed by a string key, which is by default `${dialogId}:${id}` (marked peer id)
+- `replyTo` can be used to link a reply to another entry by key, or by an entry (`{ key?, message }`) to draw the header while the target is not loaded
+  (regular `reply_to` *usually* works too, if the default key is used).
 - Messages can be "synthetic", i.e. not backed by a real server message.
 - `onHeaderTap` handles taps on the chat header.
 - `button: { text, onClick }` can be used to add a button on the bottom of the screen

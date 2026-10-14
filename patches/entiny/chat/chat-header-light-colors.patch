@@ -4,10 +4,10 @@ Date: Mon, 28 Sep 2026 00:39:21 +0300
 Subject: [*] readable chat header colors on light wallpapers
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 17 ++++++++--
- .../java/org/telegram/ui/ChatActivity.java    | 31 ++++++++++++-------
- .../ui/Components/ChatAvatarContainer.java    | 30 +++++++++---------
- 3 files changed, 50 insertions(+), 28 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 40 +++++++------------
+ .../java/org/telegram/ui/ChatActivity.java    | 31 ++++++++------
+ .../ui/Components/ChatAvatarContainer.java    | 30 +++++++-------
+ 3 files changed, 50 insertions(+), 51 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -37,25 +37,48 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          if (inu_needsUpdateGlassBounds()) {
-@@ -2583,7 +2591,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2583,30 +2591,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int t = inu_glassTop;
          final int b = inu_glassBottom;
  
 -        if (glassDrawable != null && !glassOnlyBack && drawGlassTitle) {
+-            final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
+-            final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+-
+-            final int leftDefault = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+-            final int rightDefault = getWidth() - rightOffset;
+-            final int widthDefault = rightDefault - leftDefault;
+-            final int left, right;
+-            if (chatAvatarContainer != null && !inu_nonIsland) {
+-                final int width = lerp(Math.min(widthDefault, (int) animatorAvatarContainerWidth.getFactor() + p * 2), widthDefault, Math.max(searchFactor, actionModeFactor));
+-                left = (rightDefault + leftDefault - width) / 2;
+-                right = left + width;
+-
+-                final float translationX = left
+-                    - ((MarginLayoutParams)(chatAvatarContainer.getLayoutParams())).leftMargin
+-                    - chatAvatarContainer.getLeftPadding()
+-                    + p + dp(3);
+-                chatAvatarContainer.setTranslationX(translationX);
+-                chatAvatarContainer.setPivotX((chatAvatarContainer.getMeasuredWidth()) / 2f - translationX );
+-            } else {
+-                left = leftDefault;
+-                right = rightDefault;
+-            }
+-
 +        final boolean hideChatPill = inu_hideChatPill();
 +        if (hideChatPill && inu_nonIsland) {
 +            blurScrimPaint.setColor(getThemedColor(Theme.key_actionBarDefault));
 +            canvas.drawRect(0, 0, getWidth(), getHeight(), blurScrimPaint);
 +        }
 +        if (glassDrawable != null && !glassOnlyBack && drawGlassTitle && !hideChatPill) {
-             final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
-             final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
- 
+             if (inu_nonIsland) {
+                 glassDrawable.setBounds(0, 0, getWidth(), getHeight());
+             } else {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17715,6 +17715,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17708,6 +17708,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -65,7 +88,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44148,22 +44151,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -44131,22 +44134,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }

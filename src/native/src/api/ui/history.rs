@@ -33,14 +33,15 @@ pub trait HistoryHost {
   fn history_open(&self, history_id: i64, options_json: &str) -> Option<String>;
   fn history_update(&self, history_id: i64, op: i32, json: &str) -> Option<String>;
   fn history_close(&self, history_id: i64);
-  /// `S` + page json, or `E` + message
+  /// `S` + page json, `N` when `loadAround` found no entry, or `E` + message
   fn history_page(&self, request_id: i64, wire: &str);
   /// `S` + menu items json, or `E` + message
   fn history_menu(&self, request_id: i64, wire: &str);
 }
 
 struct HistoryDef {
-  load: Persistent<Function<'static>>,
+  load_around: Persistent<Function<'static>>,
+  load_more: Persistent<Function<'static>>,
   resolve_closed: Persistent<Function<'static>>,
   retained_icon: Option<Persistent<Value<'static>>>,
   on_read: Option<Persistent<Function<'static>>>,
@@ -70,7 +71,8 @@ impl ShownMenu {
 
 impl HistoryDef {
   fn release(self, ctx: &Ctx<'_>) {
-    let _ = self.load.restore(ctx);
+    let _ = self.load_around.restore(ctx);
+    let _ = self.load_more.restore(ctx);
     let _ = self.resolve_closed.restore(ctx);
     for f in [self.on_read, self.on_header_tap, self.on_button_click, self.menu].into_iter().flatten() {
       let _ = f.restore(ctx);
@@ -84,6 +86,32 @@ impl HistoryDef {
   }
 }
 
+/// where `loadAround` places the window: the screen's start, the newest page, a plugin key, or a telegram
+/// message by marked peer id
+enum AroundTarget<'a> {
+  Initial,
+  Newest,
+  Key(&'a str),
+  Message { dialog_id: i64, message_id: i32 },
+}
+
+impl<'a> AroundTarget<'a> {
+  /// `I`, `L`, `K` + key, or `M` + `${markedPeerId}:${messageId}`
+  fn parse(wire: &'a str) -> Option<Self> {
+    let (kind, rest) = (wire.get(..1)?, &wire[1..]);
+    Some(match kind {
+      "I" => Self::Initial,
+      "L" => Self::Newest,
+      "K" => Self::Key(rest),
+      "M" => {
+        let (dialog_id, message_id) = rest.rsplit_once(':')?;
+        Self::Message { dialog_id: dialog_id.parse().ok()?, message_id: message_id.parse().ok()? }
+      }
+      _ => return None,
+    })
+  }
+}
+
 pub struct HistoryState {
   host: Rc<dyn HistoryHost>,
   jvm: Option<Rc<JvmState>>,
@@ -93,7 +121,30 @@ pub struct HistoryState {
   defs: RefCell<HashMap<i64, HistoryDef>>,
 }
 
-fn serialize_page<'js>(ctx: &Ctx<'js>, value: Value<'js>, what: &str, with_next: bool) -> JsResult<String> {
+/// what a page may carry besides entries: `More` is a `loadMore` answer, `Start` and `Jump` are `loadAround`
+/// ones for the initial or newest page and for an entry, which must be focused
+#[derive(Clone, Copy, PartialEq)]
+enum PageKind {
+  Update,
+  More,
+  Start,
+  Jump,
+}
+
+fn serialize_entry<'js>(ctx: &Ctx<'js>, entry: &Object<'js>, what: &str) -> JsResult<Object<'js>> {
+  let message = field(ctx, entry, what, "message")?;
+  if message.as_object().and_then(|o| o.get::<_, Option<String>>("_").ok().flatten()).is_none() {
+    return Err(Exception::throw_type(ctx, &format!("{what}: 'message' must be a TL message")));
+  }
+  let out = Object::new(ctx.clone())?;
+  out.set("message", message)?;
+  if let Some(key) = opt_str(ctx, entry, what, "key")? {
+    out.set("key", key)?;
+  }
+  Ok(out)
+}
+
+fn serialize_page<'js>(ctx: &Ctx<'js>, value: Value<'js>, what: &str, kind: PageKind) -> JsResult<String> {
   let page = value
     .as_object()
     .ok_or_else(|| Exception::throw_type(ctx, &format!("{what}: expected a page object")))?;
@@ -111,14 +162,14 @@ fn serialize_page<'js>(ctx: &Ctx<'js>, value: Value<'js>, what: &str, with_next:
     let entry = entry
       .as_object()
       .ok_or_else(|| Exception::throw_type(ctx, &format!("{what}: entries must be objects")))?;
-    let message = field(ctx, entry, what, "message")?;
-    if message.as_object().and_then(|o| o.get::<_, Option<String>>("_").ok().flatten()).is_none() {
-      return Err(Exception::throw_type(ctx, &format!("{what}: 'message' must be a TL message")));
-    }
-    let out_entry = Object::new(ctx.clone())?;
-    out_entry.set("message", message)?;
-    if let Some(key) = opt_str(ctx, entry, what, "key")? {
-      out_entry.set("key", key)?;
+    let out_entry = serialize_entry(ctx, entry, what)?;
+    let reply_to = field(ctx, entry, what, "replyTo")?;
+    if reply_to.is_string() {
+      out_entry.set("replyTo", reply_to)?;
+    } else if let Some(target) = reply_to.as_object() {
+      out_entry.set("replyTo", serialize_entry(ctx, target, &format!("{what}: 'replyTo'"))?)?;
+    } else if !reply_to.is_undefined() && !reply_to.is_null() {
+      return Err(Exception::throw_type(ctx, &format!("{what}: 'replyTo' must be a key or an entry")));
     }
     if let Some(synthetic) = opt_bool(ctx, entry, what, "synthetic")? {
       out_entry.set("synthetic", synthetic)?;
@@ -136,15 +187,21 @@ fn serialize_page<'js>(ctx: &Ctx<'js>, value: Value<'js>, what: &str, with_next:
     }
     out.set(list, value)?;
   }
-  if with_next {
-    if let Some(next) = opt_str(ctx, page, what, "next")? {
-      out.set("next", next)?;
+  let cursors: &[&str] = match kind {
+    PageKind::Update => &[],
+    PageKind::More => &["next"],
+    PageKind::Start | PageKind::Jump => &["older", "newer"],
+  };
+  for name in cursors {
+    if let Some(cursor) = opt_str(ctx, page, what, name)? {
+      out.set(*name, cursor)?;
     }
-    if let Some(newer) = opt_str(ctx, page, what, "newer")? {
-      out.set("newer", newer)?;
-    }
-    if let Some(first_unread) = opt_str(ctx, page, what, "firstUnread")? {
-      out.set("firstUnread", first_unread)?;
+  }
+  if matches!(kind, PageKind::Start | PageKind::Jump) {
+    match opt_str(ctx, page, what, "focus")? {
+      Some(focus) => out.set("focus", focus)?,
+      None if kind == PageKind::Jump => return Err(Exception::throw_type(ctx, &format!("{what}: 'focus' must be a key"))),
+      None => {}
     }
   }
   if let Some(count) = opt_int(ctx, page, what, "unreadCount")? {
@@ -181,7 +238,8 @@ impl HistoryState {
       out.set("icon", icon.spec)?;
       retained_icon = icon.retained_value.map(|value| Persistent::save(ctx, value));
     }
-    let load = req_fn(ctx, opts, what, "load")?;
+    let load_around = req_fn(ctx, opts, what, "loadAround")?;
+    let load_more = req_fn(ctx, opts, what, "loadMore")?;
     let on_read = opt_fn(ctx, opts, what, "onRead")?;
     out.set("read", on_read.is_some())?;
     let on_header_tap = opt_fn(ctx, opts, what, "onHeaderTap")?;
@@ -208,7 +266,8 @@ impl HistoryState {
       self.defs.borrow_mut().insert(
         history_id,
         HistoryDef {
-          load: Persistent::save(ctx, load),
+          load_around: Persistent::save(ctx, load_around),
+          load_more: Persistent::save(ctx, load_more),
           resolve_closed: Persistent::save(ctx, resolve_closed),
           retained_icon,
           on_read: on_read.map(|f| Persistent::save(ctx, f)),
@@ -232,7 +291,7 @@ impl HistoryState {
         name,
         Function::new(ctx.clone(), move |ctx: Ctx<'js>, page: Value<'js>| -> JsResult<()> {
           state.require_open(&ctx, history_id, name)?;
-          let json = serialize_page(&ctx, page, name, false)?;
+          let json = serialize_page(&ctx, page, name, PageKind::Update)?;
           state.update(&ctx, history_id, op, &json)
         })?,
       )?;
@@ -348,33 +407,54 @@ pub fn install_history<'js>(
 }
 
 impl HistoryState {
-  fn try_dispatch_load<'js>(
-    self: &Rc<Self>,
-    ctx: &Ctx<'js>,
-    history_id: i64,
-    request_id: i64,
-    cursor: Option<&str>,
-    newer: bool,
-  ) -> JsResult<()> {
-    let load = match self.defs.borrow().get(&history_id) {
-      Some(def) => def.load.clone(),
-      None => {
-        self.host.history_page(request_id, "Ethe chat history was closed");
-        return Ok(());
+  fn try_dispatch_load_more<'js>(self: &Rc<Self>, ctx: &Ctx<'js>, history_id: i64, request_id: i64, cursor: &str, newer: bool) -> JsResult<()> {
+    let Some(load_more) = self.defs.borrow().get(&history_id).map(|def| def.load_more.clone()) else {
+      self.host.history_page(request_id, "Ethe chat history was closed");
+      return Ok(());
+    };
+    let result: Value = load_more.restore(ctx)?.call((cursor, if newer { "newer" } else { "older" }))?;
+    self.answer_page(ctx, request_id, result, "loadMore", PageKind::More)
+  }
+
+  fn try_dispatch_load_around<'js>(self: &Rc<Self>, ctx: &Ctx<'js>, history_id: i64, request_id: i64, target: &str) -> JsResult<()> {
+    let Some(load_around) = self.defs.borrow().get(&history_id).map(|def| def.load_around.clone()) else {
+      self.host.history_page(request_id, "Ethe chat history was closed");
+      return Ok(());
+    };
+    let Some(target) = AroundTarget::parse(target) else {
+      self.host.history_page(request_id, &format!("Ebad loadAround target {target:?}"));
+      return Ok(());
+    };
+    let (arg, kind) = match target {
+      AroundTarget::Initial => (rquickjs::String::from_str(ctx.clone(), "initial")?.into_value(), PageKind::Start),
+      AroundTarget::Newest => (rquickjs::String::from_str(ctx.clone(), "newest")?.into_value(), PageKind::Start),
+      AroundTarget::Key(key) => {
+        let arg = Object::new(ctx.clone())?;
+        arg.set("key", key)?;
+        (arg.into_value(), PageKind::Jump)
+      }
+      AroundTarget::Message { dialog_id, message_id } => {
+        let arg = Object::new(ctx.clone())?;
+        arg.set("dialogId", dialog_id as f64)?;
+        arg.set("messageId", message_id)?;
+        (arg.into_value(), PageKind::Jump)
       }
     };
-    let load = load.restore(ctx)?;
-    let cursor = match cursor {
-      Some(cursor) => rquickjs::String::from_str(ctx.clone(), cursor)?.into_value(),
-      None => Value::new_null(ctx.clone()),
-    };
-    let result: Value = load.call((cursor, if newer { "newer" } else { "older" }))?;
+    let result: Value = load_around.restore(ctx)?.call((arg,))?;
+    self.answer_page(ctx, request_id, result, "loadAround", kind)
+  }
+
+  fn answer_page<'js>(self: &Rc<Self>, ctx: &Ctx<'js>, request_id: i64, result: Value<'js>, what: &'static str, kind: PageKind) -> JsResult<()> {
     let ok = {
       let state = self.clone();
       Function::new(ctx.clone(), move |ctx: Ctx<'js>, page: Value<'js>| {
-        let wire = match serialize_page(&ctx, page, "load", true) {
-          Ok(json) => format!("S{json}"),
-          Err(e) => format!("E{}", describe_js_error(&ctx, e)),
+        let wire = if kind == PageKind::Jump && (page.is_null() || page.is_undefined()) {
+          "N".to_string()
+        } else {
+          match serialize_page(&ctx, page, what, kind) {
+            Ok(json) => format!("S{json}"),
+            Err(e) => format!("E{}", describe_js_error(&ctx, e)),
+          }
         };
         state.host.history_page(request_id, &wire);
       })?
@@ -382,29 +462,38 @@ impl HistoryState {
     let err = {
       let state = self.clone();
       Function::new(ctx.clone(), move |ctx: Ctx<'js>, value: Value<'js>| {
-        (state.log)(&crate::fault(format_args!("openChatHistory load rejected: {}", format_thrown(&ctx, &value))));
+        (state.log)(&crate::fault(format_args!("openChatHistory {what} rejected: {}", format_thrown(&ctx, &value))));
         state.host.history_page(request_id, &format!("E{}", error_value_to_string(&ctx, &value)));
       })?
     };
     resolve_and_then(ctx, result, ok, err)
   }
 
-  pub fn dispatch_load(
-    self: &Rc<Self>,
-    context: &rquickjs::Context,
-    history_id: i64,
-    request_id: i64,
-    cursor: Option<&str>,
-    newer: bool,
-  ) {
+  /// [`AroundTarget::parse`] wire in `target`
+  pub fn dispatch_load_around(self: &Rc<Self>, context: &rquickjs::Context, history_id: i64, request_id: i64, target: &str) {
     if self.lifecycle.is_unloading() {
       self.host.history_page(request_id, "Ethe plugin is unloading");
       return;
     }
     enter_js(context, |ctx| {
-      if let Err(e) = self.try_dispatch_load(&ctx, history_id, request_id, cursor, newer) {
+      if let Err(e) = self.try_dispatch_load_around(&ctx, history_id, request_id, target) {
         let msg = describe_js_error(&ctx, e);
-        (self.log)(&crate::fault(format_args!("openChatHistory load failed: {msg}")));
+        (self.log)(&crate::fault(format_args!("openChatHistory loadAround failed: {msg}")));
+        self.host.history_page(request_id, &format!("E{msg}"));
+      }
+    });
+    pump_jobs(context, self.log.as_ref());
+  }
+
+  pub fn dispatch_load_more(self: &Rc<Self>, context: &rquickjs::Context, history_id: i64, request_id: i64, cursor: &str, newer: bool) {
+    if self.lifecycle.is_unloading() {
+      self.host.history_page(request_id, "Ethe plugin is unloading");
+      return;
+    }
+    enter_js(context, |ctx| {
+      if let Err(e) = self.try_dispatch_load_more(&ctx, history_id, request_id, cursor, newer) {
+        let msg = describe_js_error(&ctx, e);
+        (self.log)(&crate::fault(format_args!("openChatHistory loadMore failed: {msg}")));
         self.host.history_page(request_id, &format!("E{msg}"));
       }
     });

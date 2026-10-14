@@ -340,7 +340,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -26724,6 +26724,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -26717,6 +26717,12 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }
                  obj.deleted = true;
@@ -353,7 +353,7 @@ index 0000000..0000000 100644
                  if (obj.scheduled && sent) {
                      obj.scheduledSent = true;
                  }
-@@ -26732,6 +26738,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -26725,6 +26731,18 @@ public class ChatActivity extends BaseFragment implements
                  }
                  int index = chatAdapter != null && chatAdapter.isFiltered && filteredMessagesDict != null ? chatAdapter.filteredMessages.indexOf(filteredMessagesDict.get(mid)) : messages.indexOf(obj);
                  if (index != -1) {
@@ -372,7 +372,7 @@ index 0000000..0000000 100644
                      if (obj.scheduled) {
                          scheduledMessagesCount--;
                          updateScheduled = true;
-@@ -26839,6 +26857,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26832,6 +26850,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      updated = true;

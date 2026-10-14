@@ -236,15 +236,17 @@ index 0000000..0000000 100644
  
          return true;
      }
-@@ -13792,6 +13794,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13792,8 +13794,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          }
  
-+        desu.inugram.helpers.dialogs.DrawerHelper.addDialogsActivityOptions(this, io);
-+
++        desu.inugram.helpers.dialogs.DrawerHelper.addDialogsActivityOptions(this, io, () -> {
          io.show();
          io.setTranslationY(-dp(64));
++        });
      }
+ 
+     @Override
 @@ -14177,8 +14181,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
  

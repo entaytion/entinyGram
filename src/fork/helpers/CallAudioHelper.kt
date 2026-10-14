@@ -17,18 +17,36 @@ object CallAudioHelper {
     @Volatile
     private var currentRoute = VoIPService.AUDIO_ROUTE_BLUETOOTH
 
+    @Volatile
+    private var bluetoothPresent = false
+
     @JvmStatic
     fun evaluate(service: VoIPService): Boolean {
         isActive = InuConfig.HD_BLUETOOTH_CALL_AUDIO.value &&
             !VoIPService.hasRtmpStream() &&
             !VoIPService.USE_CONNECTION_SERVICE &&
-            service.isBluetoothHeadsetConnected()
+            hasBluetoothMediaOutput(service)
         return isActive
     }
 
     @JvmStatic
+    fun hasBluetoothMediaOutput(context: Context): Boolean {
+        val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return am.getDevices(AudioManager.GET_DEVICES_OUTPUTS).any { it.type in BLUETOOTH_MEDIA_TYPES }
+    }
+
+    private val BLUETOOTH_MEDIA_TYPES = buildSet {
+        add(AudioDeviceInfo.TYPE_BLUETOOTH_A2DP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) add(AudioDeviceInfo.TYPE_HEARING_AID)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            add(AudioDeviceInfo.TYPE_BLE_HEADSET)
+            add(AudioDeviceInfo.TYPE_BLE_SPEAKER)
+        }
+    }
+
+    @JvmStatic
     fun onConfigureCall(service: VoIPService): Boolean {
-        evaluate(service)
+        bluetoothPresent = evaluate(service)
         currentRoute = VoIPService.AUDIO_ROUTE_BLUETOOTH
         WebRtcAudioTrack.inu_setPreferredDevice(null)
         return isActive
@@ -36,6 +54,19 @@ object CallAudioHelper {
 
     @JvmStatic
     fun getCurrentRoute(): Int = currentRoute
+
+    @JvmStatic
+    fun onDevicesChanged(service: VoIPService) {
+        if (!isActive) return
+        val present = hasBluetoothMediaOutput(service)
+        if (present == bluetoothPresent) return
+        bluetoothPresent = present
+        if (present) {
+            service.setAudioOutput(2)
+        } else if (currentRoute == VoIPService.AUDIO_ROUTE_BLUETOOTH) {
+            service.setAudioOutput(if (service.hasEarpiece()) 1 else 0)
+        }
+    }
 
     @JvmStatic
     fun handleSetAudioOutput(service: VoIPService, output: Int): Boolean {
@@ -49,7 +80,6 @@ object CallAudioHelper {
             WebRtcAudioTrack.inu_setPreferredDevice(null)
             currentRoute = VoIPService.AUDIO_ROUTE_BLUETOOTH
         } else {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
             val am = service.getSystemService(Context.AUDIO_SERVICE) as AudioManager
             val device = am.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
                 .firstOrNull { it.type == deviceType }

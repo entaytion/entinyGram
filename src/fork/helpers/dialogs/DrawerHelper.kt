@@ -18,6 +18,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.plugins.ui.ActionRow
 import desu.inugram.helpers.plugins.ui.ActionSurface
 import desu.inugram.helpers.plugins.ui.PluginActions
+import desu.inugram.helpers.plugins.ui.PluginIcons
 // #endif
 import desu.inugram.helpers.dialogs.DrawerHelper.setupMainFragment
 import desu.inugram.helpers.menu.DialogsMenuConfig
@@ -758,7 +759,7 @@ object DrawerHelper {
     }
 
     @JvmStatic
-    fun addDialogsActivityOptions(instance: DialogsActivity, io: ItemOptions) {
+    fun addDialogsActivityOptions(instance: DialogsActivity, io: ItemOptions, show: Runnable) {
         val bottomTabsHidden = MainTabsHelper.isHidden
         for (entry in InuConfig.DIALOGS_MENU_ITEMS.value) {
             if (!entry.enabled || !DialogsMenuHelper.isEnabled(entry.item)) continue
@@ -808,7 +809,41 @@ object DrawerHelper {
                 else -> Unit
             }
         }
+
+        // #if PLUGINS
+        if (!InuConfig.NAVIGATION_DRAWER.value && PluginActions.hasRows(PluginActions.KIND_GLOBAL)) {
+            addGlobalActionOptions(instance, io, show)
+            return
+        }
+        // #endif
+        show.run()
     }
+
+    // #if PLUGINS
+    /** the drawer holds global actions otherwise; rows are rendered before the show, bounded like the message menu */
+    private fun addGlobalActionOptions(instance: DialogsActivity, io: ItemOptions, show: Runnable) {
+        val surface = ActionSurface.global(instance.currentAccount)
+        var shown = false
+        val finish = Runnable {
+            if (shown) return@Runnable
+            shown = true
+            if (!instance.isPaused) show.run()
+        }
+        PluginActions.render(PluginActions.KIND_GLOBAL, surface) { rows ->
+            if (shown) return@render
+            AndroidUtilities.cancelRunOnUIThread(finish)
+            if (rows.isNotEmpty()) io.addGap()
+            for (row in rows) {
+                PluginIcons.addMenuItem(io, row.text, row.icon, row.owner, R.drawable.msg_settings_old) {
+                    PluginActions.dispatch(row, surface)
+                }
+                io.last?.let { PluginActions.bindSecondaryCallback(it, row, surface) { io.dismiss() } }
+            }
+            finish.run()
+        }
+        AndroidUtilities.runOnUIThread(finish, PluginActions.RENDER_BUDGET_MS)
+    }
+    // #endif
 
     private fun confirmRestartApp(activity: Activity, resourceProvider: Theme.ResourcesProvider?) {
         AlertDialog.Builder(activity, resourceProvider)

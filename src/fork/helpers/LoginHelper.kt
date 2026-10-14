@@ -103,7 +103,7 @@ object LoginHelper {
     }
 
     private fun showOptionsMenu(loginActivity: LoginActivity, anchor: View, currentAccount: Int, showLoginItems: Boolean) {
-        val opts = ItemOptions.makeOptions(loginActivity, anchor)
+        val opts = ItemOptions.makeOptions(loginActivity, anchor).setLongPressSelectionEnabled(false)
         if (showLoginItems) {
             opts.add(R.drawable.msg_qrcode, getString(R.string.InuLoginViaQr)) {
                 showQrLoginDialog(loginActivity, currentAccount)

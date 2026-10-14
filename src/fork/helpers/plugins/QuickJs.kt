@@ -162,8 +162,12 @@ open class QuickJs {
     fun uiPageClosed(pageId: Long) = requireLive { nativeUiPageClosed(it, pageId) }
 
     /** answered exactly once through [UiListener.uiChatHistoryPage] */
-    fun chatHistoryLoad(historyId: Long, requestId: Long, cursor: String?, newer: Boolean) =
-        requireLive { nativeChatHistoryLoad(it, historyId, requestId, cursor, newer) }
+    fun chatHistoryLoadMore(historyId: Long, requestId: Long, cursor: String, newer: Boolean) =
+        requireLive { nativeChatHistoryLoadMore(it, historyId, requestId, cursor, newer) }
+
+    /** answered exactly once through [UiListener.uiChatHistoryPage]; [target] is `I`, `L`, `K` + key or `M` + `${markedPeerId}:${messageId}` */
+    fun chatHistoryLoadAround(historyId: Long, requestId: Long, target: String) =
+        requireLive { nativeChatHistoryLoadAround(it, historyId, requestId, target) }
 
     fun chatHistoryClosed(historyId: Long) = requireLive { nativeChatHistoryClosed(it, historyId) }
 
@@ -304,7 +308,8 @@ open class QuickJs {
     private external fun nativeUiEvent(ptr: Long, pageId: Long, slot: Int, argJson: String)
     private external fun nativeUiMenuClick(ptr: Long, menuId: Long, slot: Int)
     private external fun nativeUiPageClosed(ptr: Long, pageId: Long)
-    private external fun nativeChatHistoryLoad(ptr: Long, historyId: Long, requestId: Long, cursor: String?, newer: Boolean)
+    private external fun nativeChatHistoryLoadMore(ptr: Long, historyId: Long, requestId: Long, cursor: String, newer: Boolean)
+    private external fun nativeChatHistoryLoadAround(ptr: Long, historyId: Long, requestId: Long, target: String)
     private external fun nativeChatHistoryClosed(ptr: Long, historyId: Long)
     private external fun nativeChatHistoryRead(ptr: Long, historyId: Long, key: String)
     private external fun nativeChatHistoryButtonClick(ptr: Long, historyId: Long)

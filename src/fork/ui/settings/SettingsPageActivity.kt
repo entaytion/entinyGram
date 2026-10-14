@@ -382,7 +382,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
     }
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean {
-        val opts = ItemOptions.makeOptions(this, view)
+        val opts = ItemOptions.makeOptions(this, view).setLongPressSelectionEnabled(false)
         val hasText = hasTruncatedText(view) && addFullTextOption(opts, item)
         opts.addGapIf(hasText && SearchRegistry.deepLinkForItemId(item.id) != null)
         val hasLink = addCopyLinkOption(opts, item)

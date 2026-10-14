@@ -1822,6 +1822,9 @@
     <string name="InuPluginsInfo">Plugins are user-made scripts that extend the app. Only install plugins from sources you trust.</string>
     <string name="InuPluginsEnableEngine">Enable plugins</string>
     <string name="InuPluginsEnableEngineInfo">Run installed plugins on startup</string>
+    <string name="InuPluginsEngineDisabled">Plugins are currently disabled\n\nEnable them in settings to install this plugin</string>
+    <string name="InuPluginsPluginlessBuild">This build does not include support for plugins\n\nGo to About to switch to the Full build</string>
+    <string name="InuPluginsOpenSettings">Open settings</string>
     <string name="InuPluginsInstalled">Installed</string>
     <string name="InuPluginsEnabled">Enabled</string>
     <string name="InuPluginsEmpty">No plugins installed</string>
