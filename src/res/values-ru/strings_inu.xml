@@ -1982,4 +1982,5 @@
     <string name="InuVoiceMessages">Голосовые сообщения</string>
     <string name="InuLogsRedact">Скрывать чувствительные данные</string>
     <string name="InuLogsRedactInfo">Заменять номера, ID, токены, IP и юзернеймы в логах на стабильные плейсхолдеры при записи</string>
+    <string name="InuProfileJoinDate">Дата вступления</string>
 </resources>

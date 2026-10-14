@@ -1977,4 +1977,5 @@
     <string name="InuVoiceMessages">Sesli mesajlar</string>
     <string name="InuLogsRedact">Hassas verileri gizle</string>
     <string name="InuLogsRedactInfo">Günlüklerdeki telefon numaralarını, kimlikleri, belirteçleri, IP\'leri ve kullanıcı adlarını yazılırken sabit yer tutucularla değiştirir</string>
+    <string name="InuProfileJoinDate">Katılma Tarihi</string>
 </resources>

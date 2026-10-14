@@ -2028,4 +2028,5 @@
     <string name="InuVoiceMessages">Голосові повідомлення</string>
     <string name="InuLogsRedact">Приховувати чутливі дані</string>
     <string name="InuLogsRedactInfo">Замінювати номери, ID, токени, IP та юзернейми в логах на стабільні плейсхолдери під час запису</string>
+    <string name="InuProfileJoinDate">Дата вступу</string>
 </resources>

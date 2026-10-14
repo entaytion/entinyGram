@@ -39,12 +39,14 @@ import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.UserObject
 import org.telegram.messenger.support.LongSparseLongArray
 import org.telegram.tgnet.TLObject
+import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
@@ -61,6 +63,7 @@ import org.telegram.ui.Stars.StarsController
 import org.telegram.ui.Stories.StoriesController
 import org.telegram.ui.LaunchActivity
 import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
 
 object ProfileHelper {
     const val ACTION_TOGGLE_HIDE_WALLPAPER = 505
@@ -600,10 +603,14 @@ object ProfileHelper {
                             .addText(LocaleController.formatString(R.string.InuRegDate, regDate), 13)
                     }
                 } else if (chat != null && chat.date != 0) {
-                    val joined = ChatObject.isChannel(chat) && !ChatObject.isNotInChat(chat)
-                    val res = if (joined) R.string.InuJoinDate else R.string.InuCreatedDate
+                    val created = creationDate(chat)
                     opts.addGap()
-                        .addText(LocaleController.formatString(res, formatDateTime(chat.date * 1000L)), 13)
+                    if (created != null) {
+                        opts.addText(LocaleController.formatString(R.string.InuCreatedDate, formatDateTime(created * 1000L)), 13)
+                    }
+                    if (isJoinDate(chat)) {
+                        opts.addText(LocaleController.formatString(R.string.InuJoinDate, formatDateTime(chat.date * 1000L)), 13)
+                    }
                 }
                 opts
             }.show()
@@ -707,20 +714,55 @@ object ProfileHelper {
         }
     }
 
+    private val chatCreated = ConcurrentHashMap<Long, Int>()
+    private val chatCreatedPending = ConcurrentHashMap.newKeySet<Long>()
+
+    private fun isJoinDate(chat: TLRPC.Chat): Boolean = ChatObject.isChannel(chat) && !ChatObject.isNotInChat(chat)
+
+    private fun creationDate(chat: TLRPC.Chat): Int? {
+        if (!isJoinDate(chat)) return chat.date.takeIf { it != 0 }
+        chatCreated[chat.id]?.let { return it.takeIf { d -> d != 0 } }
+        fetchCreationDate(chat)
+        return null
+    }
+
+    private fun fetchCreationDate(chat: TLRPC.Chat) {
+        if (!chatCreatedPending.add(chat.id)) return
+        val account = UserConfig.selectedAccount
+        val req = TLRPC.TL_channels_getMessages().apply {
+            channel = MessagesController.getInputChannel(chat)
+            id.add(1)
+        }
+        ConnectionsManager.getInstance(account).sendRequest(req) { response, _ ->
+            val date = (response as? TLRPC.messages_Messages)?.messages
+                ?.firstOrNull { it is TLRPC.TL_messageService && it.action is TLRPC.TL_messageActionChannelCreate }?.date
+            AndroidUtilities.runOnUIThread {
+                chatCreatedPending.remove(chat.id)
+                chatCreated[chat.id] = date ?: 0
+                if (date != null) {
+                    NotificationCenter.getInstance(account)
+                        .postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_CHAT)
+                }
+            }
+        }
+    }
+
     @JvmStatic
     fun getRegDateValue(userId: Long, chat: TLRPC.Chat?): String {
         if (userId != 0L) {
             return getRegDate(userId) ?: ""
         }
         if (chat != null && chat.date != 0) {
-            return formatDateTime(chat.date * 1000L)
+            val date = creationDate(chat) ?: chat.date
+            return formatDateTime(date * 1000L)
         }
         return ""
     }
 
     @JvmStatic
     fun getRegDateSubtitle(userId: Long, chat: TLRPC.Chat?, user: TLRPC.User?): String {
-        val base = LocaleController.getString(R.string.InuProfileRegDate)
+        val joinOnly = userId == 0L && chat != null && isJoinDate(chat) && creationDate(chat) == null
+        val base = LocaleController.getString(if (joinOnly) R.string.InuProfileJoinDate else R.string.InuProfileRegDate)
         val dc = getDcString(user, chat)
         return if (dc.isNotEmpty()) "$base • $dc" else base
     }

@@ -2000,4 +2000,5 @@
     <string name="InuVoiceMessages">پیام‌های صوتی</string>
     <string name="InuLogsRedact">پنهان کردن داده‌های حساس</string>
     <string name="InuLogsRedactInfo">شماره‌ها، شناسه‌ها، توکن‌ها، IP و نام‌های کاربری در گزارش‌ها هنگام نوشتن با جایگزین‌های ثابت عوض می‌شوند</string>
+    <string name="InuProfileJoinDate">تاریخ عضویت</string>
 </resources>

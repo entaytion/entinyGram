@@ -1976,4 +1976,5 @@
     <string name="InuVoiceMessages">ボイスメッセージ</string>
     <string name="InuLogsRedact">機密データを隠す</string>
     <string name="InuLogsRedactInfo">電話番号、ID、トークン、IP、ユーザー名を、ログへの書き込み時に固定のプレースホルダーへ置き換えます</string>
+    <string name="InuProfileJoinDate">参加日</string>
 </resources>

@@ -1976,4 +1976,5 @@
     <string name="InuVoiceMessages">语音消息</string>
     <string name="InuLogsRedact">隐藏敏感数据</string>
     <string name="InuLogsRedactInfo">写入日志时,将手机号、ID、令牌、IP 和用户名替换为固定的占位符</string>
+    <string name="InuProfileJoinDate">加入日期</string>
 </resources>
