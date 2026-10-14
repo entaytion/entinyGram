@@ -3,6 +3,7 @@
     <string name="InuOpenInDiscussion">باز کردن در گفتگو</string>
     <string name="InuBanUserConfirm">%1$s از این گروه مسدود شود؟</string>
     <string name="InuSendToDiscussWithoutJoin">نوشتن در گروه‌های گفتگو بدون عضویت</string>
+    <string name="InuChatSnowflakes">دانه‌های برف در گفتگوها</string>
     <string name="InuSendToDiscussWithoutJoinInfo">رد کردن بررسی عضویت سمت برنامه برای گروه‌های گفتگو</string>
     <string name="InuIosStyle">سبک iOS</string>
     <string name="InuConfirmBeforeSending">تأیید پیش از ارسال</string>

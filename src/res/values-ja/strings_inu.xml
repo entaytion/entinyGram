@@ -691,6 +691,7 @@
     <string name="InuParanoiaNeedSetup">先に解除コードを設定し、チャットを少なくとも1つ選んでください。</string>
     <string name="InuParanoiaExit">パラノイアモードを解除</string>
     <string name="InuSendToDiscussWithoutJoin">ディスカッショングループに参加せずに書き込む</string>
+    <string name="InuChatSnowflakes">チャットに雪を降らせる</string>
     <string name="InuSendToDiscussWithoutJoinInfo">ディスカッショングループのクライアント側メンバーシップチェックをスキップします</string>
     <string name="InuNavigationDrawer">ナビゲーションドロワー</string>
     <string name="InuNavigationDrawerInfo">下部タブバーを 12.0 以前のハンバーガーサイドドロワーに置き換えます。再起動が必要です。</string>

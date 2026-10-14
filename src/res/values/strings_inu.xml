@@ -13,6 +13,7 @@
     <string name="InuBanUserConfirm">Ban %1$s from this group?</string>
     <string name="InuSendToDiscussWithoutJoin">Write to discuss groups without joining</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Skip the client-only membership check for discussion groups</string>
+    <string name="InuChatSnowflakes">Snowflakes in chats</string>
     <string name="InuIosStyle">iOS style</string>
     <string name="InuIosSettings">iOS settings</string>
     <string name="InuIosSettingsInfo">Title centering, bottom bar, input field, chat header and liquid glass.</string>

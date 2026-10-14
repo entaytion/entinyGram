@@ -3,6 +3,7 @@
     <string name="InuOpenInDiscussion">فتح في النقاش</string>
     <string name="InuBanUserConfirm">حظر %1$s من هذه المجموعة؟</string>
     <string name="InuSendToDiscussWithoutJoin">الكتابة في مجموعات النقاش دون الانضمام</string>
+    <string name="InuChatSnowflakes">ندف الثلج في الدردشات</string>
     <string name="InuSendToDiscussWithoutJoinInfo">تخطي التحقق من العضوية الذي يجريه التطبيق فقط لمجموعات النقاش</string>
     <string name="InuIosStyle">نمط iOS</string>
     <string name="InuConfirmBeforeSending">التأكيد قبل الإرسال</string>

@@ -3,6 +3,7 @@
     <string name="InuOpenInDiscussion">Tartışmada aç</string>
     <string name="InuBanUserConfirm">%1$s bu gruptan yasaklansın mı?</string>
     <string name="InuSendToDiscussWithoutJoin">Katılmadan tartışma gruplarına yaz</string>
+    <string name="InuChatSnowflakes">Sohbetlerde kar taneleri</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Tartışma grupları için yalnızca istemci tarafındaki üyelik kontrolünü atlar</string>
     <string name="InuNavigationDrawer">Gezinme menüsü</string>
     <string name="InuNavigationDrawerInfo">Alt sekme çubuğunu v12.0 öncesi sol yan menü ile değiştirir. Yeniden başlatma gerektirir.</string>

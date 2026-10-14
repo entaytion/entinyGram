@@ -649,6 +649,9 @@ object InuConfig {
     val SEND_TO_DISCUSS_WITHOUT_JOIN = BoolItem("send_to_discuss_without_join", true)
 
     @JvmField
+    val CHAT_SNOWFLAKES = BoolItem("chat_snowflakes", false)
+
+    @JvmField
     val CONFIRM_SEND_VOICE = BoolItem("confirm_send_voice", false)
 
     @JvmField

@@ -765,6 +765,7 @@
     <string name="InuParanoiaNeedSetup">Сначала задайте код выхода и выберите хотя бы один чат.</string>
     <string name="InuParanoiaExit">Выйти из режима паранойи</string>
     <string name="InuSendToDiscussWithoutJoin">Писать в комментарии без вступления</string>
+    <string name="InuChatSnowflakes">Снежинки в чатах</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Пропускать клиентскую проверку членства для групп обсуждения (комментариев)</string>
     <string name="InuNavigationDrawer">Боковое меню</string>
     <string name="InuNavigationDrawerInfo">Заменяет нижнюю панель вкладок на боковое меню, как в старых версиях. Требуется перезапуск.</string>

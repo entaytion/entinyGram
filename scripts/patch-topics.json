@@ -94,6 +94,7 @@
   "local-custom-emoji": "ui",
   "local-folders": "tabs",
   "local-message-edit": "chat",
+  "chat-snowflakes": "chat",
   "local-names": "ui",
   "local-premium": "premium",
   "logs-respect-toggle": "settings",

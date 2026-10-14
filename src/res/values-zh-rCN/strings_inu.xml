@@ -690,6 +690,7 @@
     <string name="InuParanoiaNeedSetup">请先设置退出码并至少选择一个聊天。</string>
     <string name="InuParanoiaExit">退出偏执模式</string>
     <string name="InuSendToDiscussWithoutJoin">不加入即在讨论组发言</string>
+    <string name="InuChatSnowflakes">聊天中的雪花</string>
     <string name="InuSendToDiscussWithoutJoinInfo">跳过讨论组的客户端成员检查</string>
     <string name="InuNavigationDrawer">侧边抽屉</string>
     <string name="InuNavigationDrawerInfo">用 12.0 之前的汉堡侧边抽屉替换底部标签栏。需重启。</string>
