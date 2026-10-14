@@ -531,3 +531,4 @@ bugfix/scrim-menu-theme.patch
 entiny/chat/local-message-edit.patch
 entiny/premium/force-wallet.patch
 entiny/chat/chat-snowflakes.patch
+entiny/privacy/log-redaction.patch

@@ -118,6 +118,14 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             ).setChecked(LogsHelper.isEnabled())
         )
         if (LogsHelper.isEnabled()) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_LOGS_REDACT,
+                    R.string.InuLogsRedact,
+                    R.string.InuLogsRedactInfo,
+                    InuConfig.LOGS_REDACT.value,
+                )
+            )
             items.add(UItem.asCustom(getOrCreateLogsRow()))
             items.add(UItem.asCustom(getOrCreateHeapRow()))
         }
@@ -389,6 +397,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 // entiny: update badge on cached TLRPC user/chat objects so toggle takes effect without app restart
                 BadgeRegistry.refreshCached()
             }
+
+            TOGGLE_LOGS_REDACT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.LOGS_REDACT.toggle()
 
             TOGGLE_LOGS_ENABLED -> {
                 if (LogsHelper.isEnabled()) {
@@ -668,6 +678,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val TOGGLE_UPDATES_INCLUDE_BETA = InuUtils.generateId()
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
+        private val TOGGLE_LOGS_REDACT = InuUtils.generateId()
         private val BUTTON_DONATE = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
         private val BUTTON_CLOUD_SYNC = InuUtils.generateId()
@@ -689,6 +700,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("logs-enabled", R.string.InuLogsEnabled, TOGGLE_LOGS_ENABLED),
+                SearchRegistry.Entry("logs-redact", R.string.InuLogsRedact, TOGGLE_LOGS_REDACT),
                 SearchRegistry.Entry("additional-donate", R.string.InuDonateRow, BUTTON_DONATE),
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("auto-update-check", R.string.InuAutoUpdateCheck, TOGGLE_AUTO_UPDATE_CHECK),

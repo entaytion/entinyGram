@@ -652,6 +652,9 @@ object InuConfig {
     val CHAT_SNOWFLAKES = BoolItem("chat_snowflakes", false)
 
     @JvmField
+    val LOGS_REDACT = BoolItem("logs_redact", true)
+
+    @JvmField
     val CONFIRM_SEND_VOICE = BoolItem("confirm_send_voice", false)
 
     @JvmField

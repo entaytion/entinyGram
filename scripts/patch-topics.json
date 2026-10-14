@@ -95,6 +95,7 @@
   "local-folders": "tabs",
   "local-message-edit": "chat",
   "chat-snowflakes": "chat",
+  "log-redaction": "privacy",
   "local-names": "ui",
   "local-premium": "premium",
   "logs-respect-toggle": "settings",

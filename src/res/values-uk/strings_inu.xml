@@ -2026,4 +2026,6 @@
     <string name="InuSystemFoldersAddRecommended">Додати рекомендовані</string>
     <string name="InuSystemFoldersInfo">Натисніть на теку, щоб показати або сховати її на панелі тек. Довге натискання видаляє теку. Ці теки зберігаються лише на цьому пристрої.</string>
     <string name="InuVoiceMessages">Голосові повідомлення</string>
+    <string name="InuLogsRedact">Приховувати чутливі дані</string>
+    <string name="InuLogsRedactInfo">Замінювати номери, ID, токени, IP та юзернейми в логах на стабільні плейсхолдери під час запису</string>
 </resources>

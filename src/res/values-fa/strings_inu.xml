@@ -1998,4 +1998,6 @@
     <string name="InuSystemFoldersAddRecommended">افزودن پیشنهادی‌ها</string>
     <string name="InuSystemFoldersInfo">روی پوشه بزنید تا در نوار پوشه‌ها نمایش داده یا پنهان شود. برای حذف، نگه دارید. این پوشه‌ها روی همین دستگاه می‌مانند.</string>
     <string name="InuVoiceMessages">پیام‌های صوتی</string>
+    <string name="InuLogsRedact">پنهان کردن داده‌های حساس</string>
+    <string name="InuLogsRedactInfo">شماره‌ها، شناسه‌ها، توکن‌ها، IP و نام‌های کاربری در گزارش‌ها هنگام نوشتن با جایگزین‌های ثابت عوض می‌شوند</string>
 </resources>

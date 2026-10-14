@@ -2018,4 +2018,6 @@
     <string name="InuFeedSummary">Aggregated posts from your channels</string>
     <string name="InuEditedArchive">Edited archive</string>
     <string name="InuGroupChatArchives">Group archives in entinyGram folder</string>
+    <string name="InuLogsRedact">Redact sensitive data</string>
+    <string name="InuLogsRedactInfo">Replace phone numbers, IDs, tokens, IPs and usernames in logs with stable placeholders as they are written</string>
 </resources>

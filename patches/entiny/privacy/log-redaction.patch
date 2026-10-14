@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 14 Oct 2026 18:22:58 +0300
+Subject: [*] redact sensitive data in logs
+
+---
+ .../src/main/java/org/telegram/messenger/FileLog.java         | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
+@@ -344,12 +344,12 @@ public class FileLog {
+             logQueue = new DispatchQueue("logQueue");
+             currentFile.createNewFile();
+             FileOutputStream stream = new FileOutputStream(currentFile);
+-            streamWriter = new OutputStreamWriter(stream);
++            streamWriter = new desu.inugram.helpers.RedactingWriter(stream);
+             streamWriter.write("-----start log " + date + "-----\n");
+             streamWriter.flush();
+ 
+             FileOutputStream tlStream = new FileOutputStream(tlRequestsFile);
+-            tlStreamWriter = new OutputStreamWriter(tlStream);
++            tlStreamWriter = new desu.inugram.helpers.RedactingWriter(tlStream);
+             tlStreamWriter.write("-----start log " + date + "-----\n");
+             tlStreamWriter.flush();
+         } catch (Exception e) {

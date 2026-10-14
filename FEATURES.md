@@ -57,6 +57,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - hide or spoiler-cover messages matching regex rules
   - optionally hide replies to filtered messages
 
+- 📡 **redact logs**: phone numbers, IDs, tokens, IPs and usernames are replaced with stable placeholders as logs are written
+
 ### restricted features
 
 - 📡 **device spoof**: choose the device name, system and app version shown in Settings → Devices, hide time zone and install source, and check what Telegram sees
