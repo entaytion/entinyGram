@@ -2,9 +2,11 @@ package desu.inugram.helpers.dialogs
 
 import android.graphics.Canvas
 import android.graphics.ColorFilter
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.Pair
+import android.view.View
 import androidx.core.content.edit
 import androidx.core.graphics.withSave
 import desu.inugram.InuConfig
@@ -305,7 +307,7 @@ object FolderHelper {
     @JvmStatic
     fun getTabBarHeightDp(): Int = TAB_BAR_HEIGHT_DP
 
-    const val TAB_BAR_BOTTOM_MARGIN_DP = 8
+    const val TAB_BAR_BOTTOM_MARGIN_DP = 6
 
     @JvmStatic
     fun atBottom(): Boolean = InuConfig.FOLDERS_AT_BOTTOM.value
@@ -323,6 +325,16 @@ object FolderHelper {
     ): Float {
         val baseOffset = additionFloatingButtonOffset - AndroidUtilities.dp(bottomReservedHeightDp().toFloat())
         return -navigationBarHeight - baseOffset - floatingButtonPanOffset
+    }
+
+    @JvmStatic
+    fun extendBottomBlur(zone: RectF, tabs: View?, hasBottomBlur: Boolean, width: Int): Boolean {
+        if (!atBottom() || tabs == null || tabs.visibility != View.VISIBLE || tabs.height == 0) return hasBottomBlur
+        val top = tabs.y
+        val bottom = tabs.y + tabs.height
+        if (hasBottomBlur) zone.set(zone.left, minOf(zone.top, top), zone.right, maxOf(zone.bottom, bottom))
+        else zone.set(0f, top, width.toFloat(), bottom)
+        return true
     }
 
     // entiny: entering a folder can skip the list rebuild, leaving the tab empty until the next switch

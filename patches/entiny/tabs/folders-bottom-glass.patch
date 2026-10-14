@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 14 Oct 2026 19:22:42 +0300
+Subject: [*] glass behind bottom folders bar
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -14605,6 +14605,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             hasBottomBlur = true;
+         }
+ 
++        hasBottomBlur = FolderHelper.extendBottomBlur(iBlur3PositionMainTabs, filterTabsView, hasBottomBlur, fragmentView.getMeasuredWidth());
+         scrollableViewNoiseSuppressor.setupRenderNodes(iBlur3Positions, hasBottomBlur ? 2 : 1);
+         scrollableViewNoiseSuppressor.invalidateResultRenderNodes(iBlur3Capture, fragmentView.getMeasuredWidth(), fragmentView.getMeasuredHeight());
+ 
