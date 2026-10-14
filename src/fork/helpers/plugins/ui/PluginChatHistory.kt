@@ -470,7 +470,7 @@ object PluginChatHistory : SessionResource {
         ChatActivity.OPTION_ADD_TO_GIFS, ChatActivity.OPTION_ADD_STICKER_TO_FAVORITES, ChatActivity.OPTION_DELETE_STICKER_FROM_FAVORITES,
         ChatActivity.OPTION_APPLY_LOCALIZATION_OR_THEME, ChatActivity.OPTION_OPEN_PROFILE, ChatActivity.OPTION_TRANSLATE,
         ChatHelper.OPTION_TRANSLATE_REVERT, ChatHelper.OPTION_DETAILS, ChatHelper.OPTION_SHOW_JSON, ChatHelper.OPTION_REMOVE_FROM_CACHE,
-        ChatHelper.OPTION_COPY_MEDIA, ChatHelper.OPTION_SAVE_STICKER_TO_DOWNLOADS, ChatHelper.OPTION_PLUGIN_ACTIONS,
+        ChatHelper.OPTION_COPY_MEDIA, ChatHelper.OPTION_SAVE_STICKER_TO_DOWNLOADS, ChatHelper.OPTION_SAVE_VOICE_TO_DOWNLOADS, ChatHelper.OPTION_PLUGIN_ACTIONS,
     )
 
     /** routed to `realId` and the message's own chat, so they work on real entries */

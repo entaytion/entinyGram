@@ -187,6 +187,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **keep keyboard while typing**: scrolling the chat doesn't hide the keyboard when there's a draft
 - 📡 **keep three-dot menu**: option to keep the chats list menu button when the side menu is on
 - 📡 **keep screen on while recording**: the screen doesn't turn off during a voice or video message
+- "Save to Downloads" for regular voice messages (stock only has it for files and music)
 
 ### debloat & premium noise
 

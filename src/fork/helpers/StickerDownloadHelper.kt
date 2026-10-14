@@ -5,6 +5,9 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
@@ -70,6 +73,27 @@ object StickerDownloadHelper {
                         ?.createDownloadBulletin(BulletinFactory.FileType.UNKNOWN, 1, resourcesProvider)
                         ?.show()
                 }
+            }
+        }
+    }
+
+    @JvmStatic
+    fun saveVoiceToDownloads(activity: Activity, accountId: Int, message: MessageObject, resourcesProvider: Theme.ResourcesProvider?) {
+        val document = message.document ?: return
+        if (!ensureStoragePermission(activity)) return
+        val stamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date(message.messageOwner.date * 1000L))
+        val extension = when (document.mime_type) {
+            "audio/ogg" -> "ogg"
+            "audio/mpeg" -> "mp3"
+            "audio/mp4", "audio/m4a", "audio/x-m4a" -> "m4a"
+            else -> FileLoader.getDocumentFileName(document).substringAfterLast('.', "").ifEmpty { "ogg" }
+        }
+        val name = "voice_${stamp}_${message.id}.$extension"
+        withDownloadedFile(accountId, document, message) { file ->
+            MediaController.saveFile(file.absolutePath, activity, 2, name, document.mime_type) {
+                createBulletinFactory(resourcesProvider)
+                    ?.createDownloadBulletin(BulletinFactory.FileType.UNKNOWN, 1, resourcesProvider)
+                    ?.show()
             }
         }
     }

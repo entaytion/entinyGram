@@ -168,6 +168,7 @@ object ChatHelper {
     const val OPTION_PLUGIN_ACTIONS = 533
     const val OPTION_LOCAL_EDIT = 534
     const val OPTION_LOCAL_EDIT_RESET = 535
+    const val OPTION_SAVE_VOICE_TO_DOWNLOADS = 536
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -572,6 +573,14 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuRegexFilterAddFromMessage))
             options.add(OPTION_ADD_FILTER)
             icons.add(R.drawable.msg_block2)
+        }
+
+        if (!noforwards && selectedObject.isVoice() && !selectedObject.isVoiceOnce() && !selectedObject.isSecretMedia() &&
+            selectedObject.document != null && !options.contains(OPTION_SAVE_VOICE_TO_DOWNLOADS)
+        ) {
+            items.add(LocaleController.getString(R.string.SaveToDownloads))
+            options.add(OPTION_SAVE_VOICE_TO_DOWNLOADS)
+            icons.add(R.drawable.msg_download)
         }
 
         // entiny: OPTION_COPY fallback copies media URI since stock only covers text/caption
@@ -1205,6 +1214,11 @@ object ChatHelper {
                     saveOneTimeMedia(activity, selectedObject, copyFirst = true)
                 }
                 openSecretViewer(activity, selectedObject)
+            }
+
+            OPTION_SAVE_VOICE_TO_DOWNLOADS -> {
+                val parent = activity.parentActivity ?: return true
+                StickerDownloadHelper.saveVoiceToDownloads(parent, activity.currentAccount, selectedObject, activity.resourceProvider)
             }
 
             OPTION_SAVE_STICKER_TO_DOWNLOADS -> {
