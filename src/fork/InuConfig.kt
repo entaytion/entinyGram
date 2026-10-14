@@ -1845,6 +1845,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val TRANSLATE_PROVIDER = IntItem("translate_provider", 0)
 
+    @JvmField
+    val TRANSLATE_AUTO_FALLBACK = BoolItem("translate_auto_fallback", true)
+
     // entiny: skip stock 6-message detection sample threshold so translate banner shows on first detected foreign message
     @JvmField
     val INSTANT_TRANSLATE_BANNER = BoolItem("instant_translate_banner", true)

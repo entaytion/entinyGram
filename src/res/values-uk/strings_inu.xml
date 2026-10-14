@@ -2029,4 +2029,6 @@
     <string name="InuLogsRedact">Приховувати чутливі дані</string>
     <string name="InuLogsRedactInfo">Замінювати номери, ID, токени, IP та юзернейми в логах на стабільні плейсхолдери під час запису</string>
     <string name="InuProfileJoinDate">Дата вступу</string>
+    <string name="InuTranslateAutoFallback">Перемикати провайдера при блокуванні</string>
+    <string name="InuTranslateAutoFallbackInfo">Якщо Google блокує переклад з вашої мережі, повторити через Bing, потім MyMemory. Текст буде надіслано їм</string>
 </resources>

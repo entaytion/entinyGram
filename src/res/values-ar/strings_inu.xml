@@ -2013,4 +2013,6 @@
     <string name="InuLogsRedact">إخفاء البيانات الحساسة</string>
     <string name="InuLogsRedactInfo">استبدال أرقام الهواتف والمعرّفات والرموز وعناوين IP وأسماء المستخدمين في السجلات برموز ثابتة أثناء الكتابة</string>
     <string name="InuProfileJoinDate">تاريخ الانضمام</string>
+    <string name="InuTranslateAutoFallback">تبديل المزوّد عند الحظر</string>
+    <string name="InuTranslateAutoFallbackInfo">إذا حظرت Google الترجمة من شبكتك، أعد المحاولة عبر Bing ثم MyMemory. سيُرسل نصك إليهما</string>
 </resources>

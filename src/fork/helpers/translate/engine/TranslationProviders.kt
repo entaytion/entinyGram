@@ -164,7 +164,7 @@ object GoogleWebProvider : TranslationProvider {
                 ?: try {
                     translateViaGtx(text, tl)
                 } catch (e: ProviderRateLimitException) {
-                    throw ProviderRateLimitException(LocaleController.getString(R.string.InuTranslateGoogleBlocked))
+                    blockedFallback(text, toLang)
                 }
         }
         return try {
@@ -176,8 +176,21 @@ object GoogleWebProvider : TranslationProvider {
             blockedUntil = System.currentTimeMillis() + BLOCK_COOLDOWN_MS
             translateViaApp(text, tl)
                 ?: translateViaDictionary(text, tl)
-                ?: throw ProviderRateLimitException(LocaleController.getString(R.string.InuTranslateGoogleBlocked))
+                ?: blockedFallback(text, toLang)
         }
+    }
+
+    private fun blockedFallback(text: String, toLang: String): String {
+        if (InuConfig.TRANSLATE_AUTO_FALLBACK.value) {
+            for (provider in listOf(BingProvider, MyMemoryProvider)) {
+                try {
+                    return provider.translate(text, toLang)
+                } catch (e: Exception) {
+                    Log.d(TAG, "blocked fallback ${provider.id} failed: ${e.message}")
+                }
+            }
+        }
+        throw ProviderRateLimitException(LocaleController.getString(R.string.InuTranslateGoogleBlocked))
     }
 
     private fun translateViaGtx(text: String, tl: String): String {

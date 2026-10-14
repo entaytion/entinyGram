@@ -1977,4 +1977,6 @@
     <string name="InuLogsRedact">機密データを隠す</string>
     <string name="InuLogsRedactInfo">電話番号、ID、トークン、IP、ユーザー名を、ログへの書き込み時に固定のプレースホルダーへ置き換えます</string>
     <string name="InuProfileJoinDate">参加日</string>
+    <string name="InuTranslateAutoFallback">ブロック時にプロバイダーを切り替える</string>
+    <string name="InuTranslateAutoFallbackInfo">ネットワークからの翻訳をGoogleがブロックした場合、BingそしてMyMemoryで再試行します。テキストはそちらに送信されます</string>
 </resources>

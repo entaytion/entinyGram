@@ -1978,4 +1978,6 @@
     <string name="InuLogsRedact">Hassas verileri gizle</string>
     <string name="InuLogsRedactInfo">Günlüklerdeki telefon numaralarını, kimlikleri, belirteçleri, IP\'leri ve kullanıcı adlarını yazılırken sabit yer tutucularla değiştirir</string>
     <string name="InuProfileJoinDate">Katılma Tarihi</string>
+    <string name="InuTranslateAutoFallback">Engellenince sağlayıcı değiştir</string>
+    <string name="InuTranslateAutoFallbackInfo">Google ağınızdan çeviriyi engellerse Bing, ardından MyMemory ile yeniden denenir. Metniniz onlara gönderilir</string>
 </resources>

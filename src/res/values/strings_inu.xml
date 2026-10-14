@@ -2021,4 +2021,6 @@
     <string name="InuLogsRedact">Redact sensitive data</string>
     <string name="InuLogsRedactInfo">Replace phone numbers, IDs, tokens, IPs and usernames in logs with stable placeholders as they are written</string>
     <string name="InuProfileJoinDate">Join Date</string>
+    <string name="InuTranslateAutoFallback">Switch provider when blocked</string>
+    <string name="InuTranslateAutoFallbackInfo">If Google blocks translation from your network, retry with Bing, then MyMemory. Your text is sent to them instead</string>
 </resources>

@@ -1983,4 +1983,6 @@
     <string name="InuLogsRedact">Скрывать чувствительные данные</string>
     <string name="InuLogsRedactInfo">Заменять номера, ID, токены, IP и юзернеймы в логах на стабильные плейсхолдеры при записи</string>
     <string name="InuProfileJoinDate">Дата вступления</string>
+    <string name="InuTranslateAutoFallback">Переключать провайдера при блокировке</string>
+    <string name="InuTranslateAutoFallbackInfo">Если Google блокирует перевод из вашей сети, повторить через Bing, затем MyMemory. Текст будет отправлен им</string>
 </resources>

@@ -89,6 +89,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
 
         items.add(mkTwoLineCheckItem(TOGGLE_FORCE_TRANSLATE, R.string.InuForceTranslate, R.string.InuForceTranslateInfo, InuConfig.FORCE_TRANSLATE.value))
         items.add(mkTwoLineCheckItem(TOGGLE_INSTANT_TRANSLATE_BANNER, R.string.InuInstantTranslateBanner, R.string.InuInstantTranslateBannerInfo, InuConfig.INSTANT_TRANSLATE_BANNER.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_TRANSLATE_AUTO_FALLBACK, R.string.InuTranslateAutoFallback, R.string.InuTranslateAutoFallbackInfo, InuConfig.TRANSLATE_AUTO_FALLBACK.value))
         items.add(mkTwoLineCheckItem(TOGGLE_IGNORE_TRANSLATIONS_DISABLED, R.string.InuIgnoreTranslationsDisabled, R.string.InuIgnoreTranslationsDisabledInfo, InuConfig.IGNORE_TRANSLATIONS_DISABLED.value))
         items.add(UItem.asShadow(null))
     }
@@ -163,6 +164,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_AUTO_DETECT_LANG = InuUtils.generateId()
         private val TOGGLE_INSTANT_TRANSLATE_BANNER = InuUtils.generateId()
         private val TOGGLE_IGNORE_TRANSLATIONS_DISABLED = InuUtils.generateId()
+        private val TOGGLE_TRANSLATE_AUTO_FALLBACK = InuUtils.generateId()
         private val TOGGLE_SHOW_TRANSLATE_BUTTON = InuUtils.generateId()
         private val TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON = InuUtils.generateId()
         private val BUTTON_DO_NOT_TRANSLATE = InuUtils.generateId()
@@ -180,6 +182,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             TOGGLE_AUTO_DETECT_LANG to InuConfig.TRANSLATE_AUTO_DETECT_LANG,
             TOGGLE_INSTANT_TRANSLATE_BANNER to InuConfig.INSTANT_TRANSLATE_BANNER,
             TOGGLE_IGNORE_TRANSLATIONS_DISABLED to InuConfig.IGNORE_TRANSLATIONS_DISABLED,
+            TOGGLE_TRANSLATE_AUTO_FALLBACK to InuConfig.TRANSLATE_AUTO_FALLBACK,
         )
 
         @JvmField val PAGE = SearchRegistry.Page(
@@ -204,6 +207,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("translate-auto-detect-lang", R.string.InuTranslateAutoDetectLang, TOGGLE_AUTO_DETECT_LANG),
                 SearchRegistry.Entry("instant-translate-banner", R.string.InuInstantTranslateBanner, TOGGLE_INSTANT_TRANSLATE_BANNER),
                 SearchRegistry.Entry("ignore-translations-disabled", R.string.InuIgnoreTranslationsDisabled, TOGGLE_IGNORE_TRANSLATIONS_DISABLED),
+                SearchRegistry.Entry("translate-auto-fallback", R.string.InuTranslateAutoFallback, TOGGLE_TRANSLATE_AUTO_FALLBACK),
             ),
         )
     }
