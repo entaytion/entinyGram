@@ -17,7 +17,7 @@ index 0000000..0000000 100644
              }
          }
          boolean isOnline = isOnline();
-+        if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && ttlPeriod <= 0 && user != null && desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) != 0) {
++        if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && ttlPeriod <= 0 && user != null && !user.self && desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) != 0) {
 +            isOnline = true;
 +        }
          onlineProgress = isOnline ? 1.0f : 0.0f;
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
              }
              if (user != null && !MessagesController.isSupportUser(user) && !user.bot) {
                  boolean isOnline = isOnline();
-+                int inu_presenceColor = desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !showTtl ? desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) : 0;
++                int inu_presenceColor = desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !showTtl && !user.self ? desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) : 0;
 +                if (inu_presenceColor != 0) isOnline = true;
                  wasDrawnOnline = isOnline;
                  if (isOnline || onlineProgress != 0) {
@@ -50,7 +50,7 @@ index 0000000..0000000 100644
          if (child == imageView) {
              boolean showOnline = !premiumBlocked && currentUser != null && !currentUser.bot && (currentUser.status != null && currentUser.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(currentUser.id));
 +            int inu_presenceColor = 0;
-+            if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !premiumBlocked && currentUser != null && !currentUser.bot) {
++            if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !premiumBlocked && currentUser != null && !currentUser.bot && !currentUser.self) {
 +                inu_presenceColor = desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(currentUser.status, showOnline);
 +                if (inu_presenceColor != 0) showOnline = true;
 +            }
