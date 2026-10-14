@@ -160,7 +160,7 @@ index 0000000..0000000 100644
      private void clearChatData(boolean full) {
          messages.clear();
          messagesByDays.clear();
-@@ -19430,6 +19458,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -19434,6 +19462,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -173,7 +173,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19437,7 +19471,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19441,7 +19475,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -182,7 +182,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33790,6 +33824,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33794,6 +33828,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -195,7 +195,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -39948,7 +39988,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39959,7 +39999,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -204,7 +204,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -46392,7 +46432,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46406,7 +46446,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.utils.code.highlight.CodeHighlighting
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
@@ -25,8 +26,6 @@ import org.telegram.ui.Components.BottomSheetWithRecyclerListView
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
-import org.telegram.utils.code.highlight.CodeHighlighting
-import org.telegram.utils.code.highlight.PrismaTokenStyles
 
 class PluginSourceSheet(context: Context, private val name: String, private val source: String) :
     BottomSheetWithRecyclerListView(context, null, false, false, false, null) {
@@ -37,9 +36,7 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuPluginSourceTitle)
 
-    private lateinit var adapter: Adapter
-
-    override fun createAdapter(listView: RecyclerListView): RecyclerListView.SelectionAdapter = Adapter().also { adapter = it }
+    override fun createAdapter(listView: RecyclerListView): RecyclerListView.SelectionAdapter = Adapter()
 
     private fun buildHeader(context: Context): View {
         val title = TextView(context).apply {
@@ -105,35 +102,28 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
 
     init {
         if (source.length <= HIGHLIGHT_MAX_LENGTH) {
-            CodeHighlighting.SERVICE.request(source, "javascript") { result ->
-                val ranges = result.tokens?.copyStyledRanges() ?: return@request
-                Utilities.searchQueue.postRunnable {
-                    var first = 0
-                    val highlighted = chunks.map { range ->
-                        val end = range.last + 1
-                        val text = SpannableString(source.substring(range.first, end))
-                        while (first < ranges.size && ranges[first + 1] <= range.first) first += 3
-                        var i = first
-                        while (i < ranges.size && ranges[i] < end) {
-                            val from = maxOf(ranges[i], range.first) - range.first
-                            val to = minOf(ranges[i + 1], end) - range.first
-                            val flags = ranges[i + 2]
-                            i += 3
-                            if (from >= to) continue
-                            val group = flags and PrismaTokenStyles.COLOR_MASK
-                            if (group != 0) {
-                                text.setSpan(CodeHighlighting.ColorSpan(group), from, to, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            }
-                            if (flags and (PrismaTokenStyles.BOLD or PrismaTokenStyles.ITALIC) != 0) {
-                                text.setSpan(CodeHighlighting.SyntaxFontSpan(flags), from, to, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            }
+            CodeHighlighting.inu_computeSpans(source, "javascript") { computed ->
+              Utilities.searchQueue.postRunnable {
+                val spans = computed.sortedBy { it.start }
+                var first = 0
+                val result = chunks.map { range ->
+                    val end = range.last + 1
+                    val text = SpannableString(source.substring(range.first, end))
+                    while (first < spans.size && spans[first].end <= range.first) first++
+                    var i = first
+                    while (i < spans.size && spans[i].start < end) {
+                        val span = spans[i++]
+                        val spanStart = maxOf(span.start, range.first) - range.first
+                        val spanEnd = minOf(span.end, end) - range.first
+                        if (spanStart < spanEnd) {
+                            text.setSpan(CodeHighlighting.ColorSpan(span.group), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
-                        text
                     }
-                    AndroidUtilities.runOnUIThread {
-                        highlightedChunks = highlighted
-                        adapter.notifyItemRangeChanged(1, chunks.size)
-                    }
+                    text
+                }
+                AndroidUtilities.runOnUIThread {
+                    highlightedChunks = result
+                    recyclerListView.adapter?.notifyItemRangeChanged(1, chunks.size)
                 }
               }
             }

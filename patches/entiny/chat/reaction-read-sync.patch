@@ -245,7 +245,7 @@ index 0000000..0000000 100644
                      if (reactionsMentionCount <= 0) {
                          getMessagesController().markReactionsAsRead(dialog_id, getTopicId());
                      }
-@@ -24646,6 +24646,17 @@ public class ChatActivity extends BaseFragment implements
+@@ -24650,6 +24650,17 @@ public class ChatActivity extends BaseFragment implements
              long topicId = (long) args[1];
              if (dialogId == dialog_id && ((!isTopic && (!ChatObject.isMonoForum(currentChat) || getTopicId() == 0)) || topicId == getTopicId())) {
                  reactionsMentionCount = (int) args[2];
@@ -263,7 +263,7 @@ index 0000000..0000000 100644
                  ArrayList<Integer> messages = null;
                  if (args[2] != null) {
                      messages = (ArrayList<Integer>) args[3];
-@@ -24656,7 +24667,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24660,7 +24671,7 @@ public class ChatActivity extends BaseFragment implements
                          BaseCell cell = findMessageCell(messageId, true);
                          if (cell != null && reactionsMentionCount > 0) {
                              reactionsMentionCount--;
@@ -272,7 +272,7 @@ index 0000000..0000000 100644
                              AndroidUtilities.runOnUIThread(() -> {
                                  playReactionAnimation(messageId);
                              }, 200);
-@@ -47415,12 +47426,20 @@ public class ChatActivity extends BaseFragment implements
+@@ -47429,12 +47440,20 @@ public class ChatActivity extends BaseFragment implements
              loadLastUnreadMention();
          } else if (buttonId == ChatActivitySideControlsButtonsLayout.BUTTON_REACTIONS) {
              wasManualScroll = true;
