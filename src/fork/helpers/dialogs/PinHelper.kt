@@ -117,8 +117,8 @@ object PinHelper {
         }
         if (matched.isEmpty()) return
         val ordered = pins.entries.sortedByDescending { it.value }.mapNotNull { matched[it.key] }
-        var insertAt = 0
-        while (insertAt < list.size && isReallyPinned(list[insertAt])) insertAt++
+        var insertAt = list.indexOfLast(isReallyPinned) + 1
+        if (insertAt == 0) while (insertAt < list.size && list[insertAt] is TLRPC.TL_dialogFolder) insertAt++
         list.addAll(insertAt, ordered)
     }
 }

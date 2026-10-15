@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 14 Oct 2026 21:32:04 +0300
+Subject: [*] keep local pins in order after folder edits
+
+---
+ .../src/main/java/org/telegram/messenger/MessagesController.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -22478,6 +22478,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         try {
+             Collections.sort(allDialogs, dialogComparator);
+         } catch (Exception e) {}
++        desu.inugram.helpers.dialogs.PinHelper.reorderLocalPins(this, currentAccount);
+     }
+ 
+     public boolean canAddToForward(TLRPC.Dialog d) {

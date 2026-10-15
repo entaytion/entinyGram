@@ -533,4 +533,5 @@ entiny/premium/force-wallet.patch
 entiny/chat/chat-snowflakes.patch
 entiny/privacy/log-redaction.patch
 entiny/tabs/folders-bottom-glass.patch
+entiny/chat/local-pins-order.patch
 entiny/chat/hide-reactions.patch
