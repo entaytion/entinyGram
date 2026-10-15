@@ -123,7 +123,7 @@ object InuHooks {
         desu.inugram.helpers.security.PresenceHelper.load(account)
         desu.inugram.helpers.security.GhostHelper.syncPresence(account)
         desu.inugram.helpers.badges.BadgeRegistry.init(account)
-        desu.inugram.helpers.chat.SavedMessagesHelper.pruneIfNeeded(account)
+        desu.inugram.helpers.chat.SavedMessagesHelper.schedulePrune(account)
         desu.inugram.helpers.security.PresenceHelper.pruneIfNeeded(account)
         AndroidUtilities.runOnUIThread {
             val nc = NotificationCenter.getInstance(account)
