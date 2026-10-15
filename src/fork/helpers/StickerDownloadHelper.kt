@@ -152,10 +152,11 @@ object StickerDownloadHelper {
         else -> FileLoader.getDocumentFileName(document).substringAfterLast('.', "").ifEmpty { "dat" }
     }
 
-    private fun withDownloadedFile(
+    internal fun withDownloadedFile(
         accountId: Int,
         document: TLRPC.Document,
         parentObject: Any?,
+        onFailed: (() -> Unit)? = null,
         callback: (File) -> Unit,
     ) {
         val loader = FileLoader.getInstance(accountId)
@@ -171,8 +172,12 @@ object StickerDownloadHelper {
                 if (args.getOrNull(0) as? String != attachName) return
                 center.removeObserver(this, NotificationCenter.fileLoaded)
                 center.removeObserver(this, NotificationCenter.fileLoadFailed)
-                if (id != NotificationCenter.fileLoaded) return
-                findExistingFile(loader, document)?.let(callback)
+                if (id != NotificationCenter.fileLoaded) {
+                    onFailed?.invoke()
+                    return
+                }
+                val file = findExistingFile(loader, document)
+                if (file != null) callback(file) else onFailed?.invoke()
             }
         }
         center.addObserver(observer, NotificationCenter.fileLoaded)

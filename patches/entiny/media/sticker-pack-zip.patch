@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 15 Oct 2026 21:07:59 +0300
+Subject: [+] sticker pack ZIP download
+
+---
+ .../main/java/org/telegram/ui/Components/StickersAlert.java    | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
+@@ -1122,6 +1122,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
+         optionsButton.addSubItem(1, R.drawable.msg_share, LocaleController.getString(R.string.StickersShare));
+         optionsButton.addSubItem(2, R.drawable.msg_link, LocaleController.getString(R.string.CopyLink));
+         optionsButton.addSubItem(100, R.drawable.msg_retry, LocaleController.getString(R.string.InuRefreshStickerSet));
++        optionsButton.addSubItem(desu.inugram.helpers.StickerPackZipHelper.MENU_ID, R.drawable.msg_download, LocaleController.getString(R.string.InuDownloadStickerPackZip));
+ 
+         optionsButton.setOnClickListener(v -> {
+             checkOptions();
+@@ -1425,6 +1426,8 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
+             });
+         } else if (id == 100) {
+             desu.inugram.helpers.StickerSetHelper.refreshStickerSet(currentAccount, (FrameLayout) containerView, resourcesProvider, stickerSet, this::updateStickerSet);
++        } else if (id == desu.inugram.helpers.StickerPackZipHelper.MENU_ID) {
++            desu.inugram.helpers.StickerPackZipHelper.download(parentActivity != null ? parentActivity : parentFragment != null ? parentFragment.getParentActivity() : null, currentAccount, (FrameLayout) containerView, resourcesProvider, stickerSet);
+         }
+     }
+ 
