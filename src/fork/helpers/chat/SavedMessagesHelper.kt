@@ -44,52 +44,140 @@ object SavedMessagesHelper {
         return dir
     }
 
-    fun migrateSavedMedia(account: Int, db: org.telegram.SQLite.SQLiteDatabase) {
-        try {
-            val legacyRoot = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "entinyGram/media").canonicalFile
-            val targetRoot = getSavedMediaDir(account)
-            val paths = ArrayList<String>()
-            val cursor = db.queryFinalized("SELECT media_path FROM inu_deleted_messages WHERE media_path IS NOT NULL UNION SELECT media_path FROM inu_edit_history WHERE media_path IS NOT NULL")
-            try {
-                while (cursor.next()) cursor.stringValue(0)?.let(paths::add)
-            } finally {
-                cursor.dispose()
+    private const val AUTO_COPY_MAX_BYTES = 50L * 1024 * 1024
+    private const val STARTUP_DELAY_MS = 20_000L
+
+    // entiny: file copies run here so storageQueue only sees short database writes
+    private val mediaQueue by lazy { org.telegram.messenger.DispatchQueue("inuArchiveMedia") }
+    private val pendingCopies = HashSet<String>()
+    private val migratedAccounts = HashSet<Int>()
+
+    private fun scheduleMediaMigration(account: Int) {
+        synchronized(migratedAccounts) { if (!migratedAccounts.add(account)) return }
+        mediaQueue.postRunnable({
+            val legacyRoot = try {
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "entinyGram/media").canonicalFile
+            } catch (e: Throwable) {
+                null
             }
-            for (path in paths) {
+            if (legacyRoot == null || !legacyRoot.isDirectory) return@postRunnable
+            val storage = MessagesStorage.getInstance(account)
+            storage.storageQueue.postRunnable {
+                val paths = ArrayList<String>()
                 try {
-                    val source = File(path).canonicalFile
-                    if (!source.path.startsWith(legacyRoot.path + File.separator) || !source.isFile || source.length() <= 0) continue
-                    val relative = source.relativeTo(legacyRoot)
-                    if (relative.parent != null && relative.parent != targetRoot.name) continue
-                    val target = File(targetRoot, "${java.util.UUID.randomUUID()}_${source.name}")
-                    val copiedPath = runMediaCopy(PendingMediaCopy(source, target)) ?: continue
-                    InuDatabaseHelper.replaceSavedMediaPath(db, path, copiedPath)
+                    val db = storage.database ?: return@postRunnable
+                    val pattern = "%/${Environment.DIRECTORY_DOWNLOADS}/entinyGram/media/%"
+                    val cursor = db.queryFinalized("SELECT media_path FROM inu_deleted_messages WHERE media_path LIKE ? UNION SELECT media_path FROM inu_edit_history WHERE media_path LIKE ?", pattern, pattern)
+                    try {
+                        while (cursor.next()) cursor.stringValue(0)?.let(paths::add)
+                    } finally {
+                        cursor.dispose()
+                    }
                 } catch (e: Throwable) {
-                    android.util.Log.d(TAG, "archive media migration failed", e)
+                    android.util.Log.d(TAG, "archive media migration query failed", e)
                 }
+                if (paths.isNotEmpty()) mediaQueue.postRunnable { migrateSavedMedia(account, legacyRoot, paths) }
             }
-        } catch (e: Throwable) {
-            android.util.Log.d(TAG, "archive media migration unavailable", e)
-        }
+        }, STARTUP_DELAY_MS)
     }
 
-    // entiny: resolve archive paths on main thread but defer heavy media copies to storage queue
+    private fun migrateSavedMedia(account: Int, legacyRoot: File, paths: List<String>) {
+        val started = android.os.SystemClock.elapsedRealtime()
+        val targetRoot = getSavedMediaDir(account)
+        val storage = MessagesStorage.getInstance(account)
+        var moved = 0
+        for (path in paths) {
+            try {
+                val source = File(path).canonicalFile
+                if (!source.path.startsWith(legacyRoot.path + File.separator) || !source.isFile || source.length() <= 0) continue
+                val relative = source.relativeTo(legacyRoot)
+                if (relative.parent != null && relative.parent != targetRoot.name) continue
+                val copiedPath = runMediaCopy(PendingMediaCopy(source, File(targetRoot, "${java.util.UUID.randomUUID()}_${source.name}"))) ?: continue
+                moved++
+                storage.storageQueue.postRunnable {
+                    try {
+                        storage.database?.let { InuDatabaseHelper.replaceSavedMediaPath(it, path, copiedPath) }
+                    } catch (e: Throwable) {
+                        File(copiedPath).delete()
+                        android.util.Log.d(TAG, "archive media migration update failed", e)
+                    }
+                }
+            } catch (e: Throwable) {
+                android.util.Log.d(TAG, "archive media migration failed", e)
+            }
+        }
+        android.util.Log.d(TAG, "archive media migration: $moved of ${paths.size} files in ${android.os.SystemClock.elapsedRealtime() - started} ms")
+    }
+
     private data class PendingMediaCopy(val source: File, val target: File, val expectedSize: Long = 0L)
 
-    private fun planMediaCopy(account: Int, message: TLRPC.Message?): PendingMediaCopy? {
+    private fun planMediaCopy(account: Int, message: TLRPC.Message?, maxBytes: Long = AUTO_COPY_MAX_BYTES): PendingMediaCopy? {
         if (message?.media == null) return null
         return try {
             val fileLoader = FileLoader.getInstance(account) ?: return null
             val expectedSize = MessageObject.getMedia(message)?.document?.size ?: 0L
+            if (maxBytes > 0 && expectedSize > maxBytes) return null
             val path = sequenceOf(
                 message.attachPath?.takeIf { it.isNotBlank() }?.let { File(it) },
                 fileLoader.getPathToMessage(message),
                 fileLoader.getPathToMessage(message, true, true),
             ).filterNotNull().firstOrNull { it.isFile && it.length() > 0 && (expectedSize <= 0 || it.length() == expectedSize) && !it.name.endsWith(".enc") } ?: return null
+            if (maxBytes > 0 && path.length() > maxBytes) return null
             PendingMediaCopy(path, File(getSavedMediaDir(account), "${MessageObject.getDialogId(message)}_${message.id}_${java.util.UUID.randomUUID()}_${path.name}"), expectedSize)
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "planMediaCopy error", e)
             null
+        }
+    }
+
+    private fun copyThenStore(account: Int, key: String, plan: PendingMediaCopy, store: (org.telegram.SQLite.SQLiteDatabase, String) -> Boolean) {
+        synchronized(pendingCopies) { if (!pendingCopies.add(key)) return }
+        mediaQueue.postRunnable {
+            val started = android.os.SystemClock.elapsedRealtime()
+            val copied = runMediaCopy(plan)
+            android.util.Log.d(TAG, "archive copy ${plan.source.length()} bytes in ${android.os.SystemClock.elapsedRealtime() - started} ms")
+            if (copied == null) {
+                synchronized(pendingCopies) { pendingCopies.remove(key) }
+                return@postRunnable
+            }
+            val storage = MessagesStorage.getInstance(account)
+            storage.storageQueue.postRunnable {
+                val kept = try {
+                    storage.database?.let { store(it, copied) } == true
+                } catch (e: Throwable) {
+                    android.util.Log.d(TAG, "archive copy store failed", e)
+                    false
+                }
+                if (!kept) File(copied).delete()
+                synchronized(pendingCopies) { pendingCopies.remove(key) }
+            }
+        }
+    }
+
+    private fun updateMediaPath(db: org.telegram.SQLite.SQLiteDatabase, table: String, where: String, path: String): Boolean {
+        val cursor = db.queryFinalized("SELECT 1 FROM $table WHERE $where")
+        val exists = try { cursor.next() } finally { cursor.dispose() }
+        if (!exists) return false
+        val query = db.executeFast("UPDATE $table SET media_path = ? WHERE $where")
+        try {
+            query.bindString(1, path)
+            query.step()
+        } finally {
+            query.dispose()
+        }
+        return true
+    }
+
+    private fun latestEditRowId(db: org.telegram.SQLite.SQLiteDatabase, dialogId: Long, msgId: Int, date: Int): Long {
+        val cursor = db.queryFinalized("SELECT MAX(id) FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id = $msgId AND date = $date")
+        return try { if (cursor.next()) cursor.longValue(0) else 0L } finally { cursor.dispose() }
+    }
+
+    private fun rememberDeletedMediaPath(account: Int, dialogId: Long, msgId: Int, path: String) {
+        synchronized(cacheLock) {
+            val paths = deletedMessageMediaPaths.get(account.toLong()) ?: LongSparseArray<LongSparseArray<String>>().also { deletedMessageMediaPaths.put(account.toLong(), it) }
+            val dialogPaths = paths.get(dialogId) ?: LongSparseArray<String>().also { paths.put(dialogId, it) }
+            dialogPaths.put(msgId.toLong(), path)
         }
     }
 
@@ -144,46 +232,51 @@ object SavedMessagesHelper {
                 callback(null)
                 return
             }
-            val storage = MessagesStorage.getInstance(account)
-            storage.storageQueue.postRunnable {
-                var saved: String? = null
-                try {
-                    val db = storage.database
-                    val table = if (deleted) "inu_deleted_messages" else "inu_edit_history"
-                    val where = if (deleted) "dialog_id = ${MessageObject.getDialogId(message)} AND msg_id = ${message.id}" else "id = $rowId AND dialog_id = ${MessageObject.getDialogId(message)} AND msg_id = ${message.id}"
-                    val cursor = db.queryFinalized("SELECT 1 FROM $table WHERE $where")
-                    val exists = try { cursor.next() } finally { cursor.dispose() }
-                    if (!exists) {
-                        saved = planMediaCopy(account, message)?.source?.absolutePath
-                    } else {
-                        val copied = runMediaCopy(planMediaCopy(account, message))
-                        saved = copied
-                        if (copied != null) {
-                            val query = db.executeFast("UPDATE $table SET media_path = ? WHERE $where")
-                            try {
-                                query.bindString(1, copied)
-                                query.step()
-                            } finally { query.dispose() }
-                            val dialogId = MessageObject.getDialogId(message)
-                            synchronized(cacheLock) {
-                                if (deleted) {
-                                    val paths = deletedMessageMediaPaths.get(account.toLong()) ?: LongSparseArray<LongSparseArray<String>>().also { deletedMessageMediaPaths.put(account.toLong(), it) }
-                                    val dialogPaths = paths.get(dialogId) ?: LongSparseArray<String>().also { paths.put(dialogId, it) }
-                                    dialogPaths.put(message.id.toLong(), copied)
-                                } else {
-                                    editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(message.id.toLong())
-                                }
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    android.util.Log.d(TAG, "archive download save failed", e)
-                    saved = null
-                }
+            fun deliver(path: String?) {
                 AndroidUtilities.runOnUIThread {
                     if (active) {
                         active = false
-                        callback(saved)
+                        callback(path)
+                    }
+                }
+            }
+            val dialogId = MessageObject.getDialogId(message)
+            val table = if (deleted) "inu_deleted_messages" else "inu_edit_history"
+            val where = if (deleted) "dialog_id = $dialogId AND msg_id = ${message.id}" else "id = $rowId AND dialog_id = $dialogId AND msg_id = ${message.id}"
+            val storage = MessagesStorage.getInstance(account)
+            mediaQueue.postRunnable {
+                val plan = planMediaCopy(account, message, 0L)
+                if (plan == null) {
+                    deliver(null)
+                    return@postRunnable
+                }
+                val copied = runMediaCopy(plan)
+                if (copied == null) {
+                    deliver(plan.source.absolutePath)
+                    return@postRunnable
+                }
+                storage.storageQueue.postRunnable {
+                    var stored = false
+                    try {
+                        val query = storage.database.executeFast("UPDATE $table SET media_path = ? WHERE $where")
+                        try {
+                            query.bindString(1, copied)
+                            query.step()
+                        } finally {
+                            query.dispose()
+                        }
+                        val cursor = storage.database.queryFinalized("SELECT 1 FROM $table WHERE $where AND media_path = ?", copied)
+                        stored = try { cursor.next() } finally { cursor.dispose() }
+                    } catch (e: Exception) {
+                        android.util.Log.d(TAG, "archive download save failed", e)
+                    }
+                    if (stored) {
+                        if (deleted) rememberDeletedMediaPath(account, dialogId, message.id, copied)
+                        else synchronized(cacheLock) { editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(message.id.toLong()) }
+                        deliver(copied)
+                    } else {
+                        File(copied).delete()
+                        deliver(plan.source.absolutePath)
                     }
                 }
             }
@@ -197,7 +290,7 @@ object SavedMessagesHelper {
         center.addObserver(observer, NotificationCenter.fileLoaded)
         center.addObserver(observer, NotificationCenter.fileLoadFailed)
         AndroidUtilities.runOnUIThread(timeout, 120_000)
-        if (planMediaCopy(account, message) != null) {
+        if (planMediaCopy(account, message, 0L) != null) {
             finish(true)
         } else if (document != null) {
             loader.loadFile(document, message, FileLoader.PRIORITY_NORMAL, 1)
@@ -333,7 +426,7 @@ object SavedMessagesHelper {
             if (loadedAccounts.contains(account)) return
         }
 
-        migrateSavedMedia(account, db)
+        scheduleMediaMigration(account)
         val ttlDays = InuConfig.DELETED_MESSAGES_TTL.value
         if (ttlDays > 0) {
             val cutoff = System.currentTimeMillis() / 1000L - ttlDays * 86400L
@@ -989,12 +1082,16 @@ object SavedMessagesHelper {
         val storage = MessagesStorage.getInstance(account) ?: return
         val persist = Runnable {
             val db = storage.database ?: return@Runnable
-            val savedPath = InuDatabaseHelper.deletedMessageMediaPath(db, dialogId, msgId)?.takeIf { File(it).isFile } ?: runMediaCopy(mediaCopy)
+            val savedPath = InuDatabaseHelper.deletedMessageMediaPath(db, dialogId, msgId)?.takeIf { File(it).isFile }
             InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, archiveText(text, message ?: snapshot), deletionTime.toInt(), savedPath, snapshot)
-            if (savedPath != null) synchronized(cacheLock) {
-                val paths = deletedMessageMediaPaths.get(account.toLong()) ?: LongSparseArray<LongSparseArray<String>>().also { deletedMessageMediaPaths.put(account.toLong(), it) }
-                val dialogPaths = paths.get(dialogId) ?: LongSparseArray<String>().also { paths.put(dialogId, it) }
-                dialogPaths.put(msgId.toLong(), savedPath)
+            if (savedPath != null) {
+                rememberDeletedMediaPath(account, dialogId, msgId, savedPath)
+            } else if (mediaCopy != null) {
+                copyThenStore(account, "d:$dialogId:$msgId", mediaCopy) { copyDb, copied ->
+                    val stored = updateMediaPath(copyDb, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id = $msgId", copied)
+                    if (stored) rememberDeletedMediaPath(account, dialogId, msgId, copied)
+                    stored
+                }
             }
         }
         if (Thread.currentThread() === storage.storageQueue) persist.run() else storage.storageQueue.postRunnable(persist)
@@ -1241,10 +1338,17 @@ object SavedMessagesHelper {
                 }
                 return@postRunnable
             }
-            val savedPath = runMediaCopy(mediaCopy)
-            InuDatabaseHelper.saveEditHistory(db, dialogId, msgId, oldText, now.toInt(), savedPath, keptEntities, keptMedia)
+            InuDatabaseHelper.saveEditHistory(db, dialogId, msgId, oldText, now.toInt(), null, keptEntities, keptMedia)
             synchronized(cacheLock) {
                 editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
+            }
+            if (mediaCopy != null) {
+                val rowId = latestEditRowId(db, dialogId, msgId, now.toInt())
+                if (rowId > 0) copyThenStore(account, "e:$rowId", mediaCopy) { copyDb, copied ->
+                    val stored = updateMediaPath(copyDb, "inu_edit_history", "id = $rowId", copied)
+                    if (stored) synchronized(cacheLock) { editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong()) }
+                    stored
+                }
             }
         }
     }
