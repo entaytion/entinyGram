@@ -536,3 +536,4 @@ entiny/tabs/folders-bottom-glass.patch
 entiny/chat/local-pins-order.patch
 entiny/chat/hide-reactions.patch
 entiny/media/sticker-pack-zip.patch
+entiny/media/send-as-sticker.patch

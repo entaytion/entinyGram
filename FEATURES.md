@@ -189,6 +189,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **keep three-dot menu**: option to keep the chats list menu button when the side menu is on
 - 📡 **keep screen on while recording**: the screen doesn't turn off during a voice or video message
 - "Save to Downloads" for regular voice messages (stock only has it for files and music)
+- 📡 **send as sticker**: long-press the send button on selected photos to send them as 512 px stickers
 - 📡 **sticker pack ZIP**: download a whole sticker or emoji pack as a ZIP from the pack menu
 - 📡 **hide reactions**: separate toggles to hide reactions on messages, disable setting them, and hide reaction badges in the chat list
 

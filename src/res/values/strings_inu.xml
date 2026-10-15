@@ -898,6 +898,7 @@
     <string name="InuLinksAndBrowser">Links &amp; browser</string>
     <string name="InuStickers">Stickers</string>
     <string name="InuReactions">Reactions</string>
+    <string name="InuSendAsSticker">Send as sticker</string>
     <string name="InuDownloadStickerPackZip">Download pack as ZIP</string>
     <string name="InuStickerPackZipFailed">Failed to download the pack</string>
     <string name="InuHideReactionsSection">Hide reactions</string>

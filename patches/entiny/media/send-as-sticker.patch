@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 15 Oct 2026 21:07:59 +0300
+Subject: [+] send photo as sticker
+
+---
+ .../org/telegram/messenger/SendMessagesHelper.java   |  1 +
+ .../org/telegram/ui/Components/ChatAttachAlert.java  | 12 ++++++++++++
+ .../src/main/java/org/telegram/ui/PhotoViewer.java   |  4 ++++
+ 3 files changed, 17 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -10888,6 +10888,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (media.isEmpty()) {
+             return;
+         }
++        desu.inugram.helpers.chat.StickerSendHelper.applyIfArmed(media);
+         if (media.size() == 1 && media.get(0).videoEditedInfo != null && media.get(0).videoEditedInfo.roundVideo) {
+             // The grouped/document dispatch below (and prepareSendingPhoto's video branch) never
+             // preserve VideoEditedInfo.roundVideo, so a video sent this way always lands as a
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+@@ -4043,6 +4043,18 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+                     }).show();
+                 });
+             }
++            if (editingMessageObject == null && (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) && desu.inugram.helpers.chat.StickerSendHelper.canSendSelected(this)) {
++                options.add(R.drawable.msg_sticker, getString(R.string.InuSendAsSticker), () -> {
++                    final long effectId = messageSendPreview != null ? messageSendPreview.getSelectedEffect() : 0;
++                    writeButton.setEffect(ChatAttachAlert.this.effectId = effectId);
++                    desu.inugram.helpers.chat.StickerSendHelper.arm();
++                    final boolean shownDialog = sendPressed(true, 0, 0, effectId, isCaptionAbove());
++                    if (messageSendPreview != null) {
++                        messageSendPreview.dismiss(!shownDialog);
++                        messageSendPreview = null;
++                    }
++                });
++            }
+             if (editingMessageObject == null && !self) {
+                 options.add(R.drawable.input_notify_off, getString(R.string.SendWithoutSound), () -> {
+                     final long effectId = messageSendPreview != null ? messageSendPreview.getSelectedEffect() : 0;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -7511,6 +7511,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+             final ItemOptions options = ItemOptions.makeOptions(containerView, new DarkThemeResourceProvider(), view)
+                 .addIf(showSendAsFile, R.drawable.msg_sendfile, getString(multipleSelected ? R.string.SendAsFiles : R.string.SendAsFile), () -> sendPressed(true, 0, 0, false, true, false))
+                 .addIf(showSendAsRound, R.drawable.inu_tabler_circle, getString(R.string.InuSendAsRoundVideo), this::inu_sendAsRoundVideoPressed)
++                .addIf(!canEdit && desu.inugram.helpers.chat.StickerSendHelper.canSendPhoto(parentChatActivity, currentObject), R.drawable.msg_sticker, getString(R.string.InuSendAsSticker), () -> {
++                    desu.inugram.helpers.chat.StickerSendHelper.arm();
++                    sendPressed(true, 0, 0);
++                })
+                 .addIf(canReplace, R.drawable.msg_send, getString(R.string.SendAsNewPhoto), () -> sendPressed(true, 0, 0))
+                 .addIf(canReplace, R.drawable.msg_replace, getString(R.string.ReplacePhoto), this::replacePressed)
+                 .addIf(showSchedule, R.drawable.msg_calendar2, getString(userIsSelf ? R.string.SetReminder : R.string.ScheduleMessage), this::showScheduleDatePickerDialog)

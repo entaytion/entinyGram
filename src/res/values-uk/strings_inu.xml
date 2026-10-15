@@ -686,6 +686,7 @@
     <string name="InuLinksAndBrowser">Посилання та браузер</string>
     <string name="InuStickers">Наліпки</string>
     <string name="InuReactions">Реакції</string>
+    <string name="InuSendAsSticker">Надіслати як стікер</string>
     <string name="InuDownloadStickerPackZip">Завантажити пак як ZIP</string>
     <string name="InuStickerPackZipFailed">Не вдалося завантажити пак</string>
     <string name="InuHideReactionsSection">Приховати реакції</string>
