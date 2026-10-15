@@ -44,7 +44,7 @@ index 0000000..0000000 100644
                  return;
              }
              MessageObject messageObject;
-@@ -31914,7 +31914,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -31910,7 +31910,7 @@ public class ChatActivity extends BaseFragment implements
              final boolean isEphemeral = message != null && message.isEphemeral();
              final boolean isReactionsViewAvailable = !isEphemeral && !suggestEdit && !isSecretChat() && !isInScheduleMode() && currentUser == null && primaryMessage.hasReactions() && (!ChatObject.isChannel(currentChat) || currentChat.megagroup) && !ChatObject.isMonoForum(currentChat) && !availableReacts.isEmpty() && primaryMessage.messageOwner.reactions.can_see_list && !primaryMessage.isSecretMedia();
              final boolean isReactionsAvailable;

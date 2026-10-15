@@ -1537,6 +1537,14 @@
     <string name="InuEditHistoryDiff">Highlight Text Changes (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Show red strikethrough for deleted text and green for added text in edit history</string>
     <string name="InuNoEditHistory">No edit history recorded for this message</string>
+    <string name="InuEditHistoryCompact">Compact edit history</string>
+    <string name="InuEditHistoryCompactInfo">Show revisions as plain chat bubbles instead of before and after cards</string>
+    <string name="InuEditHistoryBefore">Before</string>
+    <string name="InuEditHistoryAfter">After</string>
+    <string name="InuEditHistoryCurrentUnknown">Current version is not cached</string>
+    <string name="InuEditHistoryMediaChanged">Media changed</string>
+    <string name="InuEditHistoryCopyBefore">Copy old version</string>
+    <string name="InuEditHistoryCopyAfter">Copy new version</string>
     <string name="InuShowMutualContactIcon">Mutual Contact Icon</string>
     <string name="InuShowMutualContactIconInfo">Show a mutual contact indicator icon in contacts list</string>
     <string name="InuShowMutualContactInChats">Show Mutual Contact Icon in Group &amp; Channel Member Lists</string>

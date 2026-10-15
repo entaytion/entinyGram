@@ -109,12 +109,22 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         if (InuConfig.SAVE_EDITED_MESSAGES.value) {
             items.add(
                 mkTwoLineCheckItem(
-                    TOGGLE_SHOW_EDIT_HISTORY_DIFF,
-                    R.string.InuEditHistoryDiff,
-                    R.string.InuEditHistoryDiffInfo,
-                    InuConfig.SHOW_EDIT_HISTORY_DIFF.value,
+                    TOGGLE_EDIT_HISTORY_COMPACT,
+                    R.string.InuEditHistoryCompact,
+                    R.string.InuEditHistoryCompactInfo,
+                    InuConfig.EDIT_HISTORY_COMPACT.value,
                 )
             )
+            if (InuConfig.EDIT_HISTORY_COMPACT.value) {
+                items.add(
+                    mkTwoLineCheckItem(
+                        TOGGLE_SHOW_EDIT_HISTORY_DIFF,
+                        R.string.InuEditHistoryDiff,
+                        R.string.InuEditHistoryDiffInfo,
+                        InuConfig.SHOW_EDIT_HISTORY_DIFF.value,
+                    )
+                )
+            }
         }
 
         items.add(UItem.asShadow(null))
@@ -175,6 +185,11 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             }
             TOGGLE_SAVE_EDITED_MESSAGES -> {
                 val new = InuConfig.SAVE_EDITED_MESSAGES.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                listView?.adapter?.update(true)
+            }
+            TOGGLE_EDIT_HISTORY_COMPACT -> {
+                val new = InuConfig.EDIT_HISTORY_COMPACT.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
                 listView?.adapter?.update(true)
             }
@@ -240,6 +255,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_DELETED_OWN = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
+        private val TOGGLE_EDIT_HISTORY_COMPACT = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
         private val BUTTON_SEARCH = InuUtils.generateId()
         private val BUTTON_EXPORT = InuUtils.generateId()
@@ -271,6 +287,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-deleted-bots", R.string.InuSaveDeletedBots, TOGGLE_SAVE_DELETED_BOTS),
                 SearchRegistry.Entry("save-deleted-own", R.string.InuSaveDeletedOwn, TOGGLE_SAVE_DELETED_OWN),
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
+                SearchRegistry.Entry("edit-history-compact", R.string.InuEditHistoryCompact, TOGGLE_EDIT_HISTORY_COMPACT),
                 SearchRegistry.Entry("edit-history-diff", R.string.InuEditHistoryDiff, TOGGLE_SHOW_EDIT_HISTORY_DIFF),
                 SearchRegistry.Entry("self-destruct-save", R.string.InuSelfDestructMedia, SECTION_SELF_DESTRUCT_SAVE),
                 SearchRegistry.Entry("save-view-once-media", R.string.InuSaveViewOnceMedia, TOGGLE_SAVE_VIEW_ONCE_MEDIA),

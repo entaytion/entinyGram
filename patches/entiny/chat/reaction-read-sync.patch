@@ -133,7 +133,7 @@ index 0000000..0000000 100644
                  if (updatesOnMainThread == null) {
                      updatesOnMainThread = new ArrayList<>();
                  }
-@@ -21528,8 +21576,11 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21527,8 +21575,11 @@ public class MessagesController extends BaseController implements NotificationCe
                          newUnreadCount += hasUnreadReaction ? 1 : -1;
                          changed = true;
                      }
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
                  }
                  if (hasUnreadReaction) {
                      newUnreadMessages.add(messageId);
-@@ -21568,6 +21619,18 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21567,6 +21618,18 @@ public class MessagesController extends BaseController implements NotificationCe
          });
      }
  
@@ -169,7 +169,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -18782,6 +18782,53 @@ public class MessagesStorage extends BaseController {
+@@ -18779,6 +18779,53 @@ public class MessagesStorage extends BaseController {
          executeInStorageQueue(() -> markMessageReactionsAsReadInternal("poll_votes_mentions", "poll_votes_mentions_topics", dialogId, topicId, messageId, false));
      }
  
@@ -272,7 +272,7 @@ index 0000000..0000000 100644
                              AndroidUtilities.runOnUIThread(() -> {
                                  playReactionAnimation(messageId);
                              }, 200);
-@@ -47429,12 +47440,20 @@ public class ChatActivity extends BaseFragment implements
+@@ -47425,12 +47436,20 @@ public class ChatActivity extends BaseFragment implements
              loadLastUnreadMention();
          } else if (buttonId == ChatActivitySideControlsButtonsLayout.BUTTON_REACTIONS) {
              wasManualScroll = true;

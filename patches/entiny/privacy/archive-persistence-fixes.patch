@@ -5,10 +5,9 @@ Subject: [*] archive persistence fixes
 
 ---
  .../java/org/telegram/messenger/MessagesController.java   | 4 ++--
- .../main/java/org/telegram/messenger/MessagesStorage.java | 2 +-
  .../java/org/telegram/messenger/SendMessagesHelper.java   | 2 +-
  .../java/org/telegram/ui/Components/AlertsCreator.java    | 8 ++++----
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -30,19 +29,6 @@ index 0000000..0000000 100644
                      MessageObject found = null;
                      if (objs != null) {
                          for (int i = 0; i < objs.size(); ++i) {
-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -16483,7 +16483,7 @@ public class MessagesStorage extends BaseController {
-                                         // dialogMessagesByIds only tracks each dialog's current preview
-                                         // message; fall back to the shadow cache for any other message
-                                         // in a chat the user hasn't opened.
--                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, MessageObject.getDialogId(message), message.id, message.message, message.media != null);
-+                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, MessageObject.getDialogId(message), message.id, message);
-                                     }
-                                 }
-                                 continue;
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java

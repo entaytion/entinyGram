@@ -169,23 +169,7 @@ class ArchiveCacheActivity(
             }
         }
         if (edited) {
-            val storage = MessagesStorage.getInstance(currentAccount)
-            storage.storageQueue.postRunnable {
-                val result = runCatching {
-                    val db = checkNotNull(storage.database)
-                    InuDatabaseHelper.clearEditHistory(db, ids)
-                    SavedMessagesHelper.invalidateMediaCache(currentAccount)
-                }
-                AndroidUtilities.runOnUIThread {
-                    if (result.isSuccess) done.run() else {
-                        clearing = false
-                        if (!isFinished) {
-                            listView.adapter.update(true)
-                            BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.ErrorOccurred)).show()
-                        }
-                    }
-                }
-            }
+            SavedMessagesHelper.clearEditHistory(currentAccount, ids, done)
         } else {
             SavedMessagesHelper.clearCache(currentAccount, ids, deletedOnly = true, onDone = done)
         }

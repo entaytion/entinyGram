@@ -29,6 +29,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - separate deleted and edited archives with message and media previews, per-chat clearing and bulk chat selection
   - edited archive hides repeated identical revisions
   - text and caption diffs between revisions of the same post in edited archives
+  - edit history as before → after cards with highlighted changes, sender and time, or compact bubbles
+  - replies to saved deleted messages show the saved copy instead of "Deleted message"
   - download missing archived media on tap without background prefetching
   - preserve downloaded media before deletion cleanup and reject incomplete documents
   - custom styling for deleted messages

@@ -3,20 +3,38 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 16 Aug 2026 23:04:54 +0300
 Subject: feat(history): preserve message history and saved deletions
 
-- preserve deleted and edited message history behind existing settings
-- capture outgoing edits before stock state changes
-- render preserved deletions with the configured transparent style
 ---
- .../messenger/MessagesController.java         | 85 +++++++++++++++++--
- .../telegram/messenger/MessagesStorage.java   | 34 +++++++-
+ .../messenger/DownloadController.java         |  2 +
+ .../messenger/MessagesController.java         | 84 +++++++++++++++++--
+ .../telegram/messenger/MessagesStorage.java   | 33 +++++++-
  .../messenger/SendMessagesHelper.java         |  7 ++
  .../telegram/ui/Cells/ChatMessageCell.java    |  8 +-
- .../java/org/telegram/ui/ChatActivity.java    | 19 +++++
+ .../java/org/telegram/ui/ChatActivity.java    | 15 ++++
  .../telegram/ui/Components/AlertsCreator.java | 44 +++++++++-
  .../Components/DeleteMessagesBottomSheet.java |  2 +
  .../org/telegram/ui/MainTabsActivity.java     | 11 +--
- 8 files changed, 188 insertions(+), 22 deletions(-)
+ 9 files changed, 183 insertions(+), 23 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java b/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
+@@ -618,6 +618,7 @@ public class DownloadController extends BaseController implements NotificationCe
+         }
+         if (messageObject.isHiddenSensitive())
+             return false;
++        if (desu.inugram.helpers.chat.SavedMessagesHelper.isHistoryPreview(messageObject)) return false;
+         return canDownloadMediaInternal(messageObject) == 1;
+     }
+ 
+@@ -658,6 +659,7 @@ public class DownloadController extends BaseController implements NotificationCe
+         }
+         if (messageObject.isHiddenSensitive())
+             return 0;
++        if (desu.inugram.helpers.chat.SavedMessagesHelper.isHistoryPreview(messageObject)) return 0;
+         return canDownloadMediaInternal(messageObject);
+     }
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
@@ -145,18 +163,17 @@ index 0000000..0000000 100644
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -21212,6 +21261,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21212,6 +21261,9 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
 +            if (deletedMessagesFinal != null && deletedMessagesFinal.get(0) != null) {
-+                // Let filterTimedDeletions run, but we don't need to replace the list since markMessageDeleted handles it
 +                desu.inugram.helpers.security.SelfDestructHelper.filterTimedDeletions(currentAccount, deletedMessagesFinal.get(0), dialogMessagesByIds);
 +            }
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21336,6 +21389,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21336,6 +21388,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -181,7 +198,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -4355,6 +4355,9 @@ public class MessagesStorage extends BaseController {
+@@ -3813,6 +3813,7 @@ public class MessagesStorage extends BaseController {
+                     }
+                     cursor.dispose();
+                 }
++                if (!scheduled && !quickReplies && !welcomeMessages) desu.inugram.helpers.chat.SavedMessagesHelper.fillArchivedReplies(currentAccount, database, dialogId, ids, owners, usersToLoad, chatsToLoad);
+             } catch (Exception e) {
+                 throw e;
+             } finally {
+@@ -4355,6 +4356,9 @@ public class MessagesStorage extends BaseController {
          if (message == null) {
              return false;
          }
@@ -191,7 +216,7 @@ index 0000000..0000000 100644
          int type = 0;
          long id = 0;
          TLRPC.Document document = MessageObject.getDocument(message);
-@@ -4766,6 +4769,9 @@ public class MessagesStorage extends BaseController {
+@@ -4766,6 +4770,9 @@ public class MessagesStorage extends BaseController {
      }
  
      public void emptyMessagesMedia(long dialogId, ArrayList<Integer> mids) {
@@ -201,18 +226,40 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLiteCursor cursor = null;
              SQLitePreparedStatement state = null;
-@@ -14751,6 +14757,11 @@ public class MessagesStorage extends BaseController {
+@@ -9774,6 +9781,7 @@ public class MessagesStorage extends BaseController {
+                                     }
+                                 }
+                             }
++                            desu.inugram.helpers.chat.SavedMessagesHelper.dropStaleDeletedReply(currentAccount, message);
+                             if (message.replyMessage == null) {
+                                 if (message.reply_to.reply_to_msg_id != 0) {
+                                     addReplyMessages(message, replyMessageOwners, dialogReplyMessagesIds);
+@@ -14751,6 +14759,8 @@ public class MessagesStorage extends BaseController {
                  cursor.dispose();
                  cursor = null;
  
-+                // messagesByDialogs is the only place a deletion's real dialog is known for a
-+                // private chat: TL_updateDeleteMessages carries no peer, so the controller can only
-+                // guess through dialogMessagesByIds (the dialog's newest message).
 +                desu.inugram.helpers.chat.SavedMessagesHelper.markMessagesDeletedFromStorage(currentAccount, messagesByDialogs, deletedMessages);
 +
                  ArrayList<TopicKey> topicsToDelete = null;
  
                  if (dialogId != 0) {
+@@ -14805,6 +14815,7 @@ public class MessagesStorage extends BaseController {
+                 cursor.dispose();
+                 cursor = null;
+ 
++                String inu_replyIds = desu.inugram.helpers.chat.SavedMessagesHelper.replyIdsToClear(currentAccount, messagesByDialogs, messages, ids);
+                 database.beginTransaction();
+                 for (int i = 0; i < 5; i++) {
+                     if (i == 0) {
+@@ -14835,7 +14846,7 @@ public class MessagesStorage extends BaseController {
+ 
+                     state.requery();
+                     state.bindByteBuffer(1, data);
+-                    state.bindString(2, ids);
++                    state.bindString(2, inu_replyIds);
+                     if (dialogId != 0 && i != 2) {
+                         state.bindLong(3, dialogId);
+                     }
 @@ -14972,8 +14983,12 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
@@ -236,26 +283,23 @@ index 0000000..0000000 100644
                                      if (reactionUpdates != null) {
                                          reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
                                      }
-@@ -16422,6 +16438,18 @@ public class MessagesStorage extends BaseController {
+@@ -16422,6 +16438,15 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {
 +                                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue()) {
 +                                    MessageObject inu_fallbackCached = getMessagesController().dialogMessagesByIds.get(message.id);
-+                                    if (inu_fallbackCached != null && inu_fallbackCached.messageOwner != null) {
++                                    if (inu_fallbackCached != null && inu_fallbackCached.messageOwner != null && inu_fallbackCached.getDialogId() == MessageObject.getDialogId(message)) {
 +                                        String inu_fallbackText = inu_fallbackCached.messageOwner.message != null ? inu_fallbackCached.messageOwner.message : "";
 +                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, MessageObject.getDialogId(message), message.id, inu_fallbackText, inu_fallbackCached.messageOwner.date, inu_fallbackCached.messageOwner);
 +                                    } else {
-+                                        // dialogMessagesByIds only tracks each dialog's current preview
-+                                        // message; fall back to the shadow cache for any other message
-+                                        // in a chat the user hasn't opened.
-+                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, MessageObject.getDialogId(message), message.id, message.message, message.media != null);
++                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, MessageObject.getDialogId(message), message.id, message);
 +                                    }
 +                                }
                                  continue;
                              }
                          }
-@@ -19101,7 +19129,7 @@ public class MessagesStorage extends BaseController {
+@@ -19101,7 +19126,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  
@@ -340,26 +384,29 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -26717,6 +26717,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -25626,6 +25626,9 @@ public class ChatActivity extends BaseFragment implements
+         for (int a = 0, N = ids.size(); a < N; a++) {
+             MessageObject object = messagesDict[0].get(ids.get(a));
+             if (object != null) {
++                if (update == null && desu.inugram.helpers.chat.SavedMessagesHelper.isPreservedOrWillBe(currentAccount, object.replyMessageObject)) {
++                    continue;
++                }
+                 if (update == null) {
+                     object.replyMessageObject = emptyMessage;
+                 } else {
+@@ -26717,6 +26720,7 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }
                  obj.deleted = true;
-+                // Decided per message, not per dialog: an own message with SAVE_DELETED_OWN off
-+                // must vanish normally, and one the user deletes a second time is being purged from
-+                // the archive, so the ghost has to disappear with it. Asking whether the archive
-+                // already holds it would lose the race -- for a private chat the deletion is only
-+                // recorded once MessagesStorage resolves the dialog off the storage queue.
 +                boolean inu_keepVisible = desu.inugram.helpers.chat.SavedMessagesHelper.isPreservedOrWillBe(currentAccount, obj);
                  if (obj.scheduled && sent) {
                      obj.scheduledSent = true;
                  }
-@@ -26725,6 +26731,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -26725,6 +26729,16 @@ public class ChatActivity extends BaseFragment implements
                  }
                  int index = chatAdapter != null && chatAdapter.isFiltered && filteredMessagesDict != null ? chatAdapter.filteredMessages.indexOf(filteredMessagesDict.get(mid)) : messages.indexOf(obj);
                  if (index != -1) {
 +                    if (inu_keepVisible) {
-+                        // Keep message in chat as semi-transparent with deleted icon;
-+                        // deselect if selected, then trigger redraw
 +                        if (selectedMessagesIds[loadIndex].indexOfKey(mid) >= 0) {
 +                            updatedSelected = true;
 +                            addToSelectedMessages(obj, false, updatedSelectedLast = (a == size - 1));
@@ -372,7 +419,7 @@ index 0000000..0000000 100644
                      if (obj.scheduled) {
                          scheduledMessagesCount--;
                          updateScheduled = true;
-@@ -26832,6 +26850,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26832,6 +26846,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      updated = true;

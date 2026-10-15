@@ -153,15 +153,27 @@ object SavedMessagesHelper {
                     val where = if (deleted) "dialog_id = ${MessageObject.getDialogId(message)} AND msg_id = ${message.id}" else "id = $rowId AND dialog_id = ${MessageObject.getDialogId(message)} AND msg_id = ${message.id}"
                     val cursor = db.queryFinalized("SELECT 1 FROM $table WHERE $where")
                     val exists = try { cursor.next() } finally { cursor.dispose() }
-                    if (exists) {
-                        saved = runMediaCopy(planMediaCopy(account, message))
-                        if (saved != null) {
+                    if (!exists) {
+                        saved = planMediaCopy(account, message)?.source?.absolutePath
+                    } else {
+                        val copied = runMediaCopy(planMediaCopy(account, message))
+                        saved = copied
+                        if (copied != null) {
                             val query = db.executeFast("UPDATE $table SET media_path = ? WHERE $where")
                             try {
-                                query.bindString(1, saved)
+                                query.bindString(1, copied)
                                 query.step()
                             } finally { query.dispose() }
-                            invalidateMediaCache(account)
+                            val dialogId = MessageObject.getDialogId(message)
+                            synchronized(cacheLock) {
+                                if (deleted) {
+                                    val paths = deletedMessageMediaPaths.get(account.toLong()) ?: LongSparseArray<LongSparseArray<String>>().also { deletedMessageMediaPaths.put(account.toLong(), it) }
+                                    val dialogPaths = paths.get(dialogId) ?: LongSparseArray<String>().also { paths.put(dialogId, it) }
+                                    dialogPaths.put(message.id.toLong(), copied)
+                                } else {
+                                    editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(message.id.toLong())
+                                }
+                            }
                         }
                     }
                 } catch (e: Exception) {
@@ -236,6 +248,7 @@ object SavedMessagesHelper {
         val date: Int,
         val entities: ArrayList<TLRPC.MessageEntity>? = null,
         val media: TLRPC.MessageMedia? = null,
+        val editDate: Int = 0,
     )
 
     private val shadowMessageCache = LongSparseArray<LinkedHashMap<Pair<Long, Int>, ShadowEntry>>()
@@ -491,9 +504,18 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun clearEditHistory(account: Int, onDone: Runnable? = null) {
+        clearEditHistory(account, null, onDone)
+    }
+
+    @JvmStatic
+    fun clearEditHistory(account: Int, dialogIds: Collection<Long>?, onDone: Runnable?) {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
-            storage.database?.let { InuDatabaseHelper.clearEditHistory(it) }
+            try {
+                storage.database?.let { InuDatabaseHelper.clearEditHistory(it, dialogIds) }
+            } catch (e: Throwable) {
+                android.util.Log.d(TAG, "clear edit history failed", e)
+            }
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
                 synchronized(cacheLock) {
                     cacheGeneration[account] = (cacheGeneration[account] ?: 0L) + 1L
@@ -527,7 +549,7 @@ object SavedMessagesHelper {
                     val controller = org.telegram.messenger.MessagesController.getInstance(account)
                     for ((dialogId, mids) in pairs) {
                         for (mid in mids) {
-                            controller.dialogMessagesByIds.remove(mid)
+                            if (controller.dialogMessagesByIds.get(mid)?.dialogId == dialogId) controller.dialogMessagesByIds.remove(mid)
                         }
                         val list = controller.dialogMessage.get(dialogId)
                         if (list != null) {
@@ -606,7 +628,7 @@ object SavedMessagesHelper {
                 val controller = MessagesController.getInstance(account)
                 val idSet = msgIds.toHashSet()
                 for (msgId in msgIds) {
-                    controller.dialogMessagesByIds.remove(msgId)
+                    if (controller.dialogMessagesByIds.get(msgId)?.dialogId == dialogId) controller.dialogMessagesByIds.remove(msgId)
                 }
                 val list = controller.dialogMessage.get(dialogId)
                 if (list != null) {
@@ -834,7 +856,7 @@ object SavedMessagesHelper {
         }
     }
 
-    private fun archiveText(text: String?, message: TLRPC.Message?): String {
+    internal fun archiveText(text: String?, message: TLRPC.Message?): String {
         if (!text.isNullOrBlank()) return text
         val media = message?.media ?: return ""
         val res = when (media) {
@@ -901,10 +923,17 @@ object SavedMessagesHelper {
 
     @JvmStatic
     @JvmOverloads
-    fun markMessageDeleted(account: Int, dialogId: Long, msgIdIn: Int, fromId: Long, textIn: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
-        var dialogId = dialogId
-        var text = textIn
+    fun markMessageDeleted(account: Int, dialogIdIn: Long, msgIdIn: Int, fromIdIn: Long, textIn: String?, date: Int, messageIn: TLRPC.Message? = null, forceSave: Boolean = false) {
+        var dialogId = dialogIdIn
+        // entiny: dialogMessagesByIds is keyed by mid only, so a channel delete can hand over another chat's message
+        val foreign = messageIn != null && dialogIdIn != 0L && MessageObject.getDialogId(messageIn) != dialogIdIn
+        val message = if (foreign) null else messageIn
+        var text = if (foreign) null else textIn
+        var fromId = if (foreign) 0L else fromIdIn
         val msgId = msgIdIn
+        if (fromId == 0L && message != null && !message.out && message.from_id == null && org.telegram.messenger.DialogObject.isUserDialog(dialogIdIn)) {
+            fromId = dialogIdIn
+        }
         // entiny: private deletes arrive without a dialog id, recover it from the shadow cache
         if (dialogId == 0L && message == null && msgId > 0) {
             findShadowDialog(account, msgId)?.let { dialogId = it }
@@ -954,14 +983,13 @@ object SavedMessagesHelper {
                 dateDialog = LongSparseArray()
                 dateAcc.put(dialogId, dateDialog)
             }
-            dateDialog.put(msgId.toLong(), deletionTime)
-
+            if (dateDialog.get(msgId.toLong()) == null) dateDialog.put(msgId.toLong(), deletionTime)
         }
 
         val storage = MessagesStorage.getInstance(account) ?: return
         val persist = Runnable {
             val db = storage.database ?: return@Runnable
-            val savedPath = runMediaCopy(mediaCopy)
+            val savedPath = InuDatabaseHelper.deletedMessageMediaPath(db, dialogId, msgId)?.takeIf { File(it).isFile } ?: runMediaCopy(mediaCopy)
             InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, archiveText(text, message ?: snapshot), deletionTime.toInt(), savedPath, snapshot)
             if (savedPath != null) synchronized(cacheLock) {
                 val paths = deletedMessageMediaPaths.get(account.toLong()) ?: LongSparseArray<LongSparseArray<String>>().also { deletedMessageMediaPaths.put(account.toLong(), it) }
@@ -988,6 +1016,57 @@ object SavedMessagesHelper {
         if (!shouldSaveForDialog(account, dialogId)) return false
         if (!InuConfig.SAVE_DELETED_OWN.value && msg.isOutOwner) return false
         return true
+    }
+
+    @JvmStatic
+    fun replyIdsToClear(account: Int, messagesByDialogs: LongSparseArray<ArrayList<Int>>?, mids: List<Int>?, ids: String): String {
+        if (mids.isNullOrEmpty() || messagesByDialogs == null || !isSaveDeletedEnabled()) return ids
+        val kept = HashSet<Int>()
+        for (i in 0 until messagesByDialogs.size()) {
+            val dialogId = messagesByDialogs.keyAt(i)
+            messagesByDialogs.valueAt(i)?.forEach {
+                if (isMessageDeleted(account, dialogId, it) && !isPermanentDeleteRequested(account, dialogId, it)) kept.add(it)
+            }
+        }
+        return if (kept.isEmpty()) ids else mids.filter { it !in kept }.joinToString(",")
+    }
+
+    @JvmStatic
+    fun dropStaleDeletedReply(account: Int, message: TLRPC.Message?) {
+        if (message == null || message.replyMessage !is TLRPC.TL_messageEmpty || !isSaveDeletedEnabled()) return
+        val replyId = message.reply_to?.reply_to_msg_id ?: return
+        if (replyId == 0) return
+        val db = MessagesStorage.getInstance(account).database ?: return
+        try {
+            if (InuDatabaseHelper.isDeletedMessageArchived(db, MessageObject.getReplyToDialogId(message), replyId)) message.replyMessage = null
+        } catch (e: Throwable) {
+            android.util.Log.d(TAG, "stale reply check failed", e)
+        }
+    }
+
+    @JvmStatic
+    fun fillArchivedReplies(
+        account: Int,
+        db: org.telegram.SQLite.SQLiteDatabase?,
+        dialogId: Long,
+        ids: List<Int>?,
+        owners: SparseArray<ArrayList<TLRPC.Message>>?,
+        usersToLoad: ArrayList<Long>?,
+        chatsToLoad: ArrayList<Long>?,
+    ) {
+        if (!isSaveDeletedEnabled() || db == null || ids.isNullOrEmpty() || owners == null) return
+        val missing = ids.filter { id -> owners.get(id)?.any { it.replyMessage == null } == true }
+        if (missing.isEmpty()) return
+        try {
+            for ((id, message) in InuDatabaseHelper.archivedMessages(db, dialogId, missing)) {
+                message.id = id
+                message.dialog_id = dialogId
+                MessagesStorage.addUsersAndChatsFromMessage(message, usersToLoad, chatsToLoad, null)
+                owners.get(id)?.forEach { if (it.replyMessage == null) it.replyMessage = message }
+            }
+        } catch (e: Throwable) {
+            android.util.Log.d(TAG, "archived reply lookup failed", e)
+        }
     }
 
     // entiny: record deletions with dialog ids resolved by MessagesStorage from messages_v2
@@ -1177,18 +1256,24 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun rememberMessage(account: Int, dialogId: Long, msgId: Int, text: String?, hasMedia: Boolean, date: Int, entities: ArrayList<TLRPC.MessageEntity>?, media: TLRPC.MessageMedia?) {
+        rememberShadow(account, dialogId, msgId, text, hasMedia, date, entities, media, 0)
+    }
+
+    private fun rememberShadow(account: Int, dialogId: Long, msgId: Int, text: String?, hasMedia: Boolean, date: Int, entities: ArrayList<TLRPC.MessageEntity>?, media: TLRPC.MessageMedia?, editDate: Int) {
         if (!isSaveEditedEnabled() && !isSaveDeletedEnabled()) return
+        val entry = ShadowEntry(
+            text ?: "",
+            hasMedia,
+            date,
+            if (entities.isNullOrEmpty()) null else ArrayList(entities),
+            InuDatabaseHelper.cloneMedia(media),
+            editDate,
+        )
         synchronized(cacheLock) {
             val map = shadowMessageCache.get(account.toLong())
                 ?: BoundedLinkedHashMap<Pair<Long, Int>, ShadowEntry>(SHADOW_CACHE_MAX_PER_ACCOUNT)
                     .also { shadowMessageCache.put(account.toLong(), it) }
-            map[dialogId to msgId] = ShadowEntry(
-                text ?: "",
-                hasMedia,
-                date,
-                if (entities.isNullOrEmpty()) null else ArrayList(entities),
-                InuDatabaseHelper.cloneMedia(media),
-            )
+            map[dialogId to msgId] = entry
         }
     }
 
@@ -1196,12 +1281,13 @@ object SavedMessagesHelper {
     fun recordEditHistoryFromShadow(account: Int, dialogId: Long, msgId: Int, newMessage: TLRPC.Message) {
         if (!isSaveEditedEnabled()) return
         val old = synchronized(cacheLock) {
-            shadowMessageCache.get(account.toLong())?.remove(dialogId to msgId)
+            shadowMessageCache.get(account.toLong())?.get(dialogId to msgId)
         } ?: return
         val textChanged = old.text != (newMessage.message ?: "")
         val mediaChanged = !sameContent(old.entities, old.media, newMessage.entities, newMessage.media)
         if (textChanged || mediaChanged) {
-            recordEditHistory(account, dialogId, msgId, old.text, old.date, null, old.entities, old.media)
+            recordEditHistory(account, dialogId, msgId, old.text, old.editDate.takeIf { it > 0 } ?: old.date, null, old.entities, old.media)
+            rememberShadow(account, dialogId, msgId, newMessage.message, newMessage.media != null, old.date, newMessage.entities, newMessage.media, newMessage.edit_date)
         }
     }
 
@@ -1248,9 +1334,11 @@ object SavedMessagesHelper {
     @JvmStatic
     fun handleMessageEdited(account: Int, newMessage: TLRPC.Message, cached: MessageObject?) {
         if (!isSaveEditedEnabled()) return
-        val old = cached?.messageOwner
+        val old = cached?.takeIf { it.dialogId == newMessage.dialog_id }?.messageOwner
         if (old != null) {
             recordEditHistoryIfChanged(account, newMessage.dialog_id, newMessage.id, old, newMessage)
+            val shadow = synchronized(cacheLock) { shadowMessageCache.get(account.toLong())?.get(newMessage.dialog_id to newMessage.id) }
+            if (shadow != null) rememberShadow(account, newMessage.dialog_id, newMessage.id, newMessage.message, newMessage.media != null, shadow.date, newMessage.entities, newMessage.media, newMessage.edit_date)
         } else {
             // entiny: dialogMessagesByIds holds only the dialog preview, so fall back to the shadow cache
             recordEditHistoryFromShadow(account, newMessage.dialog_id, newMessage.id, newMessage)
@@ -1349,7 +1437,7 @@ object SavedMessagesHelper {
     fun showEditHistoryDialog(context: android.content.Context?, activity: org.telegram.ui.ChatActivity?, dialogId: Long, msgId: Int) {
         val account = activity?.currentAccount ?: UserConfig.selectedAccount
         val controller = MessagesController.getInstance(account)
-        var msgObj: MessageObject? = controller.dialogMessagesByIds.get(msgId)
+        var msgObj: MessageObject? = controller.dialogMessagesByIds.get(msgId)?.takeIf { it.dialogId == dialogId }
         if (msgObj == null) {
             val dummyMsg = TLRPC.TL_message().apply {
                 id = msgId

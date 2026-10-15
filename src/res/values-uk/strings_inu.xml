@@ -1355,6 +1355,14 @@
     <string name="InuEditHistoryDiff">Підсвічувати зміни в тексті (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Показувати червоне закреслення для видаленого тексту та зелений колір для доданого в історії редагувань</string>
     <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
+    <string name="InuEditHistoryCompact">Компактна історія редагувань</string>
+    <string name="InuEditHistoryCompactInfo">Показувати версії звичайними бульбашками замість карток «було → стало»</string>
+    <string name="InuEditHistoryBefore">Було</string>
+    <string name="InuEditHistoryAfter">Стало</string>
+    <string name="InuEditHistoryCurrentUnknown">Поточної версії немає в кеші</string>
+    <string name="InuEditHistoryMediaChanged">Медіа змінено</string>
+    <string name="InuEditHistoryCopyBefore">Копіювати стару версію</string>
+    <string name="InuEditHistoryCopyAfter">Копіювати нову версію</string>
     <string name="InuShowMutualContactIcon">Значок взаємного контакту</string>
     <string name="InuShowMutualContactIconInfo">Показувати значок взаємного контакту у списку контактів</string>
     <string name="InuShowMutualContactInChats">Показувати значок взаємного контакту у списках учасників чатів та каналів</string>

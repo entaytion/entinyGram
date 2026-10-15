@@ -839,7 +839,7 @@ index 0000000..0000000 100644
          }
  
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -30144,10 +30187,45 @@ public class ChatActivity extends BaseFragment implements
+@@ -30140,10 +30183,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  
