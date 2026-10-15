@@ -28,6 +28,12 @@ object EntinyMarketBridge {
     }
 
     @JvmStatic
+    fun installFile(path: String) {
+        val fragment = LaunchActivity.getSafeLastFragment() ?: return
+        PluginImportHelper.startImportFromFile(fragment, java.io.File(path))
+    }
+
+    @JvmStatic
     fun install(url: String, sha256: String?) {
         Market.download(url, sha256?.takeIf { it.isNotEmpty() }) { source, problem ->
             val fragment = LaunchActivity.getSafeLastFragment() ?: return@download
