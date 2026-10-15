@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 15 Oct 2026 21:18:55 +0300
+Subject: [+] online dots in chats
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -6595,6 +6595,7 @@ public class ChatActivity extends BaseFragment implements
+                             canvas.translate(dp(24) * getSideMenuAlpha(), 0f);
+                         }
+                         imageReceiver.draw(canvas);
++                        desu.inugram.helpers.chat.ChatAvatarPresenceHelper.draw(canvas, imageReceiver, mcell);
+                         canvas.restore();
+ 
+                         if (!replaceAnimation && child.getTranslationY() != 0) {

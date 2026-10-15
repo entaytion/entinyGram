@@ -1797,6 +1797,8 @@
     <string name="InuRoundRecorderExposureLevels">Кнопки рівня експозиції</string>
     <string name="InuRoundRecorderExposureLevelsInfo">Показувати кнопки EV, щоб освітлювати чи затемнювати кадр під час запису.</string>
     <string name="InuOnlineDots">Кольорові крапки присутності</string>
+    <string name="InuChatOnlineDots">Онлайн-крапки в чатах</string>
+    <string name="InuChatOnlineDotsInfo">Показувати онлайн-крапку на аватарках відправників у групах.</string>
     <string name="InuOnlineDotsInfo">Синя крапка онлайну; жовта — якщо контакт був у мережі до 20 хвилин тому, червона — до години тому.</string>
     <string name="InuGhostModeLauncherShortcut">Ярлик на іконці додатка</string>
     <string name="InuGhostModeLauncherShortcutInfo">Додати ярлик за довгим натисканням на іконку додатка для вмикання й вимикання режиму привида.</string>

@@ -1032,6 +1032,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val PRESENCE_COLOR_DOTS = BoolItem("presence_color_dots", false)
 
+    @JvmField
+    val CHAT_PRESENCE_DOTS = BoolItem("chat_presence_dots", false)
+
     class CommunityDisplayModeItem : IntItem("community_display_mode", REGULAR) {
         companion object {
             const val REGULAR = 1

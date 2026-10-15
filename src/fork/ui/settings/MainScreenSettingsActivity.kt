@@ -49,6 +49,14 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
                 InuConfig.PRESENCE_COLOR_DOTS.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_CHAT_ONLINE_DOTS,
+                R.string.InuChatOnlineDots,
+                R.string.InuChatOnlineDotsInfo,
+                InuConfig.CHAT_PRESENCE_DOTS.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(
@@ -76,6 +84,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
             BUTTON_RECENT_CHATS -> presentFragment(RecentChatsSettingsActivity())
             BUTTON_FEED -> presentFragment(FeedExcludedChannelsSettingsActivity())
             TOGGLE_ONLINE_DOTS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.PRESENCE_COLOR_DOTS.toggle()
+            TOGGLE_CHAT_ONLINE_DOTS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_PRESENCE_DOTS.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_ICON -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_ICON.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.toggle()
         }
@@ -86,6 +95,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
         private val BUTTON_RECENT_CHATS = InuUtils.generateId()
         private val BUTTON_FEED = InuUtils.generateId()
         private val TOGGLE_ONLINE_DOTS = InuUtils.generateId()
+        private val TOGGLE_CHAT_ONLINE_DOTS = InuUtils.generateId()
         private val TOGGLE_SHOW_MUTUAL_CONTACT_ICON = InuUtils.generateId()
         private val TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS = InuUtils.generateId()
 
@@ -99,6 +109,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("recent-chats-open", R.string.InuRecentChats, BUTTON_RECENT_CHATS),
                 SearchRegistry.Entry("feed-open", R.string.InuFeed, BUTTON_FEED),
                 SearchRegistry.Entry("online-dots", R.string.InuOnlineDots, TOGGLE_ONLINE_DOTS),
+                SearchRegistry.Entry("chat-online-dots", R.string.InuChatOnlineDots, TOGGLE_CHAT_ONLINE_DOTS),
                 SearchRegistry.Entry("show-mutual-contact-icon", R.string.InuShowMutualContactIcon, TOGGLE_SHOW_MUTUAL_CONTACT_ICON),
                 SearchRegistry.Entry("show-mutual-contact-in-chats", R.string.InuShowMutualContactInChats, TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS),
             )

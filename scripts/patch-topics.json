@@ -76,6 +76,7 @@
   "hide-pinned-forever": "ui",
   "hide-profile-similar-gifts-tabs": "ui",
   "hide-reactions": "chat",
+  "chat-presence-dots": "ui",
   "send-as-sticker": "media",
   "sticker-pack-zip": "media",
   "hide-reactions-overlay": "chat",

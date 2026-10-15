@@ -1815,6 +1815,8 @@
     <string name="InuDatacenterYourDc">Your DC</string>
     <string name="InuDatacenterLeakGuardBlocked">Blocked by leak protection</string>
     <string name="InuOnlineDots">Color-coded presence dots</string>
+    <string name="InuChatOnlineDots">Online dots in chats</string>
+    <string name="InuChatOnlineDotsInfo">Show the online dot on sender avatars inside groups.</string>
     <string name="InuOnlineDotsInfo">Blue online dot; yellow within 20 min and red within an hour after going offline.</string>
     <string name="InuGhostModeLauncherShortcut">Toggle shortcut on app icon</string>
     <string name="InuGhostModeLauncherShortcutInfo">Add a long-press shortcut on the app icon to switch Ghost Mode on or off.</string>
