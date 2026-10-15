@@ -17,6 +17,7 @@
     <string name="InuBanUserConfirm">Заблокувати %1$s у цій групі?</string>
     <string name="InuSendToDiscussWithoutJoin">Писати в групи обговорення без вступу</string>
     <string name="InuChatSnowflakes">Сніжинки в чатах</string>
+    <string name="InuActionBarSnowflakes">Сніжинки в шапці</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Пропускати клієнтську перевірку членства для груп обговорення</string>
     <string name="InuNavigationDrawer">Бічна панель (Drawer)</string>
     <string name="InuNavigationDrawerInfo">Замінює нижню панель вкладок класичним гамбургер-меню. Потрібен перезапуск.</string>

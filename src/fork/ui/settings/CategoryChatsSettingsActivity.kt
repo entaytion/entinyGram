@@ -136,6 +136,12 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
                 LocaleController.getString(R.string.InuChatSnowflakes),
             ).setChecked(InuConfig.CHAT_SNOWFLAKES.value)
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_ACTION_BAR_SNOWFLAKES,
+                LocaleController.getString(R.string.InuActionBarSnowflakes),
+            ).setChecked(InuConfig.ACTION_BAR_SNOWFLAKES.value)
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAttachmentSheet)))
@@ -248,6 +254,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
             TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.toggle()
             TOGGLE_CHAT_SNOWFLAKES -> (view as? TextCheckCell)?.isChecked = InuConfig.CHAT_SNOWFLAKES.toggle()
+            TOGGLE_ACTION_BAR_SNOWFLAKES -> (view as? TextCheckCell)?.isChecked = InuConfig.ACTION_BAR_SNOWFLAKES.toggle()
             TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER.toggle()
 
             BUTTON_FORMATTING_POPUP -> {
@@ -286,6 +293,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
         private val TOGGLE_SEARCH_FROM_GLOBAL = InuUtils.generateId()
         private val TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN = InuUtils.generateId()
         private val TOGGLE_CHAT_SNOWFLAKES = InuUtils.generateId()
+        private val TOGGLE_ACTION_BAR_SNOWFLAKES = InuUtils.generateId()
 
         private fun mentionSeparatorLabel(value: String): String = when (value) {
             ", " -> LocaleController.getString(R.string.InuMentionSepComma)
@@ -321,6 +329,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
                 SearchRegistry.Entry("search-from-global", R.string.InuSearchFromGlobal, TOGGLE_SEARCH_FROM_GLOBAL),
                 SearchRegistry.Entry("send-to-discuss-without-join", R.string.InuSendToDiscussWithoutJoin, TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN),
                 SearchRegistry.Entry("chat-snowflakes", R.string.InuChatSnowflakes, TOGGLE_CHAT_SNOWFLAKES),
+                SearchRegistry.Entry("action-bar-snowflakes", R.string.InuActionBarSnowflakes, TOGGLE_ACTION_BAR_SNOWFLAKES),
             ),
         )
     }

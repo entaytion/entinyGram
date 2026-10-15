@@ -4,9 +4,38 @@ Date: Wed, 14 Oct 2026 18:08:15 +0300
 Subject: [*] snowflakes in chats toggle
 
 ---
+ .../src/main/java/org/telegram/ui/ActionBar/ActionBar.java      | 2 +-
+ .../src/main/java/org/telegram/ui/ActionBar/Theme.java          | 2 +-
  .../org/telegram/ui/Components/SizeNotifierFrameLayout.java     | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../main/java/org/telegram/ui/Components/SnowflakesEffect.java  | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -484,7 +484,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                     }
+                 }
+ 
+-                if (Theme.canStartHolidayAnimation()) {
++                if (Theme.canStartHolidayAnimation() || desu.inugram.InuConfig.ACTION_BAR_SNOWFLAKES.getValue()) {
+                     if (snowflakesEffect == null) {
+                         snowflakesEffect = new SnowflakesEffect(0);
+                     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -4579,7 +4579,7 @@ public class Theme {
+                 canStartHolidayAnimation = false;
+             }
+             if (dialogs_holidayDrawable == null) {
+-                if (monthOfYear == 11 && dayOfMonth >= (BuildVars.DEBUG_PRIVATE_VERSION ? 29 : 31) && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1) {
++                if (monthOfYear == 11 && dayOfMonth >= (BuildVars.DEBUG_PRIVATE_VERSION ? 29 : 31) && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1 || desu.inugram.InuConfig.ACTION_BAR_SNOWFLAKES.getValue()) {
+                     dialogs_holidayDrawable = ApplicationLoader.applicationContext.getResources().getDrawable(R.drawable.newyear);
+                     dialogs_holidayDrawableOffsetX = -dp(3);
+                     dialogs_holidayDrawableOffsetY = -dp(-7);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SizeNotifierFrameLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SizeNotifierFrameLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SizeNotifierFrameLayout.java
@@ -16,7 +45,20 @@ index 0000000..0000000 100644
  
      private void checkSnowflake(Canvas canvas) {
 -        if (backgroundView != null && Theme.canStartHolidayAnimation() && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
-+        if (backgroundView != null && (Theme.canStartHolidayAnimation() || desu.inugram.InuConfig.CHAT_SNOWFLAKES.getValue()) && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
++        if (backgroundView != null && (desu.inugram.InuConfig.CHAT_SNOWFLAKES.getValue() || Theme.canStartHolidayAnimation() && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND))) {
              if (snowflakesEffect == null) {
                  snowflakesEffect = new SnowflakesEffect(1);
                  snowflakesEffect.setForcedColor(0xFFFFFFFF);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java
+@@ -176,7 +176,7 @@ public class SnowflakesEffect {
+                 final float h = particle.type == 0 ? (texSize / 2f) : (texSize / 2f * particle.scale);
+                 final float tx = particle.type == 0 ? texSize : 0;
+ 
+-                batchParticlesBuffer.setParticleColor(a, ColorUtils.setAlphaComponent(color, (int) (255 * particle.alpha)));
++                batchParticlesBuffer.setParticleColor(a, ColorUtils.setAlphaComponent(color, Math.max(0, Math.min(255, (int) (255 * particle.alpha)))));
+                 batchParticlesBuffer.setParticleVertexCords(a, x - h, y - h, x + h, y + h);
+                 batchParticlesBuffer.setParticleTextureCords(a, tx, 0, tx + texSize, texSize);
+             }
