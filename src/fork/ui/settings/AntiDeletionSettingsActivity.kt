@@ -106,25 +106,15 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_EDITED_MESSAGES.value,
             )
         )
-        if (InuConfig.SAVE_EDITED_MESSAGES.value) {
+        if (InuConfig.SAVE_EDITED_MESSAGES.value && InuConfig.EDIT_HISTORY_COMPACT.value) {
             items.add(
                 mkTwoLineCheckItem(
-                    TOGGLE_EDIT_HISTORY_COMPACT,
-                    R.string.InuEditHistoryCompact,
-                    R.string.InuEditHistoryCompactInfo,
-                    InuConfig.EDIT_HISTORY_COMPACT.value,
+                    TOGGLE_SHOW_EDIT_HISTORY_DIFF,
+                    R.string.InuEditHistoryDiff,
+                    R.string.InuEditHistoryDiffInfo,
+                    InuConfig.SHOW_EDIT_HISTORY_DIFF.value,
                 )
             )
-            if (InuConfig.EDIT_HISTORY_COMPACT.value) {
-                items.add(
-                    mkTwoLineCheckItem(
-                        TOGGLE_SHOW_EDIT_HISTORY_DIFF,
-                        R.string.InuEditHistoryDiff,
-                        R.string.InuEditHistoryDiffInfo,
-                        InuConfig.SHOW_EDIT_HISTORY_DIFF.value,
-                    )
-                )
-            }
         }
 
         items.add(UItem.asShadow(null))
@@ -149,6 +139,14 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
 
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
             items.add(UItem.asShadow(null))
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_EDIT_HISTORY_COMPACT,
+                    R.string.InuEditHistoryCompact,
+                    R.string.InuEditHistoryCompactInfo,
+                    InuConfig.EDIT_HISTORY_COMPACT.value,
+                )
+            )
             items.add(mkSubPageButton(BUTTON_SEARCH, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuDeletedMessageSearch)))
             items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuExportArchive)))
         }

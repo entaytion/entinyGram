@@ -1292,6 +1292,16 @@ object SavedMessagesHelper {
     }
 
     @JvmStatic
+    fun recordOwnEdit(account: Int, obj: MessageObject?, newText: String?, newEntities: ArrayList<TLRPC.MessageEntity>?) {
+        val old = obj?.messageOwner ?: return
+        if (!isSaveEditedEnabled() || old.message.isNullOrEmpty()) return
+        val textChanged = old.message != newText
+        val formatChanged = newEntities != null && !sameContent(old.entities, null, newEntities, null)
+        if (!textChanged && !formatChanged) return
+        recordEditHistory(account, obj.dialogId, obj.id, old.message, if (old.edit_date != 0) old.edit_date else old.date, old)
+    }
+
+    @JvmStatic
     fun recordEditHistoryIfChanged(account: Int, dialogId: Long, msgId: Int, oldMessage: TLRPC.Message?, newMessage: TLRPC.Message) {
         if (oldMessage == null || !isSaveEditedEnabled()) return
         val textChanged = oldMessage.message != newMessage.message
@@ -1415,6 +1425,19 @@ object SavedMessagesHelper {
             }
             editHistoryIds.get(account.toLong())?.get(dialogId)?.contains(msgId) == true
         }
+    }
+
+    private val historyTimeLabels = java.util.WeakHashMap<MessageObject, CharSequence>()
+
+    @JvmStatic
+    fun setHistoryTimeLabel(msg: MessageObject, label: CharSequence) {
+        synchronized(historyTimeLabels) { historyTimeLabels[msg] = label }
+    }
+
+    @JvmStatic
+    fun historyTimeLabel(msg: MessageObject?): CharSequence? {
+        if (msg == null) return null
+        return synchronized(historyTimeLabels) { historyTimeLabels[msg] }
     }
 
     @JvmStatic

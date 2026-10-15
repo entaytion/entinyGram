@@ -7,13 +7,13 @@ Subject: feat(history): preserve message history and saved deletions
  .../messenger/DownloadController.java         |  2 +
  .../messenger/MessagesController.java         | 84 +++++++++++++++++--
  .../telegram/messenger/MessagesStorage.java   | 33 +++++++-
- .../messenger/SendMessagesHelper.java         |  7 ++
+ .../messenger/SendMessagesHelper.java         |  5 ++
  .../telegram/ui/Cells/ChatMessageCell.java    |  8 +-
  .../java/org/telegram/ui/ChatActivity.java    | 15 ++++
  .../telegram/ui/Components/AlertsCreator.java | 44 +++++++++-
  .../Components/DeleteMessagesBottomSheet.java |  2 +
  .../org/telegram/ui/MainTabsActivity.java     | 11 +--
- 9 files changed, 183 insertions(+), 23 deletions(-)
+ 9 files changed, 181 insertions(+), 23 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java b/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
 index 0000000..0000000 100644
@@ -330,13 +330,11 @@ index 0000000..0000000 100644
                  messageObject.previousMedia = newMsg.media;
                  messageObject.previousMessage = newMsg.message;
                  messageObject.previousMessageEntities = newMsg.entities;
-@@ -3627,6 +3631,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3627,6 +3631,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  req.flags |= TLObject.FLAG_18;
              }
          }
-+        if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message) && !messageObject.messageOwner.message.equals(message)) {
-+            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date, messageObject.messageOwner);
-+        }
++        desu.inugram.helpers.chat.SavedMessagesHelper.recordOwnEdit(currentAccount, messageObject, message, entities);
          return getConnectionsManager().sendRequest(req, (response, error) -> {
              if (error == null) {
                  getMessagesController().processUpdates((TLRPC.Updates) response, false);

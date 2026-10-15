@@ -31,6 +31,7 @@ import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.Emoji
 import org.telegram.messenger.FileLoader
+import org.telegram.messenger.ImageLocation
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesStorage
@@ -44,6 +45,7 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ActionBar.ThemeDescription
 import org.telegram.ui.Cells.ChatMessageCell
+import org.telegram.ui.Components.AnimatedEmojiSpan
 import org.telegram.ui.Components.AvatarDrawable
 import org.telegram.ui.Components.BackupImageView
 import org.telegram.ui.Components.BulletinFactory
@@ -61,11 +63,13 @@ class AyuMessageHistoryActivity(
 
     private class EditEvent(val msgId: Int, val before: EditEntry, val after: EditEntry?, val authorId: Long, val date: Long)
 
+    private class Row(val type: Int, val index: Int, val date: Long)
+
     private val isDeletedArchive: Boolean
         get() = deletedArchiveAuthor != null || deletedArchiveDialog
 
-    private val compareMode: Boolean
-        get() = !isDeletedArchive && !InuConfig.EDIT_HISTORY_COMPACT.value
+    private val cardsMode: Boolean
+        get() = !InuConfig.EDIT_HISTORY_COMPACT.value
 
     private val showSenders: Boolean
         get() {
@@ -80,6 +84,7 @@ class AyuMessageHistoryActivity(
     private val messageObjects = ArrayList<MessageObject?>()
     private val previousEntries = ArrayList<EditEntry?>()
     private val editEvents = ArrayList<EditEvent>()
+    private val rows = ArrayList<Row>()
     private val liveMessages = HashMap<Int, TLRPC.Message>()
     private var listView: RecyclerListView? = null
     private var emptyView: View? = null
@@ -109,7 +114,7 @@ class AyuMessageHistoryActivity(
                     if (index >= 0) {
                         historyEntries[index] = entry.copy(mediaPath = path)
                         rebuildMessageObjects()
-                        if (!compareMode) listView?.adapter?.notifyItemChanged(index)
+                        listView?.adapter?.notifyDataSetChanged()
                     }
                     AndroidUtilities.openForView(File(path), File(path).name, message.mimeType, parentActivity, null, false)
                 }
@@ -195,15 +200,20 @@ class AyuMessageHistoryActivity(
                 deletedOffset += page.size
                 hasMoreDeleted = page.size == PAGE_SIZE
                 val first = !loaded
+                val layoutManager = listView?.layoutManager as? LinearLayoutManager
+                val anchorPosition = layoutManager?.findFirstVisibleItemPosition() ?: -1
+                val anchorTop = layoutManager?.findViewByPosition(anchorPosition)?.top ?: 0
+                val anchorIndex = (anchorPosition until rows.size).firstNotNullOfOrNull { p -> rows.getOrNull(p)?.index?.takeIf { it >= 0 } } ?: -1
                 historyEntries.addAll(0, page.asReversed())
                 loaded = true
                 rebuildMessageObjects()
+                listView?.adapter?.notifyDataSetChanged()
                 if (first) {
-                    listView?.adapter?.notifyDataSetChanged()
                     updateEmptyView()
-                    if (historyEntries.isNotEmpty()) listView?.scrollToPosition(historyEntries.size - 1)
-                } else if (page.isNotEmpty()) {
-                    listView?.adapter?.notifyItemRangeInserted(0, page.size)
+                    scrollToEnd()
+                } else if (page.isNotEmpty() && anchorIndex >= 0) {
+                    val target = rows.indexOfFirst { it.type != VIEW_DATE && it.index == anchorIndex + page.size }
+                    if (target >= 0) layoutManager?.scrollToPositionWithOffset(target, anchorTop)
                 }
             }
         }
@@ -298,7 +308,62 @@ class AyuMessageHistoryActivity(
             previousEntries.add(previous.put(if (editedArchiveDialog) entry.originalMessageId else targetMessageObject.id, entry))
         }
         rebuildEvents()
+        rebuildRows()
     }
+
+    private fun rebuildRows() {
+        rows.clear()
+        var lastDay = Int.MIN_VALUE
+        fun add(type: Int, index: Int, date: Long) {
+            val day = dayKey(date)
+            if (date > 0 && day != lastDay) {
+                rows.add(Row(VIEW_DATE, -1, date))
+                lastDay = day
+            }
+            rows.add(Row(type, index, date))
+        }
+        if (cardsMode && !isDeletedArchive) {
+            editEvents.forEachIndexed { i, e -> add(VIEW_COMPARE, i, e.date) }
+        } else {
+            historyEntries.forEachIndexed { i, e -> add(if (cardsMode) VIEW_DELETED else VIEW_BUBBLE, i, e.timestamp) }
+        }
+    }
+
+    private fun dayKey(date: Long): Int {
+        val calendar = java.util.Calendar.getInstance()
+        calendar.timeInMillis = date * 1000L
+        return calendar.get(java.util.Calendar.YEAR) * 1000 + calendar.get(java.util.Calendar.DAY_OF_YEAR)
+    }
+
+    private fun formatDayHeader(date: Long): String {
+        val today = dayKey(System.currentTimeMillis() / 1000L)
+        return when (dayKey(date)) {
+            today -> LocaleController.getString(R.string.MessageScheduleToday)
+            dayKey(System.currentTimeMillis() / 1000L - 86400L) -> LocaleController.getString(R.string.Yesterday).replaceFirstChar { it.titlecase() }
+            else -> LocaleController.formatDateChat(date, true)
+        }
+    }
+
+    private fun styledText(text: CharSequence, entities: ArrayList<TLRPC.MessageEntity>?, view: TextView): CharSequence {
+        val builder = SpannableStringBuilder(text)
+        if (!entities.isNullOrEmpty()) {
+            try {
+                MessageObject.addEntitiesToText(builder, entities, false, false, false, true)
+            } catch (e: Throwable) {
+                android.util.Log.d(TAG, "entities render failed", e)
+            }
+        }
+        var result: CharSequence = Emoji.replaceEmoji(builder, view.paint.fontMetricsInt, false)
+        if (!entities.isNullOrEmpty()) result = MessageObject.replaceAnimatedEmoji(result, entities, view.paint.fontMetricsInt)
+        return result
+    }
+
+    private fun emojiTextView(context: Context, size: Float, color: Int): TextView = AnimatedEmojiSpan.TextViewEmojis(context).apply {
+        setTextSize(TypedValue.COMPLEX_UNIT_DIP, size)
+        setTextColor(Theme.getColor(color))
+    }
+
+    private fun formatTime(date: Long): String = LocaleController.getInstance().getFormatterDay().format(date * 1000L)
 
     private fun mediaKey(entry: EditEntry): String? {
         val media = entry.media
@@ -310,8 +375,36 @@ class AyuMessageHistoryActivity(
         }
     }
 
-    private fun sameVersion(a: EditEntry, b: EditEntry): Boolean =
-        a.text == b.text && mediaKey(a) == mediaKey(b) && SavedMessagesHelper.sameContent(a.entities, null, b.entities, null)
+    private fun sameVersion(a: EditEntry, b: EditEntry): Boolean = changeLabels(a, b).isEmpty()
+
+    private fun splitEntities(entities: ArrayList<TLRPC.MessageEntity>?): Pair<ArrayList<TLRPC.MessageEntity>, ArrayList<TLRPC.MessageEntity>> {
+        val formatting = ArrayList<TLRPC.MessageEntity>()
+        val emoji = ArrayList<TLRPC.MessageEntity>()
+        entities?.forEach { if (it is TLRPC.TL_messageEntityCustomEmoji) emoji.add(it) else formatting.add(it) }
+        return formatting to emoji
+    }
+
+    private fun pollKey(entry: EditEntry): String? {
+        val poll = (entry.media as? TLRPC.TL_messageMediaPoll)?.poll ?: return null
+        return (poll.question?.text ?: "") + "\n" + poll.answers.joinToString("\n") { it.text?.text ?: "" }
+    }
+
+    private fun changeLabels(a: EditEntry, b: EditEntry): List<String> {
+        val labels = ArrayList<String>()
+        fun add(res: Int) = labels.add(LocaleController.getString(res))
+        val hasMedia = listOf(a.media, b.media).any { it != null && it !is TLRPC.TL_messageMediaEmpty && it !is TLRPC.TL_messageMediaWebPage }
+        if (a.text != b.text) add(if (hasMedia) R.string.InuEditFieldCaption else R.string.InuEditFieldText)
+        val (formatA, emojiA) = splitEntities(a.entities)
+        val (formatB, emojiB) = splitEntities(b.entities)
+        if (!SavedMessagesHelper.sameContent(formatA, null, formatB, null)) add(R.string.InuEditFieldFormatting)
+        if (!SavedMessagesHelper.sameContent(emojiA, null, emojiB, null)) add(R.string.InuEditFieldEmoji)
+        if (mediaKey(a) != mediaKey(b)) add(R.string.InuEditFieldMedia)
+        if ((a.media as? TLRPC.TL_messageMediaWebPage)?.webpage?.url != (b.media as? TLRPC.TL_messageMediaWebPage)?.webpage?.url) add(R.string.InuEditFieldLinkPreview)
+        if (pollKey(a) != pollKey(b)) add(R.string.InuEditFieldPoll)
+        if ((a.media?.ttl_seconds ?: 0) != (b.media?.ttl_seconds ?: 0)) add(R.string.InuEditFieldTimer)
+        if ((a.media?.spoiler == true) != (b.media?.spoiler == true)) add(R.string.InuEditFieldSpoiler)
+        return labels
+    }
 
     private fun authorOf(message: TLRPC.Message?): Long {
         val dialogId = targetMessageObject.getDialogId()
@@ -411,12 +504,12 @@ class AyuMessageHistoryActivity(
         if (deletedArchiveDialog || editedArchiveDialog) {
             actionBar.createMenu().addItem(MENU_CLEAR_ARCHIVE, R.drawable.inu_tabler_trash_x)
         }
+        val other = actionBar.createMenu().addItem(MENU_MAIN, R.drawable.ic_ab_other)
+        compactItem = other.addSubItem(MENU_TOGGLE_COMPACT, R.drawable.msg_list, LocaleController.getString(R.string.InuEditHistoryCompact), true)
         if (!isDeletedArchive) {
-            val other = actionBar.createMenu().addItem(MENU_MAIN, R.drawable.ic_ab_other)
-            compactItem = other.addSubItem(MENU_TOGGLE_COMPACT, R.drawable.msg_list, LocaleController.getString(R.string.InuEditHistoryCompact), true)
             diffItem = other.addSubItem(MENU_TOGGLE_DIFF, R.drawable.msg_customize, LocaleController.getString(R.string.InuEditHistoryDiff), true)
-            refreshMode()
         }
+        refreshMode()
 
         val frameLayout = object : SizeNotifierFrameLayout(context) {
             override fun isActionBarVisible(): Boolean = false
@@ -570,6 +663,32 @@ class AyuMessageHistoryActivity(
             .show()
     }
 
+    private fun showDeletedMenu(cell: DeletedCardCell) {
+        val index = cell.index
+        val entry = historyEntries.getOrNull(index) ?: return
+        ItemOptions.makeOptions(this, cell)
+            .addIf(entry.text.isNotEmpty(), R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) {
+                copyText(entry.text)
+            }
+            .addIf(entry.originalMessageId != 0, R.drawable.msg_delete, LocaleController.getString(R.string.Delete), true) {
+                deleteArchived(index)
+            }
+            .show()
+    }
+
+    private fun openDeletedMedia(entry: EditEntry) {
+        val saved = entry.mediaPath?.let { File(it) }?.takeIf { it.isFile && it.length() > 0 }
+        if (saved != null) {
+            AndroidUtilities.openForView(saved, saved.name, null, parentActivity, null, false)
+            return
+        }
+        val message = entry.message ?: return
+        if (message.media == null || message.media is TLRPC.TL_messageMediaEmpty) return
+        val messageObject = MessageObject(currentAccount, message, false, false)
+        SavedMessagesHelper.markAsHistoryPreview(messageObject)
+        openArchiveMedia(entry, messageObject)
+    }
+
     private fun deleteArchived(position: Int) {
         if (position < 0 || position >= historyEntries.size) return
         val entry = historyEntries.removeAt(position)
@@ -602,42 +721,44 @@ class AyuMessageHistoryActivity(
 
     private inner class HistoryAdapter(private val context: Context) : RecyclerListView.SelectionAdapter() {
 
-        override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean = true
+        override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean = holder.itemViewType != VIEW_DATE
 
-        override fun getItemCount(): Int = if (compareMode) editEvents.size else historyEntries.size
+        override fun getItemCount(): Int = rows.size
 
-        override fun getItemViewType(position: Int): Int = if (compareMode) VIEW_COMPARE else VIEW_BUBBLE
+        override fun getItemViewType(position: Int): Int = rows[position].type
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            if (viewType == VIEW_COMPARE) {
-                val cell = EditCompareCell(context)
-                cell.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                return RecyclerListView.Holder(cell)
+            val cell: View = when (viewType) {
+                VIEW_COMPARE -> EditCompareCell(context)
+                VIEW_DELETED -> DeletedCardCell(context)
+                VIEW_DATE -> DateHeaderCell(context)
+                else -> return RecyclerListView.Holder(AyuHistoryMessageCell(context))
             }
-            return RecyclerListView.Holder(AyuHistoryMessageCell(context))
+            cell.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            return RecyclerListView.Holder(cell)
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val view = holder.itemView
-            if (view is EditCompareCell) {
-                editEvents.getOrNull(position)?.let(view::bind)
-                return
-            }
-            val cell = view as AyuHistoryMessageCell
-            val entry = historyEntries[position]
-            var syntheticMsg = messageObjects.getOrNull(position)
-            if (syntheticMsg == null) {
-                val prevEntry = previousEntries.getOrNull(position)
-                syntheticMsg = createMessageObjectForEntry(entry, prevEntry, position == currentVersionIndex)
-                if (position < messageObjects.size) {
-                    messageObjects[position] = syntheticMsg
+            val row = rows.getOrNull(position) ?: return
+            when (val view = holder.itemView) {
+                is DateHeaderCell -> view.bind(formatDayHeader(row.date))
+                is EditCompareCell -> editEvents.getOrNull(row.index)?.let(view::bind)
+                is DeletedCardCell -> historyEntries.getOrNull(row.index)?.let { view.bind(it, row.index) }
+                is AyuHistoryMessageCell -> {
+                    val index = row.index
+                    val entry = historyEntries.getOrNull(index) ?: return
+                    var syntheticMsg = messageObjects.getOrNull(index)
+                    if (syntheticMsg == null) {
+                        syntheticMsg = createMessageObjectForEntry(entry, previousEntries.getOrNull(index), index == currentVersionIndex)
+                        if (index < messageObjects.size) messageObjects[index] = syntheticMsg
+                    }
+                    view.setEditEntry(entry, syntheticMsg, index)
                 }
             }
-            cell.setEditEntry(entry, syntheticMsg, position)
         }
 
         private fun createMessageObjectForEntry(entry: EditEntry, prevEntry: EditEntry?, isLive: Boolean): MessageObject {
-            val diff: CharSequence? = if (!isDeletedArchive && InuConfig.SHOW_EDIT_HISTORY_DIFF.value && prevEntry != null) {
+            val diff: CharSequence? = if (!isDeletedArchive && InuConfig.SHOW_EDIT_HISTORY_DIFF.value && prevEntry != null && prevEntry.text != entry.text) {
                 computeDiff(prevEntry.text, entry.text)
             } else {
                 null
@@ -661,15 +782,25 @@ class AyuMessageHistoryActivity(
                     flags = flags and 8.inv()
                 }
             } ?: TLRPC.TL_message().apply {
+                val source = if (editedArchiveDialog) liveMessages[entry.originalMessageId] else owner
                 id = if ((isDeletedArchive || editedArchiveDialog) && entry.originalMessageId != 0) entry.originalMessageId else targetMessageObject.id
                 dialog_id = targetMessageObject.getDialogId()
                 date = entry.timestamp.toInt()
                 message = entry.text
-                from_id = if (isDeletedArchive && entry.fromId != 0L) messagesController.getPeer(entry.fromId) else owner?.from_id
+                from_id = if (isDeletedArchive && entry.fromId != 0L) messagesController.getPeer(entry.fromId) else source?.from_id
                 peer_id = this@AyuMessageHistoryActivity.peer
-                out = if (isDeletedArchive && entry.fromId != 0L) entry.fromId == userConfig.clientUserId else owner?.out == true
-                post = owner?.post == true
+                out = if (isDeletedArchive && entry.fromId != 0L) entry.fromId == userConfig.clientUserId else source?.out == true
+                post = source?.post == true
                 edit_hide = true
+            }
+            // entiny: a sender-less copy makes the cell fall back to a blank avatar and the "DELETED" author name
+            if (msg.from_id == null && !msg.post) {
+                val sender = when {
+                    isDeletedArchive -> entry.fromId.takeIf { it != 0L } ?: authorOf(entry.message)
+                    editedArchiveDialog -> authorOf(liveMessages[entry.originalMessageId])
+                    else -> authorOf(owner)
+                }
+                if (sender != 0L) msg.from_id = messagesController.getPeer(sender)
             }
 
             val entities = if (diff == null && archived == null) entry.entities else null
@@ -710,7 +841,14 @@ class AyuMessageHistoryActivity(
             val msgObj = MessageObject(currentAccount, msg, false, true)
             // entiny: mark before layout so the cell never starts auto-downloads for archived copies
             SavedMessagesHelper.markAsHistoryPreview(msgObj)
-            msgObj.forceAvatar = !msgObj.isOutOwner
+            if (isDeletedArchive && entry.timestamp > 0) {
+                SavedMessagesHelper.setHistoryTimeLabel(msgObj, LocaleController.getString(R.string.InuDeletedMarkText) + " " + formatTime(entry.timestamp) + " · ")
+            } else if (!isDeletedArchive && prevEntry != null) {
+                val labels = changeLabels(prevEntry, entry).filter { it != LocaleController.getString(R.string.InuEditFieldText) && it != LocaleController.getString(R.string.InuEditFieldCaption) }
+                if (labels.isNotEmpty()) SavedMessagesHelper.setHistoryTimeLabel(msgObj, "✎ " + labels.joinToString(", ") + " · ")
+            }
+            val senderId = msgObj.fromChatId
+            msgObj.forceAvatar = !msgObj.isOutOwner && senderId != 0L && messagesController.getUserOrChat(senderId) != null
             if (savedFile != null) {
                 msgObj.attachPathExists = true
                 msgObj.mediaExists = true
@@ -802,11 +940,12 @@ class AyuMessageHistoryActivity(
         }
         private val dateView = textView(context, 13f, Theme.key_windowBackgroundWhiteGrayText)
         private val beforeLabel = label(context, R.string.InuEditHistoryBefore, Theme.key_text_RedRegular)
-        private val beforeText = textView(context, 15f, Theme.key_windowBackgroundWhiteBlackText)
-        private val beforeMedia = textView(context, 13f, Theme.key_windowBackgroundWhiteGrayText)
+        private val beforeText = emojiTextView(context, 15f, Theme.key_windowBackgroundWhiteBlackText)
+        private val beforeMedia = MediaRow(context)
         private val afterLabel = label(context, R.string.InuEditHistoryAfter, Theme.key_windowBackgroundWhiteGreenText)
-        private val afterText = textView(context, 15f, Theme.key_windowBackgroundWhiteBlackText)
-        private val afterMedia = textView(context, 13f, Theme.key_windowBackgroundWhiteGrayText)
+        private val afterText = emojiTextView(context, 15f, Theme.key_windowBackgroundWhiteBlackText)
+        private val afterMedia = MediaRow(context)
+        private val changesView = textView(context, 13f, Theme.key_windowBackgroundWhiteBlueText)
 
         init {
             val card = LinearLayout(context).apply {
@@ -826,16 +965,13 @@ class AyuMessageHistoryActivity(
             card.addView(header, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
             card.addView(beforeLabel, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 10f, 0f, 2f))
             card.addView(beforeText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
-            card.addView(beforeMedia, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 2f, 0f, 0f))
+            card.addView(beforeMedia, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 4f, 0f, 0f))
             card.addView(afterLabel, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 10f, 0f, 2f))
             card.addView(afterText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
-            card.addView(afterMedia, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 2f, 0f, 0f))
+            card.addView(afterMedia, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 4f, 0f, 0f))
+            card.addView(changesView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 8f, 0f, 0f))
             addView(card, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat(), Gravity.TOP, 10f, 4f, 10f, 4f))
 
-            card.setOnClickListener {
-                val path = event?.before?.mediaPath?.let { File(it) }?.takeIf { it.isFile && it.length() > 0 }
-                if (path != null) AndroidUtilities.openForView(path, path.name, null, parentActivity, null, false)
-            }
             card.setOnLongClickListener {
                 showEventMenu(this)
                 true
@@ -852,23 +988,12 @@ class AyuMessageHistoryActivity(
             text = LocaleController.getString(textRes).uppercase()
         }
 
-        private fun mediaLine(entry: EditEntry?, changed: Boolean): String {
-            if (entry == null) return ""
-            val media = entry.media
-            var line = if (media != null) SavedMessagesHelper.archiveText(null, TLRPC.TL_message().apply { this.media = media }) else ""
-            val path = entry.mediaPath
-            if (line.isEmpty() && !path.isNullOrBlank()) line = File(path).name
-            if (line.isNotEmpty()) line = "📎 $line"
-            if (changed) line = if (line.isEmpty()) LocaleController.getString(R.string.InuEditHistoryMediaChanged) else line + " · " + LocaleController.getString(R.string.InuEditHistoryMediaChanged)
-            return line
-        }
-
-        private fun setBlock(view: TextView, text: CharSequence?) {
+        private fun setBlock(view: TextView, text: CharSequence?, entities: ArrayList<TLRPC.MessageEntity>? = null) {
             if (text.isNullOrEmpty()) {
                 view.visibility = View.GONE
             } else {
                 view.visibility = View.VISIBLE
-                view.text = Emoji.replaceEmoji(text, view.paint.fontMetricsInt, false)
+                view.text = styledText(text, entities, view)
             }
         }
 
@@ -888,21 +1013,23 @@ class AyuMessageHistoryActivity(
             } else {
                 avatarView.visibility = View.GONE
             }
-            dateView.text = if (e.date > 0) LocaleController.formatDateAudio(e.date, true) else ""
+            dateView.text = if (e.date > 0) LocaleController.formatString(R.string.InuEditedAtTime, formatTime(e.date)) else ""
 
             val after = e.after
             val (oldText, newText) = if (after != null) diffPair(e.before.text, after.text) else Pair<CharSequence, CharSequence>(e.before.text, "")
-            setBlock(beforeText, oldText)
-            val mediaChanged = after != null && mediaKey(e.before) != mediaKey(after)
-            setBlock(beforeMedia, mediaLine(e.before, false))
+            setBlock(beforeText, oldText, e.before.entities)
+            beforeMedia.bind(e.before.media, e.before.mediaPath)
             if (after == null) {
                 setBlock(afterText, LocaleController.getString(R.string.InuEditHistoryCurrentUnknown))
                 afterText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
-                setBlock(afterMedia, null)
+                afterMedia.bind(null, null)
+                changesView.visibility = View.GONE
             } else {
-                setBlock(afterText, newText)
+                setBlock(afterText, newText, after.entities)
                 afterText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
-                setBlock(afterMedia, mediaLine(after, mediaChanged))
+                afterMedia.bind(after.media, after.mediaPath)
+                val labels = changeLabels(e.before, after)
+                setBlock(changesView, if (labels.isEmpty()) null else "✎ " + LocaleController.formatString(R.string.InuEditHistoryChanged, labels.joinToString(", ")))
             }
         }
 
@@ -949,6 +1076,195 @@ class AyuMessageHistoryActivity(
         }
     }
 
+    private inner class MediaRow(context: Context) : LinearLayout(context) {
+        private val imageView = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(6f)) }
+        private val infoView = TextView(context).apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
+            setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+            maxLines = 2
+            ellipsize = TextUtils.TruncateAt.END
+        }
+        private var file: File? = null
+
+        init {
+            orientation = HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            addView(imageView, LayoutHelper.createLinear(40, 40, 0f, 0f, 8f, 0f))
+            addView(infoView, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
+            setOnClickListener {
+                file?.let { AndroidUtilities.openForView(it, it.name, null, parentActivity, null, false) }
+            }
+        }
+
+        fun bind(mediaIn: TLRPC.MessageMedia?, path: String?) {
+            val media = mediaIn?.takeIf { it !is TLRPC.TL_messageMediaEmpty }
+            val saved = path?.takeIf { it.isNotBlank() }?.let { File(it) }?.takeIf { it.isFile && it.length() > 0 }
+            file = saved
+            isClickable = saved != null
+            if (media == null && saved == null) {
+                visibility = View.GONE
+                return
+            }
+            visibility = View.VISIBLE
+            val parts = ArrayList<String>()
+            if (media != null) SavedMessagesHelper.archiveText(null, TLRPC.TL_message().apply { this.media = media }).takeIf { it.isNotEmpty() }?.let(parts::add)
+            val document = media?.document
+            val photo = media?.photo
+            if (document != null) {
+                FileLoader.getDocumentFileName(document)?.takeIf { it.isNotEmpty() }?.let(parts::add)
+                if (document.size > 0) parts.add(AndroidUtilities.formatFileSize(document.size))
+                val duration = MessageObject.getDocumentDuration(document)
+                if (duration > 0) parts.add(AndroidUtilities.formatShortDuration(duration.toInt()))
+            }
+            if (media is TLRPC.TL_messageMediaWebPage) media.webpage?.let { (it.title ?: it.url)?.takeIf { t -> t.isNotEmpty() }?.let { t -> parts.add("🔗 $t") } }
+            if ((media?.ttl_seconds ?: 0) > 0) parts.add("⏱ ${media?.ttl_seconds}s")
+            if (media?.spoiler == true) parts.add("▒")
+            if (parts.isEmpty() && saved != null) parts.add(saved.name)
+            infoView.text = Emoji.replaceEmoji(parts.joinToString(" · "), infoView.paint.fontMetricsInt, false)
+
+            val thumbs = photo?.sizes ?: document?.thumbs
+            when {
+                saved != null && saved.extension.lowercase() in IMAGE_EXTENSIONS -> {
+                    imageView.visibility = View.VISIBLE
+                    imageView.setImage(saved.absolutePath, "80_80", null as android.graphics.drawable.Drawable?)
+                }
+                !thumbs.isNullOrEmpty() -> {
+                    imageView.visibility = View.VISIBLE
+                    val small = FileLoader.getClosestPhotoSizeWithSize(thumbs, 90)
+                    val stripped = thumbs.firstOrNull { it is TLRPC.TL_photoStrippedSize }
+                    fun location(size: TLRPC.PhotoSize?) = when {
+                        size == null -> null
+                        photo != null -> ImageLocation.getForPhoto(size, photo)
+                        else -> ImageLocation.getForDocument(size, document)
+                    }
+                    imageView.setImage(location(small), "80_80", location(stripped), "80_80_b", 0, media)
+                }
+                else -> {
+                    imageView.imageReceiver.clearImage()
+                    imageView.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private inner class DateHeaderCell(context: Context) : FrameLayout(context) {
+        private val textView = TextView(context).apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+            typeface = AndroidUtilities.bold()
+            setTextColor(Theme.getColor(Theme.key_chat_serviceText))
+            setPadding(AndroidUtilities.dp(10f), AndroidUtilities.dp(4f), AndroidUtilities.dp(10f), AndroidUtilities.dp(5f))
+            background = Theme.createRoundRectDrawable(AndroidUtilities.dp(12f), Theme.getColor(Theme.key_chat_serviceBackground))
+        }
+
+        init {
+            addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT.toFloat(), Gravity.CENTER_HORIZONTAL, 0f, 6f, 0f, 6f))
+        }
+
+        fun bind(text: String) {
+            textView.text = text
+        }
+    }
+
+    private inner class DeletedCardCell(context: Context) : FrameLayout(context) {
+        var index = -1
+            private set
+        private var entry: EditEntry? = null
+
+        private val avatarDrawable = AvatarDrawable()
+        private val avatarView = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(18f)) }
+        private val nameView = text(context, 15f, Theme.key_windowBackgroundWhiteBlackText).apply {
+            typeface = AndroidUtilities.bold()
+            maxLines = 1
+            ellipsize = TextUtils.TruncateAt.END
+        }
+        private val deletedView = text(context, 13f, Theme.key_text_RedRegular)
+        private val replyView = text(context, 13f, Theme.key_windowBackgroundWhiteGrayText).apply {
+            maxLines = 2
+            ellipsize = TextUtils.TruncateAt.END
+        }
+        private val bodyView = emojiTextView(context, 15f, Theme.key_windowBackgroundWhiteBlackText)
+        private val mediaView = MediaRow(context)
+        private val buttonsView = text(context, 13f, Theme.key_windowBackgroundWhiteGrayText)
+        private val sentView = text(context, 12f, Theme.key_windowBackgroundWhiteGrayText)
+
+        init {
+            val card = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(AndroidUtilities.dp(12f), AndroidUtilities.dp(10f), AndroidUtilities.dp(12f), AndroidUtilities.dp(10f))
+                background = Theme.createRoundRectDrawable(AndroidUtilities.dp(14f), Theme.getColor(Theme.key_windowBackgroundWhite))
+            }
+            val header = LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+            }
+            header.addView(avatarView, LayoutHelper.createLinear(36, 36, 0f, 0f, 10f, 0f))
+            val titles = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+            titles.addView(nameView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+            titles.addView(deletedView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+            header.addView(titles, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
+            card.addView(header, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+            card.addView(replyView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 8f, 0f, 0f))
+            card.addView(bodyView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 8f, 0f, 0f))
+            card.addView(mediaView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 6f, 0f, 0f))
+            card.addView(buttonsView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 6f, 0f, 0f))
+            card.addView(sentView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 8f, 0f, 0f))
+            addView(card, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat(), Gravity.TOP, 10f, 4f, 10f, 4f))
+
+            card.setOnClickListener { entry?.let { openDeletedMedia(it) } }
+            card.setOnLongClickListener {
+                showDeletedMenu(this)
+                true
+            }
+        }
+
+        private fun text(context: Context, size: Float, color: Int) = TextView(context).apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, size)
+            setTextColor(Theme.getColor(color))
+        }
+
+        private fun setText(view: TextView, value: CharSequence?, entities: ArrayList<TLRPC.MessageEntity>? = null) {
+            if (value.isNullOrEmpty()) {
+                view.visibility = View.GONE
+            } else {
+                view.visibility = View.VISIBLE
+                view.text = styledText(value, entities, view)
+            }
+        }
+
+        fun bind(e: EditEntry, position: Int) {
+            entry = e
+            index = position
+            val message = e.message
+            val senderId = e.fromId.takeIf { it != 0L } ?: authorOf(message)
+            val author = if (senderId != 0L) messagesController.getUserOrChat(senderId) else null
+            nameView.text = when (author) {
+                is TLRPC.User -> UserObject.getUserName(author)
+                is TLRPC.Chat -> author.title ?: ""
+                else -> ""
+            }
+            nameView.visibility = if (nameView.text.isNullOrEmpty()) View.GONE else View.VISIBLE
+            if (author != null) {
+                avatarDrawable.setInfo(currentAccount, author)
+                avatarView.setForUserOrChat(author, avatarDrawable)
+                avatarView.visibility = View.VISIBLE
+            } else {
+                avatarView.visibility = View.GONE
+            }
+            deletedView.text = if (e.timestamp > 0) LocaleController.formatString(R.string.InuDeletedAtTime, formatTime(e.timestamp)) else LocaleController.getString(R.string.InuDeletedMessage)
+
+            val reply = message?.replyMessage
+            setText(replyView, reply?.let { "↩ " + SavedMessagesHelper.archiveText(it.message, it) })
+
+            if (message != null) setText(bodyView, message.message, message.entities) else setText(bodyView, e.text)
+            mediaView.bind(message?.media, e.mediaPath)
+            val buttons = (message?.reply_markup as? TLRPC.TL_replyInlineMarkup)?.rows?.flatMap { it.buttons }?.mapNotNull { it.text?.takeIf { t -> t.isNotEmpty() } }
+            setText(buttonsView, if (buttons.isNullOrEmpty()) null else "⌨ " + buttons.joinToString(" · "))
+
+            val sent = message?.date ?: 0
+            setText(sentView, if (sent > 0) LocaleController.formatString(R.string.InuSentAtTime, LocaleController.formatDateAudio(sent.toLong(), true)) else null)
+        }
+    }
+
     companion object {
         private const val TAG = "AyuMessageHistory"
         private val IMAGE_EXTENSIONS = setOf("jpg", "jpeg", "png", "webp")
@@ -957,6 +1273,8 @@ class AyuMessageHistoryActivity(
         private const val PAGE_SIZE = 200
         private const val VIEW_BUBBLE = 0
         private const val VIEW_COMPARE = 1
+        private const val VIEW_DELETED = 2
+        private const val VIEW_DATE = 3
         private const val MENU_MAIN = 1
         private const val MENU_TOGGLE_DIFF = 2
         private const val MENU_CLEAR_ARCHIVE = 3

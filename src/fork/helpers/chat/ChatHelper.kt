@@ -237,6 +237,7 @@ object ChatHelper {
     fun timePrefix(msg: MessageObject?, time: CharSequence?, edited: Boolean = false): CharSequence? {
         if (time == null || msg == null) return time
         val sb = SpannableStringBuilder()
+        SavedMessagesHelper.historyTimeLabel(msg)?.let { sb.append(it) }
         TranslateHelper.appendTimePrefix(sb, msg)
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             appendTimeIcon(sb, R.drawable.msg_block, sizeDp = 11f, translateYDp = 1f)
