@@ -1528,7 +1528,6 @@
     <string name="InuProfileSettingsRowsItems">行项目</string>
     <string name="InuProfileSettingsRowsOrderInfo">重新排序或隐藏设置界面的行。拖动移动，开关切换隐藏。</string>
     <string name="InuProfileSettingsRowsReset">恢复默认</string>
-    <string name="InuSettingsRowWallet">钱包</string>
     <string name="InuProfileInfoRowsOrder">我的个人资料信息顺序</string>
     <string name="InuProfileInfoRowsItems">行项目</string>
     <string name="InuProfileInfoRowsOrderInfo">重新排序或隐藏个人资料中的电话、简介和用户名行。拖动移动，开关切换隐藏。</string>

@@ -894,7 +894,6 @@
     <string name="InuProfileSettingsRowsItems">Пункты</string>
     <string name="InuProfileSettingsRowsOrderInfo">Измените порядок или скройте строки на экране настроек. Перетаскивайте для перестановки, переключайте, чтобы скрыть.</string>
     <string name="InuProfileSettingsRowsReset">Сбросить по умолчанию</string>
-    <string name="InuSettingsRowWallet">Кошелёк</string>
     <string name="InuProfileInfoRowsOrder">Порядок инфо в моём профиле</string>
     <string name="InuProfileInfoRowsItems">Пункты</string>
     <string name="InuProfileInfoRowsOrderInfo">Измените порядок или скройте строки номера телефона, «О себе» и имени пользователя в профиле. Перетаскивайте для перестановки, переключайте, чтобы скрыть.</string>

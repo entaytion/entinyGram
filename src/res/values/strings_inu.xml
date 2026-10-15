@@ -1238,7 +1238,6 @@
     <string name="InuProfileSettingsRowsItems">Rows</string>
     <string name="InuProfileSettingsRowsOrderInfo">Reorder or hide rows on the Settings screen. Drag to move, toggle to hide.</string>
     <string name="InuProfileSettingsRowsReset">Reset to default</string>
-    <string name="InuSettingsRowWallet">Wallet</string>
     <string name="InuProfileInfoRowsOrder">My Profile info order</string>
     <string name="InuProfileInfoRowsItems">Rows</string>
     <string name="InuProfileInfoRowsOrderInfo">Reorder or hide phone, bio and username rows on your profile. Drag to move, toggle to hide.</string>

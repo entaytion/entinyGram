@@ -25,5 +25,5 @@ index 0000000..0000000 100644
 +            items.add(UItem.asShadow(null));
 +        }
  
+         final int inu_reorderFrom = items.size();
          final boolean walletAbove = getConnectionsManager().getCurrentTime() - 1791538462 < 4 * 7 * 24 * 60 * 60;
-         if (walletAbove && getMessagesController().config.walletAvailable.get()) {

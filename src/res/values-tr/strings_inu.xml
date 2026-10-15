@@ -1528,7 +1528,6 @@
     <string name="InuProfileSettingsRowsItems">Satırlar</string>
     <string name="InuProfileSettingsRowsOrderInfo">Ayarlar ekranındaki satırları yeniden sıralayın veya gizleyin. Taşımak için sürükleyin, gizlemek için anahtarı kapatın.</string>
     <string name="InuProfileSettingsRowsReset">Varsayılana sıfırla</string>
-    <string name="InuSettingsRowWallet">Cüzdan</string>
     <string name="InuProfileInfoRowsOrder">Profil bilgilerim sırası</string>
     <string name="InuProfileInfoRowsItems">Satırlar</string>
     <string name="InuProfileInfoRowsOrderInfo">Profilinizdeki telefon, biyografi ve kullanıcı adı satırlarını yeniden sıralayın veya gizleyin. Taşımak için sürükleyin, gizlemek için anahtarı kapatın.</string>

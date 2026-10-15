@@ -1518,7 +1518,6 @@
     <string name="InuProfileSettingsRowsItems">行</string>
     <string name="InuProfileSettingsRowsOrderInfo">設定画面の行を並べ替え・非表示にできます。ドラッグで移動、スイッチで非表示。</string>
     <string name="InuProfileSettingsRowsReset">デフォルトに戻す</string>
-    <string name="InuSettingsRowWallet">ウォレット</string>
     <string name="InuProfileInfoRowsOrder">マイプロフィールの情報順序</string>
     <string name="InuProfileInfoRowsItems">行</string>
     <string name="InuProfileInfoRowsOrderInfo">プロフィールの電話番号、自己紹介、ユーザー名の行を並べ替え・非表示にできます。ドラッグで移動、スイッチで非表示。</string>

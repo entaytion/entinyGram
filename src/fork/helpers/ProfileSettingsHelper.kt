@@ -3,6 +3,8 @@ package desu.inugram.helpers
 import desu.inugram.InuConfig
 import desu.inugram.helpers.menu.ProfileInfoMenuConfig
 import desu.inugram.helpers.menu.ProfileMenuConfig
+import desu.inugram.helpers.menu.ProfileRow
+import desu.inugram.helpers.menu.ProfileRowRegistry
 import desu.inugram.helpers.menu.reorderByMenu
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -11,15 +13,38 @@ import org.telegram.ui.Components.UniversalAdapter
 
 object ProfileSettingsHelper {
 
-    private fun classify(item: UItem): ProfileMenuConfig.Item? = ProfileMenuConfig.Item.forSettingsId(item.id)
+    private const val MONEY_ROW_ID = 25
+
+    // entiny: rows without a built-in entry are registered on the fly so new stock rows become orderable
+    private fun classify(item: UItem, customized: Boolean): ProfileRow? {
+        if (item.id == MONEY_ROW_ID && !customized) return null
+        ProfileMenuConfig.Item.forSettingsId(item.id)?.let { return it }
+        if (item.id == 0 || item.text.isNullOrEmpty()) return null
+        val row = ProfileRowRegistry.discover(item.id, item.text, item.iconResId)
+        return if (customized) row else null
+    }
 
     // entiny: stock section of a row: 0 inugram, 1 main, 2 premium, 3 help; -1 unknown
-    private fun groupOf(item: UItem): Int = when (item.id) {
+    private fun stockGroupOf(item: UItem): Int = when (item.id) {
         99 -> 0
         in 1..3, in 5..10 -> 1
-        in 11..13, 15, 16, 25 -> 2
+        in 11..13, 15, 16, MONEY_ROW_ID -> 2
         17, 18, 19, 23, 24 -> 3
         else -> -1
+    }
+
+    private fun inheritedGroups(rows: List<UItem>): Map<Int, Int> {
+        val groups = HashMap<Int, Int>()
+        var last = -1
+        for (row in rows) {
+            val group = stockGroupOf(row)
+            if (group >= 0) {
+                last = group
+            } else if (last >= 0) {
+                groups[row.id] = last
+            }
+        }
+        return groups
     }
 
     @JvmStatic
@@ -32,7 +57,10 @@ object ProfileSettingsHelper {
             if (it.viewType != UniversalAdapter.VIEW_TYPE_SHADOW && it.viewType != UniversalAdapter.VIEW_TYPE_HEADER)
                 rows.add(it)
         }
-        val ordered = reorderByMenu(rows, InuConfig.PROFILE_SETTINGS_ROWS.value) { classify(it) }
+        val customized = InuConfig.PROFILE_SETTINGS_ROWS.isCustomized()
+        val inherited = inheritedGroups(rows)
+        fun groupOf(item: UItem): Int = stockGroupOf(item).takeIf { it >= 0 } ?: inherited[item.id] ?: -1
+        val ordered = reorderByMenu(rows, InuConfig.PROFILE_SETTINGS_ROWS.value) { classify(it, customized) }
         val rebuilt = ArrayList<UItem>(ordered.size + 4)
         var lastGroup = -2
         for (row in ordered) {

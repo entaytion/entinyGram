@@ -448,7 +448,7 @@ class MenuOrderRow(context: Context, val mainHeightDp: Int = 50) : LinearLayout(
         PluginIcons.clearIcon(icon)
         // #endif
         icon.setImageResource(item.iconRes)
-        text.text = LocaleController.getString(item.labelRes)
+        text.text = item.label
         subtitle.visibility = View.GONE
     }
 

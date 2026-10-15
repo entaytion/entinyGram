@@ -15,6 +15,8 @@ interface MenuOrderItem {
     val iconRes: Int
     val ordinal: Int
 
+    val label: CharSequence get() = org.telegram.messenger.LocaleController.getString(labelRes)
+
     val isSlot: Boolean get() = false
 }
 
@@ -243,13 +245,28 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
     }
 }
 
-class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
+sealed interface ProfileRow : MenuOrderItem
+
+class DynamicProfileRow(
+    val settingsId: Int,
+    override var label: CharSequence,
+    override var iconRes: Int,
+    override val ordinal: Int,
+) : ProfileRow {
+    override val key: String get() = "row_$settingsId"
+    override val labelRes: Int get() = 0
+
+    override fun equals(other: Any?): Boolean = other is DynamicProfileRow && other.settingsId == settingsId
+    override fun hashCode(): Int = settingsId
+}
+
+class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileRow>(key, Item.entries, OFF_BY_DEFAULT) {
     enum class Item(
         override val key: String,
         val settingsId: Int,
         override val labelRes: Int,
         override val iconRes: Int,
-    ) : MenuOrderItem {
+    ) : ProfileRow {
         INUGRAM("inugram", 99, R.string.InuSettings, R.drawable.icon_settings_inu),
         ACCOUNT("account", 1, R.string.SettingsAccount, R.drawable.settings_account),
         CHAT("chat", 2, R.string.SettingsChat, R.drawable.settings_chat),
@@ -260,10 +277,10 @@ class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileMenuConfig.Item>(k
         DEVICES("devices", 8, R.string.SettingsDevices, R.drawable.settings_devices),
         LITE_MODE("lite_mode", 9, R.string.SettingsPowerSaving, R.drawable.settings_power),
         LANGUAGE("language", 10, R.string.SettingsLanguage, R.drawable.settings_language),
+        WALLET("wallet", 25, R.string.WalletAttachMoney, R.drawable.settings_wallet),
         PREMIUM("premium", 11, R.string.TelegramPremium, R.drawable.settings_premium),
         STARS("stars", 12, R.string.TelegramStars, R.drawable.settings_stars),
         TON("ton", 13, R.string.MyTON, R.drawable.settings_gram_24),
-        WALLET("wallet", 25, R.string.InuSettingsRowWallet, R.drawable.settings_wallet),
         BUSINESS("business", 15, R.string.TelegramBusiness, R.drawable.settings_business),
         PREMIUM_GIFTING("premium_gifting", 16, R.string.SendAGift, R.drawable.settings_gift),
         QUESTION("question", 17, R.string.AskAQuestion, R.drawable.settings_ask),
@@ -281,10 +298,12 @@ class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileMenuConfig.Item>(k
         }
     }
 
-    override fun itemByKey(key: String): Item? = Item.forKey(key)
+    override fun itemByKey(key: String): ProfileRow? = Item.forKey(key) ?: ProfileRowRegistry.byKey(key)
+
+    fun isCustomized(): Boolean = value.filter { it.item is Item } != default
 
     companion object {
-        private val OFF_BY_DEFAULT = emptySet<Item>()
+        private val OFF_BY_DEFAULT = emptySet<ProfileRow>()
     }
 }
 
