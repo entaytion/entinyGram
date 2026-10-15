@@ -1113,6 +1113,15 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val CONFIRM_REACTION_NON_MEMBER = BoolItem("confirm_reaction_non_member", false)
 
     @JvmField
+    val HIDE_REACTIONS_DISPLAY = BoolItem("hide_reactions_display", false)
+
+    @JvmField
+    val HIDE_REACTIONS_SET = BoolItem("hide_reactions_set", false)
+
+    @JvmField
+    val HIDE_REACTIONS_BADGES = BoolItem("hide_reactions_badges", false)
+
+    @JvmField
     val HIDE_CALL_ACTION_BUTTON = BoolItem("hide_call_action_button", true)
 
     class ProfileIdModeItem : IntItem("profile_id_mode", BOT_API_ID) {

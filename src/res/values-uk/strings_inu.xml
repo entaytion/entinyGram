@@ -685,6 +685,13 @@
     <string name="InuLinksAndBrowser">Посилання та браузер</string>
     <string name="InuStickers">Наліпки</string>
     <string name="InuReactions">Реакції</string>
+    <string name="InuHideReactionsSection">Приховати реакції</string>
+    <string name="InuHideReactionsDisplay">Приховати реакції на повідомленнях</string>
+    <string name="InuHideReactionsDisplayInfo">Реакції під повідомленнями не показуються</string>
+    <string name="InuHideReactionsSet">Вимкнути постановку реакцій</string>
+    <string name="InuHideReactionsSetInfo">Без панелі реакцій у меню повідомлення та реакції подвійним тапом</string>
+    <string name="InuHideReactionsBadges">Приховати значки реакцій</string>
+    <string name="InuHideReactionsBadgesInfo">Без значка реакцій у списку чатів</string>
     <string name="InuDelay">Затримка</string>
     <string name="InuAnimationSpeed">Швидкість анімацій</string>
     <string name="InuAnimationSpeedInstant">Миттєво</string>

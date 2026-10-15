@@ -53,6 +53,33 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuHideReactionsSection)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_REACTIONS_DISPLAY,
+                R.string.InuHideReactionsDisplay,
+                R.string.InuHideReactionsDisplayInfo,
+                InuConfig.HIDE_REACTIONS_DISPLAY.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_REACTIONS_SET,
+                R.string.InuHideReactionsSet,
+                R.string.InuHideReactionsSetInfo,
+                InuConfig.HIDE_REACTIONS_SET.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_REACTIONS_BADGES,
+                R.string.InuHideReactionsBadges,
+                R.string.InuHideReactionsBadgesInfo,
+                InuConfig.HIDE_REACTIONS_BADGES.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuConfirmationsSection)))
         confirmSendGroup.addTo(items) { listView?.adapter?.update(true) }
         items.add(
@@ -219,6 +246,10 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (confirmSendGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
         when (item.id) {
+            TOGGLE_HIDE_REACTIONS_DISPLAY -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REACTIONS_DISPLAY.toggle()
+            TOGGLE_HIDE_REACTIONS_SET -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REACTIONS_SET.toggle()
+            TOGGLE_HIDE_REACTIONS_BADGES -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REACTIONS_BADGES.toggle()
+
             TOGGLE_CONFIRM_REACTION_NON_MEMBER -> {
                 val new = InuConfig.CONFIRM_REACTION_NON_MEMBER.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -386,6 +417,9 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_PINNED_REACTIONS = InuUtils.generateId()
         private val TOGGLE_INSTANT_MARK_REACTIONS_READ = InuUtils.generateId()
         private val TOGGLE_CONFIRM_REACTION_NON_MEMBER = InuUtils.generateId()
+        private val TOGGLE_HIDE_REACTIONS_DISPLAY = InuUtils.generateId()
+        private val TOGGLE_HIDE_REACTIONS_SET = InuUtils.generateId()
+        private val TOGGLE_HIDE_REACTIONS_BADGES = InuUtils.generateId()
         private val TOGGLE_CLOWN_AVATAR_BLOCKED = InuUtils.generateId()
         private val TOGGLE_CLOWN_AVATAR_BLOCKED_ME = InuUtils.generateId()
         private val TOGGLE_CHAT_REMEMBER_ALL_REPLIES = InuUtils.generateId()
@@ -438,6 +472,9 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("pinned-reactions", R.string.InuPinnedReactions, BUTTON_PINNED_REACTIONS),
                 SearchRegistry.Entry("confirm-reaction-non-member", R.string.InuConfirmReactionNonMember, TOGGLE_CONFIRM_REACTION_NON_MEMBER),
+                SearchRegistry.Entry("hide-reactions-display", R.string.InuHideReactionsDisplay, TOGGLE_HIDE_REACTIONS_DISPLAY),
+                SearchRegistry.Entry("hide-reactions-set", R.string.InuHideReactionsSet, TOGGLE_HIDE_REACTIONS_SET),
+                SearchRegistry.Entry("hide-reactions-badges", R.string.InuHideReactionsBadges, TOGGLE_HIDE_REACTIONS_BADGES),
                 SearchRegistry.Entry("clown-avatar-blocked", R.string.InuClownAvatarBlocked, TOGGLE_CLOWN_AVATAR_BLOCKED),
                 SearchRegistry.Entry("clown-avatar-blocked-me", R.string.InuClownAvatarBlockedMe, TOGGLE_CLOWN_AVATAR_BLOCKED_ME),
                 SearchRegistry.Entry("chat-remember-all-replies", R.string.InuChatRememberAllReplies, TOGGLE_CHAT_REMEMBER_ALL_REPLIES),

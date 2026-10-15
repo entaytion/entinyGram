@@ -1,0 +1,68 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 15 Oct 2026 16:44:14 +0300
+Subject: [+] hide reactions
+
+---
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java     | 2 +-
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 +++---
+ .../ui/Components/Reactions/ReactionsLayoutInBubble.java    | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -2149,7 +2149,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                     } else {
+                         drawMention = false;
+                     }
+-                    drawReactionMention = reactionMentionCount > 0;
++                    drawReactionMention = reactionMentionCount > 0 && !desu.inugram.InuConfig.HIDE_REACTIONS_BADGES.getValue();
+                     drawPollVotesMention = pollVotesMentionCount > 0;
+                 }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -1964,7 +1964,7 @@ public class ChatActivity extends BaseFragment implements
+             if (hasDoubleTap != null) {
+                 return hasDoubleTap;
+             }
+-            if (isQuickRepliesOrWelcomeMessagesMode()) return false;
++            if (isQuickRepliesOrWelcomeMessagesMode() || desu.inugram.InuConfig.HIDE_REACTIONS_SET.getValue()) return false;
+             String reactionStringSetting = getMediaDataController().getDoubleTapReaction();
+             TLRPC.TL_availableReaction reaction = getMediaDataController().getReactionsMap().get(reactionStringSetting);
+             if (reaction == null && (reactionStringSetting == null || !reactionStringSetting.startsWith("animated_"))) {
+@@ -1991,7 +1991,7 @@ public class ChatActivity extends BaseFragment implements
+         @Override
+         public void onDoubleTap(View view, int position, float x, float y) {
+             if (desu.inugram.helpers.chat.DoubleTapActionHelper.onDoubleTap(ChatActivity.this, view, x, y)) return;
+-            if (getParentActivity() == null || isSecretChat() || isInScheduleMode() || isInPreviewMode() || isQuickRepliesOrWelcomeMessagesMode()) {
++            if (getParentActivity() == null || isSecretChat() || isInScheduleMode() || isInPreviewMode() || isQuickRepliesOrWelcomeMessagesMode() || desu.inugram.InuConfig.HIDE_REACTIONS_SET.getValue()) {
+                 return;
+             }
+             MessageObject messageObject;
+@@ -31914,7 +31914,7 @@ public class ChatActivity extends BaseFragment implements
+             final boolean isEphemeral = message != null && message.isEphemeral();
+             final boolean isReactionsViewAvailable = !isEphemeral && !suggestEdit && !isSecretChat() && !isInScheduleMode() && currentUser == null && primaryMessage.hasReactions() && (!ChatObject.isChannel(currentChat) || currentChat.megagroup) && !ChatObject.isMonoForum(currentChat) && !availableReacts.isEmpty() && primaryMessage.messageOwner.reactions.can_see_list && !primaryMessage.isSecretMedia();
+             final boolean isReactionsAvailable;
+-            if (suggestEdit || isEphemeral) {
++            if (suggestEdit || isEphemeral || desu.inugram.InuConfig.HIDE_REACTIONS_SET.getValue()) {
+                 isReactionsAvailable = false;
+             } else if (message.isForwardedChannelPost()) {
+                 TLRPC.ChatFull chatInfo = getMessagesController().getChatFull(-message.getFromChatId());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+@@ -171,7 +171,7 @@ public class ReactionsLayoutInBubble {
+         hasUnreadReactions = false;
+         hasPaidReaction = false;
+         reactionButtons.clear();
+-        if (messageObject != null) {
++        if (messageObject != null && !desu.inugram.InuConfig.HIDE_REACTIONS_DISPLAY.getValue()) {
+             boolean forceLikeDislikeReactions = false; /*!messageObject.isOutOwner()
+                     && !messageObject.isBotPendingDraft
+                     && BotForumHelper.isBotForum(currentAccount, messageObject.getDialogId())

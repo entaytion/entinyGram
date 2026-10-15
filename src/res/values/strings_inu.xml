@@ -897,6 +897,13 @@
     <string name="InuLinksAndBrowser">Links &amp; browser</string>
     <string name="InuStickers">Stickers</string>
     <string name="InuReactions">Reactions</string>
+    <string name="InuHideReactionsSection">Hide reactions</string>
+    <string name="InuHideReactionsDisplay">Hide reactions on messages</string>
+    <string name="InuHideReactionsDisplayInfo">Reaction chips under bubbles are not shown</string>
+    <string name="InuHideReactionsSet">Disable setting reactions</string>
+    <string name="InuHideReactionsSetInfo">No reaction bar in the message menu, no double-tap reaction</string>
+    <string name="InuHideReactionsBadges">Hide reaction badges</string>
+    <string name="InuHideReactionsBadgesInfo">No reaction mention badge in the chat list</string>
     <string name="InuDelay">Delay</string>
     <string name="InuAnimationSpeed">Animation speed</string>
     <string name="InuAnimationSpeedInstant">Instant</string>
