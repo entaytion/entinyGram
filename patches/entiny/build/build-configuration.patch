@@ -7,7 +7,7 @@ Includes former agp-9 and plugins-gradle-fixes patches.
 ---
  .gitignore                                    |   3 +
  TMessagesProj/build.gradle                    |  72 +++++++----
- TMessagesProj/proguard-rules.pro              |  12 +-
+ TMessagesProj/proguard-rules.pro              |  14 ++-
  TMessagesProj/src/main/AndroidManifest.xml    |   6 -
  .../java/org/telegram/ui/LaunchActivity.java  |  21 ----
  .../org/telegram/ui/PaymentFormActivity.java  |  28 +++--
@@ -18,7 +18,7 @@ Includes former agp-9 and plugins-gradle-fixes patches.
  gradle.properties                             |   4 +-
  gradle/wrapper/gradle-wrapper.properties      |   2 +-
  settings.gradle                               |   8 +-
- 13 files changed, 185 insertions(+), 151 deletions(-)
+ 13 files changed, 187 insertions(+), 151 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
 index 0000000..0000000 100644
@@ -244,7 +244,7 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -63,8 +66,13 @@
+@@ -63,9 +66,16 @@
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**
@@ -256,8 +256,11 @@ index 0000000..0000000 100644
 +-dontwarn com.stripe.android.stripe3ds2.**
 +-dontwarn com.stripe.**
  -keep class desu.inugram.** { *; }
++-keep class org.telegram.ui.Wallet.WalletEngine2 { *; }
++-keep class org.telegram.ui.Wallet.WalletEngine2$** { *; }
  -dontobfuscate
  -dontoptimize
+ # /inu
 diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
