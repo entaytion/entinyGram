@@ -61,8 +61,7 @@ object PullActionHelper {
 
     @JvmStatic
     fun shouldShowArchiveEntry(currentAccount: Int): Boolean =
-        hideArchiveRow() &&
-            MessagesController.getInstance(currentAccount).dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null
+        MessagesController.getInstance(currentAccount).dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null
 
     @JvmStatic
     fun createDrawable(listView: DialogsActivity.DialogsRecyclerView): PullForegroundDrawable =

@@ -13,7 +13,6 @@ import desu.inugram.helpers.menu.DrawerMenuConfig
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.dialogs.DrawerHelper
 import desu.inugram.helpers.dialogs.PullActionHelper
-import desu.inugram.helpers.dialogs.RecentChatsHelper
 // #if PLUGINS
 import desu.inugram.helpers.plugins.ui.PluginActions
 // #endif
@@ -283,7 +282,7 @@ class DrawerLayoutAdapter(
                 DrawerMenuConfig.Item.SAVED_MESSAGES ->
                     items.add(Item(11, LocaleController.getString(R.string.SavedMessages), R.drawable.msg_saved))
                 DrawerMenuConfig.Item.RECENT_CHATS ->
-                    if (RecentChatsHelper.isEnabled()) items.add(Item(ITEM_RECENT_CHATS, LocaleController.getString(R.string.InuRecentChats), R.drawable.msg_recent))
+                    items.add(Item(ITEM_RECENT_CHATS, LocaleController.getString(R.string.InuRecentChats), R.drawable.msg_recent))
                 DrawerMenuConfig.Item.FEED ->
                     if (FeedHelper.isEnabled()) items.add(Item(ITEM_FEED, LocaleController.getString(R.string.InuFeed), R.drawable.msg_channel))
                 DrawerMenuConfig.Item.ARCHIVE ->
