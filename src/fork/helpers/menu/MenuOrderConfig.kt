@@ -316,6 +316,7 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
         THEME_TOGGLE("theme_toggle", R.string.InuMenuThemeToggle, R.drawable.menu_night_mode_24),
         COMPOSE("compose", R.string.InuMenuCompose, R.drawable.menu_topic_add),
         SAVED_MESSAGES("saved_messages", R.string.SavedMessages, R.drawable.outline_saved_24),
+        WALLET("wallet", R.string.WalletAttachMoney, R.drawable.ic_gram),
         RECENT_CHATS("recent_chats", R.string.InuRecentChats, R.drawable.msg_recent_solar),
         CLEAR_CACHE("clear_cache", R.string.InuClearCache, R.drawable.inu_tabler_trash_x),
         FEED("feed", R.string.InuFeed, R.drawable.msg_channel),
