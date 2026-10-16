@@ -20,7 +20,12 @@ object ProfileSettingsHelper {
         if (item.id == MONEY_ROW_ID && !customized) return null
         ProfileMenuConfig.Item.forSettingsId(item.id)?.let { return it }
         if (item.id == 0 || item.text.isNullOrEmpty()) return null
-        val row = ProfileRowRegistry.discover(item.id, item.text, item.iconResId)
+        val row = try {
+            ProfileRowRegistry.discover(item.id, item.text, item.iconResId)
+        } catch (e: Throwable) {
+            android.util.Log.d("ProfileSettings", "discover failed", e)
+            return null
+        }
         return if (customized) row else null
     }
 

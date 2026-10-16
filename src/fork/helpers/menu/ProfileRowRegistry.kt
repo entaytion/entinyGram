@@ -43,15 +43,17 @@ object ProfileRowRegistry {
             if (existing.label.toString() != label || existing.iconRes != iconRes) {
                 existing.label = label
                 existing.iconRes = iconRes
-                persist()
+                runCatching { persist() }
             }
             return existing
         }
         val row = DynamicProfileRow(settingsId, label, iconRes, ORDINAL_BASE + rows.size)
         rows[settingsId] = row
-        persist()
-        val config = InuConfig.PROFILE_SETTINGS_ROWS
-        if (config.value.none { it.item == row }) config.value = config.value + MenuOrderEntry(row, true)
+        runCatching {
+            persist()
+            val config = InuConfig.PROFILE_SETTINGS_ROWS
+            if (config.value.none { it.item == row }) config.value = config.value + MenuOrderEntry(row, true)
+        }
         return row
     }
 
