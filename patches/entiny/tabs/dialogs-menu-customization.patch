@@ -4,14 +4,14 @@ Date: Sun, 13 Sep 2026 09:51:24 +0300
 Subject: Allow hiding individual items from the chats screen options menu
 
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 93 ++++++++++---------
- 1 file changed, 49 insertions(+), 44 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 95 ++++++++++---------
+ 1 file changed, 50 insertions(+), 45 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14002,55 +14002,59 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14002,60 +14002,64 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              isCurrentThemeDark = Theme.isCurrentThemeDark();
          }
@@ -114,6 +114,12 @@ index 0000000..0000000 100644
          if (ApplicationLoader.applicationLoaderInstance != null) {
              ApplicationLoader.applicationLoaderInstance.addItemOptions(io);
          }
+         if (getMessagesController().config.walletAvailable.get()) {
+-            io.add(R.drawable.ic_gram, LocaleController.getString(R.string.WalletAttachMoney), () -> {
++            io.addIf(desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.WALLET), R.drawable.ic_gram, LocaleController.getString(R.string.WalletAttachMoney), () -> {
+                 presentFragment(new WalletActivity());
+             });
+         } else {
 @@ -14084,7 +14088,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
