@@ -8,9 +8,10 @@ object MapsHelper {
     // entiny: probe osmdroid presence at runtime so trimming it degrades to Google Maps without crashing
     @JvmField
     val hasOsmdroid: Boolean = try {
-        Class.forName("org.osmdroid.views.MapView")
-        true
-    } catch (e: ClassNotFoundException) {
+        val loader = MapsHelper::class.java.classLoader
+        // entiny: microG ships its own org.osmdroid.views.MapView in a system jar - only trust ours, and don't initialize it
+        Class.forName("org.osmdroid.views.MapView", false, loader).classLoader === loader
+    } catch (e: Throwable) {
         false
     }
 
