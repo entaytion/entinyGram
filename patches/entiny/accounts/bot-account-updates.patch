@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 16 Oct 2026 02:27:47 +0300
+Subject: [*] bot account updates after long gap
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -17071,6 +17071,11 @@ public class MessagesController extends BaseController implements NotificationCe
+                 TLRPC.updates_Difference res = (TLRPC.updates_Difference) response;
+                 if (res instanceof TLRPC.TL_updates_differenceTooLong) {
+                     AndroidUtilities.runOnUIThread(() -> {
++                        if (desu.inugram.helpers.accounts.BotAccountHelper.applyDifferenceTooLong(currentAccount, res.pts, date, qts)) {
++                            gettingDifference = false;
++                            getDifference();
++                            return;
++                        }
+                         loadedFullUsers.clear();
+                         loadedFullChats.clear();
+                         resetDialogs(true, getMessagesStorage().getLastSeqValue(), res.pts, date, qts);

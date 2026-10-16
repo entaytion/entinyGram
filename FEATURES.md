@@ -145,6 +145,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **delete my messages** in any chat
 - 📡 **emoji picker** in name and surname fields
 - 📡 **open by numeric ID**
+- 📡 **bot account stays in sync**: accounts logged in with a bot token keep receiving new messages after long offline gaps
 
 ### messages & media tools
 

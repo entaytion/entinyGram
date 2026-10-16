@@ -538,3 +538,4 @@ entiny/chat/hide-reactions.patch
 entiny/media/sticker-pack-zip.patch
 entiny/media/send-as-sticker.patch
 entiny/ui/chat-presence-dots.patch
+entiny/accounts/bot-account-updates.patch

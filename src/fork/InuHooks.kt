@@ -205,6 +205,7 @@ object InuHooks {
     @JvmStatic
     fun onAuthSuccess(account: Int) {
         PasscodeHelper.removeForAccount(account)
+        desu.inugram.helpers.accounts.BotAccountHelper.ensurePolling()
     }
 
     @JvmStatic
@@ -216,6 +217,7 @@ object InuHooks {
         val bg = Theme.getColor(Theme.key_windowBackgroundWhite)
         launchActivity.window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(bg))
         CrashReporter.maybeShowReportSheet(launchActivity)
+        desu.inugram.helpers.accounts.BotAccountHelper.ensurePolling()
         desu.inugram.helpers.LogsHelper.trimIfNeeded()
         ProxyVpnHelper.reconcile()
         DrawerHelper.refreshUpdateState()
