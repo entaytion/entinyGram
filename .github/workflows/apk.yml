@@ -468,7 +468,7 @@ jobs:
             cp out/changelog.json assets/changelog.json
             git add assets/changelog.json
             if ! git diff --cached --quiet; then
-              git commit -m "[=] update changelog.json for ${{ needs.build.outputs.tag }}"
+              HUSKY=0 git commit -m "[=] update changelog.json for ${{ needs.build.outputs.tag }}"
               git push origin HEAD:main
             fi
           fi
