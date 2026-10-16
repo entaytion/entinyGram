@@ -93,6 +93,7 @@
   "ios-chats-tab-first-folder": "tabs",
   "ios-input-bar": "chat",
   "attach-preview-caption-reorder": "chat",
+  "reply-quote-command-color": "chat",
   "keep-downloads-in-background": "media",
   "keep-screen-on-recording": "media",
   "keyboard-scroll-typing": "chat",

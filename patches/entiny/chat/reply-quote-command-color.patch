@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 16 Oct 2026 23:48:14 +0300
+Subject: [*] bot command color in reply quotes
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -19849,6 +19849,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                                 sb.removeSpan(span);
+                             }
+                         }
++                        for (URLSpanBotCommand span : sb.getSpans(0, sb.length(), URLSpanBotCommand.class)) { // entiny: command color follows this bubble, not the quoted message
++                            final int s = sb.getSpanStart(span), e = sb.getSpanEnd(span);
++                            sb.removeSpan(span);
++                            sb.setSpan(new URLSpanBotCommand(span.getURL(), currentMessageObject.isOutOwner() ? 1 : 0), s, e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
++                        }
+                         replyTextRTL = AndroidUtilities.isRTL(sb);
+                         if (isReplyQuote && !currentMessageObject.shouldDrawWithoutBackground()) {
+                             maxWidth += dp(24 + 12);
