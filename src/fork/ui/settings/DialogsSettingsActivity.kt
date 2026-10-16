@@ -255,6 +255,15 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asShadow(null))
 
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_DIALOG_PREVIEW,
+                R.string.InuHideDialogPreview,
+                R.string.InuHideDialogPreviewInfo,
+                InuConfig.HIDE_DIALOG_PREVIEW.value
+            )
+        )
+        items.add(UItem.asShadow(null))
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDialogsFab)))
         val mainAction = DialogsFabHelper.Action.fromValue(InuConfig.DIALOGS_FAB_MAIN_ACTION.value)
         items.add(
@@ -505,6 +514,11 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 softRebuild()
             }
 
+            TOGGLE_HIDE_DIALOG_PREVIEW -> {
+                val new = InuConfig.HIDE_DIALOG_PREVIEW.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_FAB_LEFT_SIDE -> {
                 val new = InuConfig.DIALOGS_FAB_LEFT_SIDE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -689,6 +703,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val BUTTON_FAB_SECONDARY_ACTION = InuUtils.generateId()
         private val TOGGLE_FAB_HIDE_ON_SCROLL = InuUtils.generateId()
         private val TOGGLE_FAB_OFFSET_FOR_BOTTOM_BAR = InuUtils.generateId()
+        private val TOGGLE_HIDE_DIALOG_PREVIEW = InuUtils.generateId()
         private val TOGGLE_FAB_LEFT_SIDE = InuUtils.generateId()
         private val TOGGLE_INTERACTIVE_CHAT_PREVIEW = InuUtils.generateId()
         private val TOGGLE_DIALOG_AVATAR_OPENS_PROFILE = InuUtils.generateId()
@@ -762,6 +777,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("dialogs-fab-hide-on-scroll", R.string.InuDialogsFabHideOnScroll, TOGGLE_FAB_HIDE_ON_SCROLL),
                 SearchRegistry.Entry("dialogs-fab-offset-for-bottom-bar", R.string.InuDialogsFabOffsetForBottomBar, TOGGLE_FAB_OFFSET_FOR_BOTTOM_BAR),
                 SearchRegistry.Entry("dialogs-fab-left-side", R.string.InuDialogsFabLeftSide, TOGGLE_FAB_LEFT_SIDE),
+                SearchRegistry.Entry("hide-dialog-preview", R.string.InuHideDialogPreview, TOGGLE_HIDE_DIALOG_PREVIEW),
             ),
         )
     }

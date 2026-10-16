@@ -61,6 +61,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - optionally hide replies to filtered messages
 
 - 📡 **redact logs**: phone numbers, IDs, tokens, IPs and usernames are replaced with stable placeholders as logs are written
+- 📡 **hide last message preview**: last messages in the chats list show under a spoiler
 
 ### restricted features
 

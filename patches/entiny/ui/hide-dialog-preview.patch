@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 16 Oct 2026 11:50:54 +0300
+Subject: [+] hide last message preview
+
+---
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java          | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -2009,6 +2009,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                                                 message.spoilLoginCode();
+                                             }
+                                             MediaDataController.addTextStyleRuns(message, stringBuilder, TextStyleSpan.FLAG_STYLE_SPOILER | TextStyleSpan.FLAG_STYLE_STRIKE);
++                                            desu.inugram.helpers.dialogs.DialogPreviewHelper.spoil(stringBuilder);
+                                             if (message != null && message.messageOwner != null) {
+                                                 MediaDataController.addAnimatedEmojiSpans(message.messageOwner.entities, stringBuilder, currentMessagePaint == null ? null : currentMessagePaint.getFontMetricsInt());
+                                             }

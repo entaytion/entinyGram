@@ -78,6 +78,7 @@
   "hide-reactions": "chat",
   "bot-account-updates": "accounts",
   "chat-presence-dots": "ui",
+  "hide-dialog-preview": "ui",
   "send-as-sticker": "media",
   "sticker-pack-zip": "media",
   "hide-reactions-overlay": "chat",
