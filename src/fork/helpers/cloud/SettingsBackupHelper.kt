@@ -186,14 +186,16 @@ object SettingsBackupHelper {
         }
     }
 
+    private val RESET_KEEP = setOf("ai_providers", "anticensor_ws_secret")
+
     fun resetToDefaults(): Int {
-        val exportable = InuConfig.items.filter { it.exportable }
+        val resettable = InuConfig.items.filter { it.key !in RESET_KEEP }
         val stored = InuConfig.prefs.all
-        val toRemove = exportable.filter { it.key in stored }
+        val toRemove = resettable.filter { it.key in stored }
         InuConfig.prefs.edit {
             for (item in toRemove) remove(item.key)
         }
-        for (item in exportable) item.load(InuConfig.prefs)
+        for (item in resettable) item.load(InuConfig.prefs)
 
         // entiny: remove mainconfig keys on reset so stock falls back to hardcoded defaults
         val stock = stockPrefs()

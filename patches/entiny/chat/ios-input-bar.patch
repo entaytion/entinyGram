@@ -978,7 +978,7 @@ index 0000000..0000000 100644
      private void updateFieldRight(int attachVisible) {
          lastAttachVisible = attachVisible;
 -        if (messageEditText == null || (editingMessageObject != null && !editingMessageObject.needResendWhenEdit())) {
-+        if (messageEditText == null || (!isIosButtonPlacement() && editingMessageObject != null && !editingMessageObject.needResendWhenEdit())) {
++        if (messageEditText == null || (!isIosButtonPlacement() && !isIosInputAppearance() && editingMessageObject != null && !editingMessageObject.needResendWhenEdit())) {
              return;
          }
 +        updateScheduledButtonLayoutParams();
@@ -1264,7 +1264,7 @@ index 0000000..0000000 100644
 +                    ? color
 +                    : Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider);
 +                drawableInverse.setColorFilter(new PorterDuffColorFilter(inverseColor, PorterDuff.Mode.SRC_IN));
-+                count.setTextColor(color);
++                count.setTextColor(shouldDrawBackground() ? Color.WHITE : color);
 +                priceText.setTextColor(color);
 +            }
 +            if (desu.inugram.helpers.chat.ActionButtonStyle.getCurrentStyle() != desu.inugram.helpers.chat.ActionButtonStyle.ACCENT && shouldUseActionStyleColors()) {

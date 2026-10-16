@@ -324,7 +324,7 @@ index 0000000..0000000 100644
          }
          if (cameraView != null) {
              cameraView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
-@@ -3892,10 +3914,11 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3869,10 +3891,11 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              checkCameraWhenShown = false;
              checkCamera(true);
          }
@@ -337,7 +337,7 @@ index 0000000..0000000 100644
      }
  
      @Override
-@@ -3943,6 +3966,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3920,6 +3943,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      }
  
      private void resumeCameraPreview() {
@@ -345,7 +345,7 @@ index 0000000..0000000 100644
          try {
              checkCamera(false);
              if (cameraView != null) {
-@@ -3984,7 +4008,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3961,7 +3985,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
  //                    afterCameraInitRunnable = null;
  //                    isCameraFrontfaceBeforeEnteringEditMode = null;
  //                };
@@ -354,7 +354,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -4109,7 +4133,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -4086,7 +4110,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
  
      @Override
      public void onOpenAnimationEnd() {
@@ -363,7 +363,7 @@ index 0000000..0000000 100644
      }
  
      @Override
-@@ -4868,11 +4892,13 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -4845,11 +4869,13 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
  
          public void updateBitmap() {
              Bitmap bitmap = null;

@@ -239,7 +239,6 @@ bugfix/reaction-animation-alignment.patch
 bugfix/dialog-preview-code-color.patch
 bugfix/recyclerview-null-holder.patch
 bugfix/sticky-date-jump.patch
-bugfix/attach-preview-caption-reorder.patch
 feature/md3-profile-actions.patch
 bugfix/message-cache-fallback.patch
 bugfix/sections-adapter-first-diff.patch
@@ -540,3 +539,5 @@ entiny/media/send-as-sticker.patch
 entiny/ui/chat-presence-dots.patch
 entiny/accounts/bot-account-updates.patch
 entiny/ui/hide-dialog-preview.patch
+entiny/chat/attach-preview-caption-reorder.patch
+entiny/ui/light-status-bar-insets.patch

@@ -4,14 +4,22 @@ Date: Sun, 26 Jul 2026 18:39:42 +0400
 Subject: fix attach caption handling when reordering photos in preview
 
 ---
- .../ChatAttachAlertPhotoLayout.java           | 37 +++++++++++++++----
- 1 file changed, 30 insertions(+), 7 deletions(-)
+ .../ChatAttachAlertPhotoLayout.java           | 40 +++++++++++++++----
+ 1 file changed, 33 insertions(+), 7 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
-@@ -3164,10 +3164,22 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -1231,6 +1231,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+ 
+         counterTextView = new TextView(context);
+         counterTextView.setBackgroundResource(R.drawable.photos_rounded);
++        counterTextView.getBackground().mutate().setColorFilter(getThemedColor(Theme.key_chat_attachCheckBoxBackground), PorterDuff.Mode.SRC_IN);
+         counterTextView.setVisibility(View.GONE);
+         counterTextView.setTextColor(0xffffffff);
+         counterTextView.setGravity(Gravity.CENTER);
+@@ -3191,10 +3192,24 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      }
  
      public void updateSelected(HashMap<Object, Object> newSelectedPhotos, ArrayList<Object> newPhotosOrder, boolean updateLayout) {
@@ -28,13 +36,15 @@ index 0000000..0000000 100644
          selectedPhotos.putAll(newSelectedPhotos);
          selectedPhotosOrder.clear();
          selectedPhotosOrder.addAll(newPhotosOrder);
++        updatePhotosCounter(false);
++        updateCheckedPhotoIndices();
 +        if (firstPhotoChanged && hasMultipleCaptions) {
 +            photoViewerProvider.onApplyCaption(null);
 +        }
          if (updateLayout) {
              updatePhotosCounter(false);
              updateCheckedPhotoIndices();
-@@ -3579,23 +3591,34 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3606,23 +3621,34 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
  
      @Override
      public void applyCaption(CharSequence text) {

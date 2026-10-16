@@ -38,7 +38,7 @@ index 0000000..0000000 100644
  
              LayoutParams layoutParams;
              if (!cameraOpened) {
-@@ -4664,7 +4664,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -4641,7 +4641,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              }
              photosEndRow = count;
  
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
                  hasCameraSpaceRow = true;
                  count++;
              }
-@@ -4824,7 +4824,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -4801,7 +4801,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              if (viewHolder != null) {
                  top = viewHolder.itemView.getTop();
              } else {
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
                  if (viewHolder != null) {
                      top = viewHolder.itemView.getTop() - dp(GAP) - itemSize;
                  } else {
-@@ -4837,7 +4837,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -4814,7 +4814,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
  
              final int left = viewHolder.itemView.getLeft();
              final int right = left + itemSize;
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
  
              if (builder != null) {
                  builder.add(left);
-@@ -4908,7 +4908,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -4885,7 +4885,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              if (bitmap != null) {
                  placeholderDrawable = new BitmapDrawable(getContext().getResources(), bitmap);
              } else {

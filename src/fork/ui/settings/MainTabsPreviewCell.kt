@@ -39,6 +39,7 @@ class MainTabsPreviewCell(
     private var order = emptyList<MainTabsMenuConfig.Item>()
     private var enabledItems = emptySet<MainTabsMenuConfig.Item>()
     private var separateSearch = false
+    private var searchChip: Chip? = null
     private var chipWidthDp = CHIP_WIDTH_DP
     private var draggedItem: MainTabsMenuConfig.Item? = null
     private var dragStartRawX = 0f
@@ -61,6 +62,8 @@ class MainTabsPreviewCell(
 
     private fun render() {
         row.removeAllViews()
+        searchChip?.let { group.removeView(it) }
+        searchChip = null
         visibleOrder().forEach { item -> addChip(item, item in enabledItems) }
         if (separateSearch) {
             val search = Chip(context).apply {
@@ -69,7 +72,8 @@ class MainTabsPreviewCell(
                 isClickable = true
                 setOnClickListener { onToggle(MainTabsMenuConfig.Item.SEARCH) }
             }
-            group.addView(search, LayoutHelper.createLinear(SEARCH_BUTTON_SIZE_DP, SEARCH_BUTTON_SIZE_DP, 0f, SEARCH_ZONE_WIDTH_DP, 0, 0, 0, 0))
+            searchChip = search
+            group.addView(search, LayoutHelper.createLinear(SEARCH_BUTTON_SIZE_DP, SEARCH_BUTTON_SIZE_DP, 0f, (SEARCH_ZONE_WIDTH_DP - SEARCH_BUTTON_SIZE_DP) / 2, 0, 0, 0, 0))
         }
         requestLayout()
     }

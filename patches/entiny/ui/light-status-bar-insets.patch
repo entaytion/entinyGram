@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 16 Oct 2026 14:41:50 +0300
+Subject: [*] light status bar icons on android 15
+
+---
+ .../src/main/java/org/telegram/messenger/AndroidUtilities.java | 3 +++
+ .../org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+@@ -5226,6 +5226,9 @@ public class AndroidUtilities {
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+             final View decorView = window.getDecorView();
+             changeSetSystemUiVisibility(decorView, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR, enable);
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && window.getInsetsController() != null) {
++                window.getInsetsController().setSystemBarsAppearance(enable ? android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0, android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
++            }
+ 
+             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                 final int statusBarColor = Color.TRANSPARENT;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+@@ -3207,6 +3207,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         selectedPhotosOrder.addAll(newPhotosOrder);
+         updatePhotosCounter(false);
+         updateCheckedPhotoIndices();
++        parentAlert.updateCountButton(0);
+         if (firstPhotoChanged && hasMultipleCaptions) {
+             photoViewerProvider.onApplyCaption(null);
+         }
