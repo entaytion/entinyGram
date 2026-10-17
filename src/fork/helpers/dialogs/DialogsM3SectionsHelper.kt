@@ -26,9 +26,10 @@ object DialogsM3SectionsHelper {
     @JvmStatic
     fun isEnabled(): Boolean = InuConfig.DIALOGS_M3_SECTIONS.value
 
-    private fun sideMarginDp(): Float = when (InuConfig.DIALOGS_M3_MARGIN.value) {
-        0 -> 0f
-        2 -> 14f
+    private fun sideMarginDp(collapsed: Boolean = false): Float = when {
+        collapsed -> 0f
+        InuConfig.DIALOGS_M3_MARGIN.value == 0 -> 0f
+        InuConfig.DIALOGS_M3_MARGIN.value == 2 -> 14f
         else -> 8f
     }
 
@@ -95,7 +96,7 @@ object DialogsM3SectionsHelper {
         view.background = InsetDrawable(ripple, 0, if (first) gap * 3 else gap, 0, if (last) gap * 3 else 0)
         view.useSeparator = false
         view.fullSeparator = false
-        val start = if (sideMarginDp() == 0f) 11 else 8
+        val start = if (sideMarginDp(view.collapsed) == 0f) 11 else 8
         if (view.avatarStart != start) {
             view.avatarStart = start
             view.messagePaddingStart = start + 61
@@ -119,7 +120,7 @@ object DialogsM3SectionsHelper {
                     outRect.set(0, 0, 0, 0)
                     return
                 }
-                val m = AndroidUtilities.dp(sideMarginDp())
+                val m = AndroidUtilities.dp(sideMarginDp(view.collapsed))
                 outRect.set(m, 0, m, 0)
             }
 

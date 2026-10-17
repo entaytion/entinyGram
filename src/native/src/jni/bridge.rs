@@ -99,6 +99,7 @@ pub(crate) struct JniBridge {
   pub(crate) on_common_icon: JMethodID,
   pub(crate) on_action_register: JMethodID,
   pub(crate) on_action_unregister: JMethodID,
+  pub(crate) on_actions_rendered: JMethodID,
   pub(crate) on_translation_register: JMethodID,
   pub(crate) on_translation_unregister: JMethodID,
   pub(crate) on_translation_result: JMethodID,
@@ -224,6 +225,7 @@ impl JniBridge {
         "(IILjava/lang/String;ILjava/lang/String;Ljava/lang/String;I)Ljava/lang/String;",
       )?,
       on_action_unregister: method("actionUnregister", "(II)V")?,
+      on_actions_rendered: method("actionsRendered", "(JLjava/lang/String;)V")?,
       on_translation_register: method(
         "translationRegister",
         "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;",

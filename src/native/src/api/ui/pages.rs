@@ -115,6 +115,7 @@ fn make_check<'js>(
   set_opt(&out, "multiline", opt_bool(ctx, &opts, "check", "multiline")?)?;
   out.set("checked", req_bool(ctx, &opts, "check", "checked")?)?;
   out.set("onChange", req_fn(ctx, &opts, "check", "onChange")?)?;
+  set_opt(&out, "onClick", opt_fn(ctx, &opts, "check", "onClick")?)?;
   set_opt(&out, "onSecondaryClick", opt_fn(ctx, &opts, "check", "onSecondaryClick")?)?;
   Ok(out)
 }
@@ -577,6 +578,9 @@ impl UiState {
           set_opt(&out, "multiline", obj.get::<_, Option<bool>>("multiline")?)?;
           out.set("checked", obj.get::<_, bool>("checked")?)?;
           out.set("onChange", alloc_slot(&row, obj.get::<_, Function>("onChange")?))?;
+          if let Some(f) = obj.get::<_, Option<Function>>("onClick")? {
+            out.set("onClick", alloc_slot(&row, f))?;
+          }
           copy_secondary_click(&out, obj, &row, &mut alloc_slot)?;
         }
         "button" => {

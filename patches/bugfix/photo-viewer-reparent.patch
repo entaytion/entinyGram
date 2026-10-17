@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 15 Oct 2026 22:29:51 +0200
+Subject: hopefully fix crop, captions and pip breaking randomly
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -4786,6 +4786,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+         animatingImageView.setAnimationValues(animationValues, false, false);
+         windowView.addView(animatingImageView, LayoutHelper.createFrame(40, 40));
+ 
++        photoCropView = null;
++        captionScrollView = null;
++        captionContainer = null;
++        textureImageView = null;
+         containerView = new FrameLayoutDrawer(activity, activity);
+         containerView.setFocusable(false);
+         if (framesRewinder != null) {

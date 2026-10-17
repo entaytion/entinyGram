@@ -24,11 +24,12 @@ function wrapStatements(source: string): string {
   if (arrow.type !== 'ArrowFunctionExpression' || arrow.body.type !== 'BlockStatement') return wrapped
   const last = arrow.body.body.at(-1)
   if (last?.type !== 'ExpressionStatement') return wrapped
-  const { start, end } = last.expression
-  return `${wrapped.slice(0, start)}return (${wrapped.slice(start, end)});${wrapped.slice(last.end)}`
+  // the expression's span leaves out its own parentheses, the statement's does not
+  const expression = wrapped.slice(last.start, last.end).replace(/;$/, '')
+  return `${wrapped.slice(0, last.start)}return (${expression});${wrapped.slice(last.end)}`
 }
 
-async function compileSnippet(source: string): Promise<string> {
+export async function compileSnippet(source: string): Promise<string> {
   const transform = (code: string) => esbuild.transform(code, { loader: 'ts', target: 'esnext', sourcefile: '<eval>', logLevel: 'silent' })
   try {
     return (await transform(`(async () => (${source.trimEnd().replace(/;+$/, '')}\n))()`)).code

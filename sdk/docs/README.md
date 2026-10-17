@@ -51,6 +51,7 @@ The skill only gets you a first draft. Review the result and test it on a device
 - [interception.md](interception.md): intercepting RPCs, updates and outgoing messages
 - [grants.md](grants.md): detailed explanation of permissions
 - [ui.md](ui.md): declarative UI and actions
+- [elements.md](elements.md): screenshots of the UI elements
 - [canvas.md](canvas.md): `inu.canvas`, as an alternative to PIL
 - [engine.md](engine.md): runtime environment of the plugins
 - [io.md](io.md): `fetch`, files, blobs, `localStorage`, the clipboard

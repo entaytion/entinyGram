@@ -182,8 +182,14 @@ open class QuickJs {
     fun chatHistoryMenuClick(historyId: Long, requestId: Long, index: Int) =
         requireLive { nativeChatHistoryMenuClick(it, historyId, requestId, index) }
 
-    /** never call it off [EngineDispatch.scheduler] */
-    open fun renderActions(kind: Int, surfaceJson: String): String? = ifLiveOr(null) { nativeRenderActions(it, kind, surfaceJson) }
+    /** never call it off [EngineDispatch.scheduler]. Answered once through [UiListener.actionsRendered] unless abandoned; false when closed */
+    open fun renderActions(renderId: Long, kind: Int, surfaceJson: String): Boolean = ifLiveOr(false) {
+        nativeRenderActions(it, renderId, kind, surfaceJson)
+        true
+    }
+
+    /** the rows that already settled, or null once the render answered or the engine closed */
+    open fun abandonActionRender(renderId: Long): String? = ifLiveOr(null) { nativeAbandonActionRender(it, renderId) }
 
     open fun dispatchAction(kind: Int, token: Int, secondary: Boolean, surfaceJson: String) =
         ifLive { nativeDispatchAction(it, kind, token, secondary, surfaceJson) }
@@ -316,7 +322,8 @@ open class QuickJs {
     private external fun nativeChatHistoryHeaderTap(ptr: Long, historyId: Long)
     private external fun nativeChatHistoryMenu(ptr: Long, historyId: Long, requestId: Long)
     private external fun nativeChatHistoryMenuClick(ptr: Long, historyId: Long, requestId: Long, index: Int)
-    private external fun nativeRenderActions(ptr: Long, kind: Int, surfaceJson: String): String?
+    private external fun nativeRenderActions(ptr: Long, renderId: Long, kind: Int, surfaceJson: String)
+    private external fun nativeAbandonActionRender(ptr: Long, renderId: Long): String?
     private external fun nativeDispatchAction(ptr: Long, kind: Int, token: Int, secondary: Boolean, surfaceJson: String)
     private external fun nativeDispatchTranslation(ptr: Long, token: Int, dispatchId: Long, requestJson: String)
     private external fun nativeAbandonTranslation(ptr: Long, dispatchId: Long, timedOut: Boolean)

@@ -229,7 +229,7 @@ class PluginActionsTest {
         rendered(PluginActions.KIND_MESSAGE, surface)
 
         assertEquals(1, plugin.js.actionRenders.size)
-        val json = JSONObject(plugin.js.actionRenders[0].second)
+        val json = JSONObject(plugin.js.actionRenders[0].surfaceJson)
         assertEquals(4242L, json.getLong("dialogId"))
         assertEquals(99L, json.getLong("topicId"))
         assertEquals("selection", json.getString("source"))
@@ -249,6 +249,116 @@ class PluginActionsTest {
         fine.answers(1 to "fine")
 
         assertEquals(listOf("fine"), rendered(PluginActions.KIND_CHAT, chat))
+    }
+
+    @Test
+    fun an_engine_still_rendering_at_the_budget_is_abandoned_with_its_settled_rows_kept() {
+        val slow = startPlugin("slow")
+        val fine = startPlugin("fine")
+        PluginActions.register(slow.session!!, PluginActions.KIND_CHAT, 1, "a")
+        PluginActions.register(slow.session!!, PluginActions.KIND_CHAT, 2, "settled")
+        PluginActions.register(fine.session!!, PluginActions.KIND_CHAT, 1, "b")
+        slow.js.holdsActionRenders = true
+        slow.js.abandonedRows = """[{"token":2,"text":"settled"}]"""
+        fine.answers(1 to "fine")
+
+        val out = ArrayList<List<String>>()
+        PluginActions.render(PluginActions.KIND_CHAT, chat) { rows -> out.add(rows.map { it.text }) }
+        settle()
+        assertEquals(emptyList(), out)
+
+        advanceBy(PluginActions.RENDER_BUDGET_MS)
+        settle()
+        assertEquals(listOf(listOf("settled", "fine")), out)
+        assertEquals(listOf(slow.js.actionRenders.single().renderId), slow.js.actionRenderAbandons)
+
+        PluginActions.settleRender(slow.js, slow.js.actionRenders.single().renderId, """[{"token":1,"text":"late"}]""")
+        settle()
+        assertEquals(1, out.size)
+    }
+
+    @Test
+    fun an_engine_detached_mid_render_stops_holding_the_menu() {
+        val slow = startPlugin("slow")
+        val fine = startPlugin("fine")
+        PluginActions.register(slow.session!!, PluginActions.KIND_CHAT, 1, "a")
+        PluginActions.register(fine.session!!, PluginActions.KIND_CHAT, 1, "b")
+        slow.js.holdsActionRenders = true
+        fine.answers(1 to "fine")
+
+        val out = ArrayList<List<String>>()
+        PluginActions.render(PluginActions.KIND_CHAT, chat) { rows -> out.add(rows.map { it.text }) }
+        settle()
+        PluginActions.detach(slow.session!!)
+        settle()
+        assertEquals(listOf(listOf("fine")), out)
+    }
+
+    private fun renderOnEngine(): ArrayList<List<String>> {
+        val out = ArrayList<List<String>>()
+        PluginActions.render(PluginActions.KIND_CHAT, chat) { rows -> out.add(rows.map { it.text }) }
+        settle()
+        return out
+    }
+
+    @Test
+    fun a_real_engine_awaits_async_getters_and_drops_rows_that_reject_or_hide() {
+        val plugin = startEngine("async", actions = true)
+        plugin.js(
+            """
+            const tick = async value => { await null; await null; return value }
+            inu.registerChatAction({ id: 'a', text: ctx => tick(`chat ${'$'}{ctx.dialogId}`), visible: () => tick(true), callback: () => {} })
+            inu.registerChatAction({ id: 'b', text: 'hidden', visible: async () => false, callback: () => {} })
+            inu.registerChatAction({ id: 'c', text: async () => { throw new Error('nope') }, callback: () => {} })
+            inu.registerChatAction({ id: 'd', text: 'static', visible: () => true, callback: () => {} })
+            """,
+        )
+
+        assertEquals(listOf(listOf("chat 4242", "static")), renderOnEngine())
+    }
+
+    @Test
+    fun a_real_engine_answers_when_a_getter_settles_in_a_later_engine_turn() {
+        val plugin = startEngine("async", actions = true)
+        plugin.js(
+            """
+            globalThis.__resolve = []
+            inu.registerChatAction({ id: 'a', text: () => new Promise(resolve => __resolve.push(resolve)), callback: () => {} })
+            """,
+        )
+
+        val out = renderOnEngine()
+        assertEquals(emptyList(), out)
+        plugin.js("__resolve.forEach(resolve => resolve('late but in budget'))")
+        settle()
+        assertEquals(listOf(listOf("late but in budget")), out)
+    }
+
+    @Test
+    fun a_real_engine_that_never_settles_is_cut_off_at_the_budget_with_its_settled_rows_kept() {
+        val plugin = startEngine("async", actions = true)
+        plugin.js(
+            """
+            globalThis.__resolve = []
+            inu.registerChatAction({ id: 'a', text: () => new Promise(resolve => __resolve.push(resolve)), callback: () => {} })
+            inu.registerChatAction({ id: 'b', text: 'static', callback: () => {} })
+            inu.registerChatAction({ id: 'c', text: async () => 'settled', callback: () => {} })
+            """,
+        )
+
+        val out = renderOnEngine()
+        advanceBy(PluginActions.RENDER_BUDGET_MS)
+        settle()
+        assertEquals(listOf(listOf("static", "settled")), out)
+
+        plugin.js("__resolve.forEach(resolve => resolve('too late'))")
+        settle()
+        assertEquals(1, out.size)
+
+        val again = renderOnEngine()
+        plugin.js("__resolve.at(-1)('again')")
+        settle()
+        assertEquals(listOf(listOf("again", "static", "settled")), again)
     }
 
     @Test

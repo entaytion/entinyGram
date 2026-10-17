@@ -64,6 +64,19 @@ const mainPage = inu.ui.settingsPage({
       },
     }),
     inu.ui.check({
+      id: 'split-toggle',
+      text: 'Split toggle',
+      subtitle: 'body opens the nested page, switch toggles',
+      checked: state.notify,
+      onChange: (v) => {
+        state.notify = v
+      },
+      onClick: (anchor) => {
+        check('a split onClick is handed an anchor', typeof anchor?.openMenu === 'function', typeof anchor)
+        inu.ui.openPage(nestedPage)
+      },
+    }),
+    inu.ui.check({
       text: 'Show extra section',
       checked: state.extraSection,
       onChange: (v) => {

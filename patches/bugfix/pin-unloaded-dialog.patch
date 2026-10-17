@@ -1,0 +1,218 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 16 Oct 2026 02:10:40 +0200
+Subject: fix pinning chats found in search
+
+---
+ .../messenger/MessagesController.java         | 85 ++++++++++++++++++-
+ .../telegram/messenger/MessagesStorage.java   | 27 ++++++
+ .../ui/Adapters/DialogsSearchAdapter.java     | 12 +--
+ .../java/org/telegram/ui/DialogsActivity.java | 10 +++
+ 4 files changed, 122 insertions(+), 12 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -295,6 +295,7 @@ public class MessagesController extends BaseController implements NotificationCe
+ 
+     private LongSparseArray<Boolean> gettingUnknownChannels = new LongSparseArray<>();
+     private LongSparseArray<Boolean> gettingUnknownDialogs = new LongSparseArray<>();
++    private final LongSparseArray<Boolean> inu_loadingDialogs = new LongSparseArray<>();
+     private LongSparseArray<Boolean> checkingLastMessagesDialogs = new LongSparseArray<>();
+ 
+     private ArrayList<TLRPC.Updates> updatesQueueSeq = new ArrayList<>();
+@@ -12834,6 +12835,85 @@ public class MessagesController extends BaseController implements NotificationCe
+         });
+     }
+ 
++    public boolean inu_putStubDialog(long dialogId, int folderId) {
++        if (dialogs_dict.indexOfKey(dialogId) >= 0) {
++            return false;
++        }
++        TLRPC.Dialog dialog = new TLRPC.TL_dialog();
++        dialog.id = dialogId;
++        dialog.folder_id = folderId;
++        dialog.flags = ChatObject.isChannel(getChat(-dialogId)) ? 1 : 0;
++        dialogs_dict.put(dialogId, dialog);
++        allDialogs.add(dialog);
++        sortDialogs(null);
++        return true;
++    }
++
++    public void inu_loadDialog(long dialogId, Runnable onLoaded) {
++        if (dialogs_dict.indexOfKey(dialogId) >= 0 || inu_loadingDialogs.indexOfKey(dialogId) >= 0) {
++            return;
++        }
++        inu_loadingDialogs.put(dialogId, true);
++        getMessagesStorage().getDialogFolderId(dialogId, folderId -> {
++            if (folderId != -1) {
++                inu_loadingDialogs.delete(dialogId);
++                if (inu_putStubDialog(dialogId, folderId)) {
++                    getMessagesStorage().inu_loadDialogFromCache(dialogId);
++                    onLoaded.run();
++                }
++                return;
++            }
++            TLRPC.InputPeer peer = DialogObject.isEncryptedDialog(dialogId) ? null : getInputPeer(dialogId);
++            if (peer == null || peer instanceof TLRPC.TL_inputPeerEmpty) {
++                inu_loadingDialogs.delete(dialogId);
++                return;
++            }
++            TLRPC.TL_messages_getPeerDialogs req = new TLRPC.TL_messages_getPeerDialogs();
++            TLRPC.TL_inputDialogPeer inputDialogPeer = new TLRPC.TL_inputDialogPeer();
++            inputDialogPeer.peer = peer;
++            req.peers.add(inputDialogPeer);
++            getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
++                inu_loadingDialogs.delete(dialogId);
++                if (!(response instanceof TLRPC.TL_messages_peerDialogs)) {
++                    return;
++                }
++                TLRPC.TL_messages_peerDialogs res = (TLRPC.TL_messages_peerDialogs) response;
++                if (res.dialogs.size() != 1) {
++                    return;
++                }
++                TLRPC.Dialog dialog = res.dialogs.get(0);
++                DialogObject.initDialog(dialog);
++                if (dialog.id != dialogId || dialog.top_message == 0) {
++                    return;
++                }
++                if (dialogId < 0) {
++                    TLRPC.Chat chat = null;
++                    for (TLRPC.Chat c : res.chats) {
++                        if (c.id == -dialogId) {
++                            chat = c;
++                            break;
++                        }
++                    }
++                    if (ChatObject.isNotInChat(chat) || chat.migrated_to != null) {
++                        return;
++                    }
++                }
++                if (!inu_putStubDialog(dialogId, dialog.folder_id)) {
++                    return;
++                }
++                TLRPC.TL_messages_dialogs dialogs = new TLRPC.TL_messages_dialogs();
++                dialogs.dialogs.addAll(res.dialogs);
++                dialogs.messages.addAll(res.messages);
++                dialogs.users.addAll(res.users);
++                dialogs.chats.addAll(res.chats);
++                getMessagesStorage().putDialogs(dialogs, 3);
++                applyDialogsNotificationsSettings(dialogs.dialogs);
++                processDialogsUpdate(dialogs, null, false);
++                onLoaded.run();
++            }));
++        });
++    }
++
+     private void fetchFolderInLoadedPinnedDialogs(TLRPC.TL_messages_peerDialogs res) {
+         for (int a = 0, N = res.dialogs.size(); a < N; a++) {
+             TLRPC.Dialog dialog = res.dialogs.get(a);
+@@ -17526,6 +17606,9 @@ public class MessagesController extends BaseController implements NotificationCe
+             }
+         }
+         getMessagesStorage().setDialogPinned(dialogId, dialog.pinnedNum);
++        if (pin && dialogMessage.get(dialogId) == null) {
++            getMessagesStorage().inu_loadDialogFromCache(dialogId);
++        }
+         return true;
+     }
+ 
+@@ -22754,7 +22837,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                         }
+                     }
+                     if (maxDate > Integer.MIN_VALUE) {
+-                        if (maxDate < dialogsLoadedTillDate) {
++                        if (maxDate < dialogsLoadedTillDate && !d.pinned) {
+                             continue;
+                         }
+                     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -18029,6 +18029,33 @@ public class MessagesStorage extends BaseController {
+         });
+     }
+ 
++    public void inu_loadDialogFromCache(long did) {
++        storageQueue.postRunnable(() -> {
++            try {
++                ArrayList<Long> usersToLoad = new ArrayList<>();
++                ArrayList<Long> chatsToLoad = new ArrayList<>();
++                ArrayList<Integer> encryptedToLoad = new ArrayList<>();
++                TLRPC.messages_Dialogs dialogs = loadDialogsByIds(String.valueOf(did), usersToLoad, chatsToLoad, encryptedToLoad);
++                if (dialogs.dialogs.isEmpty()) {
++                    return;
++                }
++                ArrayList<TLRPC.EncryptedChat> encryptedChats = new ArrayList<>();
++                if (!encryptedToLoad.isEmpty()) {
++                    getEncryptedChatsInternal(TextUtils.join(",", encryptedToLoad), encryptedChats, usersToLoad);
++                }
++                if (!chatsToLoad.isEmpty()) {
++                    getChatsInternal(TextUtils.join(",", chatsToLoad), dialogs.chats);
++                }
++                if (!usersToLoad.isEmpty()) {
++                    getUsersInternal(usersToLoad, dialogs.users);
++                }
++                getMessagesController().processDialogsUpdate(dialogs, encryptedChats, true);
++            } catch (Exception e) {
++                checkSQLException(e);
++            }
++        });
++    }
++
+     public void setDialogPinned(long did, int pinned) {
+         storageQueue.postRunnable(() -> {
+             SQLitePreparedStatement state = null;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
+@@ -1042,17 +1042,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+                         long finalDialogId = dialogId;
+                         MessagesStorage.getInstance(currentAccount).getDialogFolderId(dialogId, param -> {
+                             if (param != -1) {
+-                                TLRPC.Dialog newDialog = new TLRPC.TL_dialog();
+-                                newDialog.id = finalDialogId;
+-                                if (param != 0) {
+-                                    newDialog.folder_id = param;
+-                                }
+-                                if (obj instanceof TLRPC.Chat) {
+-                                    newDialog.flags = ChatObject.isChannel((TLRPC.Chat) obj) ? 1 : 0;
+-                                }
+-                                MessagesController.getInstance(currentAccount).dialogs_dict.put(finalDialogId, newDialog);
+-                                MessagesController.getInstance(currentAccount).allDialogs.add(newDialog);
+-                                MessagesController.getInstance(currentAccount).sortDialogs(null);
++                                MessagesController.getInstance(currentAccount).inu_putStubDialog(finalDialogId, param);
+                             }
+                         });
+                     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -9892,6 +9892,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         if (filter != null) {
+             if (pin) {
+                 filter.pinnedDialogs.put(selectedDialog, minPinnedNum);
++                if (getMessagesController().dialogMessage.get(selectedDialog) == null) {
++                    getMessagesStorage().inu_loadDialogFromCache(selectedDialog);
++                }
+             } else {
+                 filter.pinnedDialogs.delete(selectedDialog);
+             }
+@@ -10226,6 +10229,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     private void showOrUpdateActionMode(long dialogId, View cell) {
+         addOrRemoveSelectedDialog(dialogId, cell);
++        if (selectedDialogs.contains(dialogId)) {
++            getMessagesController().inu_loadDialog(dialogId, () -> {
++                if (actionBar != null && actionBar.isActionModeShowed() && selectedDialogs.contains(dialogId)) {
++                    updateCounters(false);
++                }
++            });
++        }
+         boolean updateAnimated = false;
+         if (actionBar.isActionModeShowed()) {
+             if (selectedDialogs.isEmpty()) {

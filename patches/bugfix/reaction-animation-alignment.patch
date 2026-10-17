@@ -4,14 +4,50 @@ Date: Fri, 24 Jul 2026 18:13:42 +0400
 Subject: fix reaction alignment after move animation
 
 ---
- .../ui/Components/Reactions/ReactionsEffectOverlay.java        | 3 ---
- 1 file changed, 3 deletions(-)
+ .../Reactions/ReactionsEffectOverlay.java     | 41 +++++++++++++++++--
+ .../Reactions/ReactionsLayoutInBubble.java    |  2 +-
+ 2 files changed, 39 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
-@@ -332,9 +332,6 @@ public class ReactionsEffectOverlay {
+@@ -41,6 +41,7 @@ import org.telegram.ui.Components.conference.message.GroupCallMessageCell;
+ import org.telegram.ui.SelectAnimatedEmojiDialog;
+ 
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.Random;
+ 
+ public class ReactionsEffectOverlay {
+@@ -78,6 +79,10 @@ public class ReactionsEffectOverlay {
+     private final ReactionsLayoutInBubble.VisibleReaction reaction;
+     private float lastDrawnToX;
+     private float lastDrawnToY;
++    private float inu_lastDrawnToH;
++    private final int[] inu_fromRadius = new int[4];
++    private final int[] inu_lastDrawnToRadius = new int[4];
++    private final int[] inu_drawnRadius = new int[4];
+     public boolean started;
+     private ReactionsContainerLayout.ReactionHolderView holderView = null;
+     private SelectAnimatedEmojiDialog.ImageViewEmoji holderView2 = null;
+@@ -235,11 +240,15 @@ public class ReactionsEffectOverlay {
+             fromX = loc[0] + holderView.loopImageView.getX();
+             fromY = loc[1] + holderView.loopImageView.getY();
+             fromHeight = holderView.loopImageView.getWidth() * holderView.getScaleX();
++            if (holderView.loopImageView.animatedEmojiDrawable != null) {
++                inu_copyRoundRadius(holderView.loopImageView.animatedEmojiDrawable.getImageReceiver(), holderView.getScaleX(), inu_fromRadius);
++            }
+         } else if (reactionButton != null) {
+             cell.getLocationInWindow(loc);
+             fromX = loc[0] + (reactionButton.imageReceiver == null ? 0 : reactionButton.imageReceiver.getImageX());
+             fromY = loc[1] + (reactionButton.imageReceiver == null ? 0 : reactionButton.imageReceiver.getImageY());
+             fromHeight = reactionButton.imageReceiver == null ? 0 : reactionButton.imageReceiver.getImageHeight();
++            inu_copyRoundRadius(inu_getDrawnImageReceiver(reactionButton), 1f, inu_fromRadius);
+         } else if (cell != null) {
+             ((View) cell.getParent()).getLocationInWindow(loc);
+             fromX = loc[0] + x;
+@@ -332,9 +341,6 @@ public class ReactionsEffectOverlay {
                      if (drawingCell instanceof ChatMessageCell) {
                          ChatMessageCell messageCell = (ChatMessageCell) drawingCell;
                          reactionButton = messageCell.getReactionButton(reaction);
@@ -21,3 +57,73 @@ index 0000000..0000000 100644
                          toY += messageCell.getPaddingTop();
                      } else if (drawingCell instanceof ChatActionCell) {
                          reactionButton = ((ChatActionCell) drawingCell).getReactionButton(reaction);
+@@ -346,6 +352,9 @@ public class ReactionsEffectOverlay {
+                     if (reactionButton != null) {
+                         toX += reactionButton.drawingImageRect.left;
+                         toY += reactionButton.drawingImageRect.top;
++                        toH = reactionButton.drawingImageRect.width();
++                        inu_lastDrawnToH = toH;
++                        inu_copyRoundRadius(inu_getDrawnImageReceiver(reactionButton), 1f, inu_lastDrawnToRadius);
+                     }
+                     if (chatActivity != null) {
+                         toY += chatActivity.drawingChatListViewYoffset;
+@@ -358,6 +367,9 @@ public class ReactionsEffectOverlay {
+                 } else {
+                     toX = lastDrawnToX;
+                     toY = lastDrawnToY;
++                    if (inu_lastDrawnToH > 0) {
++                        toH = inu_lastDrawnToH;
++                    }
+                 }
+ 
+                 if (fragment != null && fragment.getParentActivity() != null && fragment.getFragmentView() != null && fragment.getFragmentView().getParent() != null && fragment.getFragmentView().getVisibility() == View.VISIBLE && fragment.getFragmentView() != null) {
+@@ -450,6 +462,18 @@ public class ReactionsEffectOverlay {
+                 container.setScaleX(scale);
+                 container.setScaleY(scale);
+ 
++                if (emojiImageView.animatedEmojiDrawable != null && emojiImageView.animatedEmojiDrawable.getImageReceiver() != null && scale > 0) {
++                    float radiusProgress = animationType == ONLY_MOVE_ANIMATION ? animateInProgressX : animateOutProgress;
++                    for (int i = 0; i < 4; i++) {
++                        inu_drawnRadius[i] = Math.round((inu_fromRadius[i] * (1f - radiusProgress) + inu_lastDrawnToRadius[i] * radiusProgress) / scale);
++                    }
++                    ImageReceiver emojiReceiver = emojiImageView.animatedEmojiDrawable.getImageReceiver();
++                    if (!Arrays.equals(emojiReceiver.getRoundRadius(), inu_drawnRadius)) {
++                        emojiReceiver.setRoundRadius(inu_drawnRadius);
++                        emojiImageView.invalidate();
++                    }
++                }
++
+                 super.dispatchDraw(canvas);
+ 
+                 if ((animationType == SHORT_ANIMATION || emojiImageView.wasPlaying) && animateInProgress != 1f) {
+@@ -878,6 +902,17 @@ public class ReactionsEffectOverlay {
+     }
+ 
+ 
++    private static ImageReceiver inu_getDrawnImageReceiver(ReactionsLayoutInBubble.ReactionButton button) {
++        return button.animatedEmojiDrawable != null ? button.animatedEmojiDrawable.getImageReceiver() : button.imageReceiver;
++    }
++
++    private static void inu_copyRoundRadius(ImageReceiver receiver, float scale, int[] out) {
++        int[] radius = receiver != null ? receiver.getRoundRadius() : null;
++        for (int i = 0; i < 4; i++) {
++            out[i] = radius != null ? Math.round(radius[i] * scale) : 0;
++        }
++    }
++
+     private class AnimationView extends BackupImageView {
+ 
+         public AnimationView(Context context) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+@@ -1022,7 +1022,7 @@ public class ReactionsLayoutInBubble {
+             ImageReceiver imageReceiver = animatedEmojiDrawable != null ? animatedEmojiDrawable.getImageReceiver() : this.imageReceiver;
+             if (isSmall && imageReceiver != null) {
+                 imageReceiver.setAlpha(alpha);
+-                drawingImageRect.set((int) x, (int) y, dp(14), dp(14));
++                drawingImageRect.set((int) x, (int) y, (int) x + dp(14), (int) y + dp(14));
+                 imageReceiver.setImageCoords(drawingImageRect);
+                 imageReceiver.setRoundRadius(0);
+                 drawImage(canvas, drawingImageRect, alpha);

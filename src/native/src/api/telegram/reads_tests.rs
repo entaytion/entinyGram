@@ -384,6 +384,10 @@ impl ReadsHost for TestReadsHost {
       OP_MESSAGE_PREVIEW => {
         format!(r#"J{{"text":"{}|{}"}}"#, parts[0], parts.get(1).copied().unwrap_or("").replace('"', "'"))
       }
+      OP_USER_FULL => match self.dialog_id(arg) {
+        Some(id) if id == self.self_id.get() => self.handles.mint_wire("userFull", [("about".to_string(), "Sbio".to_string())]),
+        _ => "N".to_string(),
+      },
       OP_TOPIC => match (self.dialog_id(parts[0]), parts.get(1).copied()) {
         (Some(-1001), Some("7")) => self.handles.mint_wire("forumTopic", [("title".to_string(), "Stopic".to_string())]),
         _ => "N".to_string(),
@@ -546,6 +550,20 @@ fn get_topic_cached_answers_a_loaded_topic_and_null_otherwise() {
   assert_eq!(eval_json(&ctx, "inu.account().getTopicCached(-1001, 7)._"), r#""forumTopic""#);
   assert_eq!(eval_json(&ctx, "inu.account().getTopicCached(-1001, 8)"), "null");
   assert_eq!(eval_json(&ctx, "inu.account().getTopicCached('me', 7)"), "null", "a user dialog has no topics");
+}
+
+#[test]
+fn get_user_full_cached_on_yourself_needs_only_the_self_scope() {
+  let (_rt, ctx, host, _state, _accounts) = setup(&["account.read(self)"]);
+  assert_eq!(eval_json(&ctx, "inu.account().getUserFullCached('me').about"), r#""bio""#);
+  for call in ["getUserFullCached(222)", "getChatFullCached(-1001)"] {
+    assert_eq!(
+      catch_json(&ctx, &format!("inu.account().{call}")),
+      r#"[true,"not-granted","account.read(peers)","missing grant: account.read(peers)"]"#,
+      "call: {call}",
+    );
+  }
+  assert_eq!(host.reads.borrow().len(), 1, "a refused call must not reach the host");
 }
 
 #[test]

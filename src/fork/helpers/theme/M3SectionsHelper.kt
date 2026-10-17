@@ -10,6 +10,7 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,9 @@ import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.HeaderCell
 import org.telegram.ui.Cells.TextCheckCell
+import org.telegram.ui.Cells.TextInfoPrivacyCell
 import org.telegram.ui.Components.RecyclerListView
+import org.telegram.ui.Components.SectionsScrollView
 import org.telegram.ui.Components.TranslateAlert3
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
@@ -33,9 +36,18 @@ object M3SectionsHelper {
     private val path = Path()
     private val rect = RectF()
     private val radii = FloatArray(8)
+    private val splitDividerPaint = Paint()
 
     @JvmStatic
     fun isEnabled(): Boolean = InuConfig.M3_SECTIONS_STYLE.value
+
+    /** Theme.dividerPaint is hidden while section children draw, so vertical split lines need their own */
+    @JvmStatic
+    fun getSplitDividerPaint(resourcesProvider: Theme.ResourcesProvider?): Paint {
+        if (!isEnabled()) return Theme.dividerPaint
+        splitDividerPaint.color = Theme.getColor(Theme.key_divider, resourcesProvider)
+        return splitDividerPaint
+    }
 
     @JvmStatic
     fun isCircleIconsEnabled(): Boolean = isEnabled()
@@ -175,6 +187,143 @@ object M3SectionsHelper {
             else -> outer
         }
         return tR to bR
+    }
+
+    @JvmStatic
+    fun drawScrollSectionsBackgrounds(
+        canvas: Canvas,
+        content: View,
+        rows: List<View>,
+        resourcesProvider: Theme.ResourcesProvider?,
+    ) {
+        canvas.save()
+        canvas.translate(content.x, content.y)
+        drawRowsBackgrounds(canvas, content, rows, resourcesProvider, fullWidth = true)
+        canvas.restore()
+    }
+
+    @JvmStatic
+    fun clipScrollSectionChild(canvas: Canvas, content: View, rows: List<View>, child: View) {
+        clipRowsChild(canvas, content, rows, child, fullWidth = true)
+    }
+
+    @JvmStatic
+    fun setupOwnSections(item: View, container: ViewGroup) {
+        if (!isEnabled()) return
+        item.tag = RecyclerListView.TAG_NOT_SECTION
+        container.setTag(R.id.inu_own_sections, TRUE)
+        val inset = AndroidUtilities.dp(12f)
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i)
+            if (child is HeaderCell) styleHeaderCell(child)
+            if (child is TextInfoPrivacyCell) {
+                val textLp = child.textView.layoutParams as ViewGroup.MarginLayoutParams
+                textLp.leftMargin += inset
+                textLp.rightMargin += inset
+            }
+            if (!SectionsScrollView.isSectionView(child)) continue
+            val lp = child.layoutParams as? ViewGroup.MarginLayoutParams ?: continue
+            lp.leftMargin = inset
+            lp.rightMargin = inset
+        }
+    }
+
+    @JvmStatic
+    fun drawOwnSectionsBackgrounds(canvas: Canvas, container: ViewGroup) {
+        if (container.getTag(R.id.inu_own_sections) != TRUE) return
+        drawRowsBackgrounds(canvas, container, getVisibleChildren(container), null, fullWidth = false)
+    }
+
+    @JvmStatic
+    fun clipOwnSectionChild(canvas: Canvas, container: ViewGroup, child: View) {
+        if (container.getTag(R.id.inu_own_sections) != TRUE) return
+        clipRowsChild(canvas, container, getVisibleChildren(container), child, fullWidth = false)
+    }
+
+    private fun getVisibleChildren(container: ViewGroup): List<View> {
+        return (0 until container.childCount).map { container.getChildAt(it) }.filter { it.visibility == View.VISIBLE }
+    }
+
+    private fun drawRowsBackgrounds(
+        canvas: Canvas,
+        content: View,
+        rows: List<View>,
+        resourcesProvider: Theme.ResourcesProvider?,
+        fullWidth: Boolean,
+    ) {
+        val bgColor = Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider)
+        for (i in rows.indices) {
+            if (!SectionsScrollView.isSectionView(rows[i])) continue
+            path.rewind()
+            addRowPath(path, content, rows, i, fullWidth)
+            paint.color = multAlpha(bgColor, getAlphaInContent(rows[i], content) * content.alpha)
+            canvas.drawPath(path, paint)
+        }
+    }
+
+    private fun clipRowsChild(canvas: Canvas, content: View, rows: List<View>, child: View, fullWidth: Boolean) {
+        path.rewind()
+        for (i in rows.indices) {
+            if (isInsideOf(rows[i], child, content)) addRowPath(path, content, rows, i, fullWidth)
+        }
+        if (!path.isEmpty) canvas.clipPath(path)
+    }
+
+    private fun addRowPath(target: Path, content: View, rows: List<View>, index: Int, fullWidth: Boolean) {
+        val row = rows[index]
+        var x = 0f
+        var y = 0f
+        var v: View? = row
+        while (v != null && v !== content) {
+            x += v.x
+            y += v.y
+            v = v.parent as? View
+        }
+        val isSection = SectionsScrollView.isSectionView(row)
+        if (fullWidth && isSection) {
+            rect.set(content.paddingLeft.toFloat(), y, (content.width - content.paddingRight).toFloat(), y + row.height)
+        } else {
+            rect.set(x, y, x + row.width, y + row.height)
+        }
+        val lp = row.layoutParams
+        if (row.parent !== content && lp is ViewGroup.MarginLayoutParams) {
+            rect.top -= lp.topMargin
+            rect.bottom += lp.bottomMargin
+        }
+        if (!isSection) {
+            target.addRect(rect, Path.Direction.CW)
+            return
+        }
+        val alpha = getAlphaInContent(row, content)
+        fun getNeighbour(i: Int): View? = rows.getOrNull(i)?.takeIf {
+            SectionsScrollView.isSectionView(it) && Math.abs(getAlphaInContent(it, content) - alpha) <= 0.1f
+        }
+        val prev = getNeighbour(index - 1)
+        val next = getNeighbour(index + 1)
+        val (tR, bR) = m3Radii(row, prev, next)
+        if (prev != null && tR > 0f) rect.top += gap / 2f
+        if (next != null && bR > 0f) rect.bottom -= gap / 2f
+        setRadii(tR, bR)
+        target.addRoundRect(rect, radii, Path.Direction.CW)
+    }
+
+    private fun getAlphaInContent(view: View, content: View): Float {
+        var alpha = 1f
+        var v: View? = view
+        while (v != null && v !== content) {
+            alpha *= v.alpha
+            v = v.parent as? View
+        }
+        return alpha
+    }
+
+    private fun isInsideOf(view: View, ancestor: View, content: View): Boolean {
+        var v: View? = view
+        while (v != null && v !== content) {
+            if (v === ancestor) return true
+            v = v.parent as? View
+        }
+        return false
     }
 
     @JvmStatic
@@ -328,12 +477,27 @@ object M3SectionsHelper {
 
     @JvmStatic
     fun styleHeaderCell(cell: HeaderCell) {
+        if (!isEnabled()) return
         cell.setBackgroundColor(0)
         cell.setBottomMargin(4)
         val tv = cell.textView ?: return
         tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
         tv.typeface = AndroidUtilities.bold()
         tv.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader))
+    }
+
+    /** SectionsScrollView pads its content by 12dp, while list headers span the full width with 20dp padding */
+    @JvmStatic
+    fun styleScrollHeaderCell(cell: HeaderCell) {
+        if (!isEnabled() || cell.textView == null) return
+        var parent = cell.parent
+        while (parent != null && parent !is SectionsScrollView) parent = parent.parent
+        if (parent == null) return
+        styleHeaderCell(cell)
+        cell.setHeight(40)
+        val lp = cell.textView.layoutParams as ViewGroup.MarginLayoutParams
+        lp.leftMargin = AndroidUtilities.dp(8f)
+        lp.rightMargin = AndroidUtilities.dp(8f)
     }
 
     @JvmStatic

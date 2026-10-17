@@ -132,7 +132,7 @@ index 0000000..0000000 100644
                                              MediaDataController.addAnimatedEmojiSpans(message.messageOwner.entities, msgBuilder, currentMessagePaint == null ? null : currentMessagePaint.getFontMetricsInt());
                                          }
                                          messageString = new SpannableStringBuilder(emoji).append(msgBuilder);
-@@ -6011,7 +6011,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -6012,7 +6012,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  if (message != null) {
                      message.spoilLoginCode();
                  }

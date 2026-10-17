@@ -546,3 +546,6 @@ entiny/media/next-audio-controls.patch
 entiny/ui/dialogs-m3-sections.patch
 entiny/tabs/bottom-tabs-lift.patch
 entiny/ui/forum-m3-sections.patch
+bugfix/adaptive-shortcut-icons.patch
+bugfix/photo-viewer-reparent.patch
+bugfix/pin-unloaded-dialog.patch

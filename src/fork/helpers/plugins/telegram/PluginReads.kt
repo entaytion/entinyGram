@@ -139,6 +139,8 @@ object PluginReads {
                     val (spec, rest) = PeerSpecs.splitOnce(arg)
                     mint(handles, findTopic(controller, accountId, spec, rest.toLongOrNull() ?: 0L))
                 }
+                OP_USER_FULL -> mint(handles, findUserFull(controller, accountId, arg))
+                OP_CHAT_FULL -> mint(handles, findChatFull(controller, accountId, arg))
                 OP_MESSAGE_PREVIEW -> {
                     val (flag, wire) = PeerSpecs.splitOnce(arg)
                     previewMessage(handles, accountId, wire, hideSpoilers = flag != "0", policy = session.tl.policy)
@@ -289,6 +291,45 @@ object PluginReads {
     }
 
     /** [TopicsController.findTopic] takes the bare chat id, not the dialog id */
+    private fun findUserFull(controller: MessagesController, accountId: Int, spec: String): TLRPC.UserFull? {
+        val id = PeerSpecs.resolveDialogId(controller, accountId, spec) ?: return null
+        if (id <= 0) return null
+        return controller.getUserFull(id) ?: onStorageQueue(accountId) { readStoredUserFull(accountId, id) }
+    }
+
+    private fun findChatFull(controller: MessagesController, accountId: Int, spec: String): TLRPC.ChatFull? {
+        val id = PeerSpecs.resolveDialogId(controller, accountId, spec) ?: return null
+        if (id >= 0) return null
+        return controller.getChatFull(-id) ?: onStorageQueue(accountId) { readStoredChatFull(accountId, -id) }
+    }
+
+    private fun readStoredUserFull(accountId: Int, userId: Long): TLRPC.UserFull? =
+        MessagesStorage.getInstance(accountId).loadUserInfos(hashSetOf(userId)).firstOrNull()
+
+    /** the row `MessagesStorage.loadChatInfoInternal` reads, without its network refresh and notifications */
+    private fun readStoredChatFull(accountId: Int, chatId: Long): TLRPC.ChatFull? {
+        val database = MessagesStorage.getInstance(accountId).getDatabase() ?: return null
+        try {
+            val cursor = database.queryFinalized("SELECT info, pinned, online, inviter, links FROM chat_settings_v2 WHERE uid = $chatId")
+            try {
+                if (!cursor.next()) return null
+                val data = cursor.byteBufferValue(0) ?: return null
+                val info = TLRPC.ChatFull.TLdeserialize(data, data.readInt32(false), false)
+                data.reuse()
+                return info?.apply {
+                    pinned_msg_id = cursor.intValue(1)
+                    online_count = cursor.intValue(2)
+                    inviterId = cursor.longValue(3)
+                    invitesCount = cursor.intValue(4)
+                }
+            } finally {
+                cursor.dispose()
+            }
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
     private fun findTopic(
         controller: MessagesController,
         accountId: Int,
@@ -331,7 +372,7 @@ object PluginReads {
             }
         }
         if (!latch.await(STORAGE_WAIT_MILLIS, TimeUnit.MILLISECONDS)) {
-            refuse("timed-out", "message read: the app database stayed busy for ${STORAGE_WAIT_MILLIS}ms")
+            refuse("timed-out", "account read: the app database stayed busy for ${STORAGE_WAIT_MILLIS}ms")
         }
         return answer.get()
     }
@@ -493,30 +534,25 @@ object PluginReads {
     }
 
     private fun fetchUserFull(call: Fetch): String? {
-        val dialogId = PeerSpecs.resolveDialogId(call.controller, call.accountId, call.spec)
-        val cached = dialogId?.takeIf { it > 0 }?.let { call.controller.getUserFull(it) }
-        if (cached != null) {
-            call.answer { mint(call.handles, cached) }
-            return null
-        }
         val request = TLRPC.TL_users_getFullUser()
         request.id = call.peer(kind = PeerSpecs.KIND_USER) as TLRPC.InputUser
-        return PluginWrites.send(call, request) { response ->
-            val full = (response as? TLRPC.TL_users_userFull) ?: return@send PluginWire.encodeNull()
-            call.cache(full.users, full.chats)
-            mint(call.handles, full.full_user)
+        val send = {
+            PluginWrites.send(call, request) { response ->
+                val full = (response as? TLRPC.TL_users_userFull) ?: return@send PluginWire.encodeNull()
+                call.cache(full.users, full.chats)
+                mint(call.handles, full.full_user)
+            }
         }
+        val userId = PeerSpecs.resolveDialogId(call.controller, call.accountId, call.spec)?.takeIf { it > 0 }
+        if (userId == null || call.flag("force")) return send()
+        answerCachedOr(call, call.controller.getUserFull(userId), { readStoredUserFull(call.accountId, userId) }, send)
+        return null
     }
 
     private fun fetchChatFull(call: Fetch): String? {
         val spec = call.spec
         val dialogId = PeerSpecs.resolveDialogId(call.controller, call.accountId, spec) ?: notCached(spec)
         if (dialogId >= 0) throw PluginRefusal(PeerSpecs.wrongKind(spec, PeerSpecs.KIND_CHANNEL))
-        val cached = call.controller.getChatFull(-dialogId)
-        if (cached != null) {
-            call.answer { mint(call.handles, cached) }
-            return null
-        }
         val chat = call.controller.getChat(-dialogId) ?: notCached(spec)
         // a basic group has no `InputChannel`
         val request: TLObject = if (ChatObject.isChannel(chat)) {
@@ -526,10 +562,25 @@ object PluginReads {
         } else {
             TLRPC.TL_messages_getFullChat().apply { chat_id = -dialogId }
         }
-        return PluginWrites.send(call, request) { response ->
-            val full = (response as? TLRPC.TL_messages_chatFull) ?: return@send PluginWire.encodeNull()
-            call.cache(full.users, full.chats)
-            mint(call.handles, full.full_chat)
+        val send = {
+            PluginWrites.send(call, request) { response ->
+                val full = (response as? TLRPC.TL_messages_chatFull) ?: return@send PluginWire.encodeNull()
+                call.cache(full.users, full.chats)
+                mint(call.handles, full.full_chat)
+            }
+        }
+        if (call.flag("force")) return send()
+        answerCachedOr(call, call.controller.getChatFull(-dialogId), { readStoredChatFull(call.accountId, -dialogId) }, send)
+        return null
+    }
+
+    private fun <T : TLObject> answerCachedOr(call: Fetch, cached: T?, readStored: () -> T?, send: () -> String?) {
+        if (cached != null) return call.answer { mint(call.handles, cached) }
+        MessagesStorage.getInstance(call.accountId).storageQueue.postRunnable {
+            val stored = readStored()
+            EngineDispatch.scheduler.postRunnable {
+                if (stored != null) call.answer { mint(call.handles, stored) } else send()
+            }
         }
     }
 

@@ -1,10 +1,11 @@
 use crate::runtime::Dispose;
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
+use std::collections::HashMap;
 use std::rc::Rc;
 
-use rquickjs::{Array, Ctx, Exception, Function, Object, Persistent, Result as JsResult, Value};
+use rquickjs::{Array, Ctx, Exception, FromJs, Function, Object, Persistent, Result as JsResult, Value};
 
-use crate::api::error::{call_callback, describe_js_error, format_exception};
+use crate::api::error::{call_callback, describe_js_error, format_exception, format_thrown};
 use crate::api::platform::jvm::JvmState;
 use crate::api::telegram::account::AccountState;
 use crate::api::tl::proxy::json_parse_tl;
@@ -13,6 +14,7 @@ use crate::runtime::enter_js;
 use crate::runtime::pump_jobs;
 use crate::sandbox::registry::{make_disposer, noop_disposer, Lifecycle, Registry};
 use crate::utils::arguments::{field, opt_fn, req_fn, req_str, stringify_json};
+use crate::utils::qjs::resolve_and_then;
 
 pub const KIND_GLOBAL: i32 = 0;
 pub const KIND_CHAT: i32 = 1;
@@ -52,6 +54,8 @@ pub trait ActionHost {
     dynamic_fields: i32,
   ) -> Option<String>;
   fn action_unregister(&self, kind: i32, token: u32);
+  /// a json array of `{ token, text, icon? }`, or `None` when the render failed as a whole
+  fn actions_rendered(&self, render_id: i64, json: Option<&str>);
 }
 
 enum Label {
@@ -75,6 +79,29 @@ struct ActionDef {
   secondary_callback: Option<Persistent<Function<'static>>>,
 }
 
+#[derive(Clone, Copy)]
+enum Getter {
+  Visible,
+  Text,
+  Icon,
+}
+
+struct RenderRow {
+  token: u32,
+  text: Option<String>,
+  icon: Option<String>,
+  dropped: bool,
+  pending: usize,
+}
+
+struct Render {
+  id: i64,
+  kind: i32,
+  context: Persistent<Value<'static>>,
+  rows: RefCell<Vec<RenderRow>>,
+  started: Cell<bool>,
+}
+
 pub struct ActionState {
   host: Rc<dyn ActionHost>,
   lifecycle: Rc<Lifecycle>,
@@ -82,6 +109,7 @@ pub struct ActionState {
   accounts: Option<Rc<AccountState>>,
   jvm: Option<Rc<JvmState>>,
   kinds: Vec<Registry<Rc<ActionDef>>>,
+  renders: RefCell<HashMap<i64, Rc<Render>>>,
 }
 
 impl ActionState {
@@ -106,6 +134,7 @@ pub fn install_actions<'js>(
     accounts,
     jvm,
     kinds: (0..KIND_COUNT).map(|_| Registry::default()).collect(),
+    renders: RefCell::new(HashMap::new()),
   });
 
   for (name, kind) in [
@@ -221,7 +250,9 @@ fn parse_message_placements<'js>(ctx: &Ctx<'js>, opts: &Object<'js>, what: &str)
     let value = value?;
     let placement = value
       .as_string()
-      .ok_or_else(|| Exception::throw_type(ctx, &format!("{what}: placements must be 'bubble', 'selection' or 'sharedMedia'")))?
+      .ok_or_else(|| {
+        Exception::throw_type(ctx, &format!("{what}: placements must be 'bubble', 'selection' or 'sharedMedia'"))
+      })?
       .to_string()?;
     placements |= match placement.as_str() {
       "bubble" => MESSAGE_PLACEMENT_BUBBLE,
@@ -297,80 +328,174 @@ impl ActionState {
     }
   }
 
-  fn try_render<'js>(
-    &self,
+  fn start_render<'js>(
+    self: &Rc<Self>,
     ctx: &Ctx<'js>,
+    render_id: i64,
     kind: i32,
     registry: &Registry<Rc<ActionDef>>,
-    defs: Vec<Rc<ActionDef>>,
-    context: &Value<'js>,
+    context: Value<'js>,
     placement: i32,
     settings: bool,
-  ) -> JsResult<String> {
-    let out = Array::new(ctx.clone())?;
-    let mut index = 0;
-    for def in defs {
+  ) -> JsResult<()> {
+    let render = Rc::new(Render {
+      id: render_id,
+      kind,
+      context: Persistent::save(ctx, context.clone()),
+      rows: RefCell::new(Vec::new()),
+      started: Cell::new(false),
+    });
+    self.renders.borrow_mut().insert(render_id, render.clone());
+    for def in registry.values() {
       if def.placements & placement == 0 {
         continue;
       }
       if !registry.contains(def.token) {
         continue;
       }
-      match self.render_one(ctx, kind, &def, context, settings) {
-        Ok(Some((text, icon))) => {
-          let row = Object::new(ctx.clone())?;
-          row.set("token", def.token)?;
-          row.set("text", text)?;
-          if let Some(icon) = icon {
-            row.set("icon", icon)?;
-          }
-          out.set(index, row)?;
-          index += 1;
-        }
-        Ok(None) => {}
-        Err(rquickjs::Error::Exception) => {
-          (self.log)(&format!("{} row threw while rendering: {}", kind_name(kind), format_exception(ctx)));
-        }
-        Err(e) => (self.log)(&format!("{} row failed to render: {e:?}", kind_name(kind))),
+      let index = {
+        let mut rows = render.rows.borrow_mut();
+        rows.push(RenderRow {
+          token: def.token,
+          text: match &def.label {
+            Label::Static(text) => Some(text.clone()),
+            Label::Dynamic(_) => None,
+          },
+          icon: match &def.icon {
+            Some(ActionIcon::Static { spec, .. }) => Some(spec.clone()),
+            _ => None,
+          },
+          dropped: false,
+          pending: 0,
+        });
+        rows.len() - 1
+      };
+      match def.visible.as_ref().filter(|_| !settings) {
+        Some(visible) => self.run_getter(ctx, &render, index, Getter::Visible, visible, &context)?,
+        None => self.run_presentation(ctx, &render, index, &def, &context)?,
       }
     }
-    stringify_json(ctx, out.into_value(), "render: serialization produced no output")
+    render.started.set(true);
+    self.answer_if_settled(ctx, &render);
+    Ok(())
   }
 
-  fn render_one<'js>(
-    &self,
+  fn run_presentation<'js>(
+    self: &Rc<Self>,
     ctx: &Ctx<'js>,
-    kind: i32,
-    def: &Rc<ActionDef>,
+    render: &Rc<Render>,
+    index: usize,
+    def: &ActionDef,
     context: &Value<'js>,
-    settings: bool,
-  ) -> JsResult<Option<(String, Option<String>)>> {
-    if !settings {
-      if let Some(visible) = def.visible.as_ref() {
-        let visible = visible.clone().restore(ctx)?;
-        let verdict: Value = visible.call((context.clone(),))?;
-        if !verdict.as_bool().unwrap_or(false) {
-          return Ok(None);
-        }
+  ) -> JsResult<()> {
+    if let Label::Dynamic(text) = &def.label {
+      self.run_getter(ctx, render, index, Getter::Text, text, context)?;
+    }
+    if let Some(ActionIcon::Dynamic(icon)) = &def.icon {
+      if !render.rows.borrow()[index].dropped {
+        self.run_getter(ctx, render, index, Getter::Icon, icon, context)?;
       }
     }
-    let text = match &def.label {
-      Label::Static(text) => text.clone(),
-      Label::Dynamic(f) => {
-        let f = f.clone().restore(ctx)?;
-        let text: rquickjs::Coerced<String> = f.call((context.clone(),))?;
-        text.0
+    Ok(())
+  }
+
+  fn run_getter<'js>(
+    self: &Rc<Self>,
+    ctx: &Ctx<'js>,
+    render: &Rc<Render>,
+    index: usize,
+    getter: Getter,
+    function: &Persistent<Function<'static>>,
+    context: &Value<'js>,
+  ) -> JsResult<()> {
+    let function = function.clone().restore(ctx)?;
+    render.rows.borrow_mut()[index].pending += 1;
+    let value = match function.call::<_, Value>((context.clone(),)) {
+      Ok(value) => value,
+      Err(rquickjs::Error::Exception) => {
+        (self.log)(&format!("{} row threw while rendering: {}", kind_name(render.kind), format_exception(ctx)));
+        self.finish_getter(ctx, render, index, false);
+        return Ok(());
+      }
+      Err(e) => return Err(e),
+    };
+    let render_id = render.id;
+    let ok = {
+      let state = self.clone();
+      Function::new(ctx.clone(), move |ctx: Ctx<'js>, value: Value<'js>| {
+        state.settle_getter(&ctx, render_id, index, getter, Ok(value))
+      })?
+    };
+    let err = {
+      let state = self.clone();
+      Function::new(ctx.clone(), move |ctx: Ctx<'js>, value: Value<'js>| {
+        state.settle_getter(&ctx, render_id, index, getter, Err(value))
+      })?
+    };
+    resolve_and_then(ctx, value, ok, err)
+  }
+
+  fn settle_getter<'js>(
+    self: &Rc<Self>,
+    ctx: &Ctx<'js>,
+    render_id: i64,
+    index: usize,
+    getter: Getter,
+    result: Result<Value<'js>, Value<'js>>,
+  ) {
+    let Some(render) = self.renders.borrow().get(&render_id).cloned() else {
+      return;
+    };
+    let kind = render.kind;
+    let applied = match result {
+      Ok(value) => self.apply_getter(ctx, &render, index, getter, value),
+      Err(reason) => {
+        (self.log)(&format!("{} row rejected while rendering: {}", kind_name(kind), format_thrown(ctx, &reason)));
+        Ok(false)
       }
     };
-    let icon = match def.icon.as_ref() {
-      None => None,
-      Some(ActionIcon::Static { spec, .. }) => Some(spec.clone()),
-      Some(ActionIcon::Dynamic(f)) => {
-        let f = f.clone().restore(ctx)?;
-        let value: Value = f.call((context.clone(),))?;
-        let Some(Icon { spec, retained_value }) = icon_from_value(ctx, value, kind_name(kind), self.jvm.as_ref())?
-        else {
-          return Ok(Some((text, None)));
+    let keep = match applied {
+      Ok(keep) => keep,
+      Err(rquickjs::Error::Exception) => {
+        (self.log)(&format!("{} row threw while rendering: {}", kind_name(kind), format_exception(ctx)));
+        false
+      }
+      Err(e) => {
+        (self.log)(&format!("{} row failed to render: {e:?}", kind_name(kind)));
+        false
+      }
+    };
+    self.finish_getter(ctx, &render, index, keep);
+  }
+
+  fn apply_getter<'js>(
+    self: &Rc<Self>,
+    ctx: &Ctx<'js>,
+    render: &Rc<Render>,
+    index: usize,
+    getter: Getter,
+    value: Value<'js>,
+  ) -> JsResult<bool> {
+    let token = render.rows.borrow()[index].token;
+    let Some(def) = self.registry(render.kind).and_then(|registry| registry.get(token)) else {
+      return Ok(false);
+    };
+    match getter {
+      Getter::Visible => {
+        if !value.as_bool().unwrap_or(false) {
+          return Ok(false);
+        }
+        let context = render.context.clone().restore(ctx)?;
+        self.run_presentation(ctx, render, index, &def, &context)?;
+      }
+      Getter::Text => {
+        let text = rquickjs::Coerced::<String>::from_js(ctx, value)?.0;
+        render.rows.borrow_mut()[index].text = Some(text);
+      }
+      Getter::Icon => {
+        let icon = icon_from_value(ctx, value, kind_name(render.kind), self.jvm.as_ref())?;
+        let Some(Icon { spec, retained_value }) = icon else {
+          return Ok(true);
         };
         if let Some(value) = retained_value {
           let mut retained = def.retained_icons.borrow_mut();
@@ -379,45 +504,113 @@ impl ActionState {
           }
           retained.push(Persistent::save(ctx, value));
         }
-        Some(spec)
+        render.rows.borrow_mut()[index].icon = Some(spec);
       }
+    }
+    Ok(true)
+  }
+
+  fn finish_getter(&self, ctx: &Ctx<'_>, render: &Render, index: usize, keep: bool) {
+    {
+      let mut rows = render.rows.borrow_mut();
+      rows[index].pending -= 1;
+      rows[index].dropped |= !keep;
+    }
+    self.answer_if_settled(ctx, render);
+  }
+
+  fn answer_if_settled(&self, ctx: &Ctx<'_>, render: &Render) {
+    if !render.started.get() || render.rows.borrow().iter().any(|row| row.pending != 0) {
+      return;
+    }
+    let Some(render) = self.renders.borrow_mut().remove(&render.id) else {
+      return;
     };
-    Ok(Some((text, icon)))
+    match self.serialize_rows(ctx, &render) {
+      Ok(json) => self.host.actions_rendered(render.id, Some(&json)),
+      Err(e) => {
+        (self.log)(&format!("{}: render failed: {}", kind_name(render.kind), describe_js_error(ctx, e)));
+        self.host.actions_rendered(render.id, None);
+      }
+    }
+  }
+
+  fn serialize_rows<'js>(&self, ctx: &Ctx<'js>, render: &Render) -> JsResult<String> {
+    let registry = self.registry(render.kind);
+    let out = Array::new(ctx.clone())?;
+    let mut index = 0;
+    for row in render.rows.borrow().iter() {
+      if row.dropped || row.pending != 0 || !registry.is_some_and(|registry| registry.contains(row.token)) {
+        continue;
+      }
+      let Some(text) = &row.text else {
+        continue;
+      };
+      let entry = Object::new(ctx.clone())?;
+      entry.set("token", row.token)?;
+      entry.set("text", text.as_str())?;
+      if let Some(icon) = &row.icon {
+        entry.set("icon", icon.as_str())?;
+      }
+      out.set(index, entry)?;
+      index += 1;
+    }
+    stringify_json(ctx, out.into_value(), "render: serialization produced no output")
   }
 }
 
 impl ActionState {
-  pub fn render(self: &Rc<Self>, context: &rquickjs::Context, kind: i32, surface_json: &str) -> Option<String> {
-    let out = enter_js(context, |ctx| {
+  /// answered exactly once through [`ActionHost::actions_rendered`], unless abandoned first
+  pub fn render(self: &Rc<Self>, context: &rquickjs::Context, render_id: i64, kind: i32, surface_json: &str) {
+    enter_js(context, |ctx| {
       let Some(registry) = self.registry(kind) else {
         (self.log)(&format!("render: unknown action kind {kind}"));
-        return None;
+        self.host.actions_rendered(render_id, None);
+        return;
       };
-      let defs = registry.values();
-      if defs.is_empty() {
-        return Some("[]".to_string());
+      if registry.is_empty() {
+        self.host.actions_rendered(render_id, Some("[]"));
+        return;
       }
       let settings = surface_json == "null";
       let (context, placement) = if settings {
         (Value::new_null(ctx.clone()), ALL_PLACEMENTS)
       } else {
-        let (context, placement) = self.surface_context(&ctx, kind, surface_json)?;
+        let Some((context, placement)) = self.surface_context(&ctx, kind, surface_json) else {
+          self.host.actions_rendered(render_id, None);
+          return;
+        };
         (context.into_value(), placement)
       };
-      match self.try_render(&ctx, kind, registry, defs, &context, placement, settings) {
-        Ok(json) => Some(json),
-        Err(rquickjs::Error::Exception) => {
+      let Err(e) = self.start_render(&ctx, render_id, kind, registry, context, placement, settings) else {
+        return;
+      };
+      match e {
+        rquickjs::Error::Exception => {
           (self.log)(&crate::fault(format_args!("{}: render failed: {}", kind_name(kind), format_exception(&ctx))));
-          None
         }
+        e => (self.log)(&format!("{}: render failed: {e:?}", kind_name(kind))),
+      }
+      let abandoned = self.renders.borrow_mut().remove(&render_id);
+      drop(abandoned);
+      self.host.actions_rendered(render_id, None);
+    });
+    pump_jobs(context, self.log.as_ref());
+  }
+
+  /// the host stopped waiting: answers the rows that already settled, and a late answer is dropped.
+  /// None once the render answered on its own
+  pub fn abandon_render(&self, context: &rquickjs::Context, render_id: i64) -> Option<String> {
+    enter_js(context, |ctx| {
+      let render = self.renders.borrow_mut().remove(&render_id)?;
+      match self.serialize_rows(&ctx, &render) {
+        Ok(json) => Some(json),
         Err(e) => {
-          (self.log)(&format!("{}: render failed: {e:?}", kind_name(kind)));
+          (self.log)(&format!("{}: render failed: {}", kind_name(render.kind), describe_js_error(&ctx, e)));
           None
         }
       }
-    });
-    pump_jobs(context, self.log.as_ref());
-    out
+    })
   }
 
   pub fn dispatch(
@@ -472,6 +665,8 @@ impl Dispose for ActionState {
       for registry in &self.kinds {
         drop(registry.remove_matching(|_| true));
       }
+      let renders: Vec<_> = self.renders.borrow_mut().drain().collect();
+      drop(renders);
     });
   }
 }

@@ -19,6 +19,7 @@ import desu.inugram.helpers.plugins.tl.TlHandles
 import desu.inugram.helpers.plugins.tl.TlReflect
 import desu.inugram.helpers.plugins.ui.PluginActions
 import desu.inugram.helpers.plugins.ui.PluginCanvas
+import desu.inugram.helpers.plugins.ui.PluginUi
 import desu.inugram.jvmfixture.JvmFixture
 import java.io.File
 import java.util.concurrent.CountDownLatch
@@ -155,6 +156,7 @@ fun startEngine(
     name: String,
     vararg grants: String,
     canvas: Boolean = false,
+    actions: Boolean = false,
     localStoragePath: String = "",
     onLog: (String) -> Unit = {},
 ): Plugin {
@@ -169,6 +171,7 @@ fun startEngine(
             override fun onTimerSchedule(delayMs: Long) = Unit
         },
         canvas = if (canvas) PluginCanvas.listenerFor(session) else DeviceMissing,
+        ui = if (actions) PluginUi.listenerFor(session) else DeviceMissing,
         spillDir = if (canvas) PluginBlobs.dirFor(plugin.id) else "",
         localStoragePath = localStoragePath,
     )
@@ -368,6 +371,8 @@ internal object DeviceMissing : CoreListener, UiListener, PlatformListener, Canv
     ) = throw UnsupportedOperationException("this suite has no actions")
 
     override fun actionUnregister(kind: Int, token: Int) = throw UnsupportedOperationException("this suite has no actions")
+
+    override fun actionsRendered(renderId: Long, json: String?) = throw UnsupportedOperationException("this suite has no actions")
 }
 
 fun createManifest(name: String, grants: List<String>): PluginManifest = PluginManifest(

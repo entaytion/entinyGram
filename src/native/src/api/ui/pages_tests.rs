@@ -329,7 +329,7 @@ fn every_item_callback_is_handed_an_anchor() {
           inu.registerSettings(inu.ui.settingsPage({
             title: 't',
             items: () => [
-              inu.ui.check({ text: 'c', checked: false, onChange: note('check'), onSecondaryClick: note('checkLong') }),
+              inu.ui.check({ text: 'c', checked: false, onChange: note('check'), onClick: note('checkClick'), onSecondaryClick: note('checkLong') }),
               inu.ui.button({ text: 'b', onClick: note('button'), onSecondaryClick: note('buttonLong') }),
               inu.ui.select({ text: 's', items: ['a', 'b'], selected: 0, onChange: note('select'), onSecondaryClick: note('selectLong') }),
               inu.ui.slider({ text: 'l', min: 0, max: 2, step: 1, value: 0, onChange: note('slider') }),
@@ -342,13 +342,13 @@ fn every_item_callback_is_handed_an_anchor() {
   });
   let page_id = *host.registered.borrow().last().unwrap();
   state.render(&ctx, page_id).unwrap();
-  for (slot, arg) in [(1, "true"), (2, ""), (3, ""), (4, ""), (5, "1"), (6, ""), (7, "1"), (8, "")] {
+  for (slot, arg) in [(1, "true"), (2, ""), (3, ""), (4, ""), (5, ""), (6, "1"), (7, ""), (8, "1"), (9, "")] {
     state.dispatch_event(&ctx, page_id, slot, arg);
   }
   let seen: String = eval_json(&ctx, "globalThis.__seen");
   assert_eq!(
     seen,
-    r#"{"check":2,"checkLong":1,"button":1,"buttonLong":1,"select":2,"selectLong":1,"slider":2,"bottom":1}"#,
+    r#"{"check":2,"checkClick":1,"checkLong":1,"button":1,"buttonLong":1,"select":2,"selectLong":1,"slider":2,"bottom":1}"#,
   );
 }
 

@@ -1,5 +1,7 @@
 package desu.inugram.helpers.plugins
 
+import desu.inugram.helpers.plugins.ui.PluginActions
+
 /** [start] skips `nativeCreate`, so any member not overridden here throws on `ptr == 0` */
 class RecordingQuickJs : QuickJs() {
     class Dispatch(val callbackId: Int, val dispatchId: Long, val method: String, val accountId: Int, val requestWire: String)
@@ -16,6 +18,7 @@ class RecordingQuickJs : QuickJs() {
     class WriteResult(val requestId: Long, val resultWire: String)
     class WriteProgress(val requestId: Long, val loaded: Long, val total: Long)
     class Notification(val callbackId: Int, val name: String, val accountId: Int, val args: Array<String>)
+    class ActionRender(val renderId: Long, val kind: Int, val surfaceJson: String)
     class ActionDispatch(val kind: Int, val token: Int, val secondary: Boolean, val surfaceJson: String)
     class XposedBefore(val dispatchId: Long, val site: Long, val invocation: Array<Any?>) {
         val args: List<Any?> get() = invocation.drop(2)
@@ -45,7 +48,8 @@ class RecordingQuickJs : QuickJs() {
     val writeResults = ArrayList<WriteResult>()
     val writeProgress = ArrayList<WriteProgress>()
     val notifications = ArrayList<Notification>()
-    val actionRenders = ArrayList<Pair<Int, String>>()
+    val actionRenders = ArrayList<ActionRender>()
+    val actionRenderAbandons = ArrayList<Long>()
     val actionDispatches = ArrayList<ActionDispatch>()
     val xposedBefores = ArrayList<XposedBefore>()
     val xposedAfters = ArrayList<XposedAfter>()
@@ -76,7 +80,9 @@ class RecordingQuickJs : QuickJs() {
 
     var onWriteResult: ((WriteResult) -> Unit)? = null
 
+    /** answered from inside the call like the real engine; never answered while [holdsActionRenders] */
     var onRenderActions: ((Int, String) -> String?)? = null
+    var holdsActionRenders = false
 
     var onXposedBefore: ((XposedBefore) -> Array<String>?)? = null
     var onXposedAfter: ((XposedAfter) -> String?)? = null
@@ -216,9 +222,19 @@ class RecordingQuickJs : QuickJs() {
         sendAbandons.add(dispatchId)
     }
 
-    override fun renderActions(kind: Int, surfaceJson: String): String? {
-        actionRenders.add(kind to surfaceJson)
-        return onRenderActions?.invoke(kind, surfaceJson)
+    override fun renderActions(renderId: Long, kind: Int, surfaceJson: String): Boolean {
+        actionRenders.add(ActionRender(renderId, kind, surfaceJson))
+        if (holdsActionRenders) return true
+        PluginActions.settleRender(this, renderId, onRenderActions?.invoke(kind, surfaceJson))
+        return true
+    }
+
+    /** what a held render had settled when the budget ran out */
+    var abandonedRows: String? = null
+
+    override fun abandonActionRender(renderId: Long): String? {
+        actionRenderAbandons.add(renderId)
+        return abandonedRows
     }
 
     override fun dispatchAction(kind: Int, token: Int, secondary: Boolean, surfaceJson: String) {

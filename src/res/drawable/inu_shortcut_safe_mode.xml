@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <background>
+        <aapt:attr name="android:drawable">
+            <color android:color="#58A3DD" />
+        </aapt:attr>
+    </background>
+    <foreground>
+        <aapt:attr name="android:drawable">
+            <vector
+                android:width="108dp"
+                android:height="108dp"
+                android:viewportWidth="108"
+                android:viewportHeight="108">
+                <group
+                    android:scaleX="1.35"
+                    android:scaleY="1.35"
+                    android:translateX="37.8"
+                    android:translateY="37.8">
+                    <path
+                        android:fillColor="#00000000"
+                        android:strokeColor="#FFFFFF"
+                        android:strokeWidth="2.6"
+                        android:strokeLineCap="round"
+                        android:strokeLineJoin="round"
+                        android:pathData="m16.123 16.092l-.177.177a5.81 5.81 0 1 1-8.215-8.215l.159-.159M4 20l3.5-3.5M15 4l-3.5 3.5M20 9l-3.5 3.5M3 3l18 18" />
+                </group>
+            </vector>
+        </aapt:attr>
+    </foreground>
+</adaptive-icon>

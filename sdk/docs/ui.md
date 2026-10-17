@@ -93,6 +93,8 @@ In simple cases, you don't really need row IDs, and it is automatically derived 
 | `slider` | A slider with an optional title, value formatter and reset button. As mentioned above, `onChange` is only fired on release, to avoid too many re-renders |
 | `separator(text?)` | A divider with optional footer text. |
 
+See [elements.md](elements.md) for screenshots of every element, menus and dialogs.
+
 ### Menus
 
 Every callback on a row gets a `UIAnchor` as its last argument, allowing you to open a popup menu
@@ -144,7 +146,7 @@ showing a "Settings" button next to the plugin's name in the app's list.
 Many of the UI rows accept an `icon` parameter, which is an `UIIcon`. You can get one using:
 
 | Function | Description |
-| --- | --- | --- |
+| --- | --- |
 | `common(name)` | A built-in icon from a fixed list |
 | `animation(name)` | A built-in animated icon |
 | `customEmoji(id, options?)` | A Telegram custom emoji by its ID |
@@ -196,7 +198,11 @@ inu.registerMessageAction({
 `text` and `icon` can be plain values or getters. `visible` is always a getter.
 
 Prefer static `text` and `icon` values, as they are cheaper to compute,
-and if you can't - keep the getters fast and free of I/O.
+and if you can't - keep the getters fast.
+
+Getters may return promises, e.g. to `await` a cached database read. The whole menu has a 150 ms
+budget: rows still pending by then are not shown, and late answers are ignored. Network requests
+will usually miss it.
 
 ### Other rules
 
@@ -206,6 +212,7 @@ and if you can't - keep the getters fast and free of I/O.
 - Users can hide, pin and reorder chat and message actions in the app's menu settings. That
   screen calls your `text` and `icon` getters with `null` instead of a context, and never calls
   `visible`. The typings reflect this: those getters take `Ctx | null`.
+- Unpinned rows go into an "Actions" submenu, unless only one row is visible: then it shows inline.
 - Actions never show in secret chats.
 - `callback` handles taps. Optional `secondaryCallback` handles long taps.
 

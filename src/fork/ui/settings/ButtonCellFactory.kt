@@ -30,6 +30,9 @@ open class ButtonCellFactory : UItem.UItemFactory<PluginSettingCell>() {
             setup(ButtonCellFactory())
         }
 
+        const val FLAG_MULTILINE = 1
+        const val FLAG_SPLIT = 2
+
         /**
          * [icon] is an `icons.rs` spec, resolved at bind time so it follows theme + icon pack.
          *
@@ -55,7 +58,7 @@ open class ButtonCellFactory : UItem.UItemFactory<PluginSettingCell>() {
                 this.`object` = icon
                 this.object2 = formatting
                 this.red = danger
-                this.flags = if (multiline) 1 else 0
+                this.flags = if (multiline) FLAG_MULTILINE else 0
             }
     }
 
@@ -78,7 +81,8 @@ open class ButtonCellFactory : UItem.UItemFactory<PluginSettingCell>() {
     ) {
         val cell = view as PluginSettingCell
         val sameRow = cell.tag == item.id
-        cell.setMultiline(item.flags != 0)
+        cell.setMultiline(item.flags and FLAG_MULTILINE != 0)
+        cell.setSplit(item.flags and FLAG_SPLIT != 0)
         // fix oversized emojis
         resizeEmoji(item.text, cell.textView.paint)
         resizeEmoji(item.subtext, cell.subtitleView.paint)
@@ -148,7 +152,16 @@ class CheckCellFactory : ButtonCellFactory() {
             setup(CheckCellFactory())
         }
 
-        fun of(id: Int, text: CharSequence, subtitle: CharSequence?, icon: ButtonIcon?, checked: Boolean, formatting: String?, multiline: Boolean = false): UItem =
+        fun of(
+            id: Int,
+            text: CharSequence,
+            subtitle: CharSequence?,
+            icon: ButtonIcon?,
+            checked: Boolean,
+            formatting: String?,
+            multiline: Boolean = false,
+            split: Boolean = false,
+        ): UItem =
             UItem.ofFactory(CheckCellFactory::class.java).apply {
                 this.id = id
                 this.text = text
@@ -156,7 +169,7 @@ class CheckCellFactory : ButtonCellFactory() {
                 this.`object` = icon
                 this.object2 = formatting
                 this.checked = checked
-                this.flags = if (multiline) 1 else 0
+                this.flags = (if (multiline) FLAG_MULTILINE else 0) or (if (split) FLAG_SPLIT else 0)
             }
     }
 

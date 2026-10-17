@@ -8,18 +8,23 @@ Subject: force system font for ui
  .../java/org/telegram/messenger/Emoji.java    |  4 +-
  .../telegram/messenger/RichMessageLayout.java |  6 ++
  .../telegram/ui/ActionBar/SimpleTextView.java |  1 +
- .../java/org/telegram/ui/ActionBar/Theme.java |  3 +
+ .../java/org/telegram/ui/ActionBar/Theme.java |  5 ++
+ .../org/telegram/ui/Cells/DialogCell.java     |  7 ++-
  .../telegram/ui/Cells/ProfileSearchCell.java  |  1 +
+ .../telegram/ui/ChatPullingDownDrawable.java  |  1 +
  .../ui/Components/AnimatedEmojiSpan.java      |  1 +
  .../ui/Components/AnimatedTextView.java       |  1 +
+ .../telegram/ui/Components/CounterView.java   |  8 ++-
  .../ui/Components/Paint/PaintTypeface.java    | 63 +++++++------------
  .../Paint/Views/PaintTextOptionsView.java     |  5 +-
  .../Components/Paint/Views/TextPaintView.java |  4 ++
+ .../Reactions/ReactionsLayoutInBubble.java    |  1 +
+ .../ui/Components/SearchCounterView.java      | 15 +++--
  .../org/telegram/ui/iv/RichAudioCell.java     |  1 +
  .../org/telegram/ui/iv/RichBlockChrome.java   |  1 +
  .../org/telegram/ui/iv/RichDocumentCell.java  |  1 +
  .../java/org/telegram/ui/iv/RichMapCell.java  |  1 +
- 15 files changed, 56 insertions(+), 43 deletions(-)
+ 20 files changed, 79 insertions(+), 54 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 index 0000000..0000000 100644
@@ -115,7 +120,18 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -7978,6 +7978,7 @@ public class Theme {
+@@ -7858,8 +7858,10 @@ public class Theme {
+         if (dialogs_countTextPaint == null) {
+             dialogs_countTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+             dialogs_countTextPaint.setTypeface(AndroidUtilities.bold());
++            dialogs_countTextPaint.setFontFeatureSettings("tnum");
+             dialogs_countTextPaint2 = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+             dialogs_countTextPaint2.setTypeface(AndroidUtilities.bold());
++            dialogs_countTextPaint2.setFontFeatureSettings("tnum");
+             dialogs_countPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+             dialogs_onlineCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+             dialogs_tagPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+@@ -7978,6 +7980,7 @@ public class Theme {
          dialogs_tagTextPaint.setTextSize(dp(10));
          dialogs_searchNamePaint.setTextSize(dp(16));
          dialogs_searchNameEncryptedPaint.setTextSize(dp(16));
@@ -123,7 +139,7 @@ index 0000000..0000000 100644
      }
  
      public static void applyDialogsTheme() {
-@@ -8230,6 +8231,7 @@ public class Theme {
+@@ -8230,6 +8233,7 @@ public class Theme {
              addChatPaint(key_paint_chatComposeBackground, chat_composeBackgroundPaint, key_chat_messagePanelBackground);
              addChatPaint(key_paint_chatTimeBackground, chat_timeBackgroundPaint, key_chat_mediaTimeBackground);
          }
@@ -131,7 +147,7 @@ index 0000000..0000000 100644
      }
  
      public static void createChatResources(Context context, boolean fontsOnly) {
-@@ -8937,6 +8939,7 @@ public class Theme {
+@@ -8937,6 +8941,7 @@ public class Theme {
          }
  
          profile_aboutTextPaint.setTextSize(dp(16));
@@ -139,6 +155,25 @@ index 0000000..0000000 100644
      }
  
      private static ColorFilter currentShareColorFilter;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -3658,10 +3658,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                             }
+                         }
+ 
+-                        int countOldWidth = Math.max(dp(BADGE_TEXT_MIN_WIDTH), (int) Math.ceil(Theme.dialogs_countTextPaint2.measureText(oldStr)));
++                        int countOldWidth = Math.max(dp(BADGE_TEXT_MIN_WIDTH), (int) Math.ceil(Layout.getDesiredWidth(oldSpannableStr, Theme.dialogs_countTextPaint2)));
++                        int countNewWidth = Math.max(dp(BADGE_TEXT_MIN_WIDTH), (int) Math.ceil(Math.max(Layout.getDesiredWidth(newSpannableStr, Theme.dialogs_countTextPaint2), Layout.getDesiredWidth(stableStr, Theme.dialogs_countTextPaint2))));
+                         countOldLayout = new StaticLayout(oldSpannableStr, Theme.dialogs_countTextPaint2, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+-                        countAnimationStableLayout = new StaticLayout(stableStr, Theme.dialogs_countTextPaint2, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+-                        countAnimationInLayout = new StaticLayout(newSpannableStr, Theme.dialogs_countTextPaint2, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
++                        countAnimationStableLayout = new StaticLayout(stableStr, Theme.dialogs_countTextPaint2, countNewWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
++                        countAnimationInLayout = new StaticLayout(newSpannableStr, Theme.dialogs_countTextPaint2, countNewWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                     } else {
+                         countOldLayout = countLayout;
+                     }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java
@@ -151,6 +186,18 @@ index 0000000..0000000 100644
              }
              statusPaint.setTextSize(dp(callCellStyle ? 13f : 15));
              if (currentStatusPaint == Theme.dialogs_offlinePaint) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatPullingDownDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatPullingDownDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatPullingDownDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatPullingDownDrawable.java
+@@ -124,6 +124,7 @@ public class ChatPullingDownDrawable implements NotificationCenter.NotificationC
+ 
+         textPaint.setTextSize(AndroidUtilities.dp(13));
+         textPaint.setTypeface(AndroidUtilities.bold());
++        textPaint.setFontFeatureSettings("tnum");
+         textPaint2.setTextSize(AndroidUtilities.dp(14));
+ 
+         xRefPaint.setColor(0xff000000);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
@@ -175,6 +222,33 @@ index 0000000..0000000 100644
          }
  
          public void setAllowCancel(boolean allowCancel) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/CounterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/CounterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/CounterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/CounterView.java
+@@ -132,6 +132,7 @@ public class CounterView extends View {
+                 circlePaint.setColor(Color.BLACK);
+             }
+             textPaint.setTypeface(AndroidUtilities.bold());
++            textPaint.setFontFeatureSettings("tnum");
+             textPaint.setTextSize(AndroidUtilities.dp(13));
+         }
+ 
+@@ -272,10 +273,11 @@ public class CounterView extends View {
+                             }
+                         }
+ 
+-                        int countOldWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(oldStr.toString())));
++                        int countOldWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(Layout.getDesiredWidth(oldSpannableStr, textPaint)));
++                        int countNewWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(Math.max(Layout.getDesiredWidth(newSpannableStr, textPaint), Layout.getDesiredWidth(stableStr, textPaint))));
+                         countOldLayout = new StaticLayout(oldSpannableStr, textPaint, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+-                        countAnimationStableLayout = new StaticLayout(stableStr, textPaint, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+-                        countAnimationInLayout = new StaticLayout(newSpannableStr, textPaint, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
++                        countAnimationStableLayout = new StaticLayout(stableStr, textPaint, countNewWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
++                        countAnimationInLayout = new StaticLayout(newSpannableStr, textPaint, countNewWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                     } else {
+                         countOldLayout = countLayout;
+                     }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/PaintTypeface.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/PaintTypeface.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/PaintTypeface.java
@@ -315,6 +389,48 @@ index 0000000..0000000 100644
          lastTypefaceKey = found ? null : key;
          updateSelectionView();
      }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+@@ -84,6 +84,7 @@ public class ReactionsLayoutInBubble {
+         textPaint.setColor(Theme.getColor(Theme.key_featuredStickers_buttonText, resourcesProvider));
+         textPaint.setTextSize(dp(12));
+         textPaint.setTypeface(AndroidUtilities.bold());
++        textPaint.setFontFeatureSettings("tnum");
+         cutTagPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+     }
+     public boolean isSmall;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchCounterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchCounterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchCounterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchCounterView.java
+@@ -182,15 +182,20 @@ public class SearchCounterView extends View {
+                     }
+                 }
+ 
+-                int countOldWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(oldStr)));
+-                int countNewWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(newStr)));
++                SpannableStringBuilder stableString2 = null;
++                float newDesiredWidth = Math.max(Layout.getDesiredWidth(newSpannableStr, textPaint), Layout.getDesiredWidth(stableStr, textPaint));
++                if (countStartIndex > 0) {
++                    stableString2 = new SpannableStringBuilder(newStr);
++                    stableString2.setSpan(new EmptyStubSpan(), countStartIndex, newStr.length(), 0);
++                    newDesiredWidth = Math.max(newDesiredWidth, Layout.getDesiredWidth(stableString2, textPaint));
++                }
++                int countOldWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(Layout.getDesiredWidth(oldSpannableStr, textPaint)));
++                int countNewWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(newDesiredWidth));
+                 countOldLayout = new StaticLayout(oldSpannableStr, textPaint, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                 countAnimationStableLayout = new StaticLayout(stableStr, textPaint, countNewWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                 countAnimationInLayout = new StaticLayout(newSpannableStr, textPaint, countNewWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+ 
+-                if (countStartIndex > 0) {
+-                    SpannableStringBuilder stableString2 = new SpannableStringBuilder(newStr);
+-                    stableString2.setSpan(new EmptyStubSpan(), countStartIndex, newStr.length(), 0);
++                if (stableString2 != null) {
+                     countAnimationStableLayout2 = new StaticLayout(stableString2, textPaint, countNewWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                 } else {
+                     countAnimationStableLayout2 = null;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichAudioCell.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichAudioCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichAudioCell.java

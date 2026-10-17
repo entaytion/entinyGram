@@ -368,7 +368,7 @@ object ChatActionsHelper {
             if (state.generation != generation) return@render
             state.rows = rows
             val enabled = rows.filter { PluginActions.isEnabled(it.key) }
-            val pinned = enabled.filter { PluginActions.isPinned(it.key) }
+            val pinned = enabled.filter { PluginActions.isShownInline(it.key, enabled) }
             val pinnedKeys = pinned.map { it.key }
             for (key in state.pinnedKeys) {
                 if (key !in pinnedKeys) headerItem.hideSubItem(PluginActions.optionIdFor(key))
@@ -383,7 +383,7 @@ object ChatActionsHelper {
             }
             state.pinnedKeys = pinnedKeys
             bindPluginIcons(state, pinned)
-            updatePluginSubmenu(activity, state, PluginActions.orderRows(PluginActions.KIND_CHAT, enabled, false))
+            updatePluginSubmenu(activity, state, PluginActions.getSubmenuRows(PluginActions.KIND_CHAT, enabled))
         }
     }
 
@@ -1036,7 +1036,7 @@ object ChatActionsHelper {
                 if (state.generation != generation || collectSelected(menu).isEmpty()) return@render
                 state.rows = rows
                 val enabled = rows.filter { PluginActions.isEnabled(it.key) }
-                val pinnedByKey = enabled.filter { PluginActions.isPinned(it.key) }.associateBy { it.key }
+                val pinnedByKey = enabled.filter { PluginActions.isShownInline(it.key, enabled) }.associateBy { it.key }
                 val pinned = PluginActions.orderMainKeys(PluginActions.KIND_MESSAGE, pinnedByKey.keys.toList())
                     .map { pinnedByKey.getValue(it) }
                 val visible = pinned.mapTo(HashSet()) { it.key }
@@ -1056,7 +1056,7 @@ object ChatActionsHelper {
                     overflow.setSubItemShown(PluginActions.optionIdFor(row.key), true)
                 }
                 clearSubmenuRows(state.submenu)
-                val submenuRows = PluginActions.orderRows(PluginActions.KIND_MESSAGE, enabled, false)
+                val submenuRows = PluginActions.getSubmenuRows(PluginActions.KIND_MESSAGE, enabled)
                 for (row in submenuRows) {
                     PluginIcons.addMenuItem(
                         state.submenu,

@@ -82,6 +82,9 @@ interface UiListener {
     ): String?
 
     fun actionUnregister(kind: Int, token: Int)
+
+    /** answers [QuickJs.renderActions], null for a failed render. Called on the plugin queue, from inside the engine */
+    fun actionsRendered(renderId: Long, json: String?)
 }
 
 interface PlatformListener {

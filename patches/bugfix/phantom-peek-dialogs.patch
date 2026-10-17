@@ -4,14 +4,15 @@ Date: Mon, 25 May 2026 03:24:36 +0400
 Subject: hopefully fix phantom non-joined chats (from channels/comments) appearing in the dialogs list
 
 ---
- .../main/java/org/telegram/messenger/MessagesController.java    | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../messenger/MessagesController.java         |  4 +++-
+ .../telegram/messenger/MessagesStorage.java   | 21 +++++++++++++++++++
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -11702,7 +11702,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -11702,13 +11702,15 @@ public class MessagesController extends BaseController implements NotificationCe
                              if (!res.dialogs.isEmpty()) {
                                  TLRPC.Dialog dialog = res.dialogs.get(0);
  
@@ -20,3 +21,43 @@ index 0000000..0000000 100644
                                      TLRPC.TL_messages_dialogs dialogs = new TLRPC.TL_messages_dialogs();
                                      dialogs.chats = res.chats;
                                      dialogs.users = res.users;
+                                     dialogs.dialogs = res.dialogs;
+                                     dialogs.messages = res.messages;
+                                     getMessagesStorage().putDialogs(dialogs, 2);
++                                } else if (dialog.top_message != 0) {
++                                    getMessagesStorage().inu_createFirstHoles(dialogId, dialog.top_message);
+                                 }
+ 
+                                 loadMessagesInternal(dialogId, mergeDialogId, loadInfo, count, max_id, offset_date, false, minDate, classGuid, load_type, dialog.top_message, 0, threadMessageId, loadIndex, first_unread, dialog.unread_count, last_date, queryFromServer, dialog.unread_mentions_count, false, processMessages, isTopic, null, 0L);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -17347,6 +17347,27 @@ public class MessagesStorage extends BaseController {
+         }
+     }
+ 
++    public void inu_createFirstHoles(long did, int topMessageId) {
++        storageQueue.postRunnable(() -> {
++            SQLitePreparedStatement state5 = null;
++            SQLitePreparedStatement state6 = null;
++            try {
++                state5 = database.executeFast("REPLACE INTO messages_holes VALUES(?, ?, ?)");
++                state6 = database.executeFast("REPLACE INTO media_holes_v2 VALUES(?, ?, ?, ?)");
++                createFirstHoles(did, state5, state6, topMessageId, 0);
++            } catch (Exception e) {
++                checkSQLException(e);
++            } finally {
++                if (state5 != null) {
++                    state5.dispose();
++                }
++                if (state6 != null) {
++                    state6.dispose();
++                }
++            }
++        });
++    }
++
+     public void updateDialogData(TLRPC.Dialog dialog) {
+         if (dialog == null) {
+             return;

@@ -13,6 +13,8 @@ pub(crate) struct TestActionHost {
   rows: RefCell<Vec<(i32, String, u32, i32)>>,
   pub(crate) limit: Cell<usize>,
   refuse_register: RefCell<Option<String>>,
+  rendered: RefCell<Vec<(i64, Option<String>)>>,
+  next_render: Cell<i64>,
 }
 
 impl ActionHost for TestActionHost {
@@ -62,6 +64,35 @@ impl ActionHost for TestActionHost {
   fn action_unregister(&self, kind: i32, token: u32) {
     self.rows.borrow_mut().retain(|r| !(r.0 == kind && r.2 == token));
     self.unregistered.borrow_mut().push((kind, token));
+  }
+  fn actions_rendered(&self, render_id: i64, json: Option<&str>) {
+    self.rendered.borrow_mut().push((render_id, json.map(str::to_string)));
+  }
+}
+
+impl TestActionHost {
+  fn answers(&self, render_id: i64) -> Vec<Option<String>> {
+    self.rendered.borrow().iter().filter(|(id, _)| *id == render_id).map(|(_, json)| json.clone()).collect()
+  }
+}
+
+fn start(state: &Disposing, host: &TestActionHost, ctx: &Context, kind: i32, surface: &str) -> i64 {
+  let render_id = host.next_render.get() + 1;
+  host.next_render.set(render_id);
+  state.render(ctx, render_id, kind, surface);
+  render_id
+}
+
+fn render(state: &Disposing, host: &TestActionHost, ctx: &Context, kind: i32, surface: &str) -> Option<String> {
+  let render_id = start(state, host, ctx, kind, surface);
+  let answers = host.answers(render_id);
+  assert_eq!(answers.len(), 1, "a render answers exactly once: {answers:?}");
+  answers.into_iter().next().unwrap()
+}
+
+fn run_jobs(rt: &Runtime) {
+  while rt.is_job_pending() {
+    rt.execute_pending_job().ok();
   }
 }
 
@@ -131,7 +162,7 @@ fn a_static_row_renders_without_running_plugin_code() {
     host.registered.borrow()[0],
     (KIND_CHAT, 1, "a".to_string(), Some("Alpha".to_string()), None, 0),
   );
-  let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, rows(&[row(1, "Alpha")]));
 }
 
@@ -156,13 +187,13 @@ fn a_dynamic_label_and_visible_see_the_surface() {
   assert_eq!(host.registered.borrow()[0].5, DYNAMIC_TEXT | DYNAMIC_VISIBLE);
   assert_eq!(host.registered.borrow()[1].3.as_deref(), Some("never"));
   assert_eq!(host.registered.borrow()[1].5, DYNAMIC_VISIBLE);
-  let json = state.render(&ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap();
   assert_eq!(json, rows(&[row(1, "bubble 11+12 in -100")]));
 }
 
 #[test]
 fn message_placements_filter_each_surface_and_settings_include_every_placement() {
-  let (_rt, ctx, _host, state, _logs) = setup();
+  let (_rt, ctx, host, state, _logs) = setup();
   eval(
     &ctx,
     r#"
@@ -174,16 +205,16 @@ fn message_placements_filter_each_surface_and_settings_include_every_placement()
   );
 
   assert_eq!(
-    state.render(&ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap(),
+    render(&state, &host, &ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap(),
     rows(&[row(1, "bubble"), row(3, "both")])
   );
   assert_eq!(
-    state.render(&ctx, KIND_MESSAGE, SELECTION_SURFACE).unwrap(),
+    render(&state, &host, &ctx, KIND_MESSAGE, SELECTION_SURFACE).unwrap(),
     rows(&[row(2, "selection"), row(3, "both"), row(4, "media")]),
   );
-  assert_eq!(state.render(&ctx, KIND_MESSAGE, SHARED_MEDIA_SURFACE).unwrap(), rows(&[row(4, "media")]));
+  assert_eq!(render(&state, &host, &ctx, KIND_MESSAGE, SHARED_MEDIA_SURFACE).unwrap(), rows(&[row(4, "media")]));
   assert_eq!(
-    state.render(&ctx, KIND_MESSAGE, "null").unwrap(),
+    render(&state, &host, &ctx, KIND_MESSAGE, "null").unwrap(),
     rows(&[row(1, "bubble"), row(2, "selection"), row(3, "both"), row(4, "media")]),
   );
 }
@@ -213,7 +244,7 @@ fn re_registering_an_id_replaces_the_row_in_place_and_retires_its_token() {
       inu.registerChatAction({ id: 'a', text: 'A2', callback: () => {} })
     "#,
   );
-  let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, rows(&[row(3, "A2"), row(2, "B")]), "the replacement keeps its predecessor's position");
   assert_eq!(
     *host.unregistered.borrow(),
@@ -233,7 +264,7 @@ fn a_disposer_removes_the_row_and_tells_the_host_once() {
       __d(); __d()
     "#,
   );
-  let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, rows(&[row(2, "B")]));
   assert_eq!(*host.unregistered.borrow(), vec![(KIND_CHAT, 1)]);
 }
@@ -251,7 +282,7 @@ fn registering_after_unload_began_registers_nothing() {
     "#,
   );
   assert!(host.registered.borrow().is_empty());
-  let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, "[]");
 }
 
@@ -282,13 +313,13 @@ fn static_and_dynamic_icons_are_rendered() {
   assert_eq!(host.registered.borrow()[0].5, 0);
   assert_eq!(host.registered.borrow()[1].4.as_deref(), None);
   assert_eq!(host.registered.borrow()[1].5, DYNAMIC_ICON);
-  let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, r#"[{"token":1,"text":"A","icon":"rmsg_settings"},{"token":2,"text":"B","icon":"rmsg_pin"}]"#,);
 }
 
 #[test]
 fn chat_and_message_getters_receive_null_in_settings() {
-  let (_rt, ctx, _host, state, _logs) = setup();
+  let (_rt, ctx, host, state, _logs) = setup();
   eval(
     &ctx,
     r#"
@@ -300,8 +331,8 @@ fn chat_and_message_getters_receive_null_in_settings() {
       })
     "#,
   );
-  assert_eq!(state.render(&ctx, KIND_CHAT, "null").unwrap(), rows(&[row(1, "chat settings")]));
-  assert_eq!(state.render(&ctx, KIND_MESSAGE, "null").unwrap(), rows(&[row(1, "message settings")]));
+  assert_eq!(render(&state, &host, &ctx, KIND_CHAT, "null").unwrap(), rows(&[row(1, "chat settings")]));
+  assert_eq!(render(&state, &host, &ctx, KIND_MESSAGE, "null").unwrap(), rows(&[row(1, "message settings")]));
 }
 
 /// a JNI failure is the bridge's, so the plugin is told `internal` rather than to shed rows
@@ -317,7 +348,7 @@ fn a_host_that_refuses_a_registration_throws_internal_and_leaves_nothing_behind(
     caught.starts_with(r#"[true,"internal",null,"#) && caught.contains("JNI env unavailable"),
     "{caught}"
   );
-  assert_eq!(state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap(), "[]");
+  assert_eq!(render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap(), "[]");
 }
 
 #[test]
@@ -384,7 +415,7 @@ fn a_dispatch_for_a_disposed_or_replaced_row_does_nothing() {
 
 #[test]
 fn a_row_disposed_by_an_earlier_rows_visible_is_not_drawn() {
-  let (_rt, ctx, _host, state, _logs) = setup();
+  let (_rt, ctx, host, state, _logs) = setup();
   eval(
     &ctx,
     r#"
@@ -393,13 +424,13 @@ fn a_row_disposed_by_an_earlier_rows_visible_is_not_drawn() {
       globalThis.__d = inu.registerChatAction({ id: 'b', text: 'B', callback: () => {} })
     "#,
   );
-  let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, rows(&[row(1, "A")]));
 }
 
 #[test]
 fn a_row_registered_mid_render_joins_the_next_one() {
-  let (_rt, ctx, _host, state, _logs) = setup();
+  let (_rt, ctx, host, state, _logs) = setup();
   eval(
     &ctx,
     r#"
@@ -416,15 +447,15 @@ fn a_row_registered_mid_render_joins_the_next_one() {
       })
     "#,
   );
-  let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, rows(&[row(1, "A")]));
-  let json = state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
   assert_eq!(json, rows(&[row(1, "A"), row(2, "B")]));
 }
 
 #[test]
 fn kinds_are_separate_registries() {
-  let (_rt, ctx, _host, state, _logs) = setup();
+  let (_rt, ctx, host, state, _logs) = setup();
   eval(
     &ctx,
     r#"
@@ -432,8 +463,8 @@ fn kinds_are_separate_registries() {
       inu.registerMessageAction({ id: 'a', text: 'message', callback: () => {} })
     "#,
   );
-  assert_eq!(state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap(), rows(&[row(1, "chat")]));
-  assert_eq!(state.render(&ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap(), rows(&[row(1, "message")]));
+  assert_eq!(render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap(), rows(&[row(1, "chat")]));
+  assert_eq!(render(&state, &host, &ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap(), rows(&[row(1, "message")]));
 }
 
 #[test]
@@ -444,8 +475,8 @@ fn the_bundled_actions_test_plugin_passes() {
   let lines = crate::testing::harness::install_capturing_console(&ctx);
   eval(&ctx, crate::testing::test_plugin!("actions-test.js"));
 
-  assert_eq!(state.render(&ctx, KIND_CHAT, CHAT_SURFACE).unwrap(), rows(&[row(2, "Chat row")]));
-  assert_eq!(state.render(&ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap(), rows(&[row(1, "Message row")]));
+  assert_eq!(render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap(), rows(&[row(2, "Chat row")]));
+  assert_eq!(render(&state, &host, &ctx, KIND_MESSAGE, MESSAGE_SURFACE).unwrap(), rows(&[row(1, "Message row")]));
   state.dispatch(&ctx, KIND_MESSAGE, 1, false, MESSAGE_SURFACE);
   state.dispatch(&ctx, KIND_MESSAGE, 1, false, SELECTION_SURFACE);
   state.dispatch(&ctx, KIND_PROFILE, 1, false, CHAT_SURFACE);
@@ -461,4 +492,126 @@ fn the_bundled_actions_test_plugin_passes() {
   let logs = logs.borrow();
   assert!(logs.iter().any(|l| l.contains("visible blew up")), "{logs:#?}");
   assert!(!logs.iter().any(|l| l.starts_with(crate::FAULT_PREFIX)), "{logs:#?}");
+}
+
+#[test]
+fn async_getters_are_awaited_within_the_render() {
+  let (_rt, ctx, host, state, _logs) = setup();
+  eval(
+    &ctx,
+    r#"
+      inu.registerChatAction({
+        id: 'a',
+        text: async ctx => `chat ${ctx.dialogId}`,
+        icon: async () => ({ __inuIcon: 'rmsg_pin' }),
+        visible: async () => true,
+        callback: () => {},
+      });
+      inu.registerChatAction({ id: 'b', text: 'B', visible: async () => false, callback: () => {} });
+      inu.registerChatAction({ id: 'c', text: 'C', callback: () => {} })
+    "#,
+  );
+  let json = render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap();
+  assert_eq!(json, format!(r#"[{{"token":1,"text":"chat -100","icon":"rmsg_pin"}},{}]"#, row(3, "C")));
+}
+
+#[test]
+fn a_rejected_getter_drops_only_its_row() {
+  let (_rt, ctx, host, state, logs) = setup();
+  eval(
+    &ctx,
+    r#"
+      inu.registerChatAction({ id: 'a', text: async () => { throw new Error('text blew up') }, callback: () => {} });
+      inu.registerChatAction({ id: 'b', text: 'B', visible: () => Promise.reject(new Error('nope')), callback: () => {} });
+      inu.registerChatAction({ id: 'c', text: 'C', callback: () => {} })
+    "#,
+  );
+  assert_eq!(render(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE).unwrap(), rows(&[row(3, "C")]));
+  let logs = logs.borrow();
+  assert!(logs.iter().any(|l| l.contains("text blew up")), "{logs:#?}");
+  assert!(!logs.iter().any(|l| l.starts_with(crate::FAULT_PREFIX)), "{logs:#?}");
+}
+
+#[test]
+fn a_render_answers_once_its_last_getter_settles() {
+  let (rt, ctx, host, state, _logs) = setup();
+  eval(
+    &ctx,
+    r#"
+      globalThis.__resolve = [];
+      inu.registerChatAction({
+        id: 'a', text: () => new Promise(resolve => __resolve.push(resolve)), callback: () => {},
+      });
+      inu.registerChatAction({
+        id: 'b', text: 'B', visible: () => new Promise(resolve => __resolve.push(resolve)), callback: () => {},
+      })
+    "#,
+  );
+  let render_id = start(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE);
+  assert!(host.answers(render_id).is_empty());
+  eval(&ctx, "__resolve[0]('A')");
+  run_jobs(&rt);
+  assert!(host.answers(render_id).is_empty());
+  eval(&ctx, "__resolve[1](true)");
+  run_jobs(&rt);
+  assert_eq!(host.answers(render_id), vec![Some(rows(&[row(1, "A"), row(2, "B")]))]);
+}
+
+#[test]
+fn an_abandoned_render_never_answers() {
+  let (rt, ctx, host, state, _logs) = setup();
+  eval(
+    &ctx,
+    r#"
+      globalThis.__resolve = null;
+      inu.registerChatAction({
+        id: 'a', text: () => new Promise(resolve => { __resolve = resolve }), callback: () => {},
+      })
+    "#,
+  );
+  let render_id = start(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE);
+  assert_eq!(state.abandon_render(&ctx, render_id), Some("[]".to_string()));
+  assert_eq!(state.abandon_render(&ctx, render_id), None);
+  eval(&ctx, "__resolve('A')");
+  run_jobs(&rt);
+  assert!(host.answers(render_id).is_empty());
+}
+
+#[test]
+fn a_row_disposed_while_its_getter_is_pending_is_not_drawn() {
+  let (rt, ctx, host, state, _logs) = setup();
+  eval(
+    &ctx,
+    r#"
+      globalThis.__resolve = null;
+      globalThis.__d = inu.registerChatAction({
+        id: 'a', text: () => new Promise(resolve => { __resolve = resolve }), callback: () => {},
+      });
+      inu.registerChatAction({ id: 'b', text: 'B', callback: () => {} })
+    "#,
+  );
+  let render_id = start(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE);
+  eval(&ctx, "__d(); __resolve('A')");
+  run_jobs(&rt);
+  assert_eq!(host.answers(render_id), vec![Some(rows(&[row(2, "B")]))]);
+}
+
+#[test]
+fn an_abandoned_render_answers_the_rows_that_already_settled() {
+  let (rt, ctx, host, state, _logs) = setup();
+  eval(
+    &ctx,
+    r#"
+      inu.registerChatAction({ id: 'slow', text: () => new Promise(() => {}), callback: () => {} });
+      inu.registerChatAction({ id: 'async', text: async () => 'Async', callback: () => {} });
+      inu.registerChatAction({
+        id: 'half', text: async () => 'half', icon: () => new Promise(() => {}), callback: () => {},
+      });
+      inu.registerChatAction({ id: 'static', text: 'Static', callback: () => {} })
+    "#,
+  );
+  let render_id = start(&state, &host, &ctx, KIND_CHAT, CHAT_SURFACE);
+  run_jobs(&rt);
+  assert!(host.answers(render_id).is_empty());
+  assert_eq!(state.abandon_render(&ctx, render_id), Some(rows(&[row(2, "Async"), row(4, "Static")])));
 }

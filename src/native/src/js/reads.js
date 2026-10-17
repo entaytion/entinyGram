@@ -248,12 +248,20 @@
       return natives.read(slot, ops.draft, toSpec(peer) + SEPARATOR + toCount(opts.topicId, 'getDraft', 'topicId'))
     },
 
-    getUserFull(peer) {
-      return fetchWith(this, ops.userFull, 'getUserFull', () => [toSpec(peer), {}])
+    getUserFull(peer, options) {
+      return fetchWith(this, ops.userFull, 'getUserFull', () => [toSpec(peer), { force: !!toOptions(options, 'getUserFull').force }])
     },
 
-    getChatFull(peer) {
-      return fetchWith(this, ops.chatFull, 'getChatFull', () => [toSpec(peer), {}])
+    getChatFull(peer, options) {
+      return fetchWith(this, ops.chatFull, 'getChatFull', () => [toSpec(peer), { force: !!toOptions(options, 'getChatFull').force }])
+    },
+
+    getUserFullCached(peer) {
+      return natives.read(readAccountSlot(this, 'getUserFullCached'), ops.userFull, toSpec(peer))
+    },
+
+    getChatFullCached(peer) {
+      return natives.read(readAccountSlot(this, 'getChatFullCached'), ops.chatFull, toSpec(peer))
     },
 
     getHistory(peer, options) {

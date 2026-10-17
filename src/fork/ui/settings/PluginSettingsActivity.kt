@@ -38,7 +38,7 @@ class PluginSettingsActivity(
 
     private sealed class Row(val uid: Int, val secondarySlot: Int) {
         class Header(uid: Int, val text: String) : Row(uid, 0)
-        class Check(uid: Int, val text: CharSequence, val subtitle: CharSequence?, val icon: String?, val formatting: String?, val multiline: Boolean, val checked: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
+        class Check(uid: Int, val text: CharSequence, val subtitle: CharSequence?, val icon: String?, val formatting: String?, val multiline: Boolean, val checked: Boolean, val slot: Int, val clickSlot: Int, secondary: Int) : Row(uid, secondary)
         class Button(uid: Int, val text: CharSequence, val subtitle: CharSequence?, val value: CharSequence?, val icon: String?, val formatting: String?, val multiline: Boolean, val danger: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
         class Select(uid: Int, val text: CharSequence, val options: List<SelectOption>, val selected: Int, val icon: String?, val formatting: String?, val multiline: Boolean, val dialog: Boolean, val slot: Int, secondary: Int) : Row(uid, secondary)
         class Slider(
@@ -180,7 +180,7 @@ class PluginSettingsActivity(
                         if (multiline) formatted(o, "subtitle") else formattedRow(o, "subtitle"),
                         o.optString("icon").takeIf { it.isNotEmpty() },
                         joinEntities(o, "text", "subtitle"), multiline,
-                        o.getBoolean("checked"), o.getInt("onChange"), secondary,
+                        o.getBoolean("checked"), o.getInt("onChange"), o.optInt("onClick", 0), secondary,
                     )
                 }
                 "button" -> {
@@ -273,6 +273,7 @@ class PluginSettingsActivity(
     private fun buildCheck(row: Row.Check): UItem =
         CheckCellFactory.of(
             row.uid, row.text, row.subtitle, ButtonIcon(row.icon, session.engine), row.checked, row.formatting, row.multiline,
+            split = row.clickSlot != 0,
         )
 
     private fun buildButton(row: Row.Button): UItem =
@@ -319,7 +320,11 @@ class PluginSettingsActivity(
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (val row = rowById(item.id)) {
-            is Row.Check -> dispatch(row.slot, (!row.checked).toString())
+            is Row.Check -> if (row.clickSlot != 0 && (view as? PluginSettingCell)?.isOnSwitch(x) != true) {
+                dispatch(row.clickSlot, "")
+            } else {
+                dispatch(row.slot, (!row.checked).toString())
+            }
             is Row.Button -> dispatch(row.slot, "")
             is Row.Select -> showSelect(row, view)
             else -> {}

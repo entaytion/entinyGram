@@ -977,12 +977,25 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeRenderAct
   mut env: EnvUnowned,
   _this: JObject,
   ptr: jlong,
+  render_id: jlong,
   kind: jint,
   surface_json: JString,
+) {
+  with_engine_env(&mut env, ptr, (), |env, engine| {
+    let surface_json = jstring_to_string(env, &surface_json);
+    engine.actions.render(&engine.ctx, render_id, kind, &surface_json);
+  })
+}
+
+#[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeAbandonActionRender(
+  mut env: EnvUnowned,
+  _this: JObject,
+  ptr: jlong,
+  render_id: jlong,
 ) -> jstring {
   with_engine_env(&mut env, ptr, std::ptr::null_mut(), |env, engine| {
-    let surface_json = jstring_to_string(env, &surface_json);
-    match engine.actions.render(&engine.ctx, kind, &surface_json) {
+    match engine.actions.abandon_render(&engine.ctx, render_id) {
       Some(json) => new_jstring_raw(env, json),
       None => std::ptr::null_mut(),
     }

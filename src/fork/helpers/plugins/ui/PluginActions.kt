@@ -7,6 +7,7 @@ import desu.inugram.helpers.plugins.EngineDispatch
 
 import desu.inugram.InuConfig
 import desu.inugram.core.plugins.ActionRegistration
+import desu.inugram.core.plugins.DispatchDeadline
 import desu.inugram.core.plugins.ActionRegistry
 import desu.inugram.core.plugins.PluginWire
 import desu.inugram.helpers.plugins.Plugin
@@ -76,6 +77,19 @@ object PluginActions : SessionResource {
     @Volatile private var counts = IntArray(KIND_COUNT)
     @Volatile private var registeredRows = List(KIND_COUNT) { emptyList<RegisteredActionRow>() }
 
+    private class PendingRender(val finish: (Map<Pair<QuickJs, Int>, DynamicRow>) -> Unit) {
+        val waiting = HashMap<QuickJs, PluginSession>()
+        val dynamicRows = HashMap<Pair<QuickJs, Int>, DynamicRow>()
+        lateinit var deadline: DispatchDeadline
+
+        /** engines answer from inside [QuickJs.renderActions], before the rest were asked */
+        var starting = true
+    }
+
+    // scheduler only
+    private var nextRenderId = 1L
+    private val pendingRenders = HashMap<Long, PendingRender>()
+
     private val optionIds = HashMap<ActionKey, Int>()
     private var nextOptionId = OPTION_BASE
 
@@ -117,6 +131,10 @@ object PluginActions : SessionResource {
     override fun detach(session: PluginSession) {
         registry.forget(session.engine)
         publishCounts()
+        for ((renderId, render) in pendingRenders.filterValues { session.engine in it.waiting }) {
+            render.waiting.remove(session.engine)
+            finishIfAnswered(renderId)
+        }
     }
 
     /** far above stock ids and the fork's (`ChatHelper.OPTION_*`, `ChatActionsHelper.ACTION_*`) */
@@ -193,6 +211,11 @@ object PluginActions : SessionResource {
             .sortedWith(compareBy<ActionRow> { positions[it.key.storageKey] ?: Int.MAX_VALUE }.thenBy { rows.indexOf(it) })
     }
 
+    fun isShownInline(key: ActionKey, enabled: List<ActionRow>): Boolean = enabled.size == 1 || isPinned(key)
+
+    fun getSubmenuRows(kind: Int, enabled: List<ActionRow>): List<ActionRow> =
+        if (enabled.size == 1) emptyList() else orderRows(kind, enabled, false)
+
     fun mainOrder(kind: Int, builtIns: List<String>, plugins: List<ActionKey>): List<String> {
         val available = builtIns.map(::builtInOrderKey) + plugins.map(::pluginOrderKey)
         val saved = config(kind).value.mainOrder
@@ -254,10 +277,28 @@ object PluginActions : SessionResource {
             return
         }
         EngineDispatch.scheduler.postRunnable {
-            val dynamicRows = HashMap<Pair<QuickJs, Int>, DynamicRow>()
+            val renderId = nextRenderId++
+            val render = PendingRender { dynamicRows ->
+                val rows = registrations.mapNotNull { registration ->
+                    if (registration.dynamicFields and relevantFields == 0) return@mapNotNull getStaticRow(registration)
+                    val dynamic = dynamicRows[registration.owner to registration.token] ?: return@mapNotNull null
+                    ActionRow(
+                        registration.owner,
+                        registration.token,
+                        registration.key,
+                        dynamic.text ?: registration.text ?: return@mapNotNull null,
+                        registration.pluginName,
+                        if (registration.dynamicFields and DYNAMIC_ICON != 0) dynamic.icon else registration.icon,
+                        registration.dynamicFields and HAS_SECONDARY_CALLBACK != 0,
+                    )
+                }
+                AndroidUtilities.runOnUIThread { onRows(rows) }
+            }
+            render.deadline = DispatchDeadline(EngineDispatch.scheduler, RENDER_BUDGET_MS) { expireRender(renderId) }
+            pendingRenders[renderId] = render
+            render.deadline.resume()
             for (session in plugins) {
                 if (!session.canDispatch()) continue
-                val plugin = session.plugin
                 val engine = session.engine
                 if (registrations.none { it.owner === engine && it.dynamicFields and relevantFields != 0 }) continue
                 val surfaceJson = try {
@@ -266,24 +307,41 @@ object PluginActions : SessionResource {
                     session.log.e("actions", "cannot serialize the action surface", e)
                     continue
                 }
-                val rows = engine.renderActions(kind, surfaceJson)?.let { parseDynamicRows(it, session.log) } ?: continue
-                for (row in rows) dynamicRows[engine to row.token] = row
+                render.waiting[engine] = session
+                if (!engine.renderActions(renderId, kind, surfaceJson)) render.waiting.remove(engine)
             }
-            val rows = registrations.mapNotNull { registration ->
-                if (registration.dynamicFields and relevantFields == 0) return@mapNotNull getStaticRow(registration)
-                val dynamic = dynamicRows[registration.owner to registration.token] ?: return@mapNotNull null
-                ActionRow(
-                    registration.owner,
-                    registration.token,
-                    registration.key,
-                    dynamic.text ?: registration.text ?: return@mapNotNull null,
-                    registration.pluginName,
-                    if (registration.dynamicFields and DYNAMIC_ICON != 0) dynamic.icon else registration.icon,
-                    registration.dynamicFields and HAS_SECONDARY_CALLBACK != 0,
-                )
-            }
-            AndroidUtilities.runOnUIThread { onRows(rows) }
+            render.starting = false
+            finishIfAnswered(renderId)
         }
+    }
+
+    /** scheduler only */
+    fun settleRender(engine: QuickJs, renderId: Long, json: String?) {
+        val render = pendingRenders[renderId] ?: return
+        val session = render.waiting.remove(engine) ?: return
+        render.addRows(session, json)
+        finishIfAnswered(renderId)
+    }
+
+    private fun PendingRender.addRows(session: PluginSession, json: String?) {
+        json?.let { parseDynamicRows(it, session.log) }?.forEach { row -> dynamicRows[session.engine to row.token] = row }
+    }
+
+    private fun finishIfAnswered(renderId: Long) {
+        val render = pendingRenders[renderId] ?: return
+        if (render.starting || render.waiting.isNotEmpty()) return
+        pendingRenders.remove(renderId)
+        render.deadline.cancel()
+        render.finish(render.dynamicRows)
+    }
+
+    private fun expireRender(renderId: Long) {
+        val render = pendingRenders.remove(renderId) ?: return
+        for ((engine, session) in render.waiting) {
+            session.log.w("actions", "some action rows ran past the ${RENDER_BUDGET_MS}ms render budget and were left out")
+            render.addRows(session, engine.abandonActionRender(renderId))
+        }
+        render.finish(render.dynamicRows)
     }
 
     /**

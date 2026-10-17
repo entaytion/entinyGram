@@ -3,6 +3,13 @@ package desu.inugram.helpers
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.Shader
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -20,7 +27,10 @@ import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
+import org.telegram.messenger.UserObject
+import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.AlertsCreator
+import org.telegram.ui.Components.AvatarDrawable
 import org.telegram.ui.LaunchActivity
 
 object ShortcutHelper {
@@ -81,7 +91,7 @@ object ShortcutHelper {
             action = PluginManager.SAFE_MODE_ACTION,
             labelRes = R.string.InuPluginsSafeMode,
             longLabelRes = R.string.InuPluginsSafeModeShortcut,
-            iconRes = R.drawable.msg_settings,
+            iconRes = R.drawable.inu_shortcut_safe_mode,
             rank = 2,
             shouldShow = PluginManager::isEngineEnabled,
             onClick = { PluginManager.requestSafeMode() },
@@ -120,6 +130,44 @@ object ShortcutHelper {
         }
         entry.onClick(activity)
         return true
+    }
+
+    // adaptive icons show only the central 72/108 of the bitmap, the rest is bleed for masks and parallax
+    @JvmStatic
+    fun createAvatarIcon(photo: Bitmap?, user: TLRPC.User?, chat: TLRPC.Chat?): IconCompat {
+        val serviceType = when {
+            user == null -> AvatarDrawable.AVATAR_TYPE_NORMAL
+            UserObject.isReplyUser(user) -> AvatarDrawable.AVATAR_TYPE_REPLIES
+            UserObject.isUserSelf(user) -> AvatarDrawable.AVATAR_TYPE_SAVED
+            else -> AvatarDrawable.AVATAR_TYPE_NORMAL
+        }
+        val avatar = if (photo != null && serviceType == AvatarDrawable.AVATAR_TYPE_NORMAL) {
+            photo
+        } else {
+            val placeholderSize = AndroidUtilities.dp(58f)
+            val drawable = (if (user != null) AvatarDrawable(user) else AvatarDrawable(chat)).apply {
+                if (serviceType != AvatarDrawable.AVATAR_TYPE_NORMAL) avatarType = serviceType
+                setRoundRadius(1)
+                setBounds(0, 0, placeholderSize, placeholderSize)
+            }
+            Bitmap.createBitmap(placeholderSize, placeholderSize, Bitmap.Config.ARGB_8888).also { drawable.draw(Canvas(it)) }
+        }
+
+        val size = AndroidUtilities.dp(108f)
+        val inset = size / 6f
+        val matrix = Matrix().apply {
+            setRectToRect(
+                RectF(0f, 0f, avatar.width.toFloat(), avatar.height.toFloat()),
+                RectF(inset, inset, size - inset, size - inset),
+                Matrix.ScaleToFit.FILL,
+            )
+        }
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG).apply {
+            shader = BitmapShader(avatar, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP).apply { setLocalMatrix(matrix) }
+        }
+        val result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        Canvas(result).drawRect(0f, 0f, size.toFloat(), size.toFloat(), paint)
+        return IconCompat.createWithAdaptiveBitmap(result)
     }
 
     fun countSelectableAccounts(): Int =

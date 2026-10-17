@@ -152,6 +152,8 @@ object PluginUi : SessionResource {
         ): String? = PluginActions.register(session, kind, token, id, placements, text, icon, dynamicFields)
 
         override fun actionUnregister(kind: Int, token: Int) = onHost { PluginActions.unregister(session.engine, kind, token) }
+
+        override fun actionsRendered(renderId: Long, json: String?) = PluginActions.settleRender(session.engine, renderId, json)
     }
 
     fun onPageOpened(activity: PluginSettingsActivity) {
@@ -290,6 +292,7 @@ object PluginUi : SessionResource {
                 }
                 if (radioStyle) {
                     opts.addChecked(item.checked == true, item.text, onClick)
+                    if (item.danger) opts.last?.setColors(Theme.getColor(Theme.key_text_RedRegular), Theme.getColor(Theme.key_text_RedRegular))
                 } else {
                     opts.add(0, item.text, item.danger, onClick)
                 }
