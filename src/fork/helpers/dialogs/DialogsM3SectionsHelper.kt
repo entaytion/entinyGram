@@ -42,6 +42,26 @@ object DialogsM3SectionsHelper {
         }
     }
 
+    @JvmStatic
+    fun sideMarginPx(): Int = AndroidUtilities.dp(sideMarginDp())
+
+    @JvmStatic
+    fun cardBackground(first: Boolean, last: Boolean): InsetDrawable {
+        val gap = AndroidUtilities.dp(GAP_DP)
+        val card = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(Theme.getColor(Theme.key_windowBackgroundWhite))
+            cornerRadii = radii(first, last)
+        }
+        val mask = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(-1)
+            cornerRadii = radii(first, last)
+        }
+        val ripple = RippleDrawable(ColorStateList.valueOf(Theme.getColor(Theme.key_listSelector)), card, mask)
+        return InsetDrawable(ripple, 0, if (first) gap * 3 else gap, 0, if (last) gap * 3 else 0)
+    }
+
     private fun radii(first: Boolean, last: Boolean): FloatArray {
         val o = AndroidUtilities.dp(OUTER_DP).toFloat()
         val n = AndroidUtilities.dp(INNER_DP).toFloat()

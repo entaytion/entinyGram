@@ -1988,4 +1988,5 @@
     <string name="InuBottomTabsLift">Gezinme çubuğunu yükselt</string>
     <string name="InuMutualContactIconLeft">Karşılıklı kişi simgesi unvandan önce</string>
     <string name="InuMutualContactIconLeftInfo">Karşılıklı kişi simgesini üye unvanından sonra değil, solunda göster</string>
+    <string name="InuForumSectionsCards">Forum konularında kart bölümleri</string>
 </resources>

@@ -92,6 +92,12 @@ class Material3SettingsActivity : SettingsPageActivity() {
                 )
             )
         }
+        items.add(
+            UItem.asCheck(
+                TOGGLE_FORUM_SECTIONS,
+                LocaleController.getString(R.string.InuForumSectionsCards),
+            ).setChecked(InuConfig.FORUM_M3_SECTIONS.value)
+        )
         items.add(UItem.asShadow(null))
     }
 
@@ -158,6 +164,8 @@ class Material3SettingsActivity : SettingsPageActivity() {
                 softRebuild()
             }
 
+            TOGGLE_FORUM_SECTIONS -> (view as? TextCheckCell)?.isChecked = InuConfig.FORUM_M3_SECTIONS.toggle()
+
             TOGGLE_DIALOGS_SEPARATE_PINNED -> {
                 val new = InuConfig.DIALOGS_M3_SEPARATE_PINNED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -182,6 +190,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DIALOGS_SECTIONS = InuUtils.generateId()
         private val BUTTON_DIALOGS_MARGIN = InuUtils.generateId()
         private val TOGGLE_DIALOGS_SEPARATE_PINNED = InuUtils.generateId()
+        private val TOGGLE_FORUM_SECTIONS = InuUtils.generateId()
 
         @RequiresApi(Build.VERSION_CODES.S)
         private fun monetThemeModeLabel(mode: MonetHelper.ThemeMode): String = when (mode) {
@@ -211,6 +220,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material-profile-actions", R.string.InuMaterialProfileActions, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
                 SearchRegistry.Entry("dialogs-m3-sections", R.string.InuDialogsSectionsCards, TOGGLE_DIALOGS_SECTIONS),
+                SearchRegistry.Entry("forum-m3-sections", R.string.InuForumSectionsCards, TOGGLE_FORUM_SECTIONS),
             ),
         )
     }

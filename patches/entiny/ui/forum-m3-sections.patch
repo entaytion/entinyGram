@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 17 Oct 2026 18:13:51 +0300
+Subject: [+] forum topic card sections
+
+---
+ .../src/main/java/org/telegram/ui/TopicsFragment.java       | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+@@ -1253,6 +1253,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         });
+         scrollHelper = new RecyclerAnimationScrollHelper(recyclerListView, layoutManager);
+         recyclerListView.setAdapter(adapter);
++        desu.inugram.helpers.dialogs.ForumM3SectionsHelper.attach(recyclerListView);
+         recyclerListView.setClipToPadding(false);
+         recyclerListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+ 
+@@ -3054,6 +3055,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+                 dialogCell.setChecked(selectedTopics.contains(newId), animated);
+                 dialogCell.setDialogSelected(selectedTopicForTablet == newId);
+                 dialogCell.onReorderStateChanged(reordering, true);
++                desu.inugram.helpers.dialogs.ForumM3SectionsHelper.style(dialogCell, position > 0 ? getArray().get(position - 1).topic : null, topic, nextTopic);
+             } else if (holder.getItemViewType() == VIEW_TYPE_TOPIC_CREATE) {
+                 TopicDialogCell dialogCell = (TopicDialogCell) holder.itemView;
+                 dialogCell.setCurrentDialogId(-chatId);
+@@ -3123,12 +3125,12 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+             xOffset = inPreviewMode && checkBox != null ? checkBox.getProgress() * AndroidUtilities.dp(30) : 0;
+             canvas.save();
+             canvas.translate(xOffset, translateY = -AndroidUtilities.dp(4));
+-            canvas.drawColor(getThemedColor(Theme.key_windowBackgroundWhite));
++            if (!desu.inugram.helpers.dialogs.ForumM3SectionsHelper.isEnabled()) canvas.drawColor(getThemedColor(Theme.key_windowBackgroundWhite));
+             super.onDraw(canvas);
+             canvas.restore();
+             canvas.save();
+             canvas.translate(super.translationX, 0);
+-            if (drawDivider) {
++            if (drawDivider && !desu.inugram.helpers.dialogs.ForumM3SectionsHelper.isEnabled()) {
+                 int left = fullSeparator ? 0 : AndroidUtilities.dp(messagePaddingStart);
+                 if (LocaleController.isRTL) {
+                     canvas.drawLine(0 - super.translationX, getMeasuredHeight() - 1, getMeasuredWidth() - left, getMeasuredHeight() - 1, Theme.dividerPaint);

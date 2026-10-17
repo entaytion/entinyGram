@@ -549,6 +549,7 @@ object InuConfig {
     @JvmField val DIALOGS_M3_SECTIONS = BoolItem("dialogs_m3_sections", false)
     @JvmField val DIALOGS_M3_MARGIN = IntItem("dialogs_m3_margin", 1)
     @JvmField val DIALOGS_M3_SEPARATE_PINNED = BoolItem("dialogs_m3_separate_pinned", true)
+    @JvmField val FORUM_M3_SECTIONS = BoolItem("forum_m3_sections", false)
 
     @JvmField
     val HIDE_KEYBOARD_ON_SCROLL = BoolItem("hide_keyboard_on_scroll", true)

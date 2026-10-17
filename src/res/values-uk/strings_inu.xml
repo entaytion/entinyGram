@@ -2082,4 +2082,5 @@
     <string name="InuBottomTabsLift">Підняти нижню панель</string>
     <string name="InuMutualContactIconLeft">Іконка взаємного контакту перед титулом</string>
     <string name="InuMutualContactIconLeftInfo">Показувати іконку взаємного контакту ліворуч від титулу учасника, а не після нього</string>
+    <string name="InuForumSectionsCards">Секції-картки в темах форуму</string>
 </resources>

@@ -1987,4 +1987,5 @@
     <string name="InuBottomTabsLift">抬高底部导航栏</string>
     <string name="InuMutualContactIconLeft">互为联系人图标显示在头衔前</string>
     <string name="InuMutualContactIconLeftInfo">将互为联系人图标显示在成员头衔左侧，而不是右侧</string>
+    <string name="InuForumSectionsCards">论坛话题使用卡片分区</string>
 </resources>

@@ -395,6 +395,7 @@
     <string name="InuMaterial3SettingsInfo">Switches, sliders, sections, avatars, chat list cards and more.</string>
     <string name="InuDialogsSections">Chat list sections</string>
     <string name="InuDialogsSectionsCards">Card sections</string>
+    <string name="InuForumSectionsCards">Card sections in forum topics</string>
     <string name="InuDialogsSectionsMargin">Side margins</string>
     <string name="InuDialogsSectionsMarginNone">None</string>
     <string name="InuDialogsSectionsMarginMedium">Medium</string>
