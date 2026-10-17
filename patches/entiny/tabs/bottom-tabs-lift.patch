@@ -25,7 +25,7 @@ index 0000000..0000000 100644
          }
          tabsBarContainer.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
 -        tabsViewWrapper.addView(tabsBarContainer, LayoutHelper.createFrame(M3MainTabsHelper.isEnabled() ? LayoutHelper.MATCH_PARENT : LayoutHelper.WRAP_CONTENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
-+        tabsViewWrapper.addView(tabsBarContainer, LayoutHelper.createFrame(M3MainTabsHelper.isEnabled() ? LayoutHelper.MATCH_PARENT : LayoutHelper.WRAP_CONTENT, MainTabsHelper.getMainTabsBarHeight(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
++        tabsViewWrapper.addView(tabsBarContainer, LayoutHelper.createFrame(M3MainTabsHelper.isEnabled() ? LayoutHelper.MATCH_PARENT : LayoutHelper.WRAP_CONTENT, MainTabsHelper.getMainTabsHeight() + MainTabsHelper.getMainTabsMargin() * 2, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
          tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
          tabsViewWrapper.setClipToPadding(false);
          M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);

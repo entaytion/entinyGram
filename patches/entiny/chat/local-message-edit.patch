@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -2012,6 +2012,7 @@ public class MessageObject {
+@@ -2015,6 +2015,7 @@ public class MessageObject {
  
          currentAccount = accountNum;
          messageOwner = message;

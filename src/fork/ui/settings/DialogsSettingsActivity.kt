@@ -31,6 +31,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
     private var filterTabsPreview: FilterTabsPreviewCell? = null
     private var mainTabsPreview: MainTabsPreviewCell? = null
     private var bottomLiftSlider: SliderCell? = null
+    private var fabLiftSlider: SliderCell? = null
     private var mainTabsEntries: MutableList<MenuOrderEntry<MainTabsMenuConfig.Item>> = InuConfig.BOTTOM_TABS_ORDER.value.toMutableList()
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMainPage)
@@ -323,6 +324,21 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDialogsFabLeftSide),
             ).setChecked(InuConfig.DIALOGS_FAB_LEFT_SIDE.value)
         )
+        if (fabLiftSlider == null) {
+            fabLiftSlider = SliderCell(
+                this.context, min = 0f, max = 48f,
+                defaultValue = InuConfig.DIALOGS_FAB_LIFT.default.toFloat(),
+                initialValue = InuConfig.DIALOGS_FAB_LIFT.value.toFloat(),
+                step = 1f,
+                title = LocaleController.getString(R.string.InuDialogsFabLift),
+                format = { "${it.toInt()} dp" },
+                onChanged = { InuConfig.DIALOGS_FAB_LIFT.value = it.toInt() },
+                onReleased = { showRestartBulletin() },
+            )
+        } else {
+            fabLiftSlider?.updateColors()
+        }
+        items.add(UItem.asCustom(fabLiftSlider))
         items.add(UItem.asShadow(null))
 
     }

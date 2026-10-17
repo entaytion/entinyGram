@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8716,7 +8716,8 @@ public class MessageObject {
+@@ -8739,7 +8739,8 @@ public class MessageObject {
          if (messageOwner.send_state != MESSAGE_SEND_STATE_SENT) {
              hasEntities = false;
          } else {

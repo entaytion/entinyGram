@@ -146,7 +146,7 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -18743,6 +18789,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18745,6 +18791,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);
@@ -154,7 +154,7 @@ index 0000000..0000000 100644
  
                      ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                      Integer value = read_max.get(message.dialog_id);
-@@ -19603,6 +19650,8 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19605,6 +19652,8 @@ public class MessagesController extends BaseController implements NotificationCe
                      }
                  });
  
@@ -163,7 +163,7 @@ index 0000000..0000000 100644
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -21212,6 +21261,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21214,6 +21263,9 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -173,7 +173,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21336,6 +21388,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21338,6 +21390,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -299,7 +299,7 @@ index 0000000..0000000 100644
                                  continue;
                              }
                          }
-@@ -19101,7 +19126,7 @@ public class MessagesStorage extends BaseController {
+@@ -19122,7 +19147,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  

@@ -1471,7 +1471,6 @@
     <string name="InuAiModelsLoading">Modeller yükleniyor…</string>
     <string name="InuAiModelEnterManually">Modeli elle gir</string>
     <string name="InuAiTranscribeFetchModelsFailed">Modeller alınamadı: %1$s</string>
-    <string name="InuBurnOneTime">Yok et</string>
     <string name="InuGhostAutoOffline">Otomatik olarak çevrimdışı ol</string>
     <string name="InuGhostAutoOfflineInfo">Mesaj veya tepki gönderdikten kısa süre sonra çevrim dışı durumunu yeniden gönderir.</string>
     <string name="InuViewOnceShowNormal">Tek seferlik açılmanın ardına gizlemek yerine normal bir fotoğraf olarak göster</string>

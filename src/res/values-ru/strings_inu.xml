@@ -196,6 +196,7 @@
     <string name="InuDialogsFabOffsetForBottomBar">Отступ для нижней панели</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">Отключение может работать некорректно на некоторых размерах экрана</string>
     <string name="InuDialogsFabLeftSide">Переместить влево</string>
+    <string name="InuDialogsFabLift">Поднять кнопки FAB</string>
     <string name="InuDialogsFabActionNewMessage">Новое сообщение</string>
     <string name="InuDialogsFabActionNewStory">Новая история</string>
     <string name="InuDialogsFabActionOpenSearch">Открыть поиск</string>
@@ -1641,7 +1642,6 @@
     <string name="InuAiModelsLoading">Загрузка моделей…</string>
     <string name="InuAiModelEnterManually">Ввести модель вручную</string>
     <string name="InuAiTranscribeFetchModelsFailed">Не удалось загрузить модели: %1$s</string>
-    <string name="InuBurnOneTime">Сжечь</string>
     <string name="InuDevBadge">Команда entinyGram</string>
     <string name="InuDevBadgeInfo">Этот аккаунт подтверждён командой entinyGram.</string>
     <string name="InuGhostAutoOffline">Автоматически переходить в офлайн</string>

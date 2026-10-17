@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -4194,6 +4194,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4202,6 +4202,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPage.listView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
              viewPage.listView.setClipToPadding(false);
              viewPage.listView.setPivotY(0);

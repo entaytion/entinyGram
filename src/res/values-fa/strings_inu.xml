@@ -1346,7 +1346,6 @@
     <string name="InuAiRoleDefaultConcise">مختصر</string>
     <string name="InuAiSummarizing">در حال خلاصه‌سازی…</string>
     <string name="InuAiSummaryFailed">خلاصه‌سازی ناموفق بود: %1$s</string>
-    <string name="InuBurnOneTime">سوزاندن</string>
     <string name="InuAiSectionTemperature">دما</string>
     <string name="InuAiTemperatureInfo">مقادیر کمتر پاسخ‌های دقیق‌تر و قابل پیش‌بینی‌تر و مقادیر بیشتر پاسخ‌های خلاق‌تر می‌دهد. ۱٫۰ مقدار پیش‌فرض است و به ارائه‌دهنده ارسال نمی‌شود.</string>
     <string name="InuAiFeatures">قابلیت‌ها</string>

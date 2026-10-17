@@ -408,6 +408,7 @@
     <string name="InuDialogsFabOffsetForBottomBar">Offset for bottom bar</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">Disabling this might not work well for all screen sizes</string>
     <string name="InuDialogsFabLeftSide">Move to the left</string>
+    <string name="InuDialogsFabLift">Raise FAB buttons</string>
     <string name="InuHideDialogPreview">Hide last message preview</string>
     <string name="InuHideDialogPreviewInfo">Show the last message in the chat list under a spoiler</string>
     <string name="InuDialogsFabActionNewMessage">New message</string>
@@ -1525,9 +1526,7 @@
     <string name="InuAiRoleDefaultConcise">Concise</string>
     <string name="InuAiSummarizing">Summarizing…</string>
     <string name="InuAiSummaryFailed">Summary failed: %1$s</string>
-    <string name="InuBurnOneTime">Burn</string>
     <string name="InuBurnTimedMedia">Burn timed media</string>
-    <string name="InuBurnTimedMediaInfo">Adds an Open option to the menu of timed and one-time media from others, with a choice of what happens after viewing</string>
     <string name="InuOpenTimedMedia">Open</string>
     <string name="InuTimedMediaAfterView">After viewing</string>
     <string name="InuTimedMediaAfterViewBurn">Burn</string>

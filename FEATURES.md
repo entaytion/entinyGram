@@ -112,6 +112,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **header centering** and customizable chat headers
 - 📡 **compact pill & profile transition fixes**
 - 📡 **raise bottom bar**: slider to lift the compact bottom bar off the screen edge
+- 📡 **raise FAB buttons**: slider to lift the floating action buttons independently
 - 📡 **fix topics side panel flicker**: no more constant jitter/smearing after using search inside the panel
 - 📡 **auto marquee** for long titles - *inspired by auto_marquee plugin (@chestertech)*
 - 📡 **unread counter on the chat header back button**, with an iOS-styled variant and a live preview in chat header settings - *ported from [Finegram](https://github.com/Th3Nekit/Finegram)*

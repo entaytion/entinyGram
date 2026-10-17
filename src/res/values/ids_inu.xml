@@ -1,4 +1,5 @@
 <resources>
     <item name="inu_merge_with_prev" type="id"/>
     <item name="inu_merge_with_next" type="id"/>
+    <item name="inu_own_sections" type="id"/>
 </resources>

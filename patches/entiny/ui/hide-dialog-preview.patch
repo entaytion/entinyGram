@@ -35,7 +35,7 @@ index 0000000..0000000 100644
              if ((useForceThreeLines || SharedConfig.useThreeLinesLayout) && !hasTags() && currentDialogFolderId != 0 && currentDialogFolderDialogsCount > 1) {
                  messageStringFinal = messageNameString;
                  messageNameString = null;
-@@ -3756,6 +3759,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3757,6 +3760,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
          if (isForumCell() != oldIsForumCell) {
              requestLayout = true;
          }

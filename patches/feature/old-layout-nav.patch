@@ -161,7 +161,7 @@ index 0000000..0000000 100644
      private boolean searchWasFullyShowed;
      public boolean whiteActionBar;
      private boolean searchFiltersWasShowed;
-@@ -3475,7 +3475,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3483,7 +3483,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          });
          fragmentSearchFieldWatcher.setDoNotCloseAfterFieldEmpty();
  
@@ -170,7 +170,7 @@ index 0000000..0000000 100644
              optionsItem = menu.addItem(4, R.drawable.ic_ab_other);
              optionsItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
              optionsItem.setOnClickListener(v -> {
-@@ -3536,6 +3536,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3544,6 +3544,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              if (searchString != null || folderId != 0 || communityId != 0) {
                  actionBar.setBackButtonDrawable(backDrawable = new BackDrawable(false));
@@ -182,7 +182,7 @@ index 0000000..0000000 100644
              }
              if (folderId != 0) {
                  actionBar.setTitle(getString(R.string.ArchivedChats));
-@@ -3914,6 +3919,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3922,6 +3927,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      return;
                  }
                  if (id == -1) {
@@ -194,7 +194,7 @@ index 0000000..0000000 100644
                      if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
                          if (actionBar.isActionModeShowed()) {
                              if (searchViewPager != null && searchViewPager.getVisibility() == View.VISIBLE && searchViewPager.actionModeShowing()) {
-@@ -5374,7 +5384,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5382,7 +5392,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          };
          dialogStoriesCell.setActionBar(actionBar);
@@ -203,7 +203,7 @@ index 0000000..0000000 100644
          dialogStoriesCell.allowGlobalUpdates = false;
          dialogStoriesCell.setVisibility(View.GONE);
          animateToHasStories = false;
-@@ -5404,7 +5414,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5412,7 +5422,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          undoView[1] = null;
  
          if (hasMainTabs) {
@@ -212,7 +212,7 @@ index 0000000..0000000 100644
              actionBar.setTitleColor(getThemedColor(Theme.key_telegram_color_dialogsLogo));
          }
  
-@@ -5933,6 +5943,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5941,6 +5951,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              yoff = -(actionBar.getHeight() - AndroidUtilities.rectTmp2.centerY()) - dp(16);
              xoff = AndroidUtilities.rectTmp2.centerX() - dp(16);
              xoff += dp(4);
@@ -222,7 +222,7 @@ index 0000000..0000000 100644
              if (animatedStatusView != null) {
                  animatedStatusView.translate(AndroidUtilities.rectTmp2.centerX(), AndroidUtilities.rectTmp2.centerY());
              }
-@@ -6786,7 +6799,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6794,7 +6807,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          // actionMode.setBackgroundColor(Color.TRANSPARENT);
          // actionMode.drawBlur = false;
  
@@ -232,7 +232,7 @@ index 0000000..0000000 100644
              actionModeCloseView = new ImageView(getContext());
              actionModeCloseView.setScaleType(ImageView.ScaleType.CENTER);
              actionModeCloseView.setImageDrawable(new BackDrawable(true));
-@@ -6801,7 +6815,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6809,7 +6823,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogsCountTextView.setTextSize(18);
          selectedDialogsCountTextView.setTypeface(AndroidUtilities.bold());
          selectedDialogsCountTextView.setTextColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
@@ -241,7 +241,7 @@ index 0000000..0000000 100644
          selectedDialogsCountTextView.setOnTouchListener((v, event) -> true);
  
          pinItem = actionMode.addItemWithWidth(pin, R.drawable.msg_pin, dp(48));
-@@ -9136,6 +9150,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9144,6 +9158,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogs.clear();
          if (backDrawable != null) {
              backDrawable.setRotation(0, true);
@@ -250,7 +250,7 @@ index 0000000..0000000 100644
          }
          if (filterTabsView != null) {
              filterTabsView.animateColorsTo(Theme.key_actionBarTabLine, Theme.key_actionBarTabActiveText, Theme.key_actionBarTabUnactiveText, Theme.key_actionBarTabSelector, Theme.key_windowBackgroundWhite);
-@@ -10223,6 +10239,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10231,6 +10247,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              if (backDrawable != null) {
                  backDrawable.setRotation(1, true);

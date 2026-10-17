@@ -75,7 +75,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -6725,7 +6725,7 @@ public class MessageObject {
+@@ -6748,7 +6748,7 @@ public class MessageObject {
                  }
              } else if (hasExtendedMediaPreview()) {
                  type = TYPE_EXTENDED_MEDIA_PREVIEW;
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
                  contentType = 1;
                  type = TYPE_DATE;
              } else if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaGiveaway) {
-@@ -10091,6 +10091,7 @@ public class MessageObject {
+@@ -10114,6 +10114,7 @@ public class MessageObject {
      }
  
      public boolean needDrawBluredPreview() {
@@ -92,7 +92,7 @@ index 0000000..0000000 100644
          if (isRepostPreview) {
              return false;
          }
-@@ -11706,6 +11707,7 @@ public class MessageObject {
+@@ -11729,6 +11730,7 @@ public class MessageObject {
      }
  
      public boolean canForwardMessage() {
@@ -104,7 +104,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -15903,7 +15903,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -15937,7 +15937,7 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
          if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() || messageObject.messageOwner.destroyTime != 0 || messageObject.messageOwner.ttl <= 0) {
              return null;
          }
-@@ -15932,10 +15932,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -15966,10 +15966,13 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
          final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
          messageObject.forceExpired = true;
          if (messageObject.isOutOwner() || !messageObject.isRoundOnce() && !messageObject.isVoiceOnce()) {
-@@ -15946,6 +15949,31 @@ public class ChatActivity extends BaseFragment implements
+@@ -15980,6 +15983,31 @@ public class ChatActivity extends BaseFragment implements
          return () -> getMessagesController().doDeleteShowOnceTask(taskId, dialog_id, messageObject.getId());
      }
  
@@ -160,7 +160,7 @@ index 0000000..0000000 100644
      private void clearChatData(boolean full) {
          messages.clear();
          messagesByDays.clear();
-@@ -19434,6 +19462,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -19435,6 +19463,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -173,7 +173,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19441,7 +19475,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19442,7 +19476,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -182,7 +182,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33790,6 +33824,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33777,6 +33811,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -195,7 +195,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -39955,7 +39995,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39942,7 +39982,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -204,7 +204,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -46402,7 +46442,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46389,7 +46429,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

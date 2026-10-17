@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/Re
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
-@@ -774,7 +774,7 @@ public class ReactionsEffectOverlay {
+@@ -801,7 +801,7 @@ public class ReactionsEffectOverlay {
              return;
          }
          boolean animationEnabled = MessagesController.getGlobalMainSettings().getBoolean("view_animations", true);

@@ -542,6 +542,9 @@ object InuConfig {
     val DIALOGS_FAB_OFFSET_FOR_BOTTOM_BAR = BoolItem("dialogs_fab_offset_for_bottom_bar", true)
 
     @JvmField
+    val DIALOGS_FAB_LIFT = IntItem("dialogs_fab_lift", 0)
+
+    @JvmField
     val HIDE_DIALOG_PREVIEW = BoolItem("hide_dialog_preview", false)
 
     @JvmField

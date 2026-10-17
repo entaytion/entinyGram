@@ -1358,7 +1358,6 @@
     <string name="InuAiRoleDefaultConcise">موجز</string>
     <string name="InuAiSummarizing">جارٍ التلخيص…</string>
     <string name="InuAiSummaryFailed">فشل التلخيص: %1$s</string>
-    <string name="InuBurnOneTime">حرق</string>
     <string name="InuAiSectionTemperature">درجة الحرارة</string>
     <string name="InuAiTemperatureInfo">القيم الأقل تعطي ردوداً أدق وأكثر قابلية للتوقع، والأعلى أكثر إبداعاً. 1.0 هي القيمة الافتراضية ولا تُرسل إلى المزوّد.</string>
     <string name="InuAiFeatures">الميزات</string>

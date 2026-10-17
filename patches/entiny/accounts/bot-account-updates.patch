@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -17071,6 +17071,11 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17128,6 +17128,11 @@ public class MessagesController extends BaseController implements NotificationCe
                  TLRPC.updates_Difference res = (TLRPC.updates_Difference) response;
                  if (res instanceof TLRPC.TL_updates_differenceTooLong) {
                      AndroidUtilities.runOnUIThread(() -> {

@@ -49,7 +49,7 @@ index 0000000..0000000 100644
                          } else if (draftVoice) {
                              mess = getString(R.string.AttachAudio);
                          } else if (draftMessage != null) {
-@@ -6046,7 +6046,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -6047,7 +6047,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  final TL_iv.PageBlock block = message.messageOwner.rich_message.blocks.get(0);
                  accentColor = MessageObject.isBlueBlock(block);
              }
