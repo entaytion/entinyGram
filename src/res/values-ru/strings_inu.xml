@@ -2001,8 +2001,8 @@
     <string name="InuDisableNextVoiceAutoplay">Не включать следующее голосовое автоматически</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Останавливаться после голосового вместо воспроизведения следующего в чате</string>
     <string name="InuBottomTabsLift">Поднять нижнюю панель</string>
-    <string name="InuMutualContactIconLeft">Иконка взаимного контакта перед титулом</string>
-    <string name="InuMutualContactIconLeftInfo">Показывать иконку взаимного контакта слева от титула участника, а не после него</string>
+    <string name="InuMutualContactIconLeft">Иконка взаимного контакта перед аватаркой</string>
+    <string name="InuMutualContactIconLeftInfo">Показывать иконку взаимного контакта слева от аватарки</string>
     <string name="InuForumSectionsCards">Секции-карточки в темах форума</string>
     <string name="InuBookmarkAdd">Добавить в закладки</string>
     <string name="InuBookmarkRemove">Удалить закладку</string>

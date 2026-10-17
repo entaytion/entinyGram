@@ -433,6 +433,9 @@ object DrawerHelper {
         }
     }
 
+    // entiny: rebuilds only the drawer rows so no fragment views get recreated
+    fun reloadItems() = refreshTheme()
+
     private fun refreshTheme() {
         sideMenuContainer?.setBackgroundColor(Theme.getColor(Theme.key_chats_menuBackground))
         sideMenu?.let { applySideMenuColors(it) }

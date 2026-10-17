@@ -2080,8 +2080,8 @@
     <string name="InuDisableNextVoiceAutoplay">Не вмикати наступне голосове автоматично</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Зупинятися після голосового замість відтворення наступного в чаті</string>
     <string name="InuBottomTabsLift">Підняти нижню панель</string>
-    <string name="InuMutualContactIconLeft">Іконка взаємного контакту перед титулом</string>
-    <string name="InuMutualContactIconLeftInfo">Показувати іконку взаємного контакту ліворуч від титулу учасника, а не після нього</string>
+    <string name="InuMutualContactIconLeft">Іконка взаємного контакту перед аватаркою</string>
+    <string name="InuMutualContactIconLeftInfo">Показувати іконку взаємного контакту ліворуч від аватарки</string>
     <string name="InuForumSectionsCards">Секції-картки в темах форуму</string>
     <string name="InuBurnTimedMedia">Спалювати тимчасові медіа</string>
     <string name="InuHideDialogPreview">Ховати прев’ю останнього повідомлення</string>

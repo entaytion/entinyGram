@@ -98,13 +98,13 @@ class DrawerSettingsActivity : SettingsPageActivity() {
             TOGGLE_DRAWER_M3_SECTIONS -> {
                 val new = InuConfig.DRAWER_M3_SECTIONS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+                desu.inugram.helpers.dialogs.DrawerHelper.reloadItems()
             }
 
             TOGGLE_SHOW_DRAWER_ACCOUNTS -> {
                 val new = InuConfig.SHOW_DRAWER_ACCOUNTS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+                desu.inugram.helpers.dialogs.DrawerHelper.reloadItems()
             }
 
             TOGGLE_HIDE_BOTTOM_TABS -> {

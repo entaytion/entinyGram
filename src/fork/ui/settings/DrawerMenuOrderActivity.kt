@@ -60,8 +60,7 @@ class DrawerMenuOrderActivity : MenuOrderActivity<DrawerMenuConfig.Item>() {
     }
 
     override fun onFragmentDestroy() {
-        // entiny: drawer adapter only rebuilds its rows on reloadInterface, so apply edits when leaving
-        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+        desu.inugram.helpers.dialogs.DrawerHelper.reloadItems()
         super.onFragmentDestroy()
     }
 

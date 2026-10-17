@@ -116,7 +116,7 @@ index 0000000..0000000 100644
          }
          if (getMessagesController().config.walletAvailable.get()) {
 -            io.add(R.drawable.ic_gram, LocaleController.getString(R.string.WalletAttachMoney), () -> {
-+            io.addIf(desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.WALLET), R.drawable.ic_gram, LocaleController.getString(R.string.WalletAttachMoney), () -> {
++            io.addIf(desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.WALLET), R.drawable.inu_ic_gram, LocaleController.getString(R.string.WalletAttachMoney), () -> {
                  presentFragment(new WalletActivity());
              });
          } else {

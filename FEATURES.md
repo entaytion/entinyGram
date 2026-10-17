@@ -144,7 +144,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 ### profile & identity tools
 
 - 📡 **developer badges** in chat headers and profiles
-- 📡 **mutual contact icon**: optionally shown to the left of the member title
+- 📡 **mutual contact icon**: optionally shown to the left of the avatar
 - 📡 **estimated registration date & DC** in profiles
 - 📡 **delete profile photos**: all or selected
 - 📡 **delete my messages** in any chat

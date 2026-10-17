@@ -1579,8 +1579,8 @@
     <string name="InuShowMutualContactIconInfo">Show a mutual contact indicator icon in contacts list</string>
     <string name="InuShowMutualContactInChats">Show Mutual Contact Icon in Group &amp; Channel Member Lists</string>
     <string name="InuShowMutualContactInChatsInfo">Display mutual contact icon in group and channel member lists</string>
-    <string name="InuMutualContactIconLeft">Mutual icon before the title</string>
-    <string name="InuMutualContactIconLeftInfo">Show the mutual contact icon to the left of the member title instead of after it</string>
+    <string name="InuMutualContactIconLeft">Mutual icon before the avatar</string>
+    <string name="InuMutualContactIconLeftInfo">Show the mutual contact icon to the left of the avatar</string>
     <string name="InuCategoryAppearance">Design</string>
     <string name="InuCategoryChats">Chats</string>
     <string name="InuCategoryBehavior">Behavior &amp; Tools</string>
