@@ -33,6 +33,14 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             mkTwoLineEntry(
+                BUTTON_BOOKMARKS,
+                R.drawable.msg_fave,
+                LocaleController.getString(R.string.InuBookmarks),
+                LocaleController.getString(R.string.InuBookmarksSummary)
+            )
+        )
+        items.add(
+            mkTwoLineEntry(
                 BUTTON_FEED,
                 R.drawable.msg_channel,
                 addExperimentalSpan(LocaleController.getString(R.string.InuFeed)),
@@ -90,6 +98,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
         when (item.id) {
             BUTTON_PILL_STACK -> presentFragment(PillStackSettingsActivity())
             BUTTON_RECENT_CHATS -> presentFragment(RecentChatsSettingsActivity())
+            BUTTON_BOOKMARKS -> presentFragment(desu.inugram.ui.BookmarksManagerActivity())
             BUTTON_FEED -> presentFragment(FeedExcludedChannelsSettingsActivity())
             TOGGLE_ONLINE_DOTS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.PRESENCE_COLOR_DOTS.toggle()
             TOGGLE_CHAT_ONLINE_DOTS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_PRESENCE_DOTS.toggle()
@@ -102,6 +111,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_PILL_STACK = InuUtils.generateId()
         private val BUTTON_RECENT_CHATS = InuUtils.generateId()
+        private val BUTTON_BOOKMARKS = InuUtils.generateId()
         private val BUTTON_FEED = InuUtils.generateId()
         private val TOGGLE_ONLINE_DOTS = InuUtils.generateId()
         private val TOGGLE_CHAT_ONLINE_DOTS = InuUtils.generateId()
@@ -117,6 +127,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("pill-stack-open", R.string.InuPillStack, BUTTON_PILL_STACK),
                 SearchRegistry.Entry("recent-chats-open", R.string.InuRecentChats, BUTTON_RECENT_CHATS),
+                SearchRegistry.Entry("bookmarks-open", R.string.InuBookmarks, BUTTON_BOOKMARKS),
                 SearchRegistry.Entry("feed-open", R.string.InuFeed, BUTTON_FEED),
                 SearchRegistry.Entry("online-dots", R.string.InuOnlineDots, TOGGLE_ONLINE_DOTS),
                 SearchRegistry.Entry("chat-online-dots", R.string.InuChatOnlineDots, TOGGLE_CHAT_ONLINE_DOTS),

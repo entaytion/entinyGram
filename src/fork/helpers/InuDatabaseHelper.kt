@@ -227,10 +227,48 @@ object InuDatabaseHelper {
             version = 22
         }
 
+        if (version == 22) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_bookmarks(dialog_id INTEGER NOT NULL, msg_id INTEGER NOT NULL, added_at INTEGER NOT NULL, PRIMARY KEY(dialog_id, msg_id))")
+                .stepThis().dispose()
+            writeKv(db, "version", "23")
+            version = 23
+        }
+
         // entiny: the feed no longer keeps its own cache
         db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
+    }
+
+    fun loadBookmarks(db: SQLiteDatabase): List<Pair<Long, Int>> {
+        val list = ArrayList<Pair<Long, Int>>()
+        val cursor = db.queryFinalized("SELECT dialog_id, msg_id FROM inu_bookmarks ORDER BY added_at, msg_id")
+        try {
+            while (cursor.next()) list.add(cursor.longValue(0) to cursor.intValue(1))
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    fun addBookmarks(db: SQLiteDatabase, dialogId: Long, msgIds: List<Int>) {
+        val now = (System.currentTimeMillis() / 1000).toInt()
+        for (id in msgIds) {
+            val query = db.executeFast("INSERT OR IGNORE INTO inu_bookmarks(dialog_id, msg_id, added_at) VALUES(?, ?, ?)")
+            query.bindLong(1, dialogId)
+            query.bindInteger(2, id)
+            query.bindInteger(3, now)
+            query.step()
+            query.dispose()
+        }
+    }
+
+    fun removeBookmarks(db: SQLiteDatabase, dialogId: Long, msgIds: List<Int>) {
+        db.executeFast("DELETE FROM inu_bookmarks WHERE dialog_id = $dialogId AND msg_id IN (${msgIds.joinToString(",")})").stepThis().dispose()
+    }
+
+    fun clearBookmarks(db: SQLiteDatabase) {
+        db.executeFast("DELETE FROM inu_bookmarks").stepThis().dispose()
     }
 
     fun saveReadTime(db: SQLiteDatabase, dialogId: Long, maxId: Int, readAt: Int) {

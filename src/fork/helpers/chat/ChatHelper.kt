@@ -169,6 +169,7 @@ object ChatHelper {
     const val OPTION_LOCAL_EDIT = 534
     const val OPTION_LOCAL_EDIT_RESET = 535
     const val OPTION_SAVE_VOICE_TO_DOWNLOADS = 536
+    const val OPTION_BOOKMARK = 537
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -180,6 +181,10 @@ object ChatHelper {
         if (forwards <= 0) return null
         return " " + LocaleController.formatShortNumber(forwards, null) + "  "
     }
+
+    private fun isBookmarked(msg: MessageObject?): Boolean =
+        msg != null && msg.id > 0 && isMenuItemEnabled(MessageMenuConfig.Item.BOOKMARK) &&
+            BookmarksHelper.isBookmarked(msg.currentAccount, msg.getDialogId(), msg.id)
 
     @JvmStatic
     fun timeAdditionsHash(msg: MessageObject?): Int {
@@ -206,6 +211,7 @@ object ChatHelper {
             hash = hash * 31 + 5
             hash = hash * 31 + it
         }
+        if (isBookmarked(msg)) hash = hash * 31 + 6
         return hash
     }
 
@@ -230,6 +236,7 @@ object ChatHelper {
         if (forwards != null) {
             width += AndroidUtilities.dp(11f) + ceil(Theme.chat_timePaint.measureText(forwards)).toInt()
         }
+        if (isBookmarked(msg)) width += AndroidUtilities.dp(11f) + ceil(Theme.chat_timePaint.measureText(" ")).toInt()
         return width
     }
 
@@ -255,6 +262,10 @@ object ChatHelper {
             }
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             appendTimeIcon(sb, R.drawable.group_edit, sizeDp = 11f)
+            sb.append(" ")
+        }
+        if (isBookmarked(msg)) {
+            appendTimeIcon(sb, R.drawable.msg_fave, sizeDp = 11f)
             sb.append(" ")
         }
         ReadTimeHelper.readAt(msg)?.let {
@@ -505,6 +516,13 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuSetReminder))
             options.add(OPTION_SET_REMINDER)
             icons.add(R.drawable.msg_notifications)
+        }
+
+        if (isMenuItemEnabled(MessageMenuConfig.Item.BOOKMARK) && selectedObject.id > 0) {
+            val marked = BookmarksHelper.isBookmarked(activity.currentAccount, dialogId, selectedObject.id)
+            items.add(LocaleController.getString(if (marked) R.string.InuBookmarkRemove else R.string.InuBookmarkAdd))
+            options.add(OPTION_BOOKMARK)
+            icons.add(R.drawable.msg_fave)
         }
 
         if (isMenuItemEnabled(MessageMenuConfig.Item.LOCAL_EDIT) && LocalEditHelper.canEdit(selectedObject)) {
@@ -1044,6 +1062,29 @@ object ChatHelper {
                 val messages = ArrayList<MessageObject>()
                 if (selectedObjectGroup != null) messages.addAll(selectedObjectGroup.messages) else messages.add(selectedObject)
                 setReminder(activity, messages)
+            }
+
+            OPTION_BOOKMARK -> {
+                val messages = selectedObjectGroup?.messages ?: listOf(selectedObject)
+                val result = BookmarksHelper.toggle(activity.currentAccount, selectedObject.getDialogId(), messages.map { it.id })
+                val text = when (result) {
+                    BookmarksHelper.Result.ADDED -> LocaleController.getString(R.string.InuBookmarkAdded)
+                    BookmarksHelper.Result.REMOVED -> LocaleController.getString(R.string.InuBookmarkRemoved)
+                    BookmarksHelper.Result.LIMIT -> LocaleController.formatString(R.string.InuBookmarksLimit, BookmarksHelper.MAX_PER_CHAT)
+                }
+                val bulletins = BulletinFactory.of(activity)
+                val bulletin = when (result) {
+                    BookmarksHelper.Result.LIMIT -> bulletins.createSimpleBulletin(R.raw.error, text)
+                    BookmarksHelper.Result.ADDED -> {
+                        val dialogId = selectedObject.getDialogId()
+                        bulletins.createSimpleBulletin(R.raw.saved_messages, text, LocaleController.getString(R.string.InuBookmarks)) {
+                            activity.presentFragment(desu.inugram.ui.BookmarksActivity(dialogId))
+                        }
+                    }
+                    else -> bulletins.createSimpleBulletin(R.raw.saved_messages, text)
+                }
+                bulletin.show()
+                for (m in messages) activity.chatAdapter?.updateRowWithMessageObject(m, false, false)
             }
 
             OPTION_LOCAL_EDIT -> LocalEditHelper.edit(activity, selectedObject)

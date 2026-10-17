@@ -2004,4 +2004,13 @@
     <string name="InuMutualContactIconLeft">Иконка взаимного контакта перед титулом</string>
     <string name="InuMutualContactIconLeftInfo">Показывать иконку взаимного контакта слева от титула участника, а не после него</string>
     <string name="InuForumSectionsCards">Секции-карточки в темах форума</string>
+    <string name="InuBookmarkAdd">Добавить в закладки</string>
+    <string name="InuBookmarkRemove">Удалить закладку</string>
+    <string name="InuBookmarkAdded">Добавлено в закладки</string>
+    <string name="InuBookmarkRemoved">Закладка удалена</string>
+    <string name="InuBookmarksLimit">Достигнут лимит закладок (%1$d на чат)</string>
+    <string name="InuBookmarks">Закладки</string>
+    <string name="InuBookmarksEmpty">Закладок нет</string>
+    <string name="InuBookmarksClearAll">Очистить все закладки</string>
+    <string name="InuBookmarksSummary">Сохранённые сообщения по чатам</string>
 </resources>

@@ -2090,4 +2090,13 @@
     <string name="InuTimedMediaAfterView">Після перегляду</string>
     <string name="InuTimedMediaAfterViewBurn">Спалити</string>
     <string name="InuTimedMediaAfterViewKeep">Зберегти копію</string>
+    <string name="InuBookmarkAdd">Додати до закладок</string>
+    <string name="InuBookmarkRemove">Видалити закладку</string>
+    <string name="InuBookmarkAdded">Додано до закладок</string>
+    <string name="InuBookmarkRemoved">Закладку видалено</string>
+    <string name="InuBookmarksLimit">Досягнуто ліміту закладок (%1$d на чат)</string>
+    <string name="InuBookmarks">Закладки</string>
+    <string name="InuBookmarksEmpty">Закладок немає</string>
+    <string name="InuBookmarksClearAll">Очистити всі закладки</string>
+    <string name="InuBookmarksSummary">Збережені повідомлення за чатами</string>
 </resources>

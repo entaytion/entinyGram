@@ -121,7 +121,7 @@ class RecentChatsActivity : SettingsPageActivity() {
             tab = which
             listView?.adapter?.update(true)
         }
-        items.add(UItem.asCustom(chipsRow, 52))
+        items.add(UItem(UniversalAdapter.VIEW_TYPE_CUSTOM, true).also { it.view = chipsRow; it.intValue = 52 })
         items.add(UItem.asShadow(null))
 
         val shown = all.filter { (_, obj) ->
@@ -140,6 +140,10 @@ class RecentChatsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (item.view === chips) {
+            chips?.tap(x)
+            return
+        }
         val dialogId = rows[item.id] ?: return
         RecentChatsHelper.openChat(this, dialogId)
     }
@@ -168,7 +172,7 @@ class RecentChatsActivity : SettingsPageActivity() {
     }
 }
 
-private class ChipsRow(context: Context) : HorizontalScrollView(context) {
+internal class ChipsRow(context: Context) : HorizontalScrollView(context) {
     private val row = LinearLayout(context)
 
     init {
@@ -181,7 +185,23 @@ private class ChipsRow(context: Context) : HorizontalScrollView(context) {
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite))
     }
 
+    private var onSelect: ((Int) -> Unit)? = null
+
+    // entiny: the list swallows touches on non-selectable rows, so taps arrive through the item click with row coordinates
+    fun tap(x: Float): Boolean {
+        val px = x + scrollX
+        for (i in 0 until row.childCount) {
+            val chip = row.getChildAt(i)
+            if (px >= chip.left && px <= chip.right) {
+                onSelect?.invoke(i)
+                return true
+            }
+        }
+        return false
+    }
+
     fun bind(labels: List<String>, selected: Int, onSelect: (Int) -> Unit) {
+        this.onSelect = onSelect
         row.removeAllViews()
         labels.forEachIndexed { index, text ->
             val chip = TextView(context)

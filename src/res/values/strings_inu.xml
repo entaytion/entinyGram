@@ -2076,4 +2076,13 @@
     <string name="InuProfileJoinDate">Join Date</string>
     <string name="InuTranslateAutoFallback">Switch provider when blocked</string>
     <string name="InuTranslateAutoFallbackInfo">If Google blocks translation from your network, retry with Bing, then MyMemory. Your text is sent to them instead</string>
+    <string name="InuBookmarkAdd">Add to bookmarks</string>
+    <string name="InuBookmarkRemove">Remove bookmark</string>
+    <string name="InuBookmarkAdded">Added to bookmarks</string>
+    <string name="InuBookmarkRemoved">Bookmark removed</string>
+    <string name="InuBookmarksLimit">Bookmark limit reached (%1$d per chat)</string>
+    <string name="InuBookmarks">Bookmarks</string>
+    <string name="InuBookmarksEmpty">No bookmarks</string>
+    <string name="InuBookmarksClearAll">Clear all bookmarks</string>
+    <string name="InuBookmarksSummary">Messages you saved, grouped by chat</string>
 </resources>

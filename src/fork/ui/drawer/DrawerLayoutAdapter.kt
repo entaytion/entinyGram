@@ -283,6 +283,8 @@ class DrawerLayoutAdapter(
                     items.add(Item(11, LocaleController.getString(R.string.SavedMessages), R.drawable.msg_saved))
                 DrawerMenuConfig.Item.RECENT_CHATS ->
                     items.add(Item(ITEM_RECENT_CHATS, LocaleController.getString(R.string.InuRecentChats), R.drawable.msg_recent))
+                DrawerMenuConfig.Item.BOOKMARKS ->
+                    items.add(Item(ITEM_BOOKMARKS, LocaleController.getString(R.string.InuBookmarks), R.drawable.msg_fave))
                 DrawerMenuConfig.Item.FEED ->
                     if (FeedHelper.isEnabled()) items.add(Item(ITEM_FEED, LocaleController.getString(R.string.InuFeed), R.drawable.msg_channel))
                 DrawerMenuConfig.Item.ARCHIVE ->
@@ -321,6 +323,7 @@ class DrawerLayoutAdapter(
         const val ITEM_RECENT_CHATS = 22
         const val ITEM_ENTINY_SETTINGS = 23
         const val ITEM_RESTART_APP = 24
+        const val ITEM_BOOKMARKS = 25
     }
 
     class Item private constructor(
