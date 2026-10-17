@@ -69,7 +69,7 @@
     <string name="InuNotifChannelSyncInfo">Выключение уведомлений для канала в системных настройках также глушит эти чаты в приложении и на сервере. Если выключить, заглушка останется только в системных настройках.</string>
     <string name="InuPerChatNotifChannels">Отдельный канал для каждого чата</string>
     <string name="InuPerChatNotifChannelsInfo">Создаёт индивидуальный системный канал для каждого чата вместо одного общего на тип, поэтому отключение одного канала или темы не заглушает остальные. Существующие каналы пересоздаются.</string>
-    <string name="InuUpdatesIncludeBetaInfo">Также предлагать пре-релизные и бета-сборки.</string>
+    <string name="InuUpdatesIncludeBetaInfo">Также предлагать пре-релизные и бета-сборки. Это тестовые сборки, включать их всем не нужно: они могут надоедать частыми обновлениями.</string>
     <string name="InuVersionBetaSuffix">(Бета)</string>
     <string name="InuPerformanceClass">Класс производительности</string>
     <string name="InuPerformanceClassInfo">Не рекомендуется менять эту настройку: на слабых бюджетных устройствах это может сильно снизить производительность</string>

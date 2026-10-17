@@ -63,7 +63,7 @@
     <string name="InuUnifiedPushGatewayInfo">WebPush POST ve VAPID gerektiren dağıtıcılar için yeniden yazma proxy\'si (örn. gCompat-UP, Sunup, Prism).</string>
     <string name="InuUnifiedPushGatewayDirect">Doğrudan (ağ geçidi yok)</string>
     <string name="InuUnifiedPushGatewayDefault">Varsayılan</string>
-    <string name="InuUpdatesIncludeBetaInfo">Ayrıca ön sürüm/beta yapıları da sunulur.</string>
+    <string name="InuUpdatesIncludeBetaInfo">Ayrıca ön sürüm/beta yapıları da sunulur. Bunlar test yapılarıdır, herkesin etkinleştirmesi gerekmez; sık güncelleme ile rahatsız edebilir.</string>
     <string name="InuVersionBetaSuffix">(Beta)</string>
     <string name="InuPerformanceClass">Performans sınıfı</string>
     <string name="InuPerformanceClassInfo">Bu ayarı değiştirmeniz önerilmez, düşük performanslı bütçe dostu cihazlarda performansı ciddi ölçüde düşürebilir</string>

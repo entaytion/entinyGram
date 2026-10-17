@@ -122,7 +122,7 @@
     <string name="InuNotifChannelSyncInfo">Turning notifications off for a channel in the system settings also mutes those chats inside the app and on the server. When off, the mute stays in the system settings only.</string>
     <string name="InuPerChatNotifChannels">Separate channel for every chat</string>
     <string name="InuPerChatNotifChannelsInfo">Creates an individual system notification channel per chat instead of one shared channel per type, so muting one channel or topic cannot silence the others. Existing channels are recreated.</string>
-    <string name="InuUpdatesIncludeBetaInfo">Also offer pre-release/beta builds.</string>
+    <string name="InuUpdatesIncludeBetaInfo">Also offer pre-release/beta builds. These are test builds, no need to enable them for everyone: they may nag with frequent updates.</string>
     <string name="InuVersionBetaSuffix">(Beta)</string>
     <string name="InuPerformanceClass">Performance class</string>
     <string name="InuPerformanceClassInfo">It is not recommended to change this settings, as this might tank performance on low-performance budget devices</string>

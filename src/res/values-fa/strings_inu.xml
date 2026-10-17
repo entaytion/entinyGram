@@ -70,7 +70,7 @@
     <string name="InuUnifiedPushGatewayInfo">پروکسی بازنویسی برای توزیع‌کننده‌هایی که WebPush POST و VAPID می‌خواهند (مانند gCompat-UP، Sunup و Prism).</string>
     <string name="InuUnifiedPushGatewayDirect">مستقیم (بدون دروازه)</string>
     <string name="InuUnifiedPushGatewayDefault">پیش‌فرض</string>
-    <string name="InuUpdatesIncludeBetaInfo">نسخه‌های پیش‌انتشار/آزمایشی را هم پیشنهاد بده.</string>
+    <string name="InuUpdatesIncludeBetaInfo">نسخه‌های پیش‌انتشار/آزمایشی را هم پیشنهاد بده. این‌ها نسخه‌های آزمایشی هستند و نیازی نیست برای همه فعال شوند؛ ممکن است با به‌روزرسانی‌های مکرر مزاحم شوند.</string>
     <string name="InuVersionBetaSuffix">(آزمایشی)</string>
     <string name="InuPerformanceClass">رده عملکرد</string>
     <string name="InuPerformanceClassInfo">تغییر این تنظیم توصیه نمی‌شود، زیرا ممکن است عملکرد دستگاه‌های اقتصادی ضعیف را بسیار پایین بیاورد</string>

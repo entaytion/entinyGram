@@ -70,7 +70,7 @@
     <string name="InuUnifiedPushGatewayInfo">وكيل إعادة كتابة للموزّعين الذين يتطلبون WebPush POST وVAPID (مثل gCompat-UP وSunup وPrism).</string>
     <string name="InuUnifiedPushGatewayDirect">مباشر (بدون بوابة)</string>
     <string name="InuUnifiedPushGatewayDefault">الافتراضي</string>
-    <string name="InuUpdatesIncludeBetaInfo">اقتراح الإصدارات التجريبية أيضاً.</string>
+    <string name="InuUpdatesIncludeBetaInfo">اقتراح الإصدارات التجريبية أيضاً. هذه إصدارات اختبار ولا داعي لتفعيلها للجميع، فقد تزعجك بتحديثات متكررة.</string>
     <string name="InuVersionBetaSuffix">(تجريبي)</string>
     <string name="InuPerformanceClass">فئة الأداء</string>
     <string name="InuPerformanceClassInfo">لا يُنصح بتغيير هذا الإعداد، فقد يُضعف الأداء على الأجهزة الاقتصادية محدودة الأداء</string>

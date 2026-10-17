@@ -52,7 +52,7 @@
     <string name="InuUnifiedPushGatewayInfo">WebPush POST と VAPID を必要とするディストリビューター (gCompat-UP、Sunup、Prism など) 向けの書き換えプロキシ。</string>
     <string name="InuUnifiedPushGatewayDirect">直接 (ゲートウェイなし)</string>
     <string name="InuUnifiedPushGatewayDefault">デフォルト</string>
-    <string name="InuUpdatesIncludeBetaInfo">プレリリース版・ベータ版も提供します。</string>
+    <string name="InuUpdatesIncludeBetaInfo">プレリリース版・ベータ版も提供します。テスト用ビルドのため、全員が有効にする必要はありません。頻繁な更新通知が煩わしい場合があります。</string>
     <string name="InuVersionBetaSuffix">(ベータ)</string>
     <string name="InuPerformanceClass">パフォーマンスクラス</string>
     <string name="InuPerformanceClassInfo">この設定の変更はおすすめしません。低性能な端末ではパフォーマンスが大きく低下する可能性があります</string>

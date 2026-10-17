@@ -52,7 +52,7 @@
     <string name="InuUnifiedPushGatewayInfo">为需要 WebPush POST 和 VAPID 的分发器（如 gCompat-UP、Sunup、Prism）设置的重写代理。</string>
     <string name="InuUnifiedPushGatewayDirect">直连（无网关）</string>
     <string name="InuUnifiedPushGatewayDefault">默认</string>
-    <string name="InuUpdatesIncludeBetaInfo">同时提供预发布/测试版构建。</string>
+    <string name="InuUpdatesIncludeBetaInfo">同时提供预发布/测试版构建。这些是测试构建，无需所有人开启，可能会频繁提示更新。</string>
     <string name="InuVersionBetaSuffix">(测试版)</string>
     <string name="InuPerformanceClass">性能等级</string>
     <string name="InuPerformanceClassInfo">不建议更改此设置，在低性能的入门设备上可能会严重影响性能</string>

@@ -14,6 +14,7 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
+import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
 import android.text.style.URLSpan
@@ -227,20 +228,27 @@ class UpdateAppAlertDialog(
 
         val sizeBytes = appUpdate.document?.size ?: 0L
         val sizeStr = if (sizeBytes > 0) AndroidUtilities.formatFileSize(sizeBytes) else ""
-        val verStr = UpdateHelper.pendingBetaUpdate?.version?.takeIf { it.isNotBlank() }
-            ?: appUpdate.version?.takeIf { it.isNotBlank() }
-            ?: ""
-        val versionInfo = when {
-            verStr.isNotEmpty() && sizeStr.isNotEmpty() -> "v$verStr • $sizeStr"
-            verStr.isNotEmpty() -> "v$verStr"
-            sizeStr.isNotEmpty() -> sizeStr
-            else -> LocaleController.getString(R.string.AppUpdate)
+        val newName = UpdateHelper.pendingBetaUpdate?.version?.takeIf { it.isNotBlank() }
+        val newCode = appUpdate.version?.takeIf { it.isNotBlank() }
+        val newStr = listOfNotNull(newName?.let { "v$it" }, newCode?.let { "($it)" }).joinToString(" ")
+        val oldStr = "v${UpdateHelper.stockVersionName} (${UpdateHelper.packageInfo.versionCode})"
+        val versionInfo = SpannableStringBuilder().apply {
+            if (newStr.isNotEmpty()) {
+                append(oldStr)
+                setSpan(StrikethroughSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                append(" → ").append(newStr)
+            }
+            if (sizeStr.isNotEmpty()) {
+                if (isNotEmpty()) append(" • ")
+                append(sizeStr)
+            }
+            if (isEmpty()) append(LocaleController.getString(R.string.AppUpdate))
         }
 
         val messageView = TextView(context).apply {
             setTextColor(Theme.getColor(Theme.key_dialogTextGray3))
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
-            isSingleLine = true
+            maxLines = 2
             ellipsize = TextUtils.TruncateAt.END
             text = versionInfo
         }
