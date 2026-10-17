@@ -2119,7 +2119,7 @@ object ChatHelper {
         val linked = chat.megagroup && chat.has_link
         // entiny: record the flags when the join bar is about to show for a megagroup so repro reports are actionable
         if (!linked && chat.megagroup) {
-            org.telegram.messenger.FileLog.d("InuJoin megagroup=${chat.id} has_link=${chat.has_link} join_to_send=${chat.join_to_send} min=${chat.min} left=${chat.left}")
+            android.util.Log.d("InuJoin", "megagroup=${chat.id} has_link=${chat.has_link} join_to_send=${chat.join_to_send} min=${chat.min} left=${chat.left}")
         }
         return linked
     }

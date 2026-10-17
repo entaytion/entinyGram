@@ -470,6 +470,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_BLOCK_SLEEP_WHILE_DOWNLOADING -> {
                 val new = InuConfig.BLOCK_SLEEP_WHILE_DOWNLOADING.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                if (new) desu.inugram.helpers.media.DownloadKeepAliveHelper.startPolling()
             }
 
             TOGGLE_FASTER_DOWNLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_DOWNLOADS.toggle()

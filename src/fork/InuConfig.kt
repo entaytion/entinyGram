@@ -121,6 +121,7 @@ object InuConfig {
     enum class PrefType { BOOL, INT, LONG, FLOAT, STRING }
 
     abstract class Item<T>(val key: String, val default: T, val exportable: Boolean = true) {
+        @Volatile
         private var currentValue: T = default
 
         abstract val prefType: PrefType

@@ -110,7 +110,10 @@ object ParanoiaHelper {
 
     var disguiseIcon: Boolean
         get() = prefs.getBoolean("disguiseIcon", false)
-        set(value) = prefs.edit { putBoolean("disguiseIcon", value) }
+        set(value) {
+            prefs.edit { putBoolean("disguiseIcon", value) }
+            disguisedCache = null
+        }
 
     var launcherShortcut: Boolean
         get() = prefs.getBoolean("launcherShortcut", false)
@@ -323,6 +326,7 @@ object ParanoiaHelper {
         }
         prefs.edit(commit = true) { putBoolean("paranoia", value) }
         paranoiaCache = value
+        disguisedCache = null
         InuUtils.restartApp(activity)
     }
 }

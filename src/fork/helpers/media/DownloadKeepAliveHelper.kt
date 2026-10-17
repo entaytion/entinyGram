@@ -22,6 +22,10 @@ object DownloadKeepAliveHelper {
     private val pollRunnable = object : Runnable {
         override fun run() {
             syncWakeLock()
+            if (!InuConfig.BLOCK_SLEEP_WHILE_DOWNLOADING.value) {
+                pollingStarted = false
+                return
+            }
             handler.postDelayed(this, POLL_INTERVAL_MS)
         }
     }
