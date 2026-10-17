@@ -1055,6 +1055,8 @@
     <string name="InuSortAlbumsBySize">ترتيب الألبومات حسب الحجم</string>
     <string name="InuSortAlbumsBySizeInfo">تُرتَّب الألبومات في قائمة المرفقات حسب عدد الصور بدلاً من الأحدث</string>
     <string name="InuDownloadDirectory">مجلد التنزيل</string>
+    <string name="InuSaveFilenameDate">تاريخ الرسالة في أسماء الملفات</string>
+    <string name="InuSaveFilenameDateInfo">تحصل الصور والفيديوهات والملفات المحفوظة على تاريخ ووقت إرسال الرسالة، مثل IMG_2026-08-24_05-32-18.jpg</string>
     <string name="InuDownloadDirectoryApplied">يُطبَّق على الملفات المنزَّلة حديثاً فقط</string>
     <string name="InuMentionInsertTitle">إدراج إشارة</string>
     <string name="InuPasscode">رمز المرور</string>

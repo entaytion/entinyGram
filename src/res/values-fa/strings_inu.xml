@@ -1047,6 +1047,8 @@
     <string name="InuSortAlbumsBySize">مرتب‌سازی آلبوم‌ها بر اساس اندازه</string>
     <string name="InuSortAlbumsBySizeInfo">آلبوم‌ها در منوی پیوست به‌جای تازگی، بر اساس تعداد عکس مرتب می‌شوند</string>
     <string name="InuDownloadDirectory">پوشه دانلود</string>
+    <string name="InuSaveFilenameDate">تاریخ پیام در نام فایل‌ها</string>
+    <string name="InuSaveFilenameDateInfo">عکس‌ها، ویدیوها و فایل‌های ذخیره‌شده تاریخ و زمان ارسال پیام را می‌گیرند، مثل IMG_2026-08-24_05-32-18.jpg</string>
     <string name="InuDownloadDirectoryApplied">فقط روی فایل‌های تازه دانلودشده اعمال می‌شود</string>
     <string name="InuMentionInsertTitle">درج منشن</string>
     <string name="InuPasscode">رمز قفل</string>

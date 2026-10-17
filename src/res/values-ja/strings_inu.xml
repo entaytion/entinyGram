@@ -1404,6 +1404,8 @@
     <string name="InuSortAlbumsBySize">アルバムをサイズ順に並べる</string>
     <string name="InuSortAlbumsBySizeInfo">添付メニューのアルバムを新しい順ではなく写真数の多い順に並べます</string>
     <string name="InuDownloadDirectory">ダウンロードフォルダー</string>
+    <string name="InuSaveFilenameDate">保存ファイル名にメッセージの日付を付ける</string>
+    <string name="InuSaveFilenameDateInfo">保存した写真・動画・ファイルに、メッセージの送信日時を付けます（例: IMG_2026-08-24_05-32-18.jpg）</string>
     <string name="InuDownloadDirectoryApplied">新しくダウンロードするファイルにのみ適用されます</string>
     <string name="InuPreviewMessage">プレビュー</string>
     <string name="InuMinimize">最小化</string>

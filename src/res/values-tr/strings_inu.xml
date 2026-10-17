@@ -1414,6 +1414,8 @@
     <string name="InuSortAlbumsBySize">Albümleri boyuta göre sırala</string>
     <string name="InuSortAlbumsBySizeInfo">Ek menüsündeki albümler güncellik yerine fotoğraf sayısına göre sıralanır</string>
     <string name="InuDownloadDirectory">İndirme klasörü</string>
+    <string name="InuSaveFilenameDate">Kaydedilen dosya adlarında mesaj tarihi</string>
+    <string name="InuSaveFilenameDateInfo">Kaydedilen fotoğraf, video ve dosyalara mesajın gönderildiği tarih ve saat eklenir, örneğin IMG_2026-08-24_05-32-18.jpg</string>
     <string name="InuDownloadDirectoryApplied">Yalnızca yeni indirilen dosyalara uygulanır</string>
     <string name="InuPreviewMessage">Önizle</string>
     <string name="InuMinimize">Küçült</string>

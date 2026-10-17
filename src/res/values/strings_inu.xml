@@ -1204,6 +1204,8 @@
     <string name="InuSortAlbumsBySize">Sort albums by size</string>
     <string name="InuSortAlbumsBySizeInfo">Albums in the attachment menu are ordered by photo count instead of recency</string>
     <string name="InuDownloadDirectory">Download folder</string>
+    <string name="InuSaveFilenameDate">Message date in saved file names</string>
+    <string name="InuSaveFilenameDateInfo">Saved photos, videos and files get the date and time the message was sent, like IMG_2026-08-24_05-32-18.jpg</string>
     <string name="InuDownloadDirectoryApplied">Applies to newly downloaded files only</string>
     <string name="InuMentionInsertTitle">Insert mention</string>
     <string name="InuPasscode">Passcode</string>

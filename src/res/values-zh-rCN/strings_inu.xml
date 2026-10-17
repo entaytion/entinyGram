@@ -1414,6 +1414,8 @@
     <string name="InuSortAlbumsBySize">按大小排序相册</string>
     <string name="InuSortAlbumsBySizeInfo">附件菜单中的相册按照片数量而非最近使用时间排序</string>
     <string name="InuDownloadDirectory">下载文件夹</string>
+    <string name="InuSaveFilenameDate">已保存文件名中包含消息日期</string>
+    <string name="InuSaveFilenameDateInfo">保存的照片、视频和文件会加上消息发送的日期和时间，例如 IMG_2026-08-24_05-32-18.jpg</string>
     <string name="InuDownloadDirectoryApplied">仅适用于新下载的文件</string>
     <string name="InuPreviewMessage">预览</string>
     <string name="InuMinimize">最小化</string>

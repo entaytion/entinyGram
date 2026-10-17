@@ -450,6 +450,9 @@ object InuConfig {
     val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram")
 
     @JvmField
+    val SAVE_FILENAME_DATE = BoolItem("save_filename_date", false)
+
+    @JvmField
     val AUTO_DISABLE_PROXY_ON_VPN = BoolItem("auto_disable_proxy_on_vpn", false)
 
     @JvmField

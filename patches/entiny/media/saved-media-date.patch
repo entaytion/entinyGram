@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 17 Oct 2026 23:04:23 +0300
+Subject: [+] message date in saved file names
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java       | 6 +++---
+ .../src/main/java/org/telegram/ui/PhotoViewer.java        | 8 ++++----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -34121,7 +34121,7 @@ public class ChatActivity extends BaseFragment implements
+                 return;
+             }
+         }
+-        MediaController.saveFile(path, parentActivity, messageObject.isVideo() ? 1 : 0, null, null);
++        MediaController.saveFile(path, parentActivity, messageObject.isVideo() ? 1 : 0, desu.inugram.helpers.media.SavedMediaNameHelper.name(messageObject, path, null, messageObject.isVideo()), null);
+     }
+ 
+     public void processSelectedOption(int option) {
+@@ -34424,7 +34424,7 @@ public class ChatActivity extends BaseFragment implements
+                         break;
+                     }
+                 }
+-                MediaController.saveFile(path, getParentActivity(), 0, null, null);
++                MediaController.saveFile(path, getParentActivity(), 0, desu.inugram.helpers.media.SavedMediaNameHelper.name(selectedObject, path, null, selectedObject.isVideo()), null);
+                 BulletinFactory.createSaveToGalleryBulletin(this, selectedObject.isVideo() && !selectedObject.isLivePhoto(), selectedObject.isLivePhoto(), themeDelegate).show();
+                 break;
+             }
+@@ -34575,7 +34575,7 @@ public class ChatActivity extends BaseFragment implements
+                             path = f.getPath();
+                         }
+                     }
+-                    MediaController.saveFile(path, getParentActivity(), 2, fileName, selectedObject.getDocument() != null ? selectedObject.getDocument().mime_type : "", uri -> {
++                    MediaController.saveFile(path, getParentActivity(), 2, desu.inugram.helpers.media.SavedMediaNameHelper.name(selectedObject, path, fileName, false), selectedObject.getDocument() != null ? selectedObject.getDocument().mime_type : "", uri -> {
+                         if (getParentActivity() == null) {
+                             return;
+                         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -4997,7 +4997,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                                 showDownloadAlert();
+                             }
+                         } else if (f != null && f.exists()) {
+-                            MediaController.saveFile(f.toString(), parentActivity, isVideo ? 1 : 0, null, null, uri -> BulletinFactory.createSaveToGalleryBulletin(containerView, isVideo, 0xf9222222, 0xffffffff).show());
++                            MediaController.saveFile(f.toString(), parentActivity, isVideo ? 1 : 0, desu.inugram.helpers.media.SavedMediaNameHelper.name(currentMessageObject, f.toString(), null, isVideo), null, uri -> BulletinFactory.createSaveToGalleryBulletin(containerView, isVideo, 0xf9222222, 0xffffffff).show());
+                         } else {
+                             showDownloadAlert();
+                         }
+@@ -5055,7 +5055,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                                             showDownloadAlert();
+                                         }
+                                     } else if (f != null && f.exists()) {
+-                                        MediaController.saveFile(f.toString(), parentActivity, isThisVideo ? 1 : 0, null, null, uri -> BulletinFactory.createSaveToGalleryBulletin(containerView, isThisVideo, 0xf9222222, 0xffffffff).show());
++                                        MediaController.saveFile(f.toString(), parentActivity, isThisVideo ? 1 : 0, desu.inugram.helpers.media.SavedMediaNameHelper.name(currentMessageObject, f.toString(), null, isThisVideo), null, uri -> BulletinFactory.createSaveToGalleryBulletin(containerView, isThisVideo, 0xf9222222, 0xffffffff).show());
+                                     } else {
+                                         showDownloadAlert();
+                                     }
+@@ -5101,11 +5101,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                                             if (videoFileForLivePhoto != null && videoFileForLivePhoto.exists()) {
+                                                 MediaController.saveFile(f.toString(), videoFileForLivePhoto.toString(), parentActivity, uri -> AndroidUtilities.runOnUIThread(bulletin));
+                                             } else {
+-                                                MediaController.saveFile(f.toString(), parentActivity, 0, null, null, uri -> AndroidUtilities.runOnUIThread(bulletin));
++                                                MediaController.saveFile(f.toString(), parentActivity, 0, desu.inugram.helpers.media.SavedMediaNameHelper.name(currentMessageObject, f.toString(), null, false), null, uri -> AndroidUtilities.runOnUIThread(bulletin));
+                                             }
+                                         } else if (!isThisLivePhoto && f != null && f.exists()) {
+                                             count[0]++;
+-                                            MediaController.saveFile(f.toString(), parentActivity, isThisVideo ? 1 : 0, null, null, uri -> AndroidUtilities.runOnUIThread(bulletin));
++                                            MediaController.saveFile(f.toString(), parentActivity, isThisVideo ? 1 : 0, desu.inugram.helpers.media.SavedMediaNameHelper.name(currentMessageObject, f.toString(), null, isThisVideo), null, uri -> AndroidUtilities.runOnUIThread(bulletin));
+                                         }
+                                     }
+                                 })

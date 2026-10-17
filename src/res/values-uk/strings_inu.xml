@@ -1715,6 +1715,8 @@
     <string name="InuSortAlbumsBySize">Сортувати альбоми за розміром</string>
     <string name="InuSortAlbumsBySizeInfo">Альбоми в меню вкладень впорядковуються за кількістю фото, а не за датою</string>
     <string name="InuDownloadDirectory">Папка завантажень</string>
+    <string name="InuSaveFilenameDate">Дата повідомлення в іменах файлів</string>
+    <string name="InuSaveFilenameDateInfo">Збережені фото, відео й файли отримують дату й час надсилання повідомлення, наприклад IMG_2026-08-24_05-32-18.jpg</string>
     <string name="InuDownloadDirectoryApplied">Застосовується лише до нових завантажень</string>
     <string name="InuPreviewMessage">Попередній перегляд</string>
     <string name="InuMinimize">Згорнути</string>

@@ -287,6 +287,14 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.DOWNLOAD_DIRECTORY.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SAVE_FILENAME_DATE,
+                R.string.InuSaveFilenameDate,
+                R.string.InuSaveFilenameDateInfo,
+                InuConfig.SAVE_FILENAME_DATE.value,
+            )
+        )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuFasterTransfersInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMapsHeader)))
@@ -422,6 +430,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_CALL_ROTATION -> {
                 val new = InuConfig.CALL_ROTATION.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_SAVE_FILENAME_DATE -> {
+                val new = InuConfig.SAVE_FILENAME_DATE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
@@ -619,6 +632,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_OPEN_BY_USER_ID = InuUtils.generateId()
         private val BUTTON_PERFORMANCE_CLASS = InuUtils.generateId()
         private val BUTTON_DOWNLOAD_DIRECTORY = InuUtils.generateId()
+        private val TOGGLE_SAVE_FILENAME_DATE = InuUtils.generateId()
 
         private val DOWNLOAD_DIRECTORIES = listOf("entinyGram", "Telegram")
         private val BUTTON_TEXT_CLASSIFIER_MODE = InuUtils.generateId()
@@ -701,6 +715,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("send-mp4-document-as-video", R.string.InuSendMp4DocumentAsVideo, TOGGLE_SEND_MP4_DOCUMENT_AS_VIDEO),
                 SearchRegistry.Entry("chat-export", R.string.InuChatExport, TOGGLE_CHAT_EXPORT),
                 SearchRegistry.Entry("download-directory", R.string.InuDownloadDirectory, BUTTON_DOWNLOAD_DIRECTORY),
+                SearchRegistry.Entry("save-filename-date", R.string.InuSaveFilenameDate, TOGGLE_SAVE_FILENAME_DATE),
                 SearchRegistry.Entry("web-preview-replacements", R.string.InuWebPreviewReplacements, BUTTON_WEB_PREVIEW_REPLACEMENTS),
                 SearchRegistry.Entry("auto-disable-proxy-on-vpn", R.string.InuAutoDisableProxyOnVpn, TOGGLE_AUTO_DISABLE_PROXY_ON_VPN),
                 SearchRegistry.Entry("keep-downloads-in-background", R.string.InuKeepDownloadsInBackground, TOGGLE_KEEP_DOWNLOADS_IN_BACKGROUND),
