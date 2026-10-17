@@ -297,11 +297,11 @@
     <string name="InuHideChannelShareButtonInfo">Hide the share icon next to channel posts; forwarding from the menu still works.</string>
     <string name="InuDisableProfileMusicAutoplay">Disable profile music auto-play</string>
     <string name="InuDisableProfileMusicAutoplayInfo">Don\'t start playback automatically when opening the pinned music player on a profile</string>
-    <string name="InuDisableNextAudioPreload">Don't preload next audio</string>
-    <string name="InuDisableNextAudioPreloadInfo">Don't download the next track or voice message in advance while one is playing</string>
-    <string name="InuDisableNextMusicAutoplay">Don't auto-play next music</string>
+    <string name="InuDisableNextAudioPreload">Don\'t preload next audio</string>
+    <string name="InuDisableNextAudioPreloadInfo">Don\'t download the next track or voice message in advance while one is playing</string>
+    <string name="InuDisableNextMusicAutoplay">Don\'t auto-play next music</string>
     <string name="InuDisableNextMusicAutoplayInfo">Stop when a track ends instead of starting the next one</string>
-    <string name="InuDisableNextVoiceAutoplay">Don't auto-play next voice message</string>
+    <string name="InuDisableNextVoiceAutoplay">Don\'t auto-play next voice message</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Stop after a voice message instead of playing the next one in the chat</string>
     <string name="InuHideGiftAuctionsHint">Hide gift auction banner</string>
     <string name="InuHideCacheHint">Hide \"free up space\" card</string>
