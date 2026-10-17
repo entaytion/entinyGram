@@ -11,11 +11,11 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -2009,6 +2009,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
-                                                 message.spoilLoginCode();
-                                             }
-                                             MediaDataController.addTextStyleRuns(message, stringBuilder, TextStyleSpan.FLAG_STYLE_SPOILER | TextStyleSpan.FLAG_STYLE_STRIKE);
-+                                            desu.inugram.helpers.dialogs.DialogPreviewHelper.spoil(stringBuilder);
-                                             if (message != null && message.messageOwner != null) {
-                                                 MediaDataController.addAnimatedEmojiSpans(message.messageOwner.entities, stringBuilder, currentMessagePaint == null ? null : currentMessagePaint.getFontMetricsInt());
-                                             }
+@@ -2789,6 +2789,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                     }
+                 }
+             }
++            if (message != null) messageString = desu.inugram.helpers.dialogs.DialogPreviewHelper.spoil(messageString);
+             if ((useForceThreeLines || SharedConfig.useThreeLinesLayout) && !hasTags() && currentDialogFolderId != 0 && currentDialogFolderDialogsCount > 1) {
+                 messageStringFinal = messageNameString;
+                 messageNameString = null;
