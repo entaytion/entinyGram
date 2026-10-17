@@ -157,6 +157,10 @@ object MainTabsHelper {
         }
 
     @JvmStatic
+    val mainTabsBarHeight: Int
+        get() = mainTabsHeight + mainTabsMargin * 2
+
+    @JvmStatic
     val mainTabsHeightWithMargins: Int
         get() = mainTabsHeight + mainTabsMargin * 2 + bottomLiftDp
 

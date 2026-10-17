@@ -4,8 +4,8 @@ Date: Sat, 17 Oct 2026 17:28:56 +0300
 Subject: [+] raise bottom bar
 
 ---
- .../src/main/java/org/telegram/ui/MainTabsActivity.java       | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java     | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 index 0000000..0000000 100644
@@ -20,6 +20,15 @@ index 0000000..0000000 100644
              }
          };
  
+@@ -497,7 +497,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             tabsBarContainer.addView(searchTabContainer, searchParams);
+         }
+         tabsBarContainer.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
+-        tabsViewWrapper.addView(tabsBarContainer, LayoutHelper.createFrame(M3MainTabsHelper.isEnabled() ? LayoutHelper.MATCH_PARENT : LayoutHelper.WRAP_CONTENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
++        tabsViewWrapper.addView(tabsBarContainer, LayoutHelper.createFrame(M3MainTabsHelper.isEnabled() ? LayoutHelper.MATCH_PARENT : LayoutHelper.WRAP_CONTENT, MainTabsHelper.getMainTabsBarHeight(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
+         tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
+         tabsViewWrapper.setClipToPadding(false);
+         M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
 @@ -1071,7 +1071,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {
