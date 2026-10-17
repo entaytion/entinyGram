@@ -56,7 +56,7 @@ object DialogsFabHelper {
         } else if (!offsetForBottomBar()) {
             -dp(10f)
         } else {
-            dp((MainTabsHelper.mainTabsHeight + MainTabsHelper.mainTabsMargin).toFloat())
+            dp((MainTabsHelper.mainTabsHeight + MainTabsHelper.mainTabsMargin + MainTabsHelper.bottomLiftDp).toFloat())
         }
         if (FolderHelper.atBottom()) offset += dp(FolderHelper.bottomReservedHeightDp().toFloat())
         return offset

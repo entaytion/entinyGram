@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 17 Oct 2026 17:28:56 +0300
+Subject: [+] raise bottom bar
+
+---
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java       | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -287,7 +287,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             @Override
+             public int getBottomOffset(int tag) {
+                 if (MainTabsHelper.isHidden()) return navigationBarHeight;
+-                return navigationBarHeight + dp(MainTabsHelper.getMainTabsHeight() + MainTabsHelper.getMainTabsMargin());
++                return navigationBarHeight + dp(MainTabsHelper.getMainTabsHeight() + MainTabsHelper.getMainTabsMargin() + MainTabsHelper.getBottomLiftDp());
+             }
+         };
+ 
+@@ -1071,7 +1071,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+         if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {
+             final int iosSidePadding = MainTabsHelper.getIosSidePaddingExtra();
+-            tabsViewWrapper.setPadding(systemInsets.left + iosSidePadding, 0, systemInsets.right + iosSidePadding, navigationBarHeight);
++            tabsViewWrapper.setPadding(systemInsets.left + iosSidePadding, 0, systemInsets.right + iosSidePadding, navigationBarHeight + MainTabsHelper.getBottomLiftPx());
+         } else {
+             ViewGroup.LayoutParams barLp = tabsBarContainer.getLayoutParams();
+             final int barHeight = dp(MainTabsHelper.getMainTabsHeight()) + navigationBarHeight;

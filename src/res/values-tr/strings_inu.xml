@@ -1985,4 +1985,5 @@
     <string name="InuDisableNextMusicAutoplayInfo">Parça bitince sonrakini başlatmak yerine dur</string>
     <string name="InuDisableNextVoiceAutoplay">Sonraki sesli mesajı otomatik oynatma</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Sesli mesajdan sonra sohbetteki sonrakini oynatmak yerine dur</string>
+    <string name="InuBottomTabsLift">Gezinme çubuğunu yükselt</string>
 </resources>

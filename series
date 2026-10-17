@@ -544,3 +544,4 @@ entiny/chat/reply-quote-command-color.patch
 entiny/chat/hidden-undeletable-dialogs.patch
 entiny/media/next-audio-controls.patch
 entiny/ui/dialogs-m3-sections.patch
+entiny/tabs/bottom-tabs-lift.patch

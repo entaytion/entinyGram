@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.dialogs.DialogsFabHelper
+import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.menu.MainTabsMenuConfig
@@ -28,6 +29,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
 
     private var filterTabsPreview: FilterTabsPreviewCell? = null
     private var mainTabsPreview: MainTabsPreviewCell? = null
+    private var bottomLiftSlider: SliderCell? = null
     private var mainTabsEntries: MutableList<MenuOrderEntry<MainTabsMenuConfig.Item>> = InuConfig.BOTTOM_TABS_ORDER.value.toMutableList()
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMainPage)
@@ -212,6 +214,23 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                     InuConfig.BOTTOM_TABS_COMPACT_MODE.value
                 )
             )
+            if (InuConfig.BOTTOM_TABS_COMPACT_MODE.value && !MainTabsHelper.isMaterial) {
+                if (bottomLiftSlider == null) {
+                    bottomLiftSlider = SliderCell(
+                        this.context, min = 0f, max = 48f,
+                        defaultValue = InuConfig.BOTTOM_TABS_LIFT.default.toFloat(),
+                        initialValue = InuConfig.BOTTOM_TABS_LIFT.value.toFloat(),
+                        step = 1f,
+                        title = LocaleController.getString(R.string.InuBottomTabsLift),
+                        format = { "${it.toInt()} dp" },
+                        onChanged = { InuConfig.BOTTOM_TABS_LIFT.value = it.toInt() },
+                        onReleased = { showRestartBulletin() },
+                    )
+                } else {
+                    bottomLiftSlider?.updateColors()
+                }
+                items.add(UItem.asCustom(bottomLiftSlider))
+            }
             if (!InuConfig.BOTTOM_TABS_COMPACT_MODE.value) {
                 items.add(
                     UItem.asCheck(

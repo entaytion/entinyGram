@@ -2008,4 +2008,5 @@
     <string name="InuDisableNextMusicAutoplayInfo">پس از پایان آهنگ متوقف شود و آهنگ بعدی پخش نشود</string>
     <string name="InuDisableNextVoiceAutoplay">پخش خودکار پیام صوتی بعدی نباشد</string>
     <string name="InuDisableNextVoiceAutoplayInfo">پس از پیام صوتی متوقف شود و پیام صوتی بعدی در گفتگو پخش نشود</string>
+    <string name="InuBottomTabsLift">بالا بردن نوار پایین</string>
 </resources>

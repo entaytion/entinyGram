@@ -155,7 +155,7 @@ object Md3PlayerHelper {
         val tabs = when {
             hidden -> 0
             MainTabsHelper.isMaterial -> AndroidUtilities.dp(MainTabsHelper.mainTabsHeight.toFloat())
-            else -> AndroidUtilities.dp((MainTabsHelper.mainTabsHeight + MainTabsHelper.mainTabsMargin).toFloat())
+            else -> AndroidUtilities.dp((MainTabsHelper.mainTabsHeight + MainTabsHelper.mainTabsMargin + MainTabsHelper.bottomLiftDp).toFloat())
         }
         val update = if (updateVisible) AndroidUtilities.dp(UpdateLayoutWrapper.HEIGHT.toFloat()) else 0
         val folders = if (FolderHelper.atBottom()) AndroidUtilities.dp(FolderHelper.bottomReservedHeightDp().toFloat()) else 0

@@ -1984,4 +1984,5 @@
     <string name="InuDisableNextMusicAutoplayInfo">曲目结束后停止，而不是开始下一首</string>
     <string name="InuDisableNextVoiceAutoplay">不自动播放下一条语音消息</string>
     <string name="InuDisableNextVoiceAutoplayInfo">语音消息结束后停止，而不是播放聊天中的下一条</string>
+    <string name="InuBottomTabsLift">抬高底部导航栏</string>
 </resources>

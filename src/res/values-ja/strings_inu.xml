@@ -1984,4 +1984,5 @@
     <string name="InuDisableNextMusicAutoplayInfo">トラックの終了後に次を再生せず停止します</string>
     <string name="InuDisableNextVoiceAutoplay">次のボイスメッセージを自動再生しない</string>
     <string name="InuDisableNextVoiceAutoplayInfo">ボイスメッセージの終了後にチャット内の次を再生せず停止します</string>
+    <string name="InuBottomTabsLift">ナビゲーションバーを上げる</string>
 </resources>

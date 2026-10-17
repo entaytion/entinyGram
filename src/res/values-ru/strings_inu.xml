@@ -2000,4 +2000,5 @@
     <string name="InuDisableNextMusicAutoplayInfo">Останавливаться после трека вместо запуска следующего</string>
     <string name="InuDisableNextVoiceAutoplay">Не включать следующее голосовое автоматически</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Останавливаться после голосового вместо воспроизведения следующего в чате</string>
+    <string name="InuBottomTabsLift">Поднять нижнюю панель</string>
 </resources>
