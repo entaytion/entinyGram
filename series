@@ -542,3 +542,4 @@ entiny/ui/hide-dialog-preview.patch
 entiny/chat/attach-preview-caption-reorder.patch
 entiny/ui/light-status-bar-insets.patch
 entiny/chat/reply-quote-command-color.patch
+entiny/chat/hidden-undeletable-dialogs.patch

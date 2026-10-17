@@ -211,6 +211,13 @@ object InuDatabaseHelper {
             Log.d("InuDatabaseHelper", "edit history v20 rebuild took ${android.os.SystemClock.elapsedRealtime() - started} ms")
         }
 
+        if (version == 20) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_hidden_dialogs(dialog_id INTEGER PRIMARY KEY)")
+                .stepThis().dispose()
+            writeKv(db, "version", "21")
+            version = 21
+        }
+
         // entiny: the feed no longer keeps its own cache
         db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 
@@ -462,6 +469,31 @@ object InuDatabaseHelper {
         query.bindLong(2, dialogId)
         query.step()
         query.dispose()
+    }
+
+    fun saveHiddenDialog(db: SQLiteDatabase, dialogId: Long) {
+        val query = db.executeFast("REPLACE INTO inu_hidden_dialogs(dialog_id) VALUES(?)")
+        query.bindLong(1, dialogId)
+        query.step()
+        query.dispose()
+    }
+
+    fun removeHiddenDialog(db: SQLiteDatabase, dialogId: Long) {
+        val query = db.executeFast("DELETE FROM inu_hidden_dialogs WHERE dialog_id = ?")
+        query.bindLong(1, dialogId)
+        query.step()
+        query.dispose()
+    }
+
+    fun loadHiddenDialogs(db: SQLiteDatabase): Set<Long> {
+        val set = HashSet<Long>()
+        val cursor = db.queryFinalized("SELECT dialog_id FROM inu_hidden_dialogs")
+        try {
+            while (cursor.next()) set.add(cursor.longValue(0))
+        } finally {
+            cursor.dispose()
+        }
+        return set
     }
 
     fun loadLocalPins(db: SQLiteDatabase): Map<Int, LinkedHashMap<Long, Int>> {

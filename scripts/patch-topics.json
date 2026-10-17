@@ -78,6 +78,7 @@
   "hide-reactions": "chat",
   "bot-account-updates": "accounts",
   "chat-presence-dots": "ui",
+  "hidden-undeletable-dialogs": "chat",
   "light-status-bar-insets": "ui",
   "hide-dialog-preview": "ui",
   "send-as-sticker": "media",

@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 17 Oct 2026 15:29:51 +0300
+Subject: [*] keep undeletable dialogs hidden
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java   | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -10375,6 +10375,9 @@ public class MessagesController extends BaseController implements NotificationCe
+                     if (newTaskId != 0) {
+                         getMessagesStorage().removePendingTask(newTaskId);
+                     }
++                    if (error != null && error.code == 400 && onlyHistory == 0) {
++                        desu.inugram.helpers.dialogs.HiddenDialogsHelper.hide(currentAccount, did);
++                    }
+                     if (error == null) {
+                         TLRPC.TL_messages_affectedHistory res = (TLRPC.TL_messages_affectedHistory) response;
+                         if (res.offset > 0) {
