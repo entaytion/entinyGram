@@ -580,7 +580,7 @@ object MessageDetailsHelper {
 
         if (!filePath.isNullOrEmpty() && File(filePath).exists()) {
             try {
-                MediaMetadataRetriever().use { r ->
+                withRetriever { r ->
                     r.setDataSource(filePath)
                     if (attrPerformer.isNullOrEmpty()) {
                         attrPerformer = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
@@ -602,7 +602,7 @@ object MessageDetailsHelper {
 
             try {
                 val extractor = MediaExtractor()
-                extractor.setDataSource(filePath)
+                try { extractor.setDataSource(filePath) } catch (e: Exception) { extractor.release(); throw e }
                 for (i in 0 until extractor.trackCount) {
                     val format = extractor.getTrackFormat(i)
                     val trkMime = format.getString(MediaFormat.KEY_MIME).orEmpty()
@@ -717,7 +717,7 @@ object MessageDetailsHelper {
         if (!filePath.isNullOrEmpty() && File(filePath).exists()) {
             try {
                 val extractor = MediaExtractor()
-                extractor.setDataSource(filePath)
+                try { extractor.setDataSource(filePath) } catch (e: Exception) { extractor.release(); throw e }
                 var isVideo = false
                 for (i in 0 until extractor.trackCount) {
                     val format = extractor.getTrackFormat(i)
@@ -737,7 +737,7 @@ object MessageDetailsHelper {
                 extractor.release()
 
                 if (isVideo && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    MediaMetadataRetriever().use { r ->
+                    withRetriever { r ->
                         r.setDataSource(filePath)
                         val fc = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT)?.toLongOrNull() ?: 0L
                         val dur = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
@@ -1031,4 +1031,14 @@ object MessageDetailsHelper {
     }
 
     data class Tuple4<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
+}
+
+// entiny: MediaMetadataRetriever is AutoCloseable only since API 29, so use{} breaks on API 26-28
+private inline fun <T> withRetriever(block: (MediaMetadataRetriever) -> T): T {
+    val retriever = MediaMetadataRetriever()
+    try {
+        return block(retriever)
+    } finally {
+        retriever.release()
+    }
 }
