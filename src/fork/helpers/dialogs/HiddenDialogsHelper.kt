@@ -44,11 +44,17 @@ object HiddenDialogsHelper {
     @JvmStatic
     fun unhide(account: Int, dialogId: Long) {
         val storage = MessagesStorage.getInstance(account) ?: return
-        val removed = synchronized(cache) { cache.get(account)?.remove(dialogId) == true }
-        if (!removed) return
+        var removed = false
+        var loaded = true
+        synchronized(cache) {
+            val set = cache.get(account)
+            if (set == null) loaded = false else removed = set.remove(dialogId)
+        }
+        if (loaded && !removed) return
         storage.storageQueue.postRunnable {
             storage.database?.let { InuDatabaseHelper.removeHiddenDialog(it, dialogId) }
         }
+        if (removed) AndroidUtilities.runOnUIThread { MessagesController.getInstance(account)?.sortDialogs(null) }
     }
 
     @JvmStatic
