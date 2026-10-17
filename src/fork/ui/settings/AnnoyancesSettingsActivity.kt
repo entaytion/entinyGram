@@ -213,6 +213,30 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY.value
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_DISABLE_NEXT_AUDIO_PRELOAD,
+                R.string.InuDisableNextAudioPreload,
+                R.string.InuDisableNextAudioPreloadInfo,
+                InuConfig.DISABLE_NEXT_AUDIO_PRELOAD.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_DISABLE_NEXT_MUSIC_AUTOPLAY,
+                R.string.InuDisableNextMusicAutoplay,
+                R.string.InuDisableNextMusicAutoplayInfo,
+                InuConfig.DISABLE_NEXT_MUSIC_AUTOPLAY.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_DISABLE_NEXT_VOICE_AUTOPLAY,
+                R.string.InuDisableNextVoiceAutoplay,
+                R.string.InuDisableNextVoiceAutoplayInfo,
+                InuConfig.DISABLE_NEXT_VOICE_AUTOPLAY.value
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesGifts)))
@@ -458,6 +482,21 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
+            TOGGLE_DISABLE_NEXT_AUDIO_PRELOAD -> {
+                val new = InuConfig.DISABLE_NEXT_AUDIO_PRELOAD.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_DISABLE_NEXT_MUSIC_AUTOPLAY -> {
+                val new = InuConfig.DISABLE_NEXT_MUSIC_AUTOPLAY.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_DISABLE_NEXT_VOICE_AUTOPLAY -> {
+                val new = InuConfig.DISABLE_NEXT_VOICE_AUTOPLAY.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_HIDE_GIFT_AUCTIONS_HINT -> {
                 val new = InuConfig.HIDE_GIFT_AUCTIONS_HINT.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -691,6 +730,9 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_RICH_EDITOR_BUTTON = InuUtils.generateId()
         private val TOGGLE_HIDE_CHANNEL_SHARE_BUTTON = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY = InuUtils.generateId()
+        private val TOGGLE_DISABLE_NEXT_AUDIO_PRELOAD = InuUtils.generateId()
+        private val TOGGLE_DISABLE_NEXT_MUSIC_AUTOPLAY = InuUtils.generateId()
+        private val TOGGLE_DISABLE_NEXT_VOICE_AUTOPLAY = InuUtils.generateId()
         private val BUTTON_CLEAR_HINTS = InuUtils.generateId()
         private val TOGGLE_HIDE_REPLY_BACKGROUND = InuUtils.generateId()
         private val TOGGLE_DISABLE_REPLY_CUSTOM_COLORS = InuUtils.generateId()
@@ -755,6 +797,9 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-rich-editor-button", R.string.InuHideRichEditorButton, TOGGLE_HIDE_RICH_EDITOR_BUTTON),
                 SearchRegistry.Entry("hide-channel-share-button", R.string.InuHideChannelShareButton, TOGGLE_HIDE_CHANNEL_SHARE_BUTTON),
                 SearchRegistry.Entry("disable-profile-music-autoplay", R.string.InuDisableProfileMusicAutoplay, TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY),
+                SearchRegistry.Entry("disable-next-audio-preload", R.string.InuDisableNextAudioPreload, TOGGLE_DISABLE_NEXT_AUDIO_PRELOAD),
+                SearchRegistry.Entry("disable-next-music-autoplay", R.string.InuDisableNextMusicAutoplay, TOGGLE_DISABLE_NEXT_MUSIC_AUTOPLAY),
+                SearchRegistry.Entry("disable-next-voice-autoplay", R.string.InuDisableNextVoiceAutoplay, TOGGLE_DISABLE_NEXT_VOICE_AUTOPLAY),
                 SearchRegistry.Entry("clear-hints", R.string.InuClearHints, BUTTON_CLEAR_HINTS),
                 SearchRegistry.Entry("hide-gift-auctions-hint", R.string.InuHideGiftAuctionsHint, TOGGLE_HIDE_GIFT_AUCTIONS_HINT),
                 SearchRegistry.Entry("hide-cache-hint", R.string.InuHideCacheHint, TOGGLE_HIDE_CACHE_HINT),

@@ -932,6 +932,15 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val DISABLE_PROFILE_MUSIC_AUTOPLAY = BoolItem("disable_profile_music_autoplay", true)
 
     @JvmField
+    val DISABLE_NEXT_AUDIO_PRELOAD = BoolItem("disable_next_audio_preload", false)
+
+    @JvmField
+    val DISABLE_NEXT_MUSIC_AUTOPLAY = BoolItem("disable_next_music_autoplay", false)
+
+    @JvmField
+    val DISABLE_NEXT_VOICE_AUTOPLAY = BoolItem("disable_next_voice_autoplay", false)
+
+    @JvmField
     val HIDE_REACTIONS_ENTRY = BoolItem("hide_reactions_entry", false)
 
     @JvmField

@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 17 Oct 2026 15:51:23 +0300
+Subject: [+] next audio controls
+
+---
+ .../java/org/telegram/messenger/MediaController.java  | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -2598,7 +2598,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                 hasAudioFocus = 0;
+                 int index = -1;
+                 if (voiceMessagesPlaylist != null) {
+-                    if (byVoiceEnd && (index = voiceMessagesPlaylist.indexOf(lastFile)) >= 0) {
++                    if (byVoiceEnd && !desu.inugram.helpers.media.NextAudioHelper.stopAfterVoice() && (index = voiceMessagesPlaylist.indexOf(lastFile)) >= 0) {
+                         voiceMessagesPlaylist.remove(index);
+                         voiceMessagesPlaylistMap.remove(lastFile.getId());
+                         if (voiceMessagesPlaylist.isEmpty()) {
+@@ -3009,7 +3009,12 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+             return;
+         }
+ 
++        int inu_playlistNum = currentPlaylistNum;
+         boolean last = traversePlaylist(currentPlayList, SharedConfig.playOrderReversed ? +1 : -1);
++        if (byStop && SharedConfig.repeatMode == 0 && !forceLoopCurrentPlaylist && desu.inugram.helpers.media.NextAudioHelper.stopAfterMusic()) {
++            last = true;
++            currentPlaylistNum = inu_playlistNum;
++        }
+         if (last && byStop && SharedConfig.repeatMode == 0 && !forceLoopCurrentPlaylist) {
+             if (audioPlayer != null || videoPlayer != null) {
+                 if (audioPlayer != null) {
+@@ -3120,7 +3125,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+     }
+ 
+     private void checkIsNextVoiceFileDownloaded(int currentAccount) {
+-        if (voiceMessagesPlaylist == null || voiceMessagesPlaylist.size() < 2) {
++        if (voiceMessagesPlaylist == null || voiceMessagesPlaylist.size() < 2 || desu.inugram.helpers.media.NextAudioHelper.skipPreload()) {
+             return;
+         }
+         MessageObject nextAudio = voiceMessagesPlaylist.get(1);
+@@ -3139,7 +3144,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+     }
+ 
+     private void checkIsNextMusicFileDownloaded(int currentAccount) {
+-        if (!DownloadController.getInstance(currentAccount).canDownloadNextTrack()) {
++        if (!DownloadController.getInstance(currentAccount).canDownloadNextTrack() || desu.inugram.helpers.media.NextAudioHelper.skipPreload()) {
+             return;
+         }
+         ArrayList<MessageObject> currentPlayList = SharedConfig.shuffleMusic ? shuffledPlaylist : playlist;

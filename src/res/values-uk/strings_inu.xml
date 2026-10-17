@@ -2063,4 +2063,10 @@
     <string name="InuProfileJoinDate">Дата вступу</string>
     <string name="InuTranslateAutoFallback">Перемикати провайдера при блокуванні</string>
     <string name="InuTranslateAutoFallbackInfo">Якщо Google блокує переклад з вашої мережі, повторити через Bing, потім MyMemory. Текст буде надіслано їм</string>
+    <string name="InuDisableNextAudioPreload">Не підвантажувати наступне аудіо</string>
+    <string name="InuDisableNextAudioPreloadInfo">Не завантажувати наступний трек чи голосове наперед, поки грає поточне</string>
+    <string name="InuDisableNextMusicAutoplay">Не вмикати наступну музику автоматично</string>
+    <string name="InuDisableNextMusicAutoplayInfo">Зупинятися після треку замість запуску наступного</string>
+    <string name="InuDisableNextVoiceAutoplay">Не вмикати наступне голосове автоматично</string>
+    <string name="InuDisableNextVoiceAutoplayInfo">Зупинятися після голосового замість відтворення наступного в чаті</string>
 </resources>

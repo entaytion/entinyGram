@@ -198,6 +198,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **send as sticker**: long-press the send button on selected photos to send them as 512 px stickers
 - 📡 **sticker pack ZIP**: download a whole sticker or emoji pack as a ZIP from the pack menu
 - 📡 **hide reactions**: separate toggles to hide reactions on messages, disable setting them, and hide reaction badges in the chat list
+- 📡 **next audio controls**: don't preload the next track, don't auto-play the next music or voice message - *voice auto-play inspired by [ForkGram](https://github.com/forkgram/TelegramAndroid)*
 
 ### debloat & premium noise
 

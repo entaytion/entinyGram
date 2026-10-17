@@ -2014,4 +2014,10 @@
     <string name="InuProfileJoinDate">تاريخ الانضمام</string>
     <string name="InuTranslateAutoFallback">تبديل المزوّد عند الحظر</string>
     <string name="InuTranslateAutoFallbackInfo">إذا حظرت Google الترجمة من شبكتك، أعد المحاولة عبر Bing ثم MyMemory. سيُرسل نصك إليهما</string>
+    <string name="InuDisableNextAudioPreload">عدم التحميل المسبق للصوت التالي</string>
+    <string name="InuDisableNextAudioPreloadInfo">عدم تنزيل المقطع التالي أو الرسالة الصوتية التالية مسبقًا أثناء التشغيل</string>
+    <string name="InuDisableNextMusicAutoplay">عدم تشغيل الموسيقى التالية تلقائيًا</string>
+    <string name="InuDisableNextMusicAutoplayInfo">التوقف بعد انتهاء المقطع بدلًا من تشغيل التالي</string>
+    <string name="InuDisableNextVoiceAutoplay">عدم تشغيل الرسالة الصوتية التالية تلقائيًا</string>
+    <string name="InuDisableNextVoiceAutoplayInfo">التوقف بعد الرسالة الصوتية بدلًا من تشغيل التالية في المحادثة</string>
 </resources>
