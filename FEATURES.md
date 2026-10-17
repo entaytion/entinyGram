@@ -136,6 +136,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **messages appearance**: hide reply background, custom reply colors and pattern emoji - *inspired by [Finegram](https://github.com/Th3Nekit/Finegram)*
 - 📡 **snowflakes in chats**: falling snow over the chat background any time of year
 - 📡 **snowflakes in header**: falling snow over the title bar any time of year - *ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+- 📡 **chat list sections**: chats as rounded Material 3 cards with adjustable side margins and pinned chats and archive as their own card - *inspired by Modular Sections (@RnPlugins)*
 
 ### profile & identity tools
 

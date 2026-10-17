@@ -26,6 +26,7 @@ import desu.inugram.ui.settings.GhostModeSettingsActivity
 import desu.inugram.ui.settings.IconPacksSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.IosStyleSettingsActivity
+import desu.inugram.ui.settings.Material3SettingsActivity
 import desu.inugram.ui.settings.MessageDesignSettingsActivity
 import desu.inugram.ui.settings.DrawerSettingsActivity
 import desu.inugram.ui.settings.DrawerMenuOrderActivity
@@ -72,6 +73,7 @@ object SearchRegistry {
             AppearanceSettingsActivity.PAGE,
             ChatHeaderSettingsActivity.PAGE,
             IosStyleSettingsActivity.PAGE,
+            Material3SettingsActivity.PAGE,
             MessageDesignSettingsActivity.PAGE,
             DrawerSettingsActivity.PAGE,
             DrawerMenuOrderActivity.PAGE,

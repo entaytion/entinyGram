@@ -390,6 +390,16 @@
     <string name="InuIosBottomBar">iOS-style bottom bar</string>
     <string name="InuIosBottomBarInfo">iOS-style wider, evenly-spread bottom tabs. Disables Material 3 tabs.</string>
     <string name="InuDialogsFab">FAB</string>
+    <string name="InuDesignStyle">Design style</string>
+    <string name="InuMaterial3SettingsInfo">Switches, sliders, sections, avatars, chat list cards and more.</string>
+    <string name="InuDialogsSections">Chat list sections</string>
+    <string name="InuDialogsSectionsCards">Card sections</string>
+    <string name="InuDialogsSectionsMargin">Side margins</string>
+    <string name="InuDialogsSectionsMarginNone">None</string>
+    <string name="InuDialogsSectionsMarginMedium">Medium</string>
+    <string name="InuDialogsSectionsMarginLarge">Large</string>
+    <string name="InuDialogsSectionsSeparatePinned">Pinned separately</string>
+    <string name="InuDialogsSectionsSeparatePinnedInfo">Show pinned chats and archive as their own card</string>
     <string name="InuDialogsFabMainAction">Primary action</string>
     <string name="InuDialogsFabSecondaryAction">Secondary action</string>
     <string name="InuDialogsFabHideOnScroll">Hide when scrolling</string>

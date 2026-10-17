@@ -244,6 +244,16 @@
     <string name="InuCompactMode">Компактний режим</string>
     <string name="InuCompactModeInfo">Приховує заголовки та зменшує розмір вкладок</string>
     <string name="InuDialogsFab">Плаваюча кнопка (FAB)</string>
+    <string name="InuDesignStyle">Стиль оформлення</string>
+    <string name="InuMaterial3SettingsInfo">Перемикачі, повзунки, секції, аватари, картки списку чатів та інше.</string>
+    <string name="InuDialogsSections">Секції списку чатів</string>
+    <string name="InuDialogsSectionsCards">Секції-картки</string>
+    <string name="InuDialogsSectionsMargin">Бічні відступи</string>
+    <string name="InuDialogsSectionsMarginNone">Немає</string>
+    <string name="InuDialogsSectionsMarginMedium">Середні</string>
+    <string name="InuDialogsSectionsMarginLarge">Великі</string>
+    <string name="InuDialogsSectionsSeparatePinned">Закріплені окремо</string>
+    <string name="InuDialogsSectionsSeparatePinnedInfo">Показувати закріплені чати й архів окремою карткою</string>
     <string name="InuDialogsFabMainAction">Основна дія</string>
     <string name="InuDialogsFabSecondaryAction">Вторинна дія</string>
     <string name="InuDialogsFabHideOnScroll">Приховувати при скролінгу</string>

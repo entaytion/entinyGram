@@ -6,12 +6,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import desu.inugram.InuConfig
 import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.theme.MonetHelper
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
@@ -31,25 +29,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCategoryAppearance)
 
-    private val m3Group by lazy {
-        ExpandableBoolGroup(
-            LocaleController.getString(R.string.InuMaterial3),
-            listOf(
-                ExpandableBoolGroup.Option(R.string.InuMaterial3Switches, InuConfig.MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_SWITCHES),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3Sliders, InuConfig.MATERIAL3_SLIDERS, TOGGLE_MATERIAL3_SLIDERS),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3Sections, InuConfig.M3_SECTIONS_STYLE, TOGGLE_M3_SECTIONS_STYLE),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3AccentIcons, InuConfig.M3_ACCENT_ICONS, TOGGLE_M3_ACCENT_ICONS),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3Avatars, InuConfig.MATERIAL3_AVATARS, TOGGLE_MATERIAL3_AVATARS),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3BottomTabs, InuConfig.M3_BOTTOM_TABS, TOGGLE_M3_BOTTOM_TABS),
-                ExpandableBoolGroup.Option(R.string.InuMaterialProfileActions, InuConfig.MATERIAL_PROFILE_ACTIONS, TOGGLE_MATERIAL_PROFILE_ACTIONS),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3NavigationAnimation, InuConfig.M3_NAVIGATION_ANIMATION, TOGGLE_M3_NAVIGATION_ANIMATION),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3Player, InuConfig.MD3_PLAYER, TOGGLE_MD3_PLAYER),
-            ),
-            sectionId = SECTION_MATERIAL3,
-        )
-    }
-
     override fun onResume() {
         super.onResume()
         listView?.adapter?.update(false)
@@ -60,35 +39,17 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
         items.add(mkSubPageButton(BUTTON_FONTS, LocaleController.getString(R.string.InuFonts)))
         items.add(mkTwoLineEntry(BUTTON_ICON_REPLACEMENT, R.drawable.phosphor_palette, LocaleController.getString(R.string.InuIconReplacement), IconPacksSettingsActivity.currentPackLabel()))
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDesignStyle)))
         items.add(mkTwoLineEntry(BUTTON_IOS_STYLE, R.drawable.msg_newphone, LocaleController.getString(R.string.InuIosSettings), LocaleController.getString(R.string.InuIosSettingsInfo)))
+        items.add(mkTwoLineEntry(BUTTON_MATERIAL3, R.drawable.inu_tabler_layout_cards, LocaleController.getString(R.string.InuMaterial3), LocaleController.getString(R.string.InuMaterial3SettingsInfo)))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuInterfaceElements)))
         items.add(mkTwoLineEntry(BUTTON_MESSAGE_DESIGN, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessageDesign), LocaleController.getString(R.string.InuMessageDesignInfo)))
         items.add(mkTwoLineEntry(BUTTON_SIDE_MENU, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuSideMenu), LocaleController.getString(R.string.InuSideMenuInfo)))
         items.add(mkTwoLineEntry(BUTTON_MENUS, R.drawable.inu_tabler_list, LocaleController.getString(R.string.InuMenus), LocaleController.getString(R.string.InuMenusInfo)))
-        items.add(UItem.asShadow(null))
-
-        m3Group.addTo(items) { changed ->
-            if (changed.any { it.id == TOGGLE_M3_BOTTOM_TABS } && InuConfig.M3_BOTTOM_TABS.value && InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
-                InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
-                showRestartBulletin()
-            }
-            // entiny: the master switch flips the sections style too, so rebuild this page like the single toggle does
-            if (changed.any { it.id == TOGGLE_M3_SECTIONS_STYLE }) inu_rebuildSelf()
-            invalidateVisibleRows()
-            softRebuild()
-            listView.adapter.update(true)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            items.add(
-                UItem.asButton(
-                    BUTTON_MONET_THEME,
-                    LocaleController.getString(R.string.InuMonetTheme),
-                    monetThemeModeLabel(MonetHelper.getThemeMode()),
-                )
-            )
-        }
         items.add(UItem.asShadow(null))
 
         if (avatarCornerPreview == null) {
@@ -219,24 +180,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (m3Group.handleClick(item, view) { changed ->
-            when (changed?.id) {
-                TOGGLE_MATERIAL3_SWITCHES -> invalidateVisibleRows()
-                TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_ACCENT_ICONS -> inu_rebuildSelf()
-                TOGGLE_M3_BOTTOM_TABS -> {
-                    if (InuConfig.M3_BOTTOM_TABS.value && InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
-                        InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
-                        invalidateVisibleRows()
-                        showRestartBulletin()
-                    }
-                }
-            }
-            if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_ACCENT_ICONS, TOGGLE_M3_BOTTOM_TABS, TOGGLE_MATERIAL_PROFILE_ACTIONS)) {
-                softRebuild()
-            }
-            listView.adapter.update(true)
-        }) return
-
         when (item.id) {
 
             TOGGLE_HIDE_FADE_VIEW -> {
@@ -293,28 +236,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuHooks.syncChatInputRowHeight()
             }
 
-            BUTTON_MONET_THEME -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val context = context ?: return
-                showDialog(
-                    RadioDialogBuilder(context, getResourceProvider())
-                        .setTitle(LocaleController.getString(R.string.InuMonetTheme))
-                        .setItems(
-                            arrayOf(
-                                LocaleController.getString(R.string.InuMonetThemeDisabled),
-                                LocaleController.getString(R.string.InuMonetThemeLight),
-                                LocaleController.getString(R.string.InuMonetThemeDark),
-                                LocaleController.getString(R.string.InuMonetThemeAmoled),
-                                LocaleController.getString(R.string.InuMonetThemeAuto),
-                                LocaleController.getString(R.string.InuMonetThemeAutoAmoled),
-                            ),
-                            MonetHelper.getThemeMode().ordinal,
-                        ) { _, which ->
-                            MonetHelper.setThemeMode(MonetHelper.ThemeMode.entries[which])
-                            listView.adapter.update(true)
-                        }.create()
-                )
-            }
-
             TOGGLE_DISABLE_CHAT_BACKGROUNDS -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_CHAT_BACKGROUNDS.toggle()
             TOGGLE_DISABLE_CHAT_THEMES -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_CHAT_THEMES.toggle()
             TOGGLE_DISABLE_BG_PARALLAX -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_BG_PARALLAX.toggle()
@@ -336,6 +257,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             }
 
             BUTTON_IOS_STYLE -> presentFragment(IosStyleSettingsActivity())
+            BUTTON_MATERIAL3 -> presentFragment(Material3SettingsActivity())
             BUTTON_MESSAGE_DESIGN -> presentFragment(MessageDesignSettingsActivity())
             BUTTON_SIDE_MENU -> presentFragment(DrawerSettingsActivity())
             BUTTON_MENUS -> presentFragment(MenusSettingsActivity())
@@ -344,7 +266,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
-        private val SECTION_MATERIAL3 = InuUtils.generateId()
         private val TOGGLE_HIDE_FADE_VIEW = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_FOLDERS_BAR = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS = InuUtils.generateId()
@@ -354,21 +275,11 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_SCRIM_BLUR = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_AVATAR_BLUR = InuUtils.generateId()
         private val TOGGLE_REDUCE_MENU_MOTION = InuUtils.generateId()
-        private val TOGGLE_MATERIAL3_SWITCHES = InuUtils.generateId()
-        private val TOGGLE_MATERIAL3_SLIDERS = InuUtils.generateId()
-        private val TOGGLE_MATERIAL3_FABS = InuUtils.generateId()
-        private val TOGGLE_M3_SECTIONS_STYLE = InuUtils.generateId()
-        private val TOGGLE_M3_ACCENT_ICONS = InuUtils.generateId()
-        private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
-        private val TOGGLE_M3_BOTTOM_TABS = InuUtils.generateId()
-        private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
-        private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
-        private val TOGGLE_MD3_PLAYER = InuUtils.generateId()
         private val TOGGLE_UNIFIED_CORNER_RADIUS = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
-        private val BUTTON_MONET_THEME = InuUtils.generateId()
         private val BUTTON_IOS_STYLE = InuUtils.generateId()
+        private val BUTTON_MATERIAL3 = InuUtils.generateId()
         private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
         private val TOGGLE_OPTIMIZED_ATTACHMENT_MENU = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_BACKGROUNDS = InuUtils.generateId()
@@ -377,16 +288,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val BUTTON_MESSAGE_DESIGN = InuUtils.generateId()
         private val BUTTON_SIDE_MENU = InuUtils.generateId()
         private val BUTTON_MENUS = InuUtils.generateId()
-
-        @RequiresApi(Build.VERSION_CODES.S)
-        private fun monetThemeModeLabel(mode: MonetHelper.ThemeMode): String = when (mode) {
-            MonetHelper.ThemeMode.LIGHT -> LocaleController.getString(R.string.InuMonetThemeLight)
-            MonetHelper.ThemeMode.DARK -> LocaleController.getString(R.string.InuMonetThemeDark)
-            MonetHelper.ThemeMode.AMOLED -> LocaleController.getString(R.string.InuMonetThemeAmoled)
-            MonetHelper.ThemeMode.AUTO -> LocaleController.getString(R.string.InuMonetThemeAuto)
-            MonetHelper.ThemeMode.AUTO_AMOLED -> LocaleController.getString(R.string.InuMonetThemeAutoAmoled)
-            else -> LocaleController.getString(R.string.InuMonetThemeDisabled)
-        }
 
         private fun predictiveBackModeLabel(value: Int): String = when (value) {
             InuConfig.PredictiveBackModeItem.OFF -> LocaleController.getString(R.string.InuPredictiveBackOff)
@@ -404,16 +305,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-scrim-blur", R.string.InuDisableScrimBlur, TOGGLE_DISABLE_SCRIM_BLUR),
                 SearchRegistry.Entry("disable-profile-avatar-blur", R.string.InuDisableProfileAvatarBlur, TOGGLE_DISABLE_PROFILE_AVATAR_BLUR),
                 SearchRegistry.Entry("reduce-menu-motion", R.string.InuReduceMenuMotion, TOGGLE_REDUCE_MENU_MOTION),
-                SearchRegistry.Entry("material3-switches", R.string.InuMaterial3Switches, TOGGLE_MATERIAL3_SWITCHES),
-                SearchRegistry.Entry("material3-sliders", R.string.InuMaterial3Sliders, TOGGLE_MATERIAL3_SLIDERS),
-                SearchRegistry.Entry("material3-fabs", R.string.InuMaterial3Fabs, TOGGLE_MATERIAL3_FABS),
-                SearchRegistry.Entry("material3-sections", R.string.InuMaterial3Sections, TOGGLE_M3_SECTIONS_STYLE),
-                SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),
-                SearchRegistry.Entry("m3-bottom-tabs", R.string.InuMaterial3BottomTabs, TOGGLE_M3_BOTTOM_TABS),
-                SearchRegistry.Entry("material-profile-actions", R.string.InuMaterialProfileActions, TOGGLE_MATERIAL_PROFILE_ACTIONS),
-                SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
                 SearchRegistry.Entry("unified-corner-radius", R.string.InuUnifiedCornerRadius, TOGGLE_UNIFIED_CORNER_RADIUS),
-                SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),
