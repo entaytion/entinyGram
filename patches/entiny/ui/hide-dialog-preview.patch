@@ -4,14 +4,30 @@ Date: Fri, 16 Oct 2026 11:50:54 +0300
 Subject: [+] hide last message preview
 
 ---
- .../src/main/java/org/telegram/ui/Cells/DialogCell.java          | 1 +
- 1 file changed, 1 insertion(+)
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java    | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -2789,6 +2789,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -271,6 +271,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+     private boolean drawForwardIcon, drawGiftIcon;
+     private boolean visibleOnScreen = true;
+     private boolean updateLayout;
++    private int inu_previewRev;
+     private boolean wasDrawnOnline;
+ 
+     public void setMoving(boolean moving) {
+@@ -2751,6 +2752,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+         try {
+             buttonCreated = false;
+             if (!TextUtils.isEmpty(buttonString)) {
++                if (message != null) buttonString = desu.inugram.helpers.dialogs.DialogPreviewHelper.spoil(buttonString);
+                 buttonString = Emoji.replaceEmoji(buttonString, currentMessagePaint.getFontMetricsInt(), false);
+                 CharSequence buttonStringFinal = TextUtils.ellipsize(buttonString, currentMessagePaint, messageWidth - dp(26), TextUtils.TruncateAt.END);
+                 buttonLayout = new StaticLayout(buttonStringFinal, currentMessagePaint, messageWidth - dp(20), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+@@ -2789,6 +2791,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                      }
                  }
              }
@@ -19,3 +35,14 @@ index 0000000..0000000 100644
              if ((useForceThreeLines || SharedConfig.useThreeLinesLayout) && !hasTags() && currentDialogFolderId != 0 && currentDialogFolderDialogsCount > 1) {
                  messageStringFinal = messageNameString;
                  messageNameString = null;
+@@ -3756,6 +3759,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+         if (isForumCell() != oldIsForumCell) {
+             requestLayout = true;
+         }
++        if (inu_previewRev != desu.inugram.helpers.dialogs.DialogPreviewHelper.getRev()) {
++            inu_previewRev = desu.inugram.helpers.dialogs.DialogPreviewHelper.getRev();
++            rebuildLayout = true;
++        }
+         if (rebuildLayout) {
+             if (attachedToWindow) {
+                 buildLayout();

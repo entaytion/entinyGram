@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.LinearLayout
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
+import desu.inugram.helpers.dialogs.DialogPreviewHelper
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.InuUtils
@@ -536,6 +537,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
             TOGGLE_HIDE_DIALOG_PREVIEW -> {
                 val new = InuConfig.HIDE_DIALOG_PREVIEW.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                DialogPreviewHelper.refresh()
             }
 
             TOGGLE_FAB_LEFT_SIDE -> {
