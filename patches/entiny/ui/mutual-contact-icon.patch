@@ -7,8 +7,8 @@ Modified from inugram base patch by alina sireneva <alina@tei.su> and Oleksii Ku
 This is an entiny-owned overlay patch taken over from inugram's feature/mutual-contact-icon; do not pull/overwrite during upstream inugram syncs.
 ---
  .../telegram/ui/Adapters/ContactsAdapter.java |  2 +-
- .../java/org/telegram/ui/Cells/UserCell.java  | 41 +++++++++++++++++++
- 2 files changed, 42 insertions(+), 1 deletion(-)
+ .../java/org/telegram/ui/Cells/UserCell.java  | 53 +++++++++++++++++++
+ 2 files changed, 54 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
 index 0000000..0000000 100644
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
          setFocusable(true);
      }
  
-@@ -310,6 +329,22 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -310,6 +329,34 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
          } else {
              setRightPadding(0, true, false);
          }
@@ -79,7 +79,8 @@ index 0000000..0000000 100644
 +    private void inu_updateAdminTextViewMargin() {
 +        if (adminTextView != null) {
 +            boolean visible = inu_mutualView != null && inu_mutualView.getVisibility() == VISIBLE;
-+            int margin = visible ? (dp(54) + (int) adminTextView.getTranslationX()) : dp(23);
++            boolean inu_left = visible && desu.inugram.helpers.dialogs.MutualContactHelper.isLeft();
++            int margin = visible && !inu_left ? (dp(54) + (int) adminTextView.getTranslationX()) : dp(23);
 +            int rightMargin = LocaleController.isRTL ? 0 : margin;
 +            int leftMargin = LocaleController.isRTL ? margin : 0;
 +            android.widget.FrameLayout.LayoutParams lp = (android.widget.FrameLayout.LayoutParams) adminTextView.getLayoutParams();
@@ -88,11 +89,22 @@ index 0000000..0000000 100644
 +                lp.leftMargin = leftMargin;
 +                adminTextView.setLayoutParams(lp);
 +            }
++            if (visible) {
++                int iconMargin = desu.inugram.helpers.dialogs.MutualContactHelper.iconMargin(adminTextView);
++                android.widget.FrameLayout.LayoutParams mlp = (android.widget.FrameLayout.LayoutParams) inu_mutualView.getLayoutParams();
++                int mRight = LocaleController.isRTL ? 0 : iconMargin;
++                int mLeft = LocaleController.isRTL ? iconMargin : 0;
++                if (mlp != null && (mlp.rightMargin != mRight || mlp.leftMargin != mLeft)) {
++                    mlp.rightMargin = mRight;
++                    mlp.leftMargin = mLeft;
++                    inu_mutualView.setLayoutParams(mlp);
++                }
++            }
 +        }
      }
  
      public void setRightPadding(int pad, boolean top, boolean bottom) {
-@@ -741,6 +776,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -741,6 +788,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                  (currentChat != null && currentChat.forum ? dp(14) : dp(24)));
  
          nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));

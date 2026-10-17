@@ -1676,6 +1676,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val SHOW_MUTUAL_CONTACT_IN_CHATS = BoolItem("show_mutual_contact_in_chats", true)
+
+    @JvmField
+    val MUTUAL_CONTACT_ICON_LEFT = BoolItem("mutual_contact_icon_left", false)
     // #if PLUGINS
     @JvmField
     val CHAT_PLUGIN_ACTIONS = PluginActionSettingsConfig("chat_plugin_actions")

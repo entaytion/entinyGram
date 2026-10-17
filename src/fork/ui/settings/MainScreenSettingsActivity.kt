@@ -75,6 +75,14 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
                 InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_MUTUAL_CONTACT_ICON_LEFT,
+                R.string.InuMutualContactIconLeft,
+                R.string.InuMutualContactIconLeftInfo,
+                InuConfig.MUTUAL_CONTACT_ICON_LEFT.value,
+            )
+        )
         items.add(UItem.asShadow(null))
     }
 
@@ -87,6 +95,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
             TOGGLE_CHAT_ONLINE_DOTS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_PRESENCE_DOTS.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_ICON -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_ICON.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.toggle()
+            TOGGLE_MUTUAL_CONTACT_ICON_LEFT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.MUTUAL_CONTACT_ICON_LEFT.toggle()
         }
     }
 
@@ -98,6 +107,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CHAT_ONLINE_DOTS = InuUtils.generateId()
         private val TOGGLE_SHOW_MUTUAL_CONTACT_ICON = InuUtils.generateId()
         private val TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS = InuUtils.generateId()
+        private val TOGGLE_MUTUAL_CONTACT_ICON_LEFT = InuUtils.generateId()
 
         val PAGE = SearchRegistry.Page(
             slug = "main-screen",
@@ -112,6 +122,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("chat-online-dots", R.string.InuChatOnlineDots, TOGGLE_CHAT_ONLINE_DOTS),
                 SearchRegistry.Entry("show-mutual-contact-icon", R.string.InuShowMutualContactIcon, TOGGLE_SHOW_MUTUAL_CONTACT_ICON),
                 SearchRegistry.Entry("show-mutual-contact-in-chats", R.string.InuShowMutualContactInChats, TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS),
+                SearchRegistry.Entry("mutual-contact-icon-left", R.string.InuMutualContactIconLeft, TOGGLE_MUTUAL_CONTACT_ICON_LEFT),
             )
         )
     }

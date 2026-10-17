@@ -2009,4 +2009,6 @@
     <string name="InuDisableNextVoiceAutoplay">پخش خودکار پیام صوتی بعدی نباشد</string>
     <string name="InuDisableNextVoiceAutoplayInfo">پس از پیام صوتی متوقف شود و پیام صوتی بعدی در گفتگو پخش نشود</string>
     <string name="InuBottomTabsLift">بالا بردن نوار پایین</string>
+    <string name="InuMutualContactIconLeft">نماد مخاطب دوطرفه پیش از عنوان</string>
+    <string name="InuMutualContactIconLeftInfo">نمایش نماد مخاطب دوطرفه در سمت چپ عنوان عضو، به جای بعد از آن</string>
 </resources>

@@ -2080,4 +2080,6 @@
     <string name="InuDisableNextVoiceAutoplay">Не вмикати наступне голосове автоматично</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Зупинятися після голосового замість відтворення наступного в чаті</string>
     <string name="InuBottomTabsLift">Підняти нижню панель</string>
+    <string name="InuMutualContactIconLeft">Іконка взаємного контакту перед титулом</string>
+    <string name="InuMutualContactIconLeftInfo">Показувати іконку взаємного контакту ліворуч від титулу учасника, а не після нього</string>
 </resources>

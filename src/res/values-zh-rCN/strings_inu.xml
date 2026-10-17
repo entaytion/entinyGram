@@ -1985,4 +1985,6 @@
     <string name="InuDisableNextVoiceAutoplay">不自动播放下一条语音消息</string>
     <string name="InuDisableNextVoiceAutoplayInfo">语音消息结束后停止，而不是播放聊天中的下一条</string>
     <string name="InuBottomTabsLift">抬高底部导航栏</string>
+    <string name="InuMutualContactIconLeft">互为联系人图标显示在头衔前</string>
+    <string name="InuMutualContactIconLeftInfo">将互为联系人图标显示在成员头衔左侧，而不是右侧</string>
 </resources>

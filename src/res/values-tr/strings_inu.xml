@@ -1986,4 +1986,6 @@
     <string name="InuDisableNextVoiceAutoplay">Sonraki sesli mesajı otomatik oynatma</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Sesli mesajdan sonra sohbetteki sonrakini oynatmak yerine dur</string>
     <string name="InuBottomTabsLift">Gezinme çubuğunu yükselt</string>
+    <string name="InuMutualContactIconLeft">Karşılıklı kişi simgesi unvandan önce</string>
+    <string name="InuMutualContactIconLeftInfo">Karşılıklı kişi simgesini üye unvanından sonra değil, solunda göster</string>
 </resources>
