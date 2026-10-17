@@ -1,0 +1,204 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 18 Oct 2026 00:28:32 +0300
+Subject: [*] lazy topics fragment views
+
+---
+ .../java/org/telegram/ui/TopicsFragment.java  | 126 +++++++++++-------
+ 1 file changed, 75 insertions(+), 51 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+@@ -214,11 +214,11 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+     private RecyclerAnimationScrollHelper scrollHelper;
+     private ItemTouchHelper itemTouchHelper;
+     private TouchHelperCallback itemTouchHelperCallback;
+-    private ActionBarMenuSubItem createTopicSubmenu;
+-    private ActionBarMenuSubItem addMemberSubMenu;
+-    private ActionBarMenuSubItem deleteChatSubmenu;
+-    private ActionBarMenuSubItem boostGroupSubmenu;
+-    private ActionBarMenuSubItem reportSubmenu;
++    private ActionBarMenuItem.Item createTopicSubmenu;
++    private ActionBarMenuItem.Item addMemberSubMenu;
++    private ActionBarMenuItem.Item deleteChatSubmenu;
++    private ActionBarMenuItem.Item boostGroupSubmenu;
++    private ActionBarMenuItem.Item reportSubmenu;
+     private boolean bottomPannelVisible = true;
+     private float searchAnimationProgress = 0f;
+     private TL_stories.TL_premium_boostsStatus boostsStatus;
+@@ -868,12 +868,12 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         }
+         other = menu.addItem(0, R.drawable.ic_ab_other, themeDelegate);
+         other.setContentDescription(getString(R.string.AccDescrMoreOptions));
+-        other.addSubItem(toggle_id, R.drawable.msg_discussion, getString(R.string.TopicViewAsMessages));
+-        addMemberSubMenu = other.addSubItem(add_member_id, R.drawable.msg_addcontact, getString(R.string.AddMember));
+-        boostGroupSubmenu = other.addSubItem(boost_group_id, 0, new RLottieDrawable(R.raw.boosts, AndroidUtilities.dp(24), AndroidUtilities.dp(24)), getString(R.string.BoostingBoostGroupMenu), true, false);
+-        createTopicSubmenu = other.addSubItem(create_topic_id, R.drawable.msg_topic_create, getString(R.string.CreateTopic));
+-        reportSubmenu = other.addSubItem(report, R.drawable.msg_report, getString(R.string.ReportChat));
+-        deleteChatSubmenu = other.addSubItem(delete_chat_id, R.drawable.msg_leave, getString(R.string.LeaveMegaMenu), themeDelegate);
++        other.lazilyAddSubItem(toggle_id, R.drawable.msg_discussion, getString(R.string.TopicViewAsMessages));
++        addMemberSubMenu = other.lazilyAddSubItem(add_member_id, R.drawable.msg_addcontact, getString(R.string.AddMember));
++        boostGroupSubmenu = other.lazilyAddSubItem(boost_group_id, 0, new RLottieDrawable(R.raw.boosts, AndroidUtilities.dp(24), AndroidUtilities.dp(24)), getString(R.string.BoostingBoostGroupMenu), true, false);
++        createTopicSubmenu = other.lazilyAddSubItem(create_topic_id, R.drawable.msg_topic_create, getString(R.string.CreateTopic));
++        reportSubmenu = other.lazilyAddSubItem(report, R.drawable.msg_report, getString(R.string.ReportChat));
++        deleteChatSubmenu = other.lazilyAddSubItem(delete_chat_id, R.drawable.msg_leave, getString(R.string.LeaveMegaMenu));
+ 
+         avatarContainer = new ChatAvatarContainer(context, this, false, resourceProvider);
+         avatarContainer.getAvatarImageView().setRoundRadius(AndroidUtilities.dp(16));
+@@ -1303,39 +1303,8 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         floatingButton.setContentDescription(getString(R.string.CreateTopic));
+ 
+ 
+-        FlickerLoadingView flickerLoadingView = new FlickerLoadingView(context);
+-        flickerLoadingView.setViewType(FlickerLoadingView.TOPIC_CELL_TYPE);
+-        flickerLoadingView.setVisibility(View.GONE);
+-        flickerLoadingView.showDate(true);
+-
+         emptyViewContainer = new EmptyViewContainer(context);
+         emptyViewContainer.textView.setAlpha(0);
+-
+-        topicsEmptyView = new StickerEmptyView(context, flickerLoadingView, StickerEmptyView.STICKER_TYPE_NO_CONTACTS) {
+-            boolean showProgressInternal;
+-
+-            @Override
+-            public void showProgress(boolean show, boolean animated) {
+-                super.showProgress(show, animated);
+-                showProgressInternal = show;
+-                if (animated) {
+-                    emptyViewContainer.textView.animate().alpha(show ? 0f : 1f).start();
+-                } else {
+-                    emptyViewContainer.textView.animate().cancel();
+-                    emptyViewContainer.textView.setAlpha(show ? 0f : 1f);
+-                }
+-            }
+-        };
+-        try {
+-            topicsEmptyView.stickerView.getImageReceiver().setAutoRepeat(2);
+-        } catch (Exception ignore) {
+-        }
+-        topicsEmptyView.showProgress(loadingTopics, fragmentBeginToShow);
+-        topicsEmptyView.title.setText(getString(R.string.NoTopics));
+-        updateTopicsEmptyViewText();
+-
+-        emptyViewContainer.addView(flickerLoadingView);
+-        emptyViewContainer.addView(topicsEmptyView);
+         contentView.addView(emptyViewContainer);
+ 
+         recyclerListView.setEmptyView(emptyViewContainer);
+@@ -1412,12 +1381,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         if (parentDialogsActivity == null) {
+             contentView.addView(fullscreenView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
+         }
+-        searchContainer = new MessagesSearchContainer(context);
+-        searchContainer.setVisibility(View.GONE);
+-        fullscreenView.addView(searchContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL, 0, 44, 0, 0));
+-
+-        searchContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+-
+         actionBar.setDrawBlurBackground(contentView);
+ 
+         getMessagesStorage().loadChatInfo(chatId, true, null, true, false, 0);
+@@ -1515,6 +1478,54 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         return fragmentView;
+     }
+ 
++    private void inu_buildEmptyContent() {
++        if (topicsEmptyView != null || emptyViewContainer == null) {
++            return;
++        }
++        Context context = emptyViewContainer.getContext();
++        FlickerLoadingView flickerLoadingView = new FlickerLoadingView(context);
++        flickerLoadingView.setViewType(FlickerLoadingView.TOPIC_CELL_TYPE);
++        flickerLoadingView.setVisibility(View.GONE);
++        flickerLoadingView.showDate(true);
++
++        topicsEmptyView = new StickerEmptyView(context, flickerLoadingView, StickerEmptyView.STICKER_TYPE_NO_CONTACTS) {
++            boolean showProgressInternal;
++
++            @Override
++            public void showProgress(boolean show, boolean animated) {
++                super.showProgress(show, animated);
++                showProgressInternal = show;
++                if (animated) {
++                    emptyViewContainer.textView.animate().alpha(show ? 0f : 1f).start();
++                } else {
++                    emptyViewContainer.textView.animate().cancel();
++                    emptyViewContainer.textView.setAlpha(show ? 0f : 1f);
++                }
++            }
++        };
++        try {
++            topicsEmptyView.stickerView.getImageReceiver().setAutoRepeat(2);
++        } catch (Exception ignore) {
++        }
++        topicsEmptyView.showProgress(loadingTopics, fragmentBeginToShow);
++        topicsEmptyView.title.setText(getString(R.string.NoTopics));
++        updateTopicsEmptyViewText();
++
++        emptyViewContainer.addView(flickerLoadingView);
++        emptyViewContainer.addView(topicsEmptyView);
++    }
++
++    private MessagesSearchContainer inu_ensureSearchContainer() {
++        if (searchContainer == null) {
++            searchContainer = new MessagesSearchContainer(fullscreenView.getContext());
++            searchContainer.setVisibility(View.GONE);
++            fullscreenView.addView(searchContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL, 0, 44, 0, 0));
++            searchContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
++            searchContainer.setPadding(0, 0, 0, navigationBarHeight);
++        }
++        return searchContainer;
++    }
++
+     private void updateTopicsEmptyViewText() {
+         if (topicsEmptyView == null || topicsEmptyView.subtitle == null) {
+             return;
+@@ -1550,7 +1561,9 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         if (!inPreviewMode) {
+             actionBar.setBackgroundColor(getThemedColor(Theme.key_actionBarDefault));
+         }
+-        searchContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
++        if (searchContainer != null) {
++            searchContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
++        }
+     }
+ 
+     private void openProfile(boolean byAvatar) {
+@@ -2120,6 +2133,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+ 
+     private void animateToSearchView(boolean showSearch) {
+         searching = showSearch;
++        inu_ensureSearchContainer();
+         if (searchAnimator != null) {
+             searchAnimator.removeAllListeners();
+             searchAnimator.cancel();
+@@ -2196,8 +2210,10 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+             searchTabsView.setTranslationY(-AndroidUtilities.dp(16) * (1f - value));
+             searchTabsView.setAlpha(value);
+         }
+-        searchContainer.setTranslationY(-AndroidUtilities.dp(16) * (1f - value));
+-        searchContainer.setAlpha(value);
++        if (searchContainer != null) {
++            searchContainer.setTranslationY(-AndroidUtilities.dp(16) * (1f - value));
++            searchContainer.setAlpha(value);
++        }
+ 
+         if (isInPreviewMode()) {
+             fullscreenView.invalidate();
+@@ -3319,6 +3335,14 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+ 
+         TextView textView;
+ 
++        @Override
++        public void setVisibility(int visibility) {
++            super.setVisibility(visibility);
++            if (visibility == VISIBLE) {
++                inu_buildEmptyContent();
++            }
++        }
++
+         public EmptyViewContainer(Context context) {
+             super(context);
+             textView = new TextView(context);

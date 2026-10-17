@@ -550,3 +550,4 @@ bugfix/adaptive-shortcut-icons.patch
 bugfix/photo-viewer-reparent.patch
 bugfix/pin-unloaded-dialog.patch
 entiny/media/saved-media-date.patch
+entiny/ui/topics-lazy-views.patch

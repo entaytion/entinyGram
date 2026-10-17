@@ -82,6 +82,7 @@
   "hidden-undeletable-dialogs": "chat",
   "bottom-tabs-lift": "tabs",
   "forum-m3-sections": "ui",
+  "topics-lazy-views": "ui",
   "next-audio-controls": "media",
   "light-status-bar-insets": "ui",
   "hide-dialog-preview": "ui",
