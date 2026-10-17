@@ -258,7 +258,6 @@ feature/unified-video-rewind.patch
 feature/user-deeplink.patch
 entiny/ai/chat-ai-deeplink.patch
 entiny/translator/translator.patch
-entiny/ui/night-theme-colors.patch
 entiny/ui/colorful-icons-and-popups.patch
 entiny/misc/fix-url-parsing.patch
 feature/message-menu.patch
