@@ -196,7 +196,7 @@
     <string name="InuDialogsFabOffsetForBottomBar">Отступ для нижней панели</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">Отключение может работать некорректно на некоторых размерах экрана</string>
     <string name="InuDialogsFabLeftSide">Переместить влево</string>
-    <string name="InuDialogsFabLift">Поднять кнопки FAB</string>
+    <string name="InuDialogsFabRaise">Поднять кнопки FAB чуть выше</string>
     <string name="InuDialogsFabActionNewMessage">Новое сообщение</string>
     <string name="InuDialogsFabActionNewStory">Новая история</string>
     <string name="InuDialogsFabActionOpenSearch">Открыть поиск</string>

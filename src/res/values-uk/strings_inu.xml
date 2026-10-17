@@ -260,7 +260,7 @@
     <string name="InuDialogsFabOffsetForBottomBar">Відступ для нижньої панелі</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">Вимкнення може виглядати некоректно на деяких екранах</string>
     <string name="InuDialogsFabLeftSide">Перемістити ліворуч</string>
-    <string name="InuDialogsFabLift">Підняти кнопки FAB</string>
+    <string name="InuDialogsFabRaise">Підняти кнопки FAB трохи вище</string>
     <string name="InuDialogsFabActionNewMessage">Нове повідомлення</string>
     <string name="InuDialogsFabActionNewStory">Нова історія</string>
     <string name="InuDialogsFabActionOpenSearch">Відкрити пошук</string>

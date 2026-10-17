@@ -31,7 +31,6 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
     private var filterTabsPreview: FilterTabsPreviewCell? = null
     private var mainTabsPreview: MainTabsPreviewCell? = null
     private var bottomLiftSlider: SliderCell? = null
-    private var fabLiftSlider: SliderCell? = null
     private var mainTabsEntries: MutableList<MenuOrderEntry<MainTabsMenuConfig.Item>> = InuConfig.BOTTOM_TABS_ORDER.value.toMutableList()
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMainPage)
@@ -324,21 +323,12 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDialogsFabLeftSide),
             ).setChecked(InuConfig.DIALOGS_FAB_LEFT_SIDE.value)
         )
-        if (fabLiftSlider == null) {
-            fabLiftSlider = SliderCell(
-                this.context, min = 0f, max = 48f,
-                defaultValue = InuConfig.DIALOGS_FAB_LIFT.default.toFloat(),
-                initialValue = InuConfig.DIALOGS_FAB_LIFT.value.toFloat(),
-                step = 1f,
-                title = LocaleController.getString(R.string.InuDialogsFabLift),
-                format = { "${it.toInt()} dp" },
-                onChanged = { InuConfig.DIALOGS_FAB_LIFT.value = it.toInt() },
-                onReleased = { showRestartBulletin() },
-            )
-        } else {
-            fabLiftSlider?.updateColors()
-        }
-        items.add(UItem.asCustom(fabLiftSlider))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_FAB_RAISE,
+                LocaleController.getString(R.string.InuDialogsFabRaise),
+            ).setChecked(InuConfig.DIALOGS_FAB_RAISE.value)
+        )
         items.add(UItem.asShadow(null))
 
     }
@@ -556,6 +546,12 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 DialogPreviewHelper.refresh()
             }
 
+            TOGGLE_FAB_RAISE -> {
+                val new = InuConfig.DIALOGS_FAB_RAISE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                showRestartBulletin()
+            }
+
             TOGGLE_FAB_LEFT_SIDE -> {
                 val new = InuConfig.DIALOGS_FAB_LEFT_SIDE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -742,6 +738,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_FAB_OFFSET_FOR_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_HIDE_DIALOG_PREVIEW = InuUtils.generateId()
         private val TOGGLE_FAB_LEFT_SIDE = InuUtils.generateId()
+        private val TOGGLE_FAB_RAISE = InuUtils.generateId()
         private val TOGGLE_INTERACTIVE_CHAT_PREVIEW = InuUtils.generateId()
         private val TOGGLE_DIALOG_AVATAR_OPENS_PROFILE = InuUtils.generateId()
         private val TOGGLE_ALWAYS_SHOW_DOWNLOADS = InuUtils.generateId()
@@ -814,6 +811,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("dialogs-fab-hide-on-scroll", R.string.InuDialogsFabHideOnScroll, TOGGLE_FAB_HIDE_ON_SCROLL),
                 SearchRegistry.Entry("dialogs-fab-offset-for-bottom-bar", R.string.InuDialogsFabOffsetForBottomBar, TOGGLE_FAB_OFFSET_FOR_BOTTOM_BAR),
                 SearchRegistry.Entry("dialogs-fab-left-side", R.string.InuDialogsFabLeftSide, TOGGLE_FAB_LEFT_SIDE),
+                SearchRegistry.Entry("dialogs-fab-raise", R.string.InuDialogsFabRaise, TOGGLE_FAB_RAISE),
                 SearchRegistry.Entry("hide-dialog-preview", R.string.InuHideDialogPreview, TOGGLE_HIDE_DIALOG_PREVIEW),
             ),
         )

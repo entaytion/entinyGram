@@ -408,7 +408,7 @@
     <string name="InuDialogsFabOffsetForBottomBar">Offset for bottom bar</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">Disabling this might not work well for all screen sizes</string>
     <string name="InuDialogsFabLeftSide">Move to the left</string>
-    <string name="InuDialogsFabLift">Raise FAB buttons</string>
+    <string name="InuDialogsFabRaise">Raise FAB buttons a bit</string>
     <string name="InuHideDialogPreview">Hide last message preview</string>
     <string name="InuHideDialogPreviewInfo">Show the last message in the chat list under a spoiler</string>
     <string name="InuDialogsFabActionNewMessage">New message</string>

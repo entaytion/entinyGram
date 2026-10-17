@@ -12,6 +12,9 @@ import org.telegram.ui.ChatActivity
 import org.telegram.ui.DialogsActivity
 
 object DialogsFabHelper {
+    private const val FAB_BASE_DP = 38
+    private const val FAB_RAISE_DP = 16
+
     enum class Action(
         val value: Int,
         private val labelRes: Int,
@@ -54,12 +57,12 @@ object DialogsFabHelper {
         var offset = if (!hasMainTabs) {
             0
         } else if (!offsetForBottomBar()) {
-            -dp(10f)
+            dp(FAB_BASE_DP.toFloat()) + MainTabsHelper.bottomLiftPx
         } else {
             dp((MainTabsHelper.mainTabsHeight + MainTabsHelper.mainTabsMargin + MainTabsHelper.bottomLiftDp).toFloat())
         }
         if (FolderHelper.atBottom()) offset += dp(FolderHelper.bottomReservedHeightDp().toFloat())
-        offset += dp(InuConfig.DIALOGS_FAB_LIFT.value.toFloat())
+        if (InuConfig.DIALOGS_FAB_RAISE.value) offset += dp(FAB_RAISE_DP.toFloat())
         return offset
     }
 
