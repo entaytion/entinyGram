@@ -370,14 +370,7 @@ object SavedMessagesHelper {
         if (!isSaveDeletedEnabled()) return false
         val controller = MessagesController.getInstance(account) ?: return true
         if (org.telegram.messenger.DialogObject.isEncryptedDialog(dialogId)) {
-            if (InuConfig.SAVE_SELF_DESTRUCT_TEXT.value) return true
-            val encrypted = controller.getEncryptedChat(org.telegram.messenger.DialogObject.getEncryptedChatId(dialogId))
-                ?: return InuConfig.SAVE_DELETED_PRIVATE.value
-            return if (controller.getUser(encrypted.user_id)?.bot == true) {
-                InuConfig.SAVE_DELETED_BOTS.value
-            } else {
-                InuConfig.SAVE_DELETED_PRIVATE.value
-            }
+            return InuConfig.SAVE_SELF_DESTRUCT_TEXT.value || InuConfig.SAVE_DELETED_SECRET.value
         }
         if (org.telegram.messenger.DialogObject.isUserDialog(dialogId)) {
             val user = controller.getUser(dialogId)
@@ -1051,7 +1044,8 @@ object SavedMessagesHelper {
         // entiny: reject dialog id 0 to prevent marking matching IDs in unrelated chats as deleted
         if (dialogId == 0L) return
         // entiny: unsent or cancelled uploads carry local ids and must never reach the archive
-        if (msgId <= 0 || (message != null && message.send_state != 0)) return
+        // entiny: secret chat messages carry negative ids, only the send state tells an unsent one apart
+        if ((msgId <= 0 && !org.telegram.messenger.DialogObject.isEncryptedDialog(dialogId)) || (message != null && message.send_state != 0)) return
         // entiny: a message already archived (timer path) keeps getting its real text from the storage delete even when the chat type is off
         val alreadyRecorded = isMessageDeleted(account, dialogId, msgId)
         if (!forceSave && !alreadyRecorded && !shouldSaveForDialog(account, dialogId)) return

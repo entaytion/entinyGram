@@ -1627,6 +1627,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val SAVE_DELETED_BOTS = BoolItem("save_deleted_bots", false)
 
     @JvmField
+    val SAVE_DELETED_SECRET = BoolItem("save_deleted_secret", false)
+
+    @JvmField
     val SAVE_DELETED_OWN = BoolItem("save_deleted_own", false)
 
     @JvmField

@@ -1248,6 +1248,7 @@
     <string name="InuSaveDeletedGroups">گروه‌ها</string>
     <string name="InuSaveDeletedChannels">کانال‌ها</string>
     <string name="InuSaveDeletedBots">ربات‌ها</string>
+    <string name="InuSaveDeletedSecret">چت‌های مخفی</string>
     <string name="InuSaveDeletedOwn">پیام‌های خودم</string>
     <string name="InuPromptKeepLocalOnDelete">پرسش نگه داشتن نسخه محلی</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">کادر «نگه داشتن نسخه محلی» را به پنجره حذف اضافه می‌کند؛ فقط وقتی ذخیره خودکار خاموش است.</string>

@@ -1428,6 +1428,7 @@
     <string name="InuSaveDeletedGroups">Groups</string>
     <string name="InuSaveDeletedChannels">Channels</string>
     <string name="InuSaveDeletedBots">Bots</string>
+    <string name="InuSaveDeletedSecret">Secret chats</string>
     <string name="InuSaveDeletedOwn">My own messages</string>
     <string name="InuPromptKeepLocalOnDelete">Keep local copy prompt</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Adds a \"Keep local copy\" checkbox to the delete dialog; only when auto-saving is off.</string>

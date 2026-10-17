@@ -31,6 +31,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             ExpandableBoolGroup.Option(R.string.InuSaveDeletedGroups, InuConfig.SAVE_DELETED_GROUPS, TOGGLE_SAVE_DELETED_GROUPS),
             ExpandableBoolGroup.Option(R.string.InuSaveDeletedChannels, InuConfig.SAVE_DELETED_CHANNELS, TOGGLE_SAVE_DELETED_CHANNELS),
             ExpandableBoolGroup.Option(R.string.InuSaveDeletedBots, InuConfig.SAVE_DELETED_BOTS, TOGGLE_SAVE_DELETED_BOTS),
+            ExpandableBoolGroup.Option(R.string.InuSaveDeletedSecret, InuConfig.SAVE_DELETED_SECRET, TOGGLE_SAVE_DELETED_SECRET),
             ExpandableBoolGroup.Option(R.string.InuSaveDeletedOwn, InuConfig.SAVE_DELETED_OWN, TOGGLE_SAVE_DELETED_OWN),
         ),
         sectionId = SECTION_DELETED_CATEGORIES,
@@ -250,6 +251,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_DELETED_GROUPS = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_CHANNELS = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_BOTS = InuUtils.generateId()
+        private val TOGGLE_SAVE_DELETED_SECRET = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_OWN = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
@@ -283,6 +285,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-deleted-groups", R.string.InuSaveDeletedGroups, TOGGLE_SAVE_DELETED_GROUPS),
                 SearchRegistry.Entry("save-deleted-channels", R.string.InuSaveDeletedChannels, TOGGLE_SAVE_DELETED_CHANNELS),
                 SearchRegistry.Entry("save-deleted-bots", R.string.InuSaveDeletedBots, TOGGLE_SAVE_DELETED_BOTS),
+                SearchRegistry.Entry("save-deleted-secret", R.string.InuSaveDeletedSecret, TOGGLE_SAVE_DELETED_SECRET),
                 SearchRegistry.Entry("save-deleted-own", R.string.InuSaveDeletedOwn, TOGGLE_SAVE_DELETED_OWN),
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
                 SearchRegistry.Entry("edit-history-compact", R.string.InuEditHistoryCompact, TOGGLE_EDIT_HISTORY_COMPACT),

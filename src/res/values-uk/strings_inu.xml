@@ -1135,6 +1135,7 @@
     <string name="InuSaveDeletedGroups">Групах</string>
     <string name="InuSaveDeletedChannels">Каналах</string>
     <string name="InuSaveDeletedBots">Ботах</string>
+    <string name="InuSaveDeletedSecret">Секретних чатах</string>
     <string name="InuSaveDeletedOwn">Моїх власних повідомленнях</string>
     <string name="InuPromptKeepLocalOnDelete">Запит на збереження локальної копії</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Додає прапорець «Зберегти локальну копію» до діалогу видалення; лише коли автозбереження вимкнене.</string>

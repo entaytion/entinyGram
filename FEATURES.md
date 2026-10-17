@@ -24,7 +24,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **apply to**: private chats, groups and channels separately
 - 📡 **anti-deletion & edit history**:
   - save messages and media deleted by the other side (🗑️); your own deletions are never kept
-  - per-category controls for private chats, groups, channels and bots
+  - per-category controls for private chats, groups, channels, bots and secret chats
   - save edit history (✏️) with formatting, media and text diff
   - separate deleted and edited archives with message and media previews, per-chat clearing and bulk chat selection
   - edited archive hides repeated identical revisions

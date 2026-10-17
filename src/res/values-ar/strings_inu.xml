@@ -1260,6 +1260,7 @@
     <string name="InuSaveDeletedGroups">المجموعات</string>
     <string name="InuSaveDeletedChannels">القنوات</string>
     <string name="InuSaveDeletedBots">البوتات</string>
+    <string name="InuSaveDeletedSecret">المحادثات السرية</string>
     <string name="InuSaveDeletedOwn">رسائلي أنا</string>
     <string name="InuPromptKeepLocalOnDelete">سؤال الاحتفاظ بنسخة محلية</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">يضيف خانة \"الاحتفاظ بنسخة محلية\" إلى مربع الحذف؛ فقط عند إيقاف الحفظ التلقائي.</string>

@@ -1326,6 +1326,7 @@
     <string name="InuSaveDeletedGroups">Группах</string>
     <string name="InuSaveDeletedChannels">Каналах</string>
     <string name="InuSaveDeletedBots">Ботах</string>
+    <string name="InuSaveDeletedSecret">Секретных чатах</string>
     <string name="InuSaveDeletedOwn">Моих собственных сообщениях</string>
     <string name="InuPromptKeepLocalOnDelete">Запрос сохранения локальной копии</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Добавляет флажок «Сохранить локальную копию» в диалог удаления; только когда автосохранение выключено.</string>

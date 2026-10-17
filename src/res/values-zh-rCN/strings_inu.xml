@@ -1325,6 +1325,7 @@
     <string name="InuProfileRegDate">注册日期</string>
     <string name="InuProfileRegDateCopied">已复制注册日期与数据中心</string>
     <string name="InuSaveDeletedBots">机器人</string>
+    <string name="InuSaveDeletedSecret">私密聊天</string>
     <string name="InuSaveDeletedCategories">保存已删除消息范围</string>
     <string name="InuSaveDeletedChannels">频道</string>
     <string name="InuSaveDeletedGroups">群组</string>

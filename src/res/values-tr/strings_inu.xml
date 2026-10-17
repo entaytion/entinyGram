@@ -1325,6 +1325,7 @@
     <string name="InuProfileRegDate">Kayıt Tarihi</string>
     <string name="InuProfileRegDateCopied">Kayıt tarihi ve DC kopyalandı</string>
     <string name="InuSaveDeletedBots">Botlar</string>
+    <string name="InuSaveDeletedSecret">Gizli sohbetler</string>
     <string name="InuSaveDeletedCategories">Silinenleri kaydetme konumu</string>
     <string name="InuSaveDeletedChannels">Kanallar</string>
     <string name="InuSaveDeletedGroups">Gruplar</string>
