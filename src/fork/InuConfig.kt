@@ -1636,6 +1636,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val PROMPT_KEEP_LOCAL_ON_DELETE = BoolItem("prompt_keep_local_on_delete", false)
 
     @JvmField
+    val ARCHIVE_MEDIA_PUBLIC = BoolItem("archive_media_public", false)
+
+    @JvmField
     val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)
 
     @JvmField

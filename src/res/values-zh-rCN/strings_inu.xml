@@ -1406,6 +1406,8 @@
     <string name="InuSaveDeletedOwn">我自己的消息</string>
     <string name="InuPromptKeepLocalOnDelete">保留本地副本提示</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">在删除对话框中添加「保留本地副本」复选框；仅在自动保存关闭时显示。</string>
+    <string name="InuArchiveMediaPublic">将归档媒体保存到图库</string>
+    <string name="InuArchiveMediaPublicInfo">将保存的已删除/已编辑照片和视频复制到设备图库中，与普通下载并列。关闭后仅在应用内保留。</string>
     <string name="InuKeepLocalCopy">保留本地副本</string>
     <string name="InuDeletePermanently">永久删除</string>
     <string name="InuDeletePermanentlyDone">已永久删除</string>

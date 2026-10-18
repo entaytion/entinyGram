@@ -1,7 +1,6 @@
 package desu.inugram.helpers.chat
 
 import android.app.Activity
-import android.os.Environment
 import android.util.SparseArray
 import android.view.Gravity
 import android.widget.FrameLayout
@@ -18,6 +17,7 @@ import org.telegram.messenger.ImageLocation
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
+import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
@@ -33,15 +33,55 @@ import org.telegram.ui.Components.LayoutHelper
 object SavedMessagesHelper {
     private const val TAG = "SavedMessagesHelper"
 
+    private const val MEDIA_DIR_NAME = "entinyGram/media"
+    private const val NOMEDIA = ".nomedia"
+
+    @JvmStatic
+    fun isArchivePublic(): Boolean = InuConfig.ARCHIVE_MEDIA_PUBLIC.value
+
+    // entiny: archive copy is always app-private so media_path stays valid; gallery export is a separate duplicate
     fun getSavedMediaDir(account: Int): File {
-        val dir = File(ApplicationLoader.applicationContext.filesDir, "entinyGram/media/account_${UserConfig.getInstance(account).clientUserId}")
+        val dir = File(ApplicationLoader.applicationContext.filesDir, "$MEDIA_DIR_NAME/account_${UserConfig.getInstance(account).clientUserId}")
         if (!dir.exists()) {
             try {
                 dir.mkdirs()
-                File(dir, ".nomedia").createNewFile()
+                File(dir, NOMEDIA).createNewFile()
             } catch (e: Throwable) { }
         }
         return dir
+    }
+
+    private const val MEDIA_GALLERY_TYPE_IMAGE = 0
+    private const val MEDIA_GALLERY_TYPE_VIDEO = 1
+    private const val MEDIA_GALLERY_TYPE_FILE = 2
+    private const val MEDIA_GALLERY_TYPE_AUDIO = 3
+
+    // entiny: mirrors a saved archive file into the gallery via the stock save-to-gallery path
+    @JvmStatic
+    fun exportToGallery(path: String?) {
+        if (path.isNullOrEmpty() || !isArchivePublic()) return
+        try {
+            val source = File(path)
+            if (!source.isFile || source.length() <= 0L) return
+            val extension = FileLoader.getFileExtension(source)?.lowercase()
+            val mime = if (extension != null) android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) else null
+            val type = when {
+                mime?.startsWith("image") == true -> MEDIA_GALLERY_TYPE_IMAGE
+                mime?.startsWith("video") == true -> MEDIA_GALLERY_TYPE_VIDEO
+                mime?.startsWith("audio") == true -> MEDIA_GALLERY_TYPE_AUDIO
+                else -> MEDIA_GALLERY_TYPE_FILE
+            }
+            MediaController.saveFileInternal(type, source, galleryName(source))
+        } catch (e: Throwable) {
+            android.util.Log.d(TAG, "archive gallery export failed", e)
+        }
+    }
+
+    private fun galleryName(source: File): String {
+        // entiny: strip the "<dialog>_<msg>_<uuid>_" prefix so gallery names stay readable
+        val name = source.name
+        val parts = name.split('_')
+        return if (parts.size > 3) parts.drop(3).joinToString("_") else name
     }
 
     private const val AUTO_COPY_MAX_BYTES = 50L * 1024 * 1024
@@ -52,47 +92,45 @@ object SavedMessagesHelper {
     private val pendingCopies = HashSet<String>()
     private val migratedAccounts = HashSet<Int>()
 
+    // entiny: legacy import of any media that still lives in the old public download folder
     private fun scheduleMediaMigration(account: Int) {
         synchronized(migratedAccounts) { if (!migratedAccounts.add(account)) return }
         mediaQueue.postRunnable({
-            val legacyRoot = try {
-                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "entinyGram/media").canonicalFile
-            } catch (e: Throwable) {
-                null
-            }
-            if (legacyRoot == null || !legacyRoot.isDirectory) return@postRunnable
+            val targetRoot = getSavedMediaDir(account).canonicalFile
             val storage = MessagesStorage.getInstance(account)
             storage.storageQueue.postRunnable {
                 val paths = ArrayList<String>()
                 try {
-                    val db = storage.database ?: return@postRunnable
-                    val pattern = "%/${Environment.DIRECTORY_DOWNLOADS}/entinyGram/media/%"
-                    val cursor = db.queryFinalized("SELECT media_path FROM inu_deleted_messages WHERE media_path LIKE ? UNION SELECT media_path FROM inu_edit_history WHERE media_path LIKE ?", pattern, pattern)
-                    try {
-                        while (cursor.next()) cursor.stringValue(0)?.let(paths::add)
-                    } finally {
-                        cursor.dispose()
+                    val db = storage.database
+                    if (db != null) {
+                        val cursor = db.queryFinalized(
+                            "SELECT media_path FROM inu_deleted_messages WHERE media_path IS NOT NULL AND media_path != ''" +
+                                " UNION SELECT media_path FROM inu_edit_history WHERE media_path IS NOT NULL AND media_path != ''"
+                        )
+                        try {
+                            while (cursor.next()) cursor.stringValue(0)?.let(paths::add)
+                        } finally {
+                            cursor.dispose()
+                        }
                     }
                 } catch (e: Throwable) {
                     android.util.Log.d(TAG, "archive media migration query failed", e)
                 }
-                if (paths.isNotEmpty()) mediaQueue.postRunnable { migrateSavedMedia(account, legacyRoot, paths) }
+                mediaQueue.postRunnable { migrateSavedMedia(account, targetRoot, paths) }
             }
         }, STARTUP_DELAY_MS)
     }
 
-    private fun migrateSavedMedia(account: Int, legacyRoot: File, paths: List<String>) {
+    private fun migrateSavedMedia(account: Int, targetRoot: File, paths: List<String>) {
         val started = android.os.SystemClock.elapsedRealtime()
-        val targetRoot = getSavedMediaDir(account)
         val storage = MessagesStorage.getInstance(account)
         var moved = 0
         for (path in paths) {
             try {
                 val source = File(path).canonicalFile
-                if (!source.path.startsWith(legacyRoot.path + File.separator) || !source.isFile || source.length() <= 0) continue
-                val relative = source.relativeTo(legacyRoot)
-                if (relative.parent != null && relative.parent != targetRoot.name) continue
-                val copiedPath = runMediaCopy(PendingMediaCopy(source, File(targetRoot, "${java.util.UUID.randomUUID()}_${source.name}"))) ?: continue
+                if (!source.isFile || source.length() <= 0) continue
+                if (source.path.startsWith(targetRoot.path + File.separator)) continue
+                val copiedPath = runMediaCopy(PendingMediaCopy(source, File(targetRoot, "${java.util.UUID.randomUUID()}_${source.name}"), export = false)) ?: continue
                 moved++
                 storage.storageQueue.postRunnable {
                     try {
@@ -109,7 +147,7 @@ object SavedMessagesHelper {
         android.util.Log.d(TAG, "archive media migration: $moved of ${paths.size} files in ${android.os.SystemClock.elapsedRealtime() - started} ms")
     }
 
-    private data class PendingMediaCopy(val source: File, val target: File, val expectedSize: Long = 0L)
+    private data class PendingMediaCopy(val source: File, val target: File, val expectedSize: Long = 0L, val export: Boolean = true)
 
     private fun planMediaCopy(account: Int, message: TLRPC.Message?, maxBytes: Long = AUTO_COPY_MAX_BYTES): PendingMediaCopy? {
         if (message?.media == null) return null
@@ -187,11 +225,15 @@ object SavedMessagesHelper {
         val temporary = File(plan.target.parentFile, "${plan.target.name}.partial")
         try {
             check(plan.expectedSize <= 0 || plan.source.length() == plan.expectedSize)
-            if (plan.target.isFile && plan.target.length() == plan.source.length() && plan.target.length() > 0) return plan.target.absolutePath
+            if (plan.target.isFile && plan.target.length() == plan.source.length() && plan.target.length() > 0) {
+                if (plan.export) exportToGallery(plan.target.absolutePath)
+                return plan.target.absolutePath
+            }
             plan.source.copyTo(temporary, overwrite = true)
             check(temporary.length() == plan.source.length() && temporary.length() > 0)
             check(plan.expectedSize <= 0 || temporary.length() == plan.expectedSize)
             check(temporary.renameTo(plan.target))
+            if (plan.export) exportToGallery(plan.target.absolutePath)
             return plan.target.absolutePath
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "copyMediaFile error", e)

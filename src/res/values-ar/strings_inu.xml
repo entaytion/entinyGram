@@ -1266,6 +1266,8 @@
     <string name="InuSaveDeletedOwn">رسائلي أنا</string>
     <string name="InuPromptKeepLocalOnDelete">سؤال الاحتفاظ بنسخة محلية</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">يضيف خانة \"الاحتفاظ بنسخة محلية\" إلى مربع الحذف؛ فقط عند إيقاف الحفظ التلقائي.</string>
+    <string name="InuArchiveMediaPublic">حفظ وسائط الأرشيف في المعرض</string>
+    <string name="InuArchiveMediaPublicInfo">ينسخ الصور ومقاطع الفيديو المحذوفة/المعدّلة المحفوظة إلى معرض الجهاز بجوار التنزيلات العادية. أوقفه لإبقائها داخل التطبيق فقط.</string>
     <string name="InuKeepLocalCopy">الاحتفاظ بنسخة محلية</string>
     <string name="InuDeletePermanently">حذف نهائي</string>
     <string name="InuDeletePermanentlyDone">تم الحذف نهائياً</string>

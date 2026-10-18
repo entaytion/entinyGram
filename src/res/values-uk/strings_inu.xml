@@ -1125,6 +1125,8 @@
     <string name="InuSaveDeletedOwn">Моїх власних повідомленнях</string>
     <string name="InuPromptKeepLocalOnDelete">Запит на збереження локальної копії</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Додає прапорець «Зберегти локальну копію» до діалогу видалення; лише коли автозбереження вимкнене.</string>
+    <string name="InuArchiveMediaPublic">Зберігати медіа архіву в галерею</string>
+    <string name="InuArchiveMediaPublicInfo">Копіює збережені видалені/редаговані фото й відео в галерею пристрою, поряд зі звичайними завантаженнями. Вимкни, щоб тримати їх лише всередині застосунку.</string>
     <string name="InuKeepLocalCopy">Зберегти локальну копію</string>
     <string name="InuDeletePermanently">Видалити назавжди</string>
     <string name="InuDeletePermanentlyDone">Видалено назавжди</string>

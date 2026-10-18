@@ -4,9 +4,9 @@ Date: Sun, 18 Oct 2026 15:34:45 +0300
 Subject: [*] fix media lost after restart when saved to public dir
 
 ---
- .../org/telegram/messenger/FileLoader.java    | 46 ++++++++++++++++++-
+ .../org/telegram/messenger/FileLoader.java    | 48 ++++++++++++++++++-
  .../org/telegram/messenger/MessageObject.java |  3 ++
- 2 files changed, 48 insertions(+), 1 deletion(-)
+ 2 files changed, 50 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -65,22 +65,24 @@ index 0000000..0000000 100644
          f = new File(getDirectory(MEDIA_DIR_FILES), fileName);
          if (f.exists()) return f;
  
-@@ -941,6 +977,14 @@ public class FileLoader extends BaseController {
-                         storeDir = file.getParentFile();
+@@ -972,6 +1008,16 @@ public class FileLoader extends BaseController {
+                         }
                      }
-                 }
-+                if (!customPath) {
-+                    File existing = resolveMediaFile(type, fileName);
-+                    if (existing.exists()) {
-+                        customPath = true;
-+                        storeFileName = existing.getName();
-+                        storeDir = existing.getParentFile();
+ 
++                    // entiny: only follow an existing file outside the default dir, otherwise public save would be skipped
++                    if (!saveCustomPath) {
++                        File existing = resolveMediaFile(type, fileName);
++                        File defaultDir = getDirectory(type);
++                        if (existing.exists() && defaultDir != null && !defaultDir.equals(existing.getParentFile())) {
++                            storeFileName = existing.getName();
++                            storeDir = existing.getParentFile();
++                        }
 +                    }
-+                }
-                 if (!customPath) {
-                     storeFileName = fileName;
-                     storeDir = getDirectory(type);
-@@ -1456,7 +1500,7 @@ public class FileLoader extends BaseController {
++
+                     if (saveCustomPath) {
+                         operation.pathSaveData = new FilePathDatabase.PathData(documentId, dcId, type);
+                     }
+@@ -1456,7 +1502,7 @@ public class FileLoader extends BaseController {
                  return new File(path);
              }
          }
