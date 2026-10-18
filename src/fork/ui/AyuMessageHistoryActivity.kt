@@ -393,7 +393,7 @@ class AyuMessageHistoryActivity(
         val labels = ArrayList<String>()
         fun add(res: Int) = labels.add(LocaleController.getString(res))
         val hasMedia = listOf(a.media, b.media).any { it != null && it !is TLRPC.TL_messageMediaEmpty && it !is TLRPC.TL_messageMediaWebPage }
-        if (a.text != b.text) add(if (hasMedia) R.string.InuEditFieldCaption else R.string.InuEditFieldText)
+        if (!SavedMessagesHelper.sameText(a.text, b.text)) add(if (hasMedia) R.string.InuEditFieldCaption else R.string.InuEditFieldText)
         val (formatA, emojiA) = splitEntities(a.entities)
         val (formatB, emojiB) = splitEntities(b.entities)
         if (!SavedMessagesHelper.sameContent(formatA, null, formatB, null)) add(R.string.InuEditFieldFormatting)

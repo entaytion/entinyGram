@@ -1373,7 +1373,7 @@ object SavedMessagesHelper {
                 dialogMap.put(msgId.toLong(), list)
             }
             val last = list.lastOrNull()
-            if (last != null && last.timestamp == now && last.text == oldText && sameContent(last.entities, last.media, keptEntities, keptMedia)) return
+            if (last != null && last.timestamp == now && sameText(last.text, oldText) && sameContent(last.entities, last.media, keptEntities, keptMedia)) return
             list.add(EditEntry(now, oldText, null, keptEntities, keptMedia))
 
             var idAcc = editHistoryIds.get(account.toLong())
@@ -1394,7 +1394,7 @@ object SavedMessagesHelper {
             val db = storage.database ?: return@postRunnable
             try {
                 val last = InuDatabaseHelper.lastEditHistory(db, dialogId, msgId)
-                if (last != null && last.text == oldText && sameContent(last.entities, last.media, keptEntities, keptMedia)) {
+                if (last != null && sameText(last.text, oldText) && sameContent(last.entities, last.media, keptEntities, keptMedia)) {
                     synchronized(cacheLock) {
                         editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
                     }
@@ -1452,7 +1452,7 @@ object SavedMessagesHelper {
         val old = synchronized(cacheLock) {
             shadowMessageCache.get(account.toLong())?.get(dialogId to msgId)
         } ?: return
-        val textChanged = old.text != (newMessage.message ?: "")
+        val textChanged = !sameText(old.text, newMessage.message)
         val mediaChanged = !sameContent(old.entities, old.media, newMessage.entities, newMessage.media)
         if (textChanged || mediaChanged) {
             recordEditHistory(account, dialogId, msgId, old.text, old.editDate.takeIf { it > 0 } ?: old.date, null, old.entities, old.media)
@@ -1464,7 +1464,7 @@ object SavedMessagesHelper {
     fun recordOwnEdit(account: Int, obj: MessageObject?, newText: String?, newEntities: ArrayList<TLRPC.MessageEntity>?) {
         val old = obj?.messageOwner ?: return
         if (!isSaveEditedEnabled() || old.message.isNullOrEmpty()) return
-        val textChanged = old.message != newText
+        val textChanged = !sameText(old.message, newText)
         val formatChanged = newEntities != null && !sameContent(old.entities, null, newEntities, null)
         if (!textChanged && !formatChanged) return
         recordEditHistory(account, obj.dialogId, obj.id, old.message, if (old.edit_date != 0) old.edit_date else old.date, old)
@@ -1473,7 +1473,7 @@ object SavedMessagesHelper {
     @JvmStatic
     fun recordEditHistoryIfChanged(account: Int, dialogId: Long, msgId: Int, oldMessage: TLRPC.Message?, newMessage: TLRPC.Message) {
         if (oldMessage == null || !isSaveEditedEnabled()) return
-        val textChanged = oldMessage.message != newMessage.message
+        val textChanged = !sameText(oldMessage.message, newMessage.message)
         // entiny: compare the actual attachment, "has media" is set on every ordinary update
         val contentChanged = !sameContent(oldMessage.entities, oldMessage.media, newMessage.entities, newMessage.media)
         if (textChanged || contentChanged) {
@@ -1493,11 +1493,32 @@ object SavedMessagesHelper {
         }
     }
 
+    // entiny: servers echo an edit back with collapsed space runs, that is not a caption change
+    private val wsRun = Regex("[ \\t\\u00a0\\u2007\\u202f]+")
+
+    internal fun sameText(a: String?, b: String?): Boolean =
+        (a ?: "").replace(wsRun, " ").trim() == (b ?: "").replace(wsRun, " ").trim()
+
     internal fun sameContent(oldEntities: ArrayList<TLRPC.MessageEntity>?, oldMedia: TLRPC.MessageMedia?, newEntities: ArrayList<TLRPC.MessageEntity>?, newMedia: TLRPC.MessageMedia?): Boolean {
-        if (!serialized(oldMedia).contentEquals(serialized(newMedia))) return false
+        if (!sameMedia(oldMedia, newMedia)) return false
         val old = oldEntities.orEmpty()
         val new = newEntities.orEmpty()
         return old.size == new.size && old.indices.all { serialized(old[it]).contentEquals(serialized(new[it])) }
+    }
+
+    // entiny: photo/document identity is the id, their file_reference/access_hash rotate on re-fetch
+    private fun sameMedia(a: TLRPC.MessageMedia?, b: TLRPC.MessageMedia?): Boolean {
+        val key = mediaKey(a)
+        if (key != null && key == mediaKey(b)) return true
+        return serialized(a).contentEquals(serialized(b))
+    }
+
+    private fun mediaKey(media: TLRPC.MessageMedia?): String? {
+        val photo = media?.photo
+        if (photo != null) return "p${photo.id}"
+        val document = media?.document
+        if (document != null) return "d${document.id}"
+        return null
     }
 
     fun invalidateMediaCache(account: Int) {
