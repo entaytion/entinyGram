@@ -166,6 +166,10 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/values-es',
   },
   {
+    source: 'src/res/values-it/strings_inu.xml',
+    target: 'TMessagesProj/src/main/res/values-it',
+  },
+  {
     source: 'src/res/values-night/styles.xml',
     target: 'TMessagesProj/src/main/res/values-night',
     replace: true,
