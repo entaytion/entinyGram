@@ -1,0 +1,105 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 18 Oct 2026 15:34:45 +0300
+Subject: [*] fix media lost after restart when saved to public dir
+
+---
+ .../org/telegram/messenger/FileLoader.java    | 46 ++++++++++++++++++-
+ .../org/telegram/messenger/MessageObject.java |  3 ++
+ 2 files changed, 48 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+@@ -261,6 +261,36 @@ public class FileLoader extends BaseController {
+         return mediaDirs.get(type);
+     }
+ 
++    // entiny: media may live in the public dir while lookups use the private one
++    public static File resolveMediaFile(int type, String fileName) {
++        File dir = getDirectory(type);
++        if (dir == null || fileName == null) {
++            return new File("");
++        }
++        File res = new File(dir, fileName);
++        if (res.exists()) {
++            return res;
++        }
++        if (type != MEDIA_DIR_IMAGE && type != MEDIA_DIR_VIDEO) {
++            return res;
++        }
++        File publicDir = mediaDirs.get(type == MEDIA_DIR_IMAGE ? MEDIA_DIR_IMAGE_PUBLIC : MEDIA_DIR_VIDEO_PUBLIC);
++        if (publicDir != null) {
++            File publicRes = new File(publicDir, fileName);
++            if (publicRes.exists()) {
++                return publicRes;
++            }
++        }
++        File parent = dir.getParentFile();
++        if (parent != null) {
++            File mirrored = new File(new File(parent, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue() + (type == MEDIA_DIR_IMAGE ? " Images" : " Video")), fileName);
++            if (mirrored.exists()) {
++                return mirrored;
++            }
++        }
++        return res;
++    }
++
+     public static File getDirectory(int type) {
+         File dir = mediaDirs.get(type);
+         if (dir == null && type != FileLoader.MEDIA_DIR_CACHE) {
+@@ -778,9 +808,15 @@ public class FileLoader extends BaseController {
+         f = new File(getDirectory(MEDIA_DIR_IMAGE), fileName);
+         if (f.exists()) return f;
+ 
++        f = new File(getDirectory(MEDIA_DIR_IMAGE_PUBLIC), fileName);
++        if (f.exists()) return f;
++
+         f = new File(getDirectory(MEDIA_DIR_VIDEO), fileName);
+         if (f.exists()) return f;
+ 
++        f = new File(getDirectory(MEDIA_DIR_VIDEO_PUBLIC), fileName);
++        if (f.exists()) return f;
++
+         f = new File(getDirectory(MEDIA_DIR_FILES), fileName);
+         if (f.exists()) return f;
+ 
+@@ -941,6 +977,14 @@ public class FileLoader extends BaseController {
+                         storeDir = file.getParentFile();
+                     }
+                 }
++                if (!customPath) {
++                    File existing = resolveMediaFile(type, fileName);
++                    if (existing.exists()) {
++                        customPath = true;
++                        storeFileName = existing.getName();
++                        storeDir = existing.getParentFile();
++                    }
++                }
+                 if (!customPath) {
+                     storeFileName = fileName;
+                     storeDir = getDirectory(type);
+@@ -1456,7 +1500,7 @@ public class FileLoader extends BaseController {
+                 return new File(path);
+             }
+         }
+-        return new File(dir, getAttachFileName(attach, ext));
++        return resolveMediaFile(type, getAttachFileName(attach, ext));
+     }
+ 
+     public FilePathDatabase getFileDatabase() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -12174,6 +12174,9 @@ public class MessageObject {
+                 if (!mediaExists) {
+                     mediaExists = file.exists();
+                 }
++                if (!mediaExists && currentPhotoObject.location != null && currentPhotoObject.location.volume_id != 0) {
++                    mediaExists = FileLoader.getInstance(currentAccount).getPathToAttach(currentPhotoObject, null, false, useFileDatabaseQueue).exists();
++                }
+             }
+         }
+         if (!mediaExists && type == TYPE_GIF || type == TYPE_VIDEO || type == TYPE_FILE || type == TYPE_VOICE || type == TYPE_MUSIC || type == TYPE_ROUND_VIDEO) {

@@ -10,7 +10,6 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import desu.inugram.helpers.pillstack.PillType
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.ImageLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
@@ -109,15 +108,13 @@ class CachePill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
         if (!(force || never || isRefreshDue()) || !calculating.compareAndSet(false, true)) return
         if (force || never) CacheControlActivity.resetCalculatedTotalSIze()
         startLoading()
-        ImageLoader.getInstance().checkMediaPaths {
-            CacheControlActivity.calculateTotalSize { cacheSize ->
-                lastKnownCacheSize.set(cacheSize)
-                CacheControlActivity.getDeviceTotalSize { totalSize, freeSize ->
-                    val progress = if (totalSize > 0) (totalSize - freeSize) / totalSize.toFloat() else 0f
-                    lastKnownProgress = progress
-                    calculating.set(false)
-                    setData(cacheSize, progress, true)
-                }
+        CacheControlActivity.calculateTotalSize { cacheSize ->
+            lastKnownCacheSize.set(cacheSize)
+            CacheControlActivity.getDeviceTotalSize { totalSize, freeSize ->
+                val progress = if (totalSize > 0) (totalSize - freeSize) / totalSize.toFloat() else 0f
+                lastKnownProgress = progress
+                calculating.set(false)
+                setData(cacheSize, progress, true)
             }
         }
     }
