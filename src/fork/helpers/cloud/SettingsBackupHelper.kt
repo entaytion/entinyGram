@@ -7,7 +7,6 @@ import desu.inugram.InuConfig
 import desu.inugram.ui.settings.SettingsImportConfirmSheet
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R

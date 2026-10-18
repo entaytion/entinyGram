@@ -2,7 +2,6 @@ package desu.inugram.helpers.dialogs
 
 import desu.inugram.helpers.InuPrefs
 import desu.inugram.InuConfig
-import org.telegram.messenger.ApplicationLoader
 
 object FolderTagsHelper {
     private fun prefs() = InuPrefs.of("inugram_folder_tags")

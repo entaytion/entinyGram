@@ -1,22 +1,14 @@
 package desu.inugram.ui.settings
 
 import android.os.Build
-import android.view.Gravity
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import desu.inugram.InuConfig
 import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
-import org.telegram.messenger.AndroidUtilities
-import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem

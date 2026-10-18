@@ -29,12 +29,15 @@ object AiSummaryHelper {
 
     @JvmStatic
     fun summarize(context: Context, message: MessageObject) {
+        if (AiComposeHelper.showProviderSetup(context, AiComposeHelper.providerFor(AiComposeHelper.Feature.SUMMARY))) return
         val endpoint = AiComposeHelper.endpointFor(AiComposeHelper.Feature.SUMMARY)
         if (endpoint == null || endpoint.url.isBlank()) {
             AlertDialog.Builder(context)
                 .setTitle(LocaleController.getString(R.string.InuAiSummary))
                 .setMessage(LocaleController.getString(R.string.InuAiOpenSettings))
-                .setPositiveButton(LocaleController.getString(R.string.OK), null)
+                .setPositiveButton(LocaleController.getString(R.string.InuAiOpenSettings)) { _, _ ->
+                    org.telegram.ui.LaunchActivity.instance?.presentFragment(desu.inugram.ui.settings.AiProvidersSettingsActivity())
+                }
                 .show()
             return
         }

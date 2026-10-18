@@ -2,24 +2,15 @@ package desu.inugram.helpers.pillstack.pills
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.view.Gravity
-import android.widget.ImageView
-import android.widget.LinearLayout
 import desu.inugram.helpers.pillstack.PillType
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.ui.settings.GhostModeSettingsActivity
-import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Components.AnimatedTextView
 import org.telegram.ui.Components.BulletinFactory
-import org.telegram.ui.Components.LayoutHelper
-import org.telegram.ui.Components.ScaleStateListAnimator
 import org.telegram.ui.LaunchActivity
 
 // entiny: tap toggles Ghost Mode, long-press opens its settings screen. Wired to our own GhostHelper, not a re-implementation.
@@ -27,36 +18,10 @@ import org.telegram.ui.LaunchActivity
 class GhostPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
     BasePill(context, resourcesProvider), NotificationCenter.NotificationCenterDelegate {
 
-    private val layout = LinearLayout(context)
-    private val iconView = ImageView(context)
-    private val textView = AnimatedTextView(context, true, true, true)
     private var lastAccount = 0
 
     init {
-        layout.orientation = LinearLayout.HORIZONTAL
-        layout.gravity = Gravity.CENTER
-        layout.minimumWidth = AndroidUtilities.dp(48f)
-        layout.setPadding(AndroidUtilities.dp(8f), 0, AndroidUtilities.dp(10f), 0)
-        addView(
-            layout, LayoutHelper.createFrame(
-                LayoutHelper.WRAP_CONTENT, 28,
-                (if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL
-            )
-        )
-
-        iconView.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        iconView.setImageResource(R.drawable.inu_ghost)
-        layout.addView(iconView, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 0f, 0f, 2f, 0f))
-
-        textView.setTextSize(AndroidUtilities.dp(13f).toFloat())
-        textView.setIncludeFontPadding(false)
-        textView.setTypeface(AndroidUtilities.bold())
-        textView.adaptWidth = true
-        layout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL))
-
-        setLoadingTargetView(layout)
-        updateColors()
-        ScaleStateListAnimator.apply(layout)
+        setupPill(R.drawable.inu_ghost, startPaddingDp = 8f, endPaddingDp = 10f, iconGapDp = 2f)
         onUpdateData(false)
     }
 
@@ -109,31 +74,8 @@ class GhostPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
         add(R.drawable.inu_ghost, LocaleController.getString(R.string.InuGhostMode)) {
             LaunchActivity.getSafeLastFragment()?.presentFragment(GhostModeSettingsActivity())
         }
-        add(R.drawable.msg_settings, LocaleController.getString(R.string.Settings)) { openPillSettings() }
+        addSettingsEntry()
     }
 
-    override fun drawableHotspotChanged(x: Float, y: Float) {
-        if (loading) return
-        super.drawableHotspotChanged(x, y)
-        layout.drawableHotspotChanged(x - layout.left, y - layout.top)
-    }
-
-    override fun setPressed(pressed: Boolean) {
-        super.setPressed(if (loading) false else pressed)
-        layout.isPressed = if (loading) false else pressed
-    }
-
-    override fun updateColors() {
-        val active = GhostHelper.isGhostActive()
-        val color = if (active) getThemedColor(Theme.key_windowBackgroundWhiteGreenText)
-        else getThemedColor(Theme.key_windowBackgroundWhiteBlackText, 0.75f)
-        layout.background = Theme.createSimpleSelectorRoundRectDrawable(
-            AndroidUtilities.dp(14f),
-            if (Theme.isCurrentThemeDark()) getThemedColor(Theme.key_windowBackgroundWhite) else Theme.multAlpha(color, 0.09f),
-            Theme.multAlpha(color, 0.1f)
-        )
-        textView.setTextColor(color)
-        iconView.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY)
-        updateLoadingColors()
-    }
+    override fun updateColors() = applyPillColors(if (GhostHelper.isGhostActive()) activeAccent() else defaultAccent())
 }

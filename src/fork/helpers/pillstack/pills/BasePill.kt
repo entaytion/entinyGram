@@ -3,6 +3,8 @@ package desu.inugram.helpers.pillstack.pills
 import android.animation.TimeInterpolator
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
@@ -14,12 +16,19 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
 import desu.inugram.ui.settings.PillStackSettingsActivity
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Components.AnimatedTextView
 import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.ItemOptions
+import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.LoadingDrawable
+import org.telegram.ui.Components.ScaleStateListAnimator
 import org.telegram.ui.LaunchActivity
 
 abstract class BasePill(context: Context, val resourcesProvider: Theme.ResourcesProvider?) :
@@ -36,6 +45,10 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
 
     private val rectF = RectF()
     private var stackVisible = true
+
+    protected val layout = LinearLayout(context)
+    protected val iconView = ImageView(context)
+    protected val textView = AnimatedTextView(context, true, true, true)
 
     private val autoRefreshRunnable = Runnable {
         onUpdateData(false)
@@ -80,6 +93,62 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
         val fragment = LaunchActivity.getSafeLastFragment() ?: return false
         fragment.presentFragment(PillStackSettingsActivity())
         return true
+    }
+
+    protected fun ItemOptions.addSettingsEntry() {
+        add(R.drawable.msg_settings, LocaleController.getString(R.string.Settings)) { this@BasePill.openPillSettings() }
+    }
+
+    // entiny: shared pill chrome -- pills only pass what actually differs between them
+    protected fun setupPill(
+        iconResId: Int = 0,
+        startPaddingDp: Float = 8f,
+        endPaddingDp: Float = 8f,
+        iconGapDp: Float = 4f,
+    ) {
+        layout.orientation = LinearLayout.HORIZONTAL
+        layout.gravity = Gravity.CENTER
+        layout.minimumWidth = AndroidUtilities.dp(48f)
+        layout.setPadding(AndroidUtilities.dp(startPaddingDp), 0, AndroidUtilities.dp(endPaddingDp), 0)
+        addView(
+            layout, LayoutHelper.createFrame(
+                LayoutHelper.WRAP_CONTENT, 28,
+                (if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL
+            )
+        )
+
+        iconView.scaleType = ImageView.ScaleType.CENTER_INSIDE
+        if (iconResId != 0) iconView.setImageResource(iconResId)
+        layout.addView(iconView, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 0f, 0f, iconGapDp, 0f))
+
+        textView.setTextSize(AndroidUtilities.dp(13f).toFloat())
+        textView.setIncludeFontPadding(false)
+        textView.setTypeface(AndroidUtilities.bold())
+        textView.adaptWidth = true
+        layout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL))
+
+        setLoadingTargetView(layout)
+        updateColors()
+        ScaleStateListAnimator.apply(layout)
+    }
+
+    protected fun defaultAccent(): Int = getThemedColor(Theme.key_windowBackgroundWhiteBlackText, 0.75f)
+
+    protected fun activeAccent(): Int = getThemedColor(Theme.key_windowBackgroundWhiteGreenText)
+
+    protected open fun applyIconColor(color: Int) {
+        iconView.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY)
+    }
+
+    protected fun applyPillColors(accent: Int = defaultAccent()) {
+        layout.background = Theme.createSimpleSelectorRoundRectDrawable(
+            AndroidUtilities.dp(14f),
+            if (Theme.isCurrentThemeDark()) getThemedColor(Theme.key_windowBackgroundWhite) else Theme.multAlpha(accent, 0.09f),
+            Theme.multAlpha(accent, 0.1f)
+        )
+        textView.setTextColor(accent)
+        applyIconColor(accent)
+        updateLoadingColors()
     }
 
     fun getThemedColor(key: Int): Int = Theme.getColor(key, resourcesProvider)
@@ -171,6 +240,17 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
             drawable.draw(canvas)
             invalidate()
         }
+    }
+
+    override fun drawableHotspotChanged(x: Float, y: Float) {
+        if (loading) return
+        super.drawableHotspotChanged(x, y)
+        layout.drawableHotspotChanged(x - layout.left, y - layout.top)
+    }
+
+    override fun setPressed(pressed: Boolean) {
+        super.setPressed(if (loading) false else pressed)
+        layout.isPressed = if (loading) false else pressed
     }
 
     override fun onAttachedToWindow() {

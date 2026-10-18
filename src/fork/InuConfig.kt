@@ -456,9 +456,6 @@ object InuConfig {
     val AUTO_DISABLE_PROXY_ON_VPN = BoolItem("auto_disable_proxy_on_vpn", false)
 
     @JvmField
-    val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
-
-    @JvmField
     val PROXY_SUPPRESSED_BY_VPN = BoolItem("proxy_suppressed_by_vpn", false, exportable = false)
 
     @JvmField

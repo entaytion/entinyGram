@@ -15,7 +15,6 @@ import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.PasscodeActivity

@@ -24,7 +24,6 @@ import android.window.OnBackAnimationCallback
 import androidx.annotation.RequiresApi
 import org.telegram.messenger.AndroidUtilities.dpf2
 import org.telegram.ui.ActionBar.ActionBarLayout
-import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import kotlin.math.abs
 

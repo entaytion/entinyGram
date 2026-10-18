@@ -8,7 +8,6 @@ import android.view.View
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.menu.MenuOrderEntry
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter

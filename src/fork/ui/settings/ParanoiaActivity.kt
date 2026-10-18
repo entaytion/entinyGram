@@ -11,7 +11,6 @@ import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.AlertDialog
-import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter

@@ -85,6 +85,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **input actions**: translate a draft before sending, link preview toggle, find & replace, attachment picker from the input menu
 - 📡 **translate in send preview** - *inspired by [NagramX](https://github.com/temporaryna/NagramXTurbo)*
 - 📡 **free voice transcription** via Groq Whisper, Gemini Flash, OpenAI or Cloudflare AI
+  - AI provider selection shows missing credentials and opens setup instead of hiding incomplete providers
 - 📡 **official-app emulation**: purchases and premium checkout without official app blocks
 - 📡 **wallet for everyone**: the Gram wallet entry is always available - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **raised limits**: pins, favorites and folders

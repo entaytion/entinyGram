@@ -2,7 +2,6 @@ package desu.inugram.helpers
 
 import androidx.core.content.edit
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.Utilities

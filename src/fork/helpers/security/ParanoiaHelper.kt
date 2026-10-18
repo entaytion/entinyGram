@@ -3,7 +3,6 @@ package desu.inugram.helpers.security
 import desu.inugram.helpers.InuPrefs
 import android.app.Activity
 import androidx.core.content.edit
-import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R

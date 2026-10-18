@@ -61,7 +61,7 @@ object EntinyTranslate {
                 NotificationCenter.getGlobalInstance().postNotificationName(
                     NotificationCenter.showBulletin,
                     Bulletin.TYPE_ERROR,
-                    LocaleController.getString(R.string.InuTranslateProviderNotConfigured),
+                    "${TranslationProviders.missingConfiguration(provider)}\n${LocaleController.getString(R.string.InuTranslateProviderNotConfigured)}",
                 )
             }
             return null

@@ -32,7 +32,7 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
    - **Default to NO comments at all.** Only comment when code is completely inexplicable.
    - If a comment is strictly required: **max 1 line**, tagged `// entiny: <one sentence>`.
    - **NEVER** write multi-paragraph explanations, rationale tirades, or class/function `/** ... */` docblocks.
-   - If design rationale or notes are genuinely needed for future reference, put them in a scratch file under `entinyProto/<feature-name>/NOTES.md`, NEVER inline in code or patches.
+   - If design rationale or notes are genuinely needed for future reference, put them in a scratch file under `entinyTodo/<feature-name>/NOTES.md`, NEVER inline in code or patches.
    - No orphan files, no temporary experiment junk, no unnecessary abstractions or wrappers.
 
 5. **Never Touch the User's Device:**

@@ -1,6 +1,5 @@
 package desu.inugram.helpers.media
 
-import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -43,8 +42,6 @@ object PhotoViewerHelper {
     private const val MENU_FOOTER_GAP = 103
     private const val MENU_DELETE_PROFILE_PHOTOS = 104
 
-    private var footerGap: View? = null
-    private var footerItem: ActionBarMenuSubItem? = null
     private var lastAvatarsDialogId: Long = 0L
 
     @JvmStatic

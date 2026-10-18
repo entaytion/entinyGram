@@ -17,7 +17,6 @@ import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.dialogs.RecentChatsHelper
 import desu.inugram.ui.settings.SettingsPageActivity
 import org.telegram.messenger.ChatObject
-import org.telegram.messenger.LocaleController
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R

@@ -8,7 +8,6 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.view.MotionEvent
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.graphics.createBitmap

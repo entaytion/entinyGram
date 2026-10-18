@@ -23,7 +23,8 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTranslateProviderSection)))
         items.add(UItem.asRadio(PROVIDER_BASE + TranslationProviders.PROVIDER_TELEGRAM, LocaleController.getString(R.string.InuTranslateProviderTelegram)).also { it.checked = provider == TranslationProviders.PROVIDER_TELEGRAM })
         for (p in TranslationProviders.all) {
-            items.add(UItem.asRadio(PROVIDER_BASE + p.id, p.displayName()).also { it.checked = provider == p.id })
+            val name = if (p.isConfigured()) p.displayName() else TranslationProviders.missingConfiguration(p)
+            items.add(UItem.asRadio(PROVIDER_BASE + p.id, name).also { it.checked = provider == p.id })
         }
         // entiny: providers that plugins registered, picked the same way
         TranslationProviders.plugins().forEachIndexed { index, p ->

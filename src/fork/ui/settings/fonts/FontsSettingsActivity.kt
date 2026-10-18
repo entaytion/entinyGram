@@ -14,6 +14,7 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -267,7 +268,7 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
         }
         if (uris.isEmpty()) return
         val ctx = parentActivity ?: context ?: return
-        FileLog.d("InuFonts: onActivityResultFragment: picked ${uris.size} uris")
+        Log.d("InuFonts", "onActivityResultFragment: picked ${uris.size} uris")
         setImporting(true)
         BulletinFactory.of(this).createSimpleBulletin(
             R.raw.chats_infotip,

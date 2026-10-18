@@ -29,7 +29,6 @@ import desu.inugram.helpers.update.UpdateHelper
 import desu.inugram.ui.drawer.DrawerAddCell
 import desu.inugram.ui.drawer.DrawerLayoutAdapter
 import desu.inugram.ui.drawer.DrawerProfileCell
-import desu.inugram.ui.drawer.DrawerProxyCell
 import desu.inugram.ui.drawer.DrawerSwipeController
 import desu.inugram.ui.drawer.DrawerUserCell
 import desu.inugram.ui.drawer.SideMenultItemAnimator
@@ -41,7 +40,6 @@ import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
-import org.telegram.messenger.ImageLoader
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter

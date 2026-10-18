@@ -84,6 +84,7 @@ object AiComposeHelper {
 
     @JvmStatic
     fun showEditor(context: Context, text: CharSequence, onUse: Utilities.Callback<CharSequence>) {
+        if (showProviderSetup(context, providerFor(Feature.EDITOR))) return
         val isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium()
         val hasEndpoint = activeEndpoint()?.url?.isNotBlank() == true
         if (!isPremium && !hasEndpoint) {
@@ -101,6 +102,19 @@ object AiComposeHelper {
             return
         }
         AiComposeSheet(context, text, onUse).show()
+    }
+
+    fun showProviderSetup(context: Context, provider: AiProviderStore.Provider?): Boolean {
+        if (provider == null || AiProviderStore.isReady(provider)) return false
+        org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+            .setTitle(provider.name)
+            .setMessage(desu.inugram.ui.settings.AiFeatureSupport.providerName(provider))
+            .setPositiveButton(LocaleController.getString(R.string.InuAiOpenSettings)) { _, _ ->
+                LaunchActivity.instance?.presentFragment(desu.inugram.ui.settings.AiProviderEditActivity.forExisting(provider.id))
+            }
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null as org.telegram.ui.ActionBar.AlertDialog.OnButtonClickListener?)
+            .show()
+        return true
     }
 
     private fun withRole(systemPrompt: String): String {

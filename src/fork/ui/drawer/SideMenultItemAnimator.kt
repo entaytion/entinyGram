@@ -4,8 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
-import android.view.View
-import android.view.ViewPropertyAnimator
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import org.telegram.ui.Components.CubicBezierInterpolator

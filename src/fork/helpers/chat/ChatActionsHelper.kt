@@ -60,7 +60,6 @@ import org.telegram.ui.Components.ChatActivityEnterView
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.SharedMediaLayout
-import org.telegram.ui.Components.TranslateAlert2
 import org.telegram.ui.ManageLinksActivity
 import org.telegram.ui.MessageSendPreview
 import org.telegram.ui.RestrictedLanguagesSelectActivity

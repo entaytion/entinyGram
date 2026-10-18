@@ -12,7 +12,6 @@ import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
-import org.telegram.messenger.BuildConfig
 
 class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
 

@@ -4,13 +4,10 @@ import desu.inugram.helpers.plugins.EngineDispatch
 
 import android.content.Context
 import android.view.View
-import desu.inugram.helpers.plugins.Plugin
 import desu.inugram.helpers.plugins.PluginSession
-import desu.inugram.helpers.plugins.QuickJs
 import desu.inugram.helpers.plugins.platform.PluginJvm
 import desu.inugram.helpers.plugins.ui.formatted
 import desu.inugram.helpers.plugins.ui.PluginUi
-import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController

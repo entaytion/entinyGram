@@ -2,7 +2,6 @@ package desu.inugram.helpers
 
 import android.content.SharedPreferences
 import desu.inugram.InuConfig
-import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.DialogObject
 import org.telegram.tgnet.TLRPC
 

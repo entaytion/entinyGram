@@ -6,7 +6,6 @@ import android.util.Base64
 import androidx.core.content.edit
 import desu.inugram.ui.settings.PasscodeSettingsActivity
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig

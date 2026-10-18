@@ -33,8 +33,8 @@ const onlyStale = args.includes('--stale')
 const onlyExtra = args.includes('--extra') || args.includes('-e')
 const onlyIso = args.find(a => !a.startsWith('-'))
 
-const stringRe = /<string\s+name="([^"]+)">([\s\S]*?)<\/string>/g
-const stringNameRe = /<string\s+name="([^"]+)">/
+const stringRe = /<string\s+name="([^"]+)"[^>]*>([\s\S]*?)<\/string>/g
+const stringNameRe = /<string\s+name="([^"]+)"/
 
 async function parseStrings(file: string) {
   const text = await fs.readFile(file, 'utf8')
@@ -67,6 +67,13 @@ async function blameKeyTimes(file: string) {
 
 const baseFile = join(rootDir, 'src/res/values/strings_inu.xml')
 const base = await parseStrings(baseFile)
+
+// translatable="false" keys are brand strings: locales are not required to carry them
+const nonTranslatable = new Set<string>()
+for (const m of (await fs.readFile(baseFile, 'utf8')).matchAll(/<string\s+name="([^"]+)"[^>]*translatable="false"[^>]*>/g)) {
+  nonTranslatable.add(m[1])
+}
+const checkableBaseKeys = [...base.keys()].filter(k => !nonTranslatable.has(k))
 
 // discover locales: src/res/values-<iso>/strings_inu.xml
 const resDir = join(rootDir, 'src/res')
@@ -152,13 +159,13 @@ for (const l of allLocales) {
   const extra: string[] = []
   const lStems = localeStems.get(l.iso)!
 
-  for (const key of base.keys()) {
+  for (const key of checkableBaseKeys) {
     if (l.strings.has(key)) continue
     const stem = pluralStem(key)
     if (stem && lStems.has(stem)) continue
     missing.push(key)
   }
-  for (const key of base.keys()) {
+  for (const key of checkableBaseKeys) {
     if (!l.strings.has(key)) continue
     if (l.strings.get(key) !== base.get(key)) continue
     if (identicalEverywhere(key)) {
@@ -176,7 +183,7 @@ for (const l of allLocales) {
 
   if (checkStale && baseTimes) {
     const lTimes = await blameKeyTimes(l.file)
-    for (const key of base.keys()) {
+    for (const key of checkableBaseKeys) {
       if (!l.strings.has(key)) continue
       const bt = baseTimes.get(key)
       const lt = lTimes.get(key)

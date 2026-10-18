@@ -90,6 +90,9 @@ object TranscribeHelper {
         cancelled.remove(key)
 
         if (!isProviderConfigured()) {
+            org.telegram.ui.LaunchActivity.instance?.let { activity ->
+                if (desu.inugram.helpers.ai.AiComposeHelper.showProviderSetup(activity, AiProviderStore.voiceProvider())) return
+            }
             BulletinFactory.global().createSimpleBulletin(
                 R.raw.info,
                 LocaleController.getString(R.string.InuAiTranscribeNoKey)

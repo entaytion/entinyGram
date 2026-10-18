@@ -84,6 +84,11 @@ object TranslationProviders {
         else -> null
     }
 
+    fun missingConfiguration(provider: TranslationProvider): String {
+        val field = if (provider.id == PROVIDER_LLM) R.string.InuAiEndpointUrl else R.string.InuAiApiKeyHint
+        return "${provider.displayName()} • ${LocaleController.getString(field)}: ${LocaleController.getString(R.string.InuAiProviderNotSet)}"
+    }
+
 }
 
 private fun encodeURIComponent(s: String): String =

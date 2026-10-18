@@ -41,7 +41,7 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
                 if (p.id == chatId) tags.add(LocaleController.getString(R.string.InuAiProviderTagChat))
                 if (p.id == voiceId) tags.add(LocaleController.getString(R.string.InuAiProviderTagVoice))
                 val value = if (tags.isNotEmpty()) tags.joinToString(" • ") else p.chatModel.ifBlank { p.voiceModel }
-                items.add(UItem.asButton(ENTRY_BASE + index, AiFeatureSupport.iconFor(p.kind), p.name, value))
+                items.add(UItem.asButton(ENTRY_BASE + index, AiFeatureSupport.iconFor(p.kind), AiFeatureSupport.providerName(p), value))
             }
             items.add(UItem.asShadow(null))
         }

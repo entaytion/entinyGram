@@ -2,7 +2,6 @@ package desu.inugram.helpers.media
 
 import desu.inugram.helpers.InuPrefs
 import android.content.Context
-import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.MediaController
 import org.telegram.messenger.UserConfig
 import java.io.File

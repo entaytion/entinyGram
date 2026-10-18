@@ -29,12 +29,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper
-import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.theme.MonetHelper
-import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.PhoneFormat.PhoneFormat
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.Emoji
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController

@@ -112,7 +112,6 @@ import org.telegram.ui.Components.RLottieDrawable
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble
 import org.telegram.ui.Components.ReactionsContainerLayout
 import org.telegram.ui.Components.ScaleStateListAnimator
-import org.telegram.ui.Components.ShareAlert
 import org.telegram.ui.Components.URLSpanUserMention
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity

@@ -6,7 +6,6 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem

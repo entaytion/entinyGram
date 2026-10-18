@@ -24,10 +24,6 @@ object HiddenDialogsHelper {
         }
     }
 
-    private fun isHidden(account: Int, dialogId: Long): Boolean = synchronized(cache) {
-        cache.get(account)?.contains(dialogId) == true
-    }
-
     @JvmStatic
     fun hide(account: Int, dialogId: Long) {
         val storage = MessagesStorage.getInstance(account) ?: return

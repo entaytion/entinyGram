@@ -7,7 +7,6 @@ import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ImageReceiver
 import org.telegram.messenger.MessagesController
 import org.telegram.tgnet.ConnectionsManager
-import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.ChatMessageCell
 import org.telegram.ui.Cells.IMessageCell

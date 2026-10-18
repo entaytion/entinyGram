@@ -2,21 +2,14 @@ package desu.inugram.helpers.pillstack.pills
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.Gravity
-import android.widget.ImageView
-import android.widget.LinearLayout
 import desu.inugram.helpers.pillstack.ExchangeRates
 import desu.inugram.helpers.pillstack.GoldPrice
 import desu.inugram.helpers.pillstack.PillCurrencies
 import desu.inugram.helpers.pillstack.RateInstances
-import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Components.AnimatedTextView
-import org.telegram.ui.Components.LayoutHelper
-import org.telegram.ui.Components.ScaleStateListAnimator
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.concurrent.atomic.AtomicReference
@@ -44,36 +37,10 @@ class RatePill(context: Context, resourcesProvider: Theme.ResourcesProvider?, pr
         }
     }
 
-    private val layout = LinearLayout(context)
-    private val iconView = ImageView(context)
-    private val textView = AnimatedTextView(context, true, true, true)
     private var requestInFlight = false
 
     init {
-        layout.orientation = LinearLayout.HORIZONTAL
-        layout.gravity = Gravity.CENTER
-        layout.minimumWidth = AndroidUtilities.dp(48f)
-        layout.setPadding(AndroidUtilities.dp(8f), 0, AndroidUtilities.dp(8f), 0)
-        addView(
-            layout, LayoutHelper.createFrame(
-                LayoutHelper.WRAP_CONTENT, 28,
-                (if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL
-            )
-        )
-
-        iconView.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        layout.addView(iconView, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 0f, 0f, 4f, 0f))
-
-        textView.setTextSize(AndroidUtilities.dp(13f).toFloat())
-        textView.setIncludeFontPadding(false)
-        textView.setTypeface(AndroidUtilities.bold())
-        textView.adaptWidth = true
-        layout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL))
-
-        setLoadingTargetView(layout)
-        updateColors()
-        ScaleStateListAnimator.apply(layout)
-
+        setupPill()
         cache().cachedPrice.get()?.let { setData(it, false) }
     }
 
@@ -95,7 +62,7 @@ class RatePill(context: Context, resourcesProvider: Theme.ResourcesProvider?, pr
 
     override fun onPillLongClicked(): Boolean = showPillMenu {
         add(R.drawable.msg_retry, LocaleController.getString(R.string.Refresh)) { onUpdateData(true) }
-        add(R.drawable.msg_settings, LocaleController.getString(R.string.Settings)) { openPillSettings() }
+        addSettingsEntry()
     }
 
     private fun fetchRate(target: String, force: Boolean, callback: Utilities.Callback<BigDecimal?>) {
@@ -180,17 +147,6 @@ class RatePill(context: Context, resourcesProvider: Theme.ResourcesProvider?, pr
         iconView.visibility = VISIBLE
         textView.setText(LocaleController.getString(R.string.Retry), true)
         textView.visibility = VISIBLE
-    }
-
-    override fun drawableHotspotChanged(x: Float, y: Float) {
-        if (loading) return
-        super.drawableHotspotChanged(x, y)
-        layout.drawableHotspotChanged(x - layout.left, y - layout.top)
-    }
-
-    override fun setPressed(pressed: Boolean) {
-        super.setPressed(if (loading) false else pressed)
-        layout.isPressed = if (loading) false else pressed
     }
 
     override fun updateColors() {

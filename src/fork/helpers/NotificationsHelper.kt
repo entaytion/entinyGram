@@ -11,7 +11,6 @@ import desu.inugram.helpers.plugins.platform.PluginNotifications
 // #endif
 import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.security.PasscodeHelper
-import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.NotificationsController
 import org.telegram.messenger.R

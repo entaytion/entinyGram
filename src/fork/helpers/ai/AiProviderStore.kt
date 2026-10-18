@@ -113,7 +113,7 @@ object AiProviderStore {
 
     // entiny: a feature may pin its own provider and model; blank falls back to the default chat provider
     fun featureProvider(providerId: String, model: String): Provider? {
-        val p = get(providerId)?.takeIf { canChat(it.kind) && isReady(it) } ?: chatProvider() ?: return null
+        val p = get(providerId)?.takeIf { canChat(it.kind) } ?: chatProvider() ?: return null
         val m = model.trim()
         return if (m.isEmpty()) p else p.copy(chatModel = m)
     }

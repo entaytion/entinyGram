@@ -58,7 +58,7 @@ class AiSettingsActivity : SettingsPageActivity() {
     private fun status(enabled: Boolean, provider: AiProviderStore.Provider?, model: String): String {
         if (!enabled) return off()
         if (provider == null) return LocaleController.getString(R.string.InuAiProviderNotSet)
-        return listOf(provider.name, model).filter { it.isNotBlank() }.joinToString(" • ")
+        return listOf(AiFeatureSupport.providerName(provider), model).filter { it.isNotBlank() }.joinToString(" • ")
     }
 
     private fun voiceSummary(): String {
@@ -69,18 +69,18 @@ class AiSettingsActivity : SettingsPageActivity() {
     private fun editorSummary(): String {
         val e = AiComposeHelper.endpointFor(AiComposeHelper.Feature.EDITOR)
         val provider = AiComposeHelper.providerFor(AiComposeHelper.Feature.EDITOR)
-        return status(!InuConfig.HIDE_AI_EDITOR.value, provider.takeIf { e != null }, e?.model.orEmpty())
+        return status(!InuConfig.HIDE_AI_EDITOR.value, provider, e?.model.orEmpty())
     }
 
     private fun summarySummary(): String {
         val e = AiComposeHelper.endpointFor(AiComposeHelper.Feature.SUMMARY)
         val provider = AiComposeHelper.providerFor(AiComposeHelper.Feature.SUMMARY)
-        return status(InuConfig.AI_SUMMARY_ENABLED.value, provider.takeIf { e != null }, e?.model.orEmpty())
+        return status(InuConfig.AI_SUMMARY_ENABLED.value, provider, e?.model.orEmpty())
     }
 
     private fun providersSummary(): String {
-        val chat = AiProviderStore.chatProvider()?.name
-        val voice = AiProviderStore.voiceProvider()?.name
+        val chat = AiProviderStore.chatProvider()?.let(AiFeatureSupport::providerName)
+        val voice = AiProviderStore.voiceProvider()?.let(AiFeatureSupport::providerName)
         return when {
             chat == null && voice == null -> LocaleController.getString(R.string.InuAiProviderNotSet)
             chat == voice -> chat.orEmpty()

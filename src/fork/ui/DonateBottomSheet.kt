@@ -1,6 +1,5 @@
 package desu.inugram.ui
 
-import android.content.Context
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.ImageView

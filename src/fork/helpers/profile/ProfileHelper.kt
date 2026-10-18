@@ -8,7 +8,6 @@ import android.graphics.Shader
 import android.content.DialogInterface
 import android.os.Bundle
 import android.graphics.drawable.Drawable
-import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -32,7 +31,6 @@ import java.util.WeakHashMap
 import org.json.JSONArray
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.BuildVars
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
@@ -497,14 +495,14 @@ object ProfileHelper {
                 val arr = f.get(mc) as LongSparseLongArray
                 arr.delete(keyAbs)
             }
-        }.onFailure { it.printStackTrace() }
+        }.onFailure { FileLog.e(it) }
 
         runCatching {
             mcCls.getDeclaredField("dialogPhotos").apply { isAccessible = true }.let { f ->
                 val map = f.get(mc) as LongSparseArray<*>
                 map.remove(dialogId)
             }
-        }.onFailure { it.printStackTrace() }
+        }.onFailure { FileLog.e(it) }
 
         runCatching {
             val sc = mc.storiesController
@@ -513,11 +511,11 @@ object ProfileHelper {
                 map.remove(dialogId)
             }
             sc.dialogIdToMaxReadId.delete(dialogId)
-        }.onFailure { it.printStackTrace() }
+        }.onFailure { FileLog.e(it) }
 
         runCatching {
             StarsController.getInstance(currentAccount).invalidateProfileGifts(dialogId)
-        }.onFailure { it.printStackTrace() }
+        }.onFailure { FileLog.e(it) }
 
         val storage = MessagesStorage.getInstance(currentAccount)
         storage.storageQueue.postRunnable {
@@ -534,7 +532,7 @@ object ProfileHelper {
                 db.executeFast("DELETE FROM profile_stories WHERE dialog_id = $dialogId").stepThis().dispose()
                 db.executeFast("DELETE FROM profile_stories_albums WHERE dialog_id = $dialogId").stepThis().dispose()
                 db.executeFast("DELETE FROM profile_stories_albums_links WHERE dialog_id = $dialogId").stepThis().dispose()
-            }.onFailure { it.printStackTrace() }
+            }.onFailure { FileLog.e(it) }
         }
 
         Toast.makeText(ApplicationLoader.applicationContext, "Profile cache cleared — close & reopen profile", Toast.LENGTH_LONG).show()

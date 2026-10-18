@@ -12,7 +12,6 @@ import android.text.Layout
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.style.ReplacementSpan
 import android.view.Gravity
@@ -20,10 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.graphics.withTranslation
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
@@ -41,7 +37,6 @@ import org.telegram.ui.Cells.TextCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.BulletinFactory
-import org.telegram.ui.Components.ColoredImageSpan
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem

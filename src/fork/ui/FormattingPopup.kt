@@ -74,7 +74,7 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
             isHorizontalScrollBarEnabled = false
             overScrollMode = View.OVER_SCROLL_NEVER
             background = GradientDrawable().apply {
-                cornerRadius = dpf(8f)
+                cornerRadius = dpRounded(8f)
                 setColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground))
             }
             addView(
@@ -93,7 +93,7 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
         ).apply {
             isOutsideTouchable = false
             isFocusable = false
-            elevation = dpf(1f)
+            elevation = dpRounded(1f)
             setBackgroundDrawable(null)
         }
         addItems()
@@ -173,7 +173,7 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
             for ((idx, item) in group.withIndex()) {
                 val isFirst = idx == 0
                 val isLast = idx == group.size - 1
-                item.setCorners(if (isFirst) dpf(6f) else 0f, if (isLast) dpf(6f) else 0f)
+                item.setCorners(if (isFirst) dpRounded(6f) else 0f, if (isLast) dpRounded(6f) else 0f)
                 if (!isLast) {
                     (item.view.layoutParams as LinearLayout.LayoutParams).marginEnd = dp(1)
                 }
@@ -611,6 +611,6 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
         }
 
         private fun dp(v: Int): Int = AndroidUtilities.dp(v.toFloat())
-        private fun dpf(v: Float): Float = AndroidUtilities.dp(v).toFloat()
+        private fun dpRounded(v: Float): Float = AndroidUtilities.dp(v).toFloat()
     }
 }
