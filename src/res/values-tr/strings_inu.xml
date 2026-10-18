@@ -2053,4 +2053,14 @@
     <string name="InuTimedMediaAfterView">Görüntüledikten sonra</string>
     <string name="InuTimedMediaAfterViewBurn">Yak</string>
     <string name="InuTimedMediaAfterViewKeep">Kopyasını sakla</string>
+    <string name="InuRetroTitle">Retro düzen</string>
+    <string name="InuRetroSubtitle">Eski tarz profil başlığı, düz listeler ve klasik ayarlar ekranı.</string>
+    <string name="InuRetroScreens">Ekranlar</string>
+    <string name="InuRetroProfile">Retro profil</string>
+    <string name="InuRetroProfileInfo">Eski profil başlığını geri getirir.</string>
+    <string name="InuRetroLists">Retro listeler</string>
+    <string name="InuRetroListsInfo">Her yerde düz eski tarz listeler, Material 3 bölümleri olmadan.</string>
+    <string name="InuRetroSettings">Retro ayarlar</string>
+    <string name="InuRetroSettingsInfo">Ayarlar eski tarz profil listesi olarak. Yeniden başlatma gerekir.</string>
+    <string name="InuRetroCredit">*retro-views eklentisinden uyarlandı (@sophietelle)*</string>
 </resources>

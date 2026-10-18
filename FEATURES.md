@@ -142,6 +142,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **snowflakes in header**: falling snow over the title bar any time of year - *ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - 📡 **chat list sections**: chats as rounded Material 3 cards with adjustable side margins and pinned chats and archive as their own card - *inspired by Modular Sections (@RnPlugins)*
 - 📡 **forum topic cards**: topics of a forum as rounded Material 3 cards with pinned topics as their own card
+- 📡 **retro mode**: old-style profile header, flat lists and a classic settings screen - *ported from retro-views plugin (@sophietelle)*
 
 ### profile & identity tools
 

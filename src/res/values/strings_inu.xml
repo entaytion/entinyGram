@@ -2090,4 +2090,14 @@
     <string name="InuBookmarksEmpty">No bookmarks</string>
     <string name="InuBookmarksClearAll">Clear all bookmarks</string>
     <string name="InuBookmarksSummary">Messages you saved, grouped by chat</string>
+    <string name="InuRetroTitle">Retro</string>
+    <string name="InuRetroSubtitle">Old-style profile header, flat lists and a classic settings screen.</string>
+    <string name="InuRetroScreens">Screens</string>
+    <string name="InuRetroProfile">Retro profile</string>
+    <string name="InuRetroProfileInfo">Brings back the old profile header.</string>
+    <string name="InuRetroLists">Retro lists</string>
+    <string name="InuRetroListsInfo">Flat old-style lists everywhere, without Material 3 sections.</string>
+    <string name="InuRetroSettings">Retro settings</string>
+    <string name="InuRetroSettingsInfo">Settings as an old-style profile list. Needs a restart.</string>
+    <string name="InuRetroCredit">*ported from the retro-views plugin (@sophietelle)*</string>
 </resources>

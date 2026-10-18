@@ -6,6 +6,7 @@ import android.graphics.drawable.RippleDrawable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
+import desu.inugram.helpers.theme.RetroListsHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
 
@@ -13,7 +14,7 @@ object DrawerM3SectionsHelper {
 
     @JvmStatic
     fun isEnabled(): Boolean =
-        InuConfig.NAVIGATION_DRAWER.value && InuConfig.DRAWER_M3_SECTIONS.value
+        InuConfig.NAVIGATION_DRAWER.value && InuConfig.DRAWER_M3_SECTIONS.value && !RetroListsHelper.isFlat()
 
     private val outerR get() = AndroidUtilities.dp(16f).toFloat()
 

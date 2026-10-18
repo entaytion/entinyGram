@@ -2052,4 +2052,14 @@
     <string name="InuTimedMediaAfterView">閲覧後</string>
     <string name="InuTimedMediaAfterViewBurn">焼却</string>
     <string name="InuTimedMediaAfterViewKeep">コピーを残す</string>
+    <string name="InuRetroTitle">レトロ</string>
+    <string name="InuRetroSubtitle">旧式のプロフィールヘッダー、フラットなリスト、クラシックな設定画面。</string>
+    <string name="InuRetroScreens">画面</string>
+    <string name="InuRetroProfile">レトロなプロフィール</string>
+    <string name="InuRetroProfileInfo">旧式のプロフィールヘッダーに戻します。</string>
+    <string name="InuRetroLists">レトロなリスト</string>
+    <string name="InuRetroListsInfo">Material 3 のセクションを使わず、どこでも旧式のフラットなリストにします。</string>
+    <string name="InuRetroSettings">レトロな設定</string>
+    <string name="InuRetroSettingsInfo">設定を旧式のプロフィールリストで表示します。再起動が必要です。</string>
+    <string name="InuRetroCredit">*retro-views プラグインより移植 (@sophietelle)*</string>
 </resources>

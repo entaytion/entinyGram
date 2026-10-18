@@ -39,7 +39,7 @@ object M3SectionsHelper {
     private val splitDividerPaint = Paint()
 
     @JvmStatic
-    fun isEnabled(): Boolean = InuConfig.M3_SECTIONS_STYLE.value
+    fun isEnabled(): Boolean = InuConfig.M3_SECTIONS_STYLE.value && !RetroListsHelper.isEnabled()
 
     /** Theme.dividerPaint is hidden while section children draw, so vertical split lines need their own */
     @JvmStatic

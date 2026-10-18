@@ -2044,4 +2044,14 @@
     <string name="InuTimedMediaAfterView">После просмотра</string>
     <string name="InuTimedMediaAfterViewBurn">Сжечь</string>
     <string name="InuTimedMediaAfterViewKeep">Сохранить копию</string>
+    <string name="InuRetroTitle">Ретро</string>
+    <string name="InuRetroSubtitle">Старый заголовок профиля, плоские списки и классический экран настроек.</string>
+    <string name="InuRetroScreens">Экраны</string>
+    <string name="InuRetroProfile">Ретро профиль</string>
+    <string name="InuRetroProfileInfo">Возвращает старый заголовок профиля.</string>
+    <string name="InuRetroLists">Ретро списки</string>
+    <string name="InuRetroListsInfo">Плоские списки старого стиля везде, без разделов Material 3.</string>
+    <string name="InuRetroSettings">Ретро настройки</string>
+    <string name="InuRetroSettingsInfo">Настройки как список профиля старого стиля. Нужен перезапуск.</string>
+    <string name="InuRetroCredit">*портировано из плагина retro-views (@sophietelle)*</string>
 </resources>

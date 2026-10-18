@@ -290,6 +290,15 @@ object InuConfig {
     val M3_BOTTOM_TABS = BoolItem("m3_bottom_tabs", false)
 
     @JvmField
+    val RETRO_PROFILE = BoolItem("retro_profile", false)
+
+    @JvmField
+    val RETRO_LISTS = BoolItem("retro_lists", false)
+
+    @JvmField
+    val RETRO_SETTINGS = BoolItem("retro_settings", false)
+
+    @JvmField
     val PLUGINS_ENABLED = BoolItem("plugins_enabled", false)
 
     // json: ordered [{id, file, enabled}] — install id + source file + middleware order + per-plugin

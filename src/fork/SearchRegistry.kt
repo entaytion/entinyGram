@@ -37,6 +37,7 @@ import desu.inugram.ui.settings.RecentChatsSettingsActivity
 import desu.inugram.ui.settings.ParanoiaActivity
 import desu.inugram.ui.settings.PrivacySecurityActivity
 import desu.inugram.ui.settings.RegexFilterSettingsActivity
+import desu.inugram.ui.settings.RetroSettingsActivity
 import desu.inugram.ui.settings.SettingsPageActivity
 import desu.inugram.ui.settings.StalkerPackSettingsActivity
 import desu.inugram.ui.settings.TosSettingsActivity
@@ -73,6 +74,7 @@ object SearchRegistry {
             ChatHeaderSettingsActivity.PAGE,
             IosStyleSettingsActivity.PAGE,
             Material3SettingsActivity.PAGE,
+            RetroSettingsActivity.PAGE,
             MessageDesignSettingsActivity.PAGE,
             DrawerSettingsActivity.PAGE,
             DrawerMenuOrderActivity.PAGE,

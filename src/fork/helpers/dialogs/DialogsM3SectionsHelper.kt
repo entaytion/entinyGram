@@ -9,6 +9,7 @@ import android.graphics.drawable.RippleDrawable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
+import desu.inugram.helpers.theme.RetroListsHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.UserConfig
@@ -24,7 +25,7 @@ object DialogsM3SectionsHelper {
     private const val GAP_DP = 1f
 
     @JvmStatic
-    fun isEnabled(): Boolean = InuConfig.DIALOGS_M3_SECTIONS.value
+    fun isEnabled(): Boolean = InuConfig.DIALOGS_M3_SECTIONS.value && !RetroListsHelper.isFlat()
 
     private fun sideMarginDp(collapsed: Boolean = false): Float = when {
         collapsed -> 0f
