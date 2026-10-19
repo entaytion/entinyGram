@@ -244,7 +244,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - icon replacement (solar pack by [480 Design](https://t.me/Design480) - *ported from [NagramX](https://github.com/risin42/NagramX)*; vkui pack by [VK](https://github.com/VKCOM/icons) - *ported from [Catogram](https://github.com/Catogram/Catogram)*)
 - 22 concept launcher icons (Inu tribute, Radar, Constellation, Orbit, Avatar, Nothing, Mono, Sunset, Amethyst, Aurora, Google ’26, Lunar, Math Book, Jungle, Gold, Dish, Blush, Nox Sky, Inverse, osu!, Among Us, Crimson) in the app icon picker, free for everyone - *icons by [@xiurann](https://t.me/xiurann) and [@mkr_infinity](https://t.me/mkr_infinity)*
 - notification icon: Telegram (default) or entinyGram
-- 🐶 animated splash screen follows the selected app icon and Monet theme (Android 12+)
 - show seconds in timestamps
 - override Telegram's detected device performance class
 - 🐶 customizable animation speed multiplier (incl. instant)

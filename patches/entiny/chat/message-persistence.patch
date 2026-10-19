@@ -198,7 +198,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -3813,6 +3813,7 @@ public class MessagesStorage extends BaseController {
+@@ -3816,6 +3816,7 @@ public class MessagesStorage extends BaseController {
                      }
                      cursor.dispose();
                  }
@@ -206,7 +206,7 @@ index 0000000..0000000 100644
              } catch (Exception e) {
                  throw e;
              } finally {
-@@ -4355,6 +4356,9 @@ public class MessagesStorage extends BaseController {
+@@ -4358,6 +4359,9 @@ public class MessagesStorage extends BaseController {
          if (message == null) {
              return false;
          }
@@ -216,7 +216,7 @@ index 0000000..0000000 100644
          int type = 0;
          long id = 0;
          TLRPC.Document document = MessageObject.getDocument(message);
-@@ -4766,6 +4770,9 @@ public class MessagesStorage extends BaseController {
+@@ -4769,6 +4773,9 @@ public class MessagesStorage extends BaseController {
      }
  
      public void emptyMessagesMedia(long dialogId, ArrayList<Integer> mids) {
@@ -226,7 +226,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLiteCursor cursor = null;
              SQLitePreparedStatement state = null;
-@@ -9774,6 +9781,7 @@ public class MessagesStorage extends BaseController {
+@@ -9777,6 +9784,7 @@ public class MessagesStorage extends BaseController {
                                      }
                                  }
                              }
@@ -234,7 +234,7 @@ index 0000000..0000000 100644
                              if (message.replyMessage == null) {
                                  if (message.reply_to.reply_to_msg_id != 0) {
                                      addReplyMessages(message, replyMessageOwners, dialogReplyMessagesIds);
-@@ -14751,6 +14759,8 @@ public class MessagesStorage extends BaseController {
+@@ -14754,6 +14762,8 @@ public class MessagesStorage extends BaseController {
                  cursor.dispose();
                  cursor = null;
  
@@ -243,7 +243,7 @@ index 0000000..0000000 100644
                  ArrayList<TopicKey> topicsToDelete = null;
  
                  if (dialogId != 0) {
-@@ -14805,6 +14815,7 @@ public class MessagesStorage extends BaseController {
+@@ -14808,6 +14818,7 @@ public class MessagesStorage extends BaseController {
                  cursor.dispose();
                  cursor = null;
  
@@ -251,7 +251,7 @@ index 0000000..0000000 100644
                  database.beginTransaction();
                  for (int i = 0; i < 5; i++) {
                      if (i == 0) {
-@@ -14835,7 +14846,7 @@ public class MessagesStorage extends BaseController {
+@@ -14838,7 +14849,7 @@ public class MessagesStorage extends BaseController {
  
                      state.requery();
                      state.bindByteBuffer(1, data);
@@ -260,7 +260,7 @@ index 0000000..0000000 100644
                      if (dialogId != 0 && i != 2) {
                          state.bindLong(3, dialogId);
                      }
-@@ -14972,8 +14983,12 @@ public class MessagesStorage extends BaseController {
+@@ -14975,8 +14986,12 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
                      }
@@ -275,7 +275,7 @@ index 0000000..0000000 100644
                      database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-@@ -16366,6 +16381,7 @@ public class MessagesStorage extends BaseController {
+@@ -16369,6 +16384,7 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
@@ -283,7 +283,7 @@ index 0000000..0000000 100644
                                      if (reactionUpdates != null) {
                                          reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
                                      }
-@@ -16422,6 +16438,15 @@ public class MessagesStorage extends BaseController {
+@@ -16425,6 +16441,15 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {
@@ -299,7 +299,7 @@ index 0000000..0000000 100644
                                  continue;
                              }
                          }
-@@ -19122,7 +19147,7 @@ public class MessagesStorage extends BaseController {
+@@ -19125,7 +19150,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  

@@ -19,7 +19,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -4937,7 +4937,17 @@ public class MessagesStorage extends BaseController {
+@@ -4940,7 +4940,17 @@ public class MessagesStorage extends BaseController {
          });
      }
  
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
          final long myself = getUserConfig().getClientUserId();
          final int date = getConnectionsManager().getCurrentTime();
          storageQueue.postRunnable(() -> {
-@@ -5517,6 +5527,11 @@ public class MessagesStorage extends BaseController {
+@@ -5520,6 +5530,11 @@ public class MessagesStorage extends BaseController {
      }
  
      public void updateMessageVoiceTranscriptionOpen(long dialogId, int msgId, TLRPC.Message saveFromMessage) {
@@ -49,7 +49,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLitePreparedStatement state = null;
              try {
-@@ -5565,6 +5580,11 @@ public class MessagesStorage extends BaseController {
+@@ -5568,6 +5583,11 @@ public class MessagesStorage extends BaseController {
      }
  
      public void updateMessageVoiceTranscription(long dialogId, int messageId, String text, long transcriptionId, boolean isFinal) {
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLitePreparedStatement state = null;
              try {
-@@ -5605,6 +5625,11 @@ public class MessagesStorage extends BaseController {
+@@ -5608,6 +5628,11 @@ public class MessagesStorage extends BaseController {
      }
  
      public void updateMessageVoiceTranscription(long dialogId, int messageId, String text, TLRPC.Message saveFromMessage) {
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLitePreparedStatement state = null;
              try {
-@@ -5654,11 +5679,12 @@ public class MessagesStorage extends BaseController {
+@@ -5657,11 +5682,12 @@ public class MessagesStorage extends BaseController {
      }
  
      public void updateMessageCustomParams(long dialogId, TLRPC.Message saveFromMessage) {
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
                  MessageCustomParamsHelper.copyParams(saveFromMessage, message);
  
                  for (int i = 0; i < 2; i++) {
-@@ -5674,7 +5700,7 @@ public class MessagesStorage extends BaseController {
+@@ -5677,7 +5703,7 @@ public class MessagesStorage extends BaseController {
                      } else {
                          state.bindNull(1);
                      }

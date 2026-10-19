@@ -2338,10 +2338,11 @@ object ChatHelper {
                 fragment,
                 R.string.InuPluginsPluginlessBuild,
                 R.string.InuPluginsOpenSettings,
-            ) { AboutActivity() }
+            ) { InuSettingsActivity() }
             // #endif
             else -> FontImportHelper.startImportFromFile(fragment, file, name, mimeType)
         }
+        return true
     }
 
     private fun pollFileDownload(
