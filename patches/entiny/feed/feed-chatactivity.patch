@@ -1565,7 +1565,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -666,6 +666,18 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -672,6 +672,18 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          occupyStatusBar = value;
      }
  
@@ -1584,7 +1584,7 @@ index 0000000..0000000 100644
      public void setTitleColors(int title, int subtitle) {
          titleTextView.setTextColor(title);
          subtitleTextView.setTextColor(subtitle);
-@@ -1403,6 +1415,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1409,6 +1421,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      private boolean showingSavedMessagesHint;
  
      public void updateSubtitle(boolean animated) {

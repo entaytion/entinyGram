@@ -5,9 +5,9 @@ Subject: Fix compact pill clipping, avatar dots, and profile transition jitter
 
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  |  4 +-
- .../ui/Components/ChatAvatarContainer.java    | 12 +++--
+ .../ui/Components/ChatAvatarContainer.java    | 34 +++++++++----
  .../java/org/telegram/ui/ProfileActivity.java | 51 ++++++++++++++++---
- 3 files changed, 56 insertions(+), 11 deletions(-)
+ 3 files changed, 70 insertions(+), 19 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -30,7 +30,50 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -811,7 +811,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -432,28 +432,34 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         canvas.restore();
+     }
+ 
++    private final android.graphics.Path inu_cutoutPath = new android.graphics.Path();
++
+     @Override
+     protected boolean drawChild(@NonNull Canvas canvas, View child, long drawingTime) {
+         if (child == avatarImageView) {
+             final boolean hasTimer = timeItem != null && timeItem.getVisibility() == VISIBLE;
+             final boolean hasCommunity = communityItem != null && communityItem.getVisibility() == VISIBLE;
+             if (hasTimer || hasCommunity) {
+-                AndroidUtilities.rectTmp.set(child.getX(), child.getY(), child.getX() + child.getWidth(), child.getY() + child.getHeight());
+-                AndroidUtilities.rectTmp.inset(-dp(3), -dp(3));
+-                canvas.saveLayer(AndroidUtilities.rectTmp, null);
+-                final boolean b = super.drawChild(canvas, child, drawingTime);
++                // entiny: clip the cutouts out instead of saveLayer+CLEAR, the layer left the avatar undrawn in the glass header
++                final android.graphics.Path cutout = inu_cutoutPath;
++                cutout.rewind();
+                 if (hasTimer) {
+                     final float cx = timeItem.getX() + timeItem.getWidth() / 2f;
+                     final float cy = timeItem.getY() + timeItem.getHeight() / 2f;
+-                    final float r = dpf2(12f) * timeItem.getScaleX();
+-                    canvas.drawCircle(cx, cy - dpf2(0.33f), r, Theme.PAINT_CLEAR);
++                    cutout.addCircle(cx, cy - dpf2(0.33f), dpf2(12f) * timeItem.getScaleX(), android.graphics.Path.Direction.CW);
+                 }
+                 if (hasCommunity) {
+                     final float cx = communityItem.getX() + communityItem.getWidth() / 2f;
+                     final float cy = communityItem.getY() + communityItem.getHeight() / 2f;
+-                    final float r = dpf2(7.66f) * communityItem.getScaleX();
+-                    canvas.drawCircle(cx, cy, r, Theme.PAINT_CLEAR);
++                    cutout.addCircle(cx, cy, dpf2(7.66f) * communityItem.getScaleX(), android.graphics.Path.Direction.CW);
+                 }
++                canvas.save();
++                if (android.os.Build.VERSION.SDK_INT >= 26) {
++                    canvas.clipOutPath(cutout);
++                } else {
++                    canvas.clipPath(cutout, android.graphics.Region.Op.DIFFERENCE);
++                }
++                final boolean b = super.drawChild(canvas, child, drawingTime);
+                 canvas.restore();
+                 return b;
+             }
+@@ -811,7 +817,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      // container's layout pass left the text measured for one band while another was drawn.
      private boolean isCenteredTitle() {
          final ActionBar actionBar = inu_actionBar();
@@ -39,7 +82,7 @@ index 0000000..0000000 100644
              return inu_isCenteredCandidate();
          }
          return inu_isRealChatHeader() && actionBar.inu_centeredPill;
-@@ -847,7 +847,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -847,7 +853,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (titleTextView != null) {
              width = Math.max(width, titleTextView.getExactWidthIncludeDrawables()
                      + titleTextView.getPaddingLeft() + titleTextView.getPaddingRight()
@@ -48,7 +91,7 @@ index 0000000..0000000 100644
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables()
-@@ -1024,6 +1024,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1024,6 +1030,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
              final int avatarLeft;
              if (inu_isIosMenuSlotAvatar()) {
@@ -58,7 +101,7 @@ index 0000000..0000000 100644
                  // The slot sits a good 40dp past this container's own right edge (the container is
                  // inset by the back-button and menu margins), so it is only ever drawn because
                  // nothing clips it. Assert that here instead of relying on fadeOutToLessWidth
-@@ -1068,7 +1071,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1068,7 +1077,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                  ? Math.min(titleTextView.getCenteringDrawableBias(), titleBiasSlack)
                  : 0;
          final int titleL = l + titleDrawableBias;
@@ -67,7 +110,7 @@ index 0000000..0000000 100644
          SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
          if (getSubtitleTextView().getVisibility() != GONE) {
              titleTextView.layout(titleL, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), titleR, viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
-@@ -2049,6 +2052,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2049,6 +2058,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          inu_invalidateCenteredTextWidth();
          if (actionBar != null) {
              actionBar.checkAvatarContainerWidth(animated);

@@ -131,7 +131,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -833,16 +833,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -839,16 +839,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      // entiny: pill width = max(title, subtitle) measured width + each view's own horizontal padding, not SimpleTextView#getTextWidth (stale after a post-measure setText).
@@ -148,7 +148,7 @@ index 0000000..0000000 100644
          float width = 0;
          if (titleTextView != null) {
              width = Math.max(width, titleTextView.getExactWidthIncludeDrawables()
-@@ -858,7 +849,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -864,7 +855,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              width = Math.max(width, animatedSubtitleTextView.getDrawable().getAnimateToWidth()
                      + animatedSubtitleTextView.getPaddingLeft() + animatedSubtitleTextView.getPaddingRight());
          }
@@ -156,7 +156,7 @@ index 0000000..0000000 100644
          return width;
      }
  
-@@ -962,7 +952,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -968,7 +958,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      // entiny: Saved Messages centers like any other chat header now; only non-chat headers (no dialog yet, reply-comments, Replies pseudo-user) stay excluded.
@@ -165,7 +165,7 @@ index 0000000..0000000 100644
          return parentFragment != null
                  && !parentFragment.isReplyChatComment()
                  && parentFragment.getDialogId() != 0
-@@ -1139,7 +1129,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1145,7 +1135,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      public void setRightAvatarPadding(int value) {
          rightAvatarPadding = value;
@@ -173,7 +173,7 @@ index 0000000..0000000 100644
      }
  
      public void setCommunityItemVisible(boolean visible) {
-@@ -2017,10 +2006,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2023,10 +2012,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private int getThemedColor(int key) {
@@ -199,7 +199,7 @@ index 0000000..0000000 100644
          if (currentTypingDrawable != null) {
              currentTypingDrawable.setColor(getThemedColor(Theme.key_chat_status));
          }
-@@ -2049,7 +2052,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2055,7 +2058,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private void checkActionBar(boolean animated) {

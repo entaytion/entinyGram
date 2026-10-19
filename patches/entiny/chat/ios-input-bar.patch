@@ -5,12 +5,12 @@ Subject: [+] iOS-style input bar
 
 ---
  .../java/org/telegram/ui/ChatActivity.java    |  29 +-
- .../ui/Components/ChatActivityEnterView.java  | 720 +++++++++++++++---
+ .../ui/Components/ChatActivityEnterView.java  | 722 +++++++++++++++---
  ...ChatActivityEnterViewAnimatedIconView.java |  32 +-
  .../org/telegram/ui/MessageSendPreview.java   |  26 +-
  .../java/org/telegram/ui/iv/RichEditor.java   |   6 +-
  .../org/telegram/ui/iv/RichEditorToolbar.java |   6 +-
- 6 files changed, 715 insertions(+), 104 deletions(-)
+ 6 files changed, 716 insertions(+), 105 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -1164,6 +1164,15 @@ index 0000000..0000000 100644
                      .start();
              }
              if (aiHint != null) {
+@@ -14861,7 +15369,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         emojiButtonPaddingAlpha = progress;
+         updateEmojiButtonParams();
+         emojiButton.setTranslationX(-leftPadding);
+-        messageTextPaddingTranslationX = -leftPadding - (messageEditText == null ? 0 : dp(40) + (senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE ? dp(18) : 0)) * (1f - progress);
++        messageTextPaddingTranslationX = -leftPadding - (messageEditText == null || isIosButtonPlacement() ? 0 : dp(40) + (senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE ? dp(18) : 0)) * (1f - progress);
+         if (recordDeleteImageView != null) {
+             recordDeleteImageView.setTranslationX(-leftPadding);
+         }
 @@ -14926,7 +15434,7 @@ public class ChatActivityEnterView extends FrameLayout implements
      private void updateAttachLayoutParams() {
          updateAttachButtonTranslationX();
