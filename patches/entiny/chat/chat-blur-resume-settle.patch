@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 18 Oct 2026 23:42:21 +0300
+Subject: [*] chat blur resume settle
+
+---
+ .../java/org/telegram/ui/ChatActivity.java    | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -30664,6 +30664,25 @@ public class ChatActivity extends BaseFragment implements
+         }
+         if (contentView != null) {
+             contentView.onResume();
++            contentView.invalidateBlur();
++            // entiny: re-settle blur/glass captures and insets after returning from background
++            contentView.post(() -> {
++                checkInsets();
++                updatePagedownButtonsPosition();
++                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
++                    org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawableRenderNode.inu_invalidateLiquidGlassDrawables();
++                }
++                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && scrollableViewNoiseSuppressor != null) {
++                    invalidateMergedVisibleBlurredPositionsAndSources(BLUR_INVALIDATE_FLAG_POSITIONS | BLUR_INVALIDATE_FLAG_CLIP);
++                }
++                if (glassBackgroundSourceRenderNode != null) {
++                    glassBackgroundSourceRenderNode.invalidateDisplayListForDrawables();
++                }
++                if (glassBackgroundSourceFrostedRenderNode != null) {
++                    glassBackgroundSourceFrostedRenderNode.invalidateDisplayListForDrawables();
++                }
++                invalidateAllGlassAttachedViews();
++            });
+         }
+         checkChecksHint();
+ 

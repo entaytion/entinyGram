@@ -553,3 +553,4 @@ entiny/media/saved-media-date.patch
 entiny/ui/topics-lazy-views.patch
 entiny/media/public-media-lookup.patch
 entiny/ui/retro-views.patch
+entiny/chat/chat-blur-resume-settle.patch
