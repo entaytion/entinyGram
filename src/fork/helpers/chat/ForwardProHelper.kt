@@ -70,6 +70,7 @@ object ForwardProHelper {
         var toggleActiveColor: Int = 0
         var toggleInactiveColor: Int = 0
         var filterTabsView: FilterTabsView? = null
+        var searchRow: View? = null
         var selectedFilterId: Int = 0
     }
 
@@ -214,8 +215,20 @@ object ForwardProHelper {
             addView(toggleContainer, LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
         }
 
+        state.searchRow = searchRow
         frameLayout.addView(searchRow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 40f, Gravity.TOP or Gravity.LEFT, 11f, 7f, 11f, 0f))
         updateQuickToggleIcons(alert)
+    }
+
+    @JvmStatic
+    fun onTopicsProgress(alert: ShareAlert, alpha: Float) {
+        val state = getState(alert)
+        if (!state.active) return
+        for (view in arrayOf<View?>(state.searchRow, state.filterTabsView)) {
+            view ?: continue
+            view.alpha = alpha
+            view.visibility = if (alpha <= 0f) View.INVISIBLE else View.VISIBLE
+        }
     }
 
     @JvmStatic

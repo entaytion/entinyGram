@@ -4,12 +4,12 @@ Date: Mon, 14 Sep 2026 11:22:54 +0300
 Subject: Forward Pro: quick toggles and edit before forward in ShareAlert
 
 ---
- .../org/telegram/messenger/MessageObject.java |  3 +-
- .../messenger/SendMessagesHelper.java         |  2 +-
- .../ui/Components/FilterTabsView.java         |  2 +-
- .../telegram/ui/Components/ShareAlert.java    | 97 ++++++++++++++-----
- .../java/org/telegram/ui/PhotoViewer.java     |  5 +-
- 5 files changed, 80 insertions(+), 29 deletions(-)
+ .../org/telegram/messenger/MessageObject.java |   3 +-
+ .../messenger/SendMessagesHelper.java         |   2 +-
+ .../ui/Components/FilterTabsView.java         |   2 +-
+ .../telegram/ui/Components/ShareAlert.java    | 100 +++++++++++++-----
+ .../java/org/telegram/ui/PhotoViewer.java     |   5 +-
+ 5 files changed, 82 insertions(+), 30 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
@@ -195,7 +195,15 @@ index 0000000..0000000 100644
  
          textPaint.setTextSize(dp(12));
          textPaint.setTypeface(AndroidUtilities.bold());
-@@ -2245,7 +2256,20 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2208,6 +2219,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+         searchView.setScaleX(0.9f + (1f - value) * 0.1f);
+         searchView.setScaleY(0.9f + (1f - value) * 0.1f);
+         searchView.setAlpha(1f - value);
++        desu.inugram.helpers.chat.ForwardProHelper.onTopicsProgress(this, 1f - value);
+ 
+         topicsBackActionBar.getBackButton().setTranslationX(-dp(16) * (1f - value));
+         topicsBackActionBar.getTitleTextView().setTranslationY(dp(16) * (1f - value));
+@@ -2245,7 +2257,20 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
          return containerView.getMeasuredHeight() - containerViewTop;
      }
  
@@ -217,7 +225,7 @@ index 0000000..0000000 100644
      private ActionBarPopupWindow sendPopupWindow;
      private boolean onSendLongClick(View view) {
          if (parentActivity == null) {
-@@ -2290,7 +2314,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2290,7 +2315,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              showSendersNameView.setTextAndIcon(false ? LocaleController.getString(R.string.ShowSenderNames) : LocaleController.getString(R.string.ShowSendersName), 0);
              showSendersNameView.setChecked(showSendersName = true);
  
@@ -227,7 +235,7 @@ index 0000000..0000000 100644
              if (darkTheme) {
                  hideSendersNameView.setTextColor(getThemedColor(Theme.key_voipgroup_nameText));
              }
-@@ -2300,11 +2325,16 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2300,11 +2326,16 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              showSendersNameView.setOnClickListener(e -> {
                  showSendersNameView.setChecked(showSendersName = true);
                  hideSendersNameView.setChecked(!showSendersName);
@@ -244,7 +252,7 @@ index 0000000..0000000 100644
              sendPopupLayout1.setupRadialSelectors(getThemedColor(Theme.key_dialogButtonSelector));
  
              layout.addView(sendPopupLayout1, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, -8));
-@@ -2407,6 +2437,10 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2407,6 +2438,10 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              }
          }
  
@@ -255,7 +263,7 @@ index 0000000..0000000 100644
          CharSequence[] text = new CharSequence[] { commentTextView.getText() };
          ArrayList<TLRPC.MessageEntity> entities = MediaDataController.getInstance(currentAccount).getEntities(text, true);
          final int video_timestamp;
-@@ -2505,7 +2539,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2505,7 +2540,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                          params.monoForumPeer = monoForumPeerId;
                          SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
                      }
@@ -265,7 +273,7 @@ index 0000000..0000000 100644
                      if (result != 0) {
                          removeKeys.add(key);
                      }
-@@ -2798,10 +2833,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2798,10 +2834,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  timestampFrameLayout.setVisibility(View.VISIBLE);
              }
              writeButtonContainer.setVisibility(View.VISIBLE);
@@ -278,7 +286,7 @@ index 0000000..0000000 100644
          }
          if (pickerBottom != null) {
              ViewCompat.setImportantForAccessibility(pickerBottom, show ? ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS : ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
-@@ -2879,7 +2916,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2879,7 +2917,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              writeButton.setStarsPrice(price, messagesCount, animated != 0);
              showCommentTextView(true);
  
@@ -288,7 +296,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -2889,6 +2927,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2889,6 +2928,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              AndroidUtilities.hideKeyboard(commentTextView.getEditText());
          }
          fullyShown = false;
@@ -296,7 +304,7 @@ index 0000000..0000000 100644
          super.dismiss();
          NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.dialogsNeedReload);
      }
-@@ -2933,6 +2972,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2933,6 +2973,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  if (dialog.id == selfUserId) {
                      continue;
                  }
@@ -306,7 +314,7 @@ index 0000000..0000000 100644
                  if (!DialogObject.isEncryptedDialog(dialog.id)) {
                      if (DialogObject.isUserDialog(dialog.id)) {
                          if (dialog.folder_id == 1) {
-@@ -3017,7 +3059,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -3017,7 +3060,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  case 1:
                  default: {
                      view = new View(context);
@@ -320,6 +328,15 @@ index 0000000..0000000 100644
                      break;
                  }
              }
+@@ -3564,7 +3612,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+                 default:
+                 case 1: {
+                     view = new View(context);
+-                    view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, dp(darkTheme && linkToCopy[1] != null ? 109 : 56)));
++                    view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, dp(inu_getHeaderHeight() - 2)));
+                     break;
+                 }
+                 case 2: {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
