@@ -1053,6 +1053,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val REMEMBER_SELECTED_FOLDER = BoolItem("remember_selected_folder", false)
 
     @JvmField
+    val FOLDERS_INFINITE_SWIPE = BoolItem("folders_infinite_swipe", false)
+
+    @JvmField
     val TAB_INDICATOR_STROKE = BoolItem("tab_indicator_stroke", false)
 
     @JvmField

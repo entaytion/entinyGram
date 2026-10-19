@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 19 Oct 2026 20:56:03 +0300
+Subject: Infinite folder swipe
+
+---
+ .../org/telegram/ui/Components/FilterTabsView.java     | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
+@@ -1261,7 +1261,15 @@ public class FilterTabsView extends FrameLayout {
+     }
+ 
+     public int getNextPageId(boolean forward) {
+-        return positionToId.get(currentPosition + (forward ? 1 : -1), -1);
++        int nextPos = currentPosition + (forward ? 1 : -1);
++        if (nextPos < 0 || nextPos >= tabs.size()) {
++            if (desu.inugram.InuConfig.FOLDERS_INFINITE_SWIPE.getValue() && !tabs.isEmpty()) {
++                nextPos = forward ? 0 : tabs.size() - 1;
++                return positionToId.get(nextPos, -1);
++            }
++            return -1;
++        }
++        return positionToId.get(nextPos, -1);
+     }
+ 
+     public void removeTabs() {

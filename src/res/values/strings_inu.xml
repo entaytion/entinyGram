@@ -566,6 +566,8 @@
     <string name="InuHideAllChatsTabInfo">Long press the title in the chat list to show All Chats.</string>
     <string name="InuRememberSelectedFolder">Remember Selected Folder</string>
     <string name="InuRememberSelectedFolderInfo">Reopen the last active folder when returning to the chat list.</string>
+    <string name="InuFoldersInfiniteSwipe">Infinite Folder Swipe</string>
+    <string name="InuFoldersInfiniteSwipeInfo">Wrap around when swiping between folder tabs.</string>
     <string name="InuFoldersAtBottom">Move Folders to Bottom</string>
     <string name="InuSystemFolders">System Folders</string>
     <string name="InuSystemFolderAdministrator">Administrator</string>

@@ -554,3 +554,4 @@ entiny/ui/topics-lazy-views.patch
 entiny/media/public-media-lookup.patch
 entiny/ui/retro-views.patch
 entiny/chat/chat-blur-resume-settle.patch
+entiny/tabs/infinite-folder-swipe.patch

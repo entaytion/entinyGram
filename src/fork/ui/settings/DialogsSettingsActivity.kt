@@ -93,6 +93,14 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 InuConfig.REMEMBER_SELECTED_FOLDER.value
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_FOLDERS_INFINITE_SWIPE,
+                R.string.InuFoldersInfiniteSwipe,
+                R.string.InuFoldersInfiniteSwipeInfo,
+                InuConfig.FOLDERS_INFINITE_SWIPE.value
+            )
+        )
 
         items.add(
             UItem.asCheck(
@@ -389,6 +397,11 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_REMEMBER_SELECTED_FOLDER -> {
                 val new = InuConfig.REMEMBER_SELECTED_FOLDER.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_FOLDERS_INFINITE_SWIPE -> {
+                val new = InuConfig.FOLDERS_INFINITE_SWIPE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
@@ -744,6 +757,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ALWAYS_SHOW_DOWNLOADS = InuUtils.generateId()
         private val TOGGLE_HIDE_ALL_CHATS_TAB = InuUtils.generateId()
         private val TOGGLE_REMEMBER_SELECTED_FOLDER = InuUtils.generateId()
+        private val TOGGLE_FOLDERS_INFINITE_SWIPE = InuUtils.generateId()
         private val BUTTON_COMMUNITY_DISPLAY_MODE = InuUtils.generateId()
         private val BUTTON_TITLE_TEXT = InuUtils.generateId()
         private val TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE = InuUtils.generateId()
@@ -786,6 +800,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("folders-unread-counter", R.string.InuFoldersUnreadCounter, BUTTON_FOLDERS_UNREAD_COUNTER_MODE),
                 SearchRegistry.Entry("hide-all-chats-tab", R.string.InuHideAllChatsTab, TOGGLE_HIDE_ALL_CHATS_TAB),
                 SearchRegistry.Entry("remember-selected-folder", R.string.InuRememberSelectedFolder, TOGGLE_REMEMBER_SELECTED_FOLDER),
+                SearchRegistry.Entry("folders-infinite-swipe", R.string.InuFoldersInfiniteSwipe, TOGGLE_FOLDERS_INFINITE_SWIPE),
                 SearchRegistry.Entry("folders-at-bottom", R.string.InuFoldersAtBottom, TOGGLE_FOLDERS_AT_BOTTOM),
                 SearchRegistry.Entry("system-folders", R.string.InuSystemFolders, BUTTON_SYSTEM_FOLDERS),
                 SearchRegistry.Entry("hide-archive", R.string.InuHideArchive, TOGGLE_HIDE_ARCHIVE),
