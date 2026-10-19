@@ -117,6 +117,10 @@ Pre-built APKs are available on the **[Releases](../../releases)** page.
 
 ### Building from Source
 
+Full build instructions (Windows setup, JDK 21, Android SDK, Gradle, debug/release builds, CI differences, troubleshooting) live on the project website:
+
+**https://entinygram.vercel.app/build**
+
 Requirements: **[Bun](https://bun.sh/)**, **Git**, **StGit**, and **JDK 21**.
 
 1. **Clone the repository:**
@@ -137,8 +141,6 @@ Requirements: **[Bun](https://bun.sh/)**, **Git**, **StGit**, and **JDK 21**.
    bun run build-debug
    ```
    *The resulting APK will be placed at `worktree/TMessagesProj_App/build/outputs/apk/debug/app.apk`.*
-
-For advanced build configurations, ABI filters, and release signing, see **[BUILD.md](BUILD.md)**.
 
 ### Patch Validation & Code Quality
 ```sh
