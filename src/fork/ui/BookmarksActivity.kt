@@ -168,6 +168,9 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
             adapter = BookmarksAdapter(context)
         }
         listView = recycler
+        recycler.setOnItemClickListener { _, position, _, _ ->
+            messages.getOrNull(position)?.let { showInChat(it) }
+        }
         frameLayout.addView(recycler, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat()))
 
         val empty = object : TextView(context) {

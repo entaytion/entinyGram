@@ -803,7 +803,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("bottom-tabs-hide", R.string.InuBottomTabsHide, TOGGLE_BOTTOM_TABS_HIDE),
                 SearchRegistry.Entry("compact-mode", R.string.InuCompactMode, TOGGLE_COMPACT_MODE),
                 SearchRegistry.Entry("show-tab-titles", R.string.InuShowTabTitles, TOGGLE_SHOW_TAB_TITLES),
-                SearchRegistry.Entry("hide-top-search-with-bottom-tab", R.string.InuBottomTabsHideTopSearch, TOGGLE_HIDE_TOP_SEARCH),
+                // entiny: intentionally not registered here — the row is only rendered when bottom tabs are visible, so static search entry would be a phantom; auto-collect adds it when present
                 SearchRegistry.Entry("separate-search-tab", R.string.InuBottomTabsSeparateSearch, TOGGLE_SEPARATE_SEARCH_TAB),
                 SearchRegistry.Entry("customize-bottom-tabs", R.string.InuMainTabsCustomizeReset, BUTTON_RESET_BOTTOM_TABS),
                 SearchRegistry.Entry("dialogs-fab-main-action", R.string.InuDialogsFabMainAction, BUTTON_FAB_MAIN_ACTION),
