@@ -53,6 +53,17 @@ abstract class SettingsPageActivity : UniversalFragment() {
 
     fun withHighlight(itemId: Int) = apply { highlightItemId = itemId }
 
+    // entiny: best-effort auto-collection of searchable items for settings search
+    fun collectSearchEntries(): List<UItem> {
+        val items = ArrayList<UItem>()
+        return try {
+            fillItems(items, null)
+            items
+        } catch (t: Throwable) {
+            emptyList()
+        }
+    }
+
     @Suppress("DEPRECATION")
     override fun createView(context: Context): View {
         // entiny: resize content for IME so focused inline fields remain reachable when keyboard opens
