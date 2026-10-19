@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.graphics.withTranslation
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
@@ -201,7 +202,8 @@ abstract class SettingsPageActivity : UniversalFragment() {
         textRes: Int,
         infoRes: Int,
         checked: Boolean,
-        experimental: Boolean = false
+        experimental: Boolean = false,
+        split: Boolean = false,
     ): UItem {
         val rawText = LocaleController.getString(textRes)
         val text = if (experimental) addExperimentalSpan(rawText) else rawText
@@ -210,15 +212,9 @@ abstract class SettingsPageActivity : UniversalFragment() {
             it.checked = checked
             it.bind = Utilities.Callback { view ->
                 // entiny: read it.checked instead of captured local because DiffUtil treats flipped row as unchanged
-                (view as? NotificationsCheckCell)?.setTextAndValueAndCheck(
-                    text,
-                    subtext,
-                    it.checked,
-                    0,
-                    subtext != null,
-                    !InuConfig.M3_SECTIONS_STYLE.value
-                )
-                (view as? NotificationsCheckCell)?.setDrawLine(false)
+                if (view !is NotificationsCheckCell) return@Callback
+                view.setTextAndValueAndCheck(text, subtext, it.checked, 0, subtext != null, view.needDivider)
+                view.setDrawLine(split)
             }
         }
     }
@@ -327,25 +323,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
         infoRes: Int,
         checked: Boolean,
         experimental: Boolean = false
-    ): UItem {
-        val rawText = LocaleController.getString(textRes)
-        val text = if (experimental) addExperimentalSpan(rawText) else rawText
-        val subtext = if (infoRes == 0) null else LocaleController.getString(infoRes)
-        return UItem.asButtonCheck(id, text, subtext).also {
-            it.checked = checked
-            it.bind = Utilities.Callback { view ->
-                (view as? NotificationsCheckCell)?.setTextAndValueAndCheck(
-                    text,
-                    subtext,
-                    checked,
-                    0,
-                    subtext != null,
-                    !InuConfig.M3_SECTIONS_STYLE.value
-                )
-                (view as? NotificationsCheckCell)?.setDrawLine(true)
-            }
-        }
-    }
+    ): UItem = mkTwoLineCheckItem(id, textRes, infoRes, checked, experimental, split = true)
 
 
     protected fun addExperimentalSpan(string: CharSequence): CharSequence {

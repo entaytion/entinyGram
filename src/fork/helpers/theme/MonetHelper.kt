@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.PatternMatcher
 import android.util.Log
@@ -219,6 +220,8 @@ object MonetHelper {
     private val avatarTextColorCache = java.util.concurrent.ConcurrentHashMap<Long, Int>()
     private const val AVATAR_TEXT_DARK_TONE = 15.0
     private const val AVATAR_TEXT_MIN_CHROMA = 40.0
+    private const val FILE_ICON_DARK_TONE = 30.0
+    private val fileThumbColorCache = java.util.concurrent.ConcurrentHashMap<Int, Int>()
     private var overlayReceiverRegistered = false
     private var themeReloadReceiverRegistered = false
 
@@ -445,6 +448,23 @@ object MonetHelper {
                 fallback
             }
         }
+    }
+
+    @JvmStatic
+    fun getFileIconColor(fallback: Int, background: Int): Int {
+        if (!(Theme.getActiveTheme()?.inu_isMonetNight() ?: false)) return fallback
+        val hct = Hct.fromInt(background)
+        return Hct.from(hct.hue, hct.chroma, FILE_ICON_DARK_TONE).toInt()
+    }
+
+    @JvmStatic
+    fun getFileThumbTextColor(fallback: Int, thumbResId: Int): Int {
+        if (!(Theme.getActiveTheme()?.inu_isMonetNight() ?: false)) return fallback
+        val background = fileThumbColorCache.getOrPut(thumbResId) {
+            val bitmap = (ApplicationLoader.applicationContext.getDrawable(thumbResId) as? BitmapDrawable)?.bitmap ?: return fallback
+            bitmap.getPixel(bitmap.width / 2, bitmap.height / 2)
+        }
+        return getFileIconColor(fallback, background)
     }
 
     private fun softenColorForDarkText(color: Int): Int {

@@ -244,6 +244,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - icon replacement (solar pack by [480 Design](https://t.me/Design480) - *ported from [NagramX](https://github.com/risin42/NagramX)*; vkui pack by [VK](https://github.com/VKCOM/icons) - *ported from [Catogram](https://github.com/Catogram/Catogram)*)
 - 22 concept launcher icons (Inu tribute, Radar, Constellation, Orbit, Avatar, Nothing, Mono, Sunset, Amethyst, Aurora, Google ’26, Lunar, Math Book, Jungle, Gold, Dish, Blush, Nox Sky, Inverse, osu!, Among Us, Crimson) in the app icon picker, free for everyone - *icons by [@xiurann](https://t.me/xiurann) and [@mkr_infinity](https://t.me/mkr_infinity)*
 - notification icon: Telegram (default) or entinyGram
+- 🐶 animated splash screen follows the selected app icon and Monet theme (Android 12+)
 - show seconds in timestamps
 - override Telegram's detected device performance class
 - 🐶 customizable animation speed multiplier (incl. instant)
@@ -648,3 +649,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - permanently white/stale message bubbles on low-memory devices (stock bug: `MessageDrawable` committed its radius/color cache keys even when the bitmap allocation for the bubble nine-patch failed, so the stale drawable was never rebuilt; the shadow nine-patch also recycled its old bitmap before allocating the new one, leaving a recycled bitmap in use)
 - group call recording timer showing a nonsense duration (the whole unix epoch, e.g. `496691:48:15`) right after starting a recording: stock flips the local `recording` flag optimistically while `record_start_date` is still 0
 - opening a forum is faster: its menu, search and empty-state views are created on demand
+- message database stalls (up to minutes) on big chats: reading mentions, deleting replied-to messages and loading the user rating scanned the whole cached history because sqlite picked the wrong index; also reply previews of deleted messages are now actually cleared when several messages are deleted at once (stock bound the id list as one string, matching nothing)
+- a busy channel no longer loses its whole cached history whenever the server answers "difference too long" (stock wiped every cached message, which could block the message database for minutes on big chats and stopped music playing from that chat); the cache is kept but reloaded from the server, and channel messages deleted while the app was not watching now disappear once their part of the history is loaded (stock kept them forever)
+- new channel messages sometimes appearing minutes late (until the next update in that chat): stock threw away channel updates that arrived while it was already fetching a channel's missed updates, and replayed the waiting ones before applying the fetched state

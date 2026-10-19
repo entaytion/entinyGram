@@ -5,11 +5,12 @@ Subject: hooks into various places inside ChatActivity
 
 ---
  .../messenger/MessagesController.java         |   2 +-
+ .../telegram/messenger/RichMessageLayout.java |   1 +
  .../ui/ActionBar/ActionBarMenuItem.java       |   4 +
  .../java/org/telegram/ui/AvatarPreviewer.java |   4 +-
  .../java/org/telegram/ui/ChatActivity.java    | 122 ++++++++++++------
  .../ui/Components/SharedMediaLayout.java      |   3 +
- 5 files changed, 90 insertions(+), 45 deletions(-)
+ 6 files changed, 91 insertions(+), 45 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -24,6 +25,18 @@ index 0000000..0000000 100644
      public ArrayList<TLRPC.Dialog> dialogsForward = new ArrayList<>();
      public ArrayList<TLRPC.Dialog> dialogsServerOnly = new ArrayList<>();
      public ArrayList<TLRPC.Dialog> dialogsCanAddUsers = new ArrayList<>();
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+@@ -7912,6 +7912,7 @@ public class RichMessageLayout {
+             if (buttonState == 0) {
+                 final Activity activity = findActivity(view == null ? null : view.getContext());
+                 final File file = path();
++                if (file != null && desu.inugram.helpers.chat.ChatHelper.maybeHandleRichDocumentClick(document, file)) return;
+                 if (activity != null && file != null) AndroidUtilities.openForView(file, FileLoader.getDocumentFileName(document), document.mime_type, activity, root.resourcesProvider, false);
+             } else if (buttonState == 1 && document != null) {
+                 FileLoader.getInstance(root.currentAccount).loadFile(document, root.messageObject, 1, 1);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java

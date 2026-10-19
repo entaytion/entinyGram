@@ -20,7 +20,7 @@
     <string name="InuActionBarSnowflakes">Сніжинки в шапці</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Пропускати клієнтську перевірку членства для груп обговорення</string>
     <string name="InuNavigationDrawer">Бічна панель (Drawer)</string>
-    <string name="InuNavigationDrawerInfo">Замінює нижню панель вкладок класичним гамбургер-меню. Потрібен перезапуск.</string>
+    <string name="InuNavigationDrawerInfo">Повертає бічне гамбургер-меню з версій до 12.0. Потрібен перезапуск.</string>
     <string name="InuDrawerBackGesture">Відкривати панель жестом «Назад»</string>
     <string name="InuDrawerBackGestureInfo">Свайп назад від лівого краю списку чатів відкриває бічну панель замість виходу з додатка.</string>
     <string name="InuDrawerM3Sections">Модульні секції в бічному меню</string>

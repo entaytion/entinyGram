@@ -1,5 +1,6 @@
 package desu.inugram.helpers.plugins.telegram
 
+import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.plugins.PluginLog
 import desu.inugram.helpers.plugins.SessionResource
 import desu.inugram.core.plugins.PluginRefusal
@@ -39,6 +40,7 @@ import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.QuickAckDelegate
 import org.telegram.tgnet.RequestDelegate
 import org.telegram.tgnet.RequestDelegateTimestamp
+import org.telegram.tgnet.SerializedData
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_update
@@ -334,8 +336,8 @@ object PluginRpc : SessionResource {
             override fun onRpcUnregister(callbackId: Int) =
                 onHost { unregisterIntercept(session, callbackId) }
 
-            override fun onInvokeRpc(invokeId: Long, slot: Int, requestWire: String): String? =
-                invokeRpc(session, slot, invokeAccount, invokeId, requestWire)
+            override fun onInvokeRpc(invokeId: Long, slot: Int, requestWire: String, processUpdates: Boolean): String? =
+                invokeRpc(session, slot, invokeAccount, invokeId, requestWire, processUpdates)
 
             override fun onRpcNext(dispatchId: Long, requestWire: String): String? =
                 onNext(dispatchId, requestWire)
@@ -1415,6 +1417,7 @@ object PluginRpc : SessionResource {
         startedOn: Int,
         invokeId: Long,
         requestWire: String,
+        processUpdates: Boolean,
     ): String? {
         val request = try {
             session.tl.objectFromWire(requestWire)
@@ -1429,7 +1432,7 @@ object PluginRpc : SessionResource {
         } catch (e: Exception) {
             return decodeFailureWire("invokeRpc", e)
         }
-        sendInvoke(session, account, request) { response, error ->
+        sendInvoke(session, account, request, processUpdates) { response, error ->
             settleInvoke(session, invokeId, "invokeRpc") { encodeInvokeResult(session.tl, response, error) }
         }
         return null
@@ -1443,15 +1446,74 @@ object PluginRpc : SessionResource {
         session: PluginSession,
         account: Int,
         request: TLObject,
+        processUpdates: Boolean = false,
         settle: (TLObject?, TLRPC.TL_error?) -> Unit,
     ) {
         sendWithoutInterceptors(account, request, 0) { response, error ->
             // freeResources() runs when this delegate returns, before the runnable below mints a handle
             response?.disableFree = true
+            if (processUpdates && response != null) applyInvokeResult(session, account, request, response)
             EngineDispatch.onEngine(session, onDropped = { releaseUnowned(response) }) {
                 settle(response, error)
             }
         }
+    }
+
+    /**
+     * the plugin's handle stays writable and owned, so the app gets its own copy. Runs on the
+     * request delegate, which is [Utilities.stageQueue], the only queue `processUpdates` may run on.
+     */
+    private fun applyInvokeResult(session: PluginSession, account: Int, request: TLObject, response: TLObject) {
+        try {
+            val updates = if (response is TLRPC.Updates) copyUpdates(response) else createAffectedUpdates(request, response) ?: return
+            MessagesController.getInstance(account).processUpdates(updates, false)
+        } catch (e: Throwable) {
+            session.log.e("rpc", "applying the updates an invoke returned failed", e)
+        }
+    }
+
+    private fun copyUpdates(response: TLRPC.Updates): TLRPC.Updates {
+        val data = InuUtils.CleanSerializedData(response.objectSize)
+        response.serializeToStream(data)
+        val stream = SerializedData(data.toByteArray())
+        data.cleanup()
+        return TLRPC.Updates.TLdeserialize(stream, stream.readInt32(false), false)
+    }
+
+    /**
+     * the update the server pushes to the other sessions. A result whose effect has no such update
+     * (read history, delete history) is left to the next sync: applying its pts alone would hide the change.
+     */
+    private fun createAffectedUpdates(request: TLObject, response: TLObject): TLRPC.Updates? {
+        val update: TLRPC.Update = when {
+            request is TLRPC.TL_messages_deleteMessages && response is TLRPC.TL_messages_affectedMessages ->
+                TL_update.TL_updateDeleteMessages().apply {
+                    messages = ArrayList(request.id)
+                    pts = response.pts
+                    pts_count = response.pts_count
+                }
+            request is TLRPC.TL_channels_deleteMessages && response is TLRPC.TL_messages_affectedMessages ->
+                TL_update.TL_updateDeleteChannelMessages().apply {
+                    channel_id = request.channel.channel_id
+                    messages = ArrayList(request.id)
+                    pts = response.pts
+                    pts_count = response.pts_count
+                }
+            request is TLRPC.TL_messages_readMessageContents && response is TLRPC.TL_messages_affectedMessages ->
+                TL_update.TL_updateReadMessagesContents().apply {
+                    messages = ArrayList(request.id)
+                    pts = response.pts
+                    pts_count = response.pts_count
+                }
+            request is TLRPC.TL_messages_deletePhoneCallHistory && response is TLRPC.TL_messages_affectedFoundMessages ->
+                TL_update.TL_updateDeleteMessages().apply {
+                    messages = ArrayList(response.messages)
+                    pts = response.pts
+                    pts_count = response.pts_count
+                }
+            else -> return null
+        }
+        return TLRPC.TL_updates().apply { updates.add(update) }
     }
 
     private fun invokeAccountOrRefusal(prefix: String, slot: Int, startedOn: Int): Int {

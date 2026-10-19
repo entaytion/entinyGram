@@ -555,3 +555,7 @@ entiny/media/public-media-lookup.patch
 entiny/ui/retro-views.patch
 entiny/chat/chat-blur-resume-settle.patch
 entiny/tabs/infinite-folder-swipe.patch
+bugfix/storage-query-plans.patch
+bugfix/keep-history-on-channel-too-long.patch
+bugfix/keep-channel-queue-during-diff.patch
+feature/app-icon-splash.patch

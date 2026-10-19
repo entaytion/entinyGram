@@ -223,6 +223,12 @@ const config = await inu.invokeRpc({ _: 'help.getConfig' })
   like `auth.*`. While discouraged, you can use `unsafe.disableApiFiltering` to opt out.
 - Your own calls skip every RPC interceptor.
 
+When the result is an `Updates` (sending, editing, forwarding...), the app applies the result as if it sent the request itself, so the chat shows the change right away, and update handlers (yours included) see it. This is the recommended way to handle it, because the updates would reach us anyway, but skipping it would introduce a gap.
+
+The same goes for the `messages.affectedMessages` of `messages.deleteMessages`, `channels.deleteMessages` and `messages.readMessageContents`. Other results that only move the update state (like reading or clearing history) reach the app on its next sync.
+
+Although not recommended unless very specific use-cases, you can pass `{ processUpdates: false }` as the second argument to opt out.
+
 Additionally, there's an `invokeRaw` method that allows sending raw TL bytes and gives raw bytes back.
 It needs `unsafe.invokeRaw` and exists primarily for methods newer than the app's layer.
 Raw bytes are sent as written: the takeover filter does not apply to them.

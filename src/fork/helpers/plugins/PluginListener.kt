@@ -106,7 +106,7 @@ interface RpcListener {
     fun onRpcUnregister(callbackId: Int)
 
     /** [slot] is [QuickJs.ANY_ACCOUNT] for the account-less `inu.invokeRpc` */
-    fun onInvokeRpc(invokeId: Long, slot: Int, requestWire: String): String?
+    fun onInvokeRpc(invokeId: Long, slot: Int, requestWire: String, processUpdates: Boolean): String?
 
     fun onRpcNext(dispatchId: Long, requestWire: String): String?
 

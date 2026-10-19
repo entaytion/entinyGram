@@ -4,7 +4,6 @@ import desu.inugram.ui.settings.fonts.FontInstallSheet
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.MessageObject
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.Components.BulletinFactory
@@ -19,7 +18,7 @@ object FontImportHelper {
         return EXTENSIONS.any { lower.endsWith(it) }
     }
 
-    fun startImportFromFile(fragment: BaseFragment, message: MessageObject, file: File, displayName: String) {
+    fun startImportFromFile(fragment: BaseFragment, file: File, displayName: String, mimeType: String?) {
         FileLog.d("$TAG: startImportFromFile: path=${file.absolutePath} exists=${file.exists()} size=${file.length()} name=$displayName")
         FontLibrary.importQueue.postRunnable {
             val info = FontLibrary.inspectFont(file)
@@ -44,7 +43,7 @@ object FontImportHelper {
                     info,
                     displayName,
                     onInstall = { installFont(fragment, file) },
-                    onOpen = { openExternally(fragment, message) },
+                    onOpen = { openExternally(fragment, file, displayName, mimeType) },
                 ).show()
             }
         }
@@ -73,9 +72,9 @@ object FontImportHelper {
         }
     }
 
-    private fun openExternally(fragment: BaseFragment, message: MessageObject) {
+    private fun openExternally(fragment: BaseFragment, file: File, displayName: String, mimeType: String?) {
         val activity = fragment.parentActivity ?: return
-        if (!AndroidUtilities.openForView(message, activity, fragment.resourceProvider, false)) {
+        if (!AndroidUtilities.openForView(file, displayName, mimeType, activity, fragment.resourceProvider, false)) {
             BulletinFactory.of(fragment).createErrorBulletin(
                 LocaleController.getString(R.string.InuFontOpenInFailed)
             ).show()

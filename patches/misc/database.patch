@@ -4,8 +4,8 @@ Date: Fri, 10 Apr 2026 09:36:00 +0300
 Subject: fork-specific database migration hook
 
 ---
- .../src/main/java/org/telegram/messenger/MessagesStorage.java    | 1 +
- 1 file changed, 1 insertion(+)
+ .../main/java/org/telegram/messenger/MessagesStorage.java | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 index 0000000..0000000 100644
@@ -19,3 +19,18 @@ index 0000000..0000000 100644
              databaseCreated = true;
          } catch (Exception e) {
              FileLog.e(e);
+@@ -792,9 +793,12 @@ public class MessagesStorage extends BaseController {
+         version = DatabaseMigrationHelper.migrate(MessagesStorage.this, version);
+ 
+         FileLog.d("MessagesStorage db migration finished to varsion " + version);
++    }
++
++    public void inu_startDatabaseMigration() {
+         AndroidUtilities.runOnUIThread(() -> {
+-            databaseMigrationInProgress = false;
+-            NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.onDatabaseMigration, false);
++            databaseMigrationInProgress = true;
++            NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.onDatabaseMigration, true);
+         });
+     }
+ 

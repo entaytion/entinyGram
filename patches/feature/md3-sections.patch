@@ -9,7 +9,7 @@ Subject: md3-style sections redesign
  .../ui/AutoDeleteMessagesActivity.java        |  1 -
  .../java/org/telegram/ui/BoostsActivity.java  |  5 ++
  .../org/telegram/ui/Cells/HeaderCell.java     |  7 +++
- .../ui/Cells/NotificationsCheckCell.java      |  2 +-
+ .../ui/Cells/NotificationsCheckCell.java      |  4 +-
  .../java/org/telegram/ui/Cells/TextCell.java  | 35 ++++++++++--
  .../org/telegram/ui/Cells/TextCheckCell.java  |  6 ++-
  .../ui/Cells/TextDetailSettingsCell.java      |  8 +--
@@ -32,13 +32,13 @@ Subject: md3-style sections redesign
  .../org/telegram/ui/ProxyListActivity.java    |  5 --
  .../org/telegram/ui/SettingsActivity.java     | 18 +++++++
  .../org/telegram/ui/StatisticActivity.java    |  1 +
- 28 files changed, 239 insertions(+), 45 deletions(-)
+ 28 files changed, 240 insertions(+), 46 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-@@ -10020,7 +10020,7 @@ public class RichMessageLayout {
+@@ -10021,7 +10021,7 @@ public class RichMessageLayout {
              @Override
              public PreviewView createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
                  final PreviewView cell = new PreviewView(context, currentAccount, resourcesProvider);
@@ -147,6 +147,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/NotificationsChec
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/NotificationsCheckCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/NotificationsCheckCell.java
+@@ -41,7 +41,7 @@ public class NotificationsCheckCell extends FrameLayout {
+     @SuppressWarnings("FieldCanBeLocal")
+     private ImageView imageView;
+     private Switch checkBox;
+-    private boolean needDivider;
++    public boolean needDivider;
+     private boolean drawLine = true;
+     private boolean isMultiline;
+     private int currentHeight;
 @@ -218,7 +218,7 @@ public class NotificationsCheckCell extends FrameLayout {
          if (drawLine) {
              int x = LocaleController.isRTL ? dp(76) : getMeasuredWidth() - dp(76) - 1;

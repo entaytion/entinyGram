@@ -22,7 +22,7 @@ use crate::Log;
 pub trait RpcHost {
   fn on_register(&self, methods: &[String], callback_id: u32, strict: bool) -> Option<String>;
   fn on_unregister(&self, callback_id: u32);
-  fn on_invoke(&self, invoke_id: i64, slot: i32, request_wire: &str) -> Option<String>;
+  fn on_invoke(&self, invoke_id: i64, slot: i32, request_wire: &str, process_updates: bool) -> Option<String>;
   fn on_invoke_raw(&self, invoke_id: i64, slot: i32, method: &[u8]) -> Option<String>;
   fn on_takeout(&self, invoke_id: i64, slot: i32, op: i32, takeout_id: &str, arg: &str) -> Option<String>;
   fn on_next(&self, dispatch_id: i64, request_wire: &str) -> Option<String>;
@@ -370,7 +370,9 @@ pub fn install_rpc<'js>(
   let state2 = state.clone();
   globals.inu.set(
     "invokeRpc",
-    Function::new(ctx.clone(), move |ctx: Ctx<'js>, obj: Value<'js>| state2.js_invoke_rpc(&ctx, ANY_ACCOUNT, obj))?,
+    Function::new(ctx.clone(), move |ctx: Ctx<'js>, obj: Value<'js>, options: Opt<Value<'js>>| {
+      state2.js_invoke_rpc(&ctx, ANY_ACCOUNT, obj, options)
+    })?,
   )?;
 
   let state2 = state.clone();
@@ -412,9 +414,9 @@ impl RpcState {
       "invokeRpc",
       Function::new(
         ctx.clone(),
-        move |ctx: Ctx<'js>, this: This<Value<'js>>, obj: Value<'js>| -> JsResult<Value<'js>> {
+        move |ctx: Ctx<'js>, this: This<Value<'js>>, obj: Value<'js>, options: Opt<Value<'js>>| -> JsResult<Value<'js>> {
           let slot = account_slot(&ctx, &this, "invokeRpc")?;
-          state2.js_invoke_rpc(&ctx, slot, obj)
+          state2.js_invoke_rpc(&ctx, slot, obj, options)
         },
       )?,
     )?;
@@ -545,12 +547,32 @@ fn takeout_options_json<'js>(ctx: &Ctx<'js>, options: Option<Value<'js>>) -> JsR
 }
 
 impl RpcState {
-  fn js_invoke_rpc<'js>(&self, ctx: &Ctx<'js>, slot: i32, obj: Value<'js>) -> JsResult<Value<'js>> {
+  fn js_invoke_rpc<'js>(
+    &self,
+    ctx: &Ctx<'js>,
+    slot: i32,
+    obj: Value<'js>,
+    options: Opt<Value<'js>>,
+  ) -> JsResult<Value<'js>> {
     let method = read_method_name(ctx, &obj)?;
     self.grants.check_grant(ctx, "invokeRpc", Some(&method), MATCH_EXACT)?;
+    let process_updates = match options.0.filter(|value| !value.is_undefined()) {
+      None => true,
+      Some(options) => {
+        let Some(options) = options.as_object() else {
+          return Err(Exception::throw_type(ctx, "invokeRpc: options must be an object"));
+        };
+        opt_bool(ctx, options, "invokeRpc", "processUpdates")?.unwrap_or(true)
+      }
+    };
 
     let wire = proxy::js_value_to_wire(ctx, obj)?;
-    Ok(self.invokes.park(ctx, (), |invoke_id| self.host.on_invoke(invoke_id, slot, &wire))?.into_value())
+    Ok(
+      self
+        .invokes
+        .park(ctx, (), |invoke_id| self.host.on_invoke(invoke_id, slot, &wire, process_updates))?
+        .into_value(),
+    )
   }
 
   /// the one api whose payload is bytes and nothing else, in both directions: it crosses as a

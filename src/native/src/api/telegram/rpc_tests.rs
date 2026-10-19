@@ -13,7 +13,7 @@ pub(crate) struct TestHost {
   pub(crate) send_registered: RefCell<Vec<(u32, String)>>,
   pub(crate) send_unregistered: RefCell<Vec<u32>>,
   pub(crate) send_verdicts: RefCell<Vec<(i64, String)>>,
-  pub(crate) invoke_calls: RefCell<Vec<(i64, i32, String)>>,
+  pub(crate) invoke_calls: RefCell<Vec<(i64, i32, String, bool)>>,
   pub(crate) raw_calls: RefCell<Vec<(i64, i32, Vec<u8>)>>,
   pub(crate) takeout_calls: RefCell<Vec<(i64, i32, i32, String, String)>>,
   pub(crate) update_registered: RefCell<Vec<(u32, Vec<String>, String)>>,
@@ -38,8 +38,8 @@ impl RpcHost for TestHost {
   fn on_unregister(&self, callback_id: u32) {
     self.unregistered.borrow_mut().push(callback_id);
   }
-  fn on_invoke(&self, invoke_id: i64, slot: i32, request_wire: &str) -> Option<String> {
-    self.invoke_calls.borrow_mut().push((invoke_id, slot, request_wire.to_string()));
+  fn on_invoke(&self, invoke_id: i64, slot: i32, request_wire: &str, process_updates: bool) -> Option<String> {
+    self.invoke_calls.borrow_mut().push((invoke_id, slot, request_wire.to_string(), process_updates));
     None
   }
   fn on_invoke_raw(&self, invoke_id: i64, slot: i32, method: &[u8]) -> Option<String> {
@@ -362,7 +362,7 @@ fn an_invoke_settles_by_the_wire_the_host_answers_with() {
       }
     "#,
   );
-  let ids: Vec<i64> = host.invoke_calls.borrow().iter().map(|(id, _, _)| *id).collect();
+  let ids: Vec<i64> = host.invoke_calls.borrow().iter().map(|(id, _, _, _)| *id).collect();
   let wires = [
     r#"J{"_":"foo.bar","ok":true}"#,
     "EBAD_REQUEST: oops",
@@ -405,6 +405,16 @@ fn a_refused_registration_or_call_never_reaches_the_host() {
       "invokeRpc",
       "inu.invokeRpc({ _: 42 })",
       r#"[false,"TypeError",null,"invokeRpc: the request must carry its method name in '_'"]"#,
+    ),
+    (
+      "invokeRpc",
+      "inu.invokeRpc({ _: 'foo.bar' }, 'no')",
+      r#"[false,"TypeError",null,"invokeRpc: options must be an object"]"#,
+    ),
+    (
+      "invokeRpc",
+      "inu.invokeRpc({ _: 'foo.bar' }, { processUpdates: 0 })",
+      r#"[false,"TypeError",null,"invokeRpc: 'processUpdates' must be a boolean"]"#,
     ),
     (
       "invokeRpc(users.getUsers)",
@@ -1539,7 +1549,7 @@ mod bundled_oracles {
       None
     }
     fn on_unregister(&self, _callback_id: u32) {}
-    fn on_invoke(&self, invoke_id: i64, slot: i32, request_wire: &str) -> Option<String> {
+    fn on_invoke(&self, invoke_id: i64, slot: i32, request_wire: &str, _process_updates: bool) -> Option<String> {
       let method = read_request_method(self, request_wire);
       if self.refused.borrow().contains(&method) {
         return Some(plugin_error("forbidden", &format!("'{method}' is not callable by a plugin")));
@@ -1727,6 +1737,25 @@ mod bundled_oracles {
   }
 }
 
+#[test]
+fn an_invoke_asks_the_host_to_apply_returned_updates_unless_the_plugin_opts_out() {
+  let (_rt, ctx, host, _state, _logs) = setup(&["invokeRpc", "account.read(self)"]);
+  eval(
+    &ctx,
+    r#"
+      inu.invokeRpc({ _: 'foo.bar' });
+      inu.invokeRpc({ _: 'foo.bar' }, {});
+      inu.invokeRpc({ _: 'foo.bar' }, undefined);
+      inu.invokeRpc({ _: 'foo.bar' }, { processUpdates: false });
+      inu.account(1).invokeRpc({ _: 'foo.bar' }, { processUpdates: false });
+      inu.account(1).invokeRpc({ _: 'foo.bar' }, { processUpdates: true });
+    "#,
+  );
+
+  let applied: Vec<bool> = host.invoke_calls.borrow().iter().map(|(_, _, _, apply)| *apply).collect();
+  assert_eq!(applied, vec![true, true, true, false, false, true]);
+}
+
 /// the account-less form carries `ANY_ACCOUNT` and the host decides what that means; the
 /// `Account` form carries the slot its handle is pinned to
 #[test]
@@ -1742,7 +1771,7 @@ fn an_invoke_carries_the_account_it_was_called_through_and_raw_bytes_cross_as_by
     "#,
   );
 
-  let slots: Vec<i32> = host.invoke_calls.borrow().iter().map(|(_, slot, _)| *slot).collect();
+  let slots: Vec<i32> = host.invoke_calls.borrow().iter().map(|(_, slot, _, _)| *slot).collect();
   assert_eq!(slots, vec![ANY_ACCOUNT, 1]);
   let calls = host.raw_calls.borrow().clone();
   assert_eq!(calls.iter().map(|(_, slot, _)| *slot).collect::<Vec<_>>(), vec![ANY_ACCOUNT, 1]);

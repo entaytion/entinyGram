@@ -168,7 +168,7 @@ impl JniBridge {
       console,
       on_rpc_register: method("onRpcRegister", "([Ljava/lang/String;IZ)Ljava/lang/String;")?,
       on_rpc_unregister: method("onRpcUnregister", "(I)V")?,
-      on_invoke_rpc: method("onInvokeRpc", "(JILjava/lang/String;)Ljava/lang/String;")?,
+      on_invoke_rpc: method("onInvokeRpc", "(JILjava/lang/String;Z)Ljava/lang/String;")?,
       on_invoke_raw: method("onInvokeRaw", "(JI[B)Ljava/lang/String;")?,
       on_takeout: method("onTakeout", "(JIILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;")?,
       on_rpc_next: method("onRpcNext", "(JLjava/lang/String;)Ljava/lang/String;")?,

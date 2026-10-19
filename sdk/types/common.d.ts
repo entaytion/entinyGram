@@ -32,6 +32,17 @@ declare type MismatchedRpcReturns<M extends tl.TypeRpcMethod['_'], All extends t
 declare type SharedRpcReturn<M extends tl.TypeRpcMethod['_']>
   = [MismatchedRpcReturns<M>] extends [never] ? tl.RpcCallReturn[M] : never
 
+declare interface InvokeRpcOptions {
+  /**
+   * Apply the result to the app, as if the app had sent the request: new messages, edits, deletions
+   * and the update state. Covers an `Updates` result, and the `messages.affectedMessages` of deleting
+   * messages and reading their contents. Update handlers of every plugin see them, like any other
+   * update. Without it, or for other results, the app only learns about the changes from its next
+   * sync. Defaults to `true`.
+   */
+  processUpdates?: boolean
+}
+
 declare interface InterceptRpcOptions {
   /** Fail the app's RPC when the middleware returns an invalid TL value. The default logs and skips that middleware. */
   strict?: boolean
@@ -903,7 +914,7 @@ declare namespace inu {
      *
      * @needs-grant invokeRpc
      */
-    invokeRpc<T extends tl.TypeRpcMethod>(params: T): Promise<tl.RpcCallReturn[T['_']] | null>
+    invokeRpc<T extends tl.TypeRpcMethod>(params: T, options?: InvokeRpcOptions): Promise<tl.RpcCallReturn[T['_']] | null>
 
     /**
      * invoke a raw mtproto rpc method, given its TL serialization,
@@ -913,7 +924,7 @@ declare namespace inu {
      * for cases where you want to call a method that is not yet supported by the current
      * app's layer. beware that can cause the app to crash or otherwise misbehave,
      * due to the server "bumping" the layer. in almost all cases, you should use
-     * {@link invokeRpc} instead.
+     * {@link invokeRpc} instead. the response is never applied to the app.
      *
      * @needs-grant unsafe.invokeRaw
      */
@@ -1681,7 +1692,7 @@ declare namespace inu {
    *
    * @needs-grant invokeRpc
    */
-  function invokeRpc<T extends tl.TypeRpcMethod>(params: T): Promise<tl.RpcCallReturn[T['_']] | null>
+  function invokeRpc<T extends tl.TypeRpcMethod>(params: T, options?: InvokeRpcOptions): Promise<tl.RpcCallReturn[T['_']] | null>
 
   /**
    * invoke a raw mtproto rpc method via the currently active account,
@@ -1691,7 +1702,7 @@ declare namespace inu {
    * for cases where you want to call a method that is not yet supported by the current
    * app's layer. beware that can cause the app to crash or otherwise misbehave,
    * due to the server "bumping" the layer. in almost all cases, you should use
-   * {@link invokeRpc} instead.
+   * {@link invokeRpc} instead. the response is never applied to the app.
    *
    * @needs-grant unsafe.invokeRaw
    */

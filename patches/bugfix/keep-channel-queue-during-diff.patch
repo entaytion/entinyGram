@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 18 Oct 2026 01:14:04 +0200
+Subject: keep queued channel updates while channel difference is in flight
+
+---
+ .../java/org/telegram/messenger/MessagesController.java   | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -16607,6 +16607,10 @@ public class MessagesController extends BaseController implements NotificationCe
+                     if (anyProceed) {
+                         updatesStartWaitTimeChannels.put(channelId, System.currentTimeMillis());
+                     }
++                } else if (gettingDifferenceChannels.get(channelId, false)) {
++                    if (BuildVars.LOGS_ENABLED) {
++                        FileLog.d("HOLE IN CHANNEL " + channelId + " UPDATES QUEUE - wait for difference");
++                    }
+                 } else {
+                     if (BuildVars.LOGS_ENABLED) {
+                         FileLog.d("HOLE IN CHANNEL " + channelId + " UPDATES QUEUE - getChannelDifference ");
+@@ -17046,7 +17050,6 @@ public class MessagesController extends BaseController implements NotificationCe
+                             if (!res.other_updates.isEmpty()) {
+                                 processUpdateArray(res.other_updates, res.users, res.chats, true, 0);
+                             }
+-                            processChannelsUpdatesQueue(channelId, 1);
+                             getMessagesStorage().saveChannelPts(channelId, res.pts);
+                         } else if (res instanceof TLRPC.TL_updates_channelDifferenceTooLong) {
+                             long dialogId = -channelId;
+@@ -17074,7 +17077,8 @@ public class MessagesController extends BaseController implements NotificationCe
+                             notifyAbountDifference = false;
+                         }
+                         gettingDifferenceChannels.delete(channelId);
+-                        channelsPts.put(channelId, res.pts);
++                        channelsPts.put(channelId, res instanceof TLRPC.TL_updates_channelDifferenceTooLong ? ((TLRPC.TL_updates_channelDifferenceTooLong) res).dialog.pts : res.pts);
++                        processChannelsUpdatesQueue(channelId, 1);
+ 
+                         if ((res.flags & 2) != 0) {
+                             shortPollChannels.put(channelId, (int) (System.currentTimeMillis() / 1000) + res.timeout);

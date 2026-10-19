@@ -694,7 +694,7 @@
     <string name="InuChatSnowflakes">チャットに雪を降らせる</string>
     <string name="InuSendToDiscussWithoutJoinInfo">ディスカッショングループのクライアント側メンバーシップチェックをスキップします</string>
     <string name="InuNavigationDrawer">ナビゲーションドロワー</string>
-    <string name="InuNavigationDrawerInfo">下部タブバーを 12.0 以前のハンバーガーサイドドロワーに置き換えます。再起動が必要です。</string>
+    <string name="InuNavigationDrawerInfo">12.0 以前のハンバーガーサイドドロワーを復活させます。再起動が必要です。</string>
     <string name="InuDrawerBackGesture">戻るジェスチャーでドロワーを開く</string>
     <string name="InuDrawerBackGestureInfo">チャットリストの左端から戻るスワイプをすると、アプリを終了せずにドロワーを開きます。</string>
     <string name="InuDrawerM3Sections">ナビゲーションドロワーのモジュラーセクション</string>

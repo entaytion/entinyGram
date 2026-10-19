@@ -6,7 +6,7 @@
     <string name="InuChatSnowflakes">Sohbetlerde kar taneleri</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Tartışma grupları için yalnızca istemci tarafındaki üyelik kontrolünü atlar</string>
     <string name="InuNavigationDrawer">Gezinme menüsü</string>
-    <string name="InuNavigationDrawerInfo">Alt sekme çubuğunu v12.0 öncesi sol yan menü ile değiştirir. Yeniden başlatma gerektirir.</string>
+    <string name="InuNavigationDrawerInfo">v12.0 öncesi sol yan menüyü geri getirir. Yeniden başlatma gerektirir.</string>
     <string name="InuDrawerBackGesture">Geri hareketiyle yan menüyü aç</string>
     <string name="InuDrawerBackGestureInfo">Sohbet listesinin sol kenarından sağa kaydırmak, uygulamadan çıkmak yerine yan menüyü açar.</string>
     <string name="InuDrawerM3Sections">Yan menüde modüler bölümler</string>

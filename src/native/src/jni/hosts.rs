@@ -44,8 +44,12 @@ impl RpcHost for JniBridge {
     self.call_void("interceptRpc", self.on_rpc_unregister, &[Arg::Int(callback_id as i32)]);
   }
 
-  fn on_invoke(&self, invoke_id: i64, slot: i32, request_wire: &str) -> Option<String> {
-    self.call_refusal("invokeRpc", self.on_invoke_rpc, &[Arg::Long(invoke_id), Arg::Int(slot), Arg::Str(request_wire)])
+  fn on_invoke(&self, invoke_id: i64, slot: i32, request_wire: &str, process_updates: bool) -> Option<String> {
+    self.call_refusal(
+      "invokeRpc",
+      self.on_invoke_rpc,
+      &[Arg::Long(invoke_id), Arg::Int(slot), Arg::Str(request_wire), Arg::Bool(process_updates)],
+    )
   }
 
   fn on_invoke_raw(&self, invoke_id: i64, slot: i32, method: &[u8]) -> Option<String> {

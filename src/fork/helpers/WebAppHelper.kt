@@ -6,7 +6,6 @@ import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.tgnet.OutputSerializedData
-import org.telegram.tgnet.SerializedData
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.BaseFragment
@@ -32,33 +31,12 @@ object WebAppHelper {
         })
     }
 
-    // entiny: no-op writeAttachPath writes detected via stack inspection to avoid writing attach path without a hooking lib
-    class CleanSerializedData(size: Int) : SerializedData(size) {
-        private fun inWriteAttachPath(): Boolean {
-            val stack = Thread.currentThread().stackTrace
-            for (i in 2 until stack.size.coerceAtMost(8)) {
-                if (stack[i].methodName == "writeAttachPath") return true
-            }
-            return false
-        }
-
-        override fun writeString(s: String) {
-            if (inWriteAttachPath()) return
-            super.writeString(s)
-        }
-
-        override fun writeInt32(x: Int) {
-            if (inWriteAttachPath()) return
-            super.writeInt32(x)
-        }
-    }
-
     @JvmStatic
     fun openTlViewer(fragment: BaseFragment, obj: TLObject) {
         var serialized = ""
         try {
-            val data = CleanSerializedData(obj.getObjectSize())
-            obj.serializeToStream(data)
+            val data = InuUtils.CleanSerializedData(obj.getObjectSize());
+            obj.serializeToStream(data);
             serialized =
                 Base64.encodeToString(data.toByteArray(), Base64.NO_PADDING or Base64.NO_WRAP or Base64.URL_SAFE)
             data.cleanup()

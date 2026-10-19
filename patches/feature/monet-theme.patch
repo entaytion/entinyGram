@@ -10,9 +10,12 @@ Subject: monet theme, almost directly ported from NagramX
  .../java/org/telegram/ui/ActionBar/Theme.java | 76 ++++++++++++++++++-
  .../telegram/ui/ActionBar/ThemeColors.java    | 14 ++++
  .../telegram/ui/Cells/ChatMessageCell.java    |  4 +-
+ .../telegram/ui/Cells/SharedDocumentCell.java | 10 ++-
  .../ui/Components/AvatarDrawable.java         |  2 +-
+ .../poll/attached/PollAttachedMediaFile.java  |  4 +-
  .../java/org/telegram/ui/DialogsActivity.java |  4 +
- 8 files changed, 113 insertions(+), 23 deletions(-)
+ .../code/highlight/CodeHighlighting.java      | 48 +++++++++---
+ 11 files changed, 158 insertions(+), 40 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
@@ -324,6 +327,41 @@ index 0000000..0000000 100644
                      canvas.drawRoundRect(rect, r, r, dimPaint);
                      dimPaint.setAlpha(oldAlpha2);
                  } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedDocumentCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedDocumentCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedDocumentCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedDocumentCell.java
+@@ -266,7 +266,9 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
+         }
+         needDivider = divider;
+         if (resId == 0) {
+-            placeholderImageView.setImageResource(AndroidUtilities.getThumbForNameOrMime(text, type, false));
++            int thumbResId = AndroidUtilities.getThumbForNameOrMime(text, type, false);
++            placeholderImageView.setImageResource(thumbResId);
++            extTextView.setTextColor(desu.inugram.helpers.theme.MonetHelper.getFileThumbTextColor(getThemedColor(Theme.key_files_iconText), thumbResId));
+             placeholderImageView.setVisibility(VISIBLE);
+         } else {
+             placeholderImageView.setVisibility(INVISIBLE);
+@@ -297,7 +299,7 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
+                     iconKey = Theme.key_files_folderIcon;
+                 }
+                 Theme.setCombinedDrawableColor(drawable, getThemedColor(backKey), false);
+-                Theme.setCombinedDrawableColor(drawable, getThemedColor(iconKey), true);
++                Theme.setCombinedDrawableColor(drawable, desu.inugram.helpers.theme.MonetHelper.getFileIconColor(getThemedColor(iconKey), getThemedColor(backKey)), true);
+                 thumbImageView.setImageDrawable(drawable);
+             }
+             thumbImageView.setVisibility(VISIBLE);
+@@ -442,7 +444,9 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
+ 
+             placeholderImageView.setVisibility(VISIBLE);
+             extTextView.setVisibility(VISIBLE);
+-            placeholderImageView.setImageResource(AndroidUtilities.getThumbForNameOrMime(fileName, document.mime_type, false));
++            int thumbResId = AndroidUtilities.getThumbForNameOrMime(fileName, document.mime_type, false);
++            placeholderImageView.setImageResource(thumbResId);
++            extTextView.setTextColor(desu.inugram.helpers.theme.MonetHelper.getFileThumbTextColor(getThemedColor(Theme.key_files_iconText), thumbResId));
+             extTextView.setText((idx = fileName.lastIndexOf('.')) == -1 ? "" : fileName.substring(idx + 1).toLowerCase());
+             TLRPC.PhotoSize bigthumb = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, 320);
+             TLRPC.PhotoSize thumb = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, 40);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
@@ -337,6 +375,28 @@ index 0000000..0000000 100644
          Paint backgroundPaint = Theme.avatar_backgroundPaint;
          if (hasAdvancedGradient && advancedGradient != null) {
              advancedGradient.setBounds(bounds.left, bounds.top, bounds.left + size, bounds.top + size);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/poll/attached/PollAttachedMediaFile.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/poll/attached/PollAttachedMediaFile.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/poll/attached/PollAttachedMediaFile.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/poll/attached/PollAttachedMediaFile.java
+@@ -70,7 +70,7 @@ public class PollAttachedMediaFile extends PollAttachedMedia {
+             tp = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+             tp.setTextSize(dp(13));
+             tp.setTypeface(AndroidUtilities.bold());
+-            tp.setColor(Theme.getColor(Theme.key_files_iconText));
++            tp.setColor(desu.inugram.helpers.theme.MonetHelper.getFileThumbTextColor(Theme.getColor(Theme.key_files_iconText), res));
+ 
+ 
+             CharSequence ext = TextUtils.ellipsize(this.ext, tp, dp(34), TextUtils.TruncateAt.END);
+@@ -106,7 +106,7 @@ public class PollAttachedMediaFile extends PollAttachedMedia {
+             tp = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+             tp.setTextSize(dp(13));
+             tp.setTypeface(AndroidUtilities.bold());
+-            tp.setColor(Theme.getColor(Theme.key_files_iconText));
++            tp.setColor(desu.inugram.helpers.theme.MonetHelper.getFileThumbTextColor(Theme.getColor(Theme.key_files_iconText), res));
+ 
+ 
+             CharSequence ext = TextUtils.ellipsize(this.ext, tp, dp(34), TextUtils.TruncateAt.END);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
@@ -352,3 +412,160 @@ index 0000000..0000000 100644
          io.setDimAlpha(0x08);
  
          final Activity activity = getParentActivity();
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/code/highlight/CodeHighlighting.java b/TMessagesProj/src/main/java/org/telegram/utils/code/highlight/CodeHighlighting.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/code/highlight/CodeHighlighting.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/code/highlight/CodeHighlighting.java
+@@ -97,11 +97,17 @@ public class CodeHighlighting {
+ 
+     public static class ColorSpan extends CharacterStyle {
+         public int group;
++        public boolean inu_out;
+ 
+         public ColorSpan(int match) {
+             this.group = match;
+         }
+ 
++        public ColorSpan(int match, boolean inu_out) {
++            this.group = match;
++            this.inu_out = inu_out;
++        }
++
+         public int getColorKey() {
+             switch (PrismaTokenStyles.legacyGroup(this.group)) {
+                 case MATCH_KEYWORD:
+@@ -126,7 +132,7 @@ public class CodeHighlighting {
+         @Override
+         public void updateDrawState(TextPaint tp) {
+             int key = getColorKey();
+-            if (key >= 0) tp.setColor(Theme.getColor(key));
++            if (key >= 0) tp.setColor(Theme.getColor(inu_out ? desu.inugram.helpers.theme.MonetHelper.getOutCodeColorKey(key) : key));
+         }
+     }
+ 
+@@ -296,22 +302,24 @@ public class CodeHighlighting {
+     private static final class CacheKey {
+         final String language;
+         final String code;
++        final boolean inu_out;
+ 
+-        CacheKey(String language, String code) {
++        CacheKey(String language, String code, boolean inu_out) {
+             this.language = language;
+             this.code = code;
++            this.inu_out = inu_out;
+         }
+ 
+         @Override
+         public int hashCode() {
+-            return 31 * language.hashCode() + code.hashCode();
++            return 31 * (31 * language.hashCode() + code.hashCode()) + (inu_out ? 1 : 0);
+         }
+ 
+         @Override
+         public boolean equals(Object object) {
+             if (!(object instanceof CacheKey)) return false;
+             CacheKey other = (CacheKey) object;
+-            return language.equals(other.language) && code.equals(other.code);
++            return language.equals(other.language) && code.equals(other.code) && inu_out == other.inu_out;
+         }
+     }
+ 
+@@ -322,10 +330,14 @@ public class CodeHighlighting {
+     private static final int RENDERED_CHARACTER_LIMIT = 64 * 1024;
+ 
+     public static SpannableString getHighlighted(CharSequence text, String language) {
++        return getHighlighted(text, language, false);
++    }
++
++    public static SpannableString getHighlighted(CharSequence text, String language, boolean inu_out) {
+         CharSequence source = text == null ? "" : text;
+         String normalized = PrismaHighlightingService.normalizeLanguage(language);
+         if (normalized.isEmpty() || source.length() == 0) return new SpannableString(source);
+-        CacheKey key = new CacheKey(normalized, source.toString());
++        CacheKey key = new CacheKey(normalized, source.toString(), inu_out);
+         LockedSpannableString result;
+         boolean cacheable =
+                 !(source instanceof Spanned) && key.code.length() <= RENDERED_CHARACTER_LIMIT;
+@@ -346,7 +358,7 @@ public class CodeHighlighting {
+                 }
+             }
+         }
+-        highlight(result, 0, result.length(), normalized, 0, null, true);
++        highlight(result, 0, result.length(), normalized, 0, null, true, inu_out);
+         return result;
+     }
+ 
+@@ -368,7 +380,7 @@ public class CodeHighlighting {
+                 answer ->
+                         AndroidUtilities.runOnUIThread(
+                                 () -> {
+-                                    apply(result, 0, result.length(), answer.tokens);
++                                    apply(result, 0, result.length(), answer.tokens, false);
+                                     whenDone.run(result);
+                                 }));
+     }
+@@ -426,6 +438,18 @@ public class CodeHighlighting {
+             int type,
+             TextStyleSpan.TextStyleRun style,
+             boolean smallerSize) {
++        highlight(text, start, end, language, type, style, smallerSize, false);
++    }
++
++    public static void highlight(
++            Spannable text,
++            int start,
++            int end,
++            String language,
++            int type,
++            TextStyleSpan.TextStyleRun style,
++            boolean smallerSize,
++            boolean inu_out) {
+         if (text == null) return;
+         if (start < 0 || end < start || end > text.length()) throw new IndexOutOfBoundsException();
+         Pending pending = new Pending(text.subSequence(start, end).toString());
+@@ -449,7 +473,7 @@ public class CodeHighlighting {
+                                 // Prepare it off-main.
+                                 if (current instanceof LockedSpannableString
+                                         && !((LockedSpannableString) current).ready) {
+-                                    apply(current, start, end, answer.tokens);
++                                    apply(current, start, end, answer.tokens, inu_out);
+                                     applied = true;
+                                 }
+                             }
+@@ -463,7 +487,7 @@ public class CodeHighlighting {
+                                             boolean matches =
+                                                     sameSource(current, start, end, pending.source);
+                                             if (matches && !prepared)
+-                                                apply(current, start, end, answer.tokens);
++                                                apply(current, start, end, answer.tokens, inu_out);
+                                             target.ranges.remove(range);
+                                             if (target.ranges.isEmpty()) {
+                                                 TARGETS.remove(target);
+@@ -500,7 +524,7 @@ public class CodeHighlighting {
+     }
+ 
+     private static void apply(
+-            Spannable text, int start, int end, PrismaHighlighter.Tokenization tokens) {
++            Spannable text, int start, int end, PrismaHighlighter.Tokenization tokens, boolean inu_out) {
+         if (start == end) return;
+         for (ColorSpan span : ownedSpans(text, start, end, ColorSpan.class)) {
+             preserveOutside(text, start, end, span);
+@@ -519,7 +543,7 @@ public class CodeHighlighting {
+             if (from < start || to > end || from >= to) continue;
+             int group = flags & PrismaTokenStyles.COLOR_MASK;
+             if (group != 0)
+-                text.setSpan(new ColorSpan(group), from, to, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
++                text.setSpan(new ColorSpan(group, inu_out), from, to, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+             if ((flags & (PrismaTokenStyles.BOLD | PrismaTokenStyles.ITALIC)) != 0) {
+                 text.setSpan(new SyntaxFontSpan(flags), from, to, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+             }
+@@ -552,7 +576,7 @@ public class CodeHighlighting {
+     }
+ 
+     private static Object copySyntaxSpan(Object span) {
+-        if (span instanceof ColorSpan) return new ColorSpan(((ColorSpan) span).group);
++        if (span instanceof ColorSpan) return new ColorSpan(((ColorSpan) span).group, ((ColorSpan) span).inu_out);
+         return new SyntaxFontSpan(((SyntaxFontSpan) span).flags);
+     }
+ }

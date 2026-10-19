@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
 import org.telegram.tgnet.NativeByteBuffer
+import org.telegram.tgnet.SerializedData
 import org.telegram.tgnet.TLObject
 import org.telegram.ui.ActionBar.BaseFragment
 import desu.inugram.ui.feed.FeedActivity
@@ -53,6 +54,34 @@ public object InuUtils {
         true
     }.onFailure { FileLog.e(it) }.getOrDefault(false)
 
+    // serialized message without attach path. stack-inspection monkeypatch —
+    // we can't actually override Message.writeAttachPath without a hooking lib,
+    // so we no-op the writes it would issue when we detect it in the stack.
+    // it writes its string first, and an int only right after it.
+    class CleanSerializedData(size: Int) : SerializedData(size) {
+        private var skippedAttachPath = false
+
+        private fun inWriteAttachPath(): Boolean {
+            val stack = Thread.currentThread().stackTrace
+            for (i in 2 until stack.size.coerceAtMost(8)) {
+                if (stack[i].methodName == "writeAttachPath") return true
+            }
+            return false
+        }
+
+        override fun writeString(s: String) {
+            skippedAttachPath = inWriteAttachPath()
+            if (!skippedAttachPath) super.writeString(s)
+        }
+
+        override fun writeInt32(x: Int) {
+            if (skippedAttachPath && inWriteAttachPath()) return
+            skippedAttachPath = false
+            super.writeInt32(x)
+        }
+    }
+
+    /** Deep-clones a [TLObject] via serialize → deserialize round-trip. */
     inline fun <T : TLObject, R : TLObject> cloneTLObject(
         obj: T,
         deserialize: (NativeByteBuffer, Int, Boolean) -> R?,
