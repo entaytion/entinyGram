@@ -2,6 +2,7 @@ package desu.inugram.helpers.translate.engine
 
 import android.util.Log
 import desu.inugram.InuConfig
+import desu.inugram.helpers.ai.AiComposeHelper
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -388,7 +389,7 @@ object LlmProvider : TranslationProvider {
     override fun translate(text: String, toLang: String): String = translate(text, toLang, emptyList())
 
     override fun translate(text: String, toLang: String, context: List<String>): String {
-        val endpoint = InuConfig.TRANSLATE_LLM_URL.value.trim()
+        val endpoint = AiComposeHelper.completionsUrl(InuConfig.TRANSLATE_LLM_URL.value.trim())
         val key = InuConfig.TRANSLATE_LLM_KEY.value.trim()
         val model = InuConfig.TRANSLATE_LLM_MODEL.value.trim().ifBlank { "gpt-4o-mini" }
         val system = InuConfig.TRANSLATE_LLM_PROMPT.value.trim().ifBlank { DEFAULT_SYSTEM_PROMPT }

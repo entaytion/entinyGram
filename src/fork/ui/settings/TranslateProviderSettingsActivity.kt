@@ -4,12 +4,15 @@ import android.text.InputType
 import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.ai.AiComposeHelper
+import desu.inugram.helpers.ai.AiModelsHelper
 import desu.inugram.helpers.translate.engine.EntinyTranslate
 import desu.inugram.helpers.translate.engine.TranslationProviders
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
+import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import kotlin.reflect.KMutableProperty0
@@ -46,8 +49,10 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
 
             TranslationProviders.PROVIDER_LLM -> {
                 keyField(items, ::llmUrlField, LocaleController.getString(R.string.InuTranslateLlmEndpointUrl), InuConfig.TRANSLATE_LLM_URL.value, InputType.TYPE_TEXT_VARIATION_URI) { InuConfig.TRANSLATE_LLM_URL.value = it }
+                items.add(UItem.asButton(BUTTON_DETECT_LLM, LocaleController.getString(R.string.InuAiProviderDetect)))
                 keyField(items, ::llmKeyField, LocaleController.getString(R.string.InuTranslateLlmApiKey), InuConfig.TRANSLATE_LLM_KEY.value, InputType.TYPE_TEXT_VARIATION_PASSWORD) { InuConfig.TRANSLATE_LLM_KEY.value = it }
                 keyField(items, ::llmModelField, LocaleController.getString(R.string.InuTranslateLlmModel), InuConfig.TRANSLATE_LLM_MODEL.value) { InuConfig.TRANSLATE_LLM_MODEL.value = it }
+                items.add(UItem.asButton(BUTTON_PICK_MODEL, LocaleController.getString(R.string.InuAiModelPickerTitle)))
                 keyField(items, ::llmPromptField, LocaleController.getString(R.string.InuTranslateLlmPrompt), InuConfig.TRANSLATE_LLM_PROMPT.value) { InuConfig.TRANSLATE_LLM_PROMPT.value = it }
 
                 // entiny: keep slider instances as fields so rebuilding items does not reset thumb mid-drag
@@ -92,6 +97,8 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
 
     private var deeplKeyField: FieldSlot? = null
     private var llmUrlField: FieldSlot? = null
+    private val BUTTON_DETECT_LLM = InuUtils.generateId()
+    private val BUTTON_PICK_MODEL = InuUtils.generateId()
     private var llmKeyField: FieldSlot? = null
     private var llmModelField: FieldSlot? = null
     private var llmPromptField: FieldSlot? = null
@@ -114,6 +121,14 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (item.id == BUTTON_DETECT_LLM) {
+            detectLlmEndpoint()
+            return
+        }
+        if (item.id == BUTTON_PICK_MODEL) {
+            pickLlmModel()
+            return
+        }
         if (item.id in PROVIDER_BASE..(PROVIDER_BASE + 10)) {
             val newProvider = item.id - PROVIDER_BASE
             // entiny: a built-in provider hands Telegram's own translation requests back to the app's engine
@@ -133,6 +148,49 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
                 unlockStockTranslateButton()
             }
             listView.adapter.update(true)
+        }
+    }
+
+    private fun detectLlmEndpoint() {
+        val url = InuConfig.TRANSLATE_LLM_URL.value.trim()
+        val key = InuConfig.TRANSLATE_LLM_KEY.value.trim()
+        if (url.isBlank()) {
+            BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.InuTranslateLlmEndpointUrl)).show()
+            return
+        }
+        AiModelsHelper.detectEndpoint(url, key) { result ->
+            result.onSuccess { base ->
+                InuConfig.TRANSLATE_LLM_URL.value = base
+                llmUrlField = null
+                listView?.adapter?.update(true)
+                BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LocaleController.formatString(R.string.InuAiProviderDetected, base)).show()
+            }.onFailure {
+                BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.InuAiProviderDetectFailed)).show()
+            }
+        }
+    }
+
+    private fun pickLlmModel() {
+        val url = AiComposeHelper.normalizeBase(InuConfig.TRANSLATE_LLM_URL.value.trim())
+        val key = InuConfig.TRANSLATE_LLM_KEY.value.trim()
+        if (url.isBlank()) {
+            BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.InuTranslateLlmEndpointUrl)).show()
+            return
+        }
+        AiModelsHelper.fetchOpenAiCompatModels(url, key) { result ->
+            val models = result.getOrNull().orEmpty()
+            if (models.isEmpty()) {
+                BulletinFactory.of(this).createErrorBulletin(result.exceptionOrNull()?.message ?: LocaleController.getString(R.string.InuAiTranscribeFetchModelsFailed)).show()
+                return@fetchOpenAiCompatModels
+            }
+            val builder = android.app.AlertDialog.Builder(parentActivity)
+            builder.setTitle(LocaleController.getString(R.string.InuAiModelPickerTitle))
+            builder.setItems(models.toTypedArray()) { _, which ->
+                InuConfig.TRANSLATE_LLM_MODEL.value = models[which]
+                llmModelField = null
+                listView?.adapter?.update(true)
+            }
+            builder.show()
         }
     }
 
