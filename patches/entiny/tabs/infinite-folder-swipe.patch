@@ -5,7 +5,8 @@ Subject: Infinite folder swipe
 
 ---
  .../org/telegram/ui/Components/FilterTabsView.java     | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ .../src/main/java/org/telegram/ui/DialogsActivity.java |  3 +++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
 index 0000000..0000000 100644
@@ -28,3 +29,17 @@ index 0000000..0000000 100644
      }
  
      public void removeTabs() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -14015,6 +14015,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             return true;
+         }
+ 
++        if (desu.inugram.InuConfig.FOLDERS_INFINITE_SWIPE.getValue() && filterTabsView != null && filterTabsView.getTabsCount() >= 2) {
++            return false;
++        }
+         final boolean isFirstTab = filterTabsView == null || filterTabsView.getTabsCount() < 2 || filterTabsView.getCurrentTabId() == filterTabsView.getFirstTabId();
+         final boolean isLastTab = filterTabsView == null || filterTabsView.getTabsCount() < 2 || filterTabsView.getCurrentTabId() == filterTabsView.getLastTabId();
+         final int chatSwipeAction = SharedConfig.getChatSwipeAction(currentAccount);
