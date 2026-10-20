@@ -73,14 +73,8 @@ object SystemFoldersHelper {
     }
 
     fun delete(type: Type) {
-        val list = entries().toMutableList()
-        val entry = list.firstOrNull { it.type == type }
-        if (entry != null) {
-            entry.enabled = false
-            entry.pos = -2
-        } else {
-            list.add(Entry(type, false, -2))
-        }
+        val list = entries()
+        if (!list.removeAll { it.type == type }) return
         save(list)
         syncAll()
     }
@@ -112,10 +106,8 @@ object SystemFoldersHelper {
     fun injectRecommended(controller: MessagesController) {
         controller.suggestedFilters.removeAll { it.filter != null && isSystem(it.filter.id) }
         val activeIds = controller.dialogFilters.map { it.id }.toSet()
-        val deleted = entries().filter { it.pos == -2 }.map { it.type }.toSet()
         for (type in Type.entries) {
             if (type.id in activeIds) continue
-            if (type in deleted) continue
             val suggested = TLRPC.TL_dialogFilterSuggested()
             val filter = TLRPC.TL_dialogFilter()
             filter.id = type.id
