@@ -112,6 +112,8 @@
     <string name="InuChannelMessages">Каналы, куда вы можете писать</string>
     <string name="InuSameAsIncoming">Как у входящих</string>
     <string name="InuDoubleTapInfo">Действия по двойному тапу добавляют задержку для обычных тапов на указанное выше время.</string>
+    <string name="InuSideButtonAction">Действие кнопки «поделиться»</string>
+    <string name="InuSideButtonActionInfo">Что делает круглая кнопка рядом с постами каналов и пересланными сообщениями.</string>
     <string name="InuQuickReaction">Быстрая реакция</string>
     <string name="InuShowReactions">Показать реакции</string>
     <string name="InuHideStories">Скрыть истории</string>

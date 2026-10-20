@@ -93,6 +93,8 @@
     <string name="InuChannelMessages">投稿できるチャンネル</string>
     <string name="InuSameAsIncoming">受信メッセージと同じ</string>
     <string name="InuDoubleTapInfo">注：Telegram のダブルタップ処理の都合上、ダブルタップ動作を有効にすると通常のタップが上記の時間だけ遅延し、アプリの応答が鈍く感じられます。\n時間は調整できますが、遅延を完全になくすには動作を無効にするしかありません。</string>
+    <string name="InuSideButtonAction">共有ボタンの動作</string>
+    <string name="InuSideButtonActionInfo">チャンネルの投稿や転送メッセージの横にある丸いボタンの動作です。</string>
     <string name="InuQuickReaction">クイックリアクション</string>
     <string name="InuShowReactions">リアクションを表示</string>
     <string name="InuHideStories">ストーリーを非表示</string>

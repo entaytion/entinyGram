@@ -112,6 +112,8 @@
     <string name="InuChannelMessages">القنوات التي يمكنك النشر فيها</string>
     <string name="InuSameAsIncoming">مثل الواردة / الصادرة</string>
     <string name="InuDoubleTapInfo">إجراءات النقر المزدوج تؤخر النقرات العادية بالمدة أعلاه.</string>
+    <string name="InuSideButtonAction">إجراء زر المشاركة</string>
+    <string name="InuSideButtonActionInfo">ما يفعله الزر الدائري بجوار منشورات القنوات والرسائل المُعاد توجيهها.</string>
     <string name="InuQuickReaction">التفاعل السريع</string>
     <string name="InuShowReactions">إظهار التفاعلات</string>
     <string name="InuHideStories">إخفاء القصص</string>

@@ -561,3 +561,4 @@ bugfix/keep-channel-queue-during-diff.patch
 feature/app-icon-splash.patch
 entiny/restrictions/restricted-quote-reply.patch
 entiny/chat/quote-keyboard.patch
+entiny/chat/side-button-action.patch

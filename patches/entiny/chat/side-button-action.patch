@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 20 Oct 2026 15:21:27 +0300
+Subject: [+] share button action
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -40803,6 +40803,9 @@ public class ChatActivity extends BaseFragment implements
+             if (chatActivityEnterView != null) {
+                 chatActivityEnterView.closeKeyboard();
+             }
++            if (desu.inugram.helpers.chat.DoubleTapActionHelper.onSideButton(ChatActivity.this, cell)) {
++                return;
++            }
+             MessageObject messageObject = cell.getMessageObject();
+             if (chatMode == MODE_PINNED) {
+                 chatActivityDelegate.openReplyMessage(messageObject.getId());

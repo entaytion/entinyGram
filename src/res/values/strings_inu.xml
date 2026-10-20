@@ -165,6 +165,8 @@
     <string name="InuChannelMessages">Channels you can post in</string>
     <string name="InuSameAsIncoming">Same as incoming / outgoing</string>
     <string name="InuDoubleTapInfo">Double-tap actions delay regular taps by the duration above.</string>
+    <string name="InuSideButtonAction">Share button action</string>
+    <string name="InuSideButtonActionInfo">What the round button next to channel posts and forwarded messages does.</string>
     <string name="InuQuickReaction">Quick Reaction</string>
     <string name="InuShowReactions">Show Reactions</string>
     <string name="InuHideStories">Hide stories</string>

@@ -174,6 +174,8 @@ Sistema: %6$s
     <string name="InuChannelMessages">Canali in cui puoi pubblicare</string>
     <string name="InuSameAsIncoming">Come in arrivo / inviati</string>
     <string name="InuDoubleTapInfo">Le azioni del doppio tocco ritardano i tocchi normali della durata indicata sopra.</string>
+    <string name="InuSideButtonAction">Azione del pulsante condividi</string>
+    <string name="InuSideButtonActionInfo">Cosa fa il pulsante rotondo accanto ai post dei canali e ai messaggi inoltrati.</string>
     <string name="InuQuickReaction">Reazione rapida</string>
     <string name="InuShowReactions">Mostra reazioni</string>
     <string name="InuHideStories">Nascondi storie</string>

@@ -104,6 +104,8 @@
     <string name="InuChannelMessages">Gönderi paylaşabildiğiniz kanallar</string>
     <string name="InuSameAsIncoming">Gelen ile aynı</string>
     <string name="InuDoubleTapInfo">Not: Telegram\'ın çift dokunmaları işleme biçimi nedeniyle, bir çift dokunma eylemini etkinleştirmek tek dokunmaların yukarıdaki süre kadar gecikmesine ve uygulamanın daha az tepkisel hissettirmesine neden olur.\nSüreyi ayarlayabilirsiniz, ancak gecikmeyi tamamen önlemenin tek yolu eylemleri devre dışı bırakmaktır.</string>
+    <string name="InuSideButtonAction">Paylaş düğmesi eylemi</string>
+    <string name="InuSideButtonActionInfo">Kanal gönderilerinin ve iletilen mesajların yanındaki yuvarlak düğmenin ne yaptığı.</string>
     <string name="InuQuickReaction">Hızlı Tepki</string>
     <string name="InuShowReactions">Tepkileri Göster</string>
     <string name="InuHideStories">Hikayeleri gizle</string>

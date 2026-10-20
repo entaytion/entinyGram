@@ -10,6 +10,7 @@ import desu.inugram.helpers.chat.BlockedMessagesHelper
 import desu.inugram.helpers.chat.DoubleTapAction
 import desu.inugram.helpers.chat.DoubleTapActionHelper
 import desu.inugram.helpers.chat.DoubleTapContext
+import desu.inugram.helpers.chat.SideButtonAction
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
@@ -240,6 +241,26 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asCustom(doubleTapDelaySlider))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuDoubleTapInfo)))
+        items.add(
+            UItem.asButton(
+                BUTTON_SIDE_BUTTON_ACTION,
+                LocaleController.getString(R.string.InuSideButtonAction),
+                SideButtonAction.fromValue(InuConfig.SIDE_BUTTON_ACTION.value).label()
+            )
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuSideButtonActionInfo)))
+    }
+
+    private fun showSideButtonSelector(anchor: View) {
+        val actions = SideButtonAction.entries
+        RadioItemOptions.show(
+            this, anchor,
+            actions.map { it.label() },
+            actions.indexOfFirst { it.value == InuConfig.SIDE_BUTTON_ACTION.value }.coerceAtLeast(0),
+        ) { which ->
+            InuConfig.SIDE_BUTTON_ACTION.value = actions.getOrNull(which)?.value ?: return@show
+            listView?.adapter?.update(true)
+        }
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -355,6 +376,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             BUTTON_DOUBLE_TAP_INCOMING -> showDoubleTapSelector(view, DoubleTapContext.INCOMING)
             BUTTON_DOUBLE_TAP_OUTGOING -> showDoubleTapSelector(view, DoubleTapContext.OUTGOING)
             BUTTON_DOUBLE_TAP_CHANNEL -> showDoubleTapSelector(view, DoubleTapContext.CHANNEL)
+            BUTTON_SIDE_BUTTON_ACTION -> showSideButtonSelector(view)
         }
     }
 
@@ -429,6 +451,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_CHANNEL = InuUtils.generateId()
+        private val BUTTON_SIDE_BUTTON_ACTION = InuUtils.generateId()
         private val TOGGLE_SHOW_SPOILERS_DIRECTLY = InuUtils.generateId()
         private val BUTTON_TEXT_SPOILER_MODE = InuUtils.generateId()
         private val TOGGLE_SPOILER_EXTEND_TO_LINE_END = InuUtils.generateId()
@@ -484,6 +507,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),
                 SearchRegistry.Entry("double-tap-channel", R.string.InuChannelMessages, BUTTON_DOUBLE_TAP_CHANNEL),
+                SearchRegistry.Entry("side-button-action", R.string.InuSideButtonAction, BUTTON_SIDE_BUTTON_ACTION),
                 SearchRegistry.Entry("show-spoilers-directly", R.string.InuShowSpoilersDirectly, TOGGLE_SHOW_SPOILERS_DIRECTLY),
                 SearchRegistry.Entry("text-spoiler-mode", R.string.InuTextSpoilerMode, BUTTON_TEXT_SPOILER_MODE),
                 SearchRegistry.Entry("spoiler-extend-to-line-end", R.string.InuSpoilerExtendToLineEnd, TOGGLE_SPOILER_EXTEND_TO_LINE_END),

@@ -102,6 +102,8 @@
     <string name="InuIncomingMessages">Вхідні повідомлення</string>
     <string name="InuOutgoingMessages">Вихідні повідомлення</string>
     <string name="InuDoubleTapInfo">Дії подвійного тапу затримують звичайний тап на вказаний вище час.</string>
+    <string name="InuSideButtonAction">Дія кнопки «поділитись»</string>
+    <string name="InuSideButtonActionInfo">Що робить кругла кнопка поряд з постами каналів і пересланими повідомленнями.</string>
     <string name="InuQuickReaction">Швидка реакція</string>
     <string name="InuShowReactions">Показувати реакції</string>
     <string name="InuHideStories">Приховати історії</string>

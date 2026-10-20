@@ -914,6 +914,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val HIDE_CHANNEL_SHARE_BUTTON = BoolItem("hide_channel_share_button", false)
 
     @JvmField
+    val SIDE_BUTTON_ACTION = IntItem("side_button_action", 0)
+
+    @JvmField
     val HIDE_PROFILE_STORY_BUTTON = BoolItem("hide_profile_story_button", false)
 
     @JvmField

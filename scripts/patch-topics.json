@@ -151,6 +151,7 @@
   "push-service-foreground": "notifications",
   "public-media-lookup": "media",
   "quote-keyboard": "chat",
+  "side-button-action": "chat",
   "reaction-read-sync": "chat",
   "read-time": "chat",
   "reply-background": "chat",

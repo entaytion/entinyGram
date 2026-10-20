@@ -93,6 +93,8 @@
     <string name="InuChannelMessages">你可以发布消息的频道</string>
     <string name="InuSameAsIncoming">与收到的消息相同</string>
     <string name="InuDoubleTapInfo">注意：由于 Telegram 处理双击的方式，启用双击操作会让普通点击延迟上述时间，使应用响应变慢。\n你可以调整时长，但完全消除延迟的唯一方法是禁用这些操作。</string>
+    <string name="InuSideButtonAction">分享按钮操作</string>
+    <string name="InuSideButtonActionInfo">频道帖子和转发消息旁圆形按钮的作用。</string>
     <string name="InuQuickReaction">快速回应</string>
     <string name="InuShowReactions">显示回应</string>
     <string name="InuHideStories">隐藏快拍</string>

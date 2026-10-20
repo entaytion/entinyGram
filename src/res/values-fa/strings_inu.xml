@@ -112,6 +112,8 @@
     <string name="InuChannelMessages">کانال‌هایی که می‌توانید در آن‌ها پست بگذارید</string>
     <string name="InuSameAsIncoming">مانند دریافتی / ارسالی</string>
     <string name="InuDoubleTapInfo">کنش‌های دوضربه، ضربه‌های عادی را به اندازه مدت بالا به تأخیر می‌اندازند.</string>
+    <string name="InuSideButtonAction">عملکرد دکمه اشتراک‌گذاری</string>
+    <string name="InuSideButtonActionInfo">کاری که دکمه گرد کنار پست‌های کانال و پیام‌های فوروارد‌شده انجام می‌دهد.</string>
     <string name="InuQuickReaction">واکنش سریع</string>
     <string name="InuShowReactions">نمایش واکنش‌ها</string>
     <string name="InuHideStories">پنهان کردن استوری‌ها</string>

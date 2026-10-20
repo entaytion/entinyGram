@@ -44,8 +44,51 @@ enum class DoubleTapAction(
     }
 }
 
+enum class SideButtonAction(val value: Int, private val labelRes: Int) {
+    FORWARD(0, R.string.Forward),
+    FORWARD_PRO(1, R.string.InuForwardPro),
+    SAVE(2, R.string.Save),
+    EDIT(3, R.string.Edit),
+    FORWARD_NO_QUOTE(4, R.string.InuForwardNoQuote),
+    COPY(5, R.string.Copy),
+    TRANSLATE(6, R.string.TranslateMessage),
+    DETAILS(7, R.string.InuMessageDetails),
+    DELETE(8, R.string.Delete),
+    ;
+
+    fun label(): CharSequence = LocaleController.getString(labelRes)
+
+    companion object {
+        fun fromValue(value: Int): SideButtonAction = entries.firstOrNull { it.value == value } ?: FORWARD
+    }
+}
+
 object DoubleTapActionHelper {
     const val INHERIT_INCOMING = -1
+
+    @JvmStatic
+    fun onSideButton(activity: ChatActivity, view: ChatMessageCell): Boolean {
+        val action = SideButtonAction.fromValue(InuConfig.SIDE_BUTTON_ACTION.value)
+        if (action == SideButtonAction.FORWARD || activity.chatMode != 0) return false
+        val message = extractMessage(view) ?: return false
+        val option = when (action) {
+            SideButtonAction.FORWARD_PRO -> ChatHelper.OPTION_FORWARD_PRO
+            SideButtonAction.SAVE -> ChatHelper.OPTION_SAVE.takeIf { canPerformAction(activity, message, DoubleTapAction.SAVE) }
+            SideButtonAction.EDIT -> ChatActivity.OPTION_EDIT.takeIf { canPerformAction(activity, message, DoubleTapAction.EDIT) }
+            SideButtonAction.DELETE -> ChatActivity.OPTION_DELETE.takeIf { canPerformAction(activity, message, DoubleTapAction.DELETE) }
+            SideButtonAction.TRANSLATE -> menuOptionForAction(DoubleTapAction.TRANSLATE, message)
+            SideButtonAction.DETAILS -> ChatHelper.OPTION_DETAILS
+            SideButtonAction.FORWARD_NO_QUOTE -> ChatHelper.OPTION_FORWARD_NO_QUOTE.takeIf { canForwardOrAllowed(message) }
+            SideButtonAction.COPY -> ChatActivity.OPTION_COPY.takeIf { canForwardOrAllowed(message) }
+            else -> null
+        } ?: return false
+        setSelection(activity, message)
+        activity.processSelectedOption(option)
+        return true
+    }
+
+    private fun canForwardOrAllowed(message: MessageObject): Boolean =
+        InuConfig.ALLOW_FORWARD_RESTRICTED.value || message.messageOwner?.noforwards != true
 
     private fun menuOptionForAction(action: DoubleTapAction, message: MessageObject): Int? {
         return when (action) {
