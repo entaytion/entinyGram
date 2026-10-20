@@ -21,6 +21,7 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
    - **One Feature = One Commit:** When adding a new feature, commit EXCLUSIVELY that feature alone. Never lump unrelated fixes, refactors, or multiple features into one kitchen sink. (Global cleanup/chores can be batched before release).
    - Present the diff/summary and STOP. Wait for an explicit "commit" / "зроби" / "ок".
    - **Never auto-push.** Pushing to remote requires its own separate explicit confirmation.
+   - **Fast intermediate commits:** the husky pre-commit hook re-checks every patch (~500) and is slow. For ordinary commits run `SKIP_PATCH_CHECK=1 git commit ...` and don't run `bun run export` / `lint-patches` each time. Do the full export, patch sync and fixes once, in the final commit before a release/push (without `SKIP_PATCH_CHECK`).
 
 3. **Strict Fork Isolation — ZERO Upstream Pollution:**
    - All tasks, code, and bugfixes belong **exclusively** to THIS fork (`entinyGram`).
