@@ -4,9 +4,9 @@ Date: Sun, 18 Oct 2026 15:34:45 +0300
 Subject: [*] fix media lost after restart when saved to public dir
 
 ---
- .../org/telegram/messenger/FileLoader.java    | 48 ++++++++++++++++++-
+ .../org/telegram/messenger/FileLoader.java    | 49 ++++++++++++++++++-
  .../org/telegram/messenger/MessageObject.java |  3 ++
- 2 files changed, 50 insertions(+), 1 deletion(-)
+ 2 files changed, 51 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -82,12 +82,13 @@ index 0000000..0000000 100644
                      if (saveCustomPath) {
                          operation.pathSaveData = new FilePathDatabase.PathData(documentId, dcId, type);
                      }
-@@ -1456,7 +1502,7 @@ public class FileLoader extends BaseController {
+@@ -1456,7 +1502,8 @@ public class FileLoader extends BaseController {
                  return new File(path);
              }
          }
 -        return new File(dir, getAttachFileName(attach, ext));
-+        return resolveMediaFile(type, getAttachFileName(attach, ext));
++        String attachFileName = getAttachFileName(attach, ext);
++        return dir.equals(getDirectory(type)) ? resolveMediaFile(type, attachFileName) : new File(dir, attachFileName);
      }
  
      public FilePathDatabase getFileDatabase() {
