@@ -69,7 +69,7 @@ index 0000000..0000000 100644
                      fullUsers.put(user.id, userFull);
                      getTranslateController().updateDialogFull(user.id);
                      StarsController.getInstance(currentAccount).invalidateProfileGifts(userFull);
-@@ -10509,6 +10513,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10466,6 +10470,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void putChatFull(TLRPC.ChatFull chatFull) {
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
          fullChats.put(chatFull.id, chatFull);
          getTranslateController().updateDialogFull(-chatFull.id);
      }
-@@ -10522,6 +10527,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10479,6 +10484,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
              }
              if (info != null) {
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                  if (fullChats.get(chatId) == null) {
                      fullChats.put(chatId, info);
                      getTranslateController().updateDialogFull(-chatId);
-@@ -10569,6 +10575,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10526,6 +10532,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
              }
              if (info != null) {

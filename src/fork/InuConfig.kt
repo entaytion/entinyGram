@@ -1695,12 +1695,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val SAVE_LAST_SEEN = BoolItem("save_last_seen", false)
 
     @JvmField
-    val SHOW_EDIT_HISTORY_DIFF = BoolItem("show_edit_history_diff", false)
-
-    @JvmField
-    val EDIT_HISTORY_COMPACT = BoolItem("edit_history_compact", false)
-
-    @JvmField
     val SHOW_MUTUAL_CONTACT_ICON = BoolItem("show_mutual_contact_icon", true)
 
     @JvmField

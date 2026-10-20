@@ -1376,8 +1376,6 @@
     <string name="InuAiProvidersTitle">ارائه‌دهندگان هوش مصنوعی</string>
     <string name="InuAiProvidersActiveForChat">فعال برای گفتگو</string>
     <string name="InuAiProvidersActiveForVoice">فعال برای صدا</string>
-    <string name="InuEditHistoryDiff">برجسته کردن تغییرات متن (تفاوت)</string>
-    <string name="InuEditHistoryDiffInfo">در تاریخچه ویرایش، متن حذف‌شده با خط قرمز و متن افزوده‌شده با سبز نشان داده شود</string>
     <string name="InuNoEditHistory">تاریخچه ویرایشی برای این پیام ثبت نشده است</string>
     <string name="InuShowMutualContactIcon">نماد مخاطب دوطرفه</string>
     <string name="InuShowMutualContactIconInfo">در فهرست مخاطبان نماد نشانگر مخاطب دوطرفه نشان داده شود</string>
@@ -2057,8 +2055,6 @@
     <string name="InuEditHistoryAfter">بعد</string>
     <string name="InuEditHistoryBefore">قبل</string>
     <string name="InuEditHistoryChanged">تغییر: %1$s</string>
-    <string name="InuEditHistoryCompact">نمای فشرده آرشیو</string>
-    <string name="InuEditHistoryCompactInfo">نمایش پیام‌های حذف‌شده و تاریخچه ویرایش به‌صورت حباب‌های ساده گفتگو به‌جای کارت</string>
     <string name="InuEditHistoryCopyAfter">کپی نسخه جدید</string>
     <string name="InuEditHistoryCopyBefore">کپی نسخه قدیمی</string>
     <string name="InuEditHistoryCurrentUnknown">نسخه فعلی در حافظه نهان نیست</string>

@@ -1353,11 +1353,7 @@
     <string name="InuMd3PlayerSourcePlain">Текст · %1$s</string>
     <string name="InuMd3PlayerSourceSyncedFile">Синхронізований текст із файлу</string>
     <string name="InuMd3PlayerSourcePlainFile">Текст із файлу</string>
-    <string name="InuEditHistoryDiff">Підсвічувати зміни в тексті (Diff)</string>
-    <string name="InuEditHistoryDiffInfo">Показувати червоне закреслення для видаленого тексту та зелений колір для доданого в історії редагувань</string>
     <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
-    <string name="InuEditHistoryCompact">Компактний вигляд архіву</string>
-    <string name="InuEditHistoryCompactInfo">Показувати видалені повідомлення та історію редагувань звичайними бульбашками замість карток</string>
     <string name="InuEditedAtTime">Відредаговано о %1$s</string>
     <string name="InuDeletedAtTime">Видалено о %1$s</string>
     <string name="InuSentAtTime">Надіслано %1$s</string>

@@ -27,9 +27,9 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - per-category controls for private chats, groups, channels, bots and secret chats
   - save edit history (✏️) with formatting, media and text diff
   - separate deleted and edited archives with message and media previews, per-chat clearing and bulk chat selection
-  - edited archive hides repeated identical revisions
+  - edit history keeps only real changes, one entry per revision; old duplicates are cleaned up once
   - text and caption diffs between revisions of the same post in edited archives
-  - deleted and edited archives as cards with sender, day separators and deletion or edit time, or compact bubbles
+  - deleted and edited archives as cards with sender, day separators, deletion or edit time and full-size photo and video previews
   - edit history cards show before → after with highlighted changes, formatting and custom emoji
   - replies to saved deleted messages show the saved copy instead of "Deleted message"
   - download missing archived media on tap without background prefetching

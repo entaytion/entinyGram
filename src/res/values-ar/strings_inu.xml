@@ -1388,8 +1388,6 @@
     <string name="InuAiProvidersTitle">مزودو الذكاء الاصطناعي</string>
     <string name="InuAiProvidersActiveForChat">نشط للدردشة</string>
     <string name="InuAiProvidersActiveForVoice">نشط للصوت</string>
-    <string name="InuEditHistoryDiff">إبراز تغييرات النص (الفروقات)</string>
-    <string name="InuEditHistoryDiffInfo">إظهار خط أحمر على النص المحذوف وأخضر على النص المضاف في سجل التعديلات</string>
     <string name="InuNoEditHistory">لا يوجد سجل تعديلات مسجَّل لهذه الرسالة</string>
     <string name="InuShowMutualContactIcon">أيقونة جهة الاتصال المتبادلة</string>
     <string name="InuShowMutualContactIconInfo">إظهار أيقونة مؤشر جهة الاتصال المتبادلة في قائمة جهات الاتصال</string>
@@ -2069,8 +2067,6 @@
     <string name="InuEditHistoryAfter">بعد</string>
     <string name="InuEditHistoryBefore">قبل</string>
     <string name="InuEditHistoryChanged">تم التغيير: %1$s</string>
-    <string name="InuEditHistoryCompact">عرض الأرشيف المضغوط</string>
-    <string name="InuEditHistoryCompactInfo">عرض الرسائل المحذوفة وسجل التعديلات كفقاعات محادثة عادية بدل البطاقات</string>
     <string name="InuEditHistoryCopyAfter">نسخ الإصدار الجديد</string>
     <string name="InuEditHistoryCopyBefore">نسخ الإصدار القديم</string>
     <string name="InuEditHistoryCurrentUnknown">الإصدار الحالي غير مخزّن مؤقتاً</string>

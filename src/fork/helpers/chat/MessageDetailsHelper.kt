@@ -1,5 +1,7 @@
 package desu.inugram.helpers.chat
 
+import desu.inugram.helpers.archive.DeletedMessagesHelper
+import desu.inugram.helpers.archive.EditHistoryHelper
 import android.content.Context
 import android.content.Intent
 import android.media.MediaExtractor
@@ -448,7 +450,7 @@ object MessageDetailsHelper {
             datesItems.add(DetailItem(LocaleController.getString(R.string.InuMsgDetailDate), dateStr, R.drawable.msg_calendar2))
         }
 
-        val savedDeleted = SavedMessagesHelper.getDeletedDate(activity.currentAccount, messageObject.dialogId, messageObject.id)
+        val savedDeleted = DeletedMessagesHelper.getDeletedDate(activity.currentAccount, messageObject.dialogId, messageObject.id)
         val deleteTs = when {
             savedDeleted > 0 -> (savedDeleted / 1000).toInt()
             owner.destroyTime != 0 -> owner.destroyTime
@@ -468,7 +470,7 @@ object MessageDetailsHelper {
             datesItems.add(DetailItem(LocaleController.getString(R.string.InuMsgDetailForwardDate), formatDate(fwd.date), R.drawable.msg_recent))
         }
 
-        val isEdited = messageObject.isEdited || SavedMessagesHelper.hasEditHistory(activity.currentAccount, messageObject.dialogId, messageObject.id)
+        val isEdited = messageObject.isEdited || EditHistoryHelper.hasEditHistory(activity.currentAccount, messageObject.dialogId, messageObject.id)
         if (isEdited && owner.edit_date > 0) {
             datesItems.add(DetailItem(LocaleController.getString(R.string.InuMsgDetailEdited), formatDate(owner.edit_date), R.drawable.msg_edit))
         }

@@ -82,7 +82,7 @@ index 0000000..0000000 100644
                      if (saveCustomPath) {
                          operation.pathSaveData = new FilePathDatabase.PathData(documentId, dcId, type);
                      }
-@@ -1456,7 +1502,8 @@ public class FileLoader extends BaseController {
+@@ -1450,7 +1496,8 @@ public class FileLoader extends BaseController {
                  return new File(path);
              }
          }

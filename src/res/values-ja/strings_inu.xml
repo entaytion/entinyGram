@@ -1111,8 +1111,6 @@
     <string name="InuDeletedMessagesTransparent">削除済みメッセージを半透明で表示</string>
     <string name="InuDeletedMessagesTransparentInfo">保存された削除済みメッセージを少し透明にしてチャット内で区別しやすくします。</string>
     <string name="InuDeselectAll">選択をすべて解除</string>
-    <string name="InuEditHistoryDiff">テキスト変更の差分表示 (Diff)</string>
-    <string name="InuEditHistoryDiffInfo">編集履歴で削除されたテキストを赤の取り消し線、追加されたテキストを緑でハイライト表示します</string>
     <string name="InuForceTranslate">強制翻訳</string>
     <string name="InuAutoTranslateAll">すべてのチャットを自動翻訳</string>
     <string name="InuAutoTranslateAllInfo">すべてのチャットで翻訳を既定でオンにします。チャット単位のオフは記憶されます。</string>
@@ -2033,8 +2031,6 @@
     <string name="InuEditHistoryAfter">変更後</string>
     <string name="InuEditHistoryBefore">変更前</string>
     <string name="InuEditHistoryChanged">変更点: %1$s</string>
-    <string name="InuEditHistoryCompact">コンパクトなアーカイブ表示</string>
-    <string name="InuEditHistoryCompactInfo">削除したメッセージと編集履歴をカードではなく通常の吹き出しで表示します</string>
     <string name="InuEditHistoryCopyAfter">新しいバージョンをコピー</string>
     <string name="InuEditHistoryCopyBefore">古いバージョンをコピー</string>
     <string name="InuEditHistoryCurrentUnknown">現在のバージョンはキャッシュされていません</string>

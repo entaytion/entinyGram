@@ -1,5 +1,7 @@
 package desu.inugram.helpers.chat
 
+import desu.inugram.helpers.archive.DeletedMessagesHelper
+import desu.inugram.helpers.archive.EditHistoryHelper
 import android.Manifest
 import android.content.ClipData
 import android.content.Context
@@ -73,7 +75,6 @@ import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagePreviewParams
 import org.telegram.messenger.MessageSuggestionParams
-import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.SendMessageChatArguments
 import org.telegram.messenger.R
@@ -188,7 +189,7 @@ object ChatHelper {
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             hash = hash * 31 + 2
         }
-        if (isDeletedOrPreserved(msg)) {
+        if (DeletedMessagesHelper.isDeletedOrPreserved(msg)) {
             hash = hash * 31 + 3
             hash = hash * 31 + InuConfig.DELETED_MARK_COLOR.value
             hash = hash * 31 + InuConfig.DELETED_MARK_STYLE.value
@@ -215,7 +216,7 @@ object ChatHelper {
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             width += AndroidUtilities.dp(11f)
         }
-        val isDeleted = isDeletedOrPreserved(msg)
+        val isDeleted = DeletedMessagesHelper.isDeletedOrPreserved(msg)
         if (isDeleted) {
             if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
                 width += AndroidUtilities.dp(deletedMarkSizeDp()) + ceil(Theme.chat_timePaint.measureText(" ")).toInt()
@@ -235,13 +236,12 @@ object ChatHelper {
     fun timePrefix(msg: MessageObject?, time: CharSequence?, edited: Boolean = false): CharSequence? {
         if (time == null || msg == null) return time
         val sb = SpannableStringBuilder()
-        SavedMessagesHelper.historyTimeLabel(msg)?.let { sb.append(it) }
         TranslateHelper.appendTimePrefix(sb, msg)
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             appendTimeIcon(sb, R.drawable.msg_block, sizeDp = 11f, translateYDp = 1f)
             sb.append(" ")
         }
-        val isDeleted = isDeletedOrPreserved(msg)
+        val isDeleted = DeletedMessagesHelper.isDeletedOrPreserved(msg)
         if (isDeleted) {
             if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
                 val markColor = InuConfig.DELETED_MARK_COLOR.value
@@ -292,34 +292,24 @@ object ChatHelper {
         }
     }
 
-    @JvmStatic
-    fun isDeletedOrPreserved(msg: MessageObject?): Boolean {
-        if (msg == null) return false
-        if (!InuConfig.SAVE_DELETED_MESSAGES.value) return false
-        if (SavedMessagesHelper.isHistoryPreview(msg)) return false
-        if (msg.deleted) return true
-        return SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
-    }
-
     // entiny: clamped in setAlpha because RecyclerView item animator resets alpha to 1 during animations
     @JvmStatic
     fun deletedAlpha(msg: MessageObject?): Float {
         if (msg == null) return 1f
         if (!InuConfig.DELETED_MESSAGES_TRANSPARENT.value) return 1f
-        return if (isDeletedOrPreserved(msg)) 0.65f else 1f
+        return if (DeletedMessagesHelper.isDeletedOrPreserved(msg)) 0.65f else 1f
     }
 
     @JvmStatic
     fun canClickTime(msg: MessageObject?): Boolean {
         if (msg == null) return false
-        if (SavedMessagesHelper.isHistoryPreview(msg)) return false
+        if (EditHistoryHelper.isHistoryPreview(msg)) return false
         val dialogId = msg.getDialogId()
         val msgId = msg.id
-        val isDeleted = SavedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
+        val isDeleted = DeletedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
         if (isDeleted) return true
         if (!InuConfig.SAVE_EDITED_MESSAGES.value) return false
-        val isEdited = (msg.messageOwner != null && (msg.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0) || (msg.messageOwner?.edit_date ?: 0) != 0
-        return isEdited || SavedMessagesHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)
+        return EditHistoryHelper.isEdited(msg) || EditHistoryHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)
     }
 
     @JvmStatic
@@ -330,16 +320,15 @@ object ChatHelper {
         val delegate = cell.delegate
         val parentFragment = if (delegate is ChatActivity) delegate else null
 
-        val isDeleted = SavedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
+        val isDeleted = DeletedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
         if (isDeleted) {
-            SavedMessagesHelper.showDeletionTimeBulletin(cell.context, parentFragment, dialogId, msgId)
+            DeletedMessagesHelper.showDeletionTimeBulletin(cell.context, parentFragment, msg)
             return true
         }
 
         if (InuConfig.SAVE_EDITED_MESSAGES.value) {
-            val isEdited = (msg.messageOwner != null && (msg.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0) || (msg.messageOwner?.edit_date ?: 0) != 0
-            if (isEdited || SavedMessagesHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)) {
-                SavedMessagesHelper.showEditHistoryDialog(cell.context, parentFragment, msg)
+            if (EditHistoryHelper.isEdited(msg) || EditHistoryHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)) {
+                EditHistoryHelper.showEditHistoryDialog(cell.context, parentFragment, msg)
                 return true
             }
         }
@@ -616,7 +605,7 @@ object ChatHelper {
             }
         }
 
-        if (InuConfig.SAVE_EDITED_MESSAGES.value && SavedMessagesHelper.hasEditHistory(activity.currentAccount, selectedObject.dialogId, selectedObject.id)) {
+        if (InuConfig.SAVE_EDITED_MESSAGES.value && EditHistoryHelper.hasEditHistory(activity.currentAccount, selectedObject.dialogId, selectedObject.id)) {
             items.add(LocaleController.getString(R.string.InuEditHistory))
             options.add(OPTION_EDIT_HISTORY)
             icons.add(R.drawable.group_edit)
@@ -1233,7 +1222,7 @@ object ChatHelper {
 
             OPTION_EDIT_HISTORY -> {
                 // entiny: pass real MessageObject so history screen does not synthesize stand-in without peer
-                SavedMessagesHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject)
+                EditHistoryHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject)
             }
 
             OPTION_SAVE_ONE_TIME -> {

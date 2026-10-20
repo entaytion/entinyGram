@@ -34,7 +34,7 @@ index 0000000..0000000 100644
                                  chats.remove(a);
                                  a--;
                                  pushDialogs.remove(did);
-@@ -8942,9 +8942,9 @@ public class MessagesStorage extends BaseController {
+@@ -8939,9 +8939,9 @@ public class MessagesStorage extends BaseController {
              try {
                  int result;
                  if (topicId != 0) {
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                  }
                  if (cursor.next()) {
                      result = cursor.intValue(0);
-@@ -14365,7 +14365,7 @@ public class MessagesStorage extends BaseController {
+@@ -14362,7 +14362,7 @@ public class MessagesStorage extends BaseController {
                      long key = inbox.keyAt(b);
                      int messageId = inbox.get(key);
                      database.executeFast(String.format(Locale.US, "UPDATE messages_v2 SET read_state = read_state | 1 WHERE uid = %d AND mid > 0 AND mid <= %d AND read_state IN(0,2) AND out = 0", key, messageId)).stepThis().dispose();
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
                      int newMentions = 0;
                      cursor = database.queryFinalized(String.format(Locale.US, "SELECT count(mid) FROM messages_v2 WHERE uid = %d AND mention = 1 AND read_state IN(0,1) AND out = 0", key));
                      if (cursor.next()) newMentions = cursor.intValue(0);
-@@ -14859,25 +14859,25 @@ public class MessagesStorage extends BaseController {
+@@ -14856,25 +14856,25 @@ public class MessagesStorage extends BaseController {
                  for (int i = 0; i < 5; i++) {
                      if (i == 0) {
                          if (dialogId != 0) {
@@ -88,7 +88,7 @@ index 0000000..0000000 100644
                      }
                      TLRPC.TL_messageEmpty emptyMessage = new TLRPC.TL_messageEmpty();
                      NativeByteBuffer data = new NativeByteBuffer(emptyMessage.getObjectSize());
-@@ -14885,9 +14885,8 @@ public class MessagesStorage extends BaseController {
+@@ -14882,9 +14882,8 @@ public class MessagesStorage extends BaseController {
  
                      state.requery();
                      state.bindByteBuffer(1, data);

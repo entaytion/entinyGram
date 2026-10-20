@@ -1,7 +1,8 @@
 package desu.inugram.helpers
 
 import desu.inugram.InuConfig
-import desu.inugram.helpers.chat.SavedMessagesHelper
+import desu.inugram.helpers.archive.ArchiveCache
+import desu.inugram.helpers.archive.ArchiveMediaHelper
 import desu.inugram.helpers.dialogs.RecentChatsHelper
 import desu.inugram.helpers.pillstack.ExchangeRates
 import desu.inugram.helpers.pillstack.GoldPrice
@@ -27,7 +28,7 @@ object CacheStatsHelper {
             val reactions = InuDatabaseHelper.getTableStat(db, "inu_deleted_reactions", null, 40L)
             val recent = InuDatabaseHelper.getTableStat(db, "inu_recent_dialogs", null, 16L)
             val presence = InuDatabaseHelper.getPresenceLogsStats(db)
-            val media = SavedMessagesHelper.getSavedMediaDir(account).let(::filesIn)
+            val media = ArchiveMediaHelper.getSavedMediaDir(account).let(::filesIn)
             val temp = tempDirs().flatMap(::filesIn)
             val logs = logFiles()
             val pills = listOf(InuConfig.PILL_STACK_RATE_CACHE.value, InuConfig.PILL_STACK_GOLD_CACHE.value).filter { it.isNotEmpty() }
@@ -48,13 +49,13 @@ object CacheStatsHelper {
 
     fun clear(account: Int, kind: Kind, onDone: Runnable) {
         when (kind) {
-            Kind.DELETED -> SavedMessagesHelper.clearCache(account, null, true, onDone)
-            Kind.EDITS -> SavedMessagesHelper.clearEditHistory(account, onDone)
+            Kind.DELETED -> ArchiveCache.clearCache(account, null, true, onDone)
+            Kind.EDITS -> ArchiveCache.clearEditHistory(account, onDone)
             Kind.REACTIONS -> onStorage(account, onDone) { InuDatabaseHelper.clearDeletedReactions(it) }
             Kind.MEDIA -> onStorage(account, onDone) {
                 InuDatabaseHelper.detachSavedMedia(it)
-                SavedMessagesHelper.getSavedMediaDir(account).listFiles()?.filter { f -> f.isFile && f.name != ".nomedia" }?.forEach { f -> f.delete() }
-                SavedMessagesHelper.invalidateMediaCache(account)
+                ArchiveMediaHelper.getSavedMediaDir(account).listFiles()?.filter { f -> f.isFile && f.name != ".nomedia" }?.forEach { f -> f.delete() }
+                ArchiveCache.invalidateMediaCache(account)
             }
             Kind.PRESENCE -> PresenceHelper.clearLogs(account, null, onDone)
             Kind.RECENT -> {

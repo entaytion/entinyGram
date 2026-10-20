@@ -1228,8 +1228,6 @@
     <string name="InuCategoryChats">Чаты</string>
     <string name="InuCategoryPrivacy">Конфиденциальность и безопасность</string>
     <string name="InuAdditional">Дополнительно</string>
-    <string name="InuEditHistoryDiff">Подсвечивать изменения текста (Diff)</string>
-    <string name="InuEditHistoryDiffInfo">Отображать удаленный текст красным зачеркиванием, а добавленный зеленым в истории изменений</string>
     <string name="InuGhostMode">Режим призрака</string>
     <string name="InuGhostModeMaster">Режим призрака</string>
     <string name="InuGhostModeInfo">Скрывать отметки о прочтении, онлайн-статус, набор текста и просмотры историй.</string>
@@ -2026,8 +2024,6 @@
     <string name="InuEditHistoryAfter">После</string>
     <string name="InuEditHistoryBefore">До</string>
     <string name="InuEditHistoryChanged">Изменено: %1$s</string>
-    <string name="InuEditHistoryCompact">Компактный вид архива</string>
-    <string name="InuEditHistoryCompactInfo">Показывать удалённые сообщения и историю правок обычными пузырями вместо карточек</string>
     <string name="InuEditHistoryCopyAfter">Скопировать новую версию</string>
     <string name="InuEditHistoryCopyBefore">Скопировать старую версию</string>
     <string name="InuEditHistoryCurrentUnknown">Текущая версия не в кэше</string>

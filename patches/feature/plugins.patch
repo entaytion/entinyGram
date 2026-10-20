@@ -45,7 +45,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -8166,7 +8166,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8162,7 +8162,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }));
      }
  
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          if (BuildVars.LOGS_ENABLED) {
              FileLog.d("processNewChannelDifferenceParams pts = " + pts + " pts_count = " + pts_count + " channeldId = " + channelId);
          }
-@@ -16823,7 +16823,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -16779,7 +16779,10 @@ public class MessagesController extends BaseController implements NotificationCe
                          }
                      }
  
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                          boolean notifyAbountDifference = true;
                          if (res instanceof TLRPC.TL_updates_channelDifference || res instanceof TLRPC.TL_updates_channelDifferenceEmpty) {
                              if (!res.new_messages.isEmpty()) {
-@@ -16934,7 +16937,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -16890,7 +16893,7 @@ public class MessagesController extends BaseController implements NotificationCe
                                  NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.onReceivedChannelDifference, channelId);
                              });
                          }
@@ -75,7 +75,7 @@ index 0000000..0000000 100644
                  });
              } else if (error != null) {
                  AndroidUtilities.runOnUIThread(() -> {
-@@ -17081,7 +17084,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17037,7 +17040,10 @@ public class MessagesController extends BaseController implements NotificationCe
                              }
                          }
  
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
                              if (!res.new_messages.isEmpty() || !res.new_encrypted_messages.isEmpty()) {
                                  LongSparseArray<ArrayList<MessageObject>> messages = new LongSparseArray<>();
                                  for (int b = 0; b < res.new_encrypted_messages.size(); b++) {
-@@ -17199,7 +17205,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17155,7 +17161,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              if (BuildVars.LOGS_ENABLED) {
                                  FileLog.d("received difference with date = " + getMessagesStorage().getLastDateValue() + " pts = " + getMessagesStorage().getLastPtsValue() + " seq = " + getMessagesStorage().getLastSeqValue() + " messages = " + res.new_messages.size() + " users = " + res.users.size() + " chats = " + res.chats.size() + " other updates = " + res.other_updates.size());
                              }
@@ -96,7 +96,7 @@ index 0000000..0000000 100644
                      });
                  }
              } else {
-@@ -17990,8 +17996,64 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17946,8 +17952,64 @@ public class MessagesController extends BaseController implements NotificationCe
          });
      }
  
@@ -161,7 +161,7 @@ index 0000000..0000000 100644
          if (updates instanceof TLRPC.TL_updates || updates instanceof TLRPC.TL_updatesCombined) {
              boolean hasMessageIdUpdates = false;
              for (int i = 0; i < updates.updates.size(); i++) {
-@@ -18111,54 +18173,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18067,54 +18129,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  needGetDiff = true;
              } else {
                  if (getMessagesStorage().getLastPtsValue() + updates.pts_count == updates.pts) {
@@ -217,7 +217,7 @@ index 0000000..0000000 100644
  
                      getMessagesStorage().setLastPtsValue(updates.pts);
                      boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
-@@ -18639,6 +18654,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18595,6 +18610,9 @@ public class MessagesController extends BaseController implements NotificationCe
                  FileLog.d("process update " + baseUpdate.getClass().getSimpleName());
              }
              desu.inugram.InuHooks.onUpdate(baseUpdate, currentAccount);
@@ -286,7 +286,7 @@ index 0000000..0000000 100644
          int sendResult = 0;
          long myId = getUserConfig().getClientUserId();
          boolean isChannel = false;
-@@ -4019,7 +4022,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4017,7 +4020,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              req.msg_id = messageObject.messageOwner.fwd_from.saved_from_msg_id;
          } else {
              req.peer = getMessagesController().getInputPeer(messageObject.getDialogId());
@@ -295,7 +295,7 @@ index 0000000..0000000 100644
          }
          req.add_to_recent = addToRecent;
          if (addToRecent && addedReaction != null) {
-@@ -4450,6 +4453,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4448,6 +4451,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      public void sendMessage(SendMessageParams sendMessageParams) {
@@ -303,7 +303,7 @@ index 0000000..0000000 100644
          final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
                  sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
          String message = sendMessageParams.message;
-@@ -4995,7 +4999,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4993,7 +4997,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  if (newMsg.attachPath == null) {
                      newMsg.attachPath = "";
                  }
@@ -313,7 +313,7 @@ index 0000000..0000000 100644
                  newMsg.out = true;
                  TLRPC.Chat chat = sendToPeer != null ? getMessagesController().getChat(sendToPeer.channel_id) : null;
                  if (isChannel && sendToPeer != null && (chat == null || !chat.signatures)) {
-@@ -7610,7 +7615,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -7608,7 +7613,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          }
      }
  
@@ -322,7 +322,7 @@ index 0000000..0000000 100644
          TLRPC.Message message;
          if (mid > 0) {
              message = editingMessages.get(mid);
-@@ -7741,6 +7746,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -7739,6 +7744,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return;
          }
  
@@ -330,7 +330,7 @@ index 0000000..0000000 100644
          int reqId = getConnectionsManager().sendRequest(request, (response, error) -> {
              if (error != null && FileRefController.isFileRefError(error.text)) {
                  final int fileRefIndex = FileRefController.getFileRefErrorIndex(error.text);
-@@ -8011,6 +8017,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8009,6 +8015,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                      }
                      Utilities.stageQueue.postRunnable(() -> getMessagesController().processUpdates(updates, false));
                  } else {
@@ -340,7 +340,7 @@ index 0000000..0000000 100644
                      AlertsCreator.processError(currentAccount, error, null, request);
                      isSentError = true;
                  }
-@@ -8125,6 +8134,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8123,6 +8132,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          }
          final TLRPC.Message newMsgObj = msgObj.messageOwner;
          putToSendingMessages(newMsgObj, scheduled);
@@ -350,7 +350,7 @@ index 0000000..0000000 100644
          if (!StarsController.getInstance(currentAccount).beforeSendingFinalRequest(req, msgObj, () -> performSendMessageRequest(req, msgObj, originalPath, parentMessage, check, delayedMessage, parentObject, params, scheduled))) {
              return;
          }
-@@ -8135,6 +8147,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8133,6 +8145,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return;
          }
  
@@ -358,7 +358,7 @@ index 0000000..0000000 100644
          newMsgObj.reqId = getConnectionsManager().sendRequest(req, (response, error) -> {
              if (error != null && (req instanceof TLRPC.TL_messages_sendMedia || req instanceof TL_ephemeral.TL_sendMessage || req instanceof TLRPC.TL_messages_editMessage || req instanceof TLRPC.TL_messages_addPollAnswer) && FileRefController.isFileRefError(error.text)) {
                  if (FileRefController.isFileRefErrorCover(error.text)) {
-@@ -8556,6 +8569,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8554,6 +8567,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                              }
                          }
                      } else {
@@ -368,7 +368,7 @@ index 0000000..0000000 100644
                          AlertsCreator.processError(currentAccount, error, null, req);
                          isSentError = true;
                      }
-@@ -8664,7 +8680,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8662,7 +8678,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          return false;
      }
  
@@ -377,7 +377,7 @@ index 0000000..0000000 100644
          updateMediaPaths(newMsgObj, sentMessage, newMsgId, Collections.singletonList(originalPath), post, -1, params);
      }
  
-@@ -10138,6 +10154,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10136,6 +10152,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (paths == null && originalPaths == null && uris == null || paths != null && originalPaths != null && paths.size() != originalPaths.size()) {
              return;
          }
@@ -389,7 +389,7 @@ index 0000000..0000000 100644
          Utilities.globalQueue.postRunnable(() -> {
              int error = 0;
              long[] groupId = new long[1];
-@@ -10873,6 +10894,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10871,6 +10892,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              prepareSendingVideo(accountInstance, info.path, info.videoEditedInfo, info.coverPath, info.coverPhoto, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, info.entities, info.ttl, editingMessageObject, notify, scheduleDate, scheduleRepeatPeriod, forceDocument, info.hasMediaSpoilers, info.caption, sendMessageChatArguments, effectId, info.stars, monoForumPeerId, suggestionParams, invertMedia);
              return;
          }
@@ -402,7 +402,7 @@ index 0000000..0000000 100644
          for (int a = 0, N = media.size(); a < N; a++) {
              if (media.get(a).ttl > 0) {
                  groupMedia = false;
-@@ -12306,6 +12333,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -12304,6 +12331,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      public static class SendMessageParams {

@@ -1107,8 +1107,6 @@
     <string name="InuDeletedMessagesTransparent">Silinen mesajları yarı saydam göster</string>
     <string name="InuDeletedMessagesTransparentInfo">Sohbette kolayca ayırt edilebilmesi için korunan silinmiş mesajları hafif bir şeffaflıkla gösterir.</string>
     <string name="InuDeselectAll">Tüm seçimleri kaldır</string>
-    <string name="InuEditHistoryDiff">Metin Değişikliklerini Vurgula (Diff)</string>
-    <string name="InuEditHistoryDiffInfo">Düzenleme geçmişinde silinen metni kırmızı üstü çizili, eklenen metni yeşil olarak gösterir</string>
     <string name="InuForceTranslate">Zorunlu çeviri</string>
     <string name="InuAutoTranslateAll">Tüm sohbetleri otomatik çevir</string>
     <string name="InuAutoTranslateAllInfo">Sohbet çevirisini varsayılan olarak her yerde açar; sohbete özel kapatmalar hatırlanır.</string>
@@ -2034,8 +2032,6 @@
     <string name="InuEditHistoryAfter">Sonra</string>
     <string name="InuEditHistoryBefore">Önce</string>
     <string name="InuEditHistoryChanged">Değişen: %1$s</string>
-    <string name="InuEditHistoryCompact">Kompakt arşiv görünümü</string>
-    <string name="InuEditHistoryCompactInfo">Silinen mesajları ve düzenleme geçmişini kartlar yerine düz sohbet balonları olarak göster</string>
     <string name="InuEditHistoryCopyAfter">Yeni sürümü kopyala</string>
     <string name="InuEditHistoryCopyBefore">Eski sürümü kopyala</string>
     <string name="InuEditHistoryCurrentUnknown">Güncel sürüm önbellekte yok</string>

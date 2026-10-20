@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import desu.inugram.helpers.InuDatabaseHelper
-import desu.inugram.helpers.chat.SavedMessagesHelper
+import desu.inugram.helpers.archive.ArchiveCache
 import desu.inugram.ui.AyuMessageHistoryActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -169,9 +169,9 @@ class ArchiveCacheActivity(
             }
         }
         if (edited) {
-            SavedMessagesHelper.clearEditHistory(currentAccount, ids, done)
+            ArchiveCache.clearEditHistory(currentAccount, ids, done)
         } else {
-            SavedMessagesHelper.clearCache(currentAccount, ids, deletedOnly = true, onDone = done)
+            ArchiveCache.clearCache(currentAccount, ids, deletedOnly = true, onDone = done)
         }
     }
 }

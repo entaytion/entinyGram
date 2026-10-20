@@ -11,7 +11,6 @@
   "anticensorship": "privacy",
   "app-icon-picker": "ui",
   "archive-biometric-lock": "privacy",
-  "archive-persistence-fixes": "privacy",
   "attach-camera-square": "chat",
   "auto-marquee": "ui",
   "auto-save-one-time": "media",
@@ -171,7 +170,6 @@
   "save-selected-files": "media",
   "save-self-destruct": "privacy",
   "save-stories": "media",
-  "saved-deleted-capture": "privacy",
   "selection-no-quote": "chat",
   "send-round-video": "media",
   "settings-accounts": "accounts",
@@ -195,5 +193,6 @@
   "unlimited-folder-chats": "restrictions",
   "unlimited-pinned-chats": "restrictions",
   "unread-badge-on-back-button": "chat",
+  "user-info-saver": "privacy",
   "wide-channel-posts": "restrictions"
 }

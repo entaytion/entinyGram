@@ -19,4 +19,4 @@ index 0000000..0000000 100644
 +        if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() && (messageObject.messageOwner.media == null || messageObject.messageOwner.media.ttl_seconds == 0) || messageObject.messageOwner.ttl != 0x7FFFFFFF) {
              return null;
          }
-         if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialog_id)) {
+         // entiny: keep-once-view saves a local copy and lets the real burn proceed, instead of skipping deletion

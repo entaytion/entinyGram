@@ -8,8 +8,10 @@ Subject: allow saving self-destructing media
  .../org/telegram/messenger/FileLoader.java    | 24 ++++++++-
  .../telegram/messenger/MediaController.java   |  9 +++-
  .../org/telegram/messenger/MessageObject.java |  4 +-
+ .../messenger/MessagesController.java         |  4 +-
+ .../telegram/messenger/MessagesStorage.java   |  2 +
  .../java/org/telegram/ui/ChatActivity.java    | 50 +++++++++++++++++--
- 4 files changed, 78 insertions(+), 9 deletions(-)
+ 6 files changed, 83 insertions(+), 10 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -100,6 +102,55 @@ index 0000000..0000000 100644
          if (isQuickReply()) return false;
          if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
          return !(messageOwner instanceof TLRPC.TL_message_secret) && !needDrawBluredPreview() && !isLiveLocation() && type != MessageObject.TYPE_PHONE_CALL && !isSponsored() && (!messageOwner.noforwards || desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue());
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -8299,6 +8299,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                 if (task != null) {
+                     for (int a = 0, N = task.size(); a < N; a++) {
+                         ArrayList<Integer> mids = task.valueAt(a);
++                        desu.inugram.helpers.security.SelfDestructHelper.preserveTimedDeletions(currentAccount, task.keyAt(a), mids);
+                         deleteMessages(mids, null, null, task.keyAt(a), 0, true, 0, !mids.isEmpty() && mids.get(0) > 0);
+                     }
+                 }
+@@ -8308,7 +8309,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     for (int a = 0, N = taskMedia.size(); a < N; a++) {
+                         long dialogId = taskMedia.keyAt(a);
+                         ArrayList<Integer> mids = taskMedia.valueAt(a);
+-                        if (checkViewer && viewerObject != null && viewerObject.currentAccount == currentAccount && viewerObject.getDialogId() == dialogId && mids.contains(viewerObject.getId())) {
++                        if (checkViewer && viewerObject != null && viewerObject.currentAccount == currentAccount && viewerObject.getDialogId() == dialogId && mids.contains(viewerObject.getId()) && !desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialogId)) {
+                             final int id = viewerObject.getId();
+                             mids.remove((Integer) id);
+                             viewerObject.forceExpired = true;
+@@ -21351,6 +21352,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
+                 }
+             }
++            desu.inugram.helpers.security.SelfDestructHelper.filterTimedDeletions(currentAccount, deletedMessagesFinal != null ? deletedMessagesFinal.get(0) : null);
+             if (deletedMessagesFinal != null) {
+                 for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
+                     long dialogId = deletedMessagesFinal.keyAt(a);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -4360,6 +4360,7 @@ public class MessagesStorage extends BaseController {
+             return false;
+         }
+         if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue()) return false;
++        if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(MessageObject.getDialogId(message))) return false;
+         int type = 0;
+         long id = 0;
+         TLRPC.Document document = MessageObject.getDocument(message);
+@@ -4771,6 +4772,7 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void emptyMessagesMedia(long dialogId, ArrayList<Integer> mids) {
++        if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialogId)) return;
+         storageQueue.postRunnable(() -> {
+             SQLiteCursor cursor = null;
+             SQLitePreparedStatement state = null;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java

@@ -45,7 +45,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -3543,7 +3543,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3541,7 +3541,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          request.flags |= 2048;
                          request.no_webpage = !messageObject.editingMessageSearchWebPage;
                          if (messageObject.editingMessageEntities != null) {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                              request.flags |= 8;
                          } else {
                              CharSequence[] message = new CharSequence[]{messageObject.editingMessage};
-@@ -3629,7 +3629,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3627,7 +3627,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              req.flags |= 131072;
          }
          if (entities != null) {
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              req.flags |= 8;
          }
          if (scheduleDate != 0) {
-@@ -4476,7 +4476,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4474,7 +4474,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          TLRPC.TL_messageMediaWebPage mediaWebPage = sendMessageParams.mediaWebPage;
          boolean searchLinks = sendMessageParams.searchLinks;
          MessageObject retryMessageObject = sendMessageParams.retryMessageObject;
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
          TLRPC.ReplyMarkup replyMarkup = sendMessageParams.replyMarkup;
          HashMap<String, String> params = sendMessageParams.params;
          boolean notify = sendMessageParams.notify;
-@@ -5918,7 +5918,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -5916,7 +5916,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                              req.silent = newMsg.silent;
                              req.message = pollSendParams.caption;
                              if (pollSendParams.entities != null && !pollSendParams.entities.isEmpty()) {

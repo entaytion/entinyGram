@@ -11,7 +11,7 @@ import desu.inugram.SearchRegistry
 import desu.inugram.helpers.CacheStatsHelper
 import desu.inugram.helpers.CacheStatsHelper.Kind
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.chat.SavedMessagesHelper
+import desu.inugram.helpers.archive.ArchiveCache
 import desu.inugram.helpers.security.PresenceHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -163,7 +163,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         when (item.id) {
             BUTTON_MESSAGES_TTL -> showTtlDialog(R.string.InuCacheTtl, R.string.InuCacheTtlInfo, InuConfig.DELETED_MESSAGES_TTL.value) {
                 InuConfig.DELETED_MESSAGES_TTL.value = it
-                if (it != InuConfig.DeletedMessagesTtlItem.NEVER) SavedMessagesHelper.pruneIfNeeded(UserConfig.selectedAccount)
+                if (it != InuConfig.DeletedMessagesTtlItem.NEVER) ArchiveCache.pruneIfNeeded(UserConfig.selectedAccount)
             }
             BUTTON_LOGS_TTL -> showTtlDialog(R.string.InuPresenceLogsTtl, R.string.InuPresenceLogsTtlInfo, InuConfig.PRESENCE_LOGS_TTL.value) {
                 InuConfig.PRESENCE_LOGS_TTL.value = it

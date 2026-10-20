@@ -1,9 +1,9 @@
 package desu.inugram.helpers.security
 
-import android.util.SparseArray
 import desu.inugram.InuConfig
+import desu.inugram.helpers.archive.DeletedMessagesHelper
 import org.telegram.messenger.DialogObject
-import org.telegram.messenger.MessageObject
+import org.telegram.messenger.MessagesController
 
 object SelfDestructHelper {
 
@@ -30,20 +30,21 @@ object SelfDestructHelper {
         }
     }
 
+    // entiny: 0 as the deletion date defaults to now so the deletion bulletin doesn't misreport send date as deletion time
     @JvmStatic
-    fun filterTimedDeletions(account: Int, mids: ArrayList<Int>, dialogMessagesByIds: SparseArray<MessageObject>?) {
-        if (!InuConfig.SAVE_TIMED_MESSAGES.value || mids.isEmpty() || dialogMessagesByIds == null) {
-            return
+    fun filterTimedDeletions(account: Int, mids: ArrayList<Int>?) {
+        if (!InuConfig.SAVE_TIMED_MESSAGES.value || mids.isNullOrEmpty()) return
+        val loaded = MessagesController.getInstance(account).dialogMessagesByIds
+        for (id in mids) {
+            val obj = loaded.get(id) ?: continue
+            if (obj.messageOwner.ttl_period != 0) DeletedMessagesHelper.markDeleted(account, obj.dialogId, id, obj, 0, true)
         }
-        for (i in 0 until mids.size) {
-            val id = mids[i]
-            val obj = dialogMessagesByIds.get(id)
-            if (obj != null && obj.messageOwner.ttl_period != 0) {
-                val fromId = if (obj.messageOwner.from_id != null) org.telegram.messenger.DialogObject.getPeerDialogId(obj.messageOwner.from_id) else 0L
-                val text = obj.messageOwner.message ?: ""
-                // entiny: 0 defaults to now so the deletion bulletin doesn't misreport send date as deletion time
-                desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(account, obj.getDialogId(), id, fromId, text, 0, obj.messageOwner, true)
-            }
-        }
+    }
+
+    @JvmStatic
+    fun preserveTimedDeletions(account: Int, dialogId: Long, mids: ArrayList<Int>) {
+        val controller = MessagesController.getInstance(account)
+        if (!shouldPreserveMessage(dialogId, controller.dialogs_dict.get(dialogId)?.ttl_period ?: 0)) return
+        for (id in mids) DeletedMessagesHelper.markDeleted(account, dialogId, id, controller.dialogMessagesByIds.get(id), 0, true)
     }
 }

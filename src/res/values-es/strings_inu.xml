@@ -1575,11 +1575,7 @@ Esta acción no se puede deshacer.</string>
     <string name="InuAiProvidersTitle">Proveedores de IA</string>
     <string name="InuAiProvidersActiveForChat">Activo para el chat</string>
     <string name="InuAiProvidersActiveForVoice">Activo para voz</string>
-    <string name="InuEditHistoryDiff">Resaltar cambios de texto (diff)</string>
-    <string name="InuEditHistoryDiffInfo">Muestra tachado rojo para el texto eliminado y verde para el añadido en el historial de ediciones</string>
     <string name="InuNoEditHistory">No hay historial de ediciones de este mensaje</string>
-    <string name="InuEditHistoryCompact">Vista de archivo compacta</string>
-    <string name="InuEditHistoryCompactInfo">Muestra los mensajes eliminados y el historial de ediciones como burbujas de chat normales en lugar de tarjetas</string>
     <string name="InuEditedAtTime">Editado a las %1$s</string>
     <string name="InuDeletedAtTime">Eliminado a las %1$s</string>
     <string name="InuSentAtTime">Enviado %1$s</string>

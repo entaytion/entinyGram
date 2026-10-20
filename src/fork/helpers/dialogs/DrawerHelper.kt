@@ -893,7 +893,7 @@ object DrawerHelper {
             .setMessage(getString(R.string.InuClearDeletedCacheAlert))
             .setPositiveButton(getString(R.string.ClearButton).uppercase()) { _, _ ->
                 val account = instance.currentAccount
-                desu.inugram.helpers.chat.SavedMessagesHelper.clearCache(account, null) {
+                desu.inugram.helpers.archive.ArchiveCache.clearCache(account, null) {
                     BulletinFactory.of(instance)
                         .createSimpleBulletin(R.raw.ic_delete, getString(R.string.InuClearDeletedCacheDone))
                         .show()

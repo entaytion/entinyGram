@@ -237,6 +237,25 @@ object InuDatabaseHelper {
             version = 23
         }
 
+        if (version == 23) {
+            db.executeFast("SAVEPOINT inu_edit_history_v24").stepThis().dispose()
+            try {
+                cleanEditHistory(db)
+                db.executeFast("CREATE UNIQUE INDEX IF NOT EXISTS idx_inu_edit_history_revision ON inu_edit_history(dialog_id, msg_id, date)").stepThis().dispose()
+                writeKv(db, "version", "24")
+                db.executeFast("RELEASE SAVEPOINT inu_edit_history_v24").stepThis().dispose()
+                version = 24
+            } catch (e: Throwable) {
+                try {
+                    db.executeFast("ROLLBACK TO SAVEPOINT inu_edit_history_v24").stepThis().dispose()
+                    db.executeFast("RELEASE SAVEPOINT inu_edit_history_v24").stepThis().dispose()
+                } catch (rollbackError: Throwable) {
+                    e.addSuppressed(rollbackError)
+                }
+                Log.e("InuDatabaseHelper", "edit history v24 cleanup failed", e)
+            }
+        }
+
         // entiny: the feed no longer keeps its own cache
         db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 
@@ -849,7 +868,13 @@ object InuDatabaseHelper {
         mediaPath: String? = null,
         entities: ArrayList<TLRPC.MessageEntity>? = null,
         media: TLRPC.MessageMedia? = null,
-    ) {
+    ): Boolean {
+        val exists = db.queryFinalized("SELECT 1 FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? AND date = ?", dialogId, msgId, date)
+        try {
+            if (exists.next()) return false
+        } finally {
+            exists.dispose()
+        }
         val entitiesObject = if (entities.isNullOrEmpty()) {
             null
         } else {
@@ -868,8 +893,10 @@ object InuDatabaseHelper {
             if (mediaObject != null) query.bindTlObject(7, mediaObject) else query.bindNull(7)
             query.bindLong(8, System.currentTimeMillis() / 1000L)
             query.step()
+            return true
         } catch (e: Throwable) {
             Log.e("InuDatabaseHelper", "saveEditHistory failed", e)
+            return false
         } finally {
             query.dispose()
         }
@@ -918,8 +945,67 @@ object InuDatabaseHelper {
         }
     }
 
-    fun lastEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int): EditHistoryRow? =
-        readEditHistory(db, "SELECT date, text, media_path, entities, media, rowid FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? ORDER BY date DESC, rowid DESC LIMIT 1", dialogId, msgId).firstOrNull()
+    // entiny: drops empty rows, repeats of one revision and revisions identical to the next one; keeps the copy that holds media
+    private fun cleanEditHistory(db: SQLiteDatabase) {
+        val started = android.os.SystemClock.elapsedRealtime()
+        val doomed = ArrayList<Long>()
+        val doomedPaths = ArrayList<String>()
+        val redated = ArrayList<Pair<Long, Long>>()
+        var keptKey: Pair<Long, Int>? = null
+        var kept: EditHistoryRow? = null
+        fun drop(row: EditHistoryRow) {
+            doomed.add(row.rowId)
+            row.mediaPath?.let(doomedPaths::add)
+        }
+        val cursor = db.queryFinalized("SELECT date, text, media_path, entities, media, id, dialog_id, msg_id FROM inu_edit_history ORDER BY dialog_id, msg_id, date, id")
+        try {
+            while (cursor.next()) {
+                val row = EditHistoryRow(
+                    cursor.longValue(0),
+                    cursor.stringValue(1) ?: "",
+                    if (cursor.isNull(2)) null else cursor.stringValue(2)?.takeIf { it.isNotBlank() },
+                    readTl(cursor, 3) { data -> TLRPC.TL_textWithEntities.TLdeserialize(data, data.readInt32(false), false)?.entities },
+                    readTl(cursor, 4) { data -> TLRPC.MessageMedia.TLdeserialize(data, data.readInt32(false), false) },
+                    cursor.longValue(5),
+                )
+                val key = cursor.longValue(6) to cursor.intValue(7)
+                if (row.text.isEmpty() && row.mediaPath == null && (row.media == null || row.media is TLRPC.TL_messageMediaEmpty)) {
+                    drop(row)
+                    continue
+                }
+                val previous = kept
+                if (previous == null || key != keptKey) {
+                    keptKey = key
+                    kept = row
+                    continue
+                }
+                val sameRevision = previous.date == row.date ||
+                    desu.inugram.helpers.archive.EditHistoryHelper.changes(entryOf(previous), entryOf(row)).isEmpty()
+                if (!sameRevision) {
+                    kept = row
+                } else if (previous.mediaPath == null && row.mediaPath != null) {
+                    drop(previous)
+                    kept = row.copy(date = previous.date)
+                    redated.add(row.rowId to previous.date)
+                } else {
+                    drop(row)
+                }
+            }
+        } finally {
+            cursor.dispose()
+        }
+        for ((id, date) in redated) {
+            db.executeFast("UPDATE inu_edit_history SET date = $date WHERE id = $id").stepThis().dispose()
+        }
+        for (chunk in doomed.chunked(500)) {
+            db.executeFast("DELETE FROM inu_edit_history WHERE id IN (${chunk.joinToString(",")})").stepThis().dispose()
+        }
+        deleteUnreferencedMediaFiles(db, doomedPaths)
+        Log.d("InuDatabaseHelper", "edit history cleanup: ${doomed.size} rows in ${android.os.SystemClock.elapsedRealtime() - started} ms")
+    }
+
+    private fun entryOf(row: EditHistoryRow) =
+        desu.inugram.helpers.archive.EditHistoryHelper.EditEntry(row.date, row.text, row.mediaPath, row.entities, row.media)
 
     fun loadEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int): List<EditHistoryRow> =
         readEditHistory(db, "SELECT date, text, media_path, entities, media, rowid FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? ORDER BY date ASC, rowid ASC", dialogId, msgId)

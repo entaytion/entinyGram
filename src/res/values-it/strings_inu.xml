@@ -1576,11 +1576,7 @@ Questa azione non può essere annullata.</string>
     <string name="InuAiProvidersTitle">Fornitori IA</string>
     <string name="InuAiProvidersActiveForChat">Attivo per la chat</string>
     <string name="InuAiProvidersActiveForVoice">Attivo per la voce</string>
-    <string name="InuEditHistoryDiff">Evidenzia le modifiche al testo (diff)</string>
-    <string name="InuEditHistoryDiffInfo">Mostra il testo eliminato barrato in rosso e quello aggiunto in verde nella cronologia delle modifiche</string>
     <string name="InuNoEditHistory">Nessuna cronologia delle modifiche registrata per questo messaggio</string>
-    <string name="InuEditHistoryCompact">Vista archivio compatta</string>
-    <string name="InuEditHistoryCompactInfo">Mostra i messaggi eliminati e la cronologia delle modifiche come normali fumetti di chat invece che come schede</string>
     <string name="InuEditedAtTime">Modificato alle %1$s</string>
     <string name="InuDeletedAtTime">Eliminato alle %1$s</string>
     <string name="InuSentAtTime">Inviato %1$s</string>

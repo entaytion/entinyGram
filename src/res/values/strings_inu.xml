@@ -1563,11 +1563,7 @@
     <string name="InuAiProvidersTitle">AI Providers</string>
     <string name="InuAiProvidersActiveForChat">Active for Chat</string>
     <string name="InuAiProvidersActiveForVoice">Active for Voice</string>
-    <string name="InuEditHistoryDiff">Highlight Text Changes (Diff)</string>
-    <string name="InuEditHistoryDiffInfo">Show red strikethrough for deleted text and green for added text in edit history</string>
     <string name="InuNoEditHistory">No edit history recorded for this message</string>
-    <string name="InuEditHistoryCompact">Compact archive view</string>
-    <string name="InuEditHistoryCompactInfo">Show deleted messages and edit history as plain chat bubbles instead of cards</string>
     <string name="InuEditedAtTime">Edited at %1$s</string>
     <string name="InuDeletedAtTime">Deleted at %1$s</string>
     <string name="InuSentAtTime">Sent %1$s</string>

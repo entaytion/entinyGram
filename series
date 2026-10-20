@@ -462,7 +462,6 @@ entiny/media/animated-preview-speed-fix.patch
 entiny/tabs/main-tabs-separate-search.patch
 entiny/ui/clock-format.patch
 entiny/chat/chat-header-light-colors.patch
-entiny/privacy/saved-deleted-capture.patch
 entiny/chat/share-caption-clear.patch
 entiny/feed/feed-chatactivity.patch
 entiny/proxy/proxy-link-alert.patch
@@ -514,7 +513,6 @@ entiny/tabs/folder-empty-on-switch.patch
 entiny/tabs/movable-chats-tab.patch
 entiny/chat/reply-background.patch
 entiny/chat/unread-badge-on-back-button.patch
-entiny/privacy/archive-persistence-fixes.patch
 bugfix/forum-title-overlay.patch
 bugfix/animated-drawable-recycle-interrupt.patch
 bugfix/story-reactions-window-keyboard.patch
@@ -562,3 +560,4 @@ entiny/restrictions/restricted-quote-reply.patch
 entiny/chat/quote-keyboard.patch
 entiny/chat/side-button-action.patch
 entiny/chat/contact-link-query.patch
+entiny/privacy/user-info-saver.patch
