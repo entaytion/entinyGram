@@ -1975,9 +1975,6 @@
     <string name="InuSystemFolderChannels">频道</string>
     <string name="InuSystemFolderGroups">群组</string>
     <string name="InuSystemFolderUnread">未读</string>
-    <string name="InuSystemFolders">系统文件夹</string>
-    <string name="InuSystemFoldersAddRecommended">添加推荐项</string>
-    <string name="InuSystemFoldersInfo">点按文件夹可在文件夹栏中显示或隐藏，长按可删除。这些文件夹仅保存在此设备上。</string>
     <string name="InuVoiceMessages">语音消息</string>
     <string name="InuLogsRedact">隐藏敏感数据</string>
     <string name="InuLogsRedactInfo">写入日志时,将手机号、ID、令牌、IP 和用户名替换为固定的占位符</string>

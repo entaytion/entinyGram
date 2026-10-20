@@ -1976,9 +1976,6 @@
     <string name="InuSystemFolderChannels">Kanallar</string>
     <string name="InuSystemFolderGroups">Gruplar</string>
     <string name="InuSystemFolderUnread">Okunmamış</string>
-    <string name="InuSystemFolders">Sistem klasörleri</string>
-    <string name="InuSystemFoldersAddRecommended">Önerilenleri ekle</string>
-    <string name="InuSystemFoldersInfo">Klasör çubuğunda göstermek veya gizlemek için bir klasöre dokunun. Silmek için uzun basın. Bu klasörler bu cihazda kalır.</string>
     <string name="InuVoiceMessages">Sesli mesajlar</string>
     <string name="InuLogsRedact">Hassas verileri gizle</string>
     <string name="InuLogsRedactInfo">Günlüklerdeki telefon numaralarını, kimlikleri, belirteçleri, IP\'leri ve kullanıcı adlarını yazılırken sabit yer tutucularla değiştirir</string>

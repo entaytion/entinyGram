@@ -571,14 +571,11 @@
     <string name="InuFoldersInfiniteSwipe">Infinite Folder Swipe</string>
     <string name="InuFoldersInfiniteSwipeInfo">Wrap around when swiping between folder tabs.</string>
     <string name="InuFoldersAtBottom">Move Folders to Bottom</string>
-    <string name="InuSystemFolders">System Folders</string>
     <string name="InuSystemFolderAdministrator">Administrator</string>
     <string name="InuSystemFolderBots">Bots</string>
     <string name="InuSystemFolderUnread">Unread</string>
     <string name="InuSystemFolderGroups">Groups</string>
     <string name="InuSystemFolderChannels">Channels</string>
-    <string name="InuSystemFoldersAddRecommended">Add recommended</string>
-    <string name="InuSystemFoldersInfo">Tap a folder to show or hide it in the folder bar. Long-press to delete it. These folders stay on this device.</string>
     <string name="InuHideArchive">Remove \"Archived Chats\" from Chat List</string>
     <string name="InuCommunityDisplayMode">Communities</string>
     <string name="InuCommunityDisplayModeRegular">Regular</string>

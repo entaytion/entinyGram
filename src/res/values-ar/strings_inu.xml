@@ -2011,9 +2011,6 @@
     <string name="InuSystemFolderChannels">القنوات</string>
     <string name="InuSystemFolderGroups">المجموعات</string>
     <string name="InuSystemFolderUnread">غير المقروءة</string>
-    <string name="InuSystemFolders">مجلدات النظام</string>
-    <string name="InuSystemFoldersAddRecommended">إضافة الموصى بها</string>
-    <string name="InuSystemFoldersInfo">اضغط على مجلد لإظهاره أو إخفائه في شريط المجلدات. اضغط مطولًا لحذفه. تبقى هذه المجلدات على هذا الجهاز.</string>
     <string name="InuVoiceMessages">الرسائل الصوتية</string>
     <string name="InuLogsRedact">إخفاء البيانات الحساسة</string>
     <string name="InuLogsRedactInfo">استبدال أرقام الهواتف والمعرّفات والرموز وعناوين IP وأسماء المستخدمين في السجلات برموز ثابتة أثناء الكتابة</string>

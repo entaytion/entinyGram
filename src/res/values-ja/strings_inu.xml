@@ -1975,9 +1975,6 @@
     <string name="InuSystemFolderChannels">チャンネル</string>
     <string name="InuSystemFolderGroups">グループ</string>
     <string name="InuSystemFolderUnread">未読</string>
-    <string name="InuSystemFolders">システムフォルダー</string>
-    <string name="InuSystemFoldersAddRecommended">おすすめを追加</string>
-    <string name="InuSystemFoldersInfo">フォルダーをタップするとフォルダーバーに表示/非表示を切り替えられます。長押しで削除します。これらのフォルダーはこの端末内にのみ保存されます。</string>
     <string name="InuVoiceMessages">ボイスメッセージ</string>
     <string name="InuLogsRedact">機密データを隠す</string>
     <string name="InuLogsRedactInfo">電話番号、ID、トークン、IP、ユーザー名を、ログへの書き込み時に固定のプレースホルダーへ置き換えます</string>

@@ -243,7 +243,6 @@
     <string name="InuRememberSelectedFolder">Запоминать выбранную папку</string>
     <string name="InuRememberSelectedFolderInfo">Открывать последнюю активную папку при возврате к списку чатов.</string>
     <string name="InuFoldersAtBottom">Перенести папки вниз</string>
-    <string name="InuSystemFolders">Системные папки</string>
     <string name="InuSystemFolderAdministrator">Администратор</string>
     <string name="InuSystemFolderBots">Боты</string>
     <string name="InuSystemFolderUnread">Непрочитанные</string>
@@ -1981,8 +1980,6 @@
     <string name="InuRoundAudioSourceUnprocessed">Необработанный</string>
     <string name="InuRoundBitrateDefault">По умолчанию</string>
     <string name="InuRoundVideos">Кружочки</string>
-    <string name="InuSystemFoldersAddRecommended">Добавить рекомендуемые</string>
-    <string name="InuSystemFoldersInfo">Нажмите на папку, чтобы показать или скрыть её в панели папок. Долгое нажатие удаляет папку. Эти папки хранятся только на этом устройстве.</string>
     <string name="InuVoiceMessages">Голосовые сообщения</string>
     <string name="InuLogsRedact">Скрывать чувствительные данные</string>
     <string name="InuLogsRedactInfo">Заменять номера, ID, токены, IP и юзернеймы в логах на стабильные плейсхолдеры при записи</string>

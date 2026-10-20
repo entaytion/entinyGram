@@ -414,7 +414,6 @@
     <string name="InuRememberSelectedFolder">Запам\'ятовувати обрану папку</string>
     <string name="InuRememberSelectedFolderInfo">Відкривати останню активну папку при поверненні до списку чатів.</string>
     <string name="InuFoldersAtBottom">Перенести теки вниз</string>
-    <string name="InuSystemFolders">Системні теки</string>
     <string name="InuSystemFolderAdministrator">Адміністратор</string>
     <string name="InuSystemFolderBots">Боти</string>
     <string name="InuSystemFolderUnread">Непрочитані</string>
@@ -2058,8 +2057,6 @@
     <string name="InuRoundAudioSourceUnprocessed">Необроблений</string>
     <string name="InuRoundBitrateDefault">За замовчуванням</string>
     <string name="InuRoundVideos">Відеоповідомлення</string>
-    <string name="InuSystemFoldersAddRecommended">Додати рекомендовані</string>
-    <string name="InuSystemFoldersInfo">Натисніть на теку, щоб показати або сховати її на панелі тек. Довге натискання видаляє теку. Ці теки зберігаються лише на цьому пристрої.</string>
     <string name="InuVoiceMessages">Голосові повідомлення</string>
     <string name="InuLogsRedact">Приховувати чутливі дані</string>
     <string name="InuLogsRedactInfo">Замінювати номери, ID, токени, IP та юзернейми в логах на стабільні плейсхолдери під час запису</string>

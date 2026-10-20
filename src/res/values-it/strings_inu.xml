@@ -578,14 +578,11 @@ Sistema: %6$s
     <string name="InuRememberSelectedFolder">Ricorda la cartella selezionata</string>
     <string name="InuRememberSelectedFolderInfo">Riapre l\'ultima cartella attiva quando torni all\'elenco chat.</string>
     <string name="InuFoldersAtBottom">Sposta le cartelle in basso</string>
-    <string name="InuSystemFolders">Cartelle di sistema</string>
     <string name="InuSystemFolderAdministrator">Amministratore</string>
     <string name="InuSystemFolderBots">Bot</string>
     <string name="InuSystemFolderUnread">Non letti</string>
     <string name="InuSystemFolderGroups">Gruppi</string>
     <string name="InuSystemFolderChannels">Canali</string>
-    <string name="InuSystemFoldersAddRecommended">Aggiungi consigliate</string>
-    <string name="InuSystemFoldersInfo">Tocca una cartella per mostrarla o nasconderla nella barra delle cartelle. Tieni premuto per eliminarla. Queste cartelle restano su questo dispositivo.</string>
     <string name="InuHideArchive">Rimuovi «Chat archiviate» dall\'elenco chat</string>
     <string name="InuCommunityDisplayMode">Community</string>
     <string name="InuCommunityDisplayModeRegular">Normale</string>
