@@ -51,7 +51,7 @@ index 0000000..0000000 100644
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 @@ -17590,8 +17590,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  messageObject != null && (MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) ||
-                 (messageObject.messageOwner != null && messageObject.messageOwner.noforwards)) || messageObject != null && messageObject.hasRevealedExtendedMedia()
+                 (messageObject.messageOwner != null && desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(messageObject.messageOwner))) || messageObject != null && messageObject.hasRevealedExtendedMedia()
              ) {
 -                windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
 -                AndroidUtilities.logFlagSecure();

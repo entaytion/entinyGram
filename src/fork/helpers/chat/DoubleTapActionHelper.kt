@@ -2,6 +2,7 @@ package desu.inugram.helpers.chat
 
 import android.view.View
 import desu.inugram.InuConfig
+import desu.inugram.helpers.restrictions.RestrictedFeaturesHelper
 import desu.inugram.helpers.translate.TranslateHelper
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.LocaleController
@@ -88,7 +89,7 @@ object DoubleTapActionHelper {
     }
 
     private fun canForwardOrAllowed(message: MessageObject): Boolean =
-        InuConfig.ALLOW_FORWARD_RESTRICTED.value || message.messageOwner?.noforwards != true
+        !RestrictedFeaturesHelper.noforwards(message.messageOwner)
 
     private fun menuOptionForAction(action: DoubleTapAction, message: MessageObject): Int? {
         return when (action) {

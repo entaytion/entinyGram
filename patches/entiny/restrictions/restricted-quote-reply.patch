@@ -16,7 +16,7 @@ index 0000000..0000000 100644
          }
  
 +        ArrayList<TLRPC.MessageEntity> inu_replyEntities = entities != null ? entities : new ArrayList<>();
-+        String inu_replyPrefix = desu.inugram.helpers.chat.ChatHelper.restrictedReplyPrefix(currentAccount, replyQuote, peer, inu_replyEntities);
++        String inu_replyPrefix = desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.restrictedReplyPrefix(currentAccount, replyQuote, peer, inu_replyEntities);
 +        if (inu_replyPrefix != null) {
 +            entities = inu_replyEntities;
 +            if (message != null) {

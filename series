@@ -495,7 +495,6 @@ entiny/notifications/inapp-notification-vibration.patch
 entiny/ui/forum-search-back.patch
 entiny/ui/topic-icon-inset.patch
 entiny/notifications/no-vibration.patch
-entiny/restrictions/restricted-message-flag.patch
 entiny/accounts/many-accounts-warning.patch
 entiny/misc/share-intent-lag.patch
 entiny/chat/keyboard-scroll-typing.patch

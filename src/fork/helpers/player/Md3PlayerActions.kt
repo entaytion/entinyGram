@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.FrameLayout
 import androidx.core.content.FileProvider
-import desu.inugram.InuConfig
+import desu.inugram.helpers.restrictions.RestrictedFeaturesHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BuildVars
@@ -44,7 +44,7 @@ object Md3PlayerActions {
     fun noForwards(messageObject: MessageObject): Boolean {
         val account = messageObject.currentAccount
         return MessagesController.getInstance(account).isPeerNoForwards(messageObject.dialogId) ||
-            (messageObject.messageOwner != null && messageObject.messageOwner.noforwards && !InuConfig.ALLOW_FORWARD_RESTRICTED.value)
+            RestrictedFeaturesHelper.noforwards(messageObject.messageOwner)
     }
 
     fun isProfileSavePending(messageObject: MessageObject): Boolean {
