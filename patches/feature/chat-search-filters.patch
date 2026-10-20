@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -3688,6 +3688,34 @@ public class MediaDataController extends BaseController {
+@@ -3691,6 +3691,34 @@ public class MediaDataController extends BaseController {
      private boolean loadingSearchLocal;
      private boolean loadedPredirectedSearchLocal;
  
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
      public void removeMessageFromResults(int id) {
          for (int i = 0; i < searchResultMessages.size(); ++i) {
              MessageObject m = searchResultMessages.get(i);
-@@ -3777,6 +3805,7 @@ public class MediaDataController extends BaseController {
+@@ -3780,6 +3808,7 @@ public class MediaDataController extends BaseController {
  
      public int getMask() {
          int mask = 0;
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
          if (lastReturnedNum < searchResultMessages.size() - 1 || !messagesSearchEndReached[0] || !messagesSearchEndReached[1]) {
              mask |= 1;
          }
-@@ -3832,10 +3861,15 @@ public class MediaDataController extends BaseController {
+@@ -3835,10 +3864,15 @@ public class MediaDataController extends BaseController {
      }
  
      public boolean searchEndReached() {
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
          if (loadingMoreSearchMessages || reqId != 0 || messagesSearchEndReached[0] && lastMergeDialogId == 0 && messagesSearchEndReached[1]) {
              return;
          }
-@@ -3847,6 +3881,7 @@ public class MediaDataController extends BaseController {
+@@ -3850,6 +3884,7 @@ public class MediaDataController extends BaseController {
      }
  
      public boolean isSearchLoading() {
@@ -80,7 +80,7 @@ index 0000000..0000000 100644
          return reqId != 0;
      }
  
-@@ -3863,6 +3898,29 @@ public class MediaDataController extends BaseController {
+@@ -3866,6 +3901,29 @@ public class MediaDataController extends BaseController {
              getConnectionsManager().cancelRequest(mergeReqId, true);
              mergeReqId = 0;
          }
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
          if (query == null) {
              if (searchResultMessages.isEmpty()) {
                  loadingMoreSearchMessages = false;
-@@ -3956,7 +4014,7 @@ public class MediaDataController extends BaseController {
+@@ -3959,7 +4017,7 @@ public class MediaDataController extends BaseController {
                      req.saved_reaction.add(reaction.toTLReaction());
                      req.flags |= 8;
                  }
@@ -119,7 +119,7 @@ index 0000000..0000000 100644
                  mergeReqId = getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
                      if (lastMergeDialogId == mergeDialogId) {
                          mergeReqId = 0;
-@@ -3991,7 +4049,7 @@ public class MediaDataController extends BaseController {
+@@ -3994,7 +4052,7 @@ public class MediaDataController extends BaseController {
          lastSearchChat = chat;
          lastReplyMessageId = replyMessageId;
          lastReaction = reaction;
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
          req.q = query != null ? query : "";
          req.offset_id = max_id;
          if (user != null) {
-@@ -4041,7 +4099,7 @@ public class MediaDataController extends BaseController {
+@@ -4044,7 +4102,7 @@ public class MediaDataController extends BaseController {
              req.saved_reaction.add(reaction.toTLReaction());
              req.flags |= 8;
          }
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
          lastSearchQuery = query;
          long queryWithDialogFinal = queryWithDialog;
          String finalQuery = query;
-@@ -4080,6 +4138,7 @@ public class MediaDataController extends BaseController {
+@@ -4083,6 +4141,7 @@ public class MediaDataController extends BaseController {
                          getMessagesController().putUsers(res.users, false);
                          getMessagesController().putChats(res.chats, false);
                          Runnable done = () -> {
@@ -145,7 +145,7 @@ index 0000000..0000000 100644
                              if (req.offset_id == 0 && queryWithDialogFinal == dialogId) {
                                  lastReturnedNum = 0;
                                  searchServerResultMessages.clear();
-@@ -4116,8 +4175,8 @@ public class MediaDataController extends BaseController {
+@@ -4119,8 +4178,8 @@ public class MediaDataController extends BaseController {
                                  searchMessagesInChat(lastSearchQuery, dialogId, mergeDialogId, guid, 0, replyMessageId, true, user, chat, jumpToMessage, lastReaction);
                              }
                          };

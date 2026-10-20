@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5007,7 +5007,7 @@ public class MediaDataController extends BaseController {
+@@ -5010,7 +5010,7 @@ public class MediaDataController extends BaseController {
              maxShortcuts = 5;
          }
          ArrayList<TLRPC.TL_topPeer> hintsFinal = new ArrayList<>();

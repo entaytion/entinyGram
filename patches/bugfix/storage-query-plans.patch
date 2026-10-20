@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5600,7 +5600,7 @@ public class MediaDataController extends BaseController {
+@@ -5603,7 +5603,7 @@ public class MediaDataController extends BaseController {
              try {
                  int lastTime = 0;
                  int lastMid = 0;
