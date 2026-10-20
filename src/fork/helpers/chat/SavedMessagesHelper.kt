@@ -1329,8 +1329,7 @@ object SavedMessagesHelper {
         if (!forceSave && isPermanentDeleteRequestedForMid(account, msgId)) return
         // entiny: prevent empty text from subsequent delete reports overwriting preserved text
         if (alreadyRecorded && text.isNullOrEmpty() && message?.media == null) return
-        // entiny: deletions for messages never loaded locally carry no data; recording them
-        // created phantom ghosts that littered chats with deleted-media placeholders
+        // entiny: deletions never loaded locally carry no data and would only create phantom ghosts
         if (!forceSave && !alreadyRecorded && !hasPreservableData(text, message)) return
         ensureAccountLoaded(account)
         val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
@@ -1390,8 +1389,7 @@ object SavedMessagesHelper {
         }
         if (isPermanentDeleteRequested(account, dialogId, msgId)) return false
         if (isMessageDeleted(account, dialogId, msgId)) return true
-        // entiny: nothing to archive means nothing to preserve — drop the bubble instead of
-        // leaving an in-memory ghost that survives until cache clear
+        // entiny: nothing to archive means nothing to preserve, drop the bubble
         if (!hasPreservableData(msg.messageOwner?.message, msg.messageOwner)) return false
         if (!shouldSaveForDialog(account, dialogId)) return false
         if (!InuConfig.SAVE_DELETED_OWN.value && msg.isOutOwner) return false
@@ -1569,7 +1567,7 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun recordEditHistory(account: Int, dialogId: Long, msgId: Int, oldText: String, date: Int, message: TLRPC.Message? = null) {
-        recordEditHistory(account, dialogId, msgId, oldText, date, message, message?.entities, message?.media)
+        recordEditHistory(account, dialogId, msgId, oldText, date, message, message?.entities, message?.media, copyMedia = false)
     }
 
     private fun recordEditHistory(
@@ -1584,12 +1582,11 @@ object SavedMessagesHelper {
         copyMedia: Boolean = true,
     ) {
         if (!isSaveEditedEnabled()) return
-        val mediaCopy = if (copyMedia) planMediaCopy(account, message) else null
         if (oldText.isEmpty() && (media == null || media is TLRPC.TL_messageMediaEmpty)) return
+        val mediaCopy = if (copyMedia) planMediaCopy(account, message) else null
         val now = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000
         val keptEntities = if (entities.isNullOrEmpty()) null else ArrayList(entities)
         val keptMedia = InuDatabaseHelper.cloneMedia(media)
-        
         synchronized(cacheLock) {
             var accMap = editHistoryCache.get(account.toLong())
             if (accMap == null) {
@@ -1650,11 +1647,6 @@ object SavedMessagesHelper {
                 android.util.Log.d(TAG, "edit history save failed", e)
             }
         }
-    }
-
-    @JvmStatic
-    fun recordEditHistory(account: Int, dialogId: Long, msgId: Int, oldText: String, date: Int) {
-        recordEditHistory(account, dialogId, msgId, oldText, date, null)
     }
 
     @JvmStatic
@@ -1781,11 +1773,6 @@ object SavedMessagesHelper {
             // entiny: dialogMessagesByIds holds only the dialog preview, so fall back to the shadow cache
             recordEditHistoryFromShadow(account, newMessage.dialog_id, newMessage.id, newMessage)
         }
-    }
-
-    @JvmStatic
-    fun recordEditHistory(dialogId: Long, msgId: Int, oldText: String) {
-        recordEditHistory(UserConfig.selectedAccount, dialogId, msgId, oldText, 0, null)
     }
 
     @JvmStatic
