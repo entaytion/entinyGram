@@ -51,29 +51,62 @@ object SavedMessagesHelper {
         return dir
     }
 
-    private const val MEDIA_GALLERY_TYPE_IMAGE = 0
-    private const val MEDIA_GALLERY_TYPE_VIDEO = 1
     private const val MEDIA_GALLERY_TYPE_FILE = 2
-    private const val MEDIA_GALLERY_TYPE_AUDIO = 3
 
-    // entiny: mirrors a saved archive file into the gallery via the stock save-to-gallery path
+    // entiny: mirrors a saved archive file into Downloads/<download dir>, skipping files already exported
     @JvmStatic
     fun exportToGallery(path: String?) {
         if (path.isNullOrEmpty() || !isArchivePublic()) return
         try {
             val source = File(path)
             if (!source.isFile || source.length() <= 0L) return
-            val extension = FileLoader.getFileExtension(source)?.lowercase()
-            val mime = if (extension != null) android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) else null
-            val type = when {
-                mime?.startsWith("image") == true -> MEDIA_GALLERY_TYPE_IMAGE
-                mime?.startsWith("video") == true -> MEDIA_GALLERY_TYPE_VIDEO
-                mime?.startsWith("audio") == true -> MEDIA_GALLERY_TYPE_AUDIO
-                else -> MEDIA_GALLERY_TYPE_FILE
-            }
-            MediaController.saveFileInternal(type, source, galleryName(source))
+            val name = galleryName(source)
+            if (isAlreadyExported(name, source.length())) return
+            MediaController.saveFileInternal(MEDIA_GALLERY_TYPE_FILE, source, name)
         } catch (e: Throwable) {
             android.util.Log.d(TAG, "archive gallery export failed", e)
+        }
+    }
+
+    private fun isAlreadyExported(name: String, size: Long): Boolean {
+        return try {
+            val relative = android.os.Environment.DIRECTORY_DOWNLOADS + File.separator + InuConfig.DOWNLOAD_DIRECTORY.value + File.separator
+            ApplicationLoader.applicationContext.contentResolver.query(
+                android.provider.MediaStore.Downloads.getContentUri(android.provider.MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                arrayOf(android.provider.MediaStore.MediaColumns._ID),
+                "${android.provider.MediaStore.MediaColumns.RELATIVE_PATH}=? AND ${android.provider.MediaStore.MediaColumns.DISPLAY_NAME}=? AND ${android.provider.MediaStore.MediaColumns.SIZE}=?",
+                arrayOf(relative, name, size.toString()),
+                null
+            )?.use { it.moveToFirst() } ?: false
+        } catch (e: Throwable) {
+            false
+        }
+    }
+
+    // entiny: exports every archived file once; safe to call repeatedly
+    @JvmStatic
+    fun exportExistingArchive(account: Int) {
+        if (!isArchivePublic()) return
+        val storage = MessagesStorage.getInstance(account)
+        storage.storageQueue.postRunnable {
+            val paths = ArrayList<String>()
+            try {
+                val db = storage.database
+                if (db != null) {
+                    val cursor = db.queryFinalized(
+                        "SELECT media_path FROM inu_deleted_messages WHERE media_path IS NOT NULL AND media_path != ''" +
+                            " UNION SELECT media_path FROM inu_edit_history WHERE media_path IS NOT NULL AND media_path != ''"
+                    )
+                    try {
+                        while (cursor.next()) cursor.stringValue(0)?.let(paths::add)
+                    } finally {
+                        cursor.dispose()
+                    }
+                }
+            } catch (e: Throwable) {
+                android.util.Log.d(TAG, "archive export query failed", e)
+            }
+            mediaQueue.postRunnable { paths.forEach { exportToGallery(it) } }
         }
     }
 
@@ -116,7 +149,10 @@ object SavedMessagesHelper {
                 } catch (e: Throwable) {
                     android.util.Log.d(TAG, "archive media migration query failed", e)
                 }
-                mediaQueue.postRunnable { migrateSavedMedia(account, targetRoot, paths) }
+                mediaQueue.postRunnable {
+                    migrateSavedMedia(account, targetRoot, paths)
+                    exportExistingArchive(account)
+                }
             }
         }, STARTUP_DELAY_MS)
     }

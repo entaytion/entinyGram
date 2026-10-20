@@ -4,6 +4,7 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.chat.SavedMessagesHelper
 import desu.inugram.helpers.security.ArchiveExportHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
@@ -194,6 +195,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             }
             TOGGLE_ARCHIVE_MEDIA_PUBLIC -> {
                 val new = InuConfig.ARCHIVE_MEDIA_PUBLIC.toggle()
+                if (new) SavedMessagesHelper.exportExistingArchive(currentAccount)
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
             TOGGLE_SAVE_EDITED_MESSAGES -> {

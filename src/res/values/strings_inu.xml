@@ -1437,7 +1437,7 @@
     <string name="InuPromptKeepLocalOnDelete">Keep local copy prompt</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Adds a \"Keep local copy\" checkbox to the delete dialog; only when auto-saving is off.</string>
     <string name="InuArchiveMediaPublic">Save archive media to gallery</string>
-    <string name="InuArchiveMediaPublicInfo">Copies saved deleted/edited photos and videos into the device gallery next to normal downloads. Turn off to keep them only inside the app.</string>
+    <string name="InuArchiveMediaPublicInfo">Copies saved deleted/edited media into the Downloads/entinyGram folder. Turn off to keep them only inside the app.</string>
     <string name="InuKeepLocalCopy">Keep local copy</string>
     <string name="InuDeletePermanently">Delete permanently</string>
     <string name="InuDeletePermanentlyDone">Deleted permanently</string>
