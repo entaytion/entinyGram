@@ -70,6 +70,8 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
         // #if PLUGINS
         fillPluginSection(items, adapter)
         // #endif
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asCheck(TOGGLE_GROUP_ENTINY, LocaleController.getString(R.string.InuGroupEntinyMenu)).setChecked(InuConfig.GROUP_ENTINY_MENU.value))
         fillResetSection(items, adapter)
     }
 
@@ -80,6 +82,11 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
         }
         if (item.id == PLACEMENT_ID) {
             showPlacementPicker(view)
+            return
+        }
+        if (item.id == TOGGLE_GROUP_ENTINY) {
+            InuConfig.GROUP_ENTINY_MENU.toggle()
+            listView.adapter.update(true)
             return
         }
         super.onClick(item, view, position, x, y)
@@ -197,6 +204,7 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
     companion object {
         private val MASTER_TOGGLE_ID = InuUtils.generateId()
         private val PLACEMENT_ID = InuUtils.generateId()
+        private val TOGGLE_GROUP_ENTINY = InuUtils.generateId()
         // entiny: distinct from base SHADOW_END so DiffUtil does not alias shadows on structural change
         private val SHADOW_MID = InuUtils.generateId()
         private val HEADER_BOTTOM = InuUtils.generateId()

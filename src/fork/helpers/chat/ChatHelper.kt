@@ -16,6 +16,7 @@ import android.text.Layout
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.style.ClickableSpan
 import android.text.StaticLayout
 import android.text.style.ForegroundColorSpan
 import android.text.TextUtils
@@ -162,6 +163,9 @@ object ChatHelper {
     const val OPTION_LOCAL_EDIT_RESET = 535
     const val OPTION_SAVE_VOICE_TO_DOWNLOADS = 536
     const val OPTION_BOOKMARK = 537
+    const val OPTION_ENTINY_GROUP = 538
+
+    val groupedMenuEntries = ArrayList<Triple<CharSequence, Int, Int>>()
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -447,6 +451,7 @@ object ChatHelper {
         noforwards: Boolean,
         allowSendActions: Boolean
     ) {
+        groupedMenuEntries.clear()
         if (allowSendActions && !noforwards && activity.currentChat != null && !ChatObject.isChannelAndNotMegaGroup(activity.currentChat)
             // #if PLUGINS
             || PluginChatHistory.showsInChat(activity, selectedObject)
@@ -678,6 +683,7 @@ object ChatHelper {
 
         reservePluginItems(items, options, icons, activity, selectedObject, selectedObjectGroup)
         // #endif
+        groupEntinyMenuItems(items, options, icons)
         applyMessageMenuOrder(items, options, icons)
     }
 
@@ -760,6 +766,10 @@ object ChatHelper {
             val menu = messageMenu ?: return
             cell.setRightIcon(R.drawable.msg_arrowright)
             if (menu.done) bindActionsCell(menu, cell) else menu.actionsCell = cell
+            return
+        }
+        if (option == OPTION_ENTINY_GROUP) {
+            cell.setRightIcon(R.drawable.msg_arrowright)
             return
         }
         if (option < PluginActions.OPTION_BASE) return
@@ -1057,9 +1067,22 @@ object ChatHelper {
                     BookmarksHelper.Result.LIMIT -> bulletins.createSimpleBulletin(R.raw.error, text)
                     BookmarksHelper.Result.ADDED -> {
                         val dialogId = selectedObject.getDialogId()
-                        bulletins.createSimpleBulletin(R.raw.saved_messages, text, LocaleController.getString(R.string.InuBookmarks)) {
-                            activity.presentFragment(desu.inugram.ui.BookmarksActivity(dialogId))
+                        val label = LocaleController.getString(R.string.InuBookmarks)
+                        val spannable = SpannableStringBuilder(text)
+                        val start = spannable.toString().indexOf(label)
+                        if (start >= 0) {
+                            spannable.setSpan(object : ClickableSpan() {
+                                override fun onClick(widget: View) {
+                                    activity.presentFragment(desu.inugram.ui.BookmarksActivity(dialogId))
+                                }
+                                override fun updateDrawState(ds: android.text.TextPaint) {
+                                    super.updateDrawState(ds)
+                                    ds.color = Theme.getColor(Theme.key_undo_cancelColor)
+                                    ds.isUnderlineText = true
+                                }
+                            }, start, start + label.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
+                        bulletins.createSimpleBulletin(R.raw.saved_messages, if (start >= 0) spannable else text)
                     }
                     else -> bulletins.createSimpleBulletin(R.raw.saved_messages, text)
                 }
@@ -2333,6 +2356,27 @@ object ChatHelper {
     }
 
     @JvmStatic
+    private fun groupEntinyMenuItems(items: ArrayList<CharSequence>, options: ArrayList<Int>, icons: ArrayList<Int>) {
+        if (!InuConfig.GROUP_ENTINY_MENU.value) return
+        groupedMenuEntries.clear()
+        val toGroup = ArrayList<Int>()
+        for (i in options.indices) {
+            val opt = options[i]
+            if (opt in 500..999 && opt != OPTION_ENTINY_GROUP) toGroup.add(i)
+        }
+        if (toGroup.isEmpty()) return
+        val collected = ArrayList<Triple<CharSequence, Int, Int>>()
+        for (i in toGroup.sortedDescending()) {
+            collected.add(0, Triple(items[i], options[i], icons[i]))
+            items.removeAt(i); options.removeAt(i); icons.removeAt(i)
+        }
+        groupedMenuEntries.addAll(collected)
+        items.add(LocaleController.getString(R.string.InuEntinyMenu))
+        options.add(OPTION_ENTINY_GROUP)
+        icons.add(R.drawable.msg_settings_old)
+    }
+
+    @JvmStatic
     fun onMenuOptionClick(
         activity: ChatActivity,
         popupLayout: ActionBarPopupWindow.ActionBarPopupWindowLayout,
@@ -2344,6 +2388,17 @@ object ChatHelper {
         if (message == null) return false
         if (option == OPTION_DETAILS) {
             return MessageDetailsHelper.openDetailsSubmenu(activity, popupLayout, cell, message, group)
+        }
+        if (option == OPTION_ENTINY_GROUP) {
+            if (groupedMenuEntries.isEmpty()) return true
+            return openLongTapSubmenu(activity, popupLayout, cell) { submenu ->
+                for ((label, opt, icon) in groupedMenuEntries) {
+                    submenu.add(icon, label) {
+                        processMenuOption(opt, activity, message, group)
+                        activity.closeMenu()
+                    }
+                }
+            }
         }
         // #if PLUGINS
         if (option == OPTION_PLUGIN_ACTIONS) {

@@ -1248,6 +1248,8 @@
     <string name="InuMessageMenuOrderInfo">Reorder or hide message context menu items. Drag to move, tap to hide.</string>
     <string name="InuMessageMenuOrderInfoBottom">Long-tap an item to move it to the quick actions row</string>
     <string name="InuMessageMenuReset">Reset to default</string>
+    <string name="InuEntinyMenu">entinyGram</string>
+    <string name="InuGroupEntinyMenu">Group entinyGram features</string>
     <string name="InuMenuSlotDelete">Delete / Copy link</string>
     <string name="InuMenuSlotEditForward">Edit / Forward</string>
     <string name="InuMenuMoveToBottomRow">Move to quick actions row</string>

@@ -150,16 +150,26 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
         val recycler = object : RecyclerListView(context) {
             override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
                 val result = super.drawChild(canvas, child, drawingTime)
-                if (child is ChatMessageCell && child.isAvatarVisible) {
-                    val receiver = child.avatarImage ?: return result
-                    val top = child.top + child.paddingTop
-                    var y = child.top + child.paddingTop + child.layoutHeight
-                    if (y > child.bottom) y = child.bottom
-                    if (y - AndroidUtilities.dp(48f) < top) y = top + AndroidUtilities.dp(48f)
-                    receiver.setImageY((y - AndroidUtilities.dp(44f)).toFloat())
-                    receiver.setAlpha(1f)
-                    receiver.setVisible(true, false)
-                    receiver.draw(canvas)
+                if (child is ChatMessageCell) {
+                    // flush any deferred message object now that the cell is attached
+                    child.freezeCell(false)
+                    val msg = child.messageObject
+                    if (msg != null) msg.forceAvatar = true
+                    if (msg != null) {
+                        child.isAvatarVisible = true
+                        child.setAvatar(msg)
+                    }
+                    if (child.isAvatarVisible) {
+                        val receiver = child.avatarImage ?: return result
+                        val top = child.top + child.paddingTop
+                        var y = child.top + child.paddingTop + child.layoutHeight
+                        if (y > child.bottom) y = child.bottom
+                        if (y - AndroidUtilities.dp(48f) < top) y = top + AndroidUtilities.dp(48f)
+                        receiver.setImageY((y - AndroidUtilities.dp(44f)).toFloat())
+                        receiver.setAlpha(1f)
+                        receiver.setVisible(true, false)
+                        receiver.draw(canvas)
+                    }
                 }
                 return result
             }
@@ -297,6 +307,9 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
         fun bind(message: MessageObject) {
             isChat = dialogId < 0
             setMessageObject(message, null, false, false, false)
+            // entiny: force avatar visibility/rendering in standalone list
+            isAvatarVisible = true
+            setAvatar(message)
         }
     }
 }

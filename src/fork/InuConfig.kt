@@ -1461,6 +1461,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val MESSAGE_MENU_QUICK_ACTIONS_TOP = BoolItem("message_menu_quick_actions_top", false)
 
     @JvmField
+    val GROUP_ENTINY_MENU = BoolItem("group_entiny_menu", false)
+
+    @JvmField
     val CHAT_MENU_ITEMS = ChatMenuConfig("chat_menu_items")
     @JvmField val GROUP_CHAT_ARCHIVES = BoolItem("group_chat_archives", false)
 

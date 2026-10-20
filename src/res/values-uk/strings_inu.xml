@@ -1143,6 +1143,8 @@
     <string name="InuMaterialProfileActions">Кнопки дій у профілі</string>
     <string name="InuMessageMenuOrderInfoBottom">Затисни пункт, щоб перемістити його в рядок швидких дій</string>
     <string name="InuMessageMenuReset">Скинути за замовчуванням</string>
+    <string name="InuEntinyMenu">entinyGram</string>
+    <string name="InuGroupEntinyMenu">Згрупувати функції entinyGram</string>
     <string name="InuMenuSlotDelete">Видалити / Копіювати посилання</string>
     <string name="InuMenuSlotEditForward">Редагувати / Переслати</string>
     <string name="InuMenuMoveToBottomRow">Перемістити в рядок швидких дій</string>

@@ -215,6 +215,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **hide reactions**: separate toggles to hide reactions on messages, disable setting them, and hide reaction badges in the chat list
 - 📡 **next audio controls**: don't preload the next track, don't auto-play the next music or voice message - *voice auto-play inspired by [ForkGram](https://github.com/forkgram/TelegramAndroid)*
 - 📡 **bookmarks**: bookmark messages from the message menu (up to 30 per chat), see a star next to the time and browse them by chat in a separate screen with tabs - *inspired by NagramX*
+- 📡 **group entinyGram menu items**: toggle in message menu order to collapse entinyGram-specific items into a single "entinyGram" submenu
 
 ### debloat & premium noise
 

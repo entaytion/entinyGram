@@ -738,6 +738,8 @@
     <string name="InuMenuMoveFromBottomRow">Вернуть в меню</string>
     <string name="InuMenuBottomRowFull">Строка быстрых действий заполнена (макс. 4)</string>
     <string name="InuMessageMenuReset">Сбросить по умолчанию</string>
+    <string name="InuEntinyMenu">entinyGram</string>
+    <string name="InuGroupEntinyMenu">Сгруппировать функции entinyGram</string>
     <string name="InuPrivacySecurity">Конфиденциальность и безопасность</string>
     <string name="InuPerAccountPasscode">Код-пароль для каждого аккаунта</string>
     <string name="InuHideInugramSettings">Скрыть настройки entinyGram</string>
