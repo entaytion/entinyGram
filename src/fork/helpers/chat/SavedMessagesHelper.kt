@@ -149,10 +149,7 @@ object SavedMessagesHelper {
                 } catch (e: Throwable) {
                     android.util.Log.d(TAG, "archive media migration query failed", e)
                 }
-                mediaQueue.postRunnable {
-                    migrateSavedMedia(account, targetRoot, paths)
-                    exportExistingArchive(account)
-                }
+                mediaQueue.postRunnable { migrateSavedMedia(account, targetRoot, paths) }
             }
         }, STARTUP_DELAY_MS)
     }
