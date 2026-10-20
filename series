@@ -562,3 +562,4 @@ feature/app-icon-splash.patch
 entiny/restrictions/restricted-quote-reply.patch
 entiny/chat/quote-keyboard.patch
 entiny/chat/side-button-action.patch
+entiny/chat/contact-link-query.patch

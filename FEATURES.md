@@ -72,6 +72,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 copy text and select messages in protected chats
 - 📡 **quote protected posts** into another chat as a bold title and a blockquote
 - 📡 **share button action**: make the round button next to channel posts forward, Forward Pro, save, edit, delete, translate, copy or show details
+- 📡 phone book contact links open the chat on newer Android versions
 - 📡 keyboard opens after choosing a chat to quote into
 - 📡 **local Telegram Premium**: Premium UI and limits on the client side
 - 📡 **local custom emoji**: send Premium custom emoji without Premium

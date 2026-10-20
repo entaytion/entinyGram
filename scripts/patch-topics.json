@@ -152,6 +152,7 @@
   "public-media-lookup": "media",
   "quote-keyboard": "chat",
   "side-button-action": "chat",
+  "contact-link-query": "chat",
   "reaction-read-sync": "chat",
   "read-time": "chat",
   "reply-background": "chat",
