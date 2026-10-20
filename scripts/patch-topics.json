@@ -150,6 +150,7 @@
   "proxy-management": "proxy",
   "push-service-foreground": "notifications",
   "public-media-lookup": "media",
+  "quote-keyboard": "chat",
   "reaction-read-sync": "chat",
   "read-time": "chat",
   "reply-background": "chat",

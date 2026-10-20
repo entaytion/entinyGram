@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 20 Oct 2026 14:36:48 +0300
+Subject: [*] open keyboard after quoting into another chat
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java          | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -35402,6 +35402,11 @@ public class ChatActivity extends BaseFragment implements
+                             }
+                         };
+                         chatActivity.showFieldPanelForReplyQuote(replyingMessageObject, replyingQuote);
++                        AndroidUtilities.runOnUIThread(() -> {
++                            if (chatActivity.chatActivityEnterView != null) {
++                                chatActivity.chatActivityEnterView.openKeyboard();
++                            }
++                        }, 350);
+                     } else {
+                         chatActivity.showFieldPanelForForward(true, fmessages);
+                     }
