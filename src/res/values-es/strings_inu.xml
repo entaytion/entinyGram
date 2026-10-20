@@ -1450,8 +1450,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuSaveDeletedOwn">Mis propios mensajes</string>
     <string name="InuPromptKeepLocalOnDelete">Aviso de conservar copia local</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Añade la casilla \"Conservar copia local\" al diálogo de eliminación.</string>
-    <string name="InuArchiveMediaPublic">Guardar medios del archivo en la galería</string>
-    <string name="InuArchiveMediaPublicInfo">Copia las fotos y vídeos eliminados/editados a la galería del dispositivo junto a las descargas normales. Desactívalo para mantenerlos solo dentro de la app.</string>
+    <string name="InuArchiveMediaPublic">Duplicar medios del archivo en una carpeta</string>
+    <string name="InuArchiveMediaPublicInfo">Copia las fotos y vídeos eliminados/editados en Downloads/entinyGram/Ghosts, sin mostrarlos en la galería. Desactívalo para guardarlos solo dentro de la app.</string>
     <string name="InuKeepLocalCopy">Conservar copia local</string>
     <string name="InuDeletePermanently">Eliminar definitivamente</string>
     <string name="InuDeletePermanentlyDone">Eliminado definitivamente</string>

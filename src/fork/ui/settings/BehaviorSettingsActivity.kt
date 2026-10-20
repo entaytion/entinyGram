@@ -405,6 +405,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 DOWNLOAD_DIRECTORIES.indexOf(InuConfig.DOWNLOAD_DIRECTORY.value),
             ) { which ->
                 InuConfig.DOWNLOAD_DIRECTORY.value = DOWNLOAD_DIRECTORIES[which]
+                desu.inugram.helpers.chat.SavedMessagesHelper.moveMirror(DOWNLOAD_DIRECTORIES[which])
                 org.telegram.messenger.ImageLoader.getInstance().checkMediaPaths()
                 BulletinFactory.of(this)
                     .createSimpleBulletin(

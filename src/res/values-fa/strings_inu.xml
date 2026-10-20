@@ -1256,8 +1256,8 @@
     <string name="InuSaveDeletedOwn">پیام‌های خودم</string>
     <string name="InuPromptKeepLocalOnDelete">پرسش نگه داشتن نسخه محلی</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">کادر «نگه داشتن نسخه محلی» را به پنجره حذف اضافه می‌کند؛ فقط وقتی ذخیره خودکار خاموش است.</string>
-    <string name="InuArchiveMediaPublic">ذخیره رسانه‌های آرشیو در گالری</string>
-    <string name="InuArchiveMediaPublicInfo">عکس‌ها و ویدیوهای حذف‌شده/ویرایش‌شده ذخیره‌شده را کنار دانلودهای معمولی در گالری دستگاه کپی می‌کند. برای نگه‌داشتن فقط در برنامه آن را خاموش کنید.</string>
+    <string name="InuArchiveMediaPublic">کپی رسانه‌های آرشیو در یک پوشه</string>
+    <string name="InuArchiveMediaPublicInfo">عکس‌ها و ویدیوهای حذف‌شده/ویرایش‌شده را در Downloads/entinyGram/Ghosts کپی می‌کند و در گالری نشان داده نمی‌شوند. برای نگه‌داشتن فقط داخل برنامه خاموش کنید.</string>
     <string name="InuKeepLocalCopy">نگه داشتن نسخه محلی</string>
     <string name="InuDeletePermanently">حذف دائمی</string>
     <string name="InuDeletePermanentlyDone">برای همیشه حذف شد</string>

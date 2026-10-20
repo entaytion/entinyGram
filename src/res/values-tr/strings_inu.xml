@@ -1408,8 +1408,8 @@
     <string name="InuSaveDeletedOwn">Kendi mesajlarım</string>
     <string name="InuPromptKeepLocalOnDelete">Yerel kopya sorusu</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Silme penceresine \"Yerel kopyayı sakla\" onay kutusu ekler; yalnızca otomatik kaydetme kapalıyken.</string>
-    <string name="InuArchiveMediaPublic">Arşiv medyasını galeriye kaydet</string>
-    <string name="InuArchiveMediaPublicInfo">Kaydedilen silinmiş/düzenlenmiş fotoğraf ve videoları normal indirmelerin yanına cihaz galerisine kopyalar. Yalnızca uygulama içinde tutmak için kapat.</string>
+    <string name="InuArchiveMediaPublic">Arşiv medyasını klasöre yansıt</string>
+    <string name="InuArchiveMediaPublicInfo">Silinmiş/düzenlenmiş fotoğraf ve videoları galeride görünmeyecek şekilde Downloads/entinyGram/Ghosts klasörüne kopyalar. Yalnızca uygulama içinde tutmak için kapat.</string>
     <string name="InuKeepLocalCopy">Yerel kopyayı sakla</string>
     <string name="InuDeletePermanently">Kalıcı olarak sil</string>
     <string name="InuDeletePermanentlyDone">Kalıcı olarak silindi</string>

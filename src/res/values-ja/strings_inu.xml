@@ -1398,8 +1398,8 @@
     <string name="InuSaveDeletedOwn">自分のメッセージ</string>
     <string name="InuPromptKeepLocalOnDelete">ローカルコピーの確認</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">削除ダイアログに「ローカルコピーを保存」チェックボックスを追加します。自動保存がオフのときのみ表示されます。</string>
-    <string name="InuArchiveMediaPublic">アーカイブのメディアをギャラリーに保存</string>
-    <string name="InuArchiveMediaPublicInfo">保存した削除/編集済みの写真と動画を通常のダウンロードと並んで端末のギャラリーにコピーします。アプリ内のみに保つ場合はオフにします。</string>
+    <string name="InuArchiveMediaPublic">アーカイブのメディアをフォルダにコピー</string>
+    <string name="InuArchiveMediaPublicInfo">削除/編集済みの写真と動画を、ギャラリーに表示されない Downloads/entinyGram/Ghosts にコピーします。アプリ内だけに残すにはオフにします。</string>
     <string name="InuKeepLocalCopy">ローカルコピーを保存</string>
     <string name="InuDeletePermanently">完全に削除</string>
     <string name="InuDeletePermanentlyDone">完全に削除しました</string>

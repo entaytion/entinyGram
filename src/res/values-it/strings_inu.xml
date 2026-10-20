@@ -1451,8 +1451,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuSaveDeletedOwn">I miei messaggi</string>
     <string name="InuPromptKeepLocalOnDelete">Richiesta di conservare la copia locale</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Aggiunge una casella «Conserva copia locale» alla finestra di eliminazione; solo quando il salvataggio automatico è disattivato.</string>
-    <string name="InuArchiveMediaPublic">Salva i media dell\'archivio nella galleria</string>
-    <string name="InuArchiveMediaPublicInfo">Copia le foto e i video eliminati/modificati nella galleria del dispositivo accanto ai download normali. Disattivalo per tenerli solo nell\'app.</string>
+    <string name="InuArchiveMediaPublic">Duplica i media dell\'archivio in una cartella</string>
+    <string name="InuArchiveMediaPublicInfo">Copia le foto e i video eliminati/modificati in Downloads/entinyGram/Ghosts, nascosti dalla galleria. Disattivalo per tenerli solo nell\'app.</string>
     <string name="InuKeepLocalCopy">Conserva copia locale</string>
     <string name="InuDeletePermanently">Elimina definitivamente</string>
     <string name="InuDeletePermanentlyDone">Eliminato definitivamente</string>

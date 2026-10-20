@@ -195,7 +195,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             }
             TOGGLE_ARCHIVE_MEDIA_PUBLIC -> {
                 val new = InuConfig.ARCHIVE_MEDIA_PUBLIC.toggle()
-                if (new) SavedMessagesHelper.exportExistingArchive(currentAccount)
+                if (new) SavedMessagesHelper.exportExistingArchive(currentAccount) else SavedMessagesHelper.removeMirror()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
             TOGGLE_SAVE_EDITED_MESSAGES -> {

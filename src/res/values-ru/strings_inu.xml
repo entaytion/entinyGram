@@ -1318,8 +1318,8 @@
     <string name="InuSaveDeletedOwn">Моих собственных сообщениях</string>
     <string name="InuPromptKeepLocalOnDelete">Запрос сохранения локальной копии</string>
     <string name="InuPromptKeepLocalOnDeleteInfo">Добавляет флажок «Сохранить локальную копию» в диалог удаления; только когда автосохранение выключено.</string>
-    <string name="InuArchiveMediaPublic">Сохранять медиа архива в галерею</string>
-    <string name="InuArchiveMediaPublicInfo">Копирует сохранённые удалённые/изменённые фото и видео в галерею устройства рядом с обычными загрузками. Выключи, чтобы держать их только внутри приложения.</string>
+    <string name="InuArchiveMediaPublic">Дублировать медиа архива в папку</string>
+    <string name="InuArchiveMediaPublicInfo">Копирует сохранённые удалённые/изменённые фото и видео в Downloads/entinyGram/Ghosts, галерея их не показывает. Выключи, чтобы хранить их только внутри приложения.</string>
     <string name="InuKeepLocalCopy">Сохранить локальную копию</string>
     <string name="InuDeletePermanently">Удалить навсегда</string>
     <string name="InuDeletePermanentlyDone">Удалено навсегда</string>
