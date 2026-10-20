@@ -573,6 +573,8 @@
     <string name="InuDialogAvatarOpensProfileInfo">النقر على الصورة الرمزية لمحادثة في القائمة يفتح ملفها الشخصي مباشرة بدلاً من المحادثة.</string>
     <string name="InuAlwaysShowDownloads">زر التنزيلات</string>
     <string name="InuAlwaysShowDownloadsInfo">إظهار زر التنزيلات دائمًا في رأس المحادثات</string>
+    <string name="InuHideDownloadsButton">إخفاء زر التنزيلات</string>
+    <string name="InuHideDownloadsButtonInfo">عدم إظهار زر التنزيلات في رأس الدردشات أبدًا</string>
     <string name="InuHideMyPhoneNumber">إخفاء رقم هاتفي</string>
     <string name="InuFonts">الخطوط</string>
     <string name="InuAppFont">خط التطبيق</string>

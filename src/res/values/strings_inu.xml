@@ -699,6 +699,8 @@
     <string name="InuDialogAvatarOpensProfileInfo">Tapping a chat\'s avatar in the chat list opens their profile directly instead of the chat.</string>
     <string name="InuAlwaysShowDownloads">Downloads button</string>
     <string name="InuAlwaysShowDownloadsInfo">Always show the downloads button in the chats header</string>
+    <string name="InuHideDownloadsButton">Hide downloads button</string>
+    <string name="InuHideDownloadsButtonInfo">Never show the downloads button in the chats header</string>
     <string name="InuHideMyPhoneNumber">Hide my phone number</string>
     <string name="InuFonts">Fonts</string>
     <string name="InuAppFont">App font</string>

@@ -1607,6 +1607,8 @@
     <string name="InuDialogAvatarOpensProfileInfo">Sohbet listesinde bir sohbetin avatarına dokunmak sohbet yerine doğrudan profili açar.</string>
     <string name="InuAlwaysShowDownloads">İndirmeler düğmesi</string>
     <string name="InuAlwaysShowDownloadsInfo">Sohbetler başlığında indirmeler düğmesini her zaman göster</string>
+    <string name="InuHideDownloadsButton">İndirmeler düğmesini gizle</string>
+    <string name="InuHideDownloadsButtonInfo">Sohbet başlığında indirmeler düğmesini asla gösterme</string>
     <string name="InuGhostModeDisabled">Hayalet Modu kapatıldı</string>
     <string name="InuGhostModeEnabled">Hayalet Modu açıldı</string>
     <string name="InuHidePinnedForever">Bu sohbette her zaman</string>

@@ -573,6 +573,8 @@
     <string name="InuDialogAvatarOpensProfileInfo">ضربه روی آواتار یک گفتگو در فهرست، به‌جای گفتگو مستقیماً نمایه او را باز می‌کند.</string>
     <string name="InuAlwaysShowDownloads">دکمه دانلودها</string>
     <string name="InuAlwaysShowDownloadsInfo">همیشه دکمه دانلودها را در سربرگ چت‌ها نشان بده</string>
+    <string name="InuHideDownloadsButton">پنهان کردن دکمه دانلودها</string>
+    <string name="InuHideDownloadsButtonInfo">دکمه دانلودها هرگز در سربرگ گفتگوها نمایش داده نشود</string>
     <string name="InuHideMyPhoneNumber">پنهان کردن شماره تلفن من</string>
     <string name="InuFonts">فونت‌ها</string>
     <string name="InuAppFont">فونت برنامه</string>

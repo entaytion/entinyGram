@@ -203,6 +203,14 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 InuConfig.ALWAYS_SHOW_DOWNLOADS.value
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_DOWNLOADS_BUTTON,
+                R.string.InuHideDownloadsButton,
+                R.string.InuHideDownloadsButtonInfo,
+                InuConfig.HIDE_DOWNLOADS_BUTTON.value
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuBottomTabs)))
@@ -463,6 +471,11 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_ALWAYS_SHOW_DOWNLOADS -> {
                 val new = InuConfig.ALWAYS_SHOW_DOWNLOADS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_HIDE_DOWNLOADS_BUTTON -> {
+                val new = InuConfig.HIDE_DOWNLOADS_BUTTON.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
@@ -755,6 +768,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_INTERACTIVE_CHAT_PREVIEW = InuUtils.generateId()
         private val TOGGLE_DIALOG_AVATAR_OPENS_PROFILE = InuUtils.generateId()
         private val TOGGLE_ALWAYS_SHOW_DOWNLOADS = InuUtils.generateId()
+        private val TOGGLE_HIDE_DOWNLOADS_BUTTON = InuUtils.generateId()
         private val TOGGLE_HIDE_ALL_CHATS_TAB = InuUtils.generateId()
         private val TOGGLE_REMEMBER_SELECTED_FOLDER = InuUtils.generateId()
         private val TOGGLE_FOLDERS_INFINITE_SWIPE = InuUtils.generateId()
@@ -814,6 +828,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-chat-preview-expand", R.string.InuDisableChatPreviewExpand, TOGGLE_INTERACTIVE_CHAT_PREVIEW),
                 SearchRegistry.Entry("dialog-avatar-opens-profile", R.string.InuDialogAvatarOpensProfile, TOGGLE_DIALOG_AVATAR_OPENS_PROFILE),
                 SearchRegistry.Entry("always-show-downloads", R.string.InuAlwaysShowDownloads, TOGGLE_ALWAYS_SHOW_DOWNLOADS),
+                SearchRegistry.Entry("hide-downloads-button", R.string.InuHideDownloadsButton, TOGGLE_HIDE_DOWNLOADS_BUTTON),
                 SearchRegistry.Entry("community-display-mode", R.string.InuCommunityDisplayMode, BUTTON_COMMUNITY_DISPLAY_MODE),
                 SearchRegistry.Entry("bottom-tabs-hide", R.string.InuBottomTabsHide, TOGGLE_BOTTOM_TABS_HIDE),
                 SearchRegistry.Entry("compact-mode", R.string.InuCompactMode, TOGGLE_COMPACT_MODE),

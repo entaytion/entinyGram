@@ -17,7 +17,7 @@ index 0000000..0000000 100644
              }
          }
 -        if ((getDownloadController().hasUnviewedDownloads() || showDownloads || (downloadsItem.getVisibility() == View.VISIBLE && downloadsItem.getAlpha() == 1 && !force))) {
-+        if ((desu.inugram.InuConfig.ALWAYS_SHOW_DOWNLOADS.getValue() || getDownloadController().hasUnviewedDownloads() || showDownloads || (downloadsItem.getVisibility() == View.VISIBLE && downloadsItem.getAlpha() == 1 && !force))) {
++        if (!desu.inugram.InuConfig.HIDE_DOWNLOADS_BUTTON.getValue() && (desu.inugram.InuConfig.ALWAYS_SHOW_DOWNLOADS.getValue() || getDownloadController().hasUnviewedDownloads() || showDownloads || (downloadsItem.getVisibility() == View.VISIBLE && downloadsItem.getAlpha() == 1 && !force))) {
              downloadsItemVisible = true;
          } else {
              downloadsItemVisible = false;

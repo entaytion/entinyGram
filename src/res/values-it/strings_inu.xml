@@ -706,6 +706,8 @@ Sistema: %6$s
     <string name="InuDialogAvatarOpensProfileInfo">Toccare l\'avatar di una chat nell\'elenco apre direttamente il profilo invece della chat.</string>
     <string name="InuAlwaysShowDownloads">Pulsante download</string>
     <string name="InuAlwaysShowDownloadsInfo">Mostra sempre il pulsante dei download nell\'intestazione delle chat</string>
+    <string name="InuHideDownloadsButton">Nascondi pulsante download</string>
+    <string name="InuHideDownloadsButtonInfo">Non mostrare mai il pulsante download nell\'intestazione delle chat</string>
     <string name="InuHideMyPhoneNumber">Nascondi il mio numero di telefono</string>
     <string name="InuFonts">Font</string>
     <string name="InuAppFont">Font dell\'app</string>

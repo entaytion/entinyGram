@@ -1593,6 +1593,8 @@
     <string name="InuDialogAvatarOpensProfileInfo">チャット一覧でアバターをタップすると、チャットではなくプロフィールを直接開きます。</string>
     <string name="InuAlwaysShowDownloads">ダウンロードボタン</string>
     <string name="InuAlwaysShowDownloadsInfo">チャット一覧のヘッダーにダウンロードボタンを常に表示します</string>
+    <string name="InuHideDownloadsButton">ダウンロードボタンを隠す</string>
+    <string name="InuHideDownloadsButtonInfo">チャットのヘッダーにダウンロードボタンを表示しない</string>
     <string name="InuDisableLinkPreview">リンクプレビューを無効化</string>
     <string name="InuEnableLinkPreview">リンクプレビューを有効化</string>
     <string name="InuGhostModeDisabled">ゴーストモードをオフにしました</string>

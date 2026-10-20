@@ -1551,6 +1551,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ALWAYS_SHOW_DOWNLOADS = BoolItem("always_show_downloads", false)
 
     @JvmField
+    val HIDE_DOWNLOADS_BUTTON = BoolItem("hide_downloads_button", false)
+
+    @JvmField
     val IOS_CHAT_HEADER = BoolItem("ios_chat_header", false)
 
     @JvmField
