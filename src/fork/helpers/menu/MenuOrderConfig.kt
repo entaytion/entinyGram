@@ -482,6 +482,7 @@ class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key
         GHOST_MODE("ghost_mode", R.string.InuGhostMode, R.drawable.inu_ghost),
         SETTINGS("settings", R.string.Settings, R.drawable.msg_settings),
         ENTINY_SETTINGS("entiny_settings", R.string.InuSettings, R.drawable.icon_settings_inu),
+        PLUGIN_SETTINGS("plugin_settings", R.string.InuPlugins, R.drawable.msg_customize),
         RESTART_APP("restart_app", R.string.InuRestartApp, R.drawable.msg_retry),
         DIVIDER_2("divider_2", R.string.InuMenuDivider, R.drawable.msg_list),
         DIVIDER_3("divider_3", R.string.InuMenuDivider, R.drawable.msg_list),
@@ -517,6 +518,7 @@ class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key
         private val OFF_BY_DEFAULT = setOf(
             Item.RECENT_CHATS,
             Item.ENTINY_SETTINGS,
+            Item.PLUGIN_SETTINGS,
             Item.RESTART_APP,
             Item.DIVIDER_2,
             Item.DIVIDER_3,

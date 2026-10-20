@@ -34,6 +34,9 @@ import desu.inugram.ui.drawer.DrawerUserCell
 import desu.inugram.ui.drawer.SideMenultItemAnimator
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.ParanoiaActivity
+// #if PLUGINS
+import desu.inugram.ui.settings.PluginsActivity
+// #endif
 import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
@@ -657,6 +660,13 @@ object DrawerHelper {
                 nav.presentFragment(InuSettingsActivity())
                 close()
             }
+
+            // #if PLUGINS
+            DrawerLayoutAdapter.ITEM_PLUGIN_SETTINGS -> {
+                nav.presentFragment(PluginsActivity())
+                close()
+            }
+            // #endif
 
             DrawerLayoutAdapter.ITEM_RESTART_APP -> {
                 close()
