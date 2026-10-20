@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.style.CharacterStyle
+import android.text.style.URLSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -14,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.helpers.chat.BookmarksHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
+import org.telegram.messenger.browser.Browser
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
 import org.telegram.messenger.UserObject
@@ -31,6 +35,7 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
+import org.telegram.ui.Components.ShareAlert
 import org.telegram.ui.Components.SizeNotifierFrameLayout
 
 // entiny: inspired by NagramX bookmarks
@@ -223,8 +228,20 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
     private fun showMenu(cell: BookmarkCell) {
         val message = cell.messageObject ?: return
         val text = message.messageText?.toString().orEmpty().let { if (message.caption != null) message.caption.toString() else it }
+        val link = firstLink(message)
         ItemOptions.makeOptions(this, cell)
             .add(R.drawable.msg_openin, LocaleController.getString(R.string.InuShowInChat)) { showInChat(message) }
+            .add(R.drawable.msg_share, LocaleController.getString(R.string.ShareFile)) {
+                val ctx = parentActivity ?: return@add
+                showDialog(ShareAlert.createShareAlert(ctx, message, null, false, null, false))
+            }
+            .addIf(message.isPhoto || message.isVideo || message.isDocument || message.isMusic || message.isVoice, R.drawable.msg_download, LocaleController.getString(R.string.SaveToDownloads)) {
+                val ctx = parentActivity ?: return@addIf
+                MediaController.saveFilesFromMessages(ctx, accountInstance, arrayListOf(message), null)
+            }
+            .addIf(link != null, R.drawable.msg_link, LocaleController.getString(R.string.OpenLink)) {
+                parentActivity?.let { Browser.openUrl(it, link) }
+            }
             .add(R.drawable.msg_delete, LocaleController.getString(R.string.InuBookmarkRemove), true) { removeBookmark(message) }
             .addIf(text.isNotEmpty(), R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) {
                 AndroidUtilities.addToClipboard(text)
@@ -234,10 +251,20 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
             .show()
     }
 
+    private fun firstLink(message: MessageObject): String? {
+        val entities = message.messageOwner?.entities ?: return null
+        val text = message.messageOwner?.message.orEmpty()
+        for (e in entities) {
+            if (e is TLRPC.TL_messageEntityTextUrl) return e.url
+            if (e is TLRPC.TL_messageEntityUrl && e.offset >= 0 && e.offset + e.length <= text.length) return text.substring(e.offset, e.offset + e.length)
+        }
+        return null
+    }
+
     override fun getThemeDescriptions(): ArrayList<ThemeDescription> = ArrayList()
 
     private inner class BookmarksAdapter(private val context: Context) : RecyclerListView.SelectionAdapter() {
-        override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean = false
+        override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean = true
 
         override fun getItemCount(): Int = messages.size
 
@@ -254,7 +281,13 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
         init {
             setFullyDraw(true)
             // entiny: empty delegate keeps canPerformActions false so the row long click handles touches
-            setDelegate(object : ChatMessageCellDelegate {})
+            setDelegate(object : ChatMessageCellDelegate {
+                override fun didPressUrl(cell: ChatMessageCell, url: CharacterStyle?, longPress: Boolean) {
+                    if (longPress) return
+                    val link = (url as? URLSpan)?.url ?: return
+                    parentActivity?.let { Browser.openUrl(it, link) }
+                }
+            })
             setOnLongClickListener {
                 showMenu(this)
                 true
