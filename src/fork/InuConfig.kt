@@ -206,10 +206,11 @@ object InuConfig {
         }
     }
 
-    class StringItem(key: String, default: String, exportable: Boolean = true) :
+    class StringItem(key: String, default: String, exportable: Boolean = true, private val allowed: Set<String>? = null) :
         Item<String>(key, default, exportable) {
         override val prefType = PrefType.STRING
-        override fun read(prefs: SharedPreferences): String = prefs.getString(key, default) ?: default
+        override fun read(prefs: SharedPreferences): String =
+            prefs.getString(key, default)?.takeIf { allowed == null || it in allowed } ?: default
         override fun SharedPreferences.Editor.write() {
             putString(key, value)
         }
@@ -456,7 +457,7 @@ object InuConfig {
     val ATTACH_CAMERA_SQUARE = BoolItem("attach_camera_square", true)
 
     @JvmField
-    val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram")
+    val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram", allowed = setOf("entinyGram", "Telegram"))
 
     @JvmField
     val SAVE_FILENAME_DATE = BoolItem("save_filename_date", false)
