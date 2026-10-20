@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 20 Oct 2026 14:36:45 +0300
+Subject: [+] quote restricted posts into other chats
+
+---
+ .../org/telegram/messenger/SendMessagesHelper.java  | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -4551,6 +4551,19 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             return;
+         }
+ 
++        ArrayList<TLRPC.MessageEntity> inu_replyEntities = entities != null ? entities : new ArrayList<>();
++        String inu_replyPrefix = desu.inugram.helpers.chat.ChatHelper.restrictedReplyPrefix(currentAccount, replyQuote, peer, inu_replyEntities);
++        if (inu_replyPrefix != null) {
++            entities = inu_replyEntities;
++            if (message != null) {
++                message = inu_replyPrefix + message;
++            } else if (caption != null) {
++                caption = inu_replyPrefix + caption;
++            }
++            replyToMsg = null;
++            replyQuote = null;
++        }
++
+         if (replyQuote != null && replyQuote.message != null && replyToMsg != null) {
+             replyToMsg = replyQuote.message;
+         }

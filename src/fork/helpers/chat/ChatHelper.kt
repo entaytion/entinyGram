@@ -1737,6 +1737,32 @@ object ChatHelper {
         return userFull.noforwards_peer_enabled || userFull.noforwards_my_enabled
     }
 
+    // entiny: server rejects replies to protected messages from another chat, so the quote goes in as bold title + blockquote
+    @JvmStatic
+    fun restrictedReplyPrefix(
+        account: Int,
+        quote: ChatActivity.ReplyQuote?,
+        peer: Long,
+        entities: MutableList<TLRPC.MessageEntity>,
+    ): String? {
+        val source = quote?.message ?: return null
+        val controller = MessagesController.getInstance(account)
+        if (!InuConfig.ALLOW_FORWARD_RESTRICTED.value || source.dialogId == peer) return null
+        if (!isSourceNoForwards(controller, source)) return null
+        val text = (quote.text?.toString()?.takeIf { it.isNotEmpty() } ?: source.messageText?.toString()).orEmpty()
+        val title = if (source.dialogId < 0) controller.getChat(-source.dialogId)?.title.orEmpty() else UserObject.getUserName(controller.getUser(source.dialogId))
+        if (text.isEmpty() && title.isEmpty()) return ""
+        val header = if (title.isEmpty()) "" else title + "\n"
+        val body = if (text.isEmpty()) "" else text + "\n"
+        val prefix = header + body
+        entities.forEach { it.offset += prefix.length }
+        entities.add(0, TLRPC.TL_messageEntityBlockquote().apply { offset = 0; length = header.length + text.length })
+        if (title.isNotEmpty()) {
+            entities.add(1, TLRPC.TL_messageEntityBold().apply { offset = 0; length = title.length })
+        }
+        return prefix
+    }
+
     @JvmStatic
     fun splitRestrictedForward(messages: MutableList<MessageObject>, controller: MessagesController): ArrayList<MessageObject>? {
         var restricted: ArrayList<MessageObject>? = null
