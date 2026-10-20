@@ -24,6 +24,8 @@ object DialogsM3SectionsHelper {
     private const val INNER_DP = 4f
     private const val GAP_DP = 1f
 
+    private val applied = java.util.WeakHashMap<View, Int>()
+
     @JvmStatic
     fun isEnabled(): Boolean = InuConfig.DIALOGS_M3_SECTIONS.value && !RetroListsHelper.isFlat()
 
@@ -82,19 +84,8 @@ object DialogsM3SectionsHelper {
         val sec = sectionOf(adapter, position)
         val first = sectionOf(adapter, position - 1) != sec
         val last = sectionOf(adapter, position + 1) != sec
-        val gap = AndroidUtilities.dp(GAP_DP)
-        val card = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            setColor(Theme.getColor(Theme.key_windowBackgroundWhite))
-            cornerRadii = radii(first, last)
-        }
-        val mask = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            setColor(-1)
-            cornerRadii = radii(first, last)
-        }
-        val ripple = RippleDrawable(ColorStateList.valueOf(Theme.getColor(Theme.key_listSelector)), card, mask)
-        view.background = InsetDrawable(ripple, 0, if (first) gap * 3 else gap, 0, if (last) gap * 3 else 0)
+        applied[view] = (if (first) 1 else 0) or (if (last) 2 else 0)
+        view.background = cardBackground(first, last)
         view.useSeparator = false
         view.fullSeparator = false
         val start = if (sideMarginDp(view.collapsed) == 0f) 11 else 8
@@ -126,7 +117,17 @@ object DialogsM3SectionsHelper {
             }
 
             override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-                if (isEnabled()) c.drawColor(Theme.getColor(Theme.key_windowBackgroundGray))
+                if (!isEnabled()) return
+                c.drawColor(Theme.getColor(Theme.key_windowBackgroundGray))
+                val adapter = parent.adapter as? DialogsAdapter ?: return
+                for (i in 0 until parent.childCount) {
+                    val child = parent.getChildAt(i) as? DialogCell ?: continue
+                    val pos = parent.getChildAdapterPosition(child)
+                    if (pos < 0) continue
+                    val sec = sectionOf(adapter, pos)
+                    val code = (if (sectionOf(adapter, pos - 1) != sec) 1 else 0) or (if (sectionOf(adapter, pos + 1) != sec) 2 else 0)
+                    if (applied[child] != code) style(child, pos, adapter)
+                }
             }
         })
     }
