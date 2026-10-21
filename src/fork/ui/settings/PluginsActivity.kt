@@ -46,6 +46,11 @@ import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
 class PluginsActivity : SettingsPageActivity() {
+    override fun onFragmentCreate(): Boolean {
+        desu.inugram.helpers.plugins.PluginDefaultRepo.seed(currentAccount)
+        return super.onFragmentCreate()
+    }
+
     private val rows = HashMap<String, PluginRow>()
     private var safeModeBanner: WarningBanner? = null
     private var devBanner: WarningBanner? = null

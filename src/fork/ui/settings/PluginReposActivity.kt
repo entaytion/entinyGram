@@ -44,6 +44,7 @@ class PluginReposActivity : SettingsPageActivity(), NotificationCenter.Notificat
 
     override fun onFragmentCreate(): Boolean {
         notificationCenter.addObserver(this, NotificationCenter.chatInfoDidLoad)
+        desu.inugram.helpers.plugins.PluginDefaultRepo.seed(currentAccount) { listView?.adapter?.update(true) }
         return super.onFragmentCreate()
     }
 

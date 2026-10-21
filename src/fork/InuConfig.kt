@@ -315,6 +315,9 @@ object InuConfig {
     @JvmField
     val PLUGIN_REPOS = StringItem("plugin_repos", "")
 
+    @JvmField
+    val PLUGIN_REPOS_SEEDED = BoolItem("plugin_repos_seeded", false)
+
     // the "only install plugins you trust" warning was read and accepted: consent, not a
     // preference, so it is never carried over by an import
     @JvmField
