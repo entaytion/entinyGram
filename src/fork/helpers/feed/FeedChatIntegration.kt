@@ -883,11 +883,7 @@ class FeedChatIntegration(
             return
         }
         val rows = host.getMessages()
-        val lastIndexToMark = if (host.canScrollToNewer()) {
-            minOf(lastVisibleIndex, rows.size - 1)
-        } else {
-            rows.size - 1
-        }
+        val lastIndexToMark = minOf(lastVisibleIndex, rows.size - 1)
         if (lastIndexToMark >= 0) {
             val feedController = FeedController.getInstance(currentAccount)
             for (i in 0..lastIndexToMark) {
