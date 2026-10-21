@@ -1635,7 +1635,6 @@
     <string name="InuHideRecentChatsShortcutsInfo">Uygulama simgesinin uzun basma menüsünden konuştuğunuz kişileri ve sohbetleri kaldırın.</string>
     <string name="InuWideChannelPostsInset">Kenar boşluğu</string>
     <string name="InuRestartApp">Uygulamayı yeniden başlat</string>
-    <string name="InuRestartAppAlert">Uygulama kapanıp yeniden açılacaktır. Gönderilmemiş taslaklar ve devam eden yüklemeler kaybolabilir.</string>
     <string name="InuOnlineDots">Renkli çevrim içi noktaları</string>
     <string name="InuOnlineDotsInfo">Çevrim içi noktası mavi; çevrim dışı kaldıktan sonra 20 dk içinde sarı, bir saat içinde kırmızı.</string>
     <string name="InuDonateTitle">Kararlı güncellemeler ister misin?</string>

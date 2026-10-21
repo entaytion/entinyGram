@@ -1668,7 +1668,6 @@
     <string name="InuHideRecentChatsShortcutsInfo">إزالة الأشخاص والمحادثات التي تتحدث معها من قائمة الاختصارات بالضغط المطوّل على أيقونة التطبيق.</string>
     <string name="InuWideChannelPostsInset">الحشوة الجانبية</string>
     <string name="InuRestartApp">إعادة تشغيل التطبيق</string>
-    <string name="InuRestartAppAlert">سيُغلق التطبيق ويُفتح مجدداً. قد تضيع المسودات غير المرسلة وعمليات الرفع الجارية.</string>
     <string name="InuDonateTitle">هل تريد تحديثات مستقرة؟</string>
     <string name="InuDonateText">entinyGram مجاني ومفتوح المصدر، بلا إعلانات. إبقاؤه محدّثاً مع كل إصدار جديد من Telegram يستغرق وقتي. إذا كان المجتمع يريد ذلك، يمكنك دعمه.</string>
     <string name="InuDonateButton">دعم</string>

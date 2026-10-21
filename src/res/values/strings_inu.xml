@@ -1867,7 +1867,6 @@
     <string name="InuHideRecentChatsShortcutsInfo">Remove people and chats you talk to from the long-press shortcut menu on the app icon.</string>
     <string name="InuWideChannelPostsInset">Side padding</string>
     <string name="InuRestartApp">Restart app</string>
-    <string name="InuRestartAppAlert">The app will close and reopen. Unsent drafts and in-progress uploads may be lost.</string>
     <string name="InuDonateTitle">Want stable updates?</string>
     <string name="InuDonateText">entinyGram is free and open source, with no ads. Keeping it up to date with every new Telegram version takes my time. If the community wants that, you can support it.</string>
     <string name="InuDonateButton">Support</string>

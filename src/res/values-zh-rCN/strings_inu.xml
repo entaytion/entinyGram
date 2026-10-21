@@ -1635,7 +1635,6 @@
     <string name="InuHideRecentChatsShortcutsInfo">从应用图标的长按快捷菜单中移除经常联系的人和聊天。</string>
     <string name="InuWideChannelPostsInset">边距调整</string>
     <string name="InuRestartApp">重启应用</string>
-    <string name="InuRestartAppAlert">应用将关闭并重新打开。未发送的草稿和正在进行的上传可能会丢失。</string>
     <string name="InuOnlineDots">彩色在线状态圆点</string>
     <string name="InuOnlineDotsInfo">在线圆点为蓝色；离线后 20 分钟内为黄色，1 小时内为红色。</string>
     <string name="InuDonateTitle">想要稳定的更新吗？</string>

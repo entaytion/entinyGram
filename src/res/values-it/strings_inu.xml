@@ -1873,7 +1873,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuHideRecentChatsShortcutsInfo">Rimuove le persone e le chat con cui parli dal menu a tocco prolungato dell\'icona dell\'app.</string>
     <string name="InuWideChannelPostsInset">Margine laterale</string>
     <string name="InuRestartApp">Riavvia l\'app</string>
-    <string name="InuRestartAppAlert">L\'app si chiuderà e si riaprirà. Le bozze non inviate e i caricamenti in corso potrebbero andare persi.</string>
     <string name="InuDonateTitle">Vuoi aggiornamenti stabili?</string>
     <string name="InuDonateText">entinyGram è gratuito e open source, senza pubblicità. Tenerlo aggiornato a ogni nuova versione di Telegram richiede il mio tempo. Se la community lo desidera, puoi sostenerlo.</string>
     <string name="InuDonateButton">Sostieni</string>

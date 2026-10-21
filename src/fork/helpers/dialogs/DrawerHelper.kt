@@ -683,7 +683,7 @@ object DrawerHelper {
 
             DrawerLayoutAdapter.ITEM_RESTART_APP -> {
                 close()
-                LaunchActivity.instance?.let { confirmRestartApp(it, null) }
+                LaunchActivity.instance?.let { desu.inugram.helpers.InuUtils.restartApp(it) }
             }
 
             ITEM_PROXY -> {
@@ -833,7 +833,7 @@ object DrawerHelper {
                     instance.presentFragment(ParanoiaActivity())
                 }
                 DialogsMenuConfig.Item.RESTART_APP -> io.add(R.drawable.msg_retry, getString(R.string.InuRestartApp)) {
-                    instance.parentActivity?.let { confirmRestartApp(it, instance.getResourceProvider()) }
+                    instance.parentActivity?.let { desu.inugram.helpers.InuUtils.restartApp(it) }
                 }
                 DialogsMenuConfig.Item.SETTINGS -> if (bottomTabsHidden) io.add(R.drawable.msg_settings_old, getString(R.string.Settings)) {
                     instance.presentFragment(SettingsActivity())
@@ -876,17 +876,6 @@ object DrawerHelper {
         AndroidUtilities.runOnUIThread(finish, PluginActions.RENDER_BUDGET_MS)
     }
     // #endif
-
-    private fun confirmRestartApp(activity: Activity, resourceProvider: Theme.ResourcesProvider?) {
-        AlertDialog.Builder(activity, resourceProvider)
-            .setTitle(getString(R.string.InuRestartApp))
-            .setMessage(getString(R.string.InuRestartAppAlert))
-            .setPositiveButton(getString(R.string.InuRestartApp)) { _, _ ->
-                desu.inugram.helpers.InuUtils.restartApp(activity)
-            }
-            .setNegativeButton(getString(R.string.Cancel), null)
-            .show()
-    }
 
     private fun showClearCacheOptions(instance: DialogsActivity) {
         ItemOptions.makeOptions(instance, instance.getActionBar())

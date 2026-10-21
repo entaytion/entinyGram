@@ -1824,7 +1824,6 @@
     <string name="InuHideRecentChatsShortcutsInfo">Прибрати людей і чати, з якими ви спілкуєтесь, з меню за довгим натисканням на іконку додатка.</string>
     <string name="InuWideChannelPostsInset">Бічні відступи</string>
     <string name="InuRestartApp">Перезапустити застосунок</string>
-    <string name="InuRestartAppAlert">Застосунок закриється й відкриється знову. Незбережені чернетки та завантаження, що ще тривають, можуть загубитися.</string>
     <string name="InuDonateTitle">Хочете стабільних оновлень?</string>
     <string name="InuDonateText">entinyGram безкоштовний і з відкритим кодом, без реклами. Оновлення на кожну нову версію Telegram потребують мого часу. Якщо спільнота цього хоче, можна підтримати.</string>
     <string name="InuDonateButton">Підтримати</string>
