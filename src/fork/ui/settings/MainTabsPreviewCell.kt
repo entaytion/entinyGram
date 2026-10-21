@@ -5,21 +5,22 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.text.TextUtils
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.View
+import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
-import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.Components.glass.GlassTabView
 import kotlin.math.abs
 
 @SuppressLint("ViewConstructor", "ClickableViewAccessibility")
@@ -39,8 +40,8 @@ class MainTabsPreviewCell(
     private var order = emptyList<MainTabsMenuConfig.Item>()
     private var enabledItems = emptySet<MainTabsMenuConfig.Item>()
     private var separateSearch = false
-    private var searchChip: Chip? = null
-    private var chipWidthDp = CHIP_WIDTH_DP
+    private var searchChip: SearchBubble? = null
+    private var chipWidthDp = MainTabsHelper.tabWidth
     private var draggedItem: MainTabsMenuConfig.Item? = null
     private var dragStartRawX = 0f
     private var dragging = false
@@ -49,6 +50,8 @@ class MainTabsPreviewCell(
 
     init {
         setWillNotDraw(false)
+        row.setPadding(dp(ROW_PADDING_DP.toFloat()), dp(ROW_PADDING_DP.toFloat()), dp(ROW_PADDING_DP.toFloat()), dp(ROW_PADDING_DP.toFloat()))
+        row.background = Theme.createRoundRectDrawable(dp(MainTabsHelper.mainTabsHeight / 2f), Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText), 0.14f))
         group.addView(row, LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
         addView(group, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
     }
@@ -64,11 +67,10 @@ class MainTabsPreviewCell(
         row.removeAllViews()
         searchChip?.let { group.removeView(it) }
         searchChip = null
-        visibleOrder().forEach { item -> addChip(item, item in enabledItems) }
+        visibleOrder().forEach { item -> addTab(item, item in enabledItems) }
         if (separateSearch) {
-            val search = Chip(context).apply {
-                bind(R.drawable.outline_header_search, MainTabsMenuConfig.Item.SEARCH.labelRes, MainTabsMenuConfig.Item.SEARCH in enabledItems)
-                setStandalone()
+            val search = SearchBubble(context).apply {
+                bind(MainTabsMenuConfig.Item.SEARCH in enabledItems)
                 isClickable = true
                 setOnClickListener { onToggle(MainTabsMenuConfig.Item.SEARCH) }
             }
@@ -78,15 +80,36 @@ class MainTabsPreviewCell(
         requestLayout()
     }
 
-    private fun addChip(item: MainTabsMenuConfig.Item, enabled: Boolean) {
-        val chip = Chip(context).apply {
-            bind(item.iconRes, item.labelRes, enabled)
+    // entiny: the real bottom bar's own tab view, built the way MainTabsActivity builds it, so the preview cannot drift from it
+    private fun createTab(item: MainTabsMenuConfig.Item, enabled: Boolean): GlassTabView {
+        val tab = if (item == MainTabsMenuConfig.Item.PROFILE) {
+            GlassTabView.createAvatar(context, null, UserConfig.selectedAccount, item.labelRes)
+        } else {
+            GlassTabView.createMainTab(context, null, animationOf(item), item.labelRes)
+        }
+        if (MainTabsHelper.isMaterial) tab.inu_setMaterialTabs()
+        tab.setMainTabsCompact(!MainTabsHelper.showTitles)
+        tab.setSelected(item == MainTabsMenuConfig.Item.CHATS, false)
+        tab.alpha = if (enabled) 1f else DISABLED_ALPHA
+        return tab
+    }
+
+    private fun animationOf(item: MainTabsMenuConfig.Item): GlassTabView.TabAnimation = when (item) {
+        MainTabsMenuConfig.Item.CONTACTS -> GlassTabView.TabAnimation.CONTACTS
+        MainTabsMenuConfig.Item.SETTINGS -> GlassTabView.TabAnimation.SETTINGS
+        MainTabsMenuConfig.Item.CALLS -> GlassTabView.TabAnimation.CALLS
+        MainTabsMenuConfig.Item.FEED -> GlassTabView.TabAnimation.INU_FEED
+        MainTabsMenuConfig.Item.SEARCH -> GlassTabView.TabAnimation.INU_SEARCH
+        else -> GlassTabView.TabAnimation.CHATS
+    }
+
+    private fun addTab(item: MainTabsMenuConfig.Item, enabled: Boolean) {
+        val tab = createTab(item, enabled).apply {
             tag = item
             isClickable = true
-            background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
             setOnTouchListener { _, event -> handleTouch(item, event) }
         }
-        row.addView(chip, chipLayoutParams())
+        row.addView(tab, tabLayoutParams())
     }
 
     private fun handleTouch(item: MainTabsMenuConfig.Item, event: MotionEvent): Boolean {
@@ -152,12 +175,12 @@ class MainTabsPreviewCell(
     }
 
     private fun updateDrag(item: MainTabsMenuConfig.Item, rawX: Float) {
-        val chip = row.findViewWithTag<Chip>(item) ?: return
+        val chip = row.findViewWithTag<View>(item) ?: return
         chip.translationX = rawX - dragStartRawX
         val targetOrder = orderFromPointer(item, rawX)
         val step = dp((chipWidthDp + CHIP_GAP_DP).toFloat()).toFloat()
         targetOrder.forEachIndexed { index, targetItem ->
-            val neighbor = row.findViewWithTag<Chip>(targetItem) ?: return@forEachIndexed
+            val neighbor = row.findViewWithTag<View>(targetItem) ?: return@forEachIndexed
             if (neighbor !== chip) {
                 val originalIndex = dragStartOrder.indexOf(targetItem)
                 neighbor.translationX = (index - originalIndex) * step
@@ -174,20 +197,20 @@ class MainTabsPreviewCell(
     private fun visibleOrder(): List<MainTabsMenuConfig.Item> =
         if (separateSearch) order.filterNot { it == MainTabsMenuConfig.Item.SEARCH } else order
 
-    private fun chipLayoutParams() =
-        LayoutHelper.createLinear(chipWidthDp, LayoutHelper.WRAP_CONTENT, 0f, 2, 0, 2, 0)
+    private fun tabLayoutParams() =
+        LayoutHelper.createLinear(chipWidthDp, MainTabsHelper.mainTabsBarHeight - 2 * MainTabsHelper.tabsInnerPaddingVertical, 0f, 2, 0, 2, 0)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
+        val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight - dp(SIDE_INSET_DP * 2f)
         val chipCount = row.childCount
         if (chipCount > 0 && availableWidth > 0) {
             val separateWidth = if (separateSearch) dp(SEARCH_ZONE_WIDTH_DP.toFloat()) else 0
-            val fitWidthDp = (availableWidth - separateWidth) / AndroidUtilities.density / chipCount - CHIP_GAP_DP
-            val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, CHIP_WIDTH_DP)
+            val fitWidthDp = (availableWidth - separateWidth - dp(ROW_PADDING_DP * 2f)) / AndroidUtilities.density / chipCount - CHIP_GAP_DP
+            val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, MainTabsHelper.tabWidth)
             if (newChipWidthDp != chipWidthDp) {
                 chipWidthDp = newChipWidthDp
                 for (index in 0 until row.childCount) {
-                    row.getChildAt(index).layoutParams = chipLayoutParams()
+                    row.getChildAt(index).layoutParams = tabLayoutParams()
                 }
             }
         }
@@ -202,47 +225,26 @@ class MainTabsPreviewCell(
         canvas.drawLine(0f, (measuredHeight - 1).toFloat(), measuredWidth.toFloat(), (measuredHeight - 1).toFloat(), Theme.dividerPaint)
     }
 
-    private class Chip(context: Context) : LinearLayout(context) {
-        private val icon = ImageView(context).apply { scaleType = ImageView.ScaleType.CENTER }
-        private val label = TextView(context).apply {
-            textSize = 11f
-            gravity = Gravity.CENTER
-            setSingleLine(true)
-            ellipsize = TextUtils.TruncateAt.END
-        }
-        private var enabled = true
-
+    private class SearchBubble(context: Context) : FrameLayout(context) {
         init {
-            orientation = VERTICAL
-            gravity = Gravity.CENTER_HORIZONTAL
-            addView(icon, LayoutHelper.createLinear(28, 28))
-            addView(label, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0, 2, 0, 0))
-        }
-
-        fun bind(iconRes: Int, labelRes: Int, enabled: Boolean) {
-            this.enabled = enabled
-            icon.setImageResource(iconRes)
-            label.text = LocaleController.getString(labelRes)
-            label.visibility = if (desu.inugram.helpers.dialogs.MainTabsHelper.showTitles) VISIBLE else GONE
-            val color = Theme.getColor(if (enabled) Theme.key_windowBackgroundWhiteBlackText else Theme.key_windowBackgroundWhiteGrayIcon)
-            icon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY)
-            icon.alpha = if (enabled) 1f else 0.5f
-            label.setTextColor(color)
-            label.alpha = if (enabled) 1f else 0.5f
-        }
-
-        fun setStandalone() {
-            label.visibility = GONE
-            gravity = Gravity.CENTER
-            setPadding(0, 0, 0, 0)
             background = Theme.createRoundRectDrawable(dp(SEARCH_BUTTON_SIZE_DP / 2f), Theme.getColor(Theme.key_chats_actionBackground))
-            icon.colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY)
-            icon.alpha = if (enabled) 1f else 0.5f
+            val icon = ImageView(context).apply {
+                scaleType = ImageView.ScaleType.CENTER
+                setImageResource(R.drawable.outline_header_search)
+                colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY)
+            }
+            addView(icon, LayoutHelper.createFrame(28, 28, Gravity.CENTER))
+        }
+
+        fun bind(enabled: Boolean) {
+            alpha = if (enabled) 1f else DISABLED_ALPHA
         }
     }
 
     companion object {
-        private const val CHIP_WIDTH_DP = 76
+        private const val DISABLED_ALPHA = 0.4f
+        private const val ROW_PADDING_DP = 4
+        private const val SIDE_INSET_DP = 12
         private const val CHIP_GAP_DP = 4
         private const val MIN_CHIP_WIDTH_DP = 40
         private const val SEARCH_BUTTON_SIZE_DP = 52
