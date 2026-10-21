@@ -89,6 +89,11 @@ object TranslateHelper {
     fun currentTargetLanguage(): String =
         InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
 
+    // entiny: what text typed in the input is translated into, apart from the language incoming messages are read in
+    @JvmStatic
+    fun outgoingTargetLanguage(): String =
+        InuConfig.INPUT_TRANSLATE_LANGUAGE.value.ifEmpty { currentTargetLanguage().orEmpty() }
+
     @JvmStatic
     fun isWebPageTranslating(msg: MessageObject?): Boolean {
         if (msg == null || webPagesLoading.isEmpty()) return false

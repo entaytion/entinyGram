@@ -334,6 +334,8 @@
     <string name="InuForceTranslateInfo">Переводить, даже если Telegram считает текст вашим языком или он в списке «Не переводить».</string>
     <string name="InuTranslationTarget">Язык перевода</string>
     <string name="InuTranslationTargetFollowApp">Как в приложении</string>
+    <string name="InuTranslationTargetOutgoing">Язык для отправки</string>
+    <string name="InuTranslationTargetSameAsIncoming">Как для входящих</string>
     <string name="InuTranslateProviderSection">Провайдеры перевода</string>
     <string name="InuTranslateProvider">Провайдер перевода</string>
     <string name="InuTranslateProviderInfo">Переводит чаты через сторонний сервис вместо серверного API Telegram. Форматирование сохраняется.</string>

@@ -657,6 +657,8 @@
     <string name="InuReplaceTextApply">Replace</string>
     <string name="InuTranslationTarget">Target language</string>
     <string name="InuTranslationTargetFollowApp">Follow app</string>
+    <string name="InuTranslationTargetOutgoing">Outgoing language</string>
+    <string name="InuTranslationTargetSameAsIncoming">Same as incoming</string>
     <string name="InuTranslateProviderSection">Translation providers</string>
     <string name="InuTranslateProvider">Translation provider</string>
     <string name="InuTranslateProviderInfo">Translate chats via a third-party service instead of Telegram\'s server API. Formatting preserved.</string>

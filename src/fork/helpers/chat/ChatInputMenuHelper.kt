@@ -129,7 +129,7 @@ object ChatInputMenuHelper {
     fun addPreviewTranslateItem(enterView: ChatActivityEnterView, options: ItemOptions) {
         if (!InuConfig.TRANSLATE_IN_SEND_PREVIEW.value) return
         if (TextUtils.isEmpty(enterView.fieldText)) return
-        val toLang = TranslateHelper.currentTargetLanguage().ifEmpty {
+        val toLang = TranslateHelper.outgoingTargetLanguage().ifEmpty {
             TranslateAlert2.getToLanguage().orEmpty().ifEmpty { "en" }
         }
         options.add(R.drawable.msg_translate, LocaleController.getString(R.string.TranslateMessage)) {
@@ -155,7 +155,7 @@ object ChatInputMenuHelper {
             }
         }
 
-        val toLang = TranslateHelper.currentTargetLanguage().ifEmpty {
+        val toLang = TranslateHelper.outgoingTargetLanguage().ifEmpty {
             TranslateAlert2.getToLanguage().orEmpty().ifEmpty { "en" }
         }
         val transTitle = "${LocaleController.getString(R.string.TranslateMessage)} (${toLang.uppercase()})"

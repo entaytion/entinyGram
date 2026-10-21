@@ -487,6 +487,8 @@
     <string name="InuForceTranslateInfo">Перекладати, навіть якщо Telegram вважає текст вашою мовою або він у списку «Не перекладати».</string>
     <string name="InuTranslationTarget">Цільова мова</string>
     <string name="InuTranslationTargetFollowApp">Як у додатку</string>
+    <string name="InuTranslationTargetOutgoing">Мова для відправки</string>
+    <string name="InuTranslationTargetSameAsIncoming">Як для вхідних</string>
     <string name="InuHideReactionEntry">Приховати анімацію появи реакцій</string>
     <string name="InuHideReactionEntryInfo">…коли реакція додається до повідомлення</string>
     <string name="InuMutualContact">Взаємний контакт</string>

@@ -10,8 +10,9 @@ import org.telegram.ui.Components.TranslateAlert2
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-class TranslationTargetActivity : SettingsPageActivity() {
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuTranslationTarget)
+class TranslationTargetActivity(private val outgoing: Boolean = false) : SettingsPageActivity() {
+    override fun getTitle(): CharSequence =
+        LocaleController.getString(if (outgoing) R.string.InuTranslationTargetOutgoing else R.string.InuTranslationTarget)
 
     private val languages by lazy { TranslateController.getLanguages() }
     private val suggested by lazy { TranslateController.getSuggestedLanguages(null) }
@@ -23,13 +24,15 @@ class TranslationTargetActivity : SettingsPageActivity() {
         val app = LocaleController.getInstance().currentLocaleInfo
         val followAppId = 1
         idToCode[followAppId] = ""
-        items.add(
-            UItem.asRadio(
-                followAppId,
-                LocaleController.getString(R.string.InuTranslationTargetFollowApp),
-                app?.name ?: "",
-            ).setChecked(current.isEmpty())
-        )
+        val followTitle = LocaleController.getString(if (outgoing) R.string.InuTranslationTargetSameAsIncoming else R.string.InuTranslationTargetFollowApp)
+        val followSubtitle = if (outgoing) {
+            TranslateHelper.currentTargetLanguage().orEmpty().let { code ->
+                TranslateAlert2.languageName(code)?.let { TranslateAlert2.capitalFirst(it) } ?: code.uppercase()
+            }
+        } else {
+            app?.name ?: ""
+        }
+        items.add(UItem.asRadio(followAppId, followTitle, followSubtitle).setChecked(current.isEmpty()))
 
         var nextId = 2
         for (lang in suggested) {
@@ -58,10 +61,15 @@ class TranslationTargetActivity : SettingsPageActivity() {
         listView?.adapter?.update(true)
     }
 
-    private fun currentValue(): String = TranslateHelper.resolveTargetLanguage()
+    private fun currentValue(): String =
+        if (outgoing) InuConfig.INPUT_TRANSLATE_LANGUAGE.value else TranslateHelper.resolveTargetLanguage()
 
     private fun select(newValue: String) {
         if (newValue == currentValue()) return
+        if (outgoing) {
+            InuConfig.INPUT_TRANSLATE_LANGUAGE.value = newValue
+            return
+        }
         InuConfig.TRANSLATE_TARGET_LANGUAGE.value = newValue
         if (newValue.isEmpty()) {
             TranslateAlert2.resetToLanguage()

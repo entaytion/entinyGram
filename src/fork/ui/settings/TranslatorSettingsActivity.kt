@@ -55,6 +55,14 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             UItem.asButton(
+                BUTTON_OUTGOING_LANG,
+                R.drawable.inu_tabler_language,
+                LocaleController.getString(R.string.InuTranslationTargetOutgoing),
+                outgoingLangLabel(),
+            )
+        )
+        items.add(
+            UItem.asButton(
                 BUTTON_DO_NOT_TRANSLATE,
                 R.drawable.inu_tabler_language_off,
                 LocaleController.getString(R.string.DoNotTranslate),
@@ -133,12 +141,20 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             BUTTON_DO_NOT_TRANSLATE -> presentFragment(RestrictedLanguagesSelectActivity())
 
             BUTTON_TARGET_LANG -> presentFragment(TranslationTargetActivity())
+
+            BUTTON_OUTGOING_LANG -> presentFragment(TranslationTargetActivity(outgoing = true))
         }
     }
 
     private fun targetLangLabel(): String {
         val code = TranslateHelper.resolveTargetLanguage()
         if (code.isEmpty()) return LocaleController.getString(R.string.InuTranslationTargetFollowApp)
+        return TranslateAlert2.languageName(code)?.let { TranslateAlert2.capitalFirst(it) } ?: code.uppercase()
+    }
+
+    private fun outgoingLangLabel(): String {
+        val code = InuConfig.INPUT_TRANSLATE_LANGUAGE.value
+        if (code.isEmpty()) return LocaleController.getString(R.string.InuTranslationTargetSameAsIncoming)
         return TranslateAlert2.languageName(code)?.let { TranslateAlert2.capitalFirst(it) } ?: code.uppercase()
     }
 
@@ -169,6 +185,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON = InuUtils.generateId()
         private val BUTTON_DO_NOT_TRANSLATE = InuUtils.generateId()
         private val BUTTON_TARGET_LANG = InuUtils.generateId()
+        private val BUTTON_OUTGOING_LANG = InuUtils.generateId()
 
         private val BOOL_TOGGLES: Map<Int, InuConfig.BoolItem> = mapOf(
             TOGGLE_AUTO_TRANSLATE_ALL to InuConfig.AUTO_TRANSLATE_ALL,
@@ -200,6 +217,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-translate-button", R.string.ShowTranslateButton, TOGGLE_SHOW_TRANSLATE_BUTTON),
                 SearchRegistry.Entry("show-translate-chat-button", R.string.ShowTranslateChatButton, TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON),
                 SearchRegistry.Entry("translation-target", R.string.InuTranslationTarget, BUTTON_TARGET_LANG),
+                SearchRegistry.Entry("translation-target-outgoing", R.string.InuTranslationTargetOutgoing, BUTTON_OUTGOING_LANG),
                 SearchRegistry.Entry("do-not-translate", R.string.DoNotTranslate, BUTTON_DO_NOT_TRANSLATE),
                 SearchRegistry.Entry("in-place-translation", R.string.InuInPlaceTranslation, TOGGLE_IN_PLACE_TRANSLATION),
                 SearchRegistry.Entry("translate-web-previews", R.string.InuTranslateWebPreviews, TOGGLE_TRANSLATE_WEB_PREVIEWS),

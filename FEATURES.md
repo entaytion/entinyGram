@@ -88,7 +88,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **auto-translate every chat**, with per-chat exceptions - *inspired by [OwlGram](https://github.com/OwlGramDev/OwlGram)*
 - 📡 **LLM translation with conversation context**
 - 📡 **LLM translator endpoint**: auto-detect the base URL and pick the model from the provider's list
-- 📡 **input actions**: translate a draft before sending, link preview toggle, find & replace, attachment picker from the input menu
+- 📡 **input actions**: translate a draft before sending into its own language, link preview toggle, find & replace, attachment picker from the input menu
 - 📡 **translate in send preview** - *inspired by [NagramX](https://github.com/temporaryna/NagramXTurbo)*
 - 📡 **free voice transcription** via Groq Whisper, Gemini Flash, OpenAI or Cloudflare AI
   - AI provider selection shows missing credentials and opens setup instead of hiding incomplete providers
