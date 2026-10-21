@@ -1,21 +1,15 @@
 package desu.inugram.helpers.plugins
 
-import desu.inugram.InuConfig
-
 object PluginDefaultRepo {
-    private const val USERNAME = "entinyGramPlugins"
     private var seeding = false
 
+    // entiny: the official repo is part of the app, so it comes back whenever it is missing; a network failure retries on the next open
     @JvmStatic
     fun seed(account: Int, onDone: () -> Unit = {}) {
-        if (InuConfig.PLUGIN_REPOS_SEEDED.value || seeding) return
+        if (seeding || PluginRepos.getRepos().any { PluginRepos.isOfficial(it) }) return
         seeding = true
-        PluginRepos.addRepo(account, USERNAME) { error ->
+        PluginRepos.addRepo(account, PluginRepos.OFFICIAL_USERNAME) {
             seeding = false
-            // entiny: an existing repo counts as seeded, a network failure retries next time
-            if (error == null || PluginRepos.getRepos().any { it.username.equals(USERNAME, true) }) {
-                InuConfig.PLUGIN_REPOS_SEEDED.value = true
-            }
             onDone()
         }
     }

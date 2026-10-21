@@ -45,12 +45,8 @@ object PluginDependencies {
         return null
     }
 
-    /** the SDK plugin is installed and on: what the marketplace and the SDK directives wait for */
+    /** the SDK plugin is installed and on */
     fun sdkEnabled(): Boolean = PluginManager.plugins().any { it.manifest.id == SDK_ID && it.enabled }
-
-    /** does [plugin] build on the SDK, and is the SDK there */
-    fun usesSdk(plugin: Plugin): Boolean =
-        (plugin.manifest.id == SDK_ID || needs(plugin.manifest).any { it.id == SDK_ID }) && unmet(plugin.manifest) == null
 
     /** dotted numbers; a missing part counts as 0, anything else as 0 too */
     fun compareVersions(have: String?, want: String): Int {

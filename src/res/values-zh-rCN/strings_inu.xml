@@ -1940,8 +1940,6 @@
     <string name="InuLocalEditsClearConfirm">所有本地编辑过的消息都将恢复为原始文本。</string>
     <string name="InuLocalMessageEdit">本地编辑消息</string>
     <string name="InuLocalMessageEditInfo">在消息菜单中添加“本地编辑文本”（需在菜单顺序中开启）。编辑仅在此设备上可见，并保留原始文本</string>
-    <string name="InuMarketplaceChecksum">文件与校验和不匹配</string>
-    <string name="InuMarketplaceDownloadFailed">无法获取插件：%1$s</string>
     <string name="InuMaterial3AccentIcons">强调色图标</string>
     <string name="InuMaterial3Player">音乐播放器</string>
     <string name="InuMd3PlayerClassic">经典播放器</string>

@@ -7,8 +7,10 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import desu.inugram.InuConfig
 import desu.inugram.core.plugins.PluginManifest
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.plugins.PluginDependencies
 import desu.inugram.helpers.plugins.PluginImportHelper
 import desu.inugram.helpers.plugins.PluginManager
 import desu.inugram.helpers.plugins.PluginRepo
@@ -38,12 +40,17 @@ class PluginRepoActivity(private val repo: PluginRepo) : SettingsPageActivity() 
 
     override fun getTitle(): CharSequence = repo.title
 
-    private val onPluginsChanged: () -> Unit = { listView?.adapter?.update(true) }
+    private val installer = RepoInstaller(this)
+
+    private val onPluginsChanged: () -> Unit = {
+        installer.onPluginsChanged()
+        listView?.adapter?.update(true)
+    }
 
     override fun onResume() {
         super.onResume()
         PluginManager.addOnChangedListener(onPluginsChanged)
-        listView?.adapter?.update(true)
+        onPluginsChanged()
     }
 
     override fun onPause() {
@@ -81,11 +88,39 @@ class PluginRepoActivity(private val repo: PluginRepo) : SettingsPageActivity() 
         listView?.adapter?.update(true)
     }
 
+    private fun sorted(list: List<Pair<PluginRepoPost, PluginManifest>>): List<Pair<PluginRepoPost, PluginManifest>> = when (InuConfig.PLUGIN_REPO_SORT.value) {
+        1 -> list.sortedBy { it.second.name.lowercase() }
+        2 -> list.sortedWith(compareBy({ it.second.author.orEmpty().lowercase() }, { it.second.name.lowercase() }))
+        else -> list
+    }
+
+    private fun fromDeveloper(manifest: PluginManifest): Boolean =
+        manifest.id?.startsWith("entinygram.") == true || manifest.author?.contains("entinygram", ignoreCase = true) == true
+
+    private fun sortLabel(): String = LocaleController.getString(
+        when (InuConfig.PLUGIN_REPO_SORT.value) {
+            1 -> R.string.InuPluginRepoSortName
+            2 -> R.string.InuPluginRepoSortAuthor
+            else -> R.string.InuPluginRepoSortNewest
+        }
+    )
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val latest = PluginRepos.pickLatest(posts)
+        val latest = sorted(PluginRepos.pickLatest(posts))
         if (latest.isNotEmpty()) {
-            items.add(UItem.asHeader(LocaleController.getString(R.string.InuPlugins)))
-            for ((post, manifest) in latest) items.add(buildRow(post, manifest))
+            items.add(UItem.asButton(BUTTON_SORT, R.drawable.msg_recent, LocaleController.getString(R.string.InuPluginRepoSort), sortLabel()))
+            items.add(UItem.asShadow(null))
+            val sections = if (PluginRepos.isOfficial(repo)) {
+                val (mine, others) = latest.partition { fromDeveloper(it.second) }
+                listOf(R.string.InuPluginRepoFromDeveloper to mine, R.string.InuPluginRepoFromOthers to others)
+            } else {
+                listOf(R.string.InuPlugins to latest)
+            }
+            sections.filter { it.second.isNotEmpty() }.forEachIndexed { index, (title, list) ->
+                if (index > 0) items.add(UItem.asShadow(null))
+                items.add(UItem.asHeader(LocaleController.getString(title)))
+                for ((post, manifest) in list) items.add(buildRow(post, manifest))
+            }
         } else if (exhausted) {
             items.add(UItem.asShadow(LocaleController.getString(R.string.InuPluginRepoEmpty)))
         }
@@ -112,29 +147,40 @@ class PluginRepoActivity(private val repo: PluginRepo) : SettingsPageActivity() 
             update -> R.string.InuPluginRepoUpdate
             else -> R.string.InuPluginsInstalled
         }
-        val meta = listOfNotNull(
-            manifest.version?.let { "v$it" },
-            manifest.author?.let { LocaleController.formatString(R.string.InuPluginsByAuthor, it) },
-        ).joinToString(" · ")
+        val author = manifest.author?.let { LocaleController.formatString(R.string.InuPluginsByAuthor, it) }.orEmpty()
         row.bind(
             manifest,
-            meta,
+            author,
             status?.let { LocaleController.getString(it) },
             active = update,
             onUsernameClick = { messagesController.openByUserName(it, this, 0) },
         ) {
-            if (installed != null && !update) presentFragment(PluginInfoActivity(installed))
-            else installRepoPost(this, post)
+            presentFragment(PluginRepoPluginActivity(post, manifest, posts, installer))
         }
         return UItem.asCustom(row).apply { id = ITEM_BASE + (post.messageId and 0xffff) }
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (item.id == BUTTON_MORE) loadMore()
+        when (item.id) {
+            BUTTON_MORE -> loadMore()
+            BUTTON_SORT -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuPluginRepoSortNewest),
+                    LocaleController.getString(R.string.InuPluginRepoSortName),
+                    LocaleController.getString(R.string.InuPluginRepoSortAuthor),
+                ),
+                InuConfig.PLUGIN_REPO_SORT.value,
+            ) { which ->
+                InuConfig.PLUGIN_REPO_SORT.value = which
+                listView?.adapter?.update(true)
+            }
+        }
     }
 
     companion object {
         private val BUTTON_MORE = InuUtils.generateId()
+        private val BUTTON_SORT = InuUtils.generateId()
         private const val ITEM_BASE = 20000
     }
 }
@@ -158,16 +204,36 @@ internal fun installRepoPost(fragment: BaseFragment, post: PluginRepoPost) {
     }
 }
 
+/** installs a plugin and, when it needs an SDK that is missing, the SDK from the same repository first */
+internal class RepoInstaller(private val fragment: BaseFragment) {
+    private var afterSdk: PluginRepoPost? = null
+
+    fun onPluginsChanged() {
+        afterSdk?.takeIf { PluginDependencies.sdkEnabled() }?.let {
+            afterSdk = null
+            installRepoPost(fragment, it)
+        }
+    }
+
+    fun install(post: PluginRepoPost, manifest: PluginManifest, repoPosts: List<Pair<PluginRepoPost, PluginManifest>>) {
+        val missing = PluginDependencies.unmetFor(manifest.raw[PluginDependencies.KEY].orEmpty(), manifest.id)
+        val sdk = if (missing?.startsWith(PluginDependencies.SDK_ID) == true) {
+            PluginRepos.pickLatest(repoPosts).firstOrNull { it.second.id == PluginDependencies.SDK_ID }?.first
+        } else null
+        if (sdk == null) return installRepoPost(fragment, post)
+        afterSdk = post
+        installRepoPost(fragment, sdk)
+    }
+}
+
 @SuppressLint("ViewConstructor")
 class PluginRepoRow(context: Context) : LinearLayout(context) {
     private val icon = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(8f)) }
     private val placeholder = PluginManifestIcons.createPlaceholder(context)
-    private val title = TextView(context).apply {
-        setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
-        textSize = 16f
-        setSingleLine(true)
-        ellipsize = TextUtils.TruncateAt.END
-    }
+    private val title = RowTitle(context)
+    private val textColumn = LinearLayout(context).apply { orientation = VERTICAL }
+    private val pill = PluginPill(context)
+    private val titleLine = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
     private val subtitle = TextView(context).apply {
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
         textSize = 13f
@@ -193,8 +259,14 @@ class PluginRepoRow(context: Context) : LinearLayout(context) {
             Theme.getColor(Theme.key_listSelector),
         )
         val rtl = LocaleController.isRTL
-        val text = LinearLayout(context).apply { orientation = VERTICAL }
-        text.addView(title, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+        val text = textColumn
+        val pillParams = LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, if (rtl) 6f else 0f, 0f, if (rtl) 0f else 6f, 0f)
+        val titleViews = listOf<Pair<View, LayoutParams>>(
+            pill to pillParams,
+            title to LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT),
+        )
+        for ((view, params) in if (rtl) titleViews.asReversed() else titleViews) titleLine.addView(view, params)
+        text.addView(titleLine, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
         text.addView(subtitle, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 2f, 0f, 0f))
         text.addView(description, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 4f, 0f, 0f))
         val views = listOf<Pair<View, LayoutParams>>(
@@ -205,14 +277,31 @@ class PluginRepoRow(context: Context) : LinearLayout(context) {
         for ((view, params) in if (rtl) views.asReversed() else views) addView(view, params)
     }
 
-    fun bind(manifest: PluginManifest, meta: String, statusText: String?, active: Boolean, onUsernameClick: (String) -> Unit, onClick: () -> Unit) {
+    fun bind(
+        manifest: PluginManifest,
+        meta: String,
+        statusText: String?,
+        active: Boolean,
+        onUsernameClick: (String) -> Unit,
+        showDescription: Boolean = true,
+        onClick: () -> Unit,
+    ) {
         PluginManifestIcons.bindIcon(icon, manifest.icon, placeholder)
         title.text = manifest.name
+        pill.text = manifest.version?.let { "v$it" }
+        pill.visibility = if (manifest.version == null) GONE else VISIBLE
         subtitle.text = meta
         subtitle.visibility = if (meta.isEmpty()) GONE else VISIBLE
         val text = manifest.description(LocaleController.getInstance().currentLocaleInfo?.langCode)
         description.text = text?.let { formatPluginDescription(it, onUsernameClick) }
-        description.visibility = if (text.isNullOrEmpty()) GONE else VISIBLE
+        description.visibility = if (!showDescription || text.isNullOrEmpty()) GONE else VISIBLE
+        (textColumn.layoutParams as? MarginLayoutParams)?.let {
+            val end = if (statusText == null) AndroidUtilities.dp(20f) else 0
+            if (it.marginEnd != end) {
+                it.marginEnd = end
+                textColumn.layoutParams = it
+            }
+        }
         status.text = statusText
         status.visibility = if (statusText == null) GONE else VISIBLE
         status.setTextColor(Theme.getColor(if (active) Theme.key_windowBackgroundWhiteBlueText2 else Theme.key_windowBackgroundWhiteGrayText))

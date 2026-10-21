@@ -1865,6 +1865,24 @@
     <string name="InuPluginRepoErrorDownload">Не вдалося завантажити плагін</string>
     <string name="InuPluginRepoRetry">Повторити</string>
     <string name="InuPluginRepoUpdate">Оновити</string>
+    <string name="InuPluginRepoInstall">Встановити</string>
+    <string name="InuPluginRepoVersions">Історія версій</string>
+    <string name="InuPluginRepoLatest">Остання</string>
+    <string name="InuPluginRepoDependencies">Залежності</string>
+    <string name="InuPluginRepoOfficial">Офіційний</string>
+    <string name="InuPluginRepoFromDeveloper">Плагіни від розробника</string>
+    <string name="InuPluginRepoFromOthers">Плагіни від інших</string>
+    <string name="InuPluginRepoSort">Сортування</string>
+    <string name="InuPluginRepoSortNewest">Спочатку нові</string>
+    <string name="InuPluginRepoSortName">За назвою</string>
+    <string name="InuPluginRepoSortAuthor">За автором</string>
+    <string name="InuPluginRepoAbout">Про плагін</string>
+    <string name="InuPluginRepoDescription">Опис</string>
+    <string name="InuPluginRepoAuthor">Автор</string>
+    <string name="InuPluginRepoSource">Джерело</string>
+    <string name="InuPluginRepoId">ID плагіна</string>
+    <string name="InuPluginRepoPublished">Опубліковано: %1$s</string>
+    <string name="InuPluginRepoInstallation">Встановлення</string>
     <string name="InuPluginsCompactView">Компактний вигляд</string>
     <string name="InuPluginsNormalView">Звичайний вигляд</string>
     <string name="InuPluginsReload">Перезавантажити</string>
@@ -2012,8 +2030,6 @@
     <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
     <string name="InuPluginsErrorRequires">Потрібен плагін %1$s. Спершу встановіть його</string>
     <string name="InuPluginsErrorRequiresVersion">Потрібен %1$s версії %2$s або новіше</string>
-    <string name="InuMarketplaceDownloadFailed">Не вдалося отримати плагін: %1$s</string>
-    <string name="InuMarketplaceChecksum">файл не збігається з контрольною сумою</string>
     <string name="InuCopyAllProxies">Копіювати всі</string>
     <string name="InuShareAllProxies">Поділитися всіма</string>
 

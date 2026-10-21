@@ -315,8 +315,9 @@ object InuConfig {
     @JvmField
     val PLUGIN_REPOS = StringItem("plugin_repos", "")
 
+    // 0 newest first, 1 by name, 2 by author
     @JvmField
-    val PLUGIN_REPOS_SEEDED = BoolItem("plugin_repos_seeded", false)
+    val PLUGIN_REPO_SORT = IntItem("plugin_repo_sort", 0)
 
     // the "only install plugins you trust" warning was read and accepted: consent, not a
     // preference, so it is never carried over by an import
@@ -1969,10 +1970,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val TRANSLATION_PROVIDER = StringItem("translation_provider", "", exportable = false)
-
-    // entiny: where the marketplace looks; kept so a test catalog can stand in for the real one
-    @JvmField
-    val MARKET_INDEX_URL = StringItem("market_index_url", "https://raw.githubusercontent.com/entinyGram/plugins/main/index.json", exportable = false)
 
     @JvmField
     val ACCOUNT_ORDER = StringItem("account_order", "", exportable = false)

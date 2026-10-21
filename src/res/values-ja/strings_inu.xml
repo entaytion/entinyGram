@@ -1940,8 +1940,6 @@
     <string name="InuLocalEditsClearConfirm">ローカルで編集したすべてのメッセージが元のテキストに戻ります。</string>
     <string name="InuLocalMessageEdit">メッセージをローカルで編集</string>
     <string name="InuLocalMessageEditInfo">メッセージメニューに「テキストをローカルで編集」を追加します（メニューの並び順でオンにしてください）。編集内容はこの端末でのみ表示され、元のテキストは保持されます</string>
-    <string name="InuMarketplaceChecksum">ファイルがチェックサムと一致しません</string>
-    <string name="InuMarketplaceDownloadFailed">プラグインを取得できませんでした: %1$s</string>
     <string name="InuMaterial3AccentIcons">アクセントカラーのアイコン</string>
     <string name="InuMaterial3Player">ミュージックプレーヤー</string>
     <string name="InuMd3PlayerClassic">クラシックプレーヤー</string>

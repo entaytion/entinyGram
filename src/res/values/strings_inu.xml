@@ -1909,6 +1909,24 @@
     <string name="InuPluginRepoErrorDownload">Could not download the plugin</string>
     <string name="InuPluginRepoRetry">Retry</string>
     <string name="InuPluginRepoUpdate">Update</string>
+    <string name="InuPluginRepoInstall">Install</string>
+    <string name="InuPluginRepoVersions">Version history</string>
+    <string name="InuPluginRepoLatest">Latest</string>
+    <string name="InuPluginRepoDependencies">Dependencies</string>
+    <string name="InuPluginRepoOfficial">Official</string>
+    <string name="InuPluginRepoFromDeveloper">Plugins by the developer</string>
+    <string name="InuPluginRepoFromOthers">Plugins from others</string>
+    <string name="InuPluginRepoSort">Sort</string>
+    <string name="InuPluginRepoSortNewest">Newest first</string>
+    <string name="InuPluginRepoSortName">By name</string>
+    <string name="InuPluginRepoSortAuthor">By author</string>
+    <string name="InuPluginRepoAbout">About the plugin</string>
+    <string name="InuPluginRepoDescription">Description</string>
+    <string name="InuPluginRepoAuthor">Author</string>
+    <string name="InuPluginRepoSource">Source</string>
+    <string name="InuPluginRepoId">Plugin ID</string>
+    <string name="InuPluginRepoPublished">Published: %1$s</string>
+    <string name="InuPluginRepoInstallation">Installation</string>
     <string name="InuPluginsCompactView">Compact view</string>
     <string name="InuPluginsNormalView">Normal view</string>
     <string name="InuPluginsReload">Reload</string>
@@ -2052,8 +2070,6 @@
     <string name="InuPluginsFailedAtRuntime">Runtime error</string>
     <string name="InuPluginsFailedAtUnload">Unload error</string>
     <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
-    <string name="InuMarketplaceDownloadFailed">Could not get the plugin: %1$s</string>
-    <string name="InuMarketplaceChecksum">the file does not match its checksum</string>
     <string name="InuCopyAllProxies">Copy all</string>
     <string name="InuShareAllProxies">Share all</string>
 

@@ -191,6 +191,8 @@ private class RepoRow(context: Context) : LinearLayout(context) {
     private val avatar = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(16f)) }
     private val avatarDrawable = AvatarDrawable()
     private val title = RowTitle(context)
+    private val officialPill = PluginPill(context, accent = true).apply { text = LocaleController.getString(R.string.InuPluginRepoOfficial) }
+    private val titleLine = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
     private val subtitle = TextView(context).apply {
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
         textSize = 13f
@@ -223,7 +225,9 @@ private class RepoRow(context: Context) : LinearLayout(context) {
         gutter.addView(avatar, LayoutHelper.createLinear(32, 32, Gravity.CENTER_HORIZONTAL, 0f, 4f, 0f, 0f))
 
         val content = LinearLayout(context).apply { orientation = VERTICAL }
-        content.addView(title, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.NO_GRAVITY, if (rtl) 22 else 0, 0, if (rtl) 0 else 22, 0))
+        titleLine.addView(title, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        titleLine.addView(officialPill, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        content.addView(titleLine, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.NO_GRAVITY, if (rtl) 22 else 0, 0, if (rtl) 0 else 22, 0))
         content.addView(subtitle, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.NO_GRAVITY, if (rtl) 22 else 0, 2, if (rtl) 0 else 22, 0))
         content.addView(description, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.NO_GRAVITY, if (rtl) 22 else 0, 4, if (rtl) 0 else 22, 0))
 
@@ -251,6 +255,7 @@ private class RepoRow(context: Context) : LinearLayout(context) {
             avatar.setImageDrawable(avatarDrawable)
         }
         title.text = chat?.title ?: repo.title
+        officialPill.visibility = if (PluginRepos.isOfficial(repo)) VISIBLE else GONE
         title.setWarning(if (failed) tierColors(GrantTier.CAUTION).first else null)
         subtitle.text = "@${repo.username}"
         description.text = if (about.isNullOrEmpty()) "" else linkPluginUsernames(about, onUsernameClick)
@@ -258,6 +263,7 @@ private class RepoRow(context: Context) : LinearLayout(context) {
         setOnClickListener { onOpen() }
         openChannelAction.setOnClickListener { onOpenChannel() }
         removeAction.setOnClickListener { onRemove() }
+        removeAction.visibility = if (PluginRepos.isOfficial(repo)) GONE else VISIBLE
     }
 
     /** classic-sections only: md3 cards separate rows by shape instead */

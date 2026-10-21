@@ -1943,8 +1943,6 @@
     <string name="InuLocalEditsClearConfirm">Yerel olarak düzenlenen tüm mesajlar özgün metnine geri döndürülecek.</string>
     <string name="InuLocalMessageEdit">Mesajları yerel olarak düzenle</string>
     <string name="InuLocalMessageEditInfo">Mesaj menüsüne “Metni yerel olarak düzenle” seçeneğini ekler (menü sırasından açın). Düzenlemeler yalnızca bu cihazda görünür ve özgün metin saklanır</string>
-    <string name="InuMarketplaceChecksum">dosya sağlama toplamıyla eşleşmiyor</string>
-    <string name="InuMarketplaceDownloadFailed">Eklenti alınamadı: %1$s</string>
     <string name="InuMaterial3AccentIcons">Vurgu renkli simgeler</string>
     <string name="InuMaterial3Player">Müzik oynatıcı</string>
     <string name="InuMd3PlayerClassic">Klasik oynatıcı</string>

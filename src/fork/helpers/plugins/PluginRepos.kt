@@ -51,6 +51,10 @@ object PluginRepos {
     private val manifests = HashMap<Long, PluginManifest?>()
     private val pendingManifests = HashMap<Long, MutableList<(Boolean, PluginManifest?) -> Unit>>()
 
+    const val OFFICIAL_USERNAME = "entinyGramPlugins"
+
+    fun isOfficial(repo: PluginRepo): Boolean = repo.username.equals(OFFICIAL_USERNAME, ignoreCase = true)
+
     fun getRepos(): List<PluginRepo> {
         val raw = InuConfig.PLUGIN_REPOS.value
         if (raw.isBlank()) return emptyList()
@@ -62,7 +66,7 @@ object PluginRepos {
             val o = arr.optJSONObject(i) ?: return@mapNotNull null
             PluginRepo(o.optLong("channel"), o.optString("username"), o.optString("title"))
                 .takeIf { it.channelId != 0L && it.username.isNotEmpty() }
-        }
+        }.sortedByDescending { isOfficial(it) }
     }
 
     private fun saveRepos(repos: List<PluginRepo>) {
@@ -90,6 +94,7 @@ object PluginRepos {
     }
 
     fun removeRepo(repo: PluginRepo) {
+        if (isOfficial(repo)) return
         saveRepos(getRepos().filter { it.channelId != repo.channelId })
     }
 
