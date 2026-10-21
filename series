@@ -561,3 +561,4 @@ entiny/chat/quote-keyboard.patch
 entiny/chat/side-button-action.patch
 entiny/chat/contact-link-query.patch
 entiny/privacy/user-info-saver.patch
+entiny/tabs/system-folders-recommended.patch

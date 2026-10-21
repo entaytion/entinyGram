@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 20 Oct 2026 23:03:03 +0300
+Subject: system folders via recommended folders
+
+---
+ .../java/org/telegram/ui/FiltersSetupActivity.java   | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
+@@ -148,6 +148,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+         private TextView valueTextView;
+         private ProgressButton addButton;
+         private boolean needDivider;
++        private boolean hasValue;
+         private TLRPC.TL_dialogFilterSuggested suggestedFilter;
+ 
+         public SuggestedFilterCell(Context context) {
+@@ -183,7 +184,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+ 
+         @Override
+         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+-            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), dp(64));
++            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), dp(hasValue ? 64 : 48));
+             measureChildWithMargins(addButton, widthMeasureSpec, 0, heightMeasureSpec, 0);
+             measureChildWithMargins(textView, widthMeasureSpec, addButton.getMeasuredWidth(), heightMeasureSpec, 0);
+             measureChildWithMargins(valueTextView, widthMeasureSpec, addButton.getMeasuredWidth(), heightMeasureSpec, 0);
+@@ -195,7 +196,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+             setWillNotDraw(!needDivider);
+ 
+             textView.setText(filter.filter.title.text);
++            hasValue = !TextUtils.isEmpty(filter.description);
+             valueTextView.setText(filter.description);
++            valueTextView.setVisibility(hasValue ? View.VISIBLE : View.GONE);
+         }
+ 
+         public TLRPC.TL_dialogFilterSuggested getSuggestedFilter() {
+@@ -564,6 +567,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+         oldItems.addAll(items);
+         items.clear();
+ 
++        desu.inugram.helpers.dialogs.SystemFoldersHelper.injectRecommended(getMessagesController());
+         ArrayList<TLRPC.TL_dialogFilterSuggested> suggestedFilters = getMessagesController().suggestedFilters;
+         ArrayList<MessagesController.DialogFilter> dialogFilters = getMessagesController().getDialogFilters();
+         items.add(ItemInner.asHint());
+@@ -987,6 +991,12 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+                     SuggestedFilterCell suggestedFilterCell = new SuggestedFilterCell(mContext);
+                     suggestedFilterCell.setAddOnClickListener(v -> {
+                         TLRPC.TL_dialogFilterSuggested suggested = suggestedFilterCell.getSuggestedFilter();
++                        if (desu.inugram.helpers.dialogs.SystemFoldersHelper.isSystem(suggested.filter.id)) {
++                            desu.inugram.helpers.dialogs.SystemFoldersHelper.enableFromRecommended(suggested.filter.id);
++                            getMessagesController().suggestedFilters.remove(suggested);
++                            getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
++                            return;
++                        }
+                         MessagesController.DialogFilter filter = new MessagesController.DialogFilter();
+                         filter.name = suggested.filter.title.text;
+                         filter.entities = suggested.filter.title.entities;
