@@ -22,7 +22,7 @@ index 0000000..0000000 100644
      public ActionBarLayout actionBarLayout;
      private ActionBarLayout layersActionBarLayout;
      public ActionBarLayout rightActionBarLayout;
-@@ -7020,6 +7020,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7033,6 +7033,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              onResumeStaticCallback.run();
              onResumeStaticCallback = null;
          }
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
          if (Theme.selectedAutoNightType == Theme.AUTO_NIGHT_TYPE_SYSTEM) {
              Theme.checkAutoNightThemeConditions();
          }
-@@ -7454,6 +7455,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7467,6 +7468,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                      }
                      themeSwitchImageView.setImageBitmap(bitmap);
                      themeSwitchImageView.setVisibility(View.VISIBLE);

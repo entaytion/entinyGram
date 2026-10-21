@@ -11,6 +11,7 @@ use rquickjs::{
 };
 
 use crate::api::error::{format_exception, report_callback_error, throw_wire_error, PluginErrorCode};
+use crate::api::io::blob::{self, BlobHandle};
 use crate::api::tl::proxy::{encode_bytes_wire, TlViews, ViewLife};
 use crate::runtime::enter_js;
 use crate::runtime::pump_jobs;
@@ -691,6 +692,20 @@ pub fn install_jvm<'js>(
       state.ask(ctx, OP_LOAD_DEX, 0, &path, &[])?;
       return Ok(());
     }
+    if let Some(export) = blob::export_blob(&source) {
+      if export.len() > DEX_LIMIT_BYTES as u64 {
+        return throw_too_big(ctx, "a dex", export.len() as usize, DEX_LIMIT_BYTES);
+      }
+      let bytes = match export.read(0, export.len()) {
+        Ok(bytes) => bytes,
+        Err(fault) => return fault.throw(ctx),
+      };
+      state.ask(ctx, OP_LOAD_DEX, 0, "", &[encode_bytes_wire(&bytes)])?;
+      return Ok(());
+    }
+    if Class::<BlobHandle>::from_value(&source).is_ok() {
+      return PluginErrorCode::HandleExpired.throw(ctx, "loadDex: the blob was disposed");
+    }
     if let Ok(typed) = TypedArray::<u8>::from_value(source.clone()) {
       // an error thrown past the limit is built after the last use of the bytes
       let wire = qjs_read_typed_bytes(&typed, |bytes| {
@@ -704,7 +719,7 @@ pub fn install_jvm<'js>(
         return Ok(());
       }
     }
-    Err(Exception::throw_type(ctx, "loadDex: expected an absolute path or a Uint8Array"))
+    Err(Exception::throw_type(ctx, "loadDex: expected an absolute path, a Blob or a Uint8Array"))
   });
 
   let factory = qjs_load_prelude(ctx, PRELUDE)?;

@@ -54,6 +54,7 @@
     <string name="InuUnifiedPushGatewayDefault">默认</string>
     <string name="InuUpdatesIncludeBetaInfo">同时提供预发布/测试版构建。这些是测试构建，无需所有人开启，可能会频繁提示更新。</string>
     <string name="InuVersionBetaSuffix">(测试版)</string>
+    <string name="InuAnimatedAvatars">动态头像</string>
     <string name="InuPerformanceClass">性能等级</string>
     <string name="InuPerformanceClassInfo">不建议更改此设置，在低性能的入门设备上可能会严重影响性能</string>
     <string name="InuPerformanceClassMeasured">实测</string>
@@ -216,6 +217,7 @@
     <string name="InuDisableProfileScrollSnap">禁用资料滚动吸附</string>
     <string name="InuReduceProfileMotion">减少资料动画</string>
     <string name="InuProfilePreferMediaTab">优先「媒体」标签</string>
+    <string name="InuShowProfileGiftButton">显示「礼物」操作按钮</string>
     <string name="InuDisableMotionPhotos">禁用动态照片</string>
     <string name="InuDisableMotionPhotosInfo">不在选择器和消息中检测或渲染动态照片</string>
     <string name="InuChatAlwaysShowDown">始终显示「跳到底部」</string>
@@ -419,6 +421,7 @@
     <string name="InuWebPreviewReplacements">网页预览替换</string>
     <string name="InuWebPreviewEnabled">启用替换</string>
     <string name="InuWebPreviewReplacementsInfo">获取网页预览时对 URL 应用的正则替换。长按删除。</string>
+    <string name="InuWebPreviewReplaceOnPaste">粘贴时替换</string>
     <string name="InuWebPreviewAdd">添加替换</string>
     <string name="InuWebPreviewEdit">编辑替换</string>
     <string name="InuWebPreviewReset">恢复默认</string>
@@ -695,7 +698,7 @@
     <string name="InuChatSnowflakes">聊天中的雪花</string>
     <string name="InuSendToDiscussWithoutJoinInfo">跳过讨论组的客户端成员检查</string>
     <string name="InuNavigationDrawer">侧边抽屉</string>
-    <string name="InuNavigationDrawerInfo">恢复 12.0 之前的汉堡侧边抽屉。需重启。</string>
+    <string name="InuNavigationDrawerInfo">恢复 12.0 之前的汉堡侧边抽屉。</string>
     <string name="InuDrawerBackGesture">用返回手势打开抽屉</string>
     <string name="InuDrawerBackGestureInfo">从聊天列表左边缘向内滑动返回时打开抽屉，而不是退出应用。</string>
     <string name="InuDrawerM3Sections">导航抽屉中的模块化分区</string>
@@ -779,6 +782,9 @@
     <string name="InuDialogsMenuReset">重置为默认</string>
     <string name="InuMenuThemeToggle">切换主题</string>
     <string name="InuMenuCompose">新建群组 / 消息</string>
+    <string name="InuDrawerMenuOrder">自定义项目</string>
+    <string name="InuDrawerMenuItems">项目</string>
+    <string name="InuDrawerMenuReset">重置为默认</string>
     <string name="InuGoToMessage">跳到消息</string>
     <string name="InuGoToMessagePrompt">消息 ID</string>
     <string name="InuParanoiaHideFolders">隐藏文件夹</string>
@@ -890,6 +896,8 @@
     <string name="InuNicheAlreadyUnlockedToast">bro，你已经开过了💀</string>
     <string name="InuStripTrackingParamsOnOpen">打开链接时</string>
     <string name="InuStripTrackingParamsOnPaste">粘贴时</string>
+    <string name="InuResolveTrackableRedirects">解析可追踪的重定向</string>
+    <string name="InuResolveTrackableRedirectsInfo">在粘贴和/或打开时展开部分分享链接（如 vt.tiktok.com/…）。\n会连接链接所在的服务器</string>
     <string name="InuStripTrackingParamsSourceRow">过滤器源</string>
     <string name="InuCrashTitleOom">entinyGram 内存不足</string>
     <string name="InuCrashDescOom">抱歉。崩溃日志对内存不足问题帮助不大 —— 堆转储才有用。</string>
@@ -1655,10 +1663,29 @@
     <string name="InuPluginsEnabled">已启用</string>
     <string name="InuPluginsEmpty">未安装插件</string>
     <string name="InuPluginsLoadFromDisk">从文件加载</string>
+    <string name="InuPluginRepos">仓库</string>
+    <string name="InuPluginReposInfo">仓库是发布插件文件的 Telegram 频道。从仓库安装的插件会从该仓库获取更新。</string>
+    <string name="InuPluginReposAdd">添加仓库</string>
+    <string name="InuPluginReposOpenChannel">打开频道</string>
+    <string name="InuPluginReposUpdates">更新</string>
+    <string name="InuPluginReposChecking">正在检查更新…</string>
+    <string name="InuPluginReposCheckFailed">部分仓库无法检查更新</string>
+    <string name="InuPluginReposUpToDate">没有可用更新</string>
+    <string name="InuPluginReposErrorLink">请输入频道用户名或链接</string>
+    <string name="InuPluginReposErrorNotChannel">这不是公开频道</string>
+    <string name="InuPluginReposErrorExists">该仓库已添加</string>
+    <string name="InuPluginRepoEmpty">此仓库中没有插件</string>
+    <string name="InuPluginRepoErrorLoad">无法加载仓库</string>
+    <string name="InuPluginRepoErrorDownload">无法下载插件</string>
+    <string name="InuPluginRepoRetry">重试</string>
+    <string name="InuPluginRepoUpdate">更新</string>
     <string name="InuPluginsCompactView">紧凑视图</string>
     <string name="InuPluginsNormalView">普通视图</string>
     <string name="InuPluginsReload">重新加载</string>
     <string name="InuPluginsViewSource">查看源代码</string>
+    <string name="InuPluginAssets">附带文件</string>
+    <string name="InuPluginAssetsCount_other">%1$d 个文件</string>
+    <string name="InuPluginsMemoryUsage">内存占用</string>
     <string name="InuPluginSourceTitle">源代码</string>
     <string name="InuPluginsRemove">移除</string>
     <string name="InuPluginsRemoveTitle">移除 %s</string>
@@ -1670,6 +1697,7 @@
     <string name="InuPluginsPermissions">权限</string>
     <string name="InuPluginsPermissionsNone">此插件不请求任何权限</string>
     <string name="InuPluginGrantFs">文件存储</string>
+    <string name="InuPluginGrantSqlite">数据库</string>
     <string name="InuPluginGrantClipboardWrite">写入剪贴板</string>
     <string name="InuPluginGrantOpenUrl">打开链接</string>
     <string name="InuPluginGrantAppVisibility">监视应用可见性</string>
@@ -1784,6 +1812,7 @@
     <string name="InuPluginsErrorApiVersion">需要更新版本的 entinyGram（插件 API %1$d，此应用为 %2$d）</string>
     <string name="InuPluginsErrorPlatform">并非为此平台制作（需要 %1$s）</string>
     <string name="InuPluginsErrorBadGrant">请求了无效权限（%1$s）</string>
+    <string name="InuPluginsErrorBadAssets">无效的附带文件（%1$s）</string>
     <string name="InuPluginsErrorUnconsentedGrants">请求了安装时未经审核的权限（%1$s）；请更新插件以审核这些权限</string>
     <string name="InuPluginsFailedAtLoad">加载错误</string>
     <string name="InuPluginsFailedAtRuntime">运行时错误</string>
@@ -1805,10 +1834,7 @@
     <string name="InuDeviceSection">设备</string>
     <string name="InuDownloadsAndNetwork">下载与网络</string>
     <string name="InuDrawerBots">小程序</string>
-    <string name="InuDrawerMenuItems">项目</string>
-    <string name="InuDrawerMenuOrder">菜单项</string>
     <string name="InuDrawerMenuOrderInfo">点按隐藏或显示项目，长按调整顺序。分隔线会把菜单分成若干组。</string>
-    <string name="InuDrawerMenuReset">重置菜单</string>
     <string name="InuHideTitle">隐藏标题</string>
     <string name="InuInterfaceElements">界面元素</string>
     <string name="InuIosSettings">iOS 设置</string>
@@ -1915,7 +1941,6 @@
     <string name="InuLocalEditsClearConfirm">所有本地编辑过的消息都将恢复为原始文本。</string>
     <string name="InuLocalMessageEdit">本地编辑消息</string>
     <string name="InuLocalMessageEditInfo">在消息菜单中添加“本地编辑文本”（需在菜单顺序中开启）。编辑仅在此设备上可见，并保留原始文本</string>
-    <string name="InuMarketplace">插件市场</string>
     <string name="InuMarketplaceChecksum">文件与校验和不匹配</string>
     <string name="InuMarketplaceDownloadFailed">无法获取插件：%1$s</string>
     <string name="InuMaterial3AccentIcons">强调色图标</string>

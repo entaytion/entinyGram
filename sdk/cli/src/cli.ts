@@ -6,6 +6,7 @@ import { devCmd } from './commands/dev.js'
 import { evalCmd } from './commands/eval.js'
 import { initCmd } from './commands/init.js'
 import { listCmd } from './commands/list.js'
+import { memoryCmd } from './commands/memory.js'
 import { pushCmd } from './commands/push.js'
 import { removeCmd } from './commands/remove.js'
 import { verifyCmd } from './commands/verify.js'
@@ -25,6 +26,7 @@ const main = defineCommand({
     dev: devCmd,
     eval: evalCmd,
     list: listCmd,
+    memory: memoryCmd,
     push: pushCmd,
     remove: removeCmd,
     verify: verifyCmd,

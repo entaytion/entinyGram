@@ -66,7 +66,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14020,7 +14020,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14067,7 +14067,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          }
@@ -264,7 +264,7 @@ index 0000000..0000000 100644
          final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
          float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
          if (tabletLayout) {
-@@ -1139,13 +1099,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1140,13 +1100,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
      }
  

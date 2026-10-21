@@ -226,17 +226,21 @@ investigate rather than hand-editing `patches/`.
 The plugin bridge's TL typings and `tl_tables.txt` are generated (gitignored) from
 stock's tgnet sources, so a new layer leaves them stale. `pnpm run setup` would
 regenerate them, but it refuses while the stack diverges from `series`, so run the
-generator directly. First refresh mtcute's int53 overrides, vendored because
-mtcute's layer drifts from stock's independently:
+generator directly, passing mtcute's int53 overrides as candidates:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mtcute/mtcute/refs/heads/master/packages/core/scripts/tl/data/int53-overrides.json -o scripts/data/int53-overrides.json
-pnpm run generate-tl
+curl -fsSL https://raw.githubusercontent.com/mtcute/mtcute/refs/heads/master/packages/core/scripts/tl/data/int53-overrides.json -o $TMPDIR/int53-mtcute.json
+pnpm run generate-tl $TMPDIR/int53-mtcute.json
 ```
 
-Read the `int53 override matches no long field stock declares` warnings: an entry
-stock doesn't have yet is expected, but a field stock *renamed* means ids that
-should be numbers silently stay strings. Log those to `TODO.md`.
+`scripts/data/int53-overrides.json` is curated against stock: only constructors and
+long fields stock declares (mtcute's layer drifts from stock's independently). Fix
+every int53 warning:
+
+- `matches no long field stock declares`: re-target a renamed field, drop an entry stock removed.
+- `missing for a long field stock declares`: mtcute covers it, add it (alphabetical keys).
+
+Also add any new user/chat/channel id or file size long the new layer brings.
 
 ### 5. NotificationCenter typings
 

@@ -5,16 +5,16 @@ Subject: bottom tabs tweaks: compact mode, hiding contacts, hiding it completely
 
 ---
  .../java/org/telegram/ui/CallLogActivity.java | 15 ++--
- .../ui/Components/BulletinFactory.java        |  9 +++
+ .../ui/Components/BulletinFactory.java        |  9 ++
  .../ui/Components/glass/GlassTabView.java     | 35 +++++++-
- .../org/telegram/ui/ContactsActivity.java     |  9 ++-
+ .../org/telegram/ui/ContactsActivity.java     |  9 +-
  .../java/org/telegram/ui/DialogsActivity.java | 14 ++--
- .../org/telegram/ui/MainTabsActivity.java     | 81 ++++++++++++++-----
- .../java/org/telegram/ui/ProfileActivity.java |  9 ++-
+ .../org/telegram/ui/MainTabsActivity.java     | 82 ++++++++++++++-----
+ .../java/org/telegram/ui/ProfileActivity.java |  9 +-
  .../org/telegram/ui/SettingsActivity.java     |  8 +-
- .../java/org/telegram/ui/TopicsFragment.java  |  9 ++-
+ .../java/org/telegram/ui/TopicsFragment.java  |  9 +-
  .../org/telegram/ui/ViewPagerActivity.java    |  2 +-
- 10 files changed, 141 insertions(+), 50 deletions(-)
+ 10 files changed, 142 insertions(+), 50 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java
 index 0000000..0000000 100644
@@ -216,7 +216,7 @@ index 0000000..0000000 100644
  import me.vkryl.android.animator.BoolAnimator;
  import me.vkryl.android.animator.FactorAnimator;
  import me.vkryl.android.util.ClickHelper;
-@@ -2868,7 +2870,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2869,7 +2871,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              allowBots = arguments.getBoolean("allowBots", true);
              closeFragment = arguments.getBoolean("closeFragment", true);
              allowGlobalSearch = arguments.getBoolean("allowGlobalSearch", true);
@@ -225,7 +225,7 @@ index 0000000..0000000 100644
  
              byte[] requestPeerTypeBytes = arguments.getByteArray("requestPeerType");
              if (requestPeerTypeBytes != null) {
-@@ -2978,8 +2980,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2979,8 +2981,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
  
          BirthdayController.getInstance(currentAccount).check();
@@ -236,7 +236,7 @@ index 0000000..0000000 100644
  
          return true;
      }
-@@ -13792,8 +13794,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13839,8 +13841,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          }
  
@@ -247,7 +247,7 @@ index 0000000..0000000 100644
      }
  
      @Override
-@@ -14177,8 +14181,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14224,8 +14228,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
  
          final int additionalList = dp(48);
@@ -463,13 +463,14 @@ index 0000000..0000000 100644
          final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
          float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
          if (tabletLayout) {
-@@ -1071,10 +1105,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1071,10 +1105,16 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      private void checkUi_tabsPosition() {
 +        if (tabsView == null) return;
 +        if (MainTabsHelper.isHidden()) {
-+            tabsView.setVisibility(View.GONE);
++            tabsViewWrapper.setVisibility(View.GONE);
++            fadeView.setVisibility(View.GONE);
 +            return;
 +        }
          final boolean isUpdateLayoutVisible = updateLayoutWrapper.isUpdateLayoutVisible();
@@ -480,7 +481,7 @@ index 0000000..0000000 100644
  
          final float factor = animatorTabsVisible.getFloatValue();
          final float scale = lerp(0.85f, 1f, factor);
-@@ -1158,7 +1197,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1158,7 +1198,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      private boolean accountSwitchHintShown;
  
      private void showAccountChangeHint() {
@@ -545,7 +546,7 @@ index 0000000..0000000 100644
          return super.onFragmentCreate();
      }
  
-@@ -2065,8 +2067,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -2070,8 +2072,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          }
  
          final int additionalList = dp(48);

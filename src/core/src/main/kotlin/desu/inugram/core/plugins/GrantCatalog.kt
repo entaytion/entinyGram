@@ -42,6 +42,15 @@ object GrantCatalog {
             tierWhenUnscoped = null,
         ),
         Entry(
+            name = "sqlite",
+            scopes = ScopeKind.FS_SIZE,
+            values = emptySet(),
+            extraValues = emptySet(),
+            refusesTakeover = false,
+            tier = GrantTier.NEUTRAL,
+            tierWhenUnscoped = null,
+        ),
+        Entry(
             name = "clipboard.write",
             scopes = ScopeKind.NONE,
             values = emptySet(),

@@ -362,7 +362,6 @@ bugfix/chat-keyboard-transition-gap.patch
 bugfix/keyboard-transition-delay.patch
 bugfix/rich_preview_entities.patch
 bugfix/reactions-cull-during-change.patch
-bugfix/persistent-bot-keyboard-back.patch
 feature/bot-description-media-viewer.patch
 bugfix/forward-sender-avatar.patch
 bugfix/search-highlight-block-offset.patch
@@ -562,3 +561,11 @@ entiny/chat/side-button-action.patch
 entiny/chat/contact-link-query.patch
 entiny/privacy/user-info-saver.patch
 entiny/tabs/system-folders-recommended.patch
+feature/profile-gift-button.patch
+bugfix/expanded-dark-theme.patch
+bugfix/no-quick-ack-sent-state.patch
+bugfix/sent-message-server-order.patch
+bugfix/settings-camera-button-clip.patch
+bugfix/settings-header-avatar.patch
+feature/animated-avatars.patch
+misc/experimental-settings-in-release.patch

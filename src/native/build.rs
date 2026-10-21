@@ -17,6 +17,7 @@ const PRELUDES: &[(&str, &str, &str)] = &[
   ("writes", "<inu:writes>", "src/js/writes.js"),
   ("message", "<inu:message>", "src/js/message.js"),
   ("utils", "<inu:utils>", "src/js/utils.js"),
+  ("sqlite", "<inu:sqlite>", "src/js/sqlite.js"),
 ];
 
 fn main() {

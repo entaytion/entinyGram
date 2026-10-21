@@ -57,7 +57,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -3721,7 +3721,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -3744,7 +3744,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  file = null;
              }
          }
@@ -233,7 +233,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33777,6 +33811,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33781,6 +33815,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -246,7 +246,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -39942,7 +39982,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39946,7 +39986,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -255,7 +255,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -46389,7 +46429,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46393,7 +46433,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

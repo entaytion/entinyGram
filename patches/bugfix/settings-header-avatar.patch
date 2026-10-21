@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 21 Oct 2026 08:37:10 +0400
+Subject: fix settings avatar resolution
+
+---
+ .../src/main/java/org/telegram/ui/SettingsActivity.java         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -561,7 +561,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+         if (avatarUploadingRequest != -1) return;
+ 
+         avatarDrawable.setInfo(user);
+-        avatarView.setForUserOrChat(user, avatarDrawable);
++        avatarView.setImage(null, null, ImageLocation.getForUserOrChat(currentAccount, user, ImageLocation.TYPE_BIG), "90_90", ImageLocation.getForUserOrChat(currentAccount, user, ImageLocation.TYPE_SMALL), "50_50", avatarDrawable, user);
+         titleView.setText(Emoji.replaceEmoji(UserObject.getUserName(user), titleView.getPaint().getFontMetricsInt(), false));
+         final StringBuilder sb = new StringBuilder();
+         if (user != null) {

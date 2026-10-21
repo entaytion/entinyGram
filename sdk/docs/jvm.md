@@ -260,8 +260,15 @@ parameters, 1 MB of definition. Nested calls into bodies are limited to 64 level
 > ‼️ Avoid this API. DEX files are hard to audit and are usually not needed.
 > If you find yourself needing to load a custom DEX, please reach out!
 
-`inu.jvm.loadDex(pathOrBytes)` loads a DEX file (up to 8 MB). Classes in it become reachable
-through `inu.jvm.cls`.
+`inu.jvm.loadDex(source)` loads a DEX file (up to 8 MB) from an absolute path, a `Blob` or bytes.
+Classes in it become reachable through `inu.jvm.cls`. A bundled `.dex` import is a `File`, so it
+can be passed directly:
+
+```ts
+import hooks from './hooks.dex'
+
+inu.jvm.loadDex(hooks)
+```
 
 ## Related `inu.android` helpers
 

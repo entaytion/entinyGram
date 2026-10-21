@@ -25,6 +25,7 @@ use crate::api::canvas::{install_canvas, CanvasHost};
 use crate::api::error::{describe_js_error, install_plugin_error, install_rejection_tracker};
 use crate::api::globals::{install_globals, RandomHost};
 use crate::api::info::{install_inu, InuInfo};
+use crate::api::io::assets::{install_assets, parse_assets};
 use crate::api::io::fetch::{install_fetch, FetchHost};
 use crate::api::io::local_storage::install_local_storage;
 use crate::api::lifecycle::{install_lifecycle, AppMode};
@@ -54,7 +55,7 @@ use crate::runtime::Dispose;
 use crate::runtime::{enter_js, is_job_pending};
 use crate::sandbox::grants::{CachedGrantHost, GrantHost};
 use crate::sandbox::limits::{
-  arm, install_interrupt_handler, ExternalMemory, ENTRY_DEADLINE_MS, EVAL_DEADLINE_MS, HEAP_LIMIT_BYTES,
+  arm, describe_memory_usage, install_interrupt_handler, ExternalMemory, HeapAllocator, ENTRY_DEADLINE_MS, EVAL_DEADLINE_MS, HEAP_LIMIT_BYTES,
 };
 use crate::sandbox::registry::Lifecycle;
 
@@ -71,16 +72,19 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeCreate(
   install_fs: jboolean,
   android_dirs: JString,
   local_storage_path: JString,
+  sqlite_path: JString,
+  sqlite_quota_bytes: jlong,
   install_jvm: jboolean,
   install_xposed: jboolean,
   grant_tokens: JObjectArray<JString>,
+  asset_entries: JObjectArray<JString>,
 ) -> jlong {
   in_env(&mut env, 0, |env| {
     let Some(bridge) = JniBridge::new(env, &listener) else {
       return 0;
     };
 
-    let Ok(rt) = Runtime::new() else { return 0 };
+    let Ok(rt) = Runtime::new_with_alloc(HeapAllocator::new(HEAP_LIMIT_BYTES)) else { return 0 };
     let Ok(ctx) = Context::full(&rt) else {
       return 0;
     };
@@ -96,7 +100,6 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeCreate(
 
     let interrupt_log = make_log(bridge.console.clone());
     install_interrupt_handler(&rt, Arc::new(move |msg: &str| interrupt_log(msg)));
-    rt.set_memory_limit(HEAP_LIMIT_BYTES);
 
     let spill_dir = PathBuf::from(jstring_to_string(env, &spill_dir));
     let transfer_dir = PathBuf::from(jstring_to_string(env, &transfer_dir));
@@ -104,7 +107,9 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeCreate(
     let fs_dir = PathBuf::from(jstring_to_string(env, &fs_dir));
     let android_dirs = jstring_to_string(env, &android_dirs);
     let local_storage_path = PathBuf::from(jstring_to_string(env, &local_storage_path));
+    let sqlite_path = PathBuf::from(jstring_to_string(env, &sqlite_path));
     let grants: Rc<dyn GrantHost> = CachedGrantHost::from_pairs(&read_string_array(env, &grant_tokens));
+    let assets = parse_assets(&read_string_array(env, &asset_entries));
     let Some(engine) = (|| -> Option<Engine> {
       let _deadline = arm(ENTRY_DEADLINE_MS);
       let lifecycle = Lifecycle::new();
@@ -261,6 +266,17 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeCreate(
           globals.install_ungranted_namespace(&ctx, "fs", "fs")
         })?;
       }
+      install_part(&ctx, "inu.sqlite", log.as_ref(), |ctx, globals| {
+        if sqlite_path.as_os_str().is_empty() {
+          return globals.install_ungranted_namespace(&ctx, "sqlite", "sqlite");
+        }
+        let quota = match sqlite_quota_bytes {
+          ..=0 => crate::api::io::fs::DEFAULT_QUOTA_BYTES,
+          bytes => bytes as u64,
+        };
+        crate::api::io::sqlite::install_sqlite(&ctx, grants.clone(), sqlite_path.clone(), quota, &globals)
+      })?;
+      install_part(&ctx, "inu.assets", log.as_ref(), |ctx, globals| install_assets(&ctx, assets, &globals))?;
       let rpc = install_part(&ctx, "inu.interceptRpc/onUpdate", log.as_ref(), |ctx, globals| {
         let host: Rc<dyn RpcHost> = bridge.clone();
         let shared = shared.clone().restore(&ctx)?;
@@ -308,6 +324,7 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeCreate(
         files,
         timers,
         notifications,
+        external,
         jvm,
         xposed,
       })
@@ -1105,6 +1122,17 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativePollUnloa
     Err(EntryError::Busy | EntryError::Reentrant) => return false,
   };
   engine.lifecycle_state.poll_unload(&engine.ctx)
+}
+
+#[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeMemoryUsage(
+  mut env: EnvUnowned,
+  _this: JObject,
+  ptr: jlong,
+) -> jstring {
+  with_engine_env(&mut env, ptr, std::ptr::null_mut(), |env, engine| {
+    new_jstring_raw(env, describe_memory_usage(&engine.ctx, &engine.external))
+  })
 }
 
 #[no_mangle]

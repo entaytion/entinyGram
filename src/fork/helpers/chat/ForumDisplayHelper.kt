@@ -17,6 +17,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.Forum.ForumUtilities
 import org.telegram.ui.DialogsActivity
+import org.telegram.ui.MainTabsActivity
 import org.telegram.ui.TopicsFragment
 
 object ForumDisplayHelper {
@@ -113,8 +114,9 @@ object ForumDisplayHelper {
                 } else {
                     i--
                 }
-            } else if (tabs && f is DialogsActivity) {
-                f.rightSlidingDialogContainer?.takeIf { it.hasFragment() }?.finishPreview()
+            } else if (tabs) {
+                val dialogs = if (f is MainTabsActivity) f.dialogsActivity else f
+                (dialogs as? DialogsActivity)?.rightSlidingDialogContainer?.takeIf { it.hasFragment() }?.finishPreview()
             }
             i++
         }

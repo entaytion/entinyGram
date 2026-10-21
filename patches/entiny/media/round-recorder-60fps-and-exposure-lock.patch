@@ -1,15 +1,15 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sat, 5 Sep 2026 20:39:19 +0300
+Date: Wed, 21 Oct 2026 12:26:58 +0300
 Subject: Add 60 FPS round video, exposure lock, and exposure compensation buttons
 
 ---
  .../messenger/camera/Camera2Session.java      | 75 +++++++++++++-
  .../ui/Components/InstantCameraView.java      | 98 +++++++++++++++----
  .../ui/Components/InstantCameraView2.java     |  6 +-
- .../RoundVideoCameraController.java           |  1 +
- .../roundvideo/RoundVideoCodecRecorder.java   |  4 +-
- .../camera/roundvideo/RoundVideoSession.java  |  3 +-
+ .../round/RoundVideoCameraController.java     |  1 +
+ .../round/RoundVideoCodecRecorder.java        |  4 +-
+ .../recorder/round/RoundVideoSession.java     |  3 +-
  6 files changed, 161 insertions(+), 26 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
@@ -404,10 +404,10 @@ index 0000000..0000000 100644
                  .setCompositionEnabled(SharedSettings.roundVideoComposition.get())
                  .setListener(sessionListener)
                  .setOutputListener(upload)
-diff --git a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCameraController.java b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCameraController.java
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
 index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCameraController.java
-+++ b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCameraController.java
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
 @@ -2771,6 +2771,7 @@ final class RoundVideoCameraController {
          if (cameraResolution == RoundVideoSession.CameraResolution.LOW) {
              return outputResolution.getSize();
@@ -416,10 +416,10 @@ index 0000000..0000000 100644
          if (outputResolution == RoundVideoSession.OutputResolution.P480) {
              return cameraResolution == RoundVideoSession.CameraResolution.HIGH ? 960 : 720;
          }
-diff --git a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCodecRecorder.java b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCodecRecorder.java
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java
 index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCodecRecorder.java
-+++ b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoCodecRecorder.java
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java
 @@ -274,7 +274,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
          int audioBufferSize = Math.max(minBufferSize * 4, 16_384);
          MediaFormat format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, AUDIO_SAMPLE_RATE, 1);
@@ -438,10 +438,10 @@ index 0000000..0000000 100644
                  AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, audioBufferSize);
          if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) throw new IllegalStateException("Unable to initialize AudioRecord");
      }
-diff --git a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoSession.java b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoSession.java
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
 index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoSession.java
-+++ b/TMessagesProj/src/main/java/org/telegram/utils/camera/roundvideo/RoundVideoSession.java
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
 @@ -36,7 +36,8 @@ public final class RoundVideoSession {
          /** 480 x 480 output. */
          P480(480),

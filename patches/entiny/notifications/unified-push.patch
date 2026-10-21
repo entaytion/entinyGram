@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -64,6 +64,7 @@ dependencies {
+@@ -65,6 +65,7 @@ dependencies {
      compileOnly 'org.checkerframework:checker-compat-qual:2.5.0'
      compileOnly 'com.google.j2objc:j2objc-annotations:2.8'
      implementation 'com.google.firebase:firebase-messaging:22.0.0'

@@ -35,6 +35,12 @@ class WebPreviewReplacementsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuWebPreviewReplacementsInfo)))
 
+        items.add(
+            UItem.asCheck(TOGGLE_ON_PASTE, LocaleController.getString(R.string.InuWebPreviewReplaceOnPaste))
+                .setChecked(InuConfig.WEB_PREVIEW_REPLACE_ON_PASTE.value)
+        )
+        items.add(UItem.asShadow(null))
+
         for ((i, r) in replacements.withIndex()) {
             items.add(UItem.asButton(ITEM_BASE + i, r.pattern, r.replacement))
         }
@@ -65,6 +71,10 @@ class WebPreviewReplacementsActivity : SettingsPageActivity() {
             else -> {
                 if (!InuConfig.WEB_PREVIEW_REPLACEMENTS_ENABLED.value) return
                 when (item.id) {
+                    TOGGLE_ON_PASTE -> {
+                        (view as? TextCheckCell)?.isChecked = InuConfig.WEB_PREVIEW_REPLACE_ON_PASTE.toggle()
+                    }
+
                     BUTTON_ADD -> showEditDialog(-1)
                     BUTTON_RESET -> {
                         WebPreviewHelper.resetToDefault()
@@ -183,6 +193,7 @@ class WebPreviewReplacementsActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_ENABLED = InuUtils.generateId()
+        private val TOGGLE_ON_PASTE = InuUtils.generateId()
         private val BUTTON_ADD = InuUtils.generateId()
         private val BUTTON_RESET = InuUtils.generateId()
         private const val ITEM_BASE = 10000

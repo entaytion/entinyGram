@@ -107,6 +107,42 @@ class WordDiffTest {
         )
     }
 
+    @Test
+    fun merge_run_ending_in_whitespace_before_word_eq() {
+        assertEquals(
+            "[-aa bb cc -][+xx yy +]settings stay the same",
+            diff("aa bb cc settings stay the same", "xx yy settings stay the same"),
+        )
+    }
+
+    @Test
+    fun absorb_short_anchors_in_rewrite() {
+        assertEquals(
+            "[-завтра пойду в магазин и куплю хлеба-][+сегодня схожу в аптеку и возьму лекарства+]",
+            diff("завтра пойду в магазин и куплю хлеба", "сегодня схожу в аптеку и возьму лекарства"),
+        )
+    }
+
+    @Test
+    fun absorb_anchor_word_in_rewritten_paragraph() {
+        assertEquals(
+            "keep this\n\n[-мне нужен сайдбар, но кроме как \"залезть в настройки\" он нефункционален-]" +
+                "[+вместо гамбургера три точки\nи там те же самые настройки+]",
+            diff(
+                "keep this\n\nмне нужен сайдбар, но кроме как \"залезть в настройки\" он нефункционален",
+                "keep this\n\nвместо гамбургера три точки\nи там те же самые настройки",
+            ),
+        )
+    }
+
+    @Test
+    fun keep_long_anchor_between_changes() {
+        assertEquals(
+            "я думаю что это [-хорошая-][+плохая+] идея, давай [-сделаем-][+не будем+]",
+            diff("я думаю что это хорошая идея, давай сделаем", "я думаю что это плохая идея, давай не будем"),
+        )
+    }
+
     // edge cases
     @Test
     fun full_replace() {

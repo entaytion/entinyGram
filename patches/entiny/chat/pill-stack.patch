@@ -47,7 +47,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3373,6 +3373,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3374,6 +3374,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              fragmentSearchField.updateColors();
          }
  
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
          fragmentSearchField.setCloseButtonOnClickListener(() -> {
              if (searchViewPager != null && searchViewPager.actionModeShowing()) {
                  searchViewPager.hideActionMode();
-@@ -3393,6 +3397,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3394,6 +3398,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              @Override
              public void onSearchExpand() {
                  searching = true;
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                  if (switchItem != null) {
                      switchItem.setVisibility(View.GONE);
                  }
-@@ -3456,6 +3461,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3457,6 +3462,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
  
                  searching = false;
@@ -74,7 +74,7 @@ index 0000000..0000000 100644
                  searchWas = false;
                  if (viewPages[0] != null) {
                      viewPages[0].listView.setEmptyView(folderId == 0 ? viewPages[0].progressView : null);
-@@ -5579,6 +5585,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5581,6 +5587,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
              @Override
              public void openAnimationStarted(boolean open) {

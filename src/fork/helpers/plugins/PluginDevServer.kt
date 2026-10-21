@@ -78,9 +78,9 @@ object PluginDevServer {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != ACTION) return
-            if (intent.getStringExtra("cmd") == "eval") {
-                evaluate(context, intent, isOrderedBroadcast, goAsync())
-                return
+            when (intent.getStringExtra("cmd")) {
+                "eval" -> return answerLater(isOrderedBroadcast, goAsync()) { startEval(context, intent, it) }
+                "memory" -> return answerLater(isOrderedBroadcast, goAsync()) { startMemory(context, intent, it) }
             }
             // on the main thread, unlike other install paths: an ordered broadcast's result must be set before onReceive returns
             val reply = try {
@@ -195,8 +195,11 @@ object PluginDevServer {
         return JSONObject().put("ok", true).put("action", "removed").put("plugin", described)
     }
 
-    /** answers off the main thread so the result can be awaited: `am broadcast` blocks until [BroadcastReceiver.PendingResult.finish] */
-    private fun evaluate(context: Context, intent: Intent, ordered: Boolean, pending: BroadcastReceiver.PendingResult) {
+    /**
+     * answers off the main thread so the result can be awaited: `am broadcast` blocks until
+     * [BroadcastReceiver.PendingResult.finish]. [start] answers null once the engine owns the answer
+     */
+    private fun answerLater(ordered: Boolean, pending: BroadcastReceiver.PendingResult, start: ((JSONObject) -> Unit) -> JSONObject?) {
         val answered = AtomicBoolean()
         val answer = { reply: JSONObject ->
             if (answered.compareAndSet(false, true)) {
@@ -205,12 +208,31 @@ object PluginDevServer {
             }
         }
         val refused = try {
-            startEval(context, intent, answer)
+            start(answer)
         } catch (e: Exception) {
-            PluginLog.HOST.e("dev", "eval failed", e)
+            PluginLog.HOST.e("dev", "command failed", e)
             fail(e.message ?: e.toString())
         }
         refused?.let(answer)
+    }
+
+    /** every running plugin, or the one [Intent] `file` was pushed as */
+    private fun startMemory(context: Context, intent: Intent, answer: (JSONObject) -> Unit): JSONObject? {
+        val name = intent.getStringExtra("file")
+        val plugins = if (name == null) PluginManager.plugins() else listOf(findInstalled(context, name) ?: return fail("not installed: $name"))
+        val sessions = plugins.mapNotNull { it.session }
+        if (name != null && sessions.isEmpty()) return fail("${plugins[0].manifest.name} is not running")
+        AndroidUtilities.runOnUIThread({ answer(fail("no result after ${EVAL_DEFAULT_SECONDS}s")) }, EVAL_DEFAULT_SECONDS * 1000)
+        EngineDispatch.scheduler.postRunnable {
+            val arr = JSONArray()
+            for (session in sessions) {
+                if (!session.isCurrent()) continue
+                val usage = session.engine.memoryUsage() ?: continue
+                arr.put(JSONObject().put("plugin", describe(session.plugin)).put("usage", JSONObject(usage)))
+            }
+            answer(JSONObject().put("ok", true).put("plugins", arr))
+        }
+        return null
     }
 
     /**

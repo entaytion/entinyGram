@@ -252,12 +252,12 @@ declare namespace inu {
     function toTl(value: JavaObject): TLObject
 
     /**
-     * Load a DEX file from a path or Uint8Array
+     * Load a DEX file from an absolute path, a Blob (e.g. a bundled `import dex from './hooks.dex'`) or bytes
      *
      * **Note**: avoid using this API when possible. If you need to load a DEX in your plugin,
      * please talk to us about your use-case
      */
-    function loadDex(path: string | Uint8Array): void
+    function loadDex(source: string | Blob | Uint8Array): void
 
     /**
      * Defines a public JVM class, by default extending Object with a no-arg `super()` constructor.

@@ -19,7 +19,9 @@ object WordDiff {
      *  3. Per adjacent DEL+INS pair, peel char-level prefix/suffix and char-diff the middle
      *     when "clean" (single anchor, single-direction non-EQ ops).
      *  4. Collapse consecutive DEL+INS pairs separated by whitespace EQs into one block,
-     *     except when adjacent to an EQ ending/starting with a word char (intra-word continuation).
+     *     except when the boundary with a neighbouring EQ splits a word (intra-word continuation).
+     *  5. Absorb non-whitespace EQs no longer than the changes on both sides into one block,
+     *     so a heavy rewrite doesn't read as a word salad around coincidental anchors.
      *
      * Internally everything works on code-point arrays so supplementary characters
      * (surrogate pairs) are never split. Char offsets are reconstructed at the end.
@@ -29,9 +31,14 @@ object WordDiff {
         val newCps = toCodePoints(newText)
         val oldOffsets = cpOffsets(oldText, oldCps.size)
         val newOffsets = cpOffsets(newText, newCps.size)
-        val cpOps = mergeChangeRuns(
+        val cpOps = absorbShortAnchors(
             oldCps,
-            coalesce(refineAdjacentEdits(oldCps, newCps, wordLevelDiff(oldCps, newCps))),
+            newCps,
+            mergeChangeRuns(
+                oldCps,
+                newCps,
+                coalesce(refineAdjacentEdits(oldCps, newCps, wordLevelDiff(oldCps, newCps))),
+            ),
         )
         return cpOps.map { r ->
             DiffRange(
@@ -298,21 +305,8 @@ object WordDiff {
     }
 
     // collapses runs of DEL+INS pairs separated by whitespace-only EQs into one DEL+INS block,
-    // unless adjacent to an EQ ending/starting with a word char (intra-word continuation).
-    private fun mergeChangeRuns(oldCps: IntArray, ops: List<DiffRange>): List<DiffRange> {
-        fun isWhitespaceEq(op: DiffRange): Boolean {
-            if (op.kind != DiffKind.EQUAL) return false
-            for (k in 0 until op.length) {
-                if (!Character.isWhitespace(oldCps[op.oldStart + k])) return false
-            }
-            return true
-        }
-        fun touchesWordChar(op: DiffRange?, atEnd: Boolean): Boolean {
-            if (op == null || op.kind != DiffKind.EQUAL || op.length == 0) return false
-            val idx = if (atEnd) op.oldStart + op.length - 1 else op.oldStart
-            return Character.isLetterOrDigit(oldCps[idx])
-        }
-
+    // unless a neighbouring EQ boundary splits a word (intra-word continuation).
+    private fun mergeChangeRuns(oldCps: IntArray, newCps: IntArray, ops: List<DiffRange>): List<DiffRange> {
         val out = ArrayList<DiffRange>()
         var i = 0
         while (i < ops.size) {
@@ -325,7 +319,7 @@ object WordDiff {
                 val curJ = ops[j]
                 if (curJ.kind != DiffKind.EQUAL) { j++; continue }
                 val nextIsChange = j + 1 < ops.size && ops[j + 1].kind != DiffKind.EQUAL
-                if (isWhitespaceEq(curJ) && nextIsChange) { j++; continue }
+                if (isWhitespaceEq(oldCps, curJ) && nextIsChange) { j++; continue }
                 break
             }
             val run = ops.subList(i, j)
@@ -334,7 +328,8 @@ object WordDiff {
             val hasIns = run.any { it.kind == DiffKind.INSERT }
             val opBefore = if (i > 0) ops[i - 1] else null
             val opAfter = if (j < ops.size) ops[j] else null
-            val boundedClean = !touchesWordChar(opBefore, atEnd = true) && !touchesWordChar(opAfter, atEnd = false)
+            val boundedClean = !(opBefore != null && splitsWordAtEnd(oldCps, newCps, opBefore)) &&
+                !(opAfter != null && splitsWordAtStart(oldCps, newCps, opAfter))
             if (nonEq >= 2 && hasDel && hasIns && boundedClean) {
                 val firstDel = run.first { it.kind != DiffKind.INSERT }
                 val lastDel = run.last { it.kind != DiffKind.INSERT }
@@ -350,6 +345,67 @@ object WordDiff {
             i = j
         }
         return out
+    }
+
+    // diff-match-patch style semantic cleanup: an EQ no longer than the changes on either side
+    // is a coincidental anchor, so fold it and its neighbours into one DEL+INS block. Repeats
+    // since each fold grows the changes around the next EQ.
+    private fun absorbShortAnchors(oldCps: IntArray, newCps: IntArray, input: List<DiffRange>): List<DiffRange> {
+        fun maxSideLength(changes: List<DiffRange>) = maxOf(
+            changes.sumOf { if (it.kind == DiffKind.DELETE) it.length else 0 },
+            changes.sumOf { if (it.kind == DiffKind.INSERT) it.length else 0 },
+        )
+
+        var ops = input
+        while (true) {
+            var absorbed = false
+            for (i in 1 until ops.size - 1) {
+                val eq = ops[i]
+                if (eq.kind != DiffKind.EQUAL || isWhitespaceEq(oldCps, eq)) continue
+                if (splitsWordAtStart(oldCps, newCps, eq) || splitsWordAtEnd(oldCps, newCps, eq)) continue
+                var start = i
+                while (start > 0 && ops[start - 1].kind != DiffKind.EQUAL) start--
+                var end = i
+                while (end + 1 < ops.size && ops[end + 1].kind != DiffKind.EQUAL) end++
+                if (start == i || end == i) continue
+                if (eq.length > maxSideLength(ops.subList(start, i))) continue
+                if (eq.length > maxSideLength(ops.subList(i + 1, end + 1))) continue
+
+                val first = ops[start]
+                val last = ops[end]
+                val oldEnd = last.oldStart + if (last.kind == DiffKind.INSERT) 0 else last.length
+                val newEnd = last.newStart + if (last.kind == DiffKind.DELETE) 0 else last.length
+                ops = ops.subList(0, start) +
+                    DiffRange(DiffKind.DELETE, first.oldStart, first.newStart, oldEnd - first.oldStart) +
+                    DiffRange(DiffKind.INSERT, oldEnd, first.newStart, newEnd - first.newStart) +
+                    ops.subList(end + 1, ops.size)
+                absorbed = true
+                break
+            }
+            if (!absorbed) return ops
+        }
+    }
+
+    private fun isWhitespaceEq(oldCps: IntArray, op: DiffRange): Boolean {
+        for (k in 0 until op.length) {
+            if (!Character.isWhitespace(oldCps[op.oldStart + k])) return false
+        }
+        return true
+    }
+
+    private fun splitsWordAtStart(oldCps: IntArray, newCps: IntArray, eq: DiffRange): Boolean {
+        if (eq.kind != DiffKind.EQUAL || eq.length == 0 || !Character.isLetterOrDigit(oldCps[eq.oldStart])) return false
+        return (eq.oldStart > 0 && Character.isLetterOrDigit(oldCps[eq.oldStart - 1])) ||
+            (eq.newStart > 0 && Character.isLetterOrDigit(newCps[eq.newStart - 1]))
+    }
+
+    private fun splitsWordAtEnd(oldCps: IntArray, newCps: IntArray, eq: DiffRange): Boolean {
+        if (eq.kind != DiffKind.EQUAL || eq.length == 0) return false
+        val oldEnd = eq.oldStart + eq.length
+        val newEnd = eq.newStart + eq.length
+        if (!Character.isLetterOrDigit(oldCps[oldEnd - 1])) return false
+        return (oldEnd < oldCps.size && Character.isLetterOrDigit(oldCps[oldEnd])) ||
+            (newEnd < newCps.size && Character.isLetterOrDigit(newCps[newEnd]))
     }
 
     private fun coalesce(ops: List<DiffRange>): List<DiffRange> {

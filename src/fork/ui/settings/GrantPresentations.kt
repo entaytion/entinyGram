@@ -8,6 +8,7 @@ internal class GrantPresentation(val titleRes: Int, val iconRes: Int)
 
 internal val KNOWN_GRANTS: Map<String, GrantPresentation> = mapOf(
     "fs" to GrantPresentation(R.string.InuPluginGrantFs, R.drawable.files_storage),
+    "sqlite" to GrantPresentation(R.string.InuPluginGrantSqlite, R.drawable.files_storage),
     "clipboard.write" to GrantPresentation(R.string.InuPluginGrantClipboardWrite, R.drawable.msg_copy),
     "clipboard.read" to GrantPresentation(R.string.InuPluginGrantClipboardRead, R.drawable.msg_copy),
     "openUrl" to GrantPresentation(R.string.InuPluginGrantOpenUrl, R.drawable.msg_link),

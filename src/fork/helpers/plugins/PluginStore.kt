@@ -4,6 +4,7 @@ import desu.inugram.InuConfig
 import desu.inugram.core.plugins.PluginInstall
 import desu.inugram.core.plugins.PluginInstalls
 import desu.inugram.core.plugins.PluginManifestParser
+import desu.inugram.core.plugins.PluginOrigin
 import desu.inugram.helpers.plugins.io.PluginFs
 import java.io.File
 import java.io.IOException
@@ -49,6 +50,7 @@ object PluginStore {
                     enabled = install.enabled
                     dev = install.dev
                     grants = install.grants
+                    origin = install.origin
                 }
             )
         }
@@ -63,18 +65,26 @@ object PluginStore {
     fun persist(plugins: List<Plugin>) {
         val arr = JSONArray()
         for (p in plugins) {
-            arr.put(record(p.id, p.enabled, p.manifest.id, p.dev, p.grants))
+            arr.put(record(p.id, p.enabled, p.manifest.id, p.dev, p.grants, p.origin))
         }
         for (install in unloaded) {
-            arr.put(record(install.id, install.enabled, install.pluginId, install.dev, install.grants))
+            arr.put(record(install.id, install.enabled, install.pluginId, install.dev, install.grants, install.origin))
         }
         InuConfig.PLUGINS_STATE.value = arr.toString()
     }
 
-    private fun record(id: String, enabled: Boolean, pluginId: String?, dev: Boolean, grants: List<String>?): JSONObject =
+    private fun record(
+        id: String,
+        enabled: Boolean,
+        pluginId: String?,
+        dev: Boolean,
+        grants: List<String>?,
+        origin: PluginOrigin?,
+    ): JSONObject =
         JSONObject().put("id", id).put("enabled", enabled).putOpt("pluginId", pluginId)
             .apply { if (dev) put("dev", true) }
             .putOpt("grants", grants?.let { JSONArray(it) })
+            .putOpt("origin", origin?.let { JSONObject().put("channel", it.channelId).put("message", it.messageId) })
 
     /** kept until the caller finishes the import and calls [dropUnloaded], so a failed import does not lose it */
     fun findUnloaded(pluginId: String): PluginInstall? = unloaded.firstOrNull { it.pluginId == pluginId }
@@ -129,6 +139,9 @@ object PluginStore {
                 o.optString("pluginId").takeIf { it.isNotEmpty() },
                 o.optBoolean("dev", false),
                 o.optJSONArray("grants")?.let { arr -> (0 until arr.length()).map { arr.getString(it) } },
+                o.optJSONObject("origin")
+                    ?.let { PluginOrigin(it.optLong("channel"), it.optInt("message")) }
+                    ?.takeIf { it.channelId != 0L },
             )
         }
     }

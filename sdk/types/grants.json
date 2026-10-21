@@ -46,6 +46,14 @@
       "description": "a private directory on disk; a scope such as fs(200mb) raises the default 50mb quota"
     },
     {
+      "name": "sqlite",
+      "scopes": "fsSize",
+      "tier": "neutral",
+      "title": "InuPluginGrantSqlite",
+      "icon": "files_storage",
+      "description": "a private sqlite database; a scope such as sqlite(200mb) raises the default 50mb quota"
+    },
+    {
       "name": "clipboard.write",
       "scopes": "none",
       "tier": "neutral",

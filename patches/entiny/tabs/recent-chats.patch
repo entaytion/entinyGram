@@ -54,7 +54,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2116,12 +2116,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2117,12 +2117,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  additionalPadding += h;
              }
  
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
              if (t != topPadding || b != getPaddingBottom()) {
                  setTopGlowOffset(t);
                  setPadding(0, t, 0, b);
-@@ -5775,6 +5779,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5777,6 +5781,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          checkUi_searchFieldStyle();
  
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);

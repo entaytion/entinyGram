@@ -1,0 +1,66 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 21 Oct 2026 12:31:44 +0300
+Subject: show send gift in profile menu, toggle for header gift action
+
+---
+ .../main/java/org/telegram/ui/ProfileActivity.java | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -9322,10 +9322,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     avatarImage.setHasStories(needInsetForStories());
+                 }
+                 if (chatId != 0) {
+-                    boolean gift = !BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
++                    boolean gift = !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
+                     otherItem.setSubItemShown(gift_premium, gift && !desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue());
+                     if (actionsView != null) {
+-                        actionsView.set(ProfileActionsView.KEY_GIFT, gift && !desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue());
++                        actionsView.set(ProfileActionsView.KEY_GIFT, gift && desu.inugram.InuConfig.SHOW_PROFILE_GIFT_BUTTON.getValue() && !desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue());
+                     }
+                 }
+             }
+@@ -10576,10 +10576,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+         fetchUsersFromChannelInfo();
+         inu_fetchLinkedChannelMessage();
+         if (chatId != 0) {
+-            boolean gift = !BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
++            boolean gift = !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
+             otherItem.setSubItemShown(gift_premium, gift && !desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue());
+             if (actionsView != null) {
+-                actionsView.set(ProfileActionsView.KEY_GIFT, gift && !desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue());
++                actionsView.set(ProfileActionsView.KEY_GIFT, gift && desu.inugram.InuConfig.SHOW_PROFILE_GIFT_BUTTON.getValue() && !desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue());
+             }
+         }
+     }
+@@ -12513,7 +12513,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     otherItem.addSubItem(delete_contact, R.drawable.msg_delete, LocaleController.getString(R.string.DeleteContact));
+                 }
+                 if (!UserObject.isDeleted(user) && !isBot && currentEncryptedChat == null && !userBlocked && userId != 333000 && userId != 777000 && userId != 42777) {
+-                    if (!BuildVars.IS_BILLING_UNAVAILABLE && !user.self && !user.bot && !MessagesController.isSupportUser(user) && !getMessagesController().premiumPurchaseBlocked()) {
++                    if (!user.self && !user.bot && !MessagesController.isSupportUser(user) && !getMessagesController().premiumPurchaseBlocked()) {
+                         StarsController.getInstance(currentAccount).loadStarGifts();
+                         if (!desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue()) {
+                         otherItem.addSubItem(gift_premium, R.drawable.msg_gift_premium, LocaleController.getString(R.string.ProfileSendAGift));
+@@ -12610,7 +12610,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                         otherItem.addSubItem(share, R.drawable.msg_share, LocaleController.getString(R.string.BotShare));
+                         shareAction = !chat.creator;
+                     }
+-                    if (!BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked()) {
++                    if (!getMessagesController().premiumPurchaseBlocked()) {
+                         StarsController.getInstance(currentAccount).loadStarGifts();
+                         if (!desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue()) {
+                         otherItem.addSubItem(gift_premium, R.drawable.msg_gift_premium, LocaleController.getString(R.string.ProfileSendAGiftToChannel));
+@@ -12707,7 +12707,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             actionsView.set(ProfileActionsView.KEY_VOICE_CHAT, voiceChatAction && !desu.inugram.InuConfig.HIDE_PROFILE_LIVE_ACTIONS_BUTTON.getValue());
+             actionsView.set(ProfileActionsView.KEY_STREAM, streamAction && !desu.inugram.InuConfig.HIDE_PROFILE_LIVE_ACTIONS_BUTTON.getValue());
+ 
+-            actionsView.set(ProfileActionsView.KEY_GIFT, giftAction && !desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue());
++            actionsView.set(ProfileActionsView.KEY_GIFT, giftAction && desu.inugram.InuConfig.SHOW_PROFILE_GIFT_BUTTON.getValue() && !desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue());
+             callItemVisible = videoCallItemVisible = false;
+             if (!discussAction) {
+                 if (isTopic) {

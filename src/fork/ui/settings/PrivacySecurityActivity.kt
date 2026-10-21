@@ -111,6 +111,16 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuStripTrackingParamsOnPaste)
             ).setChecked(InuConfig.STRIP_TRACKING_PARAMS_ON_PASTE.value)
         )
+        if (InuConfig.STRIP_TRACKING_PARAMS_ON_OPEN.value || InuConfig.STRIP_TRACKING_PARAMS_ON_PASTE.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_RESOLVE_TRACKABLE_REDIRECTS,
+                    R.string.InuResolveTrackableRedirects,
+                    R.string.InuResolveTrackableRedirectsInfo,
+                    InuConfig.RESOLVE_TRACKABLE_REDIRECTS.value
+                )
+            )
+        }
         items.add(UItem.asCustom(BUTTON_STRIP_TRACKING_PARAMS_SOURCE, getOrCreateSourceRow()))
         items.add(UItem.asShadow(null))
 
@@ -181,11 +191,18 @@ class PrivacySecurityActivity : SettingsPageActivity() {
             TOGGLE_STRIP_TRACKING_PARAMS_ON_OPEN -> {
                 val new = InuConfig.STRIP_TRACKING_PARAMS_ON_OPEN.toggle()
                 (view as? TextCheckCell)?.isChecked = new
+                listView.adapter.update(true)
             }
 
             TOGGLE_STRIP_TRACKING_PARAMS_ON_PASTE -> {
                 val new = InuConfig.STRIP_TRACKING_PARAMS_ON_PASTE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
+                listView.adapter.update(true)
+            }
+
+            TOGGLE_RESOLVE_TRACKABLE_REDIRECTS -> {
+                val new = InuConfig.RESOLVE_TRACKABLE_REDIRECTS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
             }
 
             TOGGLE_DISABLE_SENSITIVE -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_SENSITIVE.toggle()
@@ -299,6 +316,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_SENSITIVE = InuUtils.generateId()
         private val TOGGLE_STRIP_TRACKING_PARAMS_ON_OPEN = InuUtils.generateId()
         private val TOGGLE_STRIP_TRACKING_PARAMS_ON_PASTE = InuUtils.generateId()
+        private val TOGGLE_RESOLVE_TRACKABLE_REDIRECTS = InuUtils.generateId()
         private val BUTTON_STRIP_TRACKING_PARAMS_SOURCE = InuUtils.generateId()
         private val TOGGLE_DISABLE_DRAFT_UPLOAD = InuUtils.generateId()
         private val TOGGLE_BIOMETRIC_DELETE_CHAT = InuUtils.generateId()
@@ -318,6 +336,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-sensitive", R.string.InuDisableSensitive, TOGGLE_DISABLE_SENSITIVE),
                 SearchRegistry.Entry("strip-tracking-params", R.string.InuStripTrackingParamsOnOpen, TOGGLE_STRIP_TRACKING_PARAMS_ON_OPEN),
                 SearchRegistry.Entry("strip-tracking-params-paste", R.string.InuStripTrackingParamsOnPaste, TOGGLE_STRIP_TRACKING_PARAMS_ON_PASTE),
+                SearchRegistry.Entry("resolve-trackable-redirects", R.string.InuResolveTrackableRedirects, TOGGLE_RESOLVE_TRACKABLE_REDIRECTS),
                 SearchRegistry.Entry("disable-draft-upload", R.string.InuDisableDraftUpload, TOGGLE_DISABLE_DRAFT_UPLOAD),
                 SearchRegistry.Entry("biometric-confirm-delete-chat", R.string.InuBiometricConfirmDeleteChat, TOGGLE_BIOMETRIC_DELETE_CHAT),
                 SearchRegistry.Entry("biometric-confirm-logout", R.string.InuBiometricConfirmLogout, TOGGLE_BIOMETRIC_LOGOUT),

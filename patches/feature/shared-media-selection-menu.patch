@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -33745,6 +33745,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -33749,6 +33749,10 @@ public class ChatActivity extends BaseFragment implements
      }
  
      public void saveMessageToGallery(MessageObject messageObject) {
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
          String path = messageObject.messageOwner.attachPath;
          if (!TextUtils.isEmpty(path)) {
              File temp = new File(path);
-@@ -33788,11 +33792,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -33792,11 +33796,11 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
              if (!TextUtils.isEmpty(videoPath)) {
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
  
          photoVideoAdapter = new SharedPhotoVideoAdapter(context) {
              @Override
-@@ -5364,6 +5366,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -5365,6 +5367,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                  cantDeleteMessagesCount = 0;
              }, null, resourcesProvider);
          } else if (id == forward) {
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
              if (userInfo != null) {
                  if (profileActivity.getMessagesController().isUserNoForwards(userInfo)) {
                      if (fwdRestrictedHint != null) {
-@@ -5425,8 +5428,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -5426,8 +5429,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                          if (message != null) {
                              profileActivity.getSendMessagesHelper().sendMessage(SendMessagesHelper.SendMessageParams.of(message.toString(), did, null, null, null, true, null, null, null, true, 0, 0, null, false));
                          }
@@ -76,7 +76,7 @@ index 0000000..0000000 100644
                      fragment1.finishFragment();
                      UndoView undoView = null;
                      if (profileActivity instanceof ProfileActivity) {
-@@ -6186,6 +6190,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6187,6 +6191,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
      }
  
      private void updateStoriesPinButton() {

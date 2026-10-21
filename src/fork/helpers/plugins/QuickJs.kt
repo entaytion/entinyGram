@@ -1,5 +1,6 @@
 package desu.inugram.helpers.plugins
 
+import desu.inugram.core.plugins.PluginAsset
 import desu.inugram.core.plugins.PluginPermissions
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -20,9 +21,14 @@ open class QuickJs {
         val installFs: Boolean,
         val androidDirs: String,
         val localStoragePath: String,
+        /** "" leaves `inu.sqlite` ungranted */
+        val sqlitePath: String,
+        val sqliteQuotaBytes: Long,
         val installJvm: Boolean,
         val installXposed: Boolean,
         val grants: PluginPermissions,
+        /** each asset with the path of its decoded file */
+        val assets: List<Pair<PluginAsset, String>>,
     )
 
     /** published as 0 before teardown. Native validates this generation-tagged handle under the registry lock */
@@ -65,9 +71,12 @@ open class QuickJs {
             config.installFs,
             config.androidDirs,
             config.localStoragePath,
+            config.sqlitePath,
+            config.sqliteQuotaBytes,
             config.installJvm,
             config.installXposed,
             config.grants.toPairs().toTypedArray(),
+            config.assets.flatMap { (asset, path) -> listOf(asset.name, asset.mime, path) }.toTypedArray(),
         )
         check(ptr != 0L) { "QuickJs initialization failed" }
     }
@@ -76,6 +85,9 @@ open class QuickJs {
         ifLive { nativeDispatchNotification(it, callbackId, name, accountId, args) }
 
     fun evaluate(code: String, filename: String = "<plugin>"): String? = requireLive { nativeEvaluate(it, code, filename) }
+
+    /** json, see `describe_memory_usage`. Engine thread only */
+    fun memoryUsage(): String? = ifLiveOr(null) { nativeMemoryUsage(it) }
 
     /** native calls [onResult] by name, from the engine queue or from whatever closes the engine */
     fun interface EvalCallback {
@@ -274,9 +286,12 @@ open class QuickJs {
         installFs: Boolean,
         androidDirs: String,
         localStoragePath: String,
+        sqlitePath: String,
+        sqliteQuotaBytes: Long,
         installJvm: Boolean,
         installXposed: Boolean,
         grants: Array<String>,
+        assets: Array<String>,
     ): Long
     private external fun nativeEvaluate(ptr: Long, code: String, filename: String): String?
 
@@ -339,6 +354,7 @@ open class QuickJs {
     private external fun nativeDispatchUpdateIntercept(ptr: Long, callbackId: Int, dispatchId: Long, typeName: String, accountId: Int, updateWire: String)
     private external fun nativeAbandonUpdateDispatch(ptr: Long, dispatchId: Long, reasonWire: String)
     private external fun nativeAccountsChanged(ptr: Long)
+    private external fun nativeMemoryUsage(ptr: Long): String?
     private external fun nativeSettle(ptr: Long, api: Int, requestId: Long, wire: String)
     private external fun nativeSettleBytes(ptr: Long, api: Int, requestId: Long, bytes: ByteArray)
     private external fun nativeRunTimers(ptr: Long)

@@ -800,3 +800,34 @@ fn dispose_with_open_everything_releases_roots() {
 
   state.dispose(&ctx);
 }
+
+#[test]
+fn an_element_icon_is_validated_again_at_render() {
+  let (_rt, ctx, _host, state, _logs) = setup();
+  let page_id: i64 = ctx.with(|ctx| {
+    let inu = crate::testing::harness::get_api_globals(&ctx);
+    crate::api::ui::icons::install_icons(&ctx, crate::api::ui::icons::tests::TestIconHost::without(&[]), None, &inu)
+      .unwrap();
+    ctx
+      .eval(
+        r#"
+          const button = inu.ui.button({ text: 'B', icon: inu.icons.avatar(42), onClick: () => {} })
+          globalThis.__items = [button]
+          inu.ui.settingsPage({ title: 'T', items: () => globalThis.__items }).__inuPageId
+        "#,
+      )
+      .unwrap()
+  });
+  let rendered = state.render(&ctx, page_id).unwrap();
+  assert!(rendered.contains(r#""icon":"p-1:42""#), "{rendered}");
+
+  let svg = r#"s<!DOCTYPE x [<!ENTITY a \"a\">]><svg/>"#;
+  for forge in [
+    format!("__items[0].icon = '{svg}'"),
+    format!("__items[0].icon = {{ __inuIcon: '{svg}' }}"),
+    format!("__items = [{{ __inuUi: 'button', text: 'B', icon: '{svg}', danger: false, onClick: () => {{}} }}]"),
+  ] {
+    eval(&ctx, &forge);
+    assert_eq!(state.render(&ctx, page_id), None, "{forge} reached the host");
+  }
+}

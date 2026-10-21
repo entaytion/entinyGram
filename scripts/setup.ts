@@ -134,11 +134,9 @@ async function generateIconDrawables(repoDir: string) {
   return dirty
 }
 
-async function writeBuildProperties() {
-  const name = 'inu-build.properties'
+async function writeExcludedFile(name: string, contents: string) {
   await ensureGitExclude(worktreeDir, name)
   const target = join(worktreeDir, name)
-  const contents = `inu.pluginless=${pluginless}\n`
   if (await fs.readFile(target, 'utf8').catch(() => null) === contents) return false
   await fs.writeFile(target, contents)
   return true
@@ -260,7 +258,14 @@ if (ci) {
   }
 }
 
-const configuredBuild = await writeBuildProperties()
+const configuredBuild = await writeExcludedFile('inu-build.properties', `inu.pluginless=${pluginless}\n`)
+const taggedCache = await writeExcludedFile('CACHEDIR.TAG', [
+  'Signature: 8a477f597d28d172789f06886806bc55',
+  '# This file is a cache directory tag created by inugram setup.',
+  '# For information about cache directory tags, see:',
+  '#\thttps://bford.info/cachedir/',
+  '',
+].join('\n'))
 const syncedSubmodules = noSubmodules ? false : await syncSubmodules(worktreeDir, excludedSubmodules, ci)
 const patchedSubmodules = noSubmodules ? false : await applySubmodulePatches(worktreeDir, excludedSubmodules)
 await ensureAdGuardFilter()
@@ -271,4 +276,4 @@ const linkedAny = await linkForkSource(worktreeDir, pluginless)
 const generatedAny = await generateIconDrawables(worktreeDir)
 const generatedTl = pluginless ? false : await generateTl()
 const generatedGrants = pluginless ? false : await generateGrants()
-success(configuredBuild || linkedAny || generatedAny || generatedTl || generatedGrants || syncedSubmodules || patchedSubmodules ? 'Setup complete' : 'Up to date')
+success(configuredBuild || taggedCache || linkedAny || generatedAny || generatedTl || generatedGrants || syncedSubmodules || patchedSubmodules ? 'Setup complete' : 'Up to date')

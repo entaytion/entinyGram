@@ -183,6 +183,21 @@ fn load_dex_takes_a_path_or_bytes_and_nothing_else() {
 }
 
 #[test]
+fn load_dex_reads_a_blob_into_bytes() {
+  let f = setup(&["unsafe.jvm"]);
+  let spill = crate::testing::harness::TestDir::new("jvm-dex-spill");
+  f.ctx.with(|ctx| crate::testing::harness::install_sandbox_globals(&ctx, spill.path()).unwrap());
+  assert_eq!(eval(&f, "inu.jvm.loadDex(new Blob([new Uint8Array([1, 2, 3])]).slice(1))"), "undefined");
+  assert_eq!(f.host.calls().last().unwrap(), &format!("{OP_LOAD_DEX}|0||YAgM="));
+  let calls = f.host.calls().len();
+  let disposed = "{ const blob = new Blob([new Uint8Array([1])]); blob.dispose(); inu.jvm.loadDex(blob) }";
+  assert_eq!(error_code(&f, disposed), "handle-expired|");
+  let code = format!("inu.jvm.loadDex(new Blob([new Uint8Array({})]))", DEX_LIMIT_BYTES + 1);
+  assert_eq!(error_code(&f, &code), "quota-exceeded|");
+  assert_eq!(f.host.calls().len(), calls);
+}
+
+#[test]
 fn a_dex_past_the_bound_is_refused_before_it_is_copied() {
   let f = setup(&["unsafe.jvm"]);
   let code = format!("inu.jvm.loadDex(new Uint8Array({}))", DEX_LIMIT_BYTES + 1);

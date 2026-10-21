@@ -16,7 +16,7 @@ const outFile = join(rootDir, 'sdk/types/android.tl.d.ts')
 const tablesFile = join(rootDir, 'src/core/src/main/resources/tl_tables.txt')
 // shipped with the types package: the cli has no worktree to read the schema out of
 const tlNamesFile = join(rootDir, 'sdk/types/tl-names.txt')
-// vendored from mtcute (packages/core/scripts/tl/data/int53-overrides.json), refreshed on rebase
+// based on mtcute (packages/core/scripts/tl/data/int53-overrides.json), curated against stock
 const int53OverridesFile = join(rootDir, 'scripts/data/int53-overrides.json')
 
 interface SchemaEntry {
@@ -432,8 +432,8 @@ function assignTlNames(kept: TlClass[], schema: Map<number, SchemaEntry>, namesp
   return overrides
 }
 
-async function loadInt53Overrides(): Promise<Map<string, Set<string>>> {
-  const json = JSON.parse(await fs.readFile(int53OverridesFile, 'utf8'))
+async function loadInt53Overrides(file: string): Promise<Map<string, Set<string>>> {
+  const json = JSON.parse(await fs.readFile(file, 'utf8'))
   const out = new Map<string, Set<string>>()
   for (const section of [json.class, json.method]) {
     for (const [name, fields] of Object.entries(section ?? {})) {
@@ -457,18 +457,23 @@ function isLongType(java: string) {
  * the overrides name schema fields, so a field stock doesn't declare (or declares as something other
  * than a long) matches nothing here and is reported rather than silently dropped
  */
-function assignInt53(serializable: TlClass[], overrides: Map<string, Set<string>>) {
-  const matched = new Set<string>()
+function matchInt53(serializable: TlClass[], overrides: Map<string, Set<string>>) {
+  const matched = new Map<TlClass, string[]>()
   for (const cls of serializable) {
-    const base = baseTlName(cls.tlName!)
-    const wanted = overrides.get(base)
+    const wanted = overrides.get(baseTlName(cls.tlName!))
     if (!wanted) continue
     const visible = inheritedFields(cls)
-    for (const name of wanted) {
-      const entry = visible.get(name)
-      if (!entry || !isLongType(entry.field.type)) continue
+    matched.set(cls, [...wanted].filter(name => isLongType(visible.get(name)?.field.type ?? '')))
+  }
+  return matched
+}
+
+function assignInt53(serializable: TlClass[], overrides: Map<string, Set<string>>) {
+  const matched = new Set<string>()
+  for (const [cls, names] of matchInt53(serializable, overrides)) {
+    for (const name of names) {
       cls.int53.add(name)
-      matched.add(`${base}.${name}`)
+      matched.add(`${baseTlName(cls.tlName!)}.${name}`)
     }
   }
   const unmatched: string[] = []
@@ -719,8 +724,11 @@ function makeHeader(stamp: { layer: string, appVersion: string }) {
  */`
 }
 
-/** resolves whether either output changed */
-export async function generateTl(): Promise<boolean> {
+/**
+ * resolves whether either output changed. [int53CandidatesFile] is another overrides file (e.g.
+ * upstream mtcute's) whose entries are reported where they hit a long field ours leaves a string
+ */
+export async function generateTl(int53CandidatesFile?: string): Promise<boolean> {
   const warnings: ParseWarning[] = []
   step('parsing tgnet sources')
   const raw = await parseAll(warnings)
@@ -743,7 +751,15 @@ export async function generateTl(): Promise<boolean> {
     if (!isSerializable(cls)) continue
     cls.flags = flagTable.get(parseConstructorId(cls.constructorHash!)) ?? new Map()
   }
-  const unmatchedInt53 = assignInt53(kept.filter(isSerializable), await loadInt53Overrides())
+  const unmatchedInt53 = assignInt53(kept.filter(isSerializable), await loadInt53Overrides(int53OverridesFile))
+  const missingInt53 = new Set<string>()
+  if (int53CandidatesFile) {
+    for (const [cls, names] of matchInt53(kept.filter(isSerializable), await loadInt53Overrides(int53CandidatesFile))) {
+      for (const name of names) {
+        if (!cls.int53.has(name)) missingInt53.add(`${baseTlName(cls.tlName!)}.${name}`)
+      }
+    }
+  }
   const longMode = makeLongModeResolver()
   assignRefs(kept)
   const ctx: EmitCtx = { resolve, keptSet }
@@ -912,6 +928,7 @@ export async function generateTl(): Promise<boolean> {
   for (const w of warnings) warn(`${w.file}:${w.line} ${w.message}`)
   for (const d of dropped) warn(`no json mapping, field dropped: ${d}`)
   for (const u of unmatchedInt53) warn(`int53 override matches no long field stock declares: ${u}`)
+  for (const m of missingInt53) warn(`int53 override missing for a long field stock declares: ${m}`)
 
   const words = [...flagWords].sort()
   if (words.length > 2) warn(`more than two flag words in use (${words.join(', ')}); the table format assumes at most two`)
@@ -996,6 +1013,6 @@ async function writeIfChanged(path: string, content: string) {
 
 // `pnpm run setup` imports this too, but refuses while the stack diverges from `series`: run it by hand after a rebase
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  await generateTl()
+  await generateTl(process.argv[2])
   success('TL typings and tables generated')
 }

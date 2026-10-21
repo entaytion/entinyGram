@@ -1,25 +1,24 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Tue, 12 May 2026 00:00:00 +0000
-Subject: Use DialogsActivity as root fragment when old layout is enabled
-
-Restore hamburger side drawer for old layout mode (DrawerLayoutContainer)
-
-Restore hamburger side drawer for old layout mode (DialogsActivity)
+Subject: Restore hamburger side drawer for old layout mode
 
 Hide redundant account list in settings (switchable from the drawer)
+
+Show app update bar only in the drawer when it is enabled
 ---
  .../ui/ActionBar/DrawerLayoutContainer.java   | 38 +++++++++++++++++--
  .../ui/Components/ProfileActionsView.java     | 10 ++++-
  .../java/org/telegram/ui/DialogsActivity.java | 32 ++++++++++++----
- .../java/org/telegram/ui/LaunchActivity.java  | 32 ++++++----------
- .../java/org/telegram/ui/LoginActivity.java   |  9 ++---
+ .../java/org/telegram/ui/LaunchActivity.java  | 14 ++++---
+ .../java/org/telegram/ui/LoginActivity.java   |  1 +
+ .../org/telegram/ui/MainTabsActivity.java     |  2 +-
  .../java/org/telegram/ui/ProfileActivity.java | 12 +++++-
  .../org/telegram/ui/SettingsActivity.java     |  2 +-
- .../ui/TwoStepVerificationActivity.java       |  5 +--
- .../ui/TwoStepVerificationSetupActivity.java  | 10 ++---
+ .../ui/TwoStepVerificationActivity.java       |  1 +
+ .../ui/TwoStepVerificationSetupActivity.java  |  2 +
  .../org/telegram/ui/ViewPagerActivity.java    |  2 +-
- 10 files changed, 101 insertions(+), 51 deletions(-)
+ 11 files changed, 94 insertions(+), 22 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/DrawerLayoutContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/DrawerLayoutContainer.java
 index 0000000..0000000 100644
@@ -152,7 +151,7 @@ index 0000000..0000000 100644
      private boolean askingForPermissions;
      private int searchViewPagerIndex;
      @Nullable
-@@ -741,7 +741,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -742,7 +742,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private Bulletin topBulletin;
  
      private AnimationNotificationsLocker notificationsLocker = new AnimationNotificationsLocker();
@@ -161,7 +160,7 @@ index 0000000..0000000 100644
      private boolean searchWasFullyShowed;
      public boolean whiteActionBar;
      private boolean searchFiltersWasShowed;
-@@ -3483,7 +3483,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3484,7 +3484,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          });
          fragmentSearchFieldWatcher.setDoNotCloseAfterFieldEmpty();
  
@@ -170,7 +169,7 @@ index 0000000..0000000 100644
              optionsItem = menu.addItem(4, R.drawable.ic_ab_other);
              optionsItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
              optionsItem.setOnClickListener(v -> {
-@@ -3544,6 +3544,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3545,6 +3545,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              if (searchString != null || folderId != 0 || communityId != 0) {
                  actionBar.setBackButtonDrawable(backDrawable = new BackDrawable(false));
@@ -182,7 +181,7 @@ index 0000000..0000000 100644
              }
              if (folderId != 0) {
                  actionBar.setTitle(getString(R.string.ArchivedChats));
-@@ -3922,6 +3927,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3923,6 +3928,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      return;
                  }
                  if (id == -1) {
@@ -194,7 +193,7 @@ index 0000000..0000000 100644
                      if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
                          if (actionBar.isActionModeShowed()) {
                              if (searchViewPager != null && searchViewPager.getVisibility() == View.VISIBLE && searchViewPager.actionModeShowing()) {
-@@ -5382,7 +5392,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5384,7 +5394,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          };
          dialogStoriesCell.setActionBar(actionBar);
@@ -203,7 +202,7 @@ index 0000000..0000000 100644
          dialogStoriesCell.allowGlobalUpdates = false;
          dialogStoriesCell.setVisibility(View.GONE);
          animateToHasStories = false;
-@@ -5412,7 +5422,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5414,7 +5424,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          undoView[1] = null;
  
          if (hasMainTabs) {
@@ -212,7 +211,7 @@ index 0000000..0000000 100644
              actionBar.setTitleColor(getThemedColor(Theme.key_telegram_color_dialogsLogo));
          }
  
-@@ -5941,6 +5951,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5943,6 +5953,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              yoff = -(actionBar.getHeight() - AndroidUtilities.rectTmp2.centerY()) - dp(16);
              xoff = AndroidUtilities.rectTmp2.centerX() - dp(16);
              xoff += dp(4);
@@ -222,7 +221,7 @@ index 0000000..0000000 100644
              if (animatedStatusView != null) {
                  animatedStatusView.translate(AndroidUtilities.rectTmp2.centerX(), AndroidUtilities.rectTmp2.centerY());
              }
-@@ -6794,7 +6807,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6796,7 +6809,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          // actionMode.setBackgroundColor(Color.TRANSPARENT);
          // actionMode.drawBlur = false;
  
@@ -232,7 +231,7 @@ index 0000000..0000000 100644
              actionModeCloseView = new ImageView(getContext());
              actionModeCloseView.setScaleType(ImageView.ScaleType.CENTER);
              actionModeCloseView.setImageDrawable(new BackDrawable(true));
-@@ -6809,7 +6823,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6811,7 +6825,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogsCountTextView.setTextSize(18);
          selectedDialogsCountTextView.setTypeface(AndroidUtilities.bold());
          selectedDialogsCountTextView.setTextColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
@@ -241,7 +240,7 @@ index 0000000..0000000 100644
          selectedDialogsCountTextView.setOnTouchListener((v, event) -> true);
  
          pinItem = actionMode.addItemWithWidth(pin, R.drawable.msg_pin, dp(48));
-@@ -9144,6 +9158,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9146,6 +9160,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogs.clear();
          if (backDrawable != null) {
              backDrawable.setRotation(0, true);
@@ -250,7 +249,7 @@ index 0000000..0000000 100644
          }
          if (filterTabsView != null) {
              filterTabsView.animateColorsTo(Theme.key_actionBarTabLine, Theme.key_actionBarTabActiveText, Theme.key_actionBarTabUnactiveText, Theme.key_actionBarTabSelector, Theme.key_windowBackgroundWhite);
-@@ -10231,6 +10247,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10233,6 +10249,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              if (backDrawable != null) {
                  backDrawable.setRotation(1, true);
@@ -309,28 +308,6 @@ index 0000000..0000000 100644
              }
              getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                  OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-@@ -1227,10 +1226,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
- 
-     private boolean switchingAccount;
-     public void switchToAccount(int account, boolean removeAll) {
--        switchToAccount(account, removeAll, obj -> new MainTabsActivity());
-+        switchToAccount(account, removeAll, obj -> desu.inugram.helpers.dialogs.DrawerHelper.createMainFragment());
-     }
- 
--    public void switchToAccount(int account, boolean removeAll, GenericProvider<Void, MainTabsActivity> dialogsActivityProvider) {
-+    public void switchToAccount(int account, boolean removeAll, GenericProvider<Void, org.telegram.ui.ActionBar.BaseFragment> dialogsActivityProvider) {
-         if (account == UserConfig.selectedAccount || !UserConfig.isValidAccount(account)) {
-             return;
-         }
-@@ -1258,7 +1257,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
-         } else {
-             actionBarLayout.removeFragmentFromStack(0);
-         }
--        MainTabsActivity mainTabsActivity = dialogsActivityProvider.provide(null);
-+        org.telegram.ui.ActionBar.BaseFragment mainTabsActivity = dialogsActivityProvider.provide(null);
-         actionBarLayout.addFragmentToStack(mainTabsActivity, INavigationLayout.FORCE_ATTACH_VIEW_AS_FIRST);
-         actionBarLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
-         if (AndroidUtilities.isTablet()) {
 @@ -1272,6 +1271,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              showTosActivity(account, UserConfig.getInstance(account).unacceptedTermsOfService);
          }
@@ -339,31 +316,19 @@ index 0000000..0000000 100644
  
          switchingAccount = false;
      }
-@@ -3340,12 +3340,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
-                     }
-                 } else {
-                     if (actionBarLayout.getFragmentStack().isEmpty()) {
--                        MainTabsActivity mainTabsActivity = new MainTabsActivity();
--                        DialogsActivity dialogsActivity = mainTabsActivity.prepareDialogsActivity(null);
--                        if (searchQuery != null) {
--                            dialogsActivity.setInitialSearchString(searchQuery);
--                        }
--                        actionBarLayout.addFragmentToStack(mainTabsActivity, INavigationLayout.FORCE_NOT_ATTACH_VIEW);
-+                        desu.inugram.helpers.dialogs.DrawerHelper.addMainFragmentToStack(actionBarLayout, searchQuery);
+@@ -3346,6 +3346,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+                             dialogsActivity.setInitialSearchString(searchQuery);
+                         }
+                         actionBarLayout.addFragmentToStack(mainTabsActivity, INavigationLayout.FORCE_NOT_ATTACH_VIEW);
++                        desu.inugram.helpers.dialogs.DrawerHelper.ensureSetup(actionBarLayout);
                      }
                  }
              } else {
-@@ -3353,12 +3348,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
-                     if (!UserConfig.getInstance(currentAccount).isClientActivated()) {
-                         actionBarLayout.addFragmentToStack(getClientNotActivatedFragment(), INavigationLayout.FORCE_NOT_ATTACH_VIEW);
-                     } else {
--                        MainTabsActivity mainTabsActivity = new MainTabsActivity();
--                        DialogsActivity dialogsActivity = mainTabsActivity.prepareDialogsActivity(null);
--                        if (searchQuery != null) {
--                            dialogsActivity.setInitialSearchString(searchQuery);
--                        }
--                        actionBarLayout.addFragmentToStack(mainTabsActivity, INavigationLayout.FORCE_NOT_ATTACH_VIEW);
-+                        desu.inugram.helpers.dialogs.DrawerHelper.addMainFragmentToStack(actionBarLayout, searchQuery);
+@@ -3359,6 +3360,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+                             dialogsActivity.setInitialSearchString(searchQuery);
+                         }
+                         actionBarLayout.addFragmentToStack(mainTabsActivity, INavigationLayout.FORCE_NOT_ATTACH_VIEW);
++                        desu.inugram.helpers.dialogs.DrawerHelper.ensureSetup(actionBarLayout);
                      }
                  }
              }
@@ -371,29 +336,27 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java b/TM
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
-@@ -1601,9 +1601,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
-                 ((LaunchActivity) getParentActivity()).switchToAccount(currentAccount, true, obj -> {
-                     Bundle args = new Bundle();
-                     args.putBoolean("afterSignup", afterSignup);
--                    MainTabsActivity mainTabsActivity = new MainTabsActivity();
--                    mainTabsActivity.prepareDialogsActivity(args);
--                    return mainTabsActivity;
-+                    return desu.inugram.helpers.dialogs.DrawerHelper.createMainFragment(args);
-                 });
-                 pendingSwitchingAccount = false;
-                 finishFragment();
-@@ -1616,9 +1614,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+@@ -1616,6 +1616,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                  } else {
                      Bundle args = new Bundle();
                      args.putBoolean("afterSignup", afterSignup);
--                    MainTabsActivity mainTabsActivity = new MainTabsActivity();
--                    mainTabsActivity.prepareDialogsActivity(args);
--                    presentFragment(mainTabsActivity, true);
 +                    desu.inugram.helpers.dialogs.DrawerHelper.ensureSetup(getParentLayout());
-+                    presentFragment(desu.inugram.helpers.dialogs.DrawerHelper.createMainFragment(args), true);
-                 }
+                     MainTabsActivity mainTabsActivity = new MainTabsActivity();
+                     mainTabsActivity.prepareDialogsActivity(args);
+                     presentFragment(mainTabsActivity, true);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -425,7 +425,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         updateLayoutWrapper = new UpdateLayoutWrapper(context);
+         contentView.addView(updateLayoutWrapper, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
  
-                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.mainUserInfoChanged);
+-        updateLayout = ApplicationLoader.applicationLoaderInstance.takeUpdateLayout(getParentActivity(), updateLayoutWrapper);
++        updateLayout = desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue() ? null : ApplicationLoader.applicationLoaderInstance.takeUpdateLayout(getParentActivity(), updateLayoutWrapper);
+         if (updateLayout != null) {
+             updateLayout.updateAppUpdateViews(currentAccount, false);
+         }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
@@ -441,46 +404,34 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActivity.java
-@@ -1298,9 +1298,8 @@ public class TwoStepVerificationActivity extends BaseFragment implements Notific
+@@ -1298,6 +1298,7 @@ public class TwoStepVerificationActivity extends BaseFragment implements Notific
          if (otherwiseReloginDays >= 0) {
              final Bundle args = new Bundle();
              args.putBoolean("afterSignup", true);
--            MainTabsActivity mainTabsActivity = new MainTabsActivity();
--            mainTabsActivity.prepareDialogsActivity(args);
--            presentFragment(mainTabsActivity, true);
 +            desu.inugram.helpers.dialogs.DrawerHelper.ensureSetup(getParentLayout());
-+            presentFragment(desu.inugram.helpers.dialogs.DrawerHelper.createMainFragment(args), true);
-         } else {
-             super.finishFragment();
-         }
+             MainTabsActivity mainTabsActivity = new MainTabsActivity();
+             mainTabsActivity.prepareDialogsActivity(args);
+             presentFragment(mainTabsActivity, true);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationSetupActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationSetupActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationSetupActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationSetupActivity.java
-@@ -1315,9 +1315,8 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
+@@ -1315,6 +1315,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
                  } else if (fromRegistration) {
                      final Bundle args = new Bundle();
                      args.putBoolean("afterSignup", true);
--                    MainTabsActivity mainTabsActivity = new MainTabsActivity();
--                    mainTabsActivity.prepareDialogsActivity(args);
--                    presentFragment(mainTabsActivity, true);
 +                    desu.inugram.helpers.dialogs.DrawerHelper.ensureSetup(getParentLayout());
-+                    presentFragment(desu.inugram.helpers.dialogs.DrawerHelper.createMainFragment(args), true);
-                 } else {
-                     TwoStepVerificationActivity fragment = new TwoStepVerificationActivity();
-                     fragment.setCurrentPasswordParams(currentPassword, currentPasswordHash, currentSecretId, currentSecret);
-@@ -2154,9 +2153,8 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
+                     MainTabsActivity mainTabsActivity = new MainTabsActivity();
+                     mainTabsActivity.prepareDialogsActivity(args);
+                     presentFragment(mainTabsActivity, true);
+@@ -2156,6 +2157,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
          if (otherwiseReloginDays >= 0 && parentLayout.getFragmentStack().size() == 1) {
              final Bundle args = new Bundle();
              args.putBoolean("afterSignup", true);
--            MainTabsActivity mainTabsActivity = new MainTabsActivity();
--            mainTabsActivity.prepareDialogsActivity(args);
--            presentFragment(mainTabsActivity, true);
 +            desu.inugram.helpers.dialogs.DrawerHelper.ensureSetup(getParentLayout());
-+            presentFragment(desu.inugram.helpers.dialogs.DrawerHelper.createMainFragment(args), true);
-         } else {
-             super.finishFragment();
-         }
+             MainTabsActivity mainTabsActivity = new MainTabsActivity();
+             mainTabsActivity.prepareDialogsActivity(args);
+             presentFragment(mainTabsActivity, true);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ViewPagerActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ViewPagerActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ViewPagerActivity.java

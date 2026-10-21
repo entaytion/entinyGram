@@ -1,7 +1,9 @@
 use std::cell::Cell;
 use std::rc::Rc;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{Duration, Instant};
 
+use rquickjs::allocator::{Allocator, RustAllocator};
 use rquickjs::{qjs, Context, Ctx, Result as JsResult, Runtime, Value};
 
 use crate::api::error::PluginErrorCode;
@@ -14,7 +16,10 @@ pub const EVAL_DEADLINE_MS: u64 = 10_000;
 struct Armed {
   deadline: Instant,
   limit_ms: u64,
+  entry: u64,
 }
+
+static NEXT_ENTRY: AtomicU64 = AtomicU64::new(1);
 
 thread_local! {
     static ARMED: Cell<Option<Armed>> = const { Cell::new(None) };
@@ -31,6 +36,7 @@ pub(crate) fn arm(limit_ms: u64) -> Deadline {
   let mut armed = Armed {
     deadline: Instant::now() + Duration::from_millis(limit_ms),
     limit_ms,
+    entry: previous.map_or_else(|| NEXT_ENTRY.fetch_add(1, Ordering::Relaxed), |previous| previous.entry),
   };
   if let Some(previous) = previous {
     if previous.deadline < armed.deadline {
@@ -57,6 +63,11 @@ impl Drop for Deadline {
     let tripped = self.previously_tripped || TRIPPED.with(|t| t.get());
     TRIPPED.with(|t| t.set(tripped));
   }
+}
+
+/// for native work that runs between two checks of the interrupt handler
+pub(crate) fn is_past_deadline() -> bool {
+  ARMED.with(|a| a.get()).is_some_and(|armed| Instant::now() >= armed.deadline)
 }
 
 pub const MAX_BUDGET_STRIKES: u32 = 3;
@@ -169,20 +180,129 @@ const EXTERNAL_GC_STEP_BYTES: usize = 8 * 1024 * 1024;
 
 pub fn describe_heap_exhaustion<'js>(exception: &Value<'js>) -> Option<String> {
   let ceiling_mb = HEAP_LIMIT_BYTES / (1024 * 1024);
-  if exception.is_null() {
-    return Some(format!(
-      "null was thrown, which is also what this plugin's javascript heap ceiling of {ceiling_mb} MB raises when it has no room left to build an error object",
-    ));
-  }
   let obj = exception.as_object()?;
   let out_of_memory = obj.get::<_, String>("name").ok().as_deref() == Some("InternalError")
     && obj.get::<_, String>("message").ok().as_deref() == Some("out of memory");
   if !out_of_memory {
     return None;
   }
-  Some(format!(
+  let mut message = format!(
     "quota-exceeded: this plugin's javascript heap ceiling of {ceiling_mb} MB was reached and the allocation was refused",
-  ))
+  );
+  if let Ok(stack) = obj.get::<_, String>("stack") {
+    if !stack.is_empty() {
+      message.push('\n');
+      message.push_str(&stack);
+    }
+  }
+  Some(message)
+}
+
+/// What the first entry to reach the heap ceiling may allocate past it: the out-of-memory error
+/// and the backtrace the interpreter attaches to it while unwinding.
+pub const HEAP_RESERVE_BYTES: usize = 256 * 1024;
+
+/// Holds the heap ceiling in place of `JS_SetMemoryLimit`, under which quickjs refuses the
+/// allocations for the out-of-memory error as well and throws a bare `null`.
+pub struct HeapAllocator {
+  ceiling: usize,
+  used: usize,
+  reserve_entry: Option<u64>,
+}
+
+impl HeapAllocator {
+  pub fn new(ceiling: usize) -> Self {
+    HeapAllocator { ceiling, used: 0, reserve_entry: None }
+  }
+
+  fn admit(&mut self, growth: usize) -> bool {
+    let wanted = self.used.saturating_add(growth);
+    if wanted <= self.ceiling {
+      return true;
+    }
+    let entry = ARMED.with(|a| a.get()).map_or(0, |armed| armed.entry);
+    if self.reserve_entry == Some(entry) {
+      return wanted <= self.ceiling + HEAP_RESERVE_BYTES;
+    }
+    self.reserve_entry = Some(entry);
+    false
+  }
+
+  fn track(&mut self, ptr: *mut u8) -> *mut u8 {
+    if !ptr.is_null() {
+      // SAFETY: a live allocation just made by `RustAllocator`
+      self.used += unsafe { RustAllocator::usable_size(ptr) };
+    }
+    ptr
+  }
+}
+
+// SAFETY: every pointer comes from and goes back to `RustAllocator` unchanged
+unsafe impl Allocator for HeapAllocator {
+  fn alloc(&mut self, size: usize) -> *mut u8 {
+    if !self.admit(size) {
+      return std::ptr::null_mut();
+    }
+    let ptr = RustAllocator.alloc(size);
+    self.track(ptr)
+  }
+
+  fn calloc(&mut self, count: usize, size: usize) -> *mut u8 {
+    let Some(total) = count.checked_mul(size) else {
+      return std::ptr::null_mut();
+    };
+    if !self.admit(total) {
+      return std::ptr::null_mut();
+    }
+    let ptr = RustAllocator.calloc(count, size);
+    self.track(ptr)
+  }
+
+  unsafe fn dealloc(&mut self, ptr: *mut u8) {
+    self.used -= RustAllocator::usable_size(ptr);
+    RustAllocator.dealloc(ptr);
+  }
+
+  unsafe fn realloc(&mut self, ptr: *mut u8, new_size: usize) -> *mut u8 {
+    let old_size = RustAllocator::usable_size(ptr);
+    if !self.admit(new_size.saturating_sub(old_size)) {
+      return std::ptr::null_mut();
+    }
+    let new_ptr = RustAllocator.realloc(ptr, new_size);
+    if new_ptr.is_null() {
+      return new_ptr;
+    }
+    self.used -= old_size;
+    self.track(new_ptr)
+  }
+
+  unsafe fn usable_size(ptr: *mut u8) -> usize {
+    RustAllocator::usable_size(ptr)
+  }
+}
+
+/// `inu memory` and the plugin info page read this. Walks every live object, so it is not for a hot path
+pub fn describe_memory_usage(context: &Context, external: &ExternalMemory) -> String {
+  let mut usage = std::mem::MaybeUninit::<qjs::JSMemoryUsage>::uninit();
+  // SAFETY: under the engine lease; quickjs fills every field
+  let usage = unsafe {
+    qjs::JS_ComputeMemoryUsage(qjs::JS_GetRuntime(context.as_raw().as_ptr()), usage.as_mut_ptr());
+    usage.assume_init()
+  };
+  serde_json::json!({
+    "heapBytes": usage.malloc_size,
+    "heapLimitBytes": HEAP_LIMIT_BYTES,
+    "nativeBytes": external.charged_bytes(),
+    "nativeLimitBytes": EXTERNAL_LIMIT_BYTES,
+    "objects": usage.obj_count,
+    "arrays": usage.array_count,
+    "functions": usage.js_func_count,
+    "strings": usage.str_count,
+    "stringBytes": usage.str_size,
+    "shapes": usage.shape_count,
+    "atoms": usage.atom_count,
+  })
+  .to_string()
 }
 
 pub struct ExternalMemory {

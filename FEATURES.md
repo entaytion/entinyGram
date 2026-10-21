@@ -246,6 +246,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 - navigation drawer, like in older Telegram versions; can be used alongside or instead of the bottom tabs
   - 🐶 an option to (ab)use predictive back to open the drawer
+  - customizable drawer items
 - monet (material you) theme support - *based on [NagramX](https://github.com/risin42/NagramX)*, 🐶 improved. plus a quick switcher in appearance settings (light/dark/amoled/auto)
 - 🐶 classic ui mode for folders bar, shared media tabs, global search and chat elements (reverts the >12.6 "liquid glass" look)
 - icon replacement (solar pack by [480 Design](https://t.me/Design480) - *ported from [NagramX](https://github.com/risin42/NagramX)*; vkui pack by [VK](https://github.com/VKCOM/icons) - *ported from [Catogram](https://github.com/Catogram/Catogram)*)
@@ -253,6 +254,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - notification icon: Telegram (default) or entinyGram
 - show seconds in timestamps
 - override Telegram's detected device performance class
+- 🐶 disable animated avatars in chats independently of video autoplay from Power Saving → Effects in chats
 - 🐶 customizable animation speed multiplier (incl. instant)
 - join/creation date in group & channel profiles
 - show linked channel in discussion group profile similar to personal channel
@@ -337,8 +339,9 @@ the sections below contain the broader feature set: inugram functionality, featu
 - double-tap message actions (separate for incoming/outgoing/editable channel posts), 🐶 customizable double-tap delay
 - hide keyboard on scroll
 - always show go-to-bottom button (don't hide on scroll-down)
-- web preview: replacements (e.g. twitter→fixupx)
+- web preview replacements (e.g. twitter→fixupx), optionally applied when pasting links
 - 🐶 strip tracking params (utm_*, fbclid, si, erid, …) from links before opening and/or when pasting — *rules from AdGuard URL Tracking filter*
+- 🐶 resolve trackable share redirects (TikTok, SoundCloud and more) when pasting/opening
 - 🐶 web preview refetch from menu
 - 🐶 disable web preview limit on twitter-like websites
 - 🐶 spoiler web previews: when the preview-generating link is under a spoiler, cover the whole preview card too
@@ -401,6 +404,7 @@ the sections below contain the broader feature set: inugram functionality, featu
   - keep zoom on pinch release
   - gentler exponential zoom curve (like in normal camera apps)
   - toggle to disable dual-camera mode
+- stock experimental voice/round recorder settings visible in release builds
 
 ### photo viewer
 
@@ -461,6 +465,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 disable scroll-snap in profile
 - 🐶 reduce profile motion (skip various enter animations, disable avatar scale-on-scroll effect)
 - 🐶 prefer "Media" tab in profile over Gifts/Posts
+- "Send a gift" in profile menu (stock hides it without billing), optional "Gift" header action button
 - 🐶 recyclerlistview instant-tap
 - open bottom-tab menus early by swiping up; flat highlight (not ripple) on menu hover
 - faster downloads/uploads
@@ -499,9 +504,11 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 ### 🐶 bugfixes (vs stock)
 
+- android 16 "expanded" dark theme no longer force-inverts the app
 - channel update queue no longer replays the same update indefinitely after an earlier queued update advances PTS
 - flaky networks: server time offset no longer reset to the epoch by a `bad_msg_notification` inside a container (messages sent meanwhile were dated 1 Jan 1970); session resets on old retransmitted server messages re-send pending requests with fresh msg_id/seqno instead of stale ones (which made the server reject them and cascaded into more resets)
 - network stays awake in background for up to 2 minutes while generic requests (sends, getDifference) are pending, instead of pausing after 10 seconds regardless
+- text messages no longer show the "sent" tick on transport quick ack (server received the packet, not the send); the clock stays until the server confirms the message, which on bad links could be minutes later
 - sticker cutout/eraser edits no longer progressively fade and/or darken transparent PNGs
 - connection status title no longer gets stuck on "Updating..." when its transition animation is cancelled
 - accelerated video playback no longer applies an unnecessary pitch shift; live speed-slider changes use Android's low-latency audio mixer path
@@ -549,7 +556,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - custom emoji reaction burst respects litemode (stock only gated the "around" animation of regular emoji)
 - expired once-view/self-destruct media now reliably shows the "Expired video/photo" placeholder instead of sometimes getting stuck showing live media (stock bug: the refresh triggered when `SecretMediaViewer` closes checked the media fields directly, which aren't cleared yet at that point — only a separate `forceExpired` flag is)
 - reaction counter shift during long-tap menu
-- reactions silently disappearing right after being sent (stale server read race)
+- reactions silently disappearing right after being sent (stale server read race); for a few seconds after a send, server answers that lose or undercount your own reaction are corrected from the local state
 - seen reactions coming back to the unread reactions counter (stock only told the server once the local counter hit 0, so every server count reload resurrected them); each read is now reported via `readMessageContents`
 - reactions vanishing for a moment after editing a message that got reacted to while the edit was open (the edit applied a stale copy of the message)
 - unread reactions counter drifting and wiping unseen reactions: stock never decremented the chat's counter per read, never told an open group chat about new unread reactions, and "fixed" both by marking everything read once its own local counter hit 0; reads now update the counter per message, and only an explicit "read all" or an empty server answer marks everything read
@@ -658,3 +665,4 @@ the sections below contain the broader feature set: inugram functionality, featu
 - message database stalls (up to minutes) on big chats: reading mentions, deleting replied-to messages and loading the user rating scanned the whole cached history because sqlite picked the wrong index; also reply previews of deleted messages are now actually cleared when several messages are deleted at once (stock bound the id list as one string, matching nothing)
 - a busy channel no longer loses its whole cached history whenever the server answers "difference too long" (stock wiped every cached message, which could block the message database for minutes on big chats and stopped music playing from that chat); the cache is kept but reloaded from the server, and channel messages deleted while the app was not watching now disappear once their part of the history is loaded (stock kept them forever)
 - new channel messages sometimes appearing minutes late (until the next update in that chat): stock threw away channel updates that arrived while it was already fetching a channel's missed updates, and replayed the waiting ones before applying the fetched state
+- a sent message moves into its server order once confirmed (e.g. a photo that finished uploading after a later text moves below that text), so the local order matches what the recipient sees

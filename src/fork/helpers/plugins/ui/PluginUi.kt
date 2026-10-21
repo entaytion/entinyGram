@@ -24,7 +24,6 @@ import desu.inugram.helpers.plugins.QuickJs
 import desu.inugram.helpers.plugins.UiListener
 import desu.inugram.helpers.plugins.platform.PluginJvm
 import desu.inugram.helpers.plugins.telegram.PeerSpecs
-import desu.inugram.helpers.dialogs.DrawerHelper
 import desu.inugram.ui.settings.PluginSettingsActivity
 import desu.inugram.ui.showInputDialog
 import org.json.JSONArray
@@ -53,6 +52,7 @@ import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RLottieImageView
 import org.telegram.ui.LaunchActivity
+import org.telegram.ui.MainTabsActivity
 import org.telegram.ui.ProfileActivity
 import org.telegram.ui.SettingsActivity
 import java.util.concurrent.atomic.AtomicInteger
@@ -233,7 +233,7 @@ object PluginUi : SessionResource {
                         ?.let { putInt("message_id", it) }
                 })
                 "profile" -> ProfileActivity.of(dialogId)
-                "dialogs" -> DrawerHelper.createMainFragment()
+                "dialogs" -> MainTabsActivity()
                 "settings" -> SettingsActivity()
                 else -> return@runOnUIThread
             }

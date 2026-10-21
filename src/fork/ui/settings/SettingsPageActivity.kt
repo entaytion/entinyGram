@@ -52,7 +52,12 @@ abstract class SettingsPageActivity : UniversalFragment() {
 
     private var highlightItemId: Int = -1
 
-    fun withHighlight(itemId: Int) = apply { highlightItemId = itemId }
+    protected open val expandableGroups: List<ExpandableBoolGroup> get() = emptyList()
+
+    fun withHighlight(itemId: Int) = apply {
+        highlightItemId = itemId
+        for (group in expandableGroups) group.expandIfContains(itemId)
+    }
 
     // entiny: best-effort auto-collection of searchable items for settings search
     fun collectSearchEntries(): List<UItem> {

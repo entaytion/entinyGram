@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 21 Oct 2026 10:49:16 +0400
+Subject: show stock "experimental" settings in release builds
+
+---
+ .../main/java/org/telegram/utils/settings/SharedSettings.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/settings/SharedSettings.java b/TMessagesProj/src/main/java/org/telegram/utils/settings/SharedSettings.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/settings/SharedSettings.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/settings/SharedSettings.java
+@@ -7,7 +7,7 @@ import org.telegram.utils.recorder.audio.AudioRecordingSession;
+ public final class SharedSettings {
+ 
+     public static final BooleanSetting experimentalSettingsAllowed =
+-        BooleanSetting.of("experimental_settings_allowed", BuildConfig.DEBUG_VERSION);
++        BooleanSetting.of("experimental_settings_allowed", true);
+ 
+     public static final BooleanSetting audioRecorderV2Enabled =
+         BooleanSetting.of("audio_recorder_v2_enabled", BuildConfig.DEBUG_VERSION);

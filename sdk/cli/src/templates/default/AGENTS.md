@@ -29,7 +29,7 @@ Under `node_modules/@inugram/plugin-types/`:
 - `android.tl.d.ts`: Telegram objects and RPC methods for this SDK version.
 - `android.jvm.d.ts`, `android.xposed.d.ts`, `android.notification-center.d.ts`:
   Android bridge APIs, threading, handles, and compiled routines.
-- `canvas.d.ts`, `fs.d.ts`: drawing and filesystem APIs.
+- `canvas.d.ts`, `fs.d.ts`, `sqlite.d.ts`: drawing, filesystem and database APIs.
 
 CLI usage lives in `node_modules/@inugram/cli/README.md` and `pnpm exec inu --help`.
 Use the installed versions as the reference; app and SDK compatibility matters.

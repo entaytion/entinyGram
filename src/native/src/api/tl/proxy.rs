@@ -476,7 +476,7 @@ pub fn js_value_to_wire<'js>(ctx: &Ctx<'js>, value: Value<'js>) -> JsResult<Stri
   if value.is_null() {
     return Ok("N".to_string());
   }
-  if let Some(handle_wire) = try_read_marker(ctx, &value)? {
+  if let Some(handle_wire) = encode_view_handle(&value)? {
     return Ok(handle_wire);
   }
   if let Ok(typed) = TypedArray::<u8>::from_value(value.clone()) {
@@ -488,15 +488,16 @@ pub fn js_value_to_wire<'js>(ctx: &Ctx<'js>, value: Value<'js>) -> JsResult<Stri
   Ok(format!("J{json}"))
 }
 
-fn try_read_marker<'js>(ctx: &Ctx<'js>, value: &Value<'js>) -> JsResult<Option<String>> {
-  let Some(obj) = value.as_object() else {
+/// the marker is a `Symbol.for` any plugin can set, so only the proxy's native target names a view
+fn encode_view_handle(value: &Value<'_>) -> JsResult<Option<String>> {
+  let Some(proxy) = value.as_proxy() else {
     return Ok(None);
   };
-  let key = TlShared::marker(ctx)?;
-  match obj.get::<_, Value>(key.as_atom()) {
-    Ok(v) => Ok(v.as_string().and_then(|s| s.to_string().ok())),
-    Err(_) => Ok(None),
-  }
+  let Some(view) = Class::<HandleBox>::from_object(&proxy.target()?) else {
+    return Ok(None);
+  };
+  let view = view.borrow();
+  Ok(Some(encode_handle(view.is_vector, view.read_only, view.handle)))
 }
 
 fn open_section<'js>(ctx: &Ctx<'js>, section: &RefCell<Option<Object<'js>>>) -> JsResult<Object<'js>> {

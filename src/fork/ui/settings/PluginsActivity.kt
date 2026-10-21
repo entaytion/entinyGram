@@ -12,13 +12,9 @@ import android.text.TextUtils
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.view.children
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.children
 import desu.inugram.InuConfig
 import desu.inugram.helpers.plugins.BootGuard
 import desu.inugram.helpers.InuUtils
@@ -48,8 +44,6 @@ import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.Switch
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
-import kotlin.math.ceil
-import kotlin.math.max
 
 class PluginsActivity : SettingsPageActivity() {
     private val rows = HashMap<String, PluginRow>()
@@ -158,6 +152,16 @@ class PluginsActivity : SettingsPageActivity() {
             )
         )
 
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asButton(BUTTON_REPOS, R.drawable.msg_channel, LocaleController.getString(R.string.InuPluginRepos)))
+        items.add(
+            UItem.asButton(
+                BUTTON_LOAD,
+                R.drawable.msg_download,
+                LocaleController.getString(R.string.InuPluginsLoadFromDisk),
+            )
+        )
+
         val plugins = PluginManager.plugins()
         removeAllItem?.visibility = if (plugins.isEmpty()) View.GONE else View.VISIBLE
         // md3 draws a header as its own detached row, so the card already ends there; the classic
@@ -176,16 +180,6 @@ class PluginsActivity : SettingsPageActivity() {
         }
 
         items.add(UItem.asShadow(null))
-        if (PluginDependencies.sdkEnabled()) {
-            items.add(mkSubPageButton(BUTTON_MARKET, R.drawable.menu_shop, LocaleController.getString(R.string.InuMarketplace)))
-        }
-        items.add(
-            UItem.asButton(
-                BUTTON_LOAD,
-                R.drawable.msg_download,
-                LocaleController.getString(R.string.InuPluginsLoadFromDisk),
-            )
-        )
         items.add(
             mkTwoLineCheckItem(
                 DEV_TOGGLE,
@@ -276,12 +270,8 @@ class PluginsActivity : SettingsPageActivity() {
                     ) { setDevMode(true) }
                 }
             }
-            BUTTON_MARKET -> PluginManager.plugins().firstOrNull { it.manifest.id == PluginDependencies.SDK_ID }?.let { sdk ->
-                val session = sdk.session
-                val pageId = sdk.settingsPageId
-                if (session != null && pageId != null) presentFragment(PluginSettingsActivity(session, pageId))
-            }
             BUTTON_LOAD -> launchLoad()
+            BUTTON_REPOS -> presentFragment(PluginReposActivity())
             // plugin rows handle their own clicks (see PluginRow's background comment)
         }
     }
@@ -371,7 +361,7 @@ class PluginsActivity : SettingsPageActivity() {
     companion object {
         val ENGINE_TOGGLE = InuUtils.generateId()
         private val BUTTON_LOAD = InuUtils.generateId()
-        private val BUTTON_MARKET = InuUtils.generateId()
+        private val BUTTON_REPOS = InuUtils.generateId()
         private val SAFE_MODE_BANNER = InuUtils.generateId()
         private val DEV_BANNER = InuUtils.generateId()
         private val DEV_TOGGLE = InuUtils.generateId()
@@ -387,15 +377,7 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
     private val handle: ImageView
     private val icon: BackupImageView
     private val placeholder = PluginManifestIcons.createPlaceholder(context)
-    private val title: TextView
-    private val warningDrawable = ResourcesCompat.getDrawable(resources, R.drawable.inu_tabler_alert_triangle_filled, null)
-        ?.mutate()
-        ?.apply {
-            // bounds keep their height, so the offset only nudges the glyph off the text's optical center
-            val size = AndroidUtilities.dp(WARNING_SIZE_DP)
-            val offset = AndroidUtilities.dp(WARNING_OFFSET_DP)
-            setBounds(0, offset, size, size + offset)
-        }
+    private val title = RowTitle(context)
     private val subtitle: TextView
     private val switch: Switch
     private val settingsButton: ImageView
@@ -431,25 +413,6 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
         }
         icon = BackupImageView(context).apply {
             setRoundRadius(AndroidUtilities.dp(if (compact) 6f else 8f))
-        }
-        // an ellipsized line stops short of the width wrap_content took, which would leave the
-        // warning drawable parked at the row's edge instead of right after the ellipsis
-        title = object : TextView(context) {
-            override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-                if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) return
-                val line = layout?.takeIf { it.lineCount == 1 } ?: return
-                val fitted = ceil(line.getLineWidth(0)).toInt() + compoundPaddingLeft + compoundPaddingRight
-                if (fitted < measuredWidth) setMeasuredDimension(fitted, measuredHeight)
-            }
-        }.apply {
-            setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
-            textSize = 16f
-            setSingleLine(true)
-            ellipsize = TextUtils.TruncateAt.END
-            compoundDrawablePadding = AndroidUtilities.dp(5f)
-            // keeps the warning off the switch once the name is long enough to ellipsize
-            setPaddingRelative(0, 0, AndroidUtilities.dp(8f), 0)
         }
         subtitle = LinkSpanDrawable.LinksTextView(context).apply {
             setLinkTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteLinkText))
@@ -520,26 +483,10 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
                 ellipsize = TextUtils.TruncateAt.END
             }
 
-            val actions = object : LinearLayout(context) {
-                override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-                    orientation = HORIZONTAL
-                    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-                    if (children.any { it.visibility != GONE && (it as TextView).lineCount > 1 }) {
-                        orientation = VERTICAL
-                        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-                    }
-                }
-            }.apply { gravity = Gravity.END }
-            settingsAction = mkAction(R.string.Settings, red = false).also {
-                it.visibility = GONE
-                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
-            }
-            reloadAction = mkAction(R.string.InuPluginsReload, red = false).also {
-                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
-            }
-            removeAction = mkAction(R.string.InuPluginsRemove, red = true).also {
-                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
-            }
+            val actions = RowActions(context)
+            settingsAction = actions.addAction(R.string.Settings, red = false).also { it.visibility = GONE }
+            reloadAction = actions.addAction(R.string.InuPluginsReload, red = false)
+            removeAction = actions.addAction(R.string.InuPluginsRemove, red = true)
 
             val content = LinearLayout(context).apply { orientation = VERTICAL }
             content.addView(titleRow, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
@@ -550,61 +497,13 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
                     if (rtl) 22 else 0, 4, if (rtl) 0 else 22, 0,
                 ),
             )
-            val body = object : ViewGroup(context) {
-                private val gutterStart = AndroidUtilities.dp(8f)
-                private val contentStart = AndroidUtilities.dp(8f + 40f + 12f)
-                private val actionsEnd = AndroidUtilities.dp(8f)
-                private var actionsY = 0
 
-                override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-                    val width = MeasureSpec.getSize(widthMeasureSpec)
-                    val unspecified = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-                    gutter.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(40f), MeasureSpec.EXACTLY), unspecified)
-                    content.measure(MeasureSpec.makeMeasureSpec(width - contentStart, MeasureSpec.EXACTLY), unspecified)
-                    actionsY = content.measuredHeight + AndroidUtilities.dp(6f)
-                    if (actionsY < gutter.measuredHeight) {
-                        actions.measure(MeasureSpec.makeMeasureSpec(width - contentStart - actionsEnd, MeasureSpec.AT_MOST), unspecified)
-                        if (actions.orientation == VERTICAL) actionsY = gutter.measuredHeight
-                    }
-                    if (actionsY >= gutter.measuredHeight) {
-                        actions.measure(MeasureSpec.makeMeasureSpec(width - gutterStart - actionsEnd, MeasureSpec.AT_MOST), unspecified)
-                    }
-                    setMeasuredDimension(width, max(gutter.measuredHeight, actionsY + actions.measuredHeight))
-                }
-
-                override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-                    place(gutter, gutterStart, 0)
-                    place(content, contentStart, 0)
-                    place(actions, width - actionsEnd - actions.measuredWidth, actionsY)
-                }
-
-                private fun place(child: View, x: Int, y: Int) {
-                    val left = if (rtl) width - x - child.measuredWidth else x
-                    child.layout(left, y, left + child.measuredWidth, y + child.measuredHeight)
-                }
-            }
-            body.addView(gutter)
-            body.addView(content)
-            body.addView(actions)
+            val body = RowBody(context, gutter, content, actions)
             addView(
                 body,
                 LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 10f, 0f, 10f),
             )
         }
-    }
-
-    private fun mkAction(textRes: Int, red: Boolean) = TextView(context).apply {
-        val color = Theme.getColor(if (red) Theme.key_text_RedBold else Theme.key_windowBackgroundWhiteBlueText2)
-        text = LocaleController.getString(textRes)
-        textSize = 14f
-        typeface = AndroidUtilities.bold()
-        setTextColor(color)
-        setPadding(AndroidUtilities.dp(14f), AndroidUtilities.dp(7f), AndroidUtilities.dp(14f), AndroidUtilities.dp(7f))
-        background = Theme.createRadSelectorDrawable(
-            if (red) Theme.multAlpha(color, 0.12f) else Theme.getColor(Theme.key_listSelector),
-            ACTION_RADIUS_DP,
-            ACTION_RADIUS_DP,
-        )
     }
 
     fun bind(plugin: Plugin, onOpen: () -> Unit, onUsernameClick: (String) -> Unit, onMenu: (View) -> Unit, onToggle: (Boolean) -> Unit) {
@@ -623,10 +522,7 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
             plugin.manifest.name
         }
         val tier = highestGrantTier(plugin.manifest)
-        val warning = warningDrawable?.takeIf { tier != null }?.apply {
-            colorFilter = PorterDuffColorFilter(tierColors(tier).first, PorterDuff.Mode.SRC_IN)
-        }
-        title.setCompoundDrawablesRelative(null, null, warning, null)
+        title.setWarning(tier?.let { tierColors(it).first })
         val failure = plugin.failure
         if (compact) {
             if (failure != null) {
@@ -634,9 +530,9 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
                 subtitle.text = failure.describe()
             } else {
                 subtitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
-                subtitle.text = linkUsernames(plugin.manifest.description
-                    ?: plugin.manifest.author?.let { LocaleController.formatString(R.string.InuPluginsByAuthor, it) }
-                    ?: "")
+                subtitle.text = plugin.manifest.description(LocaleController.getInstance().currentLocaleInfo?.langCode)?.let(::formatDescription)
+                    ?: plugin.manifest.author?.let { linkUsernames(LocaleController.formatString(R.string.InuPluginsByAuthor, it)) }
+                    ?: ""
             }
         } else {
             val meta = buildMetaLine(plugin)
@@ -646,7 +542,7 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
                 ?: plugin.manifest.description(LocaleController.getInstance().currentLocaleInfo?.langCode)
             description?.let {
                 it.setTextColor(Theme.getColor(if (failure != null) Theme.key_text_RedRegular else Theme.key_windowBackgroundWhiteGrayText))
-                it.text = if (failure == null) linkUsernames(text ?: "") else text ?: ""
+                it.text = if (failure == null) formatDescription(text ?: "") else text ?: ""
                 it.visibility = if (text.isNullOrEmpty()) GONE else VISIBLE
             }
         }
@@ -656,6 +552,9 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
 
     private fun linkUsernames(text: String): CharSequence =
         linkPluginUsernames(text) { username -> onUsernameClick?.invoke(username) }
+
+    private fun formatDescription(text: String): CharSequence =
+        formatPluginDescription(text) { username -> onUsernameClick?.invoke(username) }
 
     private fun buildMetaLine(plugin: Plugin): String {
         val parts = ArrayList<String>()
@@ -700,11 +599,8 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
 
     companion object {
         const val HEIGHT_DP = 64
-        private const val ACTION_RADIUS_DP = 18
         private const val COMPACT_DIVIDER_INSET_DP = 98f
         private const val ROOMY_DIVIDER_INSET_DP = 60f
-        private const val WARNING_SIZE_DP = 12.5f
-        private const val WARNING_OFFSET_DP = 1.5f
     }
 }
 

@@ -36,6 +36,13 @@ class FsQuotaTest {
         assertEquals(FsQuota.UNCAPPED, FsQuota.forGrants(listOf("fs(10mb)", "unsafe.fs")))
     }
 
+    @Test
+    fun another_grant_is_capped_on_its_own_and_unsafe_fs_does_not_lift_it() {
+        assertEquals(FsQuota.DEFAULT_BYTES, FsQuota.forGrants(listOf("fs(200mb)", "sqlite"), "sqlite"))
+        assertEquals(10L * 1024 * 1024, FsQuota.forGrants(listOf("unsafe.fs", "sqlite(10mb)"), "sqlite"))
+        assertNull(FsQuota.forGrants(listOf("unsafe.fs", "fs"), "sqlite"))
+    }
+
     /**
      * null rather than 0: rust reads a 0 as "the host had no number to give" and substitutes the
      * default cap, so the two sentinels would silently disagree and every install would get a

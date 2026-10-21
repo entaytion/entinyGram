@@ -19,20 +19,21 @@ object FsQuota {
         return amount * unit
     }
 
-    fun forGrants(grants: List<String>): Long? {
+    /** `unsafe.fs` lifts the cap of `fs` alone */
+    fun forGrants(grants: List<String>, name: String = "fs"): Long? {
         var quota: Long? = null
-        var sawFs = false
+        var sawGrant = false
         for (token in grants) {
             val grant = PluginPermissions.parseGrant(token) ?: continue
-            if (grant.name == "unsafe.fs") return UNCAPPED
-            if (grant.name != "fs") continue
-            sawFs = true
+            if (name == "fs" && grant.name == "unsafe.fs") return UNCAPPED
+            if (grant.name != name) continue
+            sawGrant = true
             for (scope in grant.scopes) {
                 val size = parseSize(scope) ?: continue
                 if (quota == null || size > quota) quota = size
             }
         }
-        if (!sawFs) return null
+        if (!sawGrant) return null
         return quota ?: DEFAULT_BYTES
     }
 }

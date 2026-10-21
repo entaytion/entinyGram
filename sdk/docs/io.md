@@ -57,6 +57,26 @@ async function keepAttachment(account: inu.Account, message: inu.Message) {
 }
 ```
 
+## Bundled assets
+
+Import images, fonts, audio and other binary files directly. `@inugram/cli` appends them to the
+built plugin as a footer, and the import is a `File`:
+
+```ts
+import frame from './assets/frame.png'
+
+const bitmap = await inu.canvas.decode(frame)
+```
+
+Supported extensions: `png`, `jpg`, `jpeg`, `gif`, `webp`, `tgs`, `mp4`, `webm`, `mp3`, `ogg`,
+`opus`, `wav`, `m4a`, `ttf`, `otf`, `woff`, `woff2`, `bin`, `dex` (for `inu.jvm.loadDex`).
+
+The app strips the footer before running the code, so assets cost no JS heap and are not
+shown as code in the source viewer. Each asset is read from disk only when its content is read.
+`inu.assets.get(name)` returns the same file by its name: the URL-encoded file name with a content hash, e.g. `frame-1a2b3c4d.png`.
+
+Prefer this over inlining base64 strings: those are parsed and kept in memory as code.
+
 ## inu.fs
 
 `inu.fs` needs the `fs` grant and works in a private directory for your plugin. All calls are

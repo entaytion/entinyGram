@@ -311,6 +311,10 @@ object InuConfig {
     @JvmField
     val PLUGINS_COMPACT_LIST = BoolItem("plugins_compact_list", false)
 
+    // json: [{channel, username, title}]
+    @JvmField
+    val PLUGIN_REPOS = StringItem("plugin_repos", "")
+
     // the "only install plugins you trust" warning was read and accepted: consent, not a
     // preference, so it is never carried over by an import
     @JvmField
@@ -896,6 +900,9 @@ object InuConfig {
     val PROFILE_PREFER_MEDIA_TAB = BoolItem("profile_prefer_media_tab", true)
 
     @JvmField
+    val SHOW_PROFILE_GIFT_BUTTON = BoolItem("show_profile_gift_button", false)
+
+    @JvmField
     val DISABLE_MOTION_PHOTOS = BoolItem("disable_motion_photos", true)
 
     @JvmField
@@ -963,6 +970,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val DISABLE_NEXT_VOICE_AUTOPLAY = BoolItem("disable_next_voice_autoplay", false)
+
+    @JvmField
+    val DISABLE_ANIMATED_AVATARS = BoolItem("disable_animated_avatars", false)
 
     @JvmField
     val HIDE_REACTIONS_ENTRY = BoolItem("hide_reactions_entry", false)
@@ -1197,10 +1207,16 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val WEB_PREVIEW_REPLACEMENTS = StringItem("web_preview_replacements", "")
 
     @JvmField
+    val WEB_PREVIEW_REPLACE_ON_PASTE = BoolItem("web_preview_replace_on_paste", false)
+
+    @JvmField
     val STRIP_TRACKING_PARAMS_ON_OPEN = BoolItem("strip_tracking_params", true)
 
     @JvmField
     val STRIP_TRACKING_PARAMS_ON_PASTE = BoolItem("strip_tracking_params_on_paste", true)
+
+    @JvmField
+    val RESOLVE_TRACKABLE_REDIRECTS = BoolItem("resolve_trackable_redirects", false)
 
     @JvmField
     val DISABLE_INTRO_STICKER = BoolItem("disable_intro_sticker", true)

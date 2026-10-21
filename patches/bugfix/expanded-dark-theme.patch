@@ -1,0 +1,70 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 20 Oct 2026 02:35:08 +0400
+Subject: opt out of android 16 expanded dark theme
+
+---
+ .../main/java/org/telegram/messenger/AndroidUtilities.java  | 4 ++++
+ TMessagesProj/src/main/res/values-v21/styles.xml            | 6 ++++++
+ TMessagesProj/src/main/res/values-v31/styles.xml            | 2 ++
+ 3 files changed, 12 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+@@ -6322,6 +6322,10 @@ public class AndroidUtilities {
+         if (context == null) {
+             return;
+         }
++        if (open && !Theme.isCurrentThemeDark()) {
++            context.setTheme(R.style.Theme_TMessages_InuLight);
++            return;
++        }
+         context.setTheme(Theme.isCurrentThemeDark() && open ? R.style.Theme_TMessages_Dark : R.style.Theme_TMessages);
+     }
+ 
+diff --git a/TMessagesProj/src/main/res/values-v21/styles.xml b/TMessagesProj/src/main/res/values-v21/styles.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/values-v21/styles.xml
++++ b/TMessagesProj/src/main/res/values-v21/styles.xml
+@@ -23,6 +23,7 @@
+         <item name="android:navigationBarColor">#000000</item>
+         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+         <item name="android:forceDarkAllowed">false</item>
++        <item name="android:isLightTheme">false</item>
+     </style>
+ 
+     <style name="Theme.TMessages" parent="Theme.AppCompat.Light">
+@@ -50,6 +51,11 @@
+         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+         <item name="android:forceDarkAllowed">false</item>
++        <item name="android:isLightTheme">false</item>
++    </style>
++
++    <style name="Theme.TMessages.InuLight" parent="Theme.TMessages">
++        <item name="android:isLightTheme">true</item>
+     </style>
+ 
+     <style name="Theme.TMessages.Dark" parent="Theme.AppCompat.DayNight">
+diff --git a/TMessagesProj/src/main/res/values-v31/styles.xml b/TMessagesProj/src/main/res/values-v31/styles.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/values-v31/styles.xml
++++ b/TMessagesProj/src/main/res/values-v31/styles.xml
+@@ -28,6 +28,7 @@
+         <item name="android:navigationBarColor">#000000</item>
+         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+         <item name="android:forceDarkAllowed">false</item>
++        <item name="android:isLightTheme">false</item>
+         <item name="android:windowSplashScreenAnimatedIcon">@drawable/inu_splash_320</item>
+         <item name="android:windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
+         <item name="android:windowSplashScreenBackground">?android:windowBackground</item>
+@@ -58,6 +59,7 @@
+         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+         <item name="android:forceDarkAllowed">false</item>
++        <item name="android:isLightTheme">false</item>
+     </style>
+ 
+     <style name="Theme.TMessages.Dark" parent="Theme.AppCompat.DayNight">

@@ -6,7 +6,7 @@ use std::rc::Rc;
 use rquickjs::{Array, Ctx, Exception, Function, Object, Persistent, Result as JsResult, Value};
 
 use crate::api::error::{call_callback, format_exception, host_error_to_js, report_callback_error, PluginErrorCode};
-use crate::api::ui::icons::{opt_icon, Icon, RETAINED_VALUE_TAG};
+use crate::api::ui::icons::icon_from_value;
 use crate::runtime::enter_js;
 use crate::runtime::pump_jobs;
 use crate::sandbox::registry::{make_disposer, noop_disposer, Lifecycle, Registry, RequestIds};
@@ -110,7 +110,7 @@ fn make_check<'js>(
   let out = new_element(ctx, "check")?;
   set_opt(&out, "id", opt_str(ctx, &opts, "check", "id")?)?;
   out.set("text", req_str(ctx, &opts, "check", "text")?)?;
-  set_icon(&out, opt_icon(ctx, &opts, "check", jvm)?)?;
+  set_icon(ctx, &out, &opts, "check", jvm)?;
   set_opt(&out, "subtitle", opt_str(ctx, &opts, "check", "subtitle")?)?;
   set_opt(&out, "multiline", opt_bool(ctx, &opts, "check", "multiline")?)?;
   out.set("checked", req_bool(ctx, &opts, "check", "checked")?)?;
@@ -120,11 +120,17 @@ fn make_check<'js>(
   Ok(out)
 }
 
-fn set_icon<'js>(out: &Object<'js>, icon: Option<Icon<'js>>) -> JsResult<()> {
-  let Some(icon) = icon else { return Ok(()) };
-  out.set("icon", icon.spec)?;
-  if let Some(value) = icon.retained_value {
-    out.set(RETAINED_VALUE_TAG, value)?;
+/// keeps the icon object rather than its spec: an element is a plain object, so render checks it again
+fn set_icon<'js>(
+  ctx: &Ctx<'js>,
+  out: &Object<'js>,
+  opts: &Object<'js>,
+  what: &str,
+  jvm: Option<&Rc<crate::api::platform::jvm::JvmState>>,
+) -> JsResult<()> {
+  let icon: Value = field(ctx, opts, what, "icon")?;
+  if icon_from_value(ctx, icon.clone(), what, jvm)?.is_some() {
+    out.set("icon", icon)?;
   }
   Ok(())
 }
@@ -137,7 +143,7 @@ fn make_button<'js>(
   let out = new_element(ctx, "button")?;
   set_opt(&out, "id", opt_str(ctx, &opts, "button", "id")?)?;
   write_input_text(&out, "text", req_text(ctx, &opts, "button", "text")?)?;
-  set_icon(&out, opt_icon(ctx, &opts, "button", jvm)?)?;
+  set_icon(ctx, &out, &opts, "button", jvm)?;
   if let Some(subtitle) = opt_text(ctx, &opts, "button", "subtitle")? {
     write_input_text(&out, "subtitle", subtitle)?;
   }
@@ -159,7 +165,7 @@ fn make_select<'js>(
   let out = new_element(ctx, "select")?;
   set_opt(&out, "id", opt_str(ctx, &opts, "select", "id")?)?;
   write_input_text(&out, "text", req_text(ctx, &opts, "select", "text")?)?;
-  set_icon(&out, opt_icon(ctx, &opts, "select", jvm)?)?;
+  set_icon(ctx, &out, &opts, "select", jvm)?;
   set_opt(&out, "multiline", opt_bool(ctx, &opts, "select", "multiline")?)?;
 
   let raw: Value = field(ctx, &opts, "select", "items")?;
@@ -486,11 +492,19 @@ impl UiState {
   }
 }
 
-fn copy_icon<'js>(out: &Object<'js>, obj: &Object<'js>, retained: &mut Vec<Value<'js>>) -> JsResult<()> {
-  set_opt(out, "icon", obj.get::<_, Option<String>>("icon")?)?;
-  if let Some(value) = obj.get::<_, Option<Value>>(RETAINED_VALUE_TAG)? {
-    retained.push(value);
-  }
+fn copy_icon<'js>(
+  ctx: &Ctx<'js>,
+  out: &Object<'js>,
+  obj: &Object<'js>,
+  what: &str,
+  jvm: Option<&Rc<crate::api::platform::jvm::JvmState>>,
+  retained: &mut Vec<Value<'js>>,
+) -> JsResult<()> {
+  let Some(icon) = icon_from_value(ctx, obj.get("icon")?, what, jvm)? else {
+    return Ok(());
+  };
+  out.set("icon", icon.spec)?;
+  retained.extend(icon.retained_value);
   Ok(())
 }
 
@@ -573,7 +587,7 @@ impl UiState {
         "check" => {
           set_opt(&out, "id", obj.get::<_, Option<String>>("id")?)?;
           out.set("text", obj.get::<_, String>("text")?)?;
-          copy_icon(&out, obj, &mut retained_icon_values)?;
+          copy_icon(ctx, &out, obj, &ty, self.jvm.as_ref(), &mut retained_icon_values)?;
           set_opt(&out, "subtitle", obj.get::<_, Option<String>>("subtitle")?)?;
           set_opt(&out, "multiline", obj.get::<_, Option<bool>>("multiline")?)?;
           out.set("checked", obj.get::<_, bool>("checked")?)?;
@@ -586,7 +600,7 @@ impl UiState {
         "button" => {
           set_opt(&out, "id", obj.get::<_, Option<String>>("id")?)?;
           out.set("text", obj.get::<_, String>("text")?)?;
-          copy_icon(&out, obj, &mut retained_icon_values)?;
+          copy_icon(ctx, &out, obj, &ty, self.jvm.as_ref(), &mut retained_icon_values)?;
           set_opt(&out, "subtitle", obj.get::<_, Option<String>>("subtitle")?)?;
           set_opt(&out, "value", obj.get::<_, Option<String>>("value")?)?;
           set_opt(&out, "multiline", obj.get::<_, Option<bool>>("multiline")?)?;
@@ -600,7 +614,7 @@ impl UiState {
         "select" => {
           set_opt(&out, "id", obj.get::<_, Option<String>>("id")?)?;
           out.set("text", obj.get::<_, String>("text")?)?;
-          copy_icon(&out, obj, &mut retained_icon_values)?;
+          copy_icon(ctx, &out, obj, &ty, self.jvm.as_ref(), &mut retained_icon_values)?;
           copy_text(&out, obj, "text")?;
           set_opt(&out, "multiline", obj.get::<_, Option<bool>>("multiline")?)?;
           out.set("items", obj.get::<_, Array>("items")?)?;

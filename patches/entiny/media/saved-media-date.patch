@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -34114,7 +34114,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34118,7 +34118,7 @@ public class ChatActivity extends BaseFragment implements
                  return;
              }
          }
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      }
  
      public void processSelectedOption(int option) {
-@@ -34417,7 +34417,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34421,7 +34421,7 @@ public class ChatActivity extends BaseFragment implements
                          break;
                      }
                  }
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
                  BulletinFactory.createSaveToGalleryBulletin(this, selectedObject.isVideo() && !selectedObject.isLivePhoto(), selectedObject.isLivePhoto(), themeDelegate).show();
                  break;
              }
-@@ -34568,7 +34568,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34572,7 +34572,7 @@ public class ChatActivity extends BaseFragment implements
                              path = f.getPath();
                          }
                      }
@@ -43,7 +43,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -4997,7 +4997,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -4999,7 +4999,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                  showDownloadAlert();
                              }
                          } else if (f != null && f.exists()) {
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
                          } else {
                              showDownloadAlert();
                          }
-@@ -5055,7 +5055,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -5057,7 +5057,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                              showDownloadAlert();
                                          }
                                      } else if (f != null && f.exists()) {
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                                      } else {
                                          showDownloadAlert();
                                      }
-@@ -5101,11 +5101,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -5103,11 +5103,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                              if (videoFileForLivePhoto != null && videoFileForLivePhoto.exists()) {
                                                  MediaController.saveFile(f.toString(), videoFileForLivePhoto.toString(), parentActivity, uri -> AndroidUtilities.runOnUIThread(bulletin));
                                              } else {

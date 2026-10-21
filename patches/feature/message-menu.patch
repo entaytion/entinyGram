@@ -6,12 +6,12 @@ Subject: visual tweaks for the message menu
 ---
  .../ui/ActionBar/ActionBarPopupWindow.java    |   4 +
  .../java/org/telegram/ui/ChatActivity.java    | 117 ++++++++++++++----
- .../ChatScrimPopupContainerLayout.java        |  18 ++-
+ .../ChatScrimPopupContainerLayout.java        |  27 ++--
  .../Reactions/CustomEmojiReactionsWindow.java |  13 +-
  .../Components/ReactionsContainerLayout.java  |  21 +++-
  .../java/org/telegram/ui/MessageSeenView.java |   9 +-
  .../ui/SelectAnimatedEmojiDialog.java         |  10 +-
- 7 files changed, 153 insertions(+), 39 deletions(-)
+ 7 files changed, 158 insertions(+), 43 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
 index 0000000..0000000 100644
@@ -250,7 +250,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.setReactionsLayout(reactionsLayout);
                      scrimPopupContainerLayout.setClipChildren(false);
                      MessageObject messageWithReactions = message;
-@@ -32420,6 +32475,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -32424,6 +32479,9 @@ public class ChatActivity extends BaseFragment implements
  
                  boolean showNoForwards = (isPeerNoForwards() || message.messageOwner.noforwards && currentUser != null && currentUser.bot) && message.messageOwner.action == null && message.isSent() && !message.isEditing() && chatMode != MODE_SCHEDULED && chatMode != MODE_SAVED && getDialogId() != UserObject.VERIFY;
                  scrimPopupContainerLayout.addView(popupLayout, LayoutHelper.createLinearRelatively(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT, isReactionsAvailable ? 16 : 0, 0, isReactionsAvailable ? 36 : 0, 0));
@@ -260,7 +260,7 @@ index 0000000..0000000 100644
                  scrimPopupContainerLayout.setPopupWindowLayout(popupLayout);
                  if (showNoForwards) {
                      popupLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-@@ -32453,7 +32511,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32457,7 +32515,11 @@ public class ChatActivity extends BaseFragment implements
                      FrameLayout fl = new FrameLayout(contentView.getContext());
                      fl.setBackground(shadowDrawable2);
                      fl.addView(tv, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 11, 11, 11, 11));
@@ -273,7 +273,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.applyViewBottom(fl);
                  }
  
-@@ -32476,7 +32538,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32480,7 +32542,11 @@ public class ChatActivity extends BaseFragment implements
                      FrameLayout fl = new FrameLayout(contentView.getContext());
                      fl.setBackground(shadowDrawable2);
                      fl.addView(tv, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 11, 11, 11, 11));
@@ -286,7 +286,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.applyViewBottom(fl);
                  }
  
-@@ -32511,7 +32577,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -32515,7 +32581,9 @@ public class ChatActivity extends BaseFragment implements
                          }
  
                          if (stickerSets.size() > 0 && !getMessagesController().premiumFeaturesBlocked()) {
@@ -296,7 +296,7 @@ index 0000000..0000000 100644
  
                              View button = new MessageContainsEmojiButton(currentAccount, contentView.getContext(), themeDelegate, stickerSets, MessageContainsEmojiButton.EMOJI_TYPE);
                              button.setOnClickListener(e -> {
-@@ -32582,6 +32650,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -32586,6 +32654,9 @@ public class ChatActivity extends BaseFragment implements
              }
              scrimPopupWindow.setFocusable(true);
              scrimPopupContainerLayout.measure(View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000), View.MeasureSpec.AT_MOST));
@@ -310,7 +310,24 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPop
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPopupContainerLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPopupContainerLayout.java
-@@ -164,9 +164,19 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -45,11 +45,12 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+ 
+             int maxWidth = reactionsLayout.getMeasuredWidth();
+-            if (popupWindowLayout.getSwipeBack() != null && popupWindowLayout.getSwipeBack().getMeasuredWidth() > maxWidth) {
+-                maxWidth = popupWindowLayout.getSwipeBack().getMeasuredWidth();
++            int inu_foregroundExtraWidth = reactionsLayout.showCustomEmojiReaction() && popupWindowLayout.getSwipeBack() != null ? popupWindowLayout.getSwipeBack().getMeasuredWidth() - popupWindowLayout.getSwipeBack().getChildAt(0).getMeasuredWidth() : 0;
++            if (popupWindowLayout.getSwipeBack() != null && popupWindowLayout.getSwipeBack().getMeasuredWidth() - inu_foregroundExtraWidth > maxWidth) {
++                maxWidth = popupWindowLayout.getSwipeBack().getMeasuredWidth() - inu_foregroundExtraWidth;
+             }
+-            if (popupWindowLayout.getMeasuredWidth() > maxWidth) {
+-                maxWidth = popupWindowLayout.getMeasuredWidth();
++            if (popupWindowLayout.getMeasuredWidth() - inu_foregroundExtraWidth > maxWidth) {
++                maxWidth = popupWindowLayout.getMeasuredWidth() - inu_foregroundExtraWidth;
+             }
+             if (reactionsLayout.showCustomEmojiReaction()) {
+                 widthMeasureSpec = MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.EXACTLY);
+@@ -164,9 +165,19 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
          }
      }
  
@@ -332,7 +349,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -175,7 +185,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -175,7 +186,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
      }
  
      public void setExpandSize(float expandSize) {
@@ -341,7 +358,7 @@ index 0000000..0000000 100644
          this.expandSize = expandSize;
          updateBottomViewPosition();
      }
-@@ -193,7 +203,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -193,7 +204,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
              bottomView.setAlpha(v);
              float scale = 0.5f + v * 0.5f;
              bottomView.setPivotX(bottomView.getMeasuredWidth());

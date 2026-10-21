@@ -85,6 +85,28 @@ const EvalSchema = v.object({
 })
 export type DevEval = v.InferOutput<typeof EvalSchema>
 
+/** `describe_memory_usage` in the engine */
+const MemoryUsageSchema = v.object({
+  heapBytes: v.number(),
+  heapLimitBytes: v.number(),
+  nativeBytes: v.number(),
+  nativeLimitBytes: v.number(),
+  objects: v.number(),
+  arrays: v.number(),
+  functions: v.number(),
+  strings: v.number(),
+  stringBytes: v.number(),
+  shapes: v.number(),
+  atoms: v.number(),
+})
+export type DevMemoryUsage = v.InferOutput<typeof MemoryUsageSchema>
+
+const MemorySchema = v.object({
+  ok: v.literal(true),
+  plugins: v.array(v.object({ plugin: DevPluginSchema, usage: MemoryUsageSchema })),
+})
+export type DevMemorySample = v.InferOutput<typeof MemorySchema>['plugins'][number]
+
 export interface LogLine {
   /** epoch microseconds */
   time: number
@@ -206,6 +228,13 @@ export class Device {
     await this.adb(['shell', `mkdir -p ${this.dropDir} && cat > ${this.dropDir}/${name}`], { input: code })
     const target: Record<string, string> = pluginFile === null ? { reset: String(reset) } : { file: basename(pluginFile) }
     return this.send({ cmd: 'eval', code: name, timeout: String(timeoutSeconds), ...target }, EvalSchema)
+  }
+
+  /** every running plugin, or with [pluginFile] the plugin it was pushed as */
+  async memory(pluginFile: string | null): Promise<DevMemorySample[]> {
+    const target: Record<string, string> = pluginFile === null ? {} : { file: basename(pluginFile) }
+    const reply = await this.send({ cmd: 'memory', ...target }, MemorySchema)
+    return reply.plugins
   }
 
   async list(): Promise<DevPlugin[]> {

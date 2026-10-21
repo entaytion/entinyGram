@@ -318,7 +318,7 @@ impl BlobFault {
     }
   }
 
-  fn throw<'js, T>(&self, ctx: &Ctx<'js>) -> JsResult<T> {
+  pub(crate) fn throw<'js, T>(&self, ctx: &Ctx<'js>) -> JsResult<T> {
     let value = self.to_value(ctx)?;
     Err(ctx.throw(value))
   }

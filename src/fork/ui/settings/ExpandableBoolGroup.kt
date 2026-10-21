@@ -23,6 +23,10 @@ class ExpandableBoolGroup(
 
     var expanded = false
 
+    fun expandIfContains(id: Int) {
+        if (options.any { it.id == id }) expanded = true
+    }
+
     fun addTo(items: ArrayList<UItem>, onChange: (options: List<Option>) -> Unit) {
         val checkedCount = options.count { it.config.value }
         val total = options.size

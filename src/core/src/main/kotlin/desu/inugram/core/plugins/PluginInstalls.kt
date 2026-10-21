@@ -11,9 +11,13 @@ data class PluginInstall(
     val dev: Boolean = false,
     /** list of consented grants */
     val grants: List<String>? = null,
+    val origin: PluginOrigin? = null,
 ) {
     val file: String get() = PluginInstalls.fileName(id)
 }
+
+/** the repo post an install came from; updates are only taken from [channelId] */
+data class PluginOrigin(val channelId: Long, val messageId: Int)
 
 object PluginInstalls {
     const val ID_LENGTH = 32

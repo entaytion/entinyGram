@@ -4,7 +4,7 @@ import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCharacteristics
 import android.media.MediaCodecList
 import android.media.MediaFormat
-import org.telegram.utils.camera.roundvideo.RoundVideoSession
+import org.telegram.utils.recorder.round.RoundVideoSession
 import android.util.Range
 import android.view.Gravity
 import desu.inugram.helpers.vibration.HapticFeedbackConstants

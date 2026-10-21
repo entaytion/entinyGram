@@ -3,7 +3,7 @@ use crate::runtime::Dispose;
 use crate::runtime::{
   pump_jobs, SETTLE_CANVAS, SETTLE_FETCH, SETTLE_FILES, SETTLE_INVOKE, SETTLE_MODAL, SETTLE_READS, SETTLE_WRITES,
 };
-use crate::sandbox::limits::{arm, fit_stack_limit, ENTRY_DEADLINE_MS};
+use crate::sandbox::limits::{arm, fit_stack_limit, ExternalMemory, ENTRY_DEADLINE_MS};
 use std::cell::{Cell, RefCell};
 use std::ops::Deref;
 use std::rc::Rc;
@@ -215,6 +215,7 @@ pub(crate) struct Engine {
   pub(crate) files: Rc<FilesState>,
   pub(crate) timers: Rc<TimerState>,
   pub(crate) notifications: Rc<NotificationState>,
+  pub(crate) external: Rc<ExternalMemory>,
   pub(crate) jvm: Option<Rc<JvmState>>,
   pub(crate) xposed: Option<Rc<XposedState>>,
 }

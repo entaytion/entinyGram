@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 21 Oct 2026 08:35:05 +0400
+Subject: fix settings camera button clipping on fractional density
+
+---
+ .../src/main/java/org/telegram/ui/SettingsActivity.java        | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -450,7 +450,6 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+ 
+         cameraButton = new FrameLayout(context);
+         cameraButton.setBackground(Theme.createCircleDrawable(dp(32), getThemedColor(Theme.key_windowBackgroundGray)));
+-        cameraButton.setPadding(dp(2), dp(2), dp(2), dp(2));
+         cameraBackground = new FrameLayout(context);
+         cameraBackground.setBackground(Theme.createCircleDrawable(dp(30), getThemedColor(Theme.key_featuredStickers_addButton)));
+         cameraImageView = new ImageView(context);
+@@ -458,7 +457,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+         cameraImageView.setImageResource(R.drawable.filled_premium_camera);
+         cameraImageView.setColorFilter(getThemedColor(Theme.key_featuredStickers_buttonText), android.graphics.PorterDuff.Mode.SRC_IN);
+         cameraBackground.addView(cameraImageView, LayoutHelper.createFrame(22, 22, Gravity.CENTER));
+-        cameraButton.addView(cameraBackground, LayoutHelper.createFrame(30, 30));
++        cameraButton.addView(cameraBackground, LayoutHelper.createFrame(30, 30, Gravity.CENTER));
+         avatarContainer.addView(cameraButton, LayoutHelper.createFrame(34, 34, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 32, 75, 0, 0));
+         ScaleStateListAnimator.apply(cameraButton);
+ 

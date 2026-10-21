@@ -137,7 +137,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -10760,6 +10760,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10796,6 +10796,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  }
              }
  

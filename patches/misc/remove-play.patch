@@ -768,7 +768,7 @@ index 0000000..0000000 100644
                  request.flags |= 2;
                  req = request;
              }
-@@ -6965,15 +6645,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+@@ -6967,15 +6647,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                          }
                      }
                  }

@@ -49,7 +49,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -17590,8 +17590,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -17626,8 +17626,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  messageObject != null && (MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) ||
                  (messageObject.messageOwner != null && desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(messageObject.messageOwner))) || messageObject != null && messageObject.hasRevealedExtendedMedia()
              ) {

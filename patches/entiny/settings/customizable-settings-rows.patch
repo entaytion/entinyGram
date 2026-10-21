@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Tue, 1 Sep 2026 23:19:32 +0300
+Date: Wed, 21 Oct 2026 12:26:33 +0300
 Subject: Let the Settings screen and My Profile info rows be reordered and hidden
 
 ---
@@ -58,24 +58,18 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -704,12 +704,16 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -704,6 +704,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          // inu: the accounts list is hidden entirely - switching happens from the drawer/avatar
          // (ported from inugram PR #34, made unconditional)
  
 +        final int inu_reorderFrom = items.size();
-         final boolean walletAbove = getConnectionsManager().getCurrentTime() - 1791538462 < 4 * 7 * 24 * 60 * 60;
-         if (walletAbove && getMessagesController().config.walletAvailable.get()) {
-             final GramWallet wallet = GramWallet.getInstance(currentAccount);
-             items.add(SettingCell.Factory.of(25, 0, 0, Theme.isCurrentThemeDark() ? R.drawable.settings_wallet_dark : R.drawable.settings_wallet, TextCell.applyNewSpanTimed(getString(R.string.WalletAttachMoney), 1790679020), null, wallet.getBalance() > 0 ? GramWallet.formatGrams(wallet.getBalance()) : null));
-             items.add(UItem.asShadow(null));
-         }
 +        // inu: everything from here down to the version cell is one reorderable/hideable pool
 +        // (InuConfig.PROFILE_SETTINGS_ROWS). Separators added here are rebuilt per stock group
 +        // by ProfileSettingsHelper.reorder after the user's order is applied.
- 
          if (!desu.inugram.helpers.security.ParanoiaHelper.shouldHideSettings()) {
              items.add(SettingCell.Factory.of(99, IconBackgroundColors.ENTINY.top, IconBackgroundColors.ENTINY.bottom, R.drawable.icon_settings_inu, getString(R.string.InuSettings), getString(R.string.InuSettingsInfo)));
-@@ -777,6 +781,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+             items.add(UItem.asShadow(null));
+@@ -778,6 +782,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              items.add(SettingCell.Factory.of(22, 0xFFF45255, 0xFFDF3955, 0, getString(R.string.DebugClearLogs)));
          }
  

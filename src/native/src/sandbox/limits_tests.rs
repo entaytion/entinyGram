@@ -184,14 +184,18 @@ mod memory_tests {
     fn trace<'a>(&self, _tracer: Tracer<'a, 'js>) {}
   }
 
-  fn setup() -> (Runtime, Context) {
-    let (rt, ctx) = crate::testing::harness::new_engine();
+  const TEST_CEILING: usize = 8 * 1024 * 1024;
+
+  fn setup(ceiling: usize) -> (Runtime, Context) {
+    let rt = Runtime::new_with_alloc(HeapAllocator::new(ceiling)).unwrap();
+    let ctx = Context::full(&rt).unwrap();
     ctx.with(|ctx| crate::api::error::install_plugin_error(&ctx).unwrap());
     (rt, ctx)
   }
 
-  /// `Err` carries what the host would report for the failure
+  /// One entry per call. `Err` carries what the host would report for the failure
   fn eval(ctx: &Context, code: &str) -> Result<String, String> {
+    let _entry = arm(EVAL_DEADLINE_MS);
     ctx.with(|ctx| match ctx.eval::<Value, _>(code) {
       Ok(value) => Ok(rquickjs::Coerced::<String>::from_js(&ctx, value).map(|c| c.0).unwrap_or_default()),
       Err(rquickjs::Error::Exception) => Err(crate::api::error::format_exception(&ctx)),
@@ -199,24 +203,23 @@ mod memory_tests {
     })
   }
 
+  /// small allocations only, so the heap is full to the last arena when one is refused
   const GROW_UNTIL_REFUSED: &str = r#"
-    (function () {
-      const held = [];
-      for (let i = 0; i < 1e7; i++) held.push({ index: i, tag: 'x' + i });
+    (function grow() {
+      let held = null;
+      for (let i = 0; i < 1e7; i++) held = { next: held, tag: 'x' + i };
       return 'never';
     })()
   "#;
 
   #[test]
-  fn a_runaway_allocation_is_refused_and_the_engine_survives() {
-    let (rt, ctx) = setup();
+  fn a_runaway_allocation_is_refused_with_a_stack_and_the_engine_survives() {
+    let (rt, ctx) = setup(TEST_CEILING);
     let baseline = rt.memory_usage().malloc_size as usize;
-    rt.set_memory_limit(baseline + 4 * 1024 * 1024);
 
-    // a gradually grown heap is at its ceiling when it trips, so quickjs has no room to build
-    // the error and throws bare `null`; the host still names the ceiling
     let err = eval(&ctx, GROW_UNTIL_REFUSED).unwrap_err();
-    assert!(err.contains("heap ceiling of 32 MB"), "got: {err}");
+    assert!(err.starts_with("quota-exceeded:"), "got: {err}");
+    assert!(err.contains("at grow"), "got: {err}");
 
     // the dead turn's objects are gone with it, so the engine is not left pinned at its ceiling
     assert!(
@@ -225,24 +228,41 @@ mod memory_tests {
       rt.memory_usage().malloc_size,
     );
     assert_eq!(eval(&ctx, "JSON.stringify({ ok: [1, 2, 3] })").unwrap(), r#"{"ok":[1,2,3]}"#,);
-    // and a second runaway is refused the same way, not fatally
-    assert!(eval(&ctx, GROW_UNTIL_REFUSED).is_err());
+    let err = eval(&ctx, GROW_UNTIL_REFUSED).unwrap_err();
+    assert!(err.contains("at grow"), "a later turn gets the reserve again, got: {err}");
     assert_eq!(eval(&ctx, "String(6 * 7)").unwrap(), "42");
   }
 
   #[test]
+  fn a_turn_that_keeps_allocating_after_catching_the_refusal_stops_at_the_reserve() {
+    let (_rt, ctx) = setup(TEST_CEILING);
+    let err = eval(
+      &ctx,
+      r#"
+        (function () {
+          let held = null;
+          try {
+            for (let i = 0; i < 1e7; i++) held = { next: held, tag: 'x' + i };
+          } catch {}
+          for (let i = 0; i < 1e7; i++) held = { next: held, tag: 'y' + i };
+        })()
+      "#,
+    )
+    .unwrap_err();
+    assert!(err.starts_with("quota-exceeded:") || err == "null", "got: {err}");
+    assert!(eval(&ctx, GROW_UNTIL_REFUSED).unwrap_err().contains("at grow"));
+  }
+
+  #[test]
   fn one_oversized_request_is_refused_by_name() {
-    let (rt, ctx) = setup();
-    rt.set_memory_limit(rt.memory_usage().malloc_size as usize + 4 * 1024 * 1024);
-    // large enough that quickjs refuses it outright, so it still has room to build the error
+    let (_rt, ctx) = setup(TEST_CEILING);
     let err = eval(&ctx, "'x'.repeat(1e9)").unwrap_err();
     assert!(err.starts_with("quota-exceeded:"), "got: {err}");
   }
 
   #[test]
   fn an_ordinary_failure_is_not_reported_as_a_quota() {
-    let (rt, ctx) = setup();
-    rt.set_memory_limit(HEAP_LIMIT_BYTES);
+    let (_rt, ctx) = setup(HEAP_LIMIT_BYTES);
     let err = eval(&ctx, "throw new Error('boom')").unwrap_err();
     assert!(err.starts_with("Error: boom"), "got: {err}");
     let err = eval(&ctx, "throw new RangeError('nope')").unwrap_err();
@@ -253,8 +273,7 @@ mod memory_tests {
 
   #[test]
   fn an_ordinary_workload_never_reaches_either_ceiling() {
-    let (rt, ctx) = setup();
-    rt.set_memory_limit(HEAP_LIMIT_BYTES);
+    let (rt, ctx) = setup(HEAP_LIMIT_BYTES);
     let out = eval(
       &ctx,
       r#"
@@ -279,7 +298,7 @@ mod memory_tests {
 
   #[test]
   fn charging_past_the_native_budget_throws_quota_exceeded_and_reserves_nothing() {
-    let (_rt, ctx) = setup();
+    let (_rt, ctx) = setup(HEAP_LIMIT_BYTES);
     let external = ExternalMemory::new();
     ctx.with(|ctx| {
       let held = external.charge(&ctx, EXTERNAL_LIMIT_BYTES - 1024).unwrap();
@@ -304,7 +323,7 @@ mod memory_tests {
   /// a refused growth must leave it exactly where it was
   #[test]
   fn a_charge_grows_in_place_and_a_refused_growth_changes_nothing() {
-    let (_rt, ctx) = setup();
+    let (_rt, ctx) = setup(HEAP_LIMIT_BYTES);
     let external = ExternalMemory::new();
     ctx.with(|ctx| {
       let mut charge = external.charge(&ctx, 1024).unwrap();
@@ -330,7 +349,7 @@ mod memory_tests {
   /// plain `None` with nothing thrown and nothing reserved
   #[test]
   fn try_charge_refuses_without_throwing_and_reserves_nothing() {
-    let (_rt, ctx) = setup();
+    let (_rt, ctx) = setup(HEAP_LIMIT_BYTES);
     let external = ExternalMemory::new();
     ctx.with(|ctx| {
       let held = external.try_charge(&ctx, EXTERNAL_LIMIT_BYTES - 1024).unwrap();
@@ -344,7 +363,7 @@ mod memory_tests {
 
   #[test]
   fn a_cycle_holding_a_charge_is_collected_before_the_budget_refuses() {
-    let (_rt, ctx) = setup();
+    let (_rt, ctx) = setup(HEAP_LIMIT_BYTES);
     let external = ExternalMemory::new();
     ctx.with(|ctx| {
       let surface = Class::instance(

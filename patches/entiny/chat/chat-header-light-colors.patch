@@ -88,7 +88,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44121,22 +44124,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -44125,22 +44128,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }

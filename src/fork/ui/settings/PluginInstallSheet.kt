@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.View.MeasureSpec
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import desu.inugram.core.plugins.PluginAsset
 import desu.inugram.core.plugins.PluginManifest
 import desu.inugram.core.plugins.SourceObfuscation
 import desu.inugram.helpers.InuUtils
@@ -40,6 +41,7 @@ class PluginInstallSheet(
     fragment: BaseFragment,
     manifest: PluginManifest,
     source: String,
+    assets: List<PluginAsset>,
     obfuscation: SourceObfuscation?,
     previous: PluginManifest? = null,
     onInstall: (enable: Boolean) -> Unit,
@@ -49,6 +51,7 @@ class PluginInstallSheet(
     private class Content(
         val manifest: PluginManifest,
         val source: String,
+        val assets: List<PluginAsset>,
         val obfuscation: SourceObfuscation?,
         val fragment: BaseFragment,
         val previous: PluginManifest?,
@@ -59,7 +62,7 @@ class PluginInstallSheet(
      * constructor, which runs from `super()` - before any field of this class is assigned. That
      * first pass builds nothing, and `init` fills again once there is something to build.
      */
-    private val content: Content? = Content(manifest, source, obfuscation, fragment, previous)
+    private val content: Content? = Content(manifest, source, assets, obfuscation, fragment, previous)
 
     private lateinit var adapter: UniversalAdapter
     private var header: PluginInfoHeaderView? = null
@@ -149,8 +152,7 @@ class PluginInstallSheet(
      */
     override fun onPreMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onPreMeasure(widthMeasureSpec, heightMeasureSpec)
-        containerView.minimumHeight = MeasureSpec.getSize(heightMeasureSpec)
-    }
+        containerView.minimumHeight = MeasureSpec.getSize(heightMeasureSpec)    }
 
     override fun getTitle(): CharSequence = LocaleController.getString(
         if (content?.previous != null) R.string.InuPluginUpdateTitle else R.string.InuPluginInstallTitle,
@@ -180,16 +182,18 @@ class PluginInstallSheet(
         items.add(UItem.asSpace(SPACE_TOP, dp(10f)))
         // bound once, at creation: [fillItems] re-runs on every update, and re-binding the header
         // restarts the icon load, which flashes the placeholder. None of it depends on sheet state
+        val openUsername = { username: String ->
+            dismiss()
+            MessagesController.getInstance(currentAccount).openByUserName(username, content.fragment, 0)
+        }
         val headerView = header ?: PluginInfoHeaderView(context).also {
             header = it
-            it.onAuthorClick = { username ->
-                dismiss()
-                MessagesController.getInstance(currentAccount).openByUserName(username, content.fragment, 0)
-            }
+            it.onAuthorClick = openUsername
             it.bind(manifest, null, content.previous?.version)
         }
         items.add(UItem.asCustom(HEADER, headerView))
-        items.add(UItem.asShadow(manifest.description(LocaleController.getInstance().currentLocaleInfo?.langCode)))
+        val description = manifest.description(LocaleController.getInstance().currentLocaleInfo?.langCode)
+        items.add(UItem.asShadow(description?.let { formatPluginDescription(it, openUsername) }))
 
         content.obfuscation?.let { kind ->
             val banner = obfuscationBanner ?: WarningBanner(context).also { banner ->
@@ -221,6 +225,16 @@ class PluginInstallSheet(
                 false,
             )
             items.add(UItem.asCustom(TOGGLE_ENABLE, enable))
+        }
+        if (content.assets.isNotEmpty()) {
+            items.add(
+                UItem.asButton(
+                    BUTTON_ASSETS,
+                    R.drawable.msg_media,
+                    LocaleController.getString(R.string.InuPluginAssets),
+                    PluginAssetsSheet.describeAssets(content.assets),
+                ),
+            )
         }
         items.add(UItem.asButton(BUTTON_SOURCE, R.drawable.inu_tabler_code, LocaleController.getString(R.string.InuPluginsViewSource)))
         items.add(UItem.asShadow(null))
@@ -299,6 +313,7 @@ class PluginInstallSheet(
         val content = this.content ?: return
         val item = adapter.getItem(position) ?: return
         when (item.id) {
+            BUTTON_ASSETS -> PluginAssetsSheet(context, content.source, content.assets).show()
             BUTTON_SOURCE -> PluginSourceSheet(context, content.manifest.name, content.source).show()
             // nothing here moves what is already on screen: the rows land below the fold, where
             // the list was not scrollable before, and neither the scroll offset nor the sheet's top
@@ -315,6 +330,7 @@ class PluginInstallSheet(
         private val OBFUSCATION_BANNER = InuUtils.generateId()
         private val SPACE_TOP = InuUtils.generateId()
         private val TOGGLE_ENABLE = InuUtils.generateId()
+        private val BUTTON_ASSETS = InuUtils.generateId()
         private val BUTTON_SOURCE = InuUtils.generateId()
         private val BUTTON_KEPT_GRANTS = InuUtils.generateId()
         private const val GRANT_BASE = 20000

@@ -68,6 +68,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.PROFILE_PREFER_MEDIA_TAB.value)
         )
         items.add(
+            UItem.asCheck(
+                TOGGLE_SHOW_PROFILE_GIFT_BUTTON,
+                LocaleController.getString(R.string.InuShowProfileGiftButton),
+            ).setChecked(InuConfig.SHOW_PROFILE_GIFT_BUTTON.value)
+        )
+        items.add(
             UItem.asButton(
                 BUTTON_PROFILE_ID_MODE,
                 LocaleController.getString(R.string.InuProfileIdMode),
@@ -367,6 +373,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
+            TOGGLE_SHOW_PROFILE_GIFT_BUTTON -> {
+                val new = InuConfig.SHOW_PROFILE_GIFT_BUTTON.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
             BUTTON_PROFILE_ID_MODE -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -626,6 +637,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_REDUCE_PROFILE_MOTION = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_SCROLL_SNAP = InuUtils.generateId()
         private val TOGGLE_PROFILE_PREFER_MEDIA_TAB = InuUtils.generateId()
+        private val TOGGLE_SHOW_PROFILE_GIFT_BUTTON = InuUtils.generateId()
         private val BUTTON_PROFILE_ID_MODE = InuUtils.generateId()
         private val TOGGLE_SHOW_PROFILE_REG_DATE = InuUtils.generateId()
         private val TOGGLE_SETTINGS_SHOW_ACCOUNTS = InuUtils.generateId()
@@ -699,6 +711,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("reduce-profile-motion", R.string.InuReduceProfileMotion, TOGGLE_REDUCE_PROFILE_MOTION),
                 SearchRegistry.Entry("disable-profile-scroll-snap", R.string.InuDisableProfileScrollSnap, TOGGLE_DISABLE_PROFILE_SCROLL_SNAP),
                 SearchRegistry.Entry("profile-prefer-media-tab", R.string.InuProfilePreferMediaTab, TOGGLE_PROFILE_PREFER_MEDIA_TAB),
+                SearchRegistry.Entry("show-profile-gift-button", R.string.InuShowProfileGiftButton, TOGGLE_SHOW_PROFILE_GIFT_BUTTON),
                 SearchRegistry.Entry("profile-id-mode", R.string.InuProfileIdMode, BUTTON_PROFILE_ID_MODE),
                 SearchRegistry.Entry("show-profile-reg-date", R.string.InuShowProfileRegDate, TOGGLE_SHOW_PROFILE_REG_DATE),
                 SearchRegistry.Entry("settings-show-accounts", R.string.InuSettingsShowAccounts, TOGGLE_SETTINGS_SHOW_ACCOUNTS),

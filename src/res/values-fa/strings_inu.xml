@@ -1936,7 +1936,6 @@
     <string name="InuLocalEditsClearConfirm">همه پیام‌هایی که به‌صورت محلی ویرایش شده‌اند به متن اصلی خود بازگردانده می‌شوند.</string>
     <string name="InuLocalMessageEdit">ویرایش محلی پیام‌ها</string>
     <string name="InuLocalMessageEditInfo">گزینه «ویرایش محلی متن» را به منوی پیام اضافه می‌کند (آن را در ترتیب منو فعال کنید). ویرایش‌ها فقط روی این دستگاه دیده می‌شوند و متن اصلی حفظ می‌شود</string>
-    <string name="InuMarketplace">بازارچه</string>
     <string name="InuMarketplaceChecksum">فایل با چک‌سام آن مطابقت ندارد</string>
     <string name="InuMarketplaceDownloadFailed">دریافت افزونه ممکن نشد: %1$s</string>
     <string name="InuMaterial3AccentIcons">آیکون‌های رنگ تأکیدی</string>

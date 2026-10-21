@@ -2042,7 +2042,6 @@ Mientras esté activado:</string>
     <string name="InuPluginsFailedAtRuntime">Error en tiempo de ejecución</string>
     <string name="InuPluginsFailedAtUnload">Error al desmontar</string>
     <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
-    <string name="InuMarketplace">Marketplace</string>
     <string name="InuMarketplaceDownloadFailed">No se pudo obtener el plugin: %1$s</string>
     <string name="InuMarketplaceChecksum">el archivo no coincide con su suma de verificación</string>
     <string name="InuCopyAllProxies">Copiar todo</string>

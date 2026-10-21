@@ -132,4 +132,11 @@ class ObfuscationDetectorTest {
         val source = "$readablePlugin\nconst CRC_TABLE = [\n$table\n]\n"
         assertNull(ObfuscationDetector.detect(source))
     }
+
+    @Test
+    fun hex_like_runs_inside_an_asset_string_are_not_obfuscation() {
+        val asset = "const FRAME = '" + "iVBOR0xAb3+0xF/".repeat(2000) + "'"
+        val regex = "const clean = (s) => s.replace(/[\\x00-\\x09\\x0b-\\x1f]/g, '')"
+        assertNull(ObfuscationDetector.detect("$readablePlugin\n$asset\n$regex\n"))
+    }
 }

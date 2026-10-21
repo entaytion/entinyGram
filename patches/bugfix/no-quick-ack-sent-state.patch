@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 20 Oct 2026 04:34:53 +0400
+Subject: don't mark messages as sent on transport quick ack
+
+---
+ .../java/org/telegram/messenger/SendMessagesHelper.java   | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -8602,13 +8602,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     }
+                 });
+             }
+-        }, () -> {
+-            final int msg_id = newMsgObj.id;
+-            AndroidUtilities.runOnUIThread(() -> {
+-                newMsgObj.send_state = MessageObject.MESSAGE_SEND_STATE_SENT;
+-                getNotificationCenter().postNotificationName(NotificationCenter.messageReceivedByAck, msg_id);
+-            });
+-        }, ConnectionsManager.RequestFlagCanCompress | ConnectionsManager.RequestFlagInvokeAfter | (req instanceof TLRPC.TL_messages_sendMessage ? ConnectionsManager.RequestFlagNeedQuickAck : 0));
++        }, null, ConnectionsManager.RequestFlagCanCompress | ConnectionsManager.RequestFlagInvokeAfter);
+         if (parentMessage != null) {
+             parentMessage.sendDelayedRequests();
+         }

@@ -14,7 +14,7 @@ import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Stories.recorder.DualCameraView
-import org.telegram.utils.camera.roundvideo.RoundVideoSession
+import org.telegram.utils.recorder.round.RoundVideoSession
 import org.telegram.utils.settings.SharedSettings
 
 class CameraSoundSettingsActivity : SettingsPageActivity() {

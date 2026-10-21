@@ -5,9 +5,9 @@ Subject: reduce menu motion (disable stagger in some menus, simplify chat contex
 
 ---
  .../telegram/ui/ActionBar/ActionBarPopupWindow.java | 13 +++++++++++++
- .../src/main/java/org/telegram/ui/ChatActivity.java |  2 +-
+ .../src/main/java/org/telegram/ui/ChatActivity.java |  6 +++++-
  .../ui/Components/ReactionsContainerLayout.java     | 10 ++++++++--
- 3 files changed, 22 insertions(+), 3 deletions(-)
+ 3 files changed, 26 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
 index 0000000..0000000 100644
@@ -68,7 +68,18 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -32678,7 +32678,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32507,6 +32507,10 @@ public class ChatActivity extends BaseFragment implements
+ 
+                             @Override
+                             public void onSwipeBackProgress(PopupSwipeBackLayout layout, float toProgress, float progress) {
++                                if (desu.inugram.helpers.theme.MenuMotionHelper.getEnabled()) {
++                                    finalReactionsLayout.setAlpha(1f - progress);
++                                    return;
++                                }
+                                 if (toProgress == 0 && !isEnter) {
+                                     finalReactionsLayout.startEnterAnimation(false);
+                                     isEnter = true;
+@@ -32678,7 +32682,7 @@ public class ChatActivity extends BaseFragment implements
              scrimPopupWindow.setDismissAnimationDuration(220);
              scrimPopupWindow.setOutsideTouchable(true);
              scrimPopupWindow.setClippingEnabled(true);

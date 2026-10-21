@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Dubzer <me@dubzer.dev>
-Date: Wed, 14 Oct 2026 19:37:05 +0300
+Date: Wed, 21 Oct 2026 12:31:15 +0300
 Subject: match splash screen to the selected app icon and monet theme
 
 ---
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -7411,6 +7411,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7424,6 +7424,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                  checkNavigationBarColor = (boolean) args[1];
              }
              checkSystemBarColors(args.length > 2 && (boolean) args[2], true, checkNavigationBarColor && !isNavigationBarColorFrozen && !actionBarLayout.isTransitionAnimationInProgress());

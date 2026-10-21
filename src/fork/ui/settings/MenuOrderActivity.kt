@@ -49,7 +49,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
     private val reorderHandlers = HashMap<Int, (List<UItem>) -> Unit>()
 
     protected abstract val config: MenuOrderConfig<I>
-    protected abstract val infoStringRes: Int
+    protected open val infoStringRes: Int? = null
     protected abstract val headerStringRes: Int
     protected abstract val resetStringRes: Int
     // #if PLUGINS
@@ -68,6 +68,8 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
     )
 
     protected fun isAvailable(item: I): Boolean = !BuildConfig.INU_PLUGINLESS || item.key != "actions"
+
+    protected open fun isToggleable(item: I): Boolean = true
 
     /** override to attach a long-tap sub-cell to a row (e.g. Reply / Forward long-tap pickers) */
     protected open fun subCell(item: I): SubCell? = null
@@ -116,7 +118,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
             refreshPreviewCell(preview)
             items.add(UItem.asCustom(preview))
         }
-        items.add(UItem.asShadow(LocaleController.getString(infoStringRes)))
+        infoStringRes?.let { items.add(UItem.asShadow(LocaleController.getString(it))) }
         items.add(UItem.asHeader(LocaleController.getString(headerStringRes)))
         // #if PLUGINS
         val kind = pluginActionKind
@@ -252,7 +254,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
             }
             newRow
         }
-        row.setSwitchVisible(true)
+        row.setSwitchVisible(isToggleable(entry.item))
         row.setMoveBackButton(null)
         decorate(row)
         row.setChecked(entry.enabled)
@@ -336,6 +338,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
             subCell(key)?.onClick?.invoke(row)
             return
         }
+        if (!isToggleable(key)) return
         val entry = entries.firstOrNull { it.item == key } ?: return
         onRowToggle(entry, row)
     }

@@ -1,6 +1,7 @@
 package desu.inugram.helpers.plugins
 
 import desu.inugram.core.plugins.PluginManifest
+import desu.inugram.core.plugins.PluginOrigin
 import java.io.File
 import org.telegram.messenger.LocaleController.formatString
 import org.telegram.messenger.LocaleController.getString
@@ -39,6 +40,9 @@ class Plugin(
 
     /** grants the user consented to at install/update; null was never reviewed. ui-thread owned */
     @Volatile var grants: List<String>? = null
+
+    /** null when installed from anywhere but a repo post. ui-thread owned */
+    @Volatile var origin: PluginOrigin? = null
 
     @Volatile var failure: PluginFailure? = null
 

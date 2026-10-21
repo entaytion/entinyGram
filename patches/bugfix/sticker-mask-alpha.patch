@@ -175,7 +175,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -11624,6 +11624,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11660,6 +11660,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
              photoPaintView.onCleanupEntities();
          } else if (currentEditMode == EDIT_MODE_STICKER_MASK) {

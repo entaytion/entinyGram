@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -7048,6 +7048,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7050,6 +7050,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              viewPages[a].listView.setScrollEnabled(true);
              getMessagesController().selectDialogFilter(filter, viewPages[a].dialogsType == 8 ? 1 : 0);
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          }
  
          if (viewPages.length > 1) {
-@@ -11297,10 +11298,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -11299,10 +11300,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          dialogsListFrozen = frozen;
          viewPages[0].dialogsAdapter.setDialogsListFrozen(frozen);
          if (!frozen && notify) {

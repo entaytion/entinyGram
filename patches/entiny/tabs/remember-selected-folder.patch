@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -7004,6 +7004,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7006,6 +7006,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
          ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
          if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < filters.size()) {
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
              inu_updateFolderTitle(filters.get(viewPages[0].selectedType));
          }
      }
-@@ -7061,6 +7064,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7063,6 +7066,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              // folder's name stuck on a page the user never moved to. The settle-time hooks
              // (tabsAnimation onAnimationEnd, onPageScrolled progress==1) apply the name once the
              // transition has actually committed, so there is nothing to undo.
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
              inu_updateFolderTitle(filter);
          }
  
-@@ -7144,7 +7150,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7146,7 +7152,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      if (viewPages[a].selectedType >= filters.size()) {
                          viewPages[a].selectedType = filters.size() - 1;
                      }

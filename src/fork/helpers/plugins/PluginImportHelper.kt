@@ -1,8 +1,10 @@
 package desu.inugram.helpers.plugins
 
 import desu.inugram.core.plugins.ObfuscationDetector
+import desu.inugram.core.plugins.PluginAssetsParser
 import desu.inugram.core.plugins.PluginManifest
 import desu.inugram.core.plugins.PluginManifestParser
+import desu.inugram.core.plugins.PluginOrigin
 import desu.inugram.ui.settings.PluginInstallSheet
 import desu.inugram.ui.settings.PluginTrustSheet
 import org.telegram.messenger.AndroidUtilities
@@ -26,8 +28,8 @@ object PluginImportHelper {
         }
     }
 
-    fun startImport(fragment: BaseFragment, source: String) {
-        EngineDispatch.scheduler.postRunnable { present(fragment, source) }
+    fun startImport(fragment: BaseFragment, source: String, origin: PluginOrigin? = null) {
+        EngineDispatch.scheduler.postRunnable { present(fragment, source, origin) }
     }
 
     private fun failOnUi(fragment: BaseFragment, message: String) {
@@ -35,18 +37,19 @@ object PluginImportHelper {
     }
 
     /** plugin queue only */
-    private fun present(fragment: BaseFragment, source: String) {
+    private fun present(fragment: BaseFragment, source: String, origin: PluginOrigin? = null) {
         val manifest = PluginManifestParser.parseOrNull(source)
         if (manifest == null) {
             failOnUi(fragment, getString(R.string.InuPluginsErrorNoManifest))
             return
         }
-        val incompatibility = PluginManager.incompatibility(manifest)
-        if (incompatibility != null) {
-            failOnUi(fragment, incompatibility)
+        val refusal = PluginManager.incompatibility(manifest) ?: PluginManager.badAssets(source)
+        if (refusal != null) {
+            failOnUi(fragment, refusal)
             return
         }
-        val obfuscation = ObfuscationDetector.detect(source)
+        val assets = PluginAssetsParser.parse(source)
+        val obfuscation = ObfuscationDetector.detect(source.substring(0, PluginAssetsParser.findFooter(source)))
         val installed = PluginManager.findUpdateTarget(manifest)
         // the file, not `installed.source`: something may have rewritten it behind the app
         if (installed != null && runCatching { installed.file.readText() }.getOrElse { installed.source } == source) {
@@ -64,14 +67,13 @@ object PluginImportHelper {
             val context = fragment.context ?: fragment.parentActivity ?: return@runOnUIThread
             // what any plugin could do is accepted once, before the first install
             PluginTrustSheet.requireConsent(context, fragment.resourceProvider) {
-                fragment.showDialog(
-                    PluginInstallSheet(context, fragment, manifest, source, obfuscation, installed?.manifest) { enable ->
-                        // re-resolved: the installed set is the ui thread's to answer for
-                        val target = PluginManager.findUpdateTarget(manifest)
-                        if (target != null) confirmUpdate(fragment, target, manifest, source)
-                        else confirmInstall(fragment, manifest, source, enable)
-                    }
-                )
+                // not `showDialog`: the fragment dismisses that on pause, and the sheet can open files in other apps
+                PluginInstallSheet(context, fragment, manifest, source, assets, obfuscation, installed?.manifest) { enable ->
+                    // re-resolved: the installed set is the ui thread's to answer for
+                    val target = PluginManager.findUpdateTarget(manifest)
+                    if (target != null) confirmUpdate(fragment, target, manifest, source, origin)
+                    else confirmInstall(fragment, manifest, source, enable, origin)
+                }.show()
             }
         }
     }
@@ -81,8 +83,9 @@ object PluginImportHelper {
         manifest: PluginManifest,
         source: String,
         enable: Boolean,
+        origin: PluginOrigin?,
     ) {
-        when (val result = PluginManager.import(source, enable)) {
+        when (val result = PluginManager.import(source, enable, origin = origin)) {
             is PluginManager.ImportResult.Refused -> showError(fragment, result.reason)
             is PluginManager.ImportResult.Installed -> {
                 val text = formatString(R.string.InuPluginInstalled, manifest.name)
@@ -102,8 +105,9 @@ object PluginImportHelper {
         installed: Plugin,
         manifest: PluginManifest,
         source: String,
+        origin: PluginOrigin?,
     ) {
-        val error = PluginManager.update(installed, source)
+        val error = PluginManager.update(installed, source, origin = origin)
         if (error != null) {
             showError(fragment, error)
             return

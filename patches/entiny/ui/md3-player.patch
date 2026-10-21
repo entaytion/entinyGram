@@ -17,7 +17,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -4039,6 +4039,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -4062,6 +4062,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                          if (Math.abs(currentMusicPlaybackSpeed - 1.0f) > 0.001f) {
                              audioPlayer.setPlaybackSpeed(Math.round(currentMusicPlaybackSpeed * 10f) / 10f);
                          }
@@ -30,7 +30,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -38082,7 +38082,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38086,7 +38086,7 @@ public class ChatActivity extends BaseFragment implements
                      cell.resetPressedLink(-1);
                  }
                  if (!messageObject.isVoice()) {
@@ -103,7 +103,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9156,8 +9156,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9158,8 +9158,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
@@ -114,7 +114,7 @@ index 0000000..0000000 100644
          final float baseTranslationY = top
              - floatingButtonPanOffset;
  
-@@ -14605,7 +14605,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14652,7 +14652,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else if (communityId != 0) {
              return navigationBarHeight + dp(12 + 48 + 12);
          } else {
@@ -123,7 +123,7 @@ index 0000000..0000000 100644
              if (filterTabsView != null && FolderHelper.atBottom()) {
                  bottom += dp(FolderHelper.bottomReservedHeightDp());
              }
-@@ -14671,7 +14671,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14718,7 +14718,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  

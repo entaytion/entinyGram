@@ -6,16 +6,22 @@ import desu.inugram.InuConfig
 import desu.inugram.core.plugins.FsQuota
 import desu.inugram.core.plugins.GrantCatalog
 import desu.inugram.core.plugins.GrantValidator
+import desu.inugram.core.plugins.PluginAsset
+import desu.inugram.core.plugins.PluginAssetsException
+import desu.inugram.core.plugins.PluginAssetsParser
 import desu.inugram.core.plugins.PluginInstalls
 import desu.inugram.core.plugins.PluginManifest
 import desu.inugram.core.plugins.PluginManifestParser
 import desu.inugram.core.plugins.PluginPermissions
+import desu.inugram.core.plugins.PluginOrigin
 import desu.inugram.core.plugins.TlTables
 import desu.inugram.helpers.ShortcutHelper
+import desu.inugram.helpers.plugins.io.PluginAssetFiles
 import desu.inugram.helpers.plugins.io.PluginBlobs
 import desu.inugram.helpers.plugins.io.PluginFetch
 import desu.inugram.helpers.plugins.io.PluginFs
 import desu.inugram.helpers.plugins.io.PluginLocalStorage
+import desu.inugram.helpers.plugins.io.PluginSqlite
 import desu.inugram.helpers.plugins.io.PluginPaths
 import desu.inugram.helpers.plugins.io.PluginTransfers
 import desu.inugram.helpers.plugins.platform.PluginJvm
@@ -140,7 +146,9 @@ object PluginManager {
     /** runs before any plugin can start, so no engine is creating a store meanwhile */
     private fun sweepOrphans(live: Set<String>) {
         PluginFs.sweepOrphans(live)
+        PluginAssetFiles.sweepOrphans(live)
         PluginLocalStorage.sweepOrphans(live)
+        PluginSqlite.sweepOrphans(live)
         PluginJvm.sweepOrphans(live)
         PluginPaths.emptyTrash()
         PluginActions.retainInstalls(live)
@@ -302,7 +310,7 @@ object PluginManager {
             fail(plugin, PluginFailure.Site.REFUSED, getString(R.string.InuPluginsErrorNoManifest))
             return
         }
-        badGrants(manifest)?.let {
+        (badGrants(manifest) ?: badAssets(source))?.let {
             fail(plugin, PluginFailure.Site.REFUSED, it)
             return
         }
@@ -322,10 +330,10 @@ object PluginManager {
      * Reuses the install id of a same-id record that failed to load this boot, to keep its otherwise
      * unreachable storage. Plugins already in the installed list go through [update].
      */
-    fun import(source: String, enabled: Boolean = true, dev: Boolean = false): ImportResult {
+    fun import(source: String, enabled: Boolean = true, dev: Boolean = false, origin: PluginOrigin? = null): ImportResult {
         val manifest = PluginManifestParser.parseOrNull(source)
             ?: return ImportResult.Refused(getString(R.string.InuPluginsErrorNoManifest))
-        badGrants(manifest)?.let { return ImportResult.Refused(it) }
+        (badGrants(manifest) ?: badAssets(source))?.let { return ImportResult.Refused(it) }
         PluginDependencies.unmet(manifest)?.let { return ImportResult.Refused(it) }
         val reclaimed = manifest.id?.let { PluginStore.findUnloaded(it) }
         val id = reclaimed?.id ?: PluginInstalls.mintId()
@@ -339,6 +347,7 @@ object PluginManager {
                 this.enabled = enabled
                 this.dev = dev
                 this.grants = manifest.grants
+                this.origin = origin
             }
         val reversible = reclaimed == null
         plugins.add(plugin)
@@ -350,13 +359,14 @@ object PluginManager {
         return ImportResult.Installed(plugin, reversible)
     }
 
-    fun update(plugin: Plugin, source: String, dev: Boolean = false): String? {
+    fun update(plugin: Plugin, source: String, dev: Boolean = false, origin: PluginOrigin? = null): String? {
         val manifest = PluginManifestParser.parseOrNull(source)
             ?: return getString(R.string.InuPluginsErrorNoManifest)
-        incompatibility(manifest)?.let { return it }
+        (incompatibility(manifest) ?: badAssets(source))?.let { return it }
         if (!PluginStore.writeSource(plugin.file, source)) return getString(R.string.InuPluginsErrorWrite)
         plugin.dev = dev
         plugin.grants = manifest.grants
+        plugin.origin = origin
         if (dev && !plugin.enabled && plugin.failure?.disables == true) plugin.enabled = true
         reload(plugin)
         PluginStore.persist(plugins)
@@ -471,6 +481,13 @@ object PluginManager {
         return formatString(R.string.InuPluginsErrorBadGrant, problems.joinToString("; "))
     }
 
+    fun badAssets(source: String): String? = try {
+        PluginAssetsParser.parse(source)
+        null
+    } catch (e: PluginAssetsException) {
+        formatString(R.string.InuPluginsErrorBadAssets, e.message)
+    }
+
     private val stopping = java.util.IdentityHashMap<Plugin, MutableList<() -> Unit>>()
 
     private fun run(plugin: Plugin, after: () -> Unit = {}) {
@@ -544,10 +561,12 @@ object PluginManager {
             xposed = PluginXposed.listenerFor(session, jvm),
         )
         try {
+            val assets = PluginAssetFiles.extract(plugin.id, session.source, PluginAssetsParser.parse(session.source))
             // runs the JNI bridge wiring, which throws when a descriptor does not resolve
-            startEngine(session, bridge)
+            startEngine(session, bridge, assets)
             installInfo(session)
-            session.engine.evaluate(session.source, session.manifest.name)
+            val code = session.source.substring(0, PluginAssetsParser.findFooter(session.source))
+            session.engine.evaluate(code, session.manifest.name)
             notifyChanged()
         } catch (e: Throwable) {
             teardown(session) {
@@ -591,8 +610,9 @@ object PluginManager {
         }
     }
 
-    private fun startEngine(session: PluginSession, bridge: PluginBridge) {
+    private fun startEngine(session: PluginSession, bridge: PluginBridge, assets: List<Pair<PluginAsset, String>>) {
         val quota = FsQuota.forGrants(session.manifest.grants)
+        val sqliteQuota = FsQuota.forGrants(session.manifest.grants, "sqlite")
         session.engine.start(
             bridge,
             QuickJs.Config(
@@ -604,9 +624,12 @@ object PluginManager {
                 installFs = quota != null,
                 androidDirs = PluginFs.androidDirs(),
                 localStoragePath = PluginLocalStorage.pathFor(session.plugin.id),
+                sqlitePath = sqliteQuota?.let { PluginSqlite.pathFor(session.plugin.id) } ?: "",
+                sqliteQuotaBytes = sqliteQuota ?: 0,
                 installJvm = bridge.jvm != null,
                 installXposed = bridge.xposed != null,
                 grants = session.permissions,
+                assets = assets,
             ),
         )
         // no callback can hear this, the plugin's code not having run yet
@@ -620,13 +643,15 @@ object PluginManager {
 
     private fun wipeInstall(installId: String) {
         PluginLocalStorage.wipe(installId)
+        PluginSqlite.wipe(installId)
         wipeSessionScratch(installId)
         PluginFs.wipe(installId)
+        PluginAssetFiles.wipe(installId)
         // a class cannot be unloaded, so staged dex outlives the engine
         PluginJvm.wipe(installId)
     }
 
-    /** durable trees ([PluginFs], [PluginJvm], [PluginLocalStorage]) are uninstall's alone */
+    /** durable trees ([PluginFs], [PluginJvm], [PluginLocalStorage], [PluginSqlite]) are uninstall's alone */
     private fun wipeSessionScratch(installId: String) {
         PluginBlobs.wipe(installId)
         PluginTransfers.wipe(installId)

@@ -107,6 +107,7 @@ declare namespace inu {
      * - `timed-out`: Your operation has timed out
      * - `aborted`: You operation was aborted
      * - `network`: Some network-related issue happened
+     * - `sqlite`: SQLite refused a statement, see {@link errcode}
      * - `internal`: An internal plugin engine error happened, please report this
      */
     code:
@@ -120,6 +121,7 @@ declare namespace inu {
       | 'timed-out'
       | 'aborted'
       | 'network'
+      | 'sqlite'
       | 'internal'
       | (string & {})
 
@@ -129,6 +131,10 @@ declare namespace inu {
     usage?: number
     /** If `code == `quota-exceeded'`, the current quota limit */
     quota?: number
+    /** If `code == 'sqlite'`, SQLite's extended result code, e.g. `2067` for `SQLITE_CONSTRAINT_UNIQUE` */
+    errcode?: number
+    /** If `code == 'sqlite'`, SQLite's description of {@link errcode} */
+    errstr?: string
   }
 
   /** Get information about the current environment */
@@ -2122,4 +2128,96 @@ declare namespace inu {
     filter: SendMessageFilter,
     middleware: (context: SendMessageContext) => MaybePromise<'send' | 'drop'>,
   ): Disposer
+
+  /**
+   * Files bundled into the plugin. `@inugram/cli` bundles imported binary files
+   * (`import frame from './frame.png'`) and compiles the import to {@link assets.get}.
+   */
+  namespace assets {
+    /**
+     * A {@link File} over the asset, read from disk only when its content is read.
+     * Disposing it releases only this handle.
+     *
+     * @throws `not-found` {@link PluginError} when the plugin bundles no asset named `name`
+     */
+    function get(name: string): File
+  }
+}
+
+/** binary imports, bundled by `@inugram/cli` as {@link inu.assets} */
+declare module '*.png' {
+  const file: File
+  export default file
+}
+declare module '*.jpg' {
+  const file: File
+  export default file
+}
+declare module '*.jpeg' {
+  const file: File
+  export default file
+}
+declare module '*.gif' {
+  const file: File
+  export default file
+}
+declare module '*.webp' {
+  const file: File
+  export default file
+}
+declare module '*.tgs' {
+  const file: File
+  export default file
+}
+declare module '*.mp4' {
+  const file: File
+  export default file
+}
+declare module '*.webm' {
+  const file: File
+  export default file
+}
+declare module '*.mp3' {
+  const file: File
+  export default file
+}
+declare module '*.ogg' {
+  const file: File
+  export default file
+}
+declare module '*.opus' {
+  const file: File
+  export default file
+}
+declare module '*.wav' {
+  const file: File
+  export default file
+}
+declare module '*.m4a' {
+  const file: File
+  export default file
+}
+declare module '*.ttf' {
+  const file: File
+  export default file
+}
+declare module '*.otf' {
+  const file: File
+  export default file
+}
+declare module '*.woff' {
+  const file: File
+  export default file
+}
+declare module '*.woff2' {
+  const file: File
+  export default file
+}
+declare module '*.bin' {
+  const file: File
+  export default file
+}
+declare module '*.dex' {
+  const file: File
+  export default file
 }

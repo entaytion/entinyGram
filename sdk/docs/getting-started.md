@@ -35,7 +35,8 @@ export default defineConfig({
         author: '@monk',
         // user-visible version of the plugin
         version: '1.0.0',
-        // description of the plugin. either a string, or a lang->text mapping
+        // description of the plugin. either a string, or a lang->text mapping.
+        // supports telegram markdown: **bold**, __italic__, [text](url), etc.
         description: { en: 'Shows a dog', ru: 'показывает СОБАКУ' },
         // icon for the plugin. can be one of:
         // - `inu://{name}`, where `{name}` is one of the pre-defined icons from `inu.icons.common`

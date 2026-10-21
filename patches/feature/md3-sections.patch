@@ -32,7 +32,8 @@ Subject: md3-style sections redesign
  .../org/telegram/ui/ProxyListActivity.java    |  5 --
  .../org/telegram/ui/SettingsActivity.java     | 18 +++++++
  .../org/telegram/ui/StatisticActivity.java    |  1 +
- 28 files changed, 240 insertions(+), 46 deletions(-)
+ .../telegram/ui/bots/BotBiometrySettings.java |  4 ++
+ 29 files changed, 244 insertions(+), 46 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 index 0000000..0000000 100644
@@ -966,7 +967,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1212,6 +1212,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1217,6 +1217,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              titleView.setTranslationX(icon == 0 ? dp(2) : 0);
              subtitleView.setTranslationX(icon == 0 ? dp(2) : 0);
  
@@ -975,7 +976,7 @@ index 0000000..0000000 100644
              iconBackground.setColor(iconColorTop, iconColorBottom);
              iconView.setImageResource(icon);
              titleView.setText(title);
-@@ -1228,6 +1230,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1233,6 +1235,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          @Override
          protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -989,7 +990,7 @@ index 0000000..0000000 100644
              super.onMeasure(
                  MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
                  MeasureSpec.makeMeasureSpec(dp(mini ? 44 : twoLines ? 60 : 50), MeasureSpec.EXACTLY)
-@@ -1256,8 +1265,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1261,8 +1270,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                  this.border = drawBorder;
              }
  
@@ -1019,3 +1020,18 @@ index 0000000..0000000 100644
                  v = headerCell;
              } else if (viewType == 14) {
                  v = new OverviewCell(parent.getContext(), isMegagroup ? 2 : 4);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotBiometrySettings.java b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotBiometrySettings.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotBiometrySettings.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotBiometrySettings.java
+@@ -51,6 +51,10 @@ public class BotBiometrySettings extends BaseFragment {
+         contentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray, resourceProvider));
+ 
+         listView = new UniversalRecyclerView(this, this::fillItems, this::onClick, this::onLongClick);
++        if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
++            listView.setSections();
++            actionBar.setAdaptiveBackground(listView);
++        }
+         contentView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
+ 
+         BotBiometry.getBots(getContext(), currentAccount, bots -> {

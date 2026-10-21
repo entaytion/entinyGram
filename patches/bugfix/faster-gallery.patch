@@ -22,7 +22,7 @@ index 0000000..0000000 100644
  
  import org.telegram.ui.AspectRatioFrameLayout;
  import com.google.android.gms.cast.MediaMetadata;
-@@ -624,7 +623,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -641,7 +640,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  final ExifInterface ei = new ExifInterface(new File(path));
                  final String xmp = ei.getAttribute(ExifInterface.TAG_XMP);
                  if (xmp != null) {
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
                      if (motionPhoto != null) {
                          MotionPhotoDescription.ContainerItem photo = null, video = null;
                          for (int i = 0; i < motionPhoto.items.size(); ++i) {
-@@ -1248,8 +1247,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1271,8 +1270,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      return;
                  }
                  refreshGalleryRunnable = null;
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -1260,6 +1261,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1283,6 +1284,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              }
              scheduleReloadRunnable();
          }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
      }
  
      private static class GalleryObserverExternal extends ContentObserver {
-@@ -1275,8 +1288,22 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1298,8 +1311,22 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              }
              AndroidUtilities.runOnUIThread(refreshGalleryRunnable = () -> {
                  refreshGalleryRunnable = null;
@@ -88,7 +88,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -6328,7 +6355,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -6725,7 +6752,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              AndroidUtilities.cancelRunOnUIThread(broadcastPhotosRunnable);
          }
          AndroidUtilities.runOnUIThread(broadcastPhotosRunnable = () -> {
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
                  broadcastNewPhotos(guid, mediaAlbumsSorted, photoAlbumsSorted, cameraAlbumIdFinal, allMediaAlbumFinal, allPhotosAlbumFinal, allVideosAlbumFinal, 1000);
                  return;
              }
-@@ -6338,6 +6365,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -6735,6 +6762,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              allPhotosAlbumEntry = allPhotosAlbumFinal;
              allMediaAlbumEntry = allMediaAlbumFinal;
              allVideosAlbumEntry = allVideosAlbumFinal;
@@ -142,7 +142,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -19462,6 +19462,32 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -19498,6 +19498,32 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          return imagesArrLocals;
      }
  

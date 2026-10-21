@@ -52,14 +52,14 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -12074,6 +12074,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-         final boolean onlyMyselfFinal = onlyMyself;
+@@ -12109,6 +12109,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         final boolean multipleMedia = sharedMediaEntries != null && sharedMediaEntries.size() > 1;
  
          ItemOptions.makeOptions(this, view)
 +            .addIf(!isQuote && delegate instanceof ChatActivity, R.drawable.msg_forward_noquote, LocaleController.getString(R.string.InuForwardNoQuote), () -> {
 +                desu.inugram.helpers.chat.ChatHelper.pendingHideAuthor = true;
 +                view.callOnClick();
 +            })
-             .add(R.drawable.input_notify_off, getString(R.string.SendWithoutSound), () -> {
-                 this.notify = false;
+             .addIf(canSendDocs, R.drawable.msg_sendfile, LocaleController.getString(multipleMedia ? R.string.SendAsFiles : R.string.SendAsFile), () -> {
+                 this.forceDocument = true;
                  if (delegate == null || selectedDialogs.isEmpty()) {

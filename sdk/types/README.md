@@ -35,6 +35,7 @@ with fewer annotation requirements while still checking for unknown API members.
 | `common.d.ts` | the contract: `inu.*`, lifecycle, grants, limits |
 | `dom.d.ts` | web API-shaped globals: `console`, timers, URLs, blobs, and `fetch` |
 | `canvas.d.ts` | `inu.canvas`, the rasterizer |
+| `sqlite.d.ts` | `inu.sqlite`, the plugin's own database |
 | `android.d.ts`, `android.jvm.d.ts`, `android.xposed.d.ts`, `android.notification-center.d.ts` | the unsafe android-specific surfaces |
 | `android.tl.d.ts` | every TL class and method, generated from the app's own sources |
 | `grants.json` | the grant catalogue: what each permission accepts, and what it is called |

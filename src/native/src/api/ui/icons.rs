@@ -12,7 +12,7 @@ pub const SVG_LIMIT_BYTES: usize = 64 * 1024;
 const MAX_RESOURCE_NAME: usize = 128;
 
 const ICON_TAG: &str = "__inuIcon";
-pub(crate) const RETAINED_VALUE_TAG: &str = "__inuRetainedIconValue";
+const RETAINED_VALUE_TAG: &str = "__inuRetainedIconValue";
 
 pub const KIND_RESOURCE: i32 = 0;
 pub const KIND_SVG: i32 = 1;

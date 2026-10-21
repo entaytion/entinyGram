@@ -535,7 +535,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -7840,6 +7840,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -7841,6 +7841,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                      SharedDocumentCell cell = (SharedDocumentCell) view;
                      TLRPC.Document document = message.getDocument();
                      if (cell.isLoaded()) {

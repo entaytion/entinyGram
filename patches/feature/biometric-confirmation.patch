@@ -7,9 +7,9 @@ Subject: client-side biometric confirmation in various places
  .../src/main/java/org/telegram/ui/ChatActivity.java    | 10 ++++++----
  .../java/org/telegram/ui/Components/AlertsCreator.java |  4 ++--
  .../src/main/java/org/telegram/ui/DialogsActivity.java |  8 ++++----
- .../src/main/java/org/telegram/ui/LogoutActivity.java  |  4 +---
+ .../src/main/java/org/telegram/ui/LogoutActivity.java  |  2 +-
  .../src/main/java/org/telegram/ui/ProfileActivity.java |  8 ++++----
- 5 files changed, 17 insertions(+), 17 deletions(-)
+ 5 files changed, 17 insertions(+), 15 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -87,7 +87,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9495,7 +9495,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9497,7 +9497,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  user = null;
              }
@@ -96,7 +96,7 @@ index 0000000..0000000 100644
                  for (int a = 0, N = selectedDialogs.size(); a < N; a++) {
                      long did = selectedDialogs.get(a);
                      if (report) {
-@@ -9508,7 +9508,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9510,7 +9510,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      getMessagesController().blockPeer(did);
                  }
                  hideActionMode(false);
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
              return;
          }
          int minPinnedNum = Integer.MAX_VALUE;
-@@ -9592,7 +9592,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9594,7 +9594,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
                          showDialog(builder.create());
                      } else {
@@ -114,7 +114,7 @@ index 0000000..0000000 100644
                              hideActionMode(false);
                              if (action == clear && ChatObject.isChannel(chat) && (!chat.megagroup || ChatObject.isPublic(chat))) {
                                  getMessagesController().deleteDialog(selectedDialog, 2, param);
-@@ -9640,7 +9640,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9642,7 +9642,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      }
                                  }
                              }
@@ -127,17 +127,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
-@@ -189,9 +189,7 @@ public class LogoutActivity extends BaseFragment {
-         new AlertDialog.Builder(getContext())
+@@ -190,7 +190,7 @@ public class LogoutActivity extends BaseFragment {
              .setTitle(getString(R.string.LogOut))
              .setMessage(AndroidUtilities.replaceTags(grams > 0 ? formatString(R.string.AreYouSureLogoutGrams, GramWallet.formatGramsWithUnit(grams)) : getString(R.string.AreYouSureLogout)))
--            .setPositiveButton(getString(R.string.LogOut), (dialogInterface, i) -> {
+             .setPositiveButton(getString(R.string.LogOut), (dialogInterface, i) -> {
 -                MessagesController.getInstance(currentAccount).performLogout(1);
--            })
-+            .setPositiveButton(getString(R.string.LogOut), (dialogInterface, i) -> desu.inugram.helpers.security.BiometricHelper.gate(getContext(), desu.inugram.InuConfig.BIOMETRIC_CONFIRM_LOGOUT.getValue(), () -> MessagesController.getInstance(currentAccount).performLogout(1)))
++                desu.inugram.helpers.security.BiometricHelper.gate(getContext(), desu.inugram.InuConfig.BIOMETRIC_CONFIRM_LOGOUT.getValue(), () -> MessagesController.getInstance(currentAccount).performLogout(1));
+             })
              .setNegativeButton(getString(R.string.Cancel), null)
              .makeRed(DialogInterface.BUTTON_POSITIVE)
-             .show();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java

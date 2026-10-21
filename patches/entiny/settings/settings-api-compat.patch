@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Tue, 1 Sep 2026 11:04:59 +0300
+Date: Wed, 21 Oct 2026 12:23:55 +0300
 Subject: Keep settings cell APIs compatible
 
 ---
@@ -58,5 +58,5 @@ index 0000000..0000000 100644
 +        // inu: the accounts list is hidden entirely - switching happens from the drawer/avatar
 +        // (ported from inugram PR #34, made unconditional)
  
-         final boolean walletAbove = getConnectionsManager().getCurrentTime() - 1791538462 < 4 * 7 * 24 * 60 * 60;
-         if (walletAbove && getMessagesController().config.walletAvailable.get()) {
+         if (!desu.inugram.helpers.security.ParanoiaHelper.shouldHideSettings()) {
+             items.add(SettingCell.Factory.of(99, IconBackgroundColors.ENTINY.top, IconBackgroundColors.ENTINY.bottom, R.drawable.icon_settings_inu, getString(R.string.InuSettings), getString(R.string.InuSettingsInfo)));

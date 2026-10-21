@@ -311,13 +311,17 @@ class DrawerLayoutAdapter(
         // #if PLUGINS
         val pluginRows = DrawerHelper.globalActionRows
         if (pluginRows.isNotEmpty()) {
-            items.add(null)
+            addDivider()
             for (row in pluginRows) {
                 items.add(Item(PluginActions.optionIdFor(row.key), row.text, R.drawable.msg_settings))
             }
         }
         // #endif
         while (items.isNotEmpty() && items[items.size - 1] == null) items.removeAt(items.size - 1)
+    }
+
+    private fun addDivider() {
+        if (items.isNotEmpty() && items.last() != null) items.add(null)
     }
 
     companion object {

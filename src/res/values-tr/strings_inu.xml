@@ -6,7 +6,7 @@
     <string name="InuChatSnowflakes">Sohbetlerde kar taneleri</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Tartışma grupları için yalnızca istemci tarafındaki üyelik kontrolünü atlar</string>
     <string name="InuNavigationDrawer">Gezinme menüsü</string>
-    <string name="InuNavigationDrawerInfo">v12.0 öncesi sol yan menüyü geri getirir. Yeniden başlatma gerektirir.</string>
+    <string name="InuNavigationDrawerInfo">v12.0 öncesi sol yan menüyü geri getirir.</string>
     <string name="InuDrawerBackGesture">Geri hareketiyle yan menüyü aç</string>
     <string name="InuDrawerBackGestureInfo">Sohbet listesinin sol kenarından sağa kaydırmak, uygulamadan çıkmak yerine yan menüyü açar.</string>
     <string name="InuDrawerM3Sections">Yan menüde modüler bölümler</string>
@@ -65,6 +65,7 @@
     <string name="InuUnifiedPushGatewayDefault">Varsayılan</string>
     <string name="InuUpdatesIncludeBetaInfo">Ayrıca ön sürüm/beta yapıları da sunulur. Bunlar test yapılarıdır, herkesin etkinleştirmesi gerekmez; sık güncelleme ile rahatsız edebilir.</string>
     <string name="InuVersionBetaSuffix">(Beta)</string>
+    <string name="InuAnimatedAvatars">Hareketli profil fotoğrafları</string>
     <string name="InuPerformanceClass">Performans sınıfı</string>
     <string name="InuPerformanceClassInfo">Bu ayarı değiştirmeniz önerilmez, düşük performanslı bütçe dostu cihazlarda performansı ciddi ölçüde düşürebilir</string>
     <string name="InuPerformanceClassMeasured">Ölçülen</string>
@@ -312,6 +313,7 @@
     <string name="InuDisableProfileScrollSnap">Profil kaydırma hizalamasını devre dışı bırak</string>
     <string name="InuReduceProfileMotion">Profil hareketlerini azalt</string>
     <string name="InuProfilePreferMediaTab">\"Medya\" sekmesini tercih et</string>
+    <string name="InuShowProfileGiftButton">\"Hediye\" eylem düğmesini göster</string>
     <string name="InuDisableMotionPhotos">Hareketli fotoğrafları devre dışı bırak</string>
     <string name="InuDisableMotionPhotosInfo">Seçicide ve mesajlarda hareketli fotoğrafları algılamaz veya oynatmaz</string>
     <string name="InuDisableVolumePlayVideo">Ses tuşlarının videoları oynatmasını devre dışı bırak</string>
@@ -565,6 +567,8 @@
     <string name="InuStripTrackingParams">İzleme parametrelerini temizle</string>
     <string name="InuStripTrackingParamsOnOpen">Bağlantıları açarken</string>
     <string name="InuStripTrackingParamsOnPaste">Yapıştırırken</string>
+    <string name="InuResolveTrackableRedirects">İzlenebilir yönlendirmeleri çöz</string>
+    <string name="InuResolveTrackableRedirectsInfo">Bazı paylaşım bağlantılarını (vt.tiktok.com/… gibi) yapıştırırken ve/veya açarken genişletir.\nBağlantının sunucusuyla iletişim kurar</string>
     <string name="InuStripTrackingParamsSource">AdGuard URL İzleme filtresi, güncellendi: %1$s</string>
     <string name="InuStripTrackingParamsSourceRow">Filtre kaynağı</string>
     <string name="InuStripTrackingParamsUpdate">Kuralları AdGuard\'dan güncelle</string>
@@ -575,6 +579,7 @@
     <string name="InuWebPreviewReplacements">Web önizleme değişiklikleri</string>
     <string name="InuWebPreviewEnabled">Değişiklikleri etkinleştir</string>
     <string name="InuWebPreviewReplacementsInfo">Web önizlemeleri alınırken URL\'lere uygulanan Regex değişiklikleri. Silmek için uzun basın.</string>
+    <string name="InuWebPreviewReplaceOnPaste">Yapıştırırken değiştir</string>
     <string name="InuWebPreviewAdd">Değişiklik ekle</string>
     <string name="InuWebPreviewEdit">Değişikliği düzenle</string>
     <string name="InuWebPreviewReset">Varsayılanlara sıfırla</string>
@@ -835,6 +840,9 @@
     <string name="InuDialogsMenuReset">Varsayılana sıfırla</string>
     <string name="InuMenuThemeToggle">Temayı değiştir</string>
     <string name="InuMenuCompose">Yeni grup / mesaj</string>
+    <string name="InuDrawerMenuOrder">Ögeleri özelleştir</string>
+    <string name="InuDrawerMenuItems">Ögeler</string>
+    <string name="InuDrawerMenuReset">Varsayılana sıfırla</string>
     <string name="InuGoToMessage">Mesaja git</string>
     <string name="InuGoToMessagePrompt">Mesaj Kimliği (ID)</string>
     <string name="InuPrivacySecurity">Gizlilik &amp; Güvenlik</string>
@@ -1655,10 +1663,30 @@
     <string name="InuPluginsEnabled">Etkin</string>
     <string name="InuPluginsEmpty">Yüklü eklenti yok</string>
     <string name="InuPluginsLoadFromDisk">Dosyadan yükle</string>
+    <string name="InuPluginRepos">Depolar</string>
+    <string name="InuPluginReposInfo">Depo, eklenti dosyalarının paylaşıldığı bir Telegram kanalıdır. Bir depodan yüklenen eklentiler güncellemeleri oradan alır.</string>
+    <string name="InuPluginReposAdd">Depo ekle</string>
+    <string name="InuPluginReposOpenChannel">Kanalı aç</string>
+    <string name="InuPluginReposUpdates">Güncellemeler</string>
+    <string name="InuPluginReposChecking">Güncellemeler denetleniyor…</string>
+    <string name="InuPluginReposCheckFailed">Bazı depoların güncellemeleri denetlenemedi</string>
+    <string name="InuPluginReposUpToDate">Güncelleme yok</string>
+    <string name="InuPluginReposErrorLink">Bir kanal kullanıcı adı veya bağlantısı girin</string>
+    <string name="InuPluginReposErrorNotChannel">Bu herkese açık bir kanal değil</string>
+    <string name="InuPluginReposErrorExists">Bu depo zaten eklendi</string>
+    <string name="InuPluginRepoEmpty">Bu depoda eklenti yok</string>
+    <string name="InuPluginRepoErrorLoad">Depo yüklenemedi</string>
+    <string name="InuPluginRepoErrorDownload">Eklenti indirilemedi</string>
+    <string name="InuPluginRepoRetry">Yeniden dene</string>
+    <string name="InuPluginRepoUpdate">Güncelle</string>
     <string name="InuPluginsCompactView">Kompakt görünüm</string>
     <string name="InuPluginsNormalView">Normal görünüm</string>
     <string name="InuPluginsReload">Yeniden yükle</string>
     <string name="InuPluginsViewSource">Kaynak kodunu görüntüle</string>
+    <string name="InuPluginAssets">Paketlenmiş dosyalar</string>
+    <string name="InuPluginAssetsCount_one">%1$d dosya</string>
+    <string name="InuPluginAssetsCount_other">%1$d dosya</string>
+    <string name="InuPluginsMemoryUsage">Bellek kullanımı</string>
     <string name="InuPluginSourceTitle">Kaynak kodu</string>
     <string name="InuPluginsRemove">Kaldır</string>
     <string name="InuPluginsRemoveTitle">%s eklentisini kaldır</string>
@@ -1670,6 +1698,7 @@
     <string name="InuPluginsPermissions">İzinler</string>
     <string name="InuPluginsPermissionsNone">Bu eklenti herhangi bir izin istemiyor</string>
     <string name="InuPluginGrantFs">Dosya depolama</string>
+    <string name="InuPluginGrantSqlite">Veritabanı</string>
     <string name="InuPluginGrantClipboardWrite">Panoya yazma</string>
     <string name="InuPluginGrantOpenUrl">Bağlantıları açma</string>
     <string name="InuPluginGrantAppVisibility">Uygulama görünürlüğünü izleme</string>
@@ -1785,6 +1814,7 @@
     <string name="InuPluginsErrorApiVersion">Daha yeni bir entinyGram gerekiyor (eklenti API\'si %1$d, bu uygulamada %2$d)</string>
     <string name="InuPluginsErrorPlatform">Bu platform için yapılmamış (%1$s gerekiyor)</string>
     <string name="InuPluginsErrorBadGrant">Geçersiz izinler istendi (%1$s)</string>
+    <string name="InuPluginsErrorBadAssets">Geçersiz paketlenmiş dosyalar (%1$s)</string>
     <string name="InuPluginsErrorUnconsentedGrants">Yükleme sırasında incelenmeyen izinler istiyor (%1$s); incelemek için eklentiyi güncelleyin</string>
     <string name="InuPluginsFailedAtLoad">Yükleme hatası</string>
     <string name="InuPluginsFailedAtRuntime">Çalışma zamanı hatası</string>
@@ -1806,10 +1836,7 @@
     <string name="InuDeviceSection">Cihaz</string>
     <string name="InuDownloadsAndNetwork">İndirmeler ve ağ</string>
     <string name="InuDrawerBots">Mini uygulamalar</string>
-    <string name="InuDrawerMenuItems">Öğeler</string>
-    <string name="InuDrawerMenuOrder">Menü öğeleri</string>
     <string name="InuDrawerMenuOrderInfo">Öğeleri gizlemek veya göstermek için dokunun, sıralamak için basılı tutun. Ayırıcılar menüyü gruplara böler.</string>
-    <string name="InuDrawerMenuReset">Menüyü sıfırla</string>
     <string name="InuHideTitle">Başlığı gizle</string>
     <string name="InuInterfaceElements">Arayüz öğeleri</string>
     <string name="InuIosSettings">iOS ayarları</string>
@@ -1917,7 +1944,6 @@
     <string name="InuLocalEditsClearConfirm">Yerel olarak düzenlenen tüm mesajlar özgün metnine geri döndürülecek.</string>
     <string name="InuLocalMessageEdit">Mesajları yerel olarak düzenle</string>
     <string name="InuLocalMessageEditInfo">Mesaj menüsüne “Metni yerel olarak düzenle” seçeneğini ekler (menü sırasından açın). Düzenlemeler yalnızca bu cihazda görünür ve özgün metin saklanır</string>
-    <string name="InuMarketplace">Pazar yeri</string>
     <string name="InuMarketplaceChecksum">dosya sağlama toplamıyla eşleşmiyor</string>
     <string name="InuMarketplaceDownloadFailed">Eklenti alınamadı: %1$s</string>
     <string name="InuMaterial3AccentIcons">Vurgu renkli simgeler</string>

@@ -15,6 +15,7 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
+import org.telegram.ui.MainTabsActivity
 import org.telegram.ui.ProfileActivity
 
 /**
@@ -75,7 +76,7 @@ object PluginScreens {
             fragment.currentAccount,
         )
         is ProfileActivity -> ScreenRef("profile", namedDialogId(fragment.dialogId), 0, fragment.currentAccount)
-        is DialogsActivity -> ScreenRef("dialogs", 0, 0, fragment.currentAccount)
+        is DialogsActivity, is MainTabsActivity -> ScreenRef("dialogs", 0, 0, fragment.currentAccount)
         is SettingsPageActivity -> ScreenRef("settings", 0, 0, fragment.currentAccount)
         else -> ScreenRef(
             if (fragment.javaClass.simpleName.endsWith("SettingsActivity")) "settings" else "other",

@@ -99,6 +99,20 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         }
     }
 
+    fun detach() {
+        cancelCurrentAnimation()
+        setAllowOpenDrawer(false, false)
+        host.removeView(drawerLayout)
+        drawerLayout = null
+        drawerListView = null
+        velocityTracker?.recycle()
+        velocityTracker = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            host.removeOnAttachStateChangeListener(attachListener)
+            host.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
+        }
+    }
+
     fun isDrawerChild(child: View?): Boolean = child != null && child == drawerLayout
 
     fun setAllowOpenDrawer(value: Boolean, animated: Boolean) {

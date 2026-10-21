@@ -34,7 +34,7 @@ index 0000000..0000000 100644
              outlineCodeField.attachEditText(codeField);
              outlineCodeField.addView(codeField, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP));
              codeField.setOnEditorActionListener((textView, i, keyEvent) -> {
-@@ -7088,6 +7089,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+@@ -7090,6 +7091,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                  codeField[a].setPadding(padding, padding, padding, padding);
                  if (stage == 0) {
                      codeField[a].setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);

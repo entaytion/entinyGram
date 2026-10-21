@@ -5,6 +5,7 @@ import { relative } from 'node:path'
 import process from 'node:process'
 import { AsyncLock } from '@fuman/utils'
 import * as esbuild from 'esbuild'
+import { bundleAssets } from '../assets.js'
 import { compileRoutines } from '../routines/plugin.js'
 import { configArgs, defineCommand } from '../utils/args.js'
 import { watchConfig } from '../utils/config.js'
@@ -45,7 +46,7 @@ export function createBuildOptions(
       js: renderManifestHeader(plugin.manifest, config.vocabulary.catalog.pluginApi),
     },
     logLevel: 'silent',
-    plugins: [compileRoutines(), ...extra],
+    plugins: [compileRoutines(), bundleAssets(), ...extra],
   }
 
   options = plugin.esbuild?.(options) ?? options

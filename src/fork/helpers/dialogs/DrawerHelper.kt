@@ -19,6 +19,7 @@ import desu.inugram.helpers.plugins.ui.ActionRow
 import desu.inugram.helpers.plugins.ui.ActionSurface
 import desu.inugram.helpers.plugins.ui.PluginActions
 import desu.inugram.helpers.plugins.ui.PluginIcons
+import desu.inugram.ui.settings.PluginsActivity
 // #endif
 import desu.inugram.helpers.dialogs.DrawerHelper.setupMainFragment
 import desu.inugram.helpers.menu.DialogsMenuConfig
@@ -35,7 +36,6 @@ import desu.inugram.ui.drawer.SideMenultItemAnimator
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.ParanoiaActivity
 // #if PLUGINS
-import desu.inugram.ui.settings.PluginsActivity
 // #endif
 import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.messenger.AndroidUtilities
@@ -106,7 +106,7 @@ object DrawerHelper {
 
     @JvmStatic
     fun setupMainFragment(activity: LaunchActivity, layout: INavigationLayout, dlc: DrawerLayoutContainer) {
-        layout.addFragmentToStack(createMainFragment())
+        layout.addFragmentToStack(MainTabsActivity())
         if (InuConfig.NAVIGATION_DRAWER.value) setup(activity, dlc, layout)
     }
 
@@ -130,6 +130,19 @@ object DrawerHelper {
             rebindPerAccountObservers()
             refreshUpdateState()
         }
+    }
+
+    @JvmStatic
+    fun teardown(layout: INavigationLayout?) {
+        val dlc = layout?.drawerLayoutContainer ?: return
+        val controller = dlc.inu_drawer ?: return
+        controller.detach()
+        dlc.inu_drawer = null
+        adapter = null
+        sideMenu = null
+        sideMenuContainer = null
+        updateLayout = null
+        menuDrawableRef = null
     }
 
     fun refreshUpdateState() {

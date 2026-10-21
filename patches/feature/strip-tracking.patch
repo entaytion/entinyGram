@@ -4,16 +4,26 @@ Date: Mon, 18 May 2026 21:24:46 +0400
 Subject: strip tracking parameters from urls
 
 ---
- .../telegram/messenger/browser/Browser.java   |  1 +
- .../ui/Components/EditTextCaption.java        | 24 ++++++++++++++++---
+ .../telegram/messenger/browser/Browser.java   |  8 ++++++
+ .../ui/Components/EditTextCaption.java        | 25 ++++++++++++++++---
  .../java/org/telegram/ui/LaunchActivity.java  |  2 +-
- 3 files changed, 23 insertions(+), 4 deletions(-)
+ 3 files changed, 31 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/browser/Browser.java b/TMessagesProj/src/main/java/org/telegram/messenger/browser/Browser.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/browser/Browser.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/browser/Browser.java
-@@ -292,6 +292,7 @@ public class Browser {
+@@ -289,9 +289,17 @@ public class Browser {
+     }
+ 
+     public static void openUrl(final Context context, Uri uri, boolean _allowCustom, boolean tryTelegraph, boolean forceNotInternalForApps, Progress inCaseLoading, String browser, boolean allowIntent, boolean allowInAppBrowser, boolean forceRequest) {
++        if (context != null && uri != null && desu.inugram.helpers.UrlCleanerHelper.openResolvingRedirects(context, uri, inCaseLoading, resolved -> inu_openUrl(context, resolved, _allowCustom, tryTelegraph, forceNotInternalForApps, null, browser, allowIntent, allowInAppBrowser, forceRequest))) {
++            return;
++        }
++        inu_openUrl(context, uri, _allowCustom, tryTelegraph, forceNotInternalForApps, inCaseLoading, browser, allowIntent, allowInAppBrowser, forceRequest);
++    }
++
++    private static void inu_openUrl(final Context context, Uri uri, boolean _allowCustom, boolean tryTelegraph, boolean forceNotInternalForApps, Progress inCaseLoading, String browser, boolean allowIntent, boolean allowInAppBrowser, boolean forceRequest) {
          if (context == null || uri == null) {
              return;
          }
@@ -47,7 +57,7 @@ index 0000000..0000000 100644
 +
 +            @Override
 +            public android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo outAttrs) {
-+                return desu.inugram.helpers.UrlCleanerHelper.wrapInputConnection(super.onCreateInputConnection(outAttrs));
++                return desu.inugram.helpers.UrlCleanerHelper.wrapInputConnection(super.onCreateInputConnection(outAttrs), this);
 +            }
          };
          final String def = initial == null ? "" : initial;
@@ -78,7 +88,15 @@ index 0000000..0000000 100644
                      AnimatedEmojiSpan[] spans = pasted.getSpans(0, pasted.length(), AnimatedEmojiSpan.class);
                      if (spans != null) {
                          for (int k = 0; k < spans.length; ++k) {
-@@ -1055,6 +1067,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -1048,6 +1060,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+                     } else {
+                         QuoteSpan.normalizeQuotes(pasted);
+                     }
++                    if (desu.inugram.helpers.UrlCleanerHelper.insertResolvingRedirects(this, pasted, start, end)) return true;
+                     setText(getText().replace(start, end, pasted));
+                     setSelection(start + pasted.length(), start + pasted.length());
+                     return true;
+@@ -1055,6 +1068,7 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
                      FileLog.e(e);
                  }
              }
@@ -86,14 +104,14 @@ index 0000000..0000000 100644
          } else if (id == android.R.id.copy) {
              int start = Math.max(0, getSelectionStart());
              int end = Math.min(getText().length(), getSelectionEnd());
-@@ -1087,4 +1100,9 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
+@@ -1087,4 +1101,9 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
          }
          return super.onTextContextMenuItem(id);
      }
 +
 +    @Override
 +    public android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo outAttrs) {
-+        return desu.inugram.helpers.UrlCleanerHelper.wrapInputConnection(super.onCreateInputConnection(outAttrs));
++        return desu.inugram.helpers.UrlCleanerHelper.wrapInputConnection(super.onCreateInputConnection(outAttrs), this);
 +    }
  }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java

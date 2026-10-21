@@ -65,6 +65,7 @@ object PluginManifestIcons {
     private fun bindEmoji(view: BackupImageView, uri: Uri): Boolean {
         val documentId = uri.getQueryParameter("id")?.toLongOrNull() ?: return false
         view.setColorFilter(null)
+        view.setEmojiColorFilter(Theme.getAnimatedEmojiColorFilter(null))
         view.setAnimatedEmojiDrawable(
             AnimatedEmojiDrawable.make(UserConfig.selectedAccount, AnimatedEmojiDrawable.CACHE_TYPE_FORUM_TOPIC_LARGE, documentId),
         )
@@ -97,13 +98,13 @@ object PluginManifestIcons {
         val location = ImageLocation.getForDocument(thumb, sticker)
         if (MessageObject.isAnimatedStickerDocument(sticker, true) || MessageObject.isVideoSticker(sticker)) {
             view.setImage(ImageLocation.getForDocument(sticker), FILTER, location, null, 0, set)
-            if (MessageObject.isTextColorEmoji(sticker)) {
-                view.setColorFilter(Theme.getAnimatedEmojiColorFilter(null))
-            }
         } else if (location != null && location.imageType == FileLoader.IMAGE_TYPE_LOTTIE) {
             view.setImage(location, FILTER, "tgs", svgThumb, set)
         } else {
             view.setImage(location, FILTER, "webp", svgThumb, set)
+        }
+        if (MessageObject.isTextColorEmoji(sticker)) {
+            view.setColorFilter(Theme.getAnimatedEmojiColorFilter(null))
         }
     }
 }
