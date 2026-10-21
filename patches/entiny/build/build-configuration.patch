@@ -12,7 +12,7 @@ Subject: [*] build configuration: gradle 8 / AGP 8 like inugram, plugin build fi
  TMessagesProj/src/main/AndroidManifest.xml    |   6 -
  .../java/org/telegram/ui/LaunchActivity.java  |  21 ----
  .../org/telegram/ui/PaymentFormActivity.java  |  28 +++--
- TMessagesProj_App/build.gradle                | 114 +++++++++---------
+ TMessagesProj_App/build.gradle                | 113 ++++++++++--------
  build.gradle                                  |  49 +++++++-
  .../executionHistory/executionHistory.bin     | Bin 0 -> 100752 bytes
  .../executionHistory/executionHistory.lock    | Bin 0 -> 17 bytes
@@ -166,7 +166,7 @@ Subject: [*] build configuration: gradle 8 / AGP 8 like inugram, plugin build fi
  buildSrc/build/tmp/jar/MANIFEST.MF            |   2 +
  gradle.properties                             |   2 +-
  settings.gradle                               |   6 +-
- 162 files changed, 207 insertions(+), 121 deletions(-)
+ 162 files changed, 209 insertions(+), 118 deletions(-)
  create mode 100644 buildSrc/.gradle/8.11.1/executionHistory/executionHistory.bin
  create mode 100644 buildSrc/.gradle/8.11.1/executionHistory/executionHistory.lock
  create mode 100644 buildSrc/.gradle/8.13/executionHistory/executionHistory.bin
@@ -725,14 +725,7 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -1,6 +1,5 @@
- apply plugin: 'com.android.application'
- apply plugin: 'org.telegram.build-app-plugin'
--apply plugin: 'kotlin-android'
- 
- repositories {
-     mavenCentral()
-@@ -31,16 +30,29 @@ dependencies {
+@@ -31,16 +31,29 @@ dependencies {
  }
  
  android {
@@ -763,7 +756,7 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
-@@ -81,11 +93,10 @@ android {
+@@ -81,11 +94,10 @@ android {
              debuggable true
              jniDebuggable true
              signingConfig signingConfigs.release
@@ -776,7 +769,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
          }
  
-@@ -93,11 +104,14 @@ android {
+@@ -93,11 +105,14 @@ android {
              debuggable false
              jniDebuggable false
              signingConfig signingConfigs.release
@@ -794,7 +787,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -109,55 +123,22 @@ android {
+@@ -109,55 +124,22 @@ android {
          manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
      }
  
@@ -858,21 +851,21 @@ index 0000000..0000000 100644
          }
  
          if (!rootProject.ext.inuPluginless) externalNativeBuild {
-@@ -187,8 +168,11 @@ android {
-         checkReleaseBuilds false
+@@ -190,6 +172,13 @@ android {
+     kotlinOptions {
+         jvmTarget = "1.8"
      }
- 
--    kotlinOptions {
--        jvmTarget = "1.8"
++
 +}
 +
 +androidComponents {
 +    onVariants(selector().all()) { variant ->
 +        variant.outputs.each { it.outputFileName.set("app.apk") }
-     }
++    }
  }
  
-@@ -236,11 +220,22 @@ def inuNativeProfiles = [debug: 'profiling', release: 'release']
+ apply plugin: 'com.google.gms.google-services'
+@@ -236,11 +225,22 @@ def inuNativeProfiles = [debug: 'profiling', release: 'release']
  inuNativeProfiles.each { buildType, cargoProfile ->
      def taskName = "buildInuNative${buildType.capitalize()}"
      def outputDir = new File(rustJniLibsDir, buildType)
@@ -897,7 +890,7 @@ index 0000000..0000000 100644
          def ndkHost = prebuilt.listFiles()?.find { it.isDirectory() }
          def libclangCandidates = [
              project.findProperty('libclang.path'),
-@@ -250,13 +245,24 @@ inuNativeProfiles.each { buildType, cargoProfile ->
+@@ -250,13 +250,24 @@ inuNativeProfiles.each { buildType, cargoProfile ->
              '/opt/homebrew/opt/llvm/lib', '/usr/local/opt/llvm/lib',
              '/run/current-system/sw/lib', "${System.getProperty('user.home')}/.nix-profile/lib",
              '/usr/lib/llvm/lib', '/usr/lib',
