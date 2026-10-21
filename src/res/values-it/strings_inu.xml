@@ -643,7 +643,6 @@ Sistema: %6$s
     <string name="InuTranslation">Traduzione</string>
     <string name="InuTranslator">Traduttore</string>
     <string name="InuLanguages">Lingue</string>
-    <string name="InuAdvanced">Avanzate</string>
     <string name="InuForceTranslate">Forza la traduzione</string>
     <string name="InuAutoTranslateAll">Traduci automaticamente ogni chat</string>
     <string name="InuAutoTranslateAllInfo">Attiva la traduzione delle chat ovunque per impostazione predefinita; la disattivazione per singola chat viene ricordata.</string>

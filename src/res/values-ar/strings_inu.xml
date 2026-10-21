@@ -516,7 +516,6 @@
     <string name="InuTranslation">الترجمة</string>
     <string name="InuTranslator">المترجم</string>
     <string name="InuLanguages">اللغات</string>
-    <string name="InuAdvanced">متقدم</string>
     <string name="InuForceTranslate">فرض الترجمة</string>
     <string name="InuAutoTranslateAll">ترجمة كل محادثة تلقائياً</string>
     <string name="InuAutoTranslateAllInfo">تفعيل ترجمة المحادثات في كل مكان افتراضياً؛ يُحفظ إيقافها لكل محادثة.</string>

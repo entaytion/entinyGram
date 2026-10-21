@@ -1,6 +1,7 @@
 package desu.inugram.ui.settings
 
 import android.content.Context
+import android.graphics.Rect
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -59,6 +60,15 @@ class AiServiceFieldCell(
             addView(counterView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, 8, 0, 0, 0))
         }
 
+        // entiny: the list resizes after the keyboard starts opening, so a scroll asked for at focus time lands before it and leaves the field under the keyboard
+        editText.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                AndroidUtilities.runOnUIThread({
+                    if (view.isAttachedToWindow && view.hasFocus()) view.requestRectangleOnScreen(Rect(0, 0, view.width, view.height + AndroidUtilities.dp(24f)), false)
+                }, KEYBOARD_SCROLL_DELAY_MS)
+            }
+        }
+
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -82,5 +92,9 @@ class AiServiceFieldCell(
         editText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
         editText.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2))
         counterView?.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2))
+    }
+
+    companion object {
+        private const val KEYBOARD_SCROLL_DELAY_MS = 350L
     }
 }

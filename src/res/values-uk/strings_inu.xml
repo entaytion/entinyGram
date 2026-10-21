@@ -480,7 +480,6 @@
     <string name="InuTranslation">Переклад</string>
     <string name="InuTranslator">Перекладач</string>
     <string name="InuLanguages">Мови</string>
-    <string name="InuAdvanced">Додатково</string>
     <string name="InuForceTranslate">Примусовий переклад</string>
     <string name="InuAutoTranslateAll">Автоперекладати всі чати</string>
     <string name="InuAutoTranslateAllInfo">Вмикає переклад чатів усюди за замовчуванням; вимкнення в конкретному чаті запам’ятається.</string>
@@ -489,6 +488,9 @@
     <string name="InuTranslationTargetFollowApp">Як у додатку</string>
     <string name="InuTranslationTargetOutgoing">Мова для відправки</string>
     <string name="InuTranslationTargetSameAsIncoming">Як для вхідних</string>
+    <string name="InuTranslateSectionSending">Написання</string>
+    <string name="InuTranslateSectionDisplay">Відображення</string>
+    <string name="InuTranslateSectionEngine">Рушій</string>
     <string name="InuHideReactionEntry">Приховати анімацію появи реакцій</string>
     <string name="InuHideReactionEntryInfo">…коли реакція додається до повідомлення</string>
     <string name="InuMutualContact">Взаємний контакт</string>

@@ -516,7 +516,6 @@
     <string name="InuTranslation">ترجمه</string>
     <string name="InuTranslator">مترجم</string>
     <string name="InuLanguages">زبان‌ها</string>
-    <string name="InuAdvanced">پیشرفته</string>
     <string name="InuForceTranslate">اجبار ترجمه</string>
     <string name="InuAutoTranslateAll">ترجمه خودکار هر گفتگو</string>
     <string name="InuAutoTranslateAllInfo">ترجمه گفتگو به‌طور پیش‌فرض همه‌جا روشن شود؛ خاموش کردن برای هر گفتگو به‌خاطر سپرده می‌شود.</string>

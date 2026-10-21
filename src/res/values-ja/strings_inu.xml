@@ -1026,7 +1026,6 @@
     <string name="InuStickerSetRefreshed">パックを更新しました</string>
     <string name="InuTOS">利用規約</string>
     <string name="InuAdditional">その他</string>
-    <string name="InuAdvanced">詳細設定</string>
     <string name="InuAiApiKeyHint">API キー</string>
     <string name="InuAiChatTitle">AI チャット</string>
     <string name="InuAiEditorButtonInfo">メッセージ入力欄の横に、文章の書き直し・続きの作成・要約・校正を行う AI アクションを表示します。</string>

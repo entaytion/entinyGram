@@ -327,7 +327,6 @@
     <string name="InuTranslation">Перевод</string>
     <string name="InuTranslator">Переводчик</string>
     <string name="InuLanguages">Языки</string>
-    <string name="InuAdvanced">Дополнительно</string>
     <string name="InuForceTranslate">Принудительный перевод</string>
     <string name="InuAutoTranslateAll">Автоперевод во всех чатах</string>
     <string name="InuAutoTranslateAllInfo">Включает перевод чата по умолчанию везде; выключение в конкретном чате запоминается.</string>
@@ -336,6 +335,9 @@
     <string name="InuTranslationTargetFollowApp">Как в приложении</string>
     <string name="InuTranslationTargetOutgoing">Язык для отправки</string>
     <string name="InuTranslationTargetSameAsIncoming">Как для входящих</string>
+    <string name="InuTranslateSectionSending">Написание</string>
+    <string name="InuTranslateSectionDisplay">Отображение</string>
+    <string name="InuTranslateSectionEngine">Движок</string>
     <string name="InuTranslateProviderSection">Провайдеры перевода</string>
     <string name="InuTranslateProvider">Провайдер перевода</string>
     <string name="InuTranslateProviderInfo">Переводит чаты через сторонний сервис вместо серверного API Telegram. Форматирование сохраняется.</string>

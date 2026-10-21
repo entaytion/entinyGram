@@ -638,7 +638,6 @@
     <string name="InuTranslation">Translation</string>
     <string name="InuTranslator">Translator</string>
     <string name="InuLanguages">Languages</string>
-    <string name="InuAdvanced">Advanced</string>
     <string name="InuForceTranslate">Force translation</string>
     <string name="InuAutoTranslateAll">Auto-translate every chat</string>
     <string name="InuAutoTranslateAllInfo">Turn chat translation on everywhere by default; per-chat off is remembered.</string>
@@ -659,6 +658,9 @@
     <string name="InuTranslationTargetFollowApp">Follow app</string>
     <string name="InuTranslationTargetOutgoing">Outgoing language</string>
     <string name="InuTranslationTargetSameAsIncoming">Same as incoming</string>
+    <string name="InuTranslateSectionSending">Writing</string>
+    <string name="InuTranslateSectionDisplay">Display</string>
+    <string name="InuTranslateSectionEngine">Engine</string>
     <string name="InuTranslateProviderSection">Translation providers</string>
     <string name="InuTranslateProvider">Translation provider</string>
     <string name="InuTranslateProviderInfo">Translate chats via a third-party service instead of Telegram\'s server API. Formatting preserved.</string>

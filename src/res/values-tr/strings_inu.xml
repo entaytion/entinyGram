@@ -1022,7 +1022,6 @@
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
     <string name="InuTOS">Hizmet Şartları</string>
     <string name="InuAdditional">Ek</string>
-    <string name="InuAdvanced">Gelişmiş</string>
     <string name="InuAiApiKeyHint">API Anahtarı</string>
     <string name="InuAiChatTitle">AI Sohbet</string>
     <string name="InuAiEditorButtonInfo">Mesaj yazma alanının yanında metni yeniden yazma, devam ettirme, özetleme ve düzeltme AI eylemlerini gösterir.</string>

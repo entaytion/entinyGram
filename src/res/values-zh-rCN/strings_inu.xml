@@ -1022,7 +1022,6 @@
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
     <string name="InuTOS">服务条款</string>
     <string name="InuAdditional">其他</string>
-    <string name="InuAdvanced">高级</string>
     <string name="InuAiApiKeyHint">API 密钥</string>
     <string name="InuAiChatTitle">AI 聊天</string>
     <string name="InuAiEditorButtonInfo">在消息输入框旁显示 AI 操作按钮，用于重写、续写、总结和修复文本。</string>
