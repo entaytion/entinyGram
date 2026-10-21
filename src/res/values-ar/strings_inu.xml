@@ -2083,14 +2083,4 @@
     <string name="InuTimedMediaAfterView">بعد المشاهدة</string>
     <string name="InuTimedMediaAfterViewBurn">حرق</string>
     <string name="InuTimedMediaAfterViewKeep">الاحتفاظ بنسخة</string>
-    <string name="InuRetroTitle">ريترو</string>
-    <string name="InuRetroSubtitle">ترويسة الملف الشخصي القديمة وقوائم مسطحة وشاشة إعدادات كلاسيكية.</string>
-    <string name="InuRetroScreens">الشاشات</string>
-    <string name="InuRetroProfile">الملف الشخصي القديم</string>
-    <string name="InuRetroProfileInfo">يعيد ترويسة الملف الشخصي القديمة.</string>
-    <string name="InuRetroLists">القوائم القديمة</string>
-    <string name="InuRetroListsInfo">قوائم مسطحة بالطراز القديم في كل مكان، دون أقسام Material 3.</string>
-    <string name="InuRetroSettings">الإعدادات القديمة</string>
-    <string name="InuRetroSettingsInfo">الإعدادات كقائمة ملف شخصي بالطراز القديم. يلزم إعادة التشغيل.</string>
-    <string name="InuRetroCredit">*منقول من إضافة retro-views (@sophietelle)*</string>
 </resources>

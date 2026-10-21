@@ -2070,14 +2070,4 @@
     <string name="InuTimedMediaAfterView">查看后</string>
     <string name="InuTimedMediaAfterViewBurn">焚毁</string>
     <string name="InuTimedMediaAfterViewKeep">保留副本</string>
-    <string name="InuRetroTitle">复古</string>
-    <string name="InuRetroSubtitle">旧式个人资料头部、扁平列表和经典设置界面。</string>
-    <string name="InuRetroScreens">界面</string>
-    <string name="InuRetroProfile">复古个人资料</string>
-    <string name="InuRetroProfileInfo">恢复旧式个人资料头部。</string>
-    <string name="InuRetroLists">复古列表</string>
-    <string name="InuRetroListsInfo">处处使用旧式扁平列表，不使用 Material 3 分区。</string>
-    <string name="InuRetroSettings">复古设置</string>
-    <string name="InuRetroSettingsInfo">以旧式个人资料列表显示设置。需要重启。</string>
-    <string name="InuRetroCredit">*移植自 retro-views 插件 (@sophietelle)*</string>
 </resources>

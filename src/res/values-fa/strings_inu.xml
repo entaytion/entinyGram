@@ -2071,14 +2071,4 @@
     <string name="InuTimedMediaAfterView">پس از مشاهده</string>
     <string name="InuTimedMediaAfterViewBurn">سوزاندن</string>
     <string name="InuTimedMediaAfterViewKeep">نگه‌داشتن نسخه</string>
-    <string name="InuRetroTitle">رترو</string>
-    <string name="InuRetroSubtitle">سرصفحه قدیمی پروفایل، فهرست‌های تخت و صفحه تنظیمات کلاسیک.</string>
-    <string name="InuRetroScreens">صفحه‌ها</string>
-    <string name="InuRetroProfile">پروفایل قدیمی</string>
-    <string name="InuRetroProfileInfo">سرصفحه قدیمی پروفایل را برمی‌گرداند.</string>
-    <string name="InuRetroLists">فهرست‌های قدیمی</string>
-    <string name="InuRetroListsInfo">فهرست‌های تخت به سبک قدیمی در همه‌جا، بدون بخش‌های Material 3.</string>
-    <string name="InuRetroSettings">تنظیمات قدیمی</string>
-    <string name="InuRetroSettingsInfo">تنظیمات به‌صورت فهرست پروفایل قدیمی. نیاز به راه‌اندازی مجدد دارد.</string>
-    <string name="InuRetroCredit">*برگرفته از افزونه retro-views (@sophietelle)*</string>
 </resources>

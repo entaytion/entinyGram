@@ -2102,14 +2102,4 @@ Mientras esté activado:</string>
     <string name="InuBookmarksEmpty">No hay marcadores</string>
     <string name="InuBookmarksClearAll">Borrar todos los marcadores</string>
     <string name="InuBookmarksSummary">Mensajes que guardaste, agrupados por chat</string>
-    <string name="InuRetroTitle">Estilo retro</string>
-    <string name="InuRetroSubtitle">Cabecera de perfil al estilo antiguo, listas planas y pantalla de ajustes clásica.</string>
-    <string name="InuRetroScreens">Pantallas</string>
-    <string name="InuRetroProfile">Perfil retro</string>
-    <string name="InuRetroProfileInfo">Recupera la cabecera de perfil antigua.</string>
-    <string name="InuRetroLists">Listas retro</string>
-    <string name="InuRetroListsInfo">Listas planas al estilo antiguo en todas partes, sin secciones de Material 3.</string>
-    <string name="InuRetroSettings">Ajustes retro</string>
-    <string name="InuRetroSettingsInfo">Ajustes como lista de perfil al estilo antiguo. Requiere reiniciar.</string>
-    <string name="InuRetroCredit">*portado del plugin retro-views (@sophietelle)*</string>
 </resources>

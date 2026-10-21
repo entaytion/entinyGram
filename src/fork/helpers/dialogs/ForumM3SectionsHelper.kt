@@ -6,7 +6,6 @@ import android.graphics.drawable.InsetDrawable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
-import desu.inugram.helpers.theme.RetroListsHelper
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.DialogCell
@@ -14,7 +13,7 @@ import org.telegram.ui.Cells.DialogCell
 object ForumM3SectionsHelper {
 
     @JvmStatic
-    fun isEnabled(): Boolean = InuConfig.FORUM_M3_SECTIONS.value && !RetroListsHelper.isFlat()
+    fun isEnabled(): Boolean = InuConfig.FORUM_M3_SECTIONS.value
 
     private fun sectionOf(topic: TLRPC.TL_forumTopic?): Int = when {
         topic == null -> -1

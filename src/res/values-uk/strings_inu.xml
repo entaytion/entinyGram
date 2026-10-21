@@ -2136,14 +2136,4 @@
     <string name="InuBookmarksEmpty">Закладок немає</string>
     <string name="InuBookmarksClearAll">Очистити всі закладки</string>
     <string name="InuBookmarksSummary">Збережені повідомлення за чатами</string>
-    <string name="InuRetroTitle">Ретро</string>
-    <string name="InuRetroSubtitle">Старий заголовок профілю, пласкі списки та класичний екран налаштувань.</string>
-    <string name="InuRetroScreens">Екрани</string>
-    <string name="InuRetroProfile">Ретро профіль</string>
-    <string name="InuRetroProfileInfo">Повертає старий заголовок профілю.</string>
-    <string name="InuRetroLists">Ретро списки</string>
-    <string name="InuRetroListsInfo">Плоскі списки старого стилю всюди, без розділів Material 3.</string>
-    <string name="InuRetroSettings">Ретро налаштування</string>
-    <string name="InuRetroSettingsInfo">Налаштування як список профілю старого стилю. Потрібен перезапуск.</string>
-    <string name="InuRetroCredit">*портовано з плагіна retro-views (@sophietelle)*</string>
 </resources>

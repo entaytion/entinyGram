@@ -2103,14 +2103,4 @@ Mentre è attivo:</string>
     <string name="InuBookmarksEmpty">Nessun segnalibro</string>
     <string name="InuBookmarksClearAll">Cancella tutti i segnalibri</string>
     <string name="InuBookmarksSummary">Messaggi che hai salvato, raggruppati per chat</string>
-    <string name="InuRetroTitle">Retrò</string>
-    <string name="InuRetroSubtitle">Intestazione del profilo in stile vecchio, elenchi piatti e schermata impostazioni classica.</string>
-    <string name="InuRetroScreens">Schermate</string>
-    <string name="InuRetroProfile">Profilo retrò</string>
-    <string name="InuRetroProfileInfo">Ripristina la vecchia intestazione del profilo.</string>
-    <string name="InuRetroLists">Elenchi retrò</string>
-    <string name="InuRetroListsInfo">Elenchi piatti in stile vecchio ovunque, senza sezioni Material 3.</string>
-    <string name="InuRetroSettings">Impostazioni retrò</string>
-    <string name="InuRetroSettingsInfo">Impostazioni come elenco del profilo in stile vecchio. Richiede un riavvio.</string>
-    <string name="InuRetroCredit">*portato dal plugin retro-views (@sophietelle)*</string>
 </resources>
