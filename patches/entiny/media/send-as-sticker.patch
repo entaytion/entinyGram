@@ -13,14 +13,14 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -10890,6 +10890,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
-                 (m, did, reply, top, q, n, date, args) -> prepareSendingMedia(accountInstance, m, did, reply, top, storyItem, q, forceDocument, inu_groupMedia, editingMessageObject, pollToAddOptionMessageObject, n, date, scheduleRepeatPeriod, mode, updateStikcersOrder, inputContent, args, effectId, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, forcedPollDoNotSendFinal))) {
+@@ -10899,6 +10899,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             prepareSendingVideo(accountInstance, info.path, info.videoEditedInfo, info.coverPath, info.coverPhoto, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, info.entities, info.ttl, editingMessageObject, notify, scheduleDate, scheduleRepeatPeriod, forceDocument, info.hasMediaSpoilers, info.caption, sendMessageChatArguments, effectId, info.stars, monoForumPeerId, suggestionParams, invertMedia);
              return;
          }
 +        desu.inugram.helpers.chat.StickerSendHelper.applyIfArmed(media);
-         if (media.size() == 1 && media.get(0).videoEditedInfo != null && media.get(0).videoEditedInfo.roundVideo) {
-             // The grouped/document dispatch below (and prepareSendingPhoto's video branch) never
-             // preserve VideoEditedInfo.roundVideo, so a video sent this way always lands as a
+         for (int a = 0, N = media.size(); a < N; a++) {
+             if (media.get(a).ttl > 0) {
+                 groupMedia = false;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
