@@ -35,7 +35,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
             mkTwoLineEntry(
                 BUTTON_BOOKMARKS,
                 R.drawable.msg_fave,
-                LocaleController.getString(R.string.InuBookmarks),
+                addExperimentalSpan(LocaleController.getString(R.string.InuBookmarks)),
                 LocaleController.getString(R.string.InuBookmarksSummary)
             )
         )
@@ -49,6 +49,7 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuOnlineDotsSection)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_ONLINE_DOTS,
@@ -57,16 +58,19 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
                 InuConfig.PRESENCE_COLOR_DOTS.value,
             )
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_CHAT_ONLINE_DOTS,
-                R.string.InuChatOnlineDots,
-                R.string.InuChatOnlineDotsInfo,
-                InuConfig.CHAT_PRESENCE_DOTS.value,
+        if (InuConfig.PRESENCE_COLOR_DOTS.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_CHAT_ONLINE_DOTS,
+                    R.string.InuChatOnlineDots,
+                    R.string.InuChatOnlineDotsInfo,
+                    InuConfig.CHAT_PRESENCE_DOTS.value,
+                )
             )
-        )
+        }
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMutualContactSection)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SHOW_MUTUAL_CONTACT_ICON,
@@ -75,22 +79,24 @@ class MainScreenSettingsActivity : SettingsPageActivity() {
                 InuConfig.SHOW_MUTUAL_CONTACT_ICON.value,
             )
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS,
-                R.string.InuShowMutualContactInChats,
-                R.string.InuShowMutualContactInChatsInfo,
-                InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.value,
+        if (InuConfig.SHOW_MUTUAL_CONTACT_ICON.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS,
+                    R.string.InuShowMutualContactInChats,
+                    R.string.InuShowMutualContactInChatsInfo,
+                    InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.value,
+                )
             )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_MUTUAL_CONTACT_ICON_LEFT,
-                R.string.InuMutualContactIconLeft,
-                R.string.InuMutualContactIconLeftInfo,
-                InuConfig.MUTUAL_CONTACT_ICON_LEFT.value,
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_MUTUAL_CONTACT_ICON_LEFT,
+                    R.string.InuMutualContactIconLeft,
+                    R.string.InuMutualContactIconLeftInfo,
+                    InuConfig.MUTUAL_CONTACT_ICON_LEFT.value,
+                )
             )
-        )
+        }
         items.add(UItem.asShadow(null))
     }
 

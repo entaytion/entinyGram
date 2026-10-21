@@ -1904,6 +1904,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val INPUT_TRANSLATE = BoolItem("input_translate", false)
 
+    @JvmField
+    val TRANSLATE_ON_SEND = BoolItem("translate_on_send", false)
+
     // empty: the same language as incoming translations
     @JvmField
     val INPUT_TRANSLATE_LANGUAGE = StringItem("input_translate_language", "")

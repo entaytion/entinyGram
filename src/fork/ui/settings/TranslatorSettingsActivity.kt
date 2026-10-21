@@ -49,6 +49,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTranslateSectionSending)))
         items.add(mkTwoLineCheckItem(TOGGLE_INPUT_TRANSLATE, R.string.InuInputTranslate, R.string.InuInputTranslateInfo, InuConfig.INPUT_TRANSLATE.value))
         items.add(mkTwoLineCheckItem(TOGGLE_TRANSLATE_IN_SEND_PREVIEW, R.string.InuTranslateInSendPreview, R.string.InuTranslateInSendPreviewInfo, InuConfig.TRANSLATE_IN_SEND_PREVIEW.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_TRANSLATE_ON_SEND, R.string.InuTranslateOnSend, R.string.InuTranslateOnSendInfo, InuConfig.TRANSLATE_ON_SEND.value))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLanguages)))
@@ -173,6 +174,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_FORCE_TRANSLATE = InuUtils.generateId()
         private val TOGGLE_TRANSLATE_OUTGOING = InuUtils.generateId()
         private val TOGGLE_INPUT_TRANSLATE = InuUtils.generateId()
+        private val TOGGLE_TRANSLATE_ON_SEND = InuUtils.generateId()
         private val TOGGLE_TRANSLATE_IN_SEND_PREVIEW = InuUtils.generateId()
         private val TOGGLE_IN_PLACE_TRANSLATION = InuUtils.generateId()
         private val TOGGLE_TRANSLATE_WEB_PREVIEWS = InuUtils.generateId()
@@ -192,6 +194,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             TOGGLE_FORCE_TRANSLATE to InuConfig.FORCE_TRANSLATE,
             TOGGLE_TRANSLATE_OUTGOING to InuConfig.TRANSLATE_OUTGOING,
             TOGGLE_INPUT_TRANSLATE to InuConfig.INPUT_TRANSLATE,
+            TOGGLE_TRANSLATE_ON_SEND to InuConfig.TRANSLATE_ON_SEND,
             TOGGLE_TRANSLATE_IN_SEND_PREVIEW to InuConfig.TRANSLATE_IN_SEND_PREVIEW,
             TOGGLE_IN_PLACE_TRANSLATION to InuConfig.IN_PLACE_TRANSLATION,
             TOGGLE_TRANSLATE_WEB_PREVIEWS to InuConfig.TRANSLATE_WEB_PREVIEWS,
@@ -213,6 +216,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("force-translate", R.string.InuForceTranslate, TOGGLE_FORCE_TRANSLATE),
                 SearchRegistry.Entry("translate-outgoing", R.string.InuTranslateOutgoing, TOGGLE_TRANSLATE_OUTGOING),
                 SearchRegistry.Entry("input-translate", R.string.InuInputTranslate, TOGGLE_INPUT_TRANSLATE),
+                SearchRegistry.Entry("translate-on-send", R.string.InuTranslateOnSend, TOGGLE_TRANSLATE_ON_SEND),
                 SearchRegistry.Entry("translate-in-send-preview", R.string.InuTranslateInSendPreview, TOGGLE_TRANSLATE_IN_SEND_PREVIEW),
                 SearchRegistry.Entry("show-translate-button", R.string.ShowTranslateButton, TOGGLE_SHOW_TRANSLATE_BUTTON),
                 SearchRegistry.Entry("show-translate-chat-button", R.string.ShowTranslateChatButton, TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON),

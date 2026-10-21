@@ -90,6 +90,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **LLM translator endpoint**: auto-detect the base URL and pick the model from the provider's list
 - 📡 **input actions**: translate a draft before sending into its own language, link preview toggle, find & replace, attachment picker from the input menu
 - 📡 **translate in send preview** - *inspired by [NagramX](https://github.com/temporaryna/NagramXTurbo)*
+- 📡 **translate on send**: your text is translated into the outgoing language as you send it; if translating fails nothing is sent
 - 📡 **free voice transcription** via Groq Whisper, Gemini Flash, OpenAI or Cloudflare AI
   - AI provider selection shows missing credentials and opens setup instead of hiding incomplete providers
 - 📡 **official-app emulation**: purchases and premium checkout without official app blocks

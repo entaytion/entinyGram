@@ -1,14 +1,20 @@
 package desu.inugram.ui.settings
 
+import android.content.Context
 import android.os.Build
+import android.util.TypedValue
 import android.view.View
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
@@ -18,6 +24,18 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
     private var avatarCornerPreview: AvatarCornerPreviewCell? = null
+    private var nonIslandInfo: TextView? = null
+
+    private fun nonIslandInfoItem(context: Context): UItem {
+        val view = nonIslandInfo ?: TextView(context).apply {
+            text = LocaleController.getString(R.string.InuNonIslandHint)
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+            setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+            setPadding(AndroidUtilities.dp(22f), AndroidUtilities.dp(6f), AndroidUtilities.dp(22f), AndroidUtilities.dp(12f))
+            layoutParams = RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT)
+        }.also { nonIslandInfo = it }
+        return UItem.asCustom(NON_ISLAND_INFO, view)
+    }
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCategoryAppearance)
 
@@ -59,8 +77,8 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDesignStyle)))
         items.add(mkTwoLineEntry(BUTTON_IOS_STYLE, R.drawable.msg_newphone, LocaleController.getString(R.string.InuIosSettings), LocaleController.getString(R.string.InuIosSettingsInfo)))
         items.add(mkTwoLineEntry(BUTTON_MATERIAL3, R.drawable.inu_tabler_layout_cards, LocaleController.getString(R.string.InuMaterial3), LocaleController.getString(R.string.InuMaterial3SettingsInfo)))
-        nonIslandGroup.addTo(items) { changed -> applyNonIslandChanges(changed.map { it.id }) }
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
+        nonIslandGroup.addTo(items, nonIslandInfoItem(ctx)) { changed -> applyNonIslandChanges(changed.map { it.id }) }
+        items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuInterfaceElements)))
         items.add(mkTwoLineEntry(BUTTON_MESSAGE_DESIGN, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessageDesign), LocaleController.getString(R.string.InuMessageDesignInfo)))
@@ -210,6 +228,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val SECTION_NON_ISLAND = InuUtils.generateId()
+        private val NON_ISLAND_INFO = InuUtils.generateId()
         private val TOGGLE_HIDE_FADE_VIEW = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_FOLDERS_BAR = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS = InuUtils.generateId()

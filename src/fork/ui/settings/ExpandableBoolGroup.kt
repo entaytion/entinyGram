@@ -27,7 +27,8 @@ class ExpandableBoolGroup(
         if (options.any { it.id == id }) expanded = true
     }
 
-    fun addTo(items: ArrayList<UItem>, onChange: (options: List<Option>) -> Unit) {
+    /** [info] is a row of its own shown first while the group is open, for a note that belongs to the group */
+    fun addTo(items: ArrayList<UItem>, info: UItem? = null, onChange: (options: List<Option>) -> Unit) {
         val checkedCount = options.count { it.config.value }
         val total = options.size
         val isChecked = checkedCount > 0
@@ -60,6 +61,7 @@ class ExpandableBoolGroup(
                 })
         )
         if (expanded) {
+            info?.let { items.add(it) }
             for (opt in options) {
                 items.add(
                     UItem.asRoundCheckbox(opt.id, LocaleController.getString(opt.labelRes))

@@ -567,3 +567,4 @@ bugfix/settings-camera-button-clip.patch
 bugfix/settings-header-avatar.patch
 feature/animated-avatars.patch
 misc/experimental-settings-in-release.patch
+entiny/translator/translate-on-send.patch

@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 22 Oct 2026 00:39:47 +0300
+Subject: [+] translate on send
+
+---
+ .../java/org/telegram/ui/Components/ChatActivityEnterView.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -7886,6 +7886,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 return;
+             }
+             CharSequence message = messageEditText == null ? "" : messageEditText.getTextToUse();
++            if (desu.inugram.helpers.translate.OutgoingTranslateHelper.intercept(this, message, () -> sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, payStars, false))) {
++                return;
++            }
+             if (parentFragment != null) {
+                 TLRPC.Chat chat = parentFragment.getCurrentChat();
+                 if (chat != null && chat.slowmode_enabled && !ChatObject.hasAdminRights(chat)) {

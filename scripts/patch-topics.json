@@ -187,6 +187,7 @@
   "suppress-screenshot-notification": "privacy",
   "theme-switch-recovery": "ui",
   "topic-icon-inset": "ui",
+  "translate-on-send": "translator",
   "topics-panel-redraw-storm": "ui",
   "translator": "translator",
   "unified-push": "notifications",
