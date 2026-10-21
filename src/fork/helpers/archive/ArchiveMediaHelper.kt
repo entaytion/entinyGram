@@ -40,7 +40,7 @@ object ArchiveMediaHelper {
     private const val MIRROR_DIR_NAME = "Ghosts"
     private var noMediaChecked = false
 
-    private data class MirrorRecord(val uri: String, val dir: String)
+    private data class MirrorRecord(val uri: String, val dir: String, val kind: String = "")
 
     // entiny: archive file name -> where its mirror copy lives, persisted so the copies can be moved when the download folder changes
     private val mirrorIndex: HashMap<String, MirrorRecord> by lazy {
@@ -49,7 +49,7 @@ object ArchiveMediaHelper {
             val file = mirrorIndexFile()
             if (file.isFile) file.forEachLine {
                 val parts = it.split('\t')
-                if (parts.size >= 3) map[parts[0]] = MirrorRecord(parts[1], parts[2])
+                if (parts.size >= 3) map[parts[0]] = MirrorRecord(parts[1], parts[2], parts.getOrElse(3) { "" })
             }
         } catch (e: Throwable) {
             android.util.Log.d(TAG, "mirror index read failed", e)
@@ -60,7 +60,7 @@ object ArchiveMediaHelper {
     private fun mirrorIndexFile() = File(ApplicationLoader.applicationContext.filesDir, "entinyGram/mirror_index.tsv").also { it.parentFile?.mkdirs() }
 
     private fun rewriteMirrorIndex() {
-        mirrorIndexFile().writeText(mirrorIndex.entries.joinToString("") { "${it.key}\t${it.value.uri}\t${it.value.dir}\n" })
+        mirrorIndexFile().writeText(mirrorIndex.entries.joinToString("") { "${it.key}\t${it.value.uri}\t${it.value.dir}\t${it.value.kind}\n" })
     }
 
     private fun mirrorRelativePath(dir: String) = "${android.os.Environment.DIRECTORY_DOWNLOADS}/$dir/$MIRROR_DIR_NAME/"
@@ -69,7 +69,7 @@ object ArchiveMediaHelper {
     @JvmStatic
     @JvmOverloads
     fun exportToGallery(path: String?, kind: String = "") {
-        if (path.isNullOrEmpty() || !isArchivePublic()) return
+        if (path.isNullOrEmpty() || !isArchivePublic() || kind == "edit") return
         try {
             val source = File(path)
             if (!source.isFile || source.length() <= 0L) return
@@ -78,8 +78,8 @@ object ArchiveMediaHelper {
             val dir = InuConfig.DOWNLOAD_DIRECTORY.value
             val uri = mirrorToDownloads(source, mirrorName(source, kind), dir) ?: return
             synchronized(mirrorIndex) {
-                mirrorIndex[source.name] = MirrorRecord(uri.toString(), dir)
-                mirrorIndexFile().appendText("${source.name}\t${uri}\t${dir}\n")
+                mirrorIndex[source.name] = MirrorRecord(uri.toString(), dir, kind)
+                mirrorIndexFile().appendText("${source.name}\t${uri}\t${dir}\t${kind}\n")
             }
         } catch (e: Throwable) {
             android.util.Log.d(TAG, "archive mirror failed", e)
@@ -153,7 +153,7 @@ object ArchiveMediaHelper {
                             false
                         }
                         if (updated) {
-                            mirrorIndex[name] = MirrorRecord(record.uri, newDir)
+                            mirrorIndex[name] = record.copy(dir = newDir)
                             moved++
                         }
                     }
@@ -166,6 +166,43 @@ object ArchiveMediaHelper {
                 android.util.Log.d(TAG, "mirror moved: $moved files to $newDir")
             } catch (e: Throwable) {
                 android.util.Log.d(TAG, "mirror move failed", e)
+            }
+        }
+    }
+
+    // entiny: edit revisions used to be mirrored too, drop those copies once; rows saved before the kind column are told apart by file name
+    private fun removeEditMirrors() {
+        if (!isArchivePublic()) return
+        mediaQueue.postRunnable {
+            try {
+                val resolver = ApplicationLoader.applicationContext.contentResolver
+                var removed = 0
+                var changed = false
+                synchronized(mirrorIndex) {
+                    for ((name, record) in mirrorIndex.entries.toList()) {
+                        if (record.kind.isNotEmpty()) continue
+                        val uri = android.net.Uri.parse(record.uri)
+                        val displayName = try {
+                            resolver.query(uri, arrayOf(android.provider.MediaStore.MediaColumns.DISPLAY_NAME), null, null, null)?.use { if (it.moveToFirst()) it.getString(0) else null }
+                        } catch (e: Throwable) {
+                            continue
+                        }
+                        changed = true
+                        when {
+                            displayName == null -> mirrorIndex.remove(name)
+                            displayName.substringBeforeLast('.').endsWith("_edit") -> {
+                                try { resolver.delete(uri, null, null) } catch (e: Throwable) { }
+                                mirrorIndex.remove(name)
+                                removed++
+                            }
+                            else -> mirrorIndex[name] = record.copy(kind = "deleted")
+                        }
+                    }
+                    if (changed) rewriteMirrorIndex()
+                }
+                android.util.Log.d(TAG, "edit mirror removed: $removed files")
+            } catch (e: Throwable) {
+                android.util.Log.d(TAG, "edit mirror removal failed", e)
             }
         }
     }
@@ -240,7 +277,7 @@ object ArchiveMediaHelper {
             try {
                 val db = storage.database
                 if (db != null) {
-                    for ((table, kind) in listOf("inu_deleted_messages" to "deleted", "inu_edit_history" to "edit")) {
+                    for ((table, kind) in listOf("inu_deleted_messages" to "deleted")) {
                         val cursor = db.queryFinalized("SELECT media_path FROM $table WHERE media_path IS NOT NULL AND media_path != ''")
                         try {
                             while (cursor.next()) cursor.stringValue(0)?.let { rows.add(it to kind) }
@@ -286,6 +323,7 @@ object ArchiveMediaHelper {
     // entiny: legacy import of any media that still lives in the old public download folder
     internal fun scheduleMediaMigration(account: Int) {
         synchronized(migratedAccounts) { if (!migratedAccounts.add(account)) return }
+        removeEditMirrors()
         mediaQueue.postRunnable({
             val targetRoot = getSavedMediaDir(account).canonicalFile
             val storage = MessagesStorage.getInstance(account)

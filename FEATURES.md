@@ -33,7 +33,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - edit history cards show before → after with highlighted changes, formatting and custom emoji
   - replies to saved deleted messages show the saved copy instead of "Deleted message"
   - download missing archived media on tap without background prefetching
-  - optionally mirror saved archive photos and videos to Download/entinyGram/Ghosts, hidden from the gallery, moved along when the download folder changes; the archive is capped at 3 GB
+  - optionally mirror deleted photos and videos to Download/entinyGram/Ghosts, hidden from the gallery, moved along when the download folder changes; the archive is capped at 3 GB
   - preserve downloaded media before deletion cleanup and reject incomplete documents
   - custom styling for deleted messages
   - full-text search and a browsable archive of everything saved, with sender names in groups
