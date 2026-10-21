@@ -8,7 +8,7 @@ import android.graphics.Paint
 import android.text.SpannableStringBuilder
 import android.util.TypedValue
 import android.view.Gravity
-import desu.inugram.helpers.vibration.HapticFeedbackConstants
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup

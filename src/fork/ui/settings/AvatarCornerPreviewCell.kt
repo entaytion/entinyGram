@@ -15,7 +15,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.ShapeDrawable
 import android.os.Build
 import android.view.Gravity
-import desu.inugram.helpers.vibration.HapticFeedbackConstants
+import android.view.HapticFeedbackConstants
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView

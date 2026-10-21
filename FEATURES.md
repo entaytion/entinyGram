@@ -108,7 +108,6 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **standalone AMOLED theme** - *ported from NagramX Turbo*
 - 📡 **theme switch recovery**: fixes interrupted theme transitions and stale Monet palettes
 - 📡 **liquid glass controls**: adjustable refraction angle and intensity - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
-- 📡 **niche settings**: extra hidden options, revealed by tapping the settings header five times
 - 📡 **icon packs**: Stock, Solar, VKUI and Phosphor
 - 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram) and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
   - compact bottom navigation bar
@@ -196,7 +195,6 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **per-chat notification channels**: own system channel for every chat, so muting one channel or topic can't silence the rest
 - 📡 **fix stuck playback on pause** (MIUI and certain DSPs)
 - 📡 **fix in-app vibration setting ignored**: turning in-app notification vibration on or off now takes effect
-- 📡 **disable all vibration**: haptics, in-app, call and notification vibration off, whatever Telegram's own settings say
 - 📡 **rotate the call screen** instead of locking it to portrait
 - 📡 **message date in saved file names**: optionally add the date and time a message was sent to saved photos, videos and files
 - 📡 **cache management**: per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once

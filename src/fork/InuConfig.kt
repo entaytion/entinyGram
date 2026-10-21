@@ -35,7 +35,6 @@ object InuConfig {
         migrateGhostAutoOffline()
         migrateSelfDestructCategories()
         migrateFeedEnabled(context)
-        desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
     }
 
     // entiny: the feed became opt-in; anyone who ever touched it keeps it on
@@ -1309,9 +1308,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val LIQUID_GLASS_TINT = IntItem("liquid_glass_tint", 100)
 
     @JvmField
-    val NICHE_SETTINGS_UNLOCKED = BoolItem("niche_settings_unlocked", false)
-
-    @JvmField
     val HIDE_DONATE_CARD = BoolItem("hide_donate_card", false, exportable = false)
 
     @JvmField
@@ -1676,14 +1672,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val ALLOW_SCREENSHOTS = BoolItem("allow_screenshots", false)
-    val FORCE_NO_VIBRATION = object : BoolItem("force_no_vibration", false) {
-        override var value: Boolean
-            get() = super.value
-            set(v) {
-                super.value = v
-                desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
-            }
-    }
 
     @JvmField
     val SUPPRESS_SCREENSHOT_NOTIFICATION = BoolItem("suppress_screenshot_notification", false)

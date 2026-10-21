@@ -3,7 +3,6 @@ package desu.inugram.ui.settings
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
-import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -55,27 +54,6 @@ class InuSettingsHeader(context: Context) : LinearLayout(context) {
         isSingleLine = true
         ellipsize = android.text.TextUtils.TruncateAt.END
     }
-
-    var onHeaderClick: (() -> Unit)? = null
-        set(value) {
-            field = value
-            if (value != null) {
-                isClickable = true
-                isFocusable = true
-                setOnClickListener {
-                    performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    value()
-                }
-                background = Theme.createRadSelectorDrawable(
-                    Theme.getColor(Theme.key_listSelector), 0, 0
-                )
-            } else {
-                isClickable = false
-                isFocusable = false
-                setOnClickListener(null)
-                background = null
-            }
-        }
 
     init {
         orientation = HORIZONTAL

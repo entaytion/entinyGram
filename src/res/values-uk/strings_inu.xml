@@ -688,10 +688,6 @@
     <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>
     <string name="InuLiquidGlassTint">Тонування рідкого скла</string>
-    <string name="InuNicheSettings">Нішеві налаштування</string>
-    <string name="InuNicheSettingsInfo">Тут зібрані функції, які потрібні не всім, але про які попросили. Якщо вони не працюватимуть, ми їх видалимо.</string>
-    <string name="InuNicheUnlockedToast">бро, не вмикай entiny tv пліз💀💀</string>
-    <string name="InuNicheAlreadyUnlockedToast">бро, ти це вже вмикав 💀</string>
 
     <string name="InuReduceMenuMotion">Зменшити анімації меню</string>
     <string name="InuReduceMenuMotionInfo">Спрощує анімацію виклику меню повідомлень</string>
@@ -1188,8 +1184,6 @@
     <string name="InuProfileInfoRowsOrderInfo">Змінюйте порядок або приховуйте рядки телефону, біо та імені користувача у власному профілі. Перетягніть, щоб рухати, перемикач — щоб приховати.</string>
     <string name="InuProfileInfoRowsReset">Скинути за замовчуванням</string>
     <string name="InuLogsEnabled">Режим налагодження</string>
-    <string name="InuForceNoVibration">Вимкнути всю вібрацію</string>
-    <string name="InuForceNoVibrationInfo">Вимикає вібровідгук, вібрацію в застосунку та сповіщень, навіть якщо вона ввімкнена в налаштуваннях Telegram.</string>
     <string name="InuLogsPrivacyTitle">Увімкнути режим налагодження?</string>
     <string name="InuLogsPrivacyText">Застосунок записуватиме технічні логи на пристрій. У них можуть бути ідентифікатори акаунта й чатів, тож надсилайте їх лише тим, кому довіряєте. Логи займають до 25 МБ і очищаються будь-коли.</string>
     <string name="InuLogsEnableAction">Увімкнути</string>

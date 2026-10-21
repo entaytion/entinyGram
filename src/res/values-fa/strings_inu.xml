@@ -763,10 +763,6 @@
     <string name="InuLiquidGlassAngle">زاویه شیشه مایع</string>
     <string name="InuLiquidGlassIntensity">شدت شیشه مایع</string>
     <string name="InuLiquidGlassTint">رنگ‌مایه شیشه مایع</string>
-    <string name="InuNicheSettings">تنظیمات ویژه</string>
-    <string name="InuNicheSettingsInfo">قابلیت‌های درخواستی که شاید برای همه مفید نباشند. اگر کار نکنند حذف می‌شوند.</string>
-    <string name="InuNicheUnlockedToast">رفیق، entiny tv رو فعال نکن خواهشاً💀💀</string>
-    <string name="InuNicheAlreadyUnlockedToast">رفیق، قبلاً فعالش کردی 💀</string>
 
     <string name="InuReduceMenuMotion">کاهش حرکت منوها</string>
     <string name="InuReduceMenuMotionInfo">رد کردن نوبت‌بندی منوی زمینه و ساده‌سازی انیمیشن‌های منوی پیام</string>
@@ -1161,8 +1157,6 @@
 
     <string name="InuLogs">اشکال‌زدایی</string>
     <string name="InuLogsEnabled">حالت اشکال‌زدایی</string>
-    <string name="InuForceNoVibration">غیرفعال کردن همه لرزش‌ها</string>
-    <string name="InuForceNoVibrationInfo">لرزش لمسی، لرزش درون‌برنامه و اعلان‌ها را حتی اگر در تنظیمات تلگرام روشن باشد خاموش می‌کند.</string>
     <string name="InuLogsSize">حجم گزارش‌ها: %1$s</string>
     <string name="InuLogsShare">اشتراک‌گذاری گزارش‌ها</string>
     <string name="InuLogsShareZip">همه گزارش‌ها (.zip)</string>

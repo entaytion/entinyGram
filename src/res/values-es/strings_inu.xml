@@ -907,10 +907,6 @@ Sistema: %6$s
     <string name="InuLiquidGlassAngle">Ángulo de cristal líquido</string>
     <string name="InuLiquidGlassIntensity">Intensidad de cristal líquido</string>
     <string name="InuLiquidGlassTint">Tinte de cristal líquido</string>
-    <string name="InuNicheSettings">Ajustes de nicho</string>
-    <string name="InuNicheSettingsInfo">Funciones solicitadas que pueden no ser útiles para todos. Si no funcionan, se eliminarán.</string>
-    <string name="InuNicheUnlockedToast">bro no actives entiny tv por favor💀💀</string>
-    <string name="InuNicheAlreadyUnlockedToast">bro, ya lo activaste 💀</string>
 
     <string name="InuReduceMenuMotion">Reducir el movimiento de los menús</string>
     <string name="InuReduceMenuMotionInfo">Omitir escalonamiento de menús contextuales y simplificar animaciones de menús de mensajes</string>
@@ -1330,8 +1326,6 @@ Esta acción no se puede deshacer.</string>
 
     <string name="InuLogs">Depuración</string>
     <string name="InuLogsEnabled">Modo de depuración</string>
-    <string name="InuForceNoVibration">Desactivar toda la vibración</string>
-    <string name="InuForceNoVibrationInfo">Apaga la vibración háptica, de la app y de las notificaciones, aunque esté activada en los ajustes de Telegram.</string>
     <string name="InuLogsPrivacyTitle">¿Activar el modo de depuración?</string>
     <string name="InuLogsPrivacyText">La app escribirá registros técnicos en el dispositivo. Pueden contener identificadores de cuentas y chats, así que compártelos solo con personas de confianza. Los registros ocupan hasta 25 MB y se pueden borrar en cualquier momento.</string>
     <string name="InuLogsEnableAction">Activar</string>

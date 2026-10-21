@@ -907,10 +907,6 @@
     <string name="InuLiquidGlassAngle">Liquid Glass angle</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass intensity</string>
     <string name="InuLiquidGlassTint">Liquid Glass tint</string>
-    <string name="InuNicheSettings">Niche settings</string>
-    <string name="InuNicheSettingsInfo">Requested features that may not be useful to everyone. If they do not work, they will be removed.</string>
-    <string name="InuNicheUnlockedToast">bro dont enable entiny tv pls💀💀</string>
-    <string name="InuNicheAlreadyUnlockedToast">bro, you already enabled it 💀</string>
 
     <string name="InuReduceMenuMotion">Reduce menu motion</string>
     <string name="InuReduceMenuMotionInfo">Skip context menu stagger and simplify message menu animations</string>
@@ -1330,8 +1326,6 @@
 
     <string name="InuLogs">Debug</string>
     <string name="InuLogsEnabled">Debug mode</string>
-    <string name="InuForceNoVibration">Disable all vibration</string>
-    <string name="InuForceNoVibrationInfo">Turn off haptics, in-app and notification vibration, even if enabled in Telegram settings.</string>
     <string name="InuLogsPrivacyTitle">Enable debug mode?</string>
     <string name="InuLogsPrivacyText">The app will write technical logs to the device. They may contain account and chat identifiers, so share them only with people you trust. Logs are kept up to 25 MB and can be cleared at any time.</string>
     <string name="InuLogsEnableAction">Enable</string>

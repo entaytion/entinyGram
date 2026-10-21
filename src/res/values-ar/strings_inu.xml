@@ -763,10 +763,6 @@
     <string name="InuLiquidGlassAngle">زاوية الزجاج السائل</string>
     <string name="InuLiquidGlassIntensity">شدة الزجاج السائل</string>
     <string name="InuLiquidGlassTint">تظليل الزجاج السائل</string>
-    <string name="InuNicheSettings">إعدادات متخصصة</string>
-    <string name="InuNicheSettingsInfo">ميزات مطلوبة قد لا تفيد الجميع. إذا لم تعمل فستُزال.</string>
-    <string name="InuNicheUnlockedToast">يا صديقي لا تفعّل entiny tv أرجوك💀💀</string>
-    <string name="InuNicheAlreadyUnlockedToast">يا صديقي، لقد فعّلتها بالفعل 💀</string>
 
     <string name="InuReduceMenuMotion">تقليل حركة القوائم</string>
     <string name="InuReduceMenuMotionInfo">تخطي التتابع في قائمة السياق وتبسيط حركات قائمة الرسالة</string>
@@ -1169,8 +1165,6 @@
 
     <string name="InuLogs">التصحيح</string>
     <string name="InuLogsEnabled">وضع التصحيح</string>
-    <string name="InuForceNoVibration">تعطيل كل الاهتزازات</string>
-    <string name="InuForceNoVibrationInfo">يوقف الاهتزاز اللمسي واهتزاز التطبيق والإشعارات حتى لو كان مفعلًا في إعدادات Telegram.</string>
     <string name="InuLogsSize">حجم السجلات: %1$s</string>
     <string name="InuLogsShare">مشاركة السجلات</string>
     <string name="InuLogsShareZip">كل السجلات (.zip)</string>

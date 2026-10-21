@@ -925,8 +925,6 @@
     <string name="InuCrashNotifText">Нажмите для перезапуска</string>
     <string name="InuLogs">Отладка</string>
     <string name="InuLogsEnabled">Режим отладки</string>
-    <string name="InuForceNoVibration">Отключить всю вибрацию</string>
-    <string name="InuForceNoVibrationInfo">Отключает виброотклик, вибрацию в приложении и уведомлениях, даже если она включена в настройках Telegram.</string>
     <string name="InuLogsPrivacyTitle">Включить режим отладки?</string>
     <string name="InuLogsPrivacyText">Приложение будет записывать технические логи на устройство. В них могут быть идентификаторы аккаунта и чатов, поэтому отправляйте их только тем, кому доверяете. Логи занимают до 25 МБ и очищаются в любой момент.</string>
     <string name="InuLogsEnableAction">Включить</string>
@@ -1061,10 +1059,6 @@
     <string name="InuLiquidGlassAngle">Угол Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Интенсивность Liquid Glass</string>
     <string name="InuLiquidGlassTint">Тонировка жидкого стекла</string>
-    <string name="InuNicheSettings">Нишевые настройки</string>
-    <string name="InuNicheSettingsInfo">Здесь собраны функции, которые нужны не всем, но о которых попросили. Если они не работают, мы их удалим.</string>
-    <string name="InuNicheUnlockedToast">бро, не включай entiny tv плз💀💀</string>
-    <string name="InuNicheAlreadyUnlockedToast">бро, ты уже включил это 💀</string>
     <string name="InuStripTrackingParamsOnOpen">При открытии ссылок</string>
     <string name="InuStripTrackingParamsOnPaste">При вставке</string>
     <string name="InuResolveTrackableRedirects">Раскрывать отслеживаемые ссылки</string>

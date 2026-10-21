@@ -11,7 +11,6 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.browser.Browser
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.ActionBarMenuItem
-import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.ProfileActivity
@@ -22,8 +21,6 @@ class InuSettingsActivity : SettingsPageActivity() {
 
     private var searchAdapter: ProfileActivity.SearchAdapter? = null
     private var isSearchOpen = false
-    private var headerTapCount = 0
-    private var lastHeaderTapAt = 0L
 
     override fun createView(context: Context): View {
         return super.createView(context).also {
@@ -65,31 +62,7 @@ class InuSettingsActivity : SettingsPageActivity() {
 
     private fun createHeaderView(): View {
         val context = context ?: return View(org.telegram.messenger.ApplicationLoader.applicationContext)
-        return InuSettingsHeader(context).apply {
-            onHeaderClick = { onHeaderTap() }
-        }
-    }
-
-    private fun onHeaderTap() {
-        val now = android.os.SystemClock.uptimeMillis()
-        if (now - lastHeaderTapAt > HEADER_TAP_WINDOW_MS) headerTapCount = 0
-        lastHeaderTapAt = now
-        headerTapCount++
-        if (headerTapCount == HEADER_TAP_COUNT) {
-            headerTapCount = 0
-            val alreadyUnlocked = InuConfig.NICHE_SETTINGS_UNLOCKED.value
-            if (!alreadyUnlocked) {
-                InuConfig.NICHE_SETTINGS_UNLOCKED.value = true
-                listView.adapter.update(true)
-            }
-            BulletinFactory.of(this).createSimpleBulletin(
-                R.raw.chats_infotip,
-                LocaleController.getString(
-                    if (alreadyUnlocked) R.string.InuNicheAlreadyUnlockedToast
-                    else R.string.InuNicheUnlockedToast
-                )
-            ).show()
-        }
+        return InuSettingsHeader(context)
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
@@ -121,9 +94,6 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(BUTTON_PLUGINS, R.drawable.inu_tabler_code, addExperimentalSpan(LocaleController.getString(R.string.InuPlugins))))
         // #endif
         items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_floppy, LocaleController.getString(R.string.InuCategoryBackup)))
-        if (InuConfig.NICHE_SETTINGS_UNLOCKED.value) {
-            items.add(mkSubPageButton(CAT_NICHE, R.drawable.inu_tabler_skull, LocaleController.getString(R.string.InuNicheSettings)))
-        }
         items.add(UItem.asShadow(null))
 
         items.add(
@@ -168,7 +138,6 @@ class InuSettingsActivity : SettingsPageActivity() {
             BUTTON_PLUGINS -> presentFragment(PluginsActivity())
             // #endif
             CAT_SYSTEM -> presentFragment(AdditionalSettingsActivity())
-            CAT_NICHE -> presentFragment(NicheSettingsActivity())
             BUTTON_CHANNEL_LINK -> Browser.openUrl(ctx, "https://t.me/entinyGram")
             BUTTON_GITHUB -> Browser.openUrl(ctx, "https://github.com/Entaytion/EntinyGram")
         }
@@ -186,9 +155,6 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val BUTTON_TOS = InuUtils.generateId()
         private val BUTTON_PLUGINS = InuUtils.generateId()
         private val CAT_SYSTEM = InuUtils.generateId()
-        private val CAT_NICHE = InuUtils.generateId()
-        private const val HEADER_TAP_COUNT = 5
-        private const val HEADER_TAP_WINDOW_MS = 2000L
         private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
         private val BUTTON_GITHUB = InuUtils.generateId()
 

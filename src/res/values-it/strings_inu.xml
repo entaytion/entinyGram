@@ -907,10 +907,6 @@ Sistema: %6$s
     <string name="InuLiquidGlassAngle">Angolo del Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Intensità del Liquid Glass</string>
     <string name="InuLiquidGlassTint">Tinta del Liquid Glass</string>
-    <string name="InuNicheSettings">Impostazioni di nicchia</string>
-    <string name="InuNicheSettingsInfo">Funzioni richieste che potrebbero non essere utili a tutti. Se non funzionano, verranno rimosse.</string>
-    <string name="InuNicheUnlockedToast">bro non attivare entiny tv per favore💀💀</string>
-    <string name="InuNicheAlreadyUnlockedToast">bro, l\'hai già attivato 💀</string>
 
     <string name="InuReduceMenuMotion">Riduci il movimento dei menu</string>
     <string name="InuReduceMenuMotionInfo">Salta lo scaglionamento dei menu contestuali e semplifica le animazioni del menu dei messaggi</string>
@@ -1331,8 +1327,6 @@ Questa azione non può essere annullata.</string>
 
     <string name="InuLogs">Debug</string>
     <string name="InuLogsEnabled">Modalità debug</string>
-    <string name="InuForceNoVibration">Disattiva tutte le vibrazioni</string>
-    <string name="InuForceNoVibrationInfo">Disattiva la vibrazione aptica, dell\'app e delle notifiche, anche se attivata nelle impostazioni di Telegram.</string>
     <string name="InuLogsPrivacyTitle">Attivare la modalità debug?</string>
     <string name="InuLogsPrivacyText">L\'app scriverà log tecnici sul dispositivo. Possono contenere identificatori di account e chat, quindi condividili solo con persone di cui ti fidi. I log occupano fino a 25 MB e possono essere cancellati in qualsiasi momento.</string>
     <string name="InuLogsEnableAction">Attiva</string>
