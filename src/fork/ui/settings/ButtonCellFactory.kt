@@ -40,6 +40,8 @@ open class ButtonCellFactory : UItem.UItemFactory<PluginSettingCell>() {
          * characters only and reports two CharSequences equal however differently they are spanned,
          * so entities that changed under unchanged text would otherwise never reach [contentsEquals].
          */
+        // entiny: the trailing defaults must stay callable without them, plugins built before they existed pass fewer arguments
+        @JvmOverloads
         fun of(
             id: Int,
             text: CharSequence,
@@ -152,6 +154,7 @@ class CheckCellFactory : ButtonCellFactory() {
             setup(CheckCellFactory())
         }
 
+        @JvmOverloads
         fun of(
             id: Int,
             text: CharSequence,
