@@ -162,7 +162,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">Alanda metin varsa kaydırırken gizleme</string>
     <string name="InuDisablePullToNext">Sonraki kanala geçmek için çekmeyi devre dışı bırak</string>
     <string name="InuDisableSensitive">Hassas içerik filtresini devre dışı bırak</string>
-    <string name="InuDisableSensitiveInfo">Hassas içerikteki bulanıklığı, uyarı ekranlarını ve istemci tarafı kısıtlamaları kaldırır. Telegram'ın yasakladığı kanallar kapalı kalır, çünkü sunucu bunları göndermez.</string>
+    <string name="InuDisableSensitiveInfo">Hassas içerikteki bulanıklığı, uyarı ekranlarını ve istemci tarafı kısıtlamaları kaldırır. Telegram\'ın yasakladığı kanallar kapalı kalır, çünkü sunucu bunları göndermez.</string>
     <string name="InuMemoryTrim">Arka planda belleği boşalt</string>
     <string name="InuMemoryTrimInfo">Uygulama arka plana geçtikten kısa süre sonra görsel önbelleklerini temizler ve belleği sıkıştırır</string>
     <string name="InuDisableQuickShare">Hızlı paylaşımı devre dışı bırak</string>

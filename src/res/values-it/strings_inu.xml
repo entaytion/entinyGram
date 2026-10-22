@@ -1760,7 +1760,7 @@ Questa azione non può essere annullata.</string>
     <string name="InuStalkerPresence">Presenza</string>
     <string name="InuStalkerTools">Strumenti</string>
     <string name="InuPresenceLoggerNotify">Notifiche di presenza</string>
-    <string name="InuPresenceLoggerNotifyInfo">Popup quando un contatto monitorato va online o offline, solo con l'app aperta; le modifiche vengono sempre registrate localmente.</string>
+    <string name="InuPresenceLoggerNotifyInfo">Popup quando un contatto monitorato va online o offline, solo con l\'app aperta; le modifiche vengono sempre registrate localmente.</string>
     <string name="InuForceRelayCalls">Forza le chiamate tramite relay</string>
     <string name="InuForceRelayCallsInfo">Instrada le chiamate tramite i server relay di Telegram, mai peer-to-peer, nascondendo il tuo IP reale.</string>
     <string name="InuPresenceWatchUser">Segui lo stato online</string>

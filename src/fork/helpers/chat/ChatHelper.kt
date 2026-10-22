@@ -53,6 +53,7 @@ import desu.inugram.helpers.ai.AiSummaryHelper
 import desu.inugram.helpers.WebAppHelper
 import desu.inugram.helpers.cloud.SettingsBackupHelper
 import desu.inugram.helpers.font.FontImportHelper
+import desu.inugram.helpers.menu.MenuOrderEntry
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.reorderByMenu
 import desu.inugram.helpers.security.GhostHelper
@@ -179,7 +180,7 @@ object ChatHelper {
     }
 
     private fun isBookmarked(msg: MessageObject?): Boolean =
-        msg != null && msg.id > 0 && isMenuItemEnabled(MessageMenuConfig.Item.BOOKMARK) &&
+        msg != null && msg.id > 0 && isBookmarkMenuEnabled() &&
             BookmarksHelper.isBookmarked(msg.currentAccount, msg.getDialogId(), msg.id)
 
     @JvmStatic
@@ -1880,6 +1881,20 @@ object ChatHelper {
 
     private fun isMenuItemEnabled(item: MessageMenuConfig.Item): Boolean =
         InuConfig.MESSAGE_MENU_ITEMS.value.any { it.item == item && it.enabled }
+
+    private class BookmarkMenuState(val source: List<MenuOrderEntry<MessageMenuConfig.Item>>, val enabled: Boolean)
+
+    @Volatile
+    private var bookmarkMenuState: BookmarkMenuState? = null
+
+    // entiny: config assigns a fresh list on every change, so list identity is a safe cache key
+    private fun isBookmarkMenuEnabled(): Boolean {
+        val source = InuConfig.MESSAGE_MENU_ITEMS.value
+        bookmarkMenuState?.let { if (it.source === source) return it.enabled }
+        val enabled = source.any { it.item == MessageMenuConfig.Item.BOOKMARK && it.enabled }
+        bookmarkMenuState = BookmarkMenuState(source, enabled)
+        return enabled
+    }
 
     private fun messageDocuments(message: MessageObject): List<TLRPC.Document> {
         val out = ArrayList<TLRPC.Document>(2)

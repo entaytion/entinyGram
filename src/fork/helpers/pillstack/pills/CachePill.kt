@@ -86,7 +86,7 @@ class CachePill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
 
     override fun getPillId(): Int = PillType.CACHE.id
 
-    override fun getRefreshInterval(): Long = 3 * 60 * 1000L
+    override fun getRefreshInterval(): Long = 30 * 60 * 1000L
 
     override fun onPillClicked() {
         openStorageUsage()
