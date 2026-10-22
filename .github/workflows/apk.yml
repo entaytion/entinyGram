@@ -161,13 +161,28 @@ jobs:
       # clang drivers), and cargo-ndk drives the Android cross build.
       - name: Install libclang
         if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
-        timeout-minutes: 5
+        timeout-minutes: 10
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
+          # the azure mirror sometimes stalls mid-download, so use the main archive and cap every attempt
+          sudo sed -i -E 's|^URIs: mirror\+file:/etc/apt/apt-mirrors.txt|URIs: http://archive.ubuntu.com/ubuntu/|' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true
+          sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|' /etc/apt/sources.list 2>/dev/null || true
           APT_OPTS="-o Acquire::Retries=3 -o Acquire::http::Timeout=20"
-          sudo -E apt-get $APT_OPTS update -qq
-          sudo -E apt-get $APT_OPTS install -y --no-install-recommends libclang-dev
+          ok=0
+          for i in 1 2 3; do
+            if sudo -E timeout 120 apt-get $APT_OPTS update -qq && sudo -E timeout 180 apt-get $APT_OPTS install -y --no-install-recommends libclang-dev; then
+              ok=1
+              break
+            fi
+            echo "apt attempt $i failed"
+            sleep 5
+          done
+          if [ "$ok" != 1 ]; then
+            echo "apt failed, falling back to the pip libclang wheel"
+            python3 -m pip install --user --break-system-packages libclang
+            echo "LIBCLANG_PATH=$(python3 -c 'import clang, os; print(os.path.join(os.path.dirname(clang.__file__), "native"))')" >> "$GITHUB_ENV"
+          fi
 
       - name: Cache cargo
         if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
