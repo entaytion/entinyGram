@@ -15,23 +15,7 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuStalkerPack)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStalkerPack)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_PRESENCE_LOGGER_NOTIFY,
-                R.string.InuPresenceLoggerNotify,
-                R.string.InuPresenceLoggerNotifyInfo,
-                InuConfig.PRESENCE_LOGGER_NOTIFY.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_FORCE_RELAY_CALLS,
-                R.string.InuForceRelayCalls,
-                R.string.InuForceRelayCallsInfo,
-                InuConfig.FORCE_RELAY_CALLS.value,
-            )
-        )
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStalkerSaved)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SAVE_USER_INFO,
@@ -59,8 +43,31 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
                 experimental = true,
             )
         )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStalkerPresence)))
         items.add(mkSubPageButton(BUTTON_WATCH_LIST, R.drawable.inu_tabler_user_search, LocaleController.getString(R.string.InuPresenceWatchList)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_PRESENCE_LOGGER_NOTIFY,
+                R.string.InuPresenceLoggerNotify,
+                R.string.InuPresenceLoggerNotifyInfo,
+                InuConfig.PRESENCE_LOGGER_NOTIFY.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStalkerTools)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_FORCE_RELAY_CALLS,
+                R.string.InuForceRelayCalls,
+                R.string.InuForceRelayCallsInfo,
+                InuConfig.FORCE_RELAY_CALLS.value,
+            )
+        )
         items.add(mkSubPageButton(BUTTON_TYPING_SPOOF_LIST, R.drawable.inu_tabler_keyboard, LocaleController.getString(R.string.InuTypingSpoof)))
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {

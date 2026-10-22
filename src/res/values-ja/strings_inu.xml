@@ -116,6 +116,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">入力欄に文字があるときはスクロールしても隠さない</string>
     <string name="InuDisablePullToNext">次のチャンネルへの引き下げを無効化</string>
     <string name="InuDisableSensitive">センシティブフィルターを無効化</string>
+    <string name="InuDisableSensitiveInfo">センシティブなコンテンツのぼかしや警告画面、クライアント側の制限を解除します。Telegram自体にBANされたチャンネルはサーバーが送信しないため、開けません。</string>
     <string name="InuMemoryTrim">バックグラウンドでメモリを解放</string>
     <string name="InuMemoryTrimInfo">アプリがバックグラウンドに移った直後に、画像キャッシュを消去してメモリを圧縮します</string>
     <string name="InuHideChannelShareButton">チャンネルの共有ボタンを非表示</string>
@@ -1008,7 +1009,7 @@
     <string name="InuSaveEditedMessages">編集履歴を保存</string>
     <string name="InuSaveEditedMessagesInfo">メッセージの過去のバージョンを保存し、編集履歴 ✏️ を表示できるようにします</string>
     <string name="InuSaveUserInfo">ユーザー情報を保存</string>
-    <string name="InuSaveUserInfoInfo">サーバーが返さなくなった電話番号の国、登録月、名前/写真の変更日を保存します</string>
+    <string name="InuSaveUserInfoInfo">サーバーが返さなくなった後も、電話の国と、名前・ユーザー名・自己紹介・写真の変更履歴を保持します</string>
     <string name="InuSelfDestructMedia">消えるメディア</string>
     <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
     <string name="InuStickerSetRefreshed">パックを更新しました</string>
@@ -1191,8 +1192,11 @@
     <string name="InuFolderIcon">フォルダーアイコン</string>
     <string name="InuFolderIconDefault">デフォルト</string>
     <string name="InuStalkerPack">ストーカーパック</string>
+    <string name="InuStalkerSaved">保存データ</string>
+    <string name="InuStalkerPresence">プレゼンス</string>
+    <string name="InuStalkerTools">ツール</string>
     <string name="InuPresenceLoggerNotify">在席通知</string>
-    <string name="InuPresenceLoggerNotifyInfo">監視中の連絡先がオンライン/オフラインになったときにポップアップ通知。状態変化は常にローカルに記録されます。</string>
+    <string name="InuPresenceLoggerNotifyInfo">監視中の連絡先がオンライン/オフラインになるとポップアップを表示します(アプリを開いている間のみ)。変更は常にローカルに記録されます。</string>
     <string name="InuForceRelayCalls">通話を強制リレー化</string>
     <string name="InuForceRelayCallsInfo">通話を常にTelegramのリレーサーバー経由にし、ピアツーピアを避けて実際のIPを隠します。</string>
     <string name="InuPresenceWatchUser">オンライン状態を監視</string>

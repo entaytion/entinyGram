@@ -302,6 +302,14 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
+    fun deleteReadTime(db: SQLiteDatabase, dialogId: Long, maxId: Int) {
+        val query = db.executeFast("DELETE FROM inu_read_times WHERE dialog_id = ? AND max_id = ?")
+        query.bindLong(1, dialogId)
+        query.bindInteger(2, maxId)
+        query.step()
+        query.dispose()
+    }
+
     fun loadReadTimes(db: SQLiteDatabase): List<Triple<Long, Int, Int>> {
         val list = ArrayList<Triple<Long, Int, Int>>()
         val cursor = db.queryFinalized("SELECT dialog_id, max_id, read_at FROM inu_read_times ORDER BY dialog_id, max_id")

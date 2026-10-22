@@ -172,6 +172,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">عدم إخفائها عند التمرير إذا كان هناك نص في الحقل</string>
     <string name="InuDisablePullToNext">تعطيل السحب للقناة التالية</string>
     <string name="InuDisableSensitive">تعطيل مرشّح المحتوى الحساس</string>
+    <string name="InuDisableSensitiveInfo">يزيل التمويه وشاشات التحذير على المحتوى الحساس وقيود العميل. القنوات التي حظرها تيليجرام نفسه تبقى مغلقة لأن الخادم لا يرسلها.</string>
     <string name="InuMemoryTrim">تحرير الذاكرة في الخلفية</string>
     <string name="InuMemoryTrimInfo">يمسح ذاكرة الصور المؤقتة ويضغط الذاكرة بعد قليل من انتقال التطبيق إلى الخلفية</string>
     <string name="InuDisableQuickShare">تعطيل المشاركة السريعة</string>
@@ -1252,7 +1253,7 @@
     <string name="InuSaveEditedMessages">حفظ سجل التعديلات</string>
     <string name="InuSaveEditedMessagesInfo">يحفظ النسخ السابقة للرسائل ويتيح عرض سجل التعديلات ✏️</string>
     <string name="InuSaveUserInfo">حفظ معلومات المستخدم</string>
-    <string name="InuSaveUserInfoInfo">يحتفظ ببلد الهاتف وشهر التسجيل وتواريخ تغيير الاسم/الصورة بعد أن يتوقف الخادم عن إرجاعها</string>
+    <string name="InuSaveUserInfoInfo">يحتفظ ببلد الهاتف وسجل تغييرات الاسم واسم المستخدم والنبذة والصورة بعد أن يتوقف الخادم عن إرسالها</string>
     <string name="InuCacheTtl">مسح ذاكرة الرسائل تلقائياً</string>
     <string name="InuCacheTtlInfo">يحذف تلقائياً الرسائل المحذوفة/المعدّلة المحفوظة الأقدم من المدة المختارة</string>
     <string name="InuCacheTtlNever">أبداً (الاحتفاظ إلى الأبد)</string>
@@ -1550,8 +1551,11 @@
     <string name="InuFolderIcon">أيقونة المجلد</string>
     <string name="InuFolderIconDefault">الافتراضية</string>
     <string name="InuStalkerPack">حزمة المتتبّع</string>
+    <string name="InuStalkerSaved">البيانات المحفوظة</string>
+    <string name="InuStalkerPresence">الحضور</string>
+    <string name="InuStalkerTools">الأدوات</string>
     <string name="InuPresenceLoggerNotify">إشعارات التواجد</string>
-    <string name="InuPresenceLoggerNotifyInfo">نافذة منبثقة عندما تتصل جهة اتصال مراقَبة أو تنقطع؛ وتُسجَّل التغييرات محلياً دائماً.</string>
+    <string name="InuPresenceLoggerNotifyInfo">نافذة منبثقة عندما يتصل جهة اتصال مراقَبة أو ينقطع اتصالها، فقط أثناء فتح التطبيق؛ تُسجَّل التغييرات محليًا دائمًا.</string>
     <string name="InuForceRelayCalls">فرض ترحيل المكالمات</string>
     <string name="InuForceRelayCallsInfo">توجيه المكالمات عبر خوادم الترحيل التابعة لـ Telegram، وليس نظير إلى نظير أبداً، لإخفاء عنوان IP الحقيقي.</string>
     <string name="InuPresenceWatchUser">تتبع حالة الاتصال</string>

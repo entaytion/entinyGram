@@ -172,6 +172,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">در صورت وجود متن در کادر، هنگام اسکرول پنهان نشود</string>
     <string name="InuDisablePullToNext">غیرفعال کردن کشیدن برای کانال بعدی</string>
     <string name="InuDisableSensitive">غیرفعال کردن فیلتر محتوای حساس</string>
+    <string name="InuDisableSensitiveInfo">محو شدگی و صفحه‌های هشدار محتوای حساس و محدودیت‌های سمت کلاینت را برمی‌دارد. کانال‌هایی که خود تلگرام مسدود کرده بسته می‌مانند، چون سرور آن‌ها را نمی‌فرستد.</string>
     <string name="InuMemoryTrim">آزادسازی حافظه در پس‌زمینه</string>
     <string name="InuMemoryTrimInfo">مدت کوتاهی پس از رفتن برنامه به پس‌زمینه، حافظهٔ پنهان تصاویر را پاک می‌کند و حافظه را فشرده می‌کند</string>
     <string name="InuDisableQuickShare">غیرفعال کردن اشتراک‌گذاری سریع</string>
@@ -1240,7 +1241,7 @@
     <string name="InuSaveEditedMessages">ذخیره تاریخچه ویرایش</string>
     <string name="InuSaveEditedMessagesInfo">نسخه‌های قبلی پیام‌ها را ذخیره می‌کند و مشاهده تاریخچه ویرایش را ممکن می‌سازد ✏️</string>
     <string name="InuSaveUserInfo">ذخیره اطلاعات کاربر</string>
-    <string name="InuSaveUserInfoInfo">کشور تلفن، ماه ثبت‌نام و تاریخ تغییر نام/عکس را پس از اینکه سرور دیگر آن‌ها را برنگرداند نگه می‌دارد</string>
+    <string name="InuSaveUserInfoInfo">کشور شماره تلفن و گزارش تغییرات نام، نام کاربری، بیو و عکس را پس از آنکه سرور دیگر نمی‌فرستد نگه می‌دارد</string>
     <string name="InuCacheTtl">پاک کردن خودکار حافظه نهان پیام</string>
     <string name="InuCacheTtlInfo">پیام‌های حذف‌شده/ویرایش‌شده ذخیره‌شده‌ای را که از بازه انتخابی قدیمی‌ترند خودکار حذف می‌کند</string>
     <string name="InuCacheTtlNever">هرگز (برای همیشه نگه دار)</string>
@@ -1538,8 +1539,11 @@
     <string name="InuFolderIcon">نماد پوشه</string>
     <string name="InuFolderIconDefault">پیش‌فرض</string>
     <string name="InuStalkerPack">بسته ردیاب</string>
+    <string name="InuStalkerSaved">داده‌های ذخیره‌شده</string>
+    <string name="InuStalkerPresence">حضور</string>
+    <string name="InuStalkerTools">ابزارها</string>
     <string name="InuPresenceLoggerNotify">اعلان حضور</string>
-    <string name="InuPresenceLoggerNotifyInfo">وقتی مخاطب تحت نظر آنلاین یا آفلاین می‌شود پنجره‌ای نشان داده شود؛ تغییرات همیشه به‌صورت محلی ثبت می‌شوند.</string>
+    <string name="InuPresenceLoggerNotifyInfo">پنجره بازشو وقتی مخاطب تحت نظر آنلاین یا آفلاین می‌شود، فقط هنگام باز بودن برنامه؛ تغییرات همیشه به‌صورت محلی ثبت می‌شوند.</string>
     <string name="InuForceRelayCalls">اجبار تماس از طریق رله</string>
     <string name="InuForceRelayCallsInfo">تماس‌ها را از طریق سرورهای رله تلگرام و هرگز همتابههمتا هدایت می‌کند تا IP واقعی شما پنهان بماند.</string>
     <string name="InuPresenceWatchUser">ردیابی وضعیت آنلاین</string>

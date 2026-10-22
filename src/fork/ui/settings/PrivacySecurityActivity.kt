@@ -91,10 +91,12 @@ class PrivacySecurityActivity : SettingsPageActivity() {
             )
         )
         items.add(
-            UItem.asCheck(
+            mkTwoLineCheckItem(
                 TOGGLE_DISABLE_SENSITIVE,
-                LocaleController.getString(R.string.InuDisableSensitive),
-            ).setChecked(InuConfig.DISABLE_SENSITIVE.value)
+                R.string.InuDisableSensitive,
+                R.string.InuDisableSensitiveInfo,
+                InuConfig.DISABLE_SENSITIVE.value
+            )
         )
         items.add(UItem.asShadow(null))
 
@@ -205,7 +207,10 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
-            TOGGLE_DISABLE_SENSITIVE -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_SENSITIVE.toggle()
+            TOGGLE_DISABLE_SENSITIVE -> {
+                val new = InuConfig.DISABLE_SENSITIVE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
 
             TOGGLE_DISABLE_DRAFT_UPLOAD -> {
                 val new = InuConfig.DISABLE_DRAFT_UPLOAD.toggle()

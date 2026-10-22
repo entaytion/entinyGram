@@ -162,6 +162,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">Alanda metin varsa kaydırırken gizleme</string>
     <string name="InuDisablePullToNext">Sonraki kanala geçmek için çekmeyi devre dışı bırak</string>
     <string name="InuDisableSensitive">Hassas içerik filtresini devre dışı bırak</string>
+    <string name="InuDisableSensitiveInfo">Hassas içerikteki bulanıklığı, uyarı ekranlarını ve istemci tarafı kısıtlamaları kaldırır. Telegram'ın yasakladığı kanallar kapalı kalır, çünkü sunucu bunları göndermez.</string>
     <string name="InuMemoryTrim">Arka planda belleği boşalt</string>
     <string name="InuMemoryTrimInfo">Uygulama arka plana geçtikten kısa süre sonra görsel önbelleklerini temizler ve belleği sıkıştırır</string>
     <string name="InuDisableQuickShare">Hızlı paylaşımı devre dışı bırak</string>
@@ -1004,7 +1005,7 @@
     <string name="InuSaveEditedMessages">Düzenleme geçmişini kaydet</string>
     <string name="InuSaveEditedMessagesInfo">Önceki mesaj sürümlerini kaydeder ve düzenleme geçmişini ✏️ görüntülemeyi sağlar</string>
     <string name="InuSaveUserInfo">Kullanıcı bilgilerini kaydet</string>
-    <string name="InuSaveUserInfoInfo">Sunucu göndermeyi bıraktığında telefon ülkesi, kayıt ayı ve ad/fotoğraf değişiklik tarihlerini saklar</string>
+    <string name="InuSaveUserInfoInfo">Sunucu göndermeyi bıraktığında telefon ülkesini ve ad, kullanıcı adı, biyografi ve fotoğraf değişikliklerinin günlüğünü saklar</string>
     <string name="InuSelfDestructMedia">Süreli medya</string>
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
@@ -1192,8 +1193,11 @@
     <string name="InuFolderIcon">Klasör simgesi</string>
     <string name="InuFolderIconDefault">Varsayılan</string>
     <string name="InuStalkerPack">Takipçi Paketi</string>
+    <string name="InuStalkerSaved">Kaydedilen veriler</string>
+    <string name="InuStalkerPresence">Çevrimiçi durumu</string>
+    <string name="InuStalkerTools">Araçlar</string>
     <string name="InuPresenceLoggerNotify">Çevrim İçi Bildirimleri</string>
-    <string name="InuPresenceLoggerNotifyInfo">İzlenen bir kişi çevrim içi/dışı olduğunda açılır bildirim; değişiklikler her zaman yerelde kaydedilir.</string>
+    <string name="InuPresenceLoggerNotifyInfo">İzlenen bir kişi çevrimiçi veya çevrimdışı olduğunda açılır bildirim, yalnızca uygulama açıkken; değişiklikler her zaman yerelde kaydedilir.</string>
     <string name="InuForceRelayCalls">Aramaları Zorla Röleden Geçir</string>
     <string name="InuForceRelayCallsInfo">Aramalar her zaman Telegram röle sunucuları üzerinden yönlendirilir, eşler arası değil; gerçek IP\'niz gizli kalır.</string>
     <string name="InuPresenceWatchUser">Çevrim içi durumunu izle</string>

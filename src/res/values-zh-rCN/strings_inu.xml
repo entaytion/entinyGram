@@ -116,6 +116,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">输入框有文字时，滚动不隐藏键盘</string>
     <string name="InuDisablePullToNext">禁用下拉到下一个频道</string>
     <string name="InuDisableSensitive">禁用敏感内容过滤</string>
+    <string name="InuDisableSensitiveInfo">移除敏感内容的模糊和警告页面以及客户端限制。被 Telegram 封禁的频道服务器不会下发，因此仍无法打开。</string>
     <string name="InuMemoryTrim">后台释放内存</string>
     <string name="InuMemoryTrimInfo">应用进入后台后不久，清理图片缓存并压缩内存</string>
     <string name="InuHideChannelShareButton">隐藏频道分享按钮</string>
@@ -1004,7 +1005,7 @@
     <string name="InuSaveEditedMessages">保存编辑历史</string>
     <string name="InuSaveEditedMessagesInfo">保存以前的消息版本并允许查看编辑历史 ✏️</string>
     <string name="InuSaveUserInfo">保存用户信息</string>
-    <string name="InuSaveUserInfoInfo">在服务器停止返回后保留电话号码国家/地区、注册月份以及姓名/头像更改日期</string>
+    <string name="InuSaveUserInfoInfo">在服务器不再返回后,仍保留手机号国家以及姓名、用户名、简介和头像的变更记录</string>
     <string name="InuSelfDestructMedia">阅后即焚媒体</string>
     <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
@@ -1192,8 +1193,11 @@
     <string name="InuFolderIcon">文件夹图标</string>
     <string name="InuFolderIconDefault">默认</string>
     <string name="InuStalkerPack">监视包</string>
+    <string name="InuStalkerSaved">已保存数据</string>
+    <string name="InuStalkerPresence">在线状态</string>
+    <string name="InuStalkerTools">工具</string>
     <string name="InuPresenceLoggerNotify">在线通知</string>
-    <string name="InuPresenceLoggerNotifyInfo">被监视的联系人上线或下线时弹出通知；状态变化始终在本地记录。</string>
+    <string name="InuPresenceLoggerNotifyInfo">被监视的联系人上线或下线时弹出提示(仅在应用打开时);变更始终记录在本地。</string>
     <string name="InuForceRelayCalls">强制中继通话</string>
     <string name="InuForceRelayCallsInfo">通话始终经由 Telegram 中继服务器而非点对点，隐藏真实 IP。</string>
     <string name="InuPresenceWatchUser">跟踪在线状态</string>

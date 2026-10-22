@@ -164,6 +164,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">Не приховувати при прокручуванні, якщо в полі є текст</string>
     <string name="InuDisablePullToNext">Вимкнути потягування до наступного каналу</string>
     <string name="InuDisableSensitive">Вимкнути фільтр делікатного контенту</string>
+    <string name="InuDisableSensitiveInfo">Прибирає розмиття та заглушки на делікатному контенті й клієнтські обмеження. Канали, забанені самим Telegram, лишаються закритими, бо сервер їх не віддає.</string>
     <string name="InuMemoryTrim">Звільняти пам\'ять у фоні</string>
     <string name="InuMemoryTrimInfo">Очищає кеші зображень і стискає пам\'ять невдовзі після згортання застосунку</string>
     <string name="InuDisableQuickShare">Вимкнути швидке поширення</string>
@@ -1119,7 +1120,7 @@
     <string name="InuSaveEditedMessagesInfo">Записує попередні версії повідомлень і дозволяє переглядати їх історію ✏️</string>
 
     <string name="InuSaveUserInfo">Зберігати дані про користувача</string>
-    <string name="InuSaveUserInfoInfo">Зберігає країну телефону, місяць реєстрації та журнал змін імені, юзернейму, біо і фото, коли сервер перестає їх надсилати</string>
+    <string name="InuSaveUserInfoInfo">Зберігає країну телефону та журнал змін імені, юзернейму, біо і фото, коли сервер перестає їх надсилати</string>
     <string name="InuContactChanges">Зміни контакту</string>
     <string name="InuContactChangesEmpty">Для цього контакту ще немає збережених змін</string>
     <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
@@ -1590,8 +1591,11 @@
     <string name="InuFolderIcon">Іконка папки</string>
     <string name="InuFolderIconDefault">Типова</string>
     <string name="InuStalkerPack">Сталкер-пак</string>
+    <string name="InuStalkerSaved">Збережені дані</string>
+    <string name="InuStalkerPresence">Присутність</string>
+    <string name="InuStalkerTools">Інструменти</string>
     <string name="InuPresenceLoggerNotify">Сповіщення про присутність</string>
-    <string name="InuPresenceLoggerNotifyInfo">Спливаюче вікно, коли відстежуваний контакт входить у мережу чи виходить із неї; зміни й так записуються локально.</string>
+    <string name="InuPresenceLoggerNotifyInfo">Спливаюче вікно, коли відстежуваний контакт входить у мережу чи виходить із неї, лише поки застосунок відкритий; зміни й так записуються локально.</string>
     <string name="InuForceRelayCalls">Примусовий релей дзвінків</string>
     <string name="InuForceRelayCallsInfo">Спрямовує дзвінки через релей-сервери Telegram, ніколи напряму, приховуючи вашу справжню IP-адресу.</string>
     <string name="InuPresenceWatchUser">Відстежувати статус онлайн</string>

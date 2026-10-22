@@ -256,6 +256,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">Don\'t hide it on scroll when there is a draft</string>
     <string name="InuDisablePullToNext">Disable pull to next channel</string>
     <string name="InuDisableSensitive">Disable sensitive filter</string>
+    <string name="InuDisableSensitiveInfo">Removes the blur and warning screens on sensitive content and client-side restrictions. Channels banned by Telegram itself stay closed, because the server does not send them.</string>
     <string name="InuMemoryTrim">Free memory in background</string>
     <string name="InuMemoryTrimInfo">Clears image caches and compacts memory shortly after the app goes to background</string>
     <string name="InuDisableQuickShare">Disable quick share</string>
@@ -1404,7 +1405,7 @@
     <string name="InuSaveEditedMessages">Save edit history</string>
     <string name="InuSaveEditedMessagesInfo">Saves previous message versions and allows viewing edit history ✏️</string>
     <string name="InuSaveUserInfo">Save user info</string>
-    <string name="InuSaveUserInfoInfo">Keeps phone country, registration month, and a log of name, username, bio and photo changes after the server stops returning them</string>
+    <string name="InuSaveUserInfoInfo">Keeps phone country and a log of name, username, bio and photo changes after the server stops returning them</string>
     <string name="InuContactChanges">Contact changes</string>
     <string name="InuContactChangesEmpty">No changes saved for this contact yet</string>
     <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
@@ -1741,8 +1742,11 @@
     <string name="InuFolderIcon">Folder icon</string>
     <string name="InuFolderIconDefault">Default</string>
     <string name="InuStalkerPack">Stalker Pack</string>
+    <string name="InuStalkerSaved">Saved data</string>
+    <string name="InuStalkerPresence">Presence</string>
+    <string name="InuStalkerTools">Tools</string>
     <string name="InuPresenceLoggerNotify">Presence Notifications</string>
-    <string name="InuPresenceLoggerNotifyInfo">Popup when a watched contact goes online or offline; changes are always logged locally.</string>
+    <string name="InuPresenceLoggerNotifyInfo">Popup when a watched contact goes online or offline, only while the app is open; changes are always logged locally.</string>
     <string name="InuForceRelayCalls">Force Relay Calls</string>
     <string name="InuForceRelayCallsInfo">Route calls via Telegram relay servers, never peer-to-peer, hiding your real IP.</string>
     <string name="InuPresenceWatchUser">Track online status</string>

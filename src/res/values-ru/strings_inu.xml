@@ -135,6 +135,7 @@
     <string name="InuKeepKeyboardWhileTypingInfo">Не прятать при прокрутке, если в поле есть текст</string>
     <string name="InuDisablePullToNext">Отключить переход к следующему каналу</string>
     <string name="InuDisableSensitive">Отключить фильтр чувствительного контента</string>
+    <string name="InuDisableSensitiveInfo">Убирает размытие и заглушки на чувствительном контенте и клиентские ограничения. Каналы, забаненные самим Telegram, остаются закрытыми, потому что сервер их не отдаёт.</string>
     <string name="InuHideChannelShareButton">Скрыть кнопку «Поделиться» в каналах</string>
     <string name="InuHideChannelShareButtonInfo">Скрывает иконку «Поделиться» рядом с постами каналов; пересылка через меню сообщения работает.</string>
     <string name="InuCustomizeMessages">Сообщения</string>
@@ -1142,7 +1143,7 @@
     <string name="InuSaveEditedMessages">Сохранять историю редактирования</string>
     <string name="InuSaveEditedMessagesInfo">Сохраняет предыдущие версии сообщений и позволяет просматривать историю ✏️</string>
     <string name="InuSaveUserInfo">Сохранять данные о пользователе</string>
-    <string name="InuSaveUserInfoInfo">Сохраняет страну телефона, месяц регистрации и журнал смены имени, юзернейма, био и фото, когда сервер перестаёт их присылать</string>
+    <string name="InuSaveUserInfoInfo">Сохраняет страну телефона и журнал смены имени, юзернейма, био и фото, когда сервер перестаёт их присылать</string>
     <string name="InuContactChanges">Изменения контакта</string>
     <string name="InuContactChangesEmpty">Для этого контакта пока нет сохранённых изменений</string>
     <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
@@ -1397,8 +1398,11 @@
     <string name="InuFolderIcon">Значок папки</string>
     <string name="InuFolderIconDefault">По умолчанию</string>
     <string name="InuStalkerPack">Сталкер-пак</string>
+    <string name="InuStalkerSaved">Сохранённые данные</string>
+    <string name="InuStalkerPresence">Присутствие</string>
+    <string name="InuStalkerTools">Инструменты</string>
     <string name="InuPresenceLoggerNotify">Уведомления о присутствии</string>
-    <string name="InuPresenceLoggerNotifyInfo">Всплывающее уведомление, когда отслеживаемый контакт входит или выходит из сети; изменения всегда сохраняются локально.</string>
+    <string name="InuPresenceLoggerNotifyInfo">Всплывающее уведомление, когда отслеживаемый контакт входит или выходит из сети, только пока приложение открыто; изменения всегда сохраняются локально.</string>
     <string name="InuForceRelayCalls">Принудительный релей звонков</string>
     <string name="InuForceRelayCallsInfo">Направляет звонки через релей-серверы Telegram, никогда напрямую, скрывая ваш настоящий IP-адрес.</string>
     <string name="InuPresenceWatchUser">Отслеживать статус онлайн</string>

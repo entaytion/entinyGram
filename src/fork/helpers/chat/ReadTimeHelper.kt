@@ -7,6 +7,8 @@ import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesStorage
 
 object ReadTimeHelper {
+    private const val MERGE_WINDOW_SEC = 60
+
     private class Boundary(val maxId: Int, val readAt: Int)
 
     private val cache = SparseArray<HashMap<Long, MutableList<Boundary>>>()
@@ -16,17 +18,27 @@ object ReadTimeHelper {
     fun onReadOutbox(account: Int, userId: Long, maxId: Int, date: Int) {
         if (!InuConfig.SAVE_READ_TIME.value || userId <= 0L || date <= 0) return
         val storage = MessagesStorage.getInstance(account) ?: return
-        val list = synchronized(cache) {
-            val dialogs = cache.get(account) ?: HashMap<Long, MutableList<Boundary>>().also { cache.put(account, it) }
-            dialogs.getOrPut(userId) { ArrayList() }
-        }
+        ensureLoaded(account)
+        var replacedMaxId = 0
+        var readAt = date
         synchronized(cache) {
-            if (list.isNotEmpty() && list.last().maxId >= maxId) return
-            list.add(Boundary(maxId, date))
+            val dialogs = cache.get(account) ?: HashMap<Long, MutableList<Boundary>>().also { cache.put(account, it) }
+            val list = dialogs.getOrPut(userId) { ArrayList() }
+            val last = list.lastOrNull()
+            if (last != null) {
+                if (last.maxId >= maxId) return
+                if (date - last.readAt < MERGE_WINDOW_SEC) {
+                    list.removeAt(list.size - 1)
+                    replacedMaxId = last.maxId
+                    readAt = last.readAt
+                }
+            }
+            list.add(Boundary(maxId, readAt))
         }
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            InuDatabaseHelper.saveReadTime(db, userId, maxId, date)
+            if (replacedMaxId != 0) InuDatabaseHelper.deleteReadTime(db, userId, replacedMaxId)
+            InuDatabaseHelper.saveReadTime(db, userId, maxId, readAt)
         }
     }
 

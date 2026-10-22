@@ -265,6 +265,7 @@ Sistema: %6$s
     <string name="InuKeepKeyboardWhileTypingInfo">Non nasconderla allo scorrimento quando c\'è una bozza</string>
     <string name="InuDisablePullToNext">Disattiva il trascinamento al canale successivo</string>
     <string name="InuDisableSensitive">Disattiva il filtro contenuti sensibili</string>
+    <string name="InuDisableSensitiveInfo">Rimuove la sfocatura e gli avvisi sui contenuti sensibili e le restrizioni lato client. I canali bannati da Telegram restano chiusi perché il server non li invia.</string>
     <string name="InuMemoryTrim">Libera memoria in background</string>
     <string name="InuMemoryTrimInfo">Svuota le cache delle immagini e compatta la memoria poco dopo che l\'app passa in background</string>
     <string name="InuDisableQuickShare">Disattiva condivisione rapida</string>
@@ -1419,7 +1420,7 @@ Questa azione non può essere annullata.</string>
     <string name="InuSaveEditedMessages">Salva la cronologia delle modifiche</string>
     <string name="InuSaveEditedMessagesInfo">Salva le versioni precedenti dei messaggi e permette di vedere la cronologia delle modifiche ✏️</string>
     <string name="InuSaveUserInfo">Salva le info utente</string>
-    <string name="InuSaveUserInfoInfo">Conserva il paese del telefono, il mese di registrazione e un registro delle modifiche di nome, username, bio e foto dopo che il server smette di restituirli</string>
+    <string name="InuSaveUserInfoInfo">Conserva il paese del telefono e un registro delle modifiche di nome, username, bio e foto quando il server smette di inviarli</string>
     <string name="InuContactChanges">Modifiche del contatto</string>
     <string name="InuContactChangesEmpty">Ancora nessuna modifica salvata per questo contatto</string>
     <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
@@ -1756,8 +1757,11 @@ Questa azione non può essere annullata.</string>
     <string name="InuFolderIcon">Icona della cartella</string>
     <string name="InuFolderIconDefault">Predefinito</string>
     <string name="InuStalkerPack">Stalker Pack</string>
+    <string name="InuStalkerSaved">Dati salvati</string>
+    <string name="InuStalkerPresence">Presenza</string>
+    <string name="InuStalkerTools">Strumenti</string>
     <string name="InuPresenceLoggerNotify">Notifiche di presenza</string>
-    <string name="InuPresenceLoggerNotifyInfo">Popup quando un contatto osservato va online o offline; le modifiche vengono sempre registrate localmente.</string>
+    <string name="InuPresenceLoggerNotifyInfo">Popup quando un contatto monitorato va online o offline, solo con l'app aperta; le modifiche vengono sempre registrate localmente.</string>
     <string name="InuForceRelayCalls">Forza le chiamate tramite relay</string>
     <string name="InuForceRelayCallsInfo">Instrada le chiamate tramite i server relay di Telegram, mai peer-to-peer, nascondendo il tuo IP reale.</string>
     <string name="InuPresenceWatchUser">Segui lo stato online</string>
