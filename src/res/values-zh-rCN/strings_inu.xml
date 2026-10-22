@@ -390,7 +390,6 @@
     <string name="InuMsgDetailStickerPackCreator">贴纸包创建者</string>
     <string name="InuMsgDetailEmojiPackCreators">表情符号包创建者</string>
     <string name="InuShowJson">显示 JSON</string>
-    <string name="InuRegDate">注册于: %s</string>
     <string name="InuJoinDate">加入于: %s</string>
     <string name="InuCreatedDate">创建于: %s</string>
     <string name="InuChatVoiceInAttach">录制按钮放入附件</string>

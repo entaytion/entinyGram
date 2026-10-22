@@ -739,7 +739,6 @@
     <string name="InuYes">نعم</string>
     <string name="InuNo">لا</string>
     <string name="InuShowJson">إظهار JSON</string>
-    <string name="InuRegDate">تاريخ التسجيل: %s</string>
     <string name="InuJoinDate">تاريخ الانضمام: %s</string>
     <string name="InuCreatedDate">تاريخ الإنشاء: %s</string>
 

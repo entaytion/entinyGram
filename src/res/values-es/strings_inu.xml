@@ -869,7 +869,6 @@ Sistema: %6$s
     <string name="InuYes">Sí</string>
     <string name="InuNo">No</string>
     <string name="InuShowJson">Mostrar JSON</string>
-    <string name="InuRegDate">Registro: %s</string>
     <string name="InuJoinDate">Se unió: %s</string>
     <string name="InuCreatedDate">Creado: %s</string>
 

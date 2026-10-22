@@ -739,7 +739,6 @@
     <string name="InuYes">بله</string>
     <string name="InuNo">خیر</string>
     <string name="InuShowJson">نمایش JSON</string>
-    <string name="InuRegDate">ثبت‌نام: %s</string>
     <string name="InuJoinDate">عضویت: %s</string>
     <string name="InuCreatedDate">ایجاد: %s</string>
 

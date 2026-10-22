@@ -391,7 +391,6 @@
     <string name="InuMsgDetailStickerPackCreator">ステッカーパックの作成者</string>
     <string name="InuMsgDetailEmojiPackCreators">絵文字パックの作成者</string>
     <string name="InuShowJson">JSON を表示</string>
-    <string name="InuRegDate">登録日: %s</string>
     <string name="InuJoinDate">参加日: %s</string>
     <string name="InuCreatedDate">作成日: %s</string>
     <string name="InuChatVoiceInAttach">録音を添付パネルへ</string>

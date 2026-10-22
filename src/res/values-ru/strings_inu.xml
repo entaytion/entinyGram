@@ -464,7 +464,6 @@
     <string name="InuMsgDetailStickerPackCreator">Создатель набора стикеров</string>
     <string name="InuMsgDetailEmojiPackCreators">Создатели наборов эмодзи</string>
     <string name="InuShowJson">Показать JSON</string>
-    <string name="InuRegDate">Зарегистрирован: %s</string>
     <string name="InuJoinDate">Присоединился: %s</string>
     <string name="InuCreatedDate">Создан: %s</string>
     <string name="InuChatVoiceInAttach">Запись в панели вложений</string>

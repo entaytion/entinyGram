@@ -860,7 +860,6 @@
     <string name="InuYes">Yes</string>
     <string name="InuNo">No</string>
     <string name="InuShowJson">Show JSON</string>
-    <string name="InuRegDate">Registered: %s</string>
     <string name="InuJoinDate">Joined: %s</string>
     <string name="InuCreatedDate">Created: %s</string>
 
