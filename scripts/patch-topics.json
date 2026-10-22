@@ -25,6 +25,7 @@
   "centered-header-fixes": "chat",
   "chat-activity-layout-crash": "chat",
   "chat-blur-resume-settle": "chat",
+  "scheduled-first-message": "chat",
   "chat-ai-deeplink": "ai",
   "chat-header-light-colors": "chat",
   "movable-chats-tab": "tabs",

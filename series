@@ -569,3 +569,4 @@ feature/animated-avatars.patch
 misc/experimental-settings-in-release.patch
 entiny/translator/translate-on-send.patch
 entiny/proxy/proxy-rotation-fix.patch
+entiny/chat/scheduled-first-message.patch
