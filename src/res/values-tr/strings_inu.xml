@@ -1392,7 +1392,6 @@
     <string name="InuKeepDownloadsInBackgroundInfo">Kaydırdığınızda veya sohbetten çıktığınızda indirmeler devam eder.</string>
     <string name="InuMaterial3BottomTabs">Alt sekmeler</string>
     <string name="InuIosBottomBar">iOS tarzı alt çubuk</string>
-    <string name="InuIosBottomBarInfo">iOS tarzı daha geniş, eşit aralıklı alt sekmeler. Material 3 sekmelerini devre dışı bırakır.</string>
     <string name="InuIosChatHeader">Kompakt hap</string>
     <string name="InuIosChatHeaderInfo">Ortada yüzen, iOS tarzı kompakt sohbet başlığı hapı.</string>
     <string name="InuChatHeaderNoPill">Hap arka planını gizle</string>
@@ -1551,9 +1550,7 @@
     <string name="InuForwardDownloadFailed">Dosya indirilemedi, iletilmedi</string>
     <string name="InuForwardTooLarge">Dosya yükleme sınırını aşıyor (%1$s), iletilemez</string>
     <string name="InuIosButtonPlacement">Düğme yerleşimi (iOS)</string>
-    <string name="InuIosButtonPlacementInfo">Ek dosya düğmesini sola ve ifade düğmesini giriş alanının sağına taşır.</string>
     <string name="InuIosInputAppearance">Görünüm (iOS)</string>
-    <string name="InuIosInputAppearanceInfo">Yuvarlatılmış işlem düğmelerine sahip cam kapsül giriş alanı.</string>
     <string name="InuCompactInputSize">Kompakt mod</string>
     <string name="InuCompactInputSizeInfo">Giriş alanı etrafındaki kenar boşluklarını azaltır.</string>
     <string name="InuActionButtonStyle">İşlem düğmesi stili</string>

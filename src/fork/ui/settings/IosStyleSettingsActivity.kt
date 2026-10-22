@@ -21,34 +21,42 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
 
     private var inputBarPreviewCell: InputBarPreviewCell? = null
 
+    private val iosGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuIosStyle),
+        listOf(
+            ExpandableBoolGroup.Option(R.string.InuChatHeaderSettings, InuConfig.IOS_CHAT_HEADER, TOGGLE_IOS_CHAT_HEADER),
+            ExpandableBoolGroup.Option(R.string.InuIosBottomBar, InuConfig.IOS_BOTTOM_NAVIGATION_BAR, TOGGLE_IOS_BOTTOM_BAR),
+            ExpandableBoolGroup.Option(R.string.InuIosButtonPlacement, InuConfig.IOS_INPUT_BUTTON_PLACEMENT, TOGGLE_IOS_BUTTON_PLACEMENT),
+            ExpandableBoolGroup.Option(R.string.InuIosInputAppearance, InuConfig.IOS_INPUT_APPEARANCE, TOGGLE_IOS_INPUT_APPEARANCE),
+        ),
+    )
+
+    override val expandableGroups get() = listOf(iosGroup)
+
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuIosSettings)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val context = context ?: return
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuIosStyle)))
-        items.add(
-            mkSubPageButton(
-                BUTTON_CHAT_HEADER,
-                R.drawable.inu_tabler_app_window,
-                LocaleController.getString(R.string.InuChatHeaderSettings),
+        iosGroup.addTo(items) { onIosOptionsChanged(it) }
+        if (InuConfig.IOS_CHAT_HEADER.value) {
+            items.add(
+                mkSubPageButton(
+                    BUTTON_CHAT_HEADER,
+                    R.drawable.inu_tabler_app_window,
+                    LocaleController.getString(R.string.InuChatHeaderSettings),
+                )
             )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_IOS_BOTTOM_BAR,
-                R.string.InuIosBottomBar,
-                R.string.InuIosBottomBarInfo,
-                InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value,
+        }
+        if (InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER,
+                    R.string.InuIosChatsTabFirstFolder,
+                    R.string.InuIosChatsTabFirstFolderInfo,
+                    InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.value,
+                )
             )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER,
-                R.string.InuIosChatsTabFirstFolder,
-                R.string.InuIosChatsTabFirstFolderInfo,
-                InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.value,
-            )
-        )
+        }
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMessageInput)))
@@ -63,22 +71,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                     ActionButtonStyle.WHITE -> LocaleController.getString(R.string.InuActionButtonStyleWhite)
                     else -> LocaleController.getString(R.string.InuActionButtonStyleAccent)
                 }
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_IOS_BUTTON_PLACEMENT,
-                R.string.InuIosButtonPlacement,
-                R.string.InuIosButtonPlacementInfo,
-                InuConfig.IOS_INPUT_BUTTON_PLACEMENT.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_IOS_INPUT_APPEARANCE,
-                R.string.InuIosInputAppearance,
-                R.string.InuIosInputAppearanceInfo,
-                InuConfig.IOS_INPUT_APPEARANCE.value,
             )
         )
         if (InuConfig.IOS_INPUT_APPEARANCE.value) {
@@ -152,36 +144,37 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             tintSlider?.updateColors()
         }
         items.add(UItem.asCustom(tintSlider))
-        items.add(UItem.asShadow(null))    }
+        items.add(UItem.asShadow(null))
+    }
+
+    private fun onIosOptionsChanged(changed: List<ExpandableBoolGroup.Option>) {
+        if (changed.any { it.id == TOGGLE_IOS_BOTTOM_BAR }) {
+            if (InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value && InuConfig.M3_BOTTOM_TABS.value) {
+                InuConfig.M3_BOTTOM_TABS.value = false
+            }
+            softRebuild()
+            showRestartBulletin()
+        }
+        if (changed.any { it.id == TOGGLE_IOS_BUTTON_PLACEMENT || it.id == TOGGLE_IOS_INPUT_APPEARANCE }) {
+            inputBarPreviewCell?.updateInputBarState()
+        }
+        listView.adapter.update(true)
+    }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (item.id == iosGroup.sectionId) {
+            iosGroup.handleClick(item, view) { listView.adapter.update(true) }
+            return
+        }
+        if (iosGroup.options.any { it.id == item.id }) {
+            iosGroup.handleClick(item, view) { opt -> opt?.let { onIosOptionsChanged(listOf(it)) } }
+            return
+        }
         when (item.id) {
-            TOGGLE_IOS_BOTTOM_BAR -> {
-                val new = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.toggle()
-                if (new && InuConfig.M3_BOTTOM_TABS.value) {
-                    InuConfig.M3_BOTTOM_TABS.value = false
-                }
-                (view as? NotificationsCheckCell)?.isChecked = new
-                softRebuild()
-                listView.adapter.update(true)
-                showRestartBulletin()
-            }
 
             TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER -> {
                 val new = InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_IOS_BUTTON_PLACEMENT -> {
-                val new = InuConfig.IOS_INPUT_BUTTON_PLACEMENT.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                inputBarPreviewCell?.updateInputBarState()
-            }
-
-            TOGGLE_IOS_INPUT_APPEARANCE -> {
-                InuConfig.IOS_INPUT_APPEARANCE.toggle()
-                inputBarPreviewCell?.updateInputBarState()
-                listView.adapter.update(true)
             }
 
             TOGGLE_COMPACT_INPUT_SIZE -> {
@@ -224,6 +217,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_DISABLE_GLASS_GLARE = InuUtils.generateId()
+        private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER = InuUtils.generateId()
         private val TOGGLE_IOS_BUTTON_PLACEMENT = InuUtils.generateId()

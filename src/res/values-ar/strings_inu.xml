@@ -294,7 +294,6 @@
     <string name="InuMainTabsCustomizeReset">إعادة إلى الافتراضي</string>
     <string name="InuMaterial3BottomTabs">علامات التبويب السفلية</string>
     <string name="InuIosBottomBar">شريط سفلي بنمط iOS</string>
-    <string name="InuIosBottomBarInfo">علامات تبويب سفلية أعرض وموزعة بالتساوي بنمط iOS. تعطّل علامات Material 3.</string>
     <string name="InuDialogsFab">زر الإجراء العائم</string>
     <string name="InuDialogsFabMainAction">الإجراء الأساسي</string>
     <string name="InuDialogsFabSecondaryAction">الإجراء الثانوي</string>
@@ -1649,9 +1648,7 @@
     <string name="InuForwardTooLarge">الملف يتجاوز حد الرفع (%1$s)، لا يمكن توجيهه</string>
 
     <string name="InuIosButtonPlacement">موضع الأزرار (iOS)</string>
-    <string name="InuIosButtonPlacementInfo">يضع المرفقات على اليسار والإيموجي داخل حقل الإدخال على اليمين.</string>
     <string name="InuIosInputAppearance">المظهر (iOS)</string>
-    <string name="InuIosInputAppearanceInfo">حقل إدخال بكبسولة زجاجية مع أزرار إجراء مستديرة.</string>
     <string name="InuCompactInputSize">الوضع المضغوط</string>
     <string name="InuCompactInputSizeInfo">يقلل الهوامش والحشوات حول حقل الإدخال.</string>
     <string name="InuActionButtonStyle">نمط أزرار الإجراء</string>

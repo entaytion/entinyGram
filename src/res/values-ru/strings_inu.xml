@@ -1572,7 +1572,6 @@
     <string name="InuKeepDownloadsInBackgroundInfo">Загрузки продолжаются, когда вы прокручиваете сообщение или выходите из чата.</string>
     <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
     <string name="InuIosBottomBar">Нижняя панель в стиле iOS</string>
-    <string name="InuIosBottomBarInfo">Более широкие нижние вкладки с равномерным распределением, как в iOS. Отключает вкладки Material 3.</string>
     <string name="InuIosChatHeader">Компактная таблетка</string>
     <string name="InuIosChatHeaderInfo">Компактная таблетка шапки чата, плавающая посередине, как в iOS.</string>
     <string name="InuChatHeaderNoPill">Скрыть фон таблетки</string>
@@ -1673,9 +1672,7 @@
     <string name="InuForwardDownloadFailed">Не удалось скачать файл, пересылка отменена</string>
     <string name="InuForwardTooLarge">Файл превышает лимит загрузки (%1$s), переслать нельзя</string>
     <string name="InuIosButtonPlacement">Расположение кнопок как в iOS</string>
-    <string name="InuIosButtonPlacementInfo">Переносит кнопку вложений влево, а эмодзи внутрь поля ввода справа.</string>
     <string name="InuIosInputAppearance">Оформление как в iOS</string>
-    <string name="InuIosInputAppearanceInfo">Стеклянная капсула поля ввода с круглыми кнопками действий.</string>
     <string name="InuCompactInputSize">Компактный размер</string>
     <string name="InuCompactInputSizeInfo">Уменьшает отступы вокруг поля ввода.</string>
     <string name="InuActionButtonStyle">Стиль кнопки действия</string>

@@ -1700,7 +1700,6 @@
     <string name="InuKeepDownloadsInBackgroundInfo">Завантаження тривають, коли ви прокручуєте повідомлення або виходите з чату.</string>
     <string name="InuMaterial3BottomTabs">Нижні вкладки</string>
     <string name="InuIosBottomBar">Нижня панель у стилі iOS</string>
-    <string name="InuIosBottomBarInfo">Нижні вкладки ширші й рівномірно розтягнуті, як в iOS. Вимикає вкладки Material 3.</string>
     <string name="InuIosChatHeader">Компактна пілюля</string>
     <string name="InuIosChatHeaderInfo">Компактна пілюля шапки чату в стилі iOS, що плаває посередині.</string>
     <string name="InuChatHeaderNoPill">Сховати фон пілюлі</string>
@@ -1749,9 +1748,7 @@
     <string name="InuForwardTooLarge">Файл перевищує ліміт завантаження (%1$s), переслати неможливо</string>
 
     <string name="InuIosButtonPlacement">Розташування кнопок як в iOS</string>
-    <string name="InuIosButtonPlacementInfo">Переносить кнопку вкладень ліворуч, а емодзі всередину поля вводу праворуч.</string>
     <string name="InuIosInputAppearance">Оформлення як в iOS</string>
-    <string name="InuIosInputAppearanceInfo">Скляна капсула поля вводу з круглими кнопками дій.</string>
     <string name="InuCompactInputSize">Компактний режим</string>
     <string name="InuCompactInputSizeInfo">Зменшує відступи навколо поля вводу.</string>
     <string name="InuActionButtonStyle">Стиль кнопки дії</string>

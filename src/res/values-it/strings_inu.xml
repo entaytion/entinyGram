@@ -402,7 +402,6 @@ Sistema: %6$s
     <string name="InuMainTabsCustomizeReset">Ripristina predefiniti</string>
     <string name="InuMaterial3BottomTabs">Schede in basso</string>
     <string name="InuIosBottomBar">Barra inferiore stile iOS</string>
-    <string name="InuIosBottomBarInfo">Schede in basso più larghe e distribuite uniformemente in stile iOS. Disattiva le schede Material 3.</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Stile di design</string>
     <string name="InuMaterial3SettingsInfo">Interruttori, cursori, sezioni, avatar, schede dell\'elenco chat e altro.</string>
@@ -1852,9 +1851,7 @@ Questa azione non può essere annullata.</string>
     <string name="InuForwardProEmptyNotice">Il testo del messaggio non può essere vuoto</string>
 
     <string name="InuIosButtonPlacement">Posizione dei pulsanti (iOS)</string>
-    <string name="InuIosButtonPlacementInfo">Mette l\'allegato a sinistra e l\'emoji dentro il campo di input a destra.</string>
     <string name="InuIosInputAppearance">Aspetto (iOS)</string>
-    <string name="InuIosInputAppearanceInfo">Campo di input a capsula di vetro con pulsanti di azione arrotondati.</string>
     <string name="InuCompactInputSize">Modalità compatta</string>
     <string name="InuCompactInputSizeInfo">Riduce margini e spaziature attorno al campo di input.</string>
     <string name="InuActionButtonStyle">Stile dei pulsanti di azione</string>

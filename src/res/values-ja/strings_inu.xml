@@ -1379,7 +1379,6 @@
     <string name="InuKeepDownloadsInBackgroundInfo">スクロールで見えなくなったりチャットを離れても、ダウンロードを続けます。</string>
     <string name="InuMaterial3BottomTabs">下部タブ</string>
     <string name="InuIosBottomBar">iOS風のボトムバー</string>
-    <string name="InuIosBottomBarInfo">iOS風の幅広で均等配置のボトムタブ。Material 3タブは無効になります。</string>
     <string name="InuIosChatHeader">コンパクトなピル</string>
     <string name="InuIosChatHeaderInfo">iOS風のコンパクトなチャットヘッダーピルを中央に浮かせます。</string>
     <string name="InuChatHeaderNoPill">ピルの背景を非表示</string>
@@ -1606,13 +1605,11 @@
     <string name="InuTranslateOnSend">送信時に翻訳</string>
     <string name="InuTranslateOnSendInfo">送信するテキストは先に送信用の言語へ翻訳されます。翻訳に失敗した場合は何も送信されません。</string>
     <string name="InuIosButtonPlacement">ボタンの配置（iOS）</string>
-    <string name="InuIosButtonPlacementInfo">添付ボタンを左に、絵文字ボタンを入力欄の右側に配置します。</string>
     <string name="InuIosChatHeaderAvatarStatic">アバターを中央に寄せない</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">アバターは戻るボタンの横に残し、タイトルのピルだけを中央に配置します。</string>
     <string name="InuHideChatAvatar">アバターを非表示</string>
     <string name="InuHideChatAvatarInfo">チャットヘッダーからアバターを外し、3点メニューは残ります。タイトルをタップするとプロフィールが開きます。</string>
     <string name="InuIosInputAppearance">外観（iOS）</string>
-    <string name="InuIosInputAppearanceInfo">ガラス風のカプセル型入力欄と丸いアクションボタン。</string>
     <string name="InuIosStyle">iOS スタイル</string>
     <string name="InuPingAllProxies">すべてのプロキシに Ping</string>
     <string name="InuReplaceText">テキストを置換</string>

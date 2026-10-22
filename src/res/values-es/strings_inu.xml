@@ -402,7 +402,6 @@ Sistema: %6$s
     <string name="InuMainTabsCustomizeReset">Restablecer valores predeterminados</string>
     <string name="InuMaterial3BottomTabs">Pestañas inferiores</string>
     <string name="InuIosBottomBar">Barra inferior estilo iOS</string>
-    <string name="InuIosBottomBarInfo">Pestañas inferiores más anchas distribuidas uniformemente estilo iOS. Desactiva las de Material 3.</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Estilo de diseño</string>
     <string name="InuMaterial3SettingsInfo">Interruptores, deslizadores, secciones, avatares, tarjetas de la lista de chats y más.</string>
@@ -1851,9 +1850,7 @@ Esta acción no se puede deshacer.</string>
     <string name="InuForwardProEmptyNotice">El texto del mensaje no puede estar vacío</string>
 
     <string name="InuIosButtonPlacement">Ubicación de botones (iOS)</string>
-    <string name="InuIosButtonPlacementInfo">Coloca el botón de adjuntar a la izquierda y el emoji dentro del campo de texto a la derecha.</string>
     <string name="InuIosInputAppearance">Apariencia (iOS)</string>
-    <string name="InuIosInputAppearanceInfo">Campo de entrada en cápsula de cristal con botones de acción redondeados.</string>
     <string name="InuCompactInputSize">Modo compacto</string>
     <string name="InuCompactInputSizeInfo">Reduce los márgenes y rellenos alrededor del campo de entrada de texto.</string>
     <string name="InuActionButtonStyle">Estilo del botón de acción</string>

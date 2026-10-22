@@ -393,7 +393,6 @@
     <string name="InuMainTabsCustomizeReset">Reset to default</string>
     <string name="InuMaterial3BottomTabs">Bottom tabs</string>
     <string name="InuIosBottomBar">iOS-style bottom bar</string>
-    <string name="InuIosBottomBarInfo">iOS-style wider, evenly-spread bottom tabs. Disables Material 3 tabs.</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Design style</string>
     <string name="InuMaterial3SettingsInfo">Switches, sliders, sections, avatars, chat list cards and more.</string>
@@ -1837,9 +1836,7 @@
     <string name="InuForwardProEmptyNotice">Message text can\'t be empty</string>
 
     <string name="InuIosButtonPlacement">Button placement (iOS)</string>
-    <string name="InuIosButtonPlacementInfo">Places attachment on the left and emoji inside the input field on the right.</string>
     <string name="InuIosInputAppearance">Appearance (iOS)</string>
-    <string name="InuIosInputAppearanceInfo">Glass capsule input field with rounded action buttons.</string>
     <string name="InuCompactInputSize">Compact mode</string>
     <string name="InuCompactInputSizeInfo">Reduces margins and paddings around the input field.</string>
     <string name="InuActionButtonStyle">Action button style</string>

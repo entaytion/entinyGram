@@ -294,7 +294,6 @@
     <string name="InuMainTabsCustomizeReset">بازنشانی به پیش‌فرض</string>
     <string name="InuMaterial3BottomTabs">زبانه‌های پایین</string>
     <string name="InuIosBottomBar">نوار پایین به سبک iOS</string>
-    <string name="InuIosBottomBarInfo">زبانه‌های پایینِ عریض‌تر و یکنواخت‌تر به سبک iOS. زبانه‌های Material 3 را غیرفعال می‌کند.</string>
     <string name="InuDialogsFab">دکمه کنش شناور</string>
     <string name="InuDialogsFabMainAction">کنش اصلی</string>
     <string name="InuDialogsFabSecondaryAction">کنش ثانویه</string>
@@ -1637,9 +1636,7 @@
     <string name="InuForwardTooLarge">فایل از حد آپلود (%1$s) بیشتر است، فوروارد نمی‌شود</string>
 
     <string name="InuIosButtonPlacement">جایگاه دکمه‌ها (iOS)</string>
-    <string name="InuIosButtonPlacementInfo">پیوست را در چپ و ایموجی را در راست داخل کادر ورودی قرار می‌دهد.</string>
     <string name="InuIosInputAppearance">ظاهر (iOS)</string>
-    <string name="InuIosInputAppearanceInfo">کادر ورودی قرص شیشه‌ای با دکمه‌های کنش گرد.</string>
     <string name="InuCompactInputSize">حالت فشرده</string>
     <string name="InuCompactInputSizeInfo">حاشیه‌ها و فاصله‌های دور کادر ورودی را کم می‌کند.</string>
     <string name="InuActionButtonStyle">سبک دکمه‌های کنش</string>
