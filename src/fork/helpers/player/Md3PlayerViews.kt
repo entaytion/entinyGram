@@ -897,9 +897,9 @@ class Md3CoverImage(context: Context, noteSizeDp: Float) : BackupImageView(conte
 
     override fun onDraw(canvas: Canvas) {
         if (!imageReceiver.hasBitmapImage()) {
-            rect.set(0f, 0f, width.toFloat(), height.toFloat())
+            rect.set(0f, 0f, getWidth().toFloat(), getHeight().toFloat())
             canvas.drawRoundRect(rect, radius.toFloat(), radius.toFloat(), placeholderPaint)
-            note.setBounds(0, 0, width, height)
+            note.setBounds(0, 0, getWidth(), getHeight())
             note.draw(canvas)
         }
         super.onDraw(canvas)
