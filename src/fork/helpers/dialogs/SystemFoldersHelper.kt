@@ -178,6 +178,17 @@ object SystemFoldersHelper {
             controller.dialogFiltersById.put(filter.id, filter)
             changed = true
         }
+        var repointed = false
+        for (i in controller.selectedDialogFilter.indices) {
+            val current = controller.selectedDialogFilter[i] ?: continue
+            if (!isSystem(current.id)) continue
+            val fresh = controller.dialogFiltersById.get(current.id) ?: continue
+            if (fresh !== current) {
+                controller.selectedDialogFilter[i] = fresh
+                repointed = true
+            }
+        }
+        if (repointed) controller.sortDialogs(null)
         if (changed) {
             NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.dialogFiltersUpdated)
             MessagesStorage.getInstance(account).inu_recalcUnread()
