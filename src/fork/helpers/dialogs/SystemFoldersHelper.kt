@@ -4,6 +4,7 @@ import desu.inugram.InuConfig
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
@@ -167,6 +168,8 @@ object SystemFoldersHelper {
             filter.id = entry.type.id
             filter.name = LocaleController.getString(entry.type.titleRes)
             filter.flags = entry.type.flags
+            filter.pendingUnreadCount = -1
+            filter.unreadCount = -1
             val filters = controller.dialogFilters
             filter.order = (filters.maxOfOrNull { it.order } ?: 0) + 1
             val minIndex = if (filters.firstOrNull()?.isDefault == true) 1 else 0
@@ -177,6 +180,19 @@ object SystemFoldersHelper {
         }
         if (changed) {
             NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.dialogFiltersUpdated)
+            MessagesStorage.getInstance(account).inu_recalcUnread()
         }
+    }
+
+    @JvmStatic
+    fun withSystem(account: Int, base: List<MessagesController.DialogFilter>): ArrayList<MessagesController.DialogFilter> {
+        val result = ArrayList(base)
+        try {
+            for (filter in ArrayList(MessagesController.getInstance(account).dialogFilters)) {
+                if (isSystem(filter.id) && result.none { it.id == filter.id }) result.add(filter)
+            }
+        } catch (_: Exception) {
+        }
+        return result
     }
 }
