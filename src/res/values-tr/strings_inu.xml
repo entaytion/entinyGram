@@ -2013,6 +2013,8 @@
     <string name="InuProfileJoinDate">Katılma Tarihi</string>
     <string name="InuTranslateAutoFallback">Engellenince sağlayıcı değiştir</string>
     <string name="InuTranslateAutoFallbackInfo">Google ağınızdan çeviriyi engellerse Bing, ardından MyMemory ile yeniden denenir. Metniniz onlara gönderilir</string>
+    <string name="InuTranslateNewGoogle">Yeni Google Çeviri'yi kullan</string>
+    <string name="InuTranslateNewGoogleInfo">Daha iyi kalite sunan yeni Google uç noktası. Hata olursa eskisi kullanılır</string>
     <string name="InuDisableNextAudioPreload">Sonraki sesi önceden yükleme</string>
     <string name="InuDisableNextAudioPreloadInfo">Biri çalarken sonraki parçayı veya sesli mesajı önceden indirme</string>
     <string name="InuDisableNextMusicAutoplay">Sonraki müziği otomatik oynatma</string>

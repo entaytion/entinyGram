@@ -2011,6 +2011,8 @@
     <string name="InuProfileJoinDate">加入日期</string>
     <string name="InuTranslateAutoFallback">被屏蔽时切换提供商</string>
     <string name="InuTranslateAutoFallbackInfo">如果 Google 屏蔽了您网络的翻译,将改用 Bing,然后是 MyMemory。文本将发送给它们</string>
+    <string name="InuTranslateNewGoogle">使用新版 Google 翻译</string>
+    <string name="InuTranslateNewGoogleInfo">质量更好的新版 Google 接口。出错时回退到旧接口</string>
     <string name="InuDisableNextAudioPreload">不预加载下一个音频</string>
     <string name="InuDisableNextAudioPreloadInfo">播放时不提前下载下一首曲目或语音消息</string>
     <string name="InuDisableNextMusicAutoplay">不自动播放下一首音乐</string>

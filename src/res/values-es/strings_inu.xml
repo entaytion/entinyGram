@@ -2145,6 +2145,8 @@ Mientras esté activado:</string>
     <string name="InuProfileJoinDate">Fecha de ingreso</string>
     <string name="InuTranslateAutoFallback">Cambiar proveedor si está bloqueado</string>
     <string name="InuTranslateAutoFallbackInfo">Si Google bloquea la traducción desde tu red, reintentar con Bing, luego MyMemory.</string>
+    <string name="InuTranslateNewGoogle">Usar el nuevo Google Translate</string>
+    <string name="InuTranslateNewGoogleInfo">Endpoint más reciente de Google con mejor calidad. Si falla, se usa el anterior</string>
     <string name="InuBookmarkAdd">Añadir a marcadores</string>
     <string name="InuBookmarkRemove">Quitar marcador</string>
     <string name="InuBookmarkAdded">Añadido a marcadores</string>

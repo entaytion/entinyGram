@@ -2110,6 +2110,8 @@
     <string name="InuProfileJoinDate">Дата вступу</string>
     <string name="InuTranslateAutoFallback">Перемикати провайдера при блокуванні</string>
     <string name="InuTranslateAutoFallbackInfo">Якщо Google блокує переклад з вашої мережі, повторити через Bing, потім MyMemory. Текст буде надіслано їм</string>
+    <string name="InuTranslateNewGoogle">Новий Google Translate</string>
+    <string name="InuTranslateNewGoogleInfo">Новіший ендпоінт Google з кращою якістю. У разі помилки використовується старий</string>
     <string name="InuDisableNextAudioPreload">Не підвантажувати наступне аудіо</string>
     <string name="InuDisableNextAudioPreloadInfo">Не завантажувати наступний трек чи голосове наперед, поки грає поточне</string>
     <string name="InuDisableNextMusicAutoplay">Не вмикати наступну музику автоматично</string>

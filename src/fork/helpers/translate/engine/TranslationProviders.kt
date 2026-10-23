@@ -144,6 +144,7 @@ object GoogleWebProvider : TranslationProvider {
     private const val BLOCK_COOLDOWN_MS = 10 * 60 * 1000L
     private const val MAX_FALLBACK_CHARS = 1800
     private const val MAX_APP_CHARS = 3500
+    private const val NEW_API_KEY = "AIzaSyDLEeFI5OtFBwYBIoK_jj5m32rZK5CkCXA"
     private const val FAST_CONNECT_TIMEOUT_MS = 5_000
     private const val FAST_READ_TIMEOUT_MS = 7_000
 
@@ -173,6 +174,7 @@ object GoogleWebProvider : TranslationProvider {
                     blockedFallback(text, toLang)
                 }
         }
+        if (InuConfig.TRANSLATE_NEW_GOOGLE.value) translateViaNew(text, tl)?.let { return it }
         return try {
             translateViaGtx(text, tl)
         } catch (e: ProviderRateLimitException) {
@@ -197,6 +199,27 @@ object GoogleWebProvider : TranslationProvider {
             }
         }
         throw ProviderRateLimitException(LocaleController.getString(R.string.InuTranslateGoogleBlocked))
+    }
+
+    // entiny: ported from exteraless (NagramX) "Use New Google Translate"
+    private fun translateViaNew(text: String, tl: String): String? {
+        if (text.length > MAX_APP_CHARS) return null
+        return try {
+            val resp = httpJson(
+                "https://translate-pa.googleapis.com/v1/translate?params.client=gtx" +
+                    "&query.source_language=auto&query.target_language=" + encodeURIComponent(tl) +
+                    "&query.display_language=en-US&data_types=TRANSLATION" +
+                    "&key=" + NEW_API_KEY +
+                    "&query.text=" + encodeURIComponent(text),
+                headers = mapOf("User-Agent" to USER_AGENT),
+                connectTimeout = FAST_CONNECT_TIMEOUT_MS,
+                readTimeout = FAST_READ_TIMEOUT_MS,
+            )
+            JSONObject(resp).optString("translation", "").ifBlank { null }
+        } catch (e: Exception) {
+            Log.d(TAG, "translateViaNew failed: ${e.message}")
+            null
+        }
     }
 
     private fun translateViaGtx(text: String, tl: String): String {

@@ -2125,6 +2125,8 @@
     <string name="InuProfileJoinDate">Join Date</string>
     <string name="InuTranslateAutoFallback">Switch provider when blocked</string>
     <string name="InuTranslateAutoFallbackInfo">If Google blocks translation from your network, retry with Bing, then MyMemory. Your text is sent to them instead</string>
+    <string name="InuTranslateNewGoogle">Use new Google Translate</string>
+    <string name="InuTranslateNewGoogleInfo">Newer Google endpoint with better quality. Falls back to the old one on errors</string>
     <string name="InuBookmarkAdd">Add to bookmarks</string>
     <string name="InuBookmarkRemove">Remove bookmark</string>
     <string name="InuBookmarkAdded">Added to bookmarks</string>

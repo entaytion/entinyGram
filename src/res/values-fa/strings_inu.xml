@@ -2050,6 +2050,8 @@
     <string name="InuProfileJoinDate">تاریخ عضویت</string>
     <string name="InuTranslateAutoFallback">تغییر ارائه‌دهنده هنگام مسدود شدن</string>
     <string name="InuTranslateAutoFallbackInfo">اگر Google ترجمه را از شبکه شما مسدود کند، با Bing و سپس MyMemory دوباره تلاش می‌شود. متن شما برای آن‌ها ارسال می‌شود</string>
+    <string name="InuTranslateNewGoogle">استفاده از ترجمه جدید Google</string>
+    <string name="InuTranslateNewGoogleInfo">نقطه اتصال جدیدتر Google با کیفیت بهتر. در صورت خطا از نسخه قبلی استفاده می‌شود</string>
     <string name="InuDisableNextAudioPreload">پیش‌بارگیری نکردن صوت بعدی</string>
     <string name="InuDisableNextAudioPreloadInfo">در حین پخش، آهنگ یا پیام صوتی بعدی از قبل دانلود نشود</string>
     <string name="InuDisableNextMusicAutoplay">پخش خودکار آهنگ بعدی نباشد</string>
