@@ -37,7 +37,7 @@ import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.ParanoiaActivity
 // #if PLUGINS
 // #endif
-import desu.inugram.ui.settings.TosSettingsActivity
+import desu.inugram.ui.settings.GhostModeSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
@@ -692,7 +692,7 @@ object DrawerHelper {
             }
 
             ITEM_GHOST -> {
-                nav.presentFragment(TosSettingsActivity())
+                nav.presentFragment(GhostModeSettingsActivity())
                 close()
             }
 
