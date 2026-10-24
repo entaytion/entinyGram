@@ -32,6 +32,7 @@
   "chat-header-light-colors": "chat",
   "movable-chats-tab": "tabs",
   "start-tab": "tabs",
+  "tab-counter-default": "tabs",
   "chat-input-match-font-size": "chat",
   "chat-menu-live-reorder": "chat",
   "clock-format": "ui",
