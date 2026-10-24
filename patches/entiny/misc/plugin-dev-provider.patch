@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 24 Oct 2026 22:54:09 +0300
+Subject: [*] Let the plugin cli write plugin-dev files through a provider
+
+---
+ TMessagesProj/src/main/AndroidManifest.xml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/AndroidManifest.xml
++++ b/TMessagesProj/src/main/AndroidManifest.xml
+@@ -1000,6 +1000,8 @@
+             </intent-filter>
+         </receiver>
+ 
++        <provider android:name="desu.inugram.helpers.PluginDropProvider" android:authorities="${applicationId}.plugindev" android:exported="true" android:permission="android.permission.DUMP" />
++
+         <receiver android:name=".voip.VoIPActionsReceiver" android:exported="false"/>
+ 
+         <receiver android:name=".ShortcutResultReceiver" android:exported="false"/>

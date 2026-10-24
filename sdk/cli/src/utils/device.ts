@@ -1,5 +1,6 @@
 import { execFile, spawn } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
 import { basename } from 'node:path'
 import { createInterface } from 'node:readline'
 import { promisify } from 'node:util'
@@ -14,6 +15,10 @@ export const RELEASE_APP_ID = 'desu.inugram'
 
 const PID_POLL_MS = 2000
 const DROP_DIR_NAME = 'plugin-dev'
+/** `PluginDropProvider` authority, after the app id */
+const DROP_PROVIDER_SUFFIX = 'plugindev'
+/** `content write` reports a missing provider, a refusal or an old android in its output, not always in the exit code */
+const PROVIDER_FAILURE_RE = /error|exception|unsupported|usage:|failed/i
 const DEV_ACTION = 'desu.inugram.plugins.DEV'
 /** `PluginLog` tags: one channel per plugin, keyed by manifest id (install id without one), and one for the host */
 export const PLUGIN_LOG_TAG_PREFIX = 'InuPlugin/'
@@ -137,7 +142,7 @@ export class Device {
   }
 
   /** [input] is written to stdin; `adb shell` passes its end on to the device under shell protocol v2, which android 7+ has */
-  private async adb(args: string[], { allowFailure = false, input }: { allowFailure?: boolean, input?: string } = {}) {
+  private async adb(args: string[], { allowFailure = false, input }: { allowFailure?: boolean, input?: string | Buffer } = {}) {
     try {
       const pending = run('adb', [...this.serial, ...args], { maxBuffer: 32 * 1024 * 1024 })
       if (input !== undefined) pending.child.stdin?.end(input)
@@ -200,11 +205,26 @@ export class Device {
     return parsed.output
   }
 
+  /**
+   * some devices deny `adb shell` access to Android/data, so the app's provider writes the drop dir first.
+   * Apps without it, and android before 10, fall back to writing the dir directly
+   */
+  private async write(name: string, data: string | Buffer): Promise<void> {
+    const uri = `content://${this.appId}.${DROP_PROVIDER_SUFFIX}/${name}`
+    const viaProvider = await this.adb(['shell', 'content', 'write', '--uri', uri], { allowFailure: true, input: data })
+    const providerOutput = `${viaProvider.stdout}${viaProvider.stderr}`.trim()
+    if (!PROVIDER_FAILURE_RE.test(providerOutput)) return
+    try {
+      await this.adb(['shell', `mkdir -p ${this.dropDir} && cat > ${this.dropDir}/${name}`], { input: data })
+    } catch (error) {
+      throw new CliError(`${(error as Error).message}\nprovider write failed too: ${providerOutput.split('\n')[0]}`)
+    }
+  }
+
   /** one entry per pushed file, in the order they were pushed */
   async install(files: string[]): Promise<DevInstall[]> {
-    await this.adb(['shell', 'mkdir', '-p', this.dropDir])
     for (const file of files) {
-      await this.adb(['push', file, `${this.dropDir}/${basename(file)}`])
+      await this.write(basename(file), await readFile(file))
     }
 
     const installs: DevInstall[] = []
@@ -225,7 +245,7 @@ export class Device {
    */
   async evaluate(pluginFile: string | null, code: string, timeoutSeconds: number, reset = false): Promise<DevEval> {
     const name = `eval-${randomUUID()}.txt`
-    await this.adb(['shell', `mkdir -p ${this.dropDir} && cat > ${this.dropDir}/${name}`], { input: code })
+    await this.write(name, code)
     const target: Record<string, string> = pluginFile === null ? { reset: String(reset) } : { file: basename(pluginFile) }
     return this.send({ cmd: 'eval', code: name, timeout: String(timeoutSeconds), ...target }, EvalSchema)
   }

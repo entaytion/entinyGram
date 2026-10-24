@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Build
 import desu.inugram.InuConfig
 import desu.inugram.core.plugins.PluginManifestParser
+import desu.inugram.helpers.PluginDropProvider
 import desu.inugram.helpers.plugins.ui.PluginAppVisibility
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
@@ -24,7 +25,7 @@ import org.telegram.ui.Components.BulletinFactory
  */
 object PluginDevServer {
     const val ACTION = "desu.inugram.plugins.DEV"
-    const val DIR = "plugin-dev"
+    const val DIR = PluginDropProvider.DIR
 
     private const val SENDER_PERMISSION = "android.permission.DUMP"
 
@@ -46,7 +47,7 @@ object PluginDevServer {
         if (InuConfig.PLUGINS_DEV_MODE.value) register(app) else unregister(app)
     }
 
-    fun dropDir(context: Context): File? = context.applicationContext.getExternalFilesDir(DIR)
+    fun dropDir(context: Context): File? = PluginDropProvider.dropDir(context)
 
     private fun register(context: Context) {
         if (registered) return
