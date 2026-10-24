@@ -571,3 +571,5 @@ entiny/translator/translate-on-send.patch
 entiny/proxy/proxy-rotation-fix.patch
 entiny/chat/scheduled-first-message.patch
 bugfix/round-recorder-ae-lock-toggle.patch
+entiny/ui/photoviewer-stickermaker-npe.patch
+entiny/ui/wallet-delete-npe.patch

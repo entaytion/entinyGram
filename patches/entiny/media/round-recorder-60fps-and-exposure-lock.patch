@@ -6,11 +6,11 @@ Subject: Add 60 FPS round video, exposure lock, and exposure compensation button
 ---
  .../messenger/camera/Camera2Session.java      | 75 +++++++++++++-
  .../ui/Components/InstantCameraView.java      | 98 +++++++++++++++----
- .../ui/Components/InstantCameraView2.java     |  6 +-
+ .../ui/Components/InstantCameraView2.java     |  8 +-
  .../round/RoundVideoCameraController.java     |  1 +
  .../round/RoundVideoCodecRecorder.java        |  4 +-
  .../recorder/round/RoundVideoSession.java     |  3 +-
- 6 files changed, 161 insertions(+), 26 deletions(-)
+ 6 files changed, 162 insertions(+), 27 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
 index 0000000..0000000 100644
@@ -394,7 +394,8 @@ index 0000000..0000000 100644
 +        activeOutputResolution = desu.inugram.helpers.chat.RoundRecorderHelper.outputResolution(SharedSettings.roundVideoOutputResolution.get());
          session = new RoundVideoSession.Builder(getContext(), textureView)
                  .setOutputDirectory(new File(ApplicationLoader.getFilesDirFixed(), "cache"))
-                 .setInitialFacing(SharedSettings.roundVideoLastCamera.get())
+-                .setInitialFacing(SharedSettings.roundVideoLastCamera.get())
++                .setInitialFacing(fromPaused ? SharedSettings.roundVideoLastCamera.get() : desu.inugram.helpers.chat.VoiceRecorderHelper.initialRoundFacing())
                  .setOutputResolution(activeOutputResolution)
 -                .setVideoBitrate(SharedSettings.roundVideoVideoBitrate.get())
 +                .setVideoBitrate(desu.inugram.helpers.chat.RoundRecorderHelper.videoBitrate(SharedSettings.roundVideoVideoBitrate.get()))

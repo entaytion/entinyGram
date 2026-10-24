@@ -26,6 +26,8 @@
   "chat-activity-layout-crash": "chat",
   "chat-blur-resume-settle": "chat",
   "scheduled-first-message": "chat",
+  "photoviewer-stickermaker-npe": "ui",
+  "wallet-delete-npe": "ui",
   "chat-ai-deeplink": "ai",
   "chat-header-light-colors": "chat",
   "movable-chats-tab": "tabs",

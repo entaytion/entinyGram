@@ -4,9 +4,9 @@ Date: Fri, 9 Oct 2026 17:59:59 +0300
 Subject: [+] system folders hook in message controller
 
 ---
- .../main/java/org/telegram/messenger/MessagesController.java | 5 +++++
- .../main/java/org/telegram/messenger/MessagesStorage.java    | 4 ++++
- 2 files changed, 9 insertions(+)
+ .../messenger/MessagesController.java         |  5 ++++
+ .../telegram/messenger/MessagesStorage.java   | 25 ++++++++++++++-----
+ 2 files changed, 24 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -42,9 +42,35 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -3683,6 +3683,9 @@ public class MessagesStorage extends BaseController {
+@@ -2941,7 +2941,8 @@ public class MessagesStorage extends BaseController {
+                     FileLog.d("bots = " + bots[b][0] + ", " + bots[b][1]);
+                 }
+             }*/
+-            for (int a = 0, N = dialogFilters.size(); a < N + 2; a++) {
++            final ArrayList<MessagesController.DialogFilter> inu_filters = desu.inugram.helpers.dialogs.SystemFoldersHelper.withSystem(currentAccount, dialogFilters);
++            for (int a = 0, N = inu_filters.size(); a < N + 2; a++) {
+                 final boolean isFilter = a < N;
+                 final boolean isMain = a == N;
+                 final boolean isArchive = a == N + 1;
+@@ -2949,7 +2950,7 @@ public class MessagesStorage extends BaseController {
+                 MessagesController.DialogFilter filter;
+                 int flags;
+                 if (a < N) {
+-                    filter = dialogFilters.get(a);
++                    filter = inu_filters.get(a);
+                     if (filter.pendingUnreadCount >= 0) {
+                         continue;
+                     }
+@@ -3682,7 +3683,16 @@ public class MessagesStorage extends BaseController {
+         storageQueue.postRunnable(() -> deleteDialogFilterInternal(filter));
      }
  
++    public void inu_recalcUnread() {
++        storageQueue.postRunnable(() -> {
++            resetAllUnreadCounters(false);
++        });
++    }
++
      public void saveDialogFilter(MessagesController.DialogFilter filter, boolean atBegin, boolean peers) {
 +        if (desu.inugram.helpers.dialogs.SystemFoldersHelper.isSystem(filter.id)) {
 +            return;
@@ -52,7 +78,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              saveDialogFilterInternal(filter, atBegin, peers);
              calcUnreadCounters(false);
-@@ -3722,6 +3725,7 @@ public class MessagesStorage extends BaseController {
+@@ -3722,6 +3732,7 @@ public class MessagesStorage extends BaseController {
      }
  
      public void saveDialogFiltersOrder() {
@@ -60,3 +86,34 @@ index 0000000..0000000 100644
          ArrayList<MessagesController.DialogFilter> filtersFinal = new ArrayList<>(getMessagesController().dialogFilters);
          storageQueue.postRunnable(() -> {
              dialogFilters.clear();
+@@ -6338,7 +6349,8 @@ public class MessagesStorage extends BaseController {
+             }
+         }*/
+ 
+-        for (int a = 0, N = dialogFilters.size(); a < N + 2; a++) {
++        final ArrayList<MessagesController.DialogFilter> inu_filters = desu.inugram.helpers.dialogs.SystemFoldersHelper.withSystem(currentAccount, dialogFilters);
++        for (int a = 0, N = inu_filters.size(); a < N + 2; a++) {
+             final boolean isFilter = a < N;
+             final boolean isMain = a == N;
+             final boolean isArchive = a == N + 1;
+@@ -6347,7 +6359,7 @@ public class MessagesStorage extends BaseController {
+             MessagesController.DialogFilter filter;
+             int flags;
+             if (a < N) {
+-                filter = dialogFilters.get(a);
++                filter = inu_filters.get(a);
+                 if (filter.pendingUnreadCount < 0) {
+                     continue;
+                 }
+@@ -18050,8 +18062,9 @@ public class MessagesStorage extends BaseController {
+ 
+     public void resetAllUnreadCounters(boolean muted) {
+         if (muted && FolderHelper.isMuteFilteringActive()) muted = false;
+-        for (int a = 0, N = dialogFilters.size(); a < N; a++) {
+-            MessagesController.DialogFilter filter = dialogFilters.get(a);
++        final ArrayList<MessagesController.DialogFilter> inu_filters = desu.inugram.helpers.dialogs.SystemFoldersHelper.withSystem(currentAccount, dialogFilters);
++        for (int a = 0, N = inu_filters.size(); a < N; a++) {
++            MessagesController.DialogFilter filter = inu_filters.get(a);
+             if (muted) {
+                 if ((filter.flags & MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_MUTED) != 0) {
+                     filter.pendingUnreadCount = -1;

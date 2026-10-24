@@ -23,6 +23,7 @@ import org.telegram.ui.Components.ChatActivityEnterViewAnimatedIconView
 import org.telegram.ui.Components.ChatAttachAlert
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.utils.recorder.round.RoundVideoSession
 
 object VoiceRecorderHelper {
     private const val RECORD_DELAY_MS = 150L
@@ -45,6 +46,10 @@ object VoiceRecorderHelper {
     @JvmStatic
     fun attachTranslationXOffset(): Float =
         if (isMovedToAttach()) AndroidUtilities.dp(48f).toFloat() else 0f
+
+    @JvmStatic
+    fun initialRoundFacing(): RoundVideoSession.CameraFacing =
+        if (nextCameraFront) RoundVideoSession.CameraFacing.FRONT else RoundVideoSession.CameraFacing.BACK
 
     @JvmStatic
     fun interceptForCameraChoice(enterView: ChatActivityEnterView): Boolean {

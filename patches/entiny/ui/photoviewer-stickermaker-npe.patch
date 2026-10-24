@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 23 Oct 2026 15:26:37 +0300
+Subject: [*] photo viewer sticker maker crash
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -7139,7 +7139,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+             @Override
+             public void setAlpha(float alpha) {
+                 super.setAlpha(alpha);
+-                windowView.invalidate();
++                if (windowView != null) {
++                    windowView.invalidate();
++                }
+             }
+         };
+         stickerMakerBackgroundView.setVisibility(View.GONE);
