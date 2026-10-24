@@ -116,6 +116,12 @@ object MainTabsHelper {
     }
 
     @JvmStatic
+    fun startPosition(): Int {
+        val pos = indexToPosition(InuConfig.START_TAB.value)
+        return if (pos >= 0) pos else chatsPosition()
+    }
+
+    @JvmStatic
     fun chatsPosition(): Int = indexToPosition(MainTabsMenuConfig.Item.CHATS.index)
 
     @JvmStatic

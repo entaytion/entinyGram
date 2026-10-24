@@ -2040,6 +2040,7 @@
     <string name="InuDisableNextVoiceAutoplay">Не включать следующее голосовое автоматически</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Останавливаться после голосового вместо воспроизведения следующего в чате</string>
     <string name="InuBottomTabsLift">Поднять нижнюю панель</string>
+    <string name="InuStartTab">Стартовая вкладка</string>
     <string name="InuMutualContactIconLeft">Перед аватаркой</string>
     <string name="InuMutualContactIconLeftInfo">Ставить значок слева от аватарки.</string>
     <string name="InuForumSectionsCards">Секции-карточки в темах форума</string>

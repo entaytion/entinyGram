@@ -276,6 +276,13 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
             )
             items.add(
                 UItem.asButton(
+                    BUTTON_START_TAB,
+                    LocaleController.getString(R.string.InuStartTab),
+                    startTabLabel(),
+                )
+            )
+            items.add(
+                UItem.asButton(
                     BUTTON_RESET_BOTTOM_TABS,
                     R.drawable.msg_reset,
                     LocaleController.getString(R.string.InuMainTabsCustomizeReset),
@@ -439,6 +446,8 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
 
 
             BUTTON_PULL_DOWN_ACTION -> showPullDownActionSelector()
+
+            BUTTON_START_TAB -> showStartTabSelector()
 
             TOGGLE_DISABLE_SWIPE_TO_UNARCHIVE -> {
                 val new = InuConfig.DISABLE_SWIPE_TO_UNARCHIVE.toggle()
@@ -686,6 +695,31 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         )
     }
 
+    private fun startTabItems() = mainTabsEntries
+        .filter { it.item != MainTabsMenuConfig.Item.SEARCH && (it.enabled || it.item == MainTabsMenuConfig.Item.CHATS) }
+        .map { it.item }
+
+    private fun startTabLabel(): String {
+        val items = startTabItems()
+        val current = items.firstOrNull { it.index == InuConfig.START_TAB.value } ?: MainTabsMenuConfig.Item.CHATS
+        return LocaleController.getString(current.labelRes)
+    }
+
+    private fun showStartTabSelector() {
+        val context = context ?: return
+        val items = startTabItems()
+        val current = items.indexOfFirst { it.index == InuConfig.START_TAB.value }.coerceAtLeast(0)
+        showDialog(
+            RadioDialogBuilder(context, getResourceProvider())
+                .setTitle(LocaleController.getString(R.string.InuStartTab))
+                .setItems(items.map { RadioDialogBuilder.Item(LocaleController.getString(it.labelRes)) }, current) { _, which ->
+                    InuConfig.START_TAB.value = items[which].index
+                    listView.adapter.update(true)
+                    showRestartBulletin()
+                }.create()
+        )
+    }
+
     private fun showPullDownActionSelector() {
         val context = context ?: return
         val values = intArrayOf(
@@ -740,6 +774,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
         private val TOGGLE_OLD_MENTION_INDICATOR = InuUtils.generateId()
         private val BUTTON_PULL_DOWN_ACTION = InuUtils.generateId()
+        private val BUTTON_START_TAB = InuUtils.generateId()
         private val TOGGLE_DISABLE_SWIPE_TO_UNARCHIVE = InuUtils.generateId()
         private val TOGGLE_DISABLE_SWIPE_TO_HIDE_GENERAL_TOPIC = InuUtils.generateId()
         private val TOGGLE_BOTTOM_TABS_HIDE = InuUtils.generateId()
@@ -811,6 +846,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("title-text-override-archive", R.string.InuTitleTextOverrideArchive, TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE),
                 SearchRegistry.Entry("old-mention-indicator", R.string.InuOldMentionIndicator, TOGGLE_OLD_MENTION_INDICATOR),
                 SearchRegistry.Entry("pull-down-action", R.string.InuPullDownAction, BUTTON_PULL_DOWN_ACTION),
+                SearchRegistry.Entry("start-tab", R.string.InuStartTab, BUTTON_START_TAB),
                 SearchRegistry.Entry("disable-swipe-to-unarchive", R.string.InuDisableSwipeToUnarchive, TOGGLE_DISABLE_SWIPE_TO_UNARCHIVE),
                 SearchRegistry.Entry("disable-swipe-to-hide-general-topic", R.string.InuDisableSwipeToHideGeneralTopic, TOGGLE_DISABLE_SWIPE_TO_HIDE_GENERAL_TOPIC),
                 SearchRegistry.Entry("hide-bot-webview-dialogs", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),

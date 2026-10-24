@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 24 Oct 2026 21:14:13 +0300
+Subject: [*] Choose which bottom tab opens first
+
+---
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -859,7 +859,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+     @Override
+     protected int getStartPosition() {
+-        return MainTabsHelper.chatsPosition();
++        return MainTabsHelper.startPosition();
+     }
+ 
+     private DialogsActivity dialogsActivity;

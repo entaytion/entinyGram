@@ -398,6 +398,7 @@ Sistema: %6$s
     <string name="InuCompactMode">Modo compacto</string>
     <string name="InuCompactModeInfo">Oculta los títulos y hace las pestañas más pequeñas</string>
     <string name="InuBottomTabsLift">Elevar la barra de navegación</string>
+    <string name="InuStartTab">Pestaña de inicio</string>
     <string name="InuShowTabTitles">Mostrar títulos de pestañas</string>
     <string name="InuMainTabsCustomizeReset">Restablecer valores predeterminados</string>
     <string name="InuMaterial3BottomTabs">Pestañas inferiores</string>

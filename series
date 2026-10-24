@@ -573,3 +573,4 @@ entiny/chat/scheduled-first-message.patch
 bugfix/round-recorder-ae-lock-toggle.patch
 entiny/ui/photoviewer-stickermaker-npe.patch
 entiny/ui/wallet-delete-npe.patch
+entiny/tabs/start-tab.patch

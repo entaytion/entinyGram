@@ -2074,6 +2074,7 @@
     <string name="InuDisableNextVoiceAutoplay">عدم تشغيل الرسالة الصوتية التالية تلقائيًا</string>
     <string name="InuDisableNextVoiceAutoplayInfo">التوقف بعد الرسالة الصوتية بدلًا من تشغيل التالية في المحادثة</string>
     <string name="InuBottomTabsLift">رفع شريط التنقل</string>
+    <string name="InuStartTab">علامة التبويب الافتتاحية</string>
     <string name="InuMutualContactIconLeft">أيقونة الاتصال المتبادل قبل اللقب</string>
     <string name="InuMutualContactIconLeftInfo">عرض أيقونة الاتصال المتبادل على يسار لقب العضو بدلًا من بعده</string>
     <string name="InuForumSectionsCards">أقسام بطاقات في مواضيع المنتدى</string>

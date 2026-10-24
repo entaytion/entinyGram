@@ -529,6 +529,8 @@ object InuConfig {
     @JvmField
     val BOTTOM_TABS_LIFT = IntItem("bottom_tabs_lift", 0)
 
+    val START_TAB = IntItem("start_tab", 0)
+
     @JvmField
     val BOTTOM_TABS_ORDER = MainTabsMenuConfig("bottom_tabs_order")
 

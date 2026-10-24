@@ -398,6 +398,7 @@ Sistema: %6$s
     <string name="InuCompactMode">Modalità compatta</string>
     <string name="InuCompactModeInfo">Nasconde i titoli e rimpicciolisce le schede</string>
     <string name="InuBottomTabsLift">Solleva la barra di navigazione</string>
+    <string name="InuStartTab">Scheda iniziale</string>
     <string name="InuShowTabTitles">Mostra i titoli delle schede</string>
     <string name="InuMainTabsCustomizeReset">Ripristina predefiniti</string>
     <string name="InuMaterial3BottomTabs">Schede in basso</string>
