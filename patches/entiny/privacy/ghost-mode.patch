@@ -7,12 +7,12 @@ Subject: Add ghost mode (invisible mode) for read receipts, typing and online st
  .../java/org/telegram/messenger/ContactsController.java    | 1 +
  .../main/java/org/telegram/messenger/LocaleController.java | 6 ++++++
  .../java/org/telegram/messenger/MessagesController.java    | 3 +++
- .../main/java/org/telegram/tgnet/ConnectionsManager.java   | 3 +++
+ .../main/java/org/telegram/tgnet/ConnectionsManager.java   | 4 ++++
  .../src/main/java/org/telegram/ui/Cells/DialogCell.java    | 1 +
  .../org/telegram/ui/Components/ChatAvatarContainer.java    | 7 ++++++-
  .../src/main/java/org/telegram/ui/DialogsActivity.java     | 3 +++
  .../src/main/java/org/telegram/ui/ProfileActivity.java     | 6 +++++-
- 8 files changed, 28 insertions(+), 2 deletions(-)
+ 8 files changed, 29 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
 index 0000000..0000000 100644
@@ -71,6 +71,14 @@ index 0000000..0000000 100644
          try {
              NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
              object.serializeToStream(buffer);
+@@ -461,6 +464,7 @@ public class ConnectionsManager extends BaseController {
+                     final TLObject finalResponse = resp;
+                     final TLRPC.TL_error finalError = error;
+                     Utilities.stageQueue.postRunnable(() -> {
++                        desu.inugram.helpers.security.GhostHelper.onResponse(object, currentAccount, finalError);
+                         if (onComplete != null) {
+                             onComplete.run(finalResponse, finalError);
+                         } else if (onCompleteTimestamp != null) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java

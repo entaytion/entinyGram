@@ -1415,8 +1415,6 @@
     <string name="InuGhostPresenceModeHidden">همیشه پنهان</string>
     <string name="InuGhostPresenceModeDelayed">مدتی کوتاه پس از آنلاین شدن آفلاین شو</string>
 
-    <string name="InuGhostAutoOffline">آفلاین شدن خودکار</string>
-    <string name="InuGhostAutoOfflineInfo">مدتی کوتاه پس از ارسال پیام یا واکنش، وضعیت آفلاین را دوباره می‌فرستد.</string>
     <string name="InuGhostEnabled">حالت روح فعال شد</string>
     <string name="InuGhostDisabled">حالت روح غیرفعال شد</string>
     <string name="InuGhostScope">اعمال روی</string>

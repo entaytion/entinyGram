@@ -1633,8 +1633,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuGhostPresenceModeHidden">Sempre nascosto</string>
     <string name="InuGhostPresenceModeDelayed">Vai offline poco dopo essere andato online</string>
 
-    <string name="InuGhostAutoOffline">Vai offline automaticamente</string>
-    <string name="InuGhostAutoOfflineInfo">Reinvia lo stato offline poco dopo che invii messaggi o reazioni.</string>
     <string name="InuGhostEnabled">Modalità Fantasma attivata</string>
     <string name="InuGhostDisabled">Modalità Fantasma disattivata</string>
     <string name="InuGhostScope">Applica a</string>

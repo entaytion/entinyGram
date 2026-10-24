@@ -49,12 +49,13 @@ object InuConfig {
         FEED_ENABLED.value = touched
     }
 
-    private fun migrateGhostAutoOffline() {
-        if (GHOST_AUTO_OFFLINE_MIGRATED.value) return
-        GHOST_AUTO_OFFLINE_MIGRATED.value = true
-        if (GHOST_PRESENCE_MODE.value == GhostPresenceModeItem.DELAYED) {
-            GHOST_AUTO_OFFLINE.value = true
+    // entiny: auto-offline folded into presence mode; re-runs whenever an old backup import brings it back
+    fun migrateGhostAutoOffline() {
+        if (!GHOST_AUTO_OFFLINE.value) return
+        if (GHOST_PRESENCE_MODE.value == GhostPresenceModeItem.NORMAL) {
+            GHOST_PRESENCE_MODE.value = GhostPresenceModeItem.DELAYED
         }
+        GHOST_AUTO_OFFLINE.value = false
     }
 
     // entiny: ghost mode migrated from single master flag to independent sub-toggles; old master flag lost on update since sub-toggles default to false
@@ -87,6 +88,8 @@ object InuConfig {
     private fun migrateGhostModeEnabledDefault() {
         if (GHOST_MODE_ENABLED_MIGRATED.value) return
         GHOST_MODE_ENABLED_MIGRATED.value = true
+        // entiny: a replace-import wipes the run-record; an explicit master value from the backup must survive
+        if (prefs.contains(GHOST_MODE_ENABLED.key)) return
         val hadActiveSubToggle = GHOST_HIDE_READ.value || GHOST_HIDE_VOICE_READ.value ||
             GHOST_HIDE_STORY_READ.value || GHOST_HIDE_TYPING.value ||
             GHOST_PRESENCE_MODE.value != GhostPresenceModeItem.NORMAL
@@ -2078,12 +2081,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val GHOST_PRESENCE_MODE = GhostPresenceModeItem()
 
-    // entiny: auto-offline re-asserts offline after live actions because server flips account online implicitly
+    // entiny: legacy, folded into GHOST_PRESENCE_MODE; kept so old backups still import
     @JvmField
     val GHOST_AUTO_OFFLINE = BoolItem("ghost_auto_offline", false)
-
-    @JvmField
-    val GHOST_AUTO_OFFLINE_MIGRATED = BoolItem("ghost_auto_offline_migrated", false, exportable = false)
 
     @JvmField
     val GHOST_HIDE_APP_BAR_ICON = BoolItem("ghost_hide_app_bar_icon", false)

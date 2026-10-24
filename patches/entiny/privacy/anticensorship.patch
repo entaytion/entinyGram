@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -676,6 +676,9 @@ public class ConnectionsManager extends BaseController {
+@@ -677,6 +677,9 @@ public class ConnectionsManager extends BaseController {
                          proxySettings.getUser(), proxySettings.getPassword(), proxySettings.getSecret());
              }
          }
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          String installer = "";
          try {
              Context context = ApplicationLoader.applicationContext;
-@@ -976,6 +979,14 @@ public class ConnectionsManager extends BaseController {
+@@ -977,6 +980,14 @@ public class ConnectionsManager extends BaseController {
          KeepAliveJob.startJob();
      }
  
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      public static void setProxySettings(boolean enabled, ProxySettings settings) {
          String address = "";
          int port = 0;
-@@ -1003,8 +1014,17 @@ public class ConnectionsManager extends BaseController {
+@@ -1004,8 +1015,17 @@ public class ConnectionsManager extends BaseController {
              WebProxyTransport.stop();
          }
  

@@ -22,6 +22,7 @@ class ExpandableBoolGroup(
     )
 
     var expanded = false
+    var enabled = true
 
     fun expandIfContains(id: Int) {
         if (options.any { it.id == id }) expanded = true
@@ -37,6 +38,7 @@ class ExpandableBoolGroup(
                 .setChecked(isChecked)
                 .setCollapsed(!expanded)
                 .setClickCallback {
+                    if (!enabled) return@setClickCallback
                     val enable = !isChecked
                     val changed = arrayListOf<Option>()
                     for (opt in options) {
@@ -48,6 +50,7 @@ class ExpandableBoolGroup(
                     onChange(changed)
                 }
                 .onBind(Utilities.Callback { view ->
+                    view.alpha = if (enabled) 1f else 0.5f
                     val cell = view as? TextCheckCell2 ?: return@Callback
                     cell.checkBox.also {
                         it.setDrawIconType(0)
@@ -67,6 +70,8 @@ class ExpandableBoolGroup(
                     UItem.asRoundCheckbox(opt.id, LocaleController.getString(opt.labelRes))
                         .setChecked(opt.config.value)
                         .setPad(1)
+                        .setEnabled(enabled)
+                        .onBind(Utilities.Callback { it.alpha = if (enabled) 1f else 0.5f })
                 )
             }
         }
@@ -79,6 +84,7 @@ class ExpandableBoolGroup(
             return true
         }
         val opt = options.firstOrNull { it.id == item.id } ?: return false
+        if (!enabled) return true
         val new = opt.config.toggle()
         (view as? CheckBoxCell)?.setChecked(new, true)
         onChange(opt)

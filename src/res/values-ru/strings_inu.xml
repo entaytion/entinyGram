@@ -1648,8 +1648,6 @@
     <string name="InuAiTranscribeFetchModelsFailed">Не удалось загрузить модели: %1$s</string>
     <string name="InuDevBadge">Команда entinyGram</string>
     <string name="InuDevBadgeInfo">Этот аккаунт подтверждён командой entinyGram.</string>
-    <string name="InuGhostAutoOffline">Автоматически переходить в офлайн</string>
-    <string name="InuGhostAutoOfflineInfo">Вновь отправляет статус офлайн вскоре после отправки сообщений или реакций.</string>
     <string name="InuIgnoreTranslationsDisabled">Игнорировать «Перевод отключён»</string>
     <string name="InuIgnoreTranslationsDisabledInfo">Показывает баннер перевода, даже если канал или пользователь отключили перевод.</string>
     <string name="InuInstantTranslateBanner">Мгновенный баннер перевода</string>

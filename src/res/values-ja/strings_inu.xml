@@ -1464,8 +1464,6 @@
     <string name="InuAiModelsLoading">モデルを読み込み中…</string>
     <string name="InuAiModelEnterManually">モデルを手動で入力</string>
     <string name="InuAiTranscribeFetchModelsFailed">モデルを取得できませんでした: %1$s</string>
-    <string name="InuGhostAutoOffline">自動的にオフラインにする</string>
-    <string name="InuGhostAutoOfflineInfo">メッセージやリアクションの送信後、しばらくしてオフラインステータスを再送します。</string>
     <string name="InuViewOnceShowNormal">1回限りの表示で制限せず、通常の写真として表示する</string>
     <string name="InuAutoSaveOneTime">使い捨てメディアを自動保存</string>
     <string name="InuDisableContactsPermissionNag">連絡先のアクセス許可要求を非表示</string>

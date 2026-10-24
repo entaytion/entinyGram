@@ -1618,8 +1618,6 @@
     <string name="InuGhostPresenceModeHidden">Always hidden</string>
     <string name="InuGhostPresenceModeDelayed">Go offline shortly after coming online</string>
 
-    <string name="InuGhostAutoOffline">Automatically go offline</string>
-    <string name="InuGhostAutoOfflineInfo">Re-sends offline status shortly after you send messages or reactions.</string>
     <string name="InuGhostEnabled">Ghost Mode enabled</string>
     <string name="InuGhostDisabled">Ghost Mode disabled</string>
     <string name="InuGhostScope">Apply to</string>

@@ -43,13 +43,14 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 .setChecked(GhostHelper.isGhostActive())
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostModeInfo)))
+        val masterOn = GhostHelper.isGhostActive()
+        ghostGroup.enabled = masterOn
+        scopeGroup.enabled = masterOn
         ghostGroup.addTo(items) {
-            GhostHelper.syncPresence(currentAccount)
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
         }
         scopeGroup.addTo(items) { listView?.adapter?.update(true) }
-        val masterOn = GhostHelper.isGhostActive()
         items.add(
             UItem.asButton(
                 BUTTON_PRESENCE_MODE,
@@ -57,7 +58,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 presenceModeLabel(),
             ).setEnabled(masterOn)
         )
-        items.add(mkTwoLineCheckItem(TOGGLE_AUTO_OFFLINE, R.string.InuGhostAutoOffline, R.string.InuGhostAutoOfflineInfo, InuConfig.GHOST_AUTO_OFFLINE.value).setEnabled(masterOn))
         items.add(mkTwoLineCheckItem(TOGGLE_HIDE_APP_BAR_ICON, R.string.InuGhostHideAppBarIcon, R.string.InuGhostHideAppBarIconInfo, InuConfig.GHOST_HIDE_APP_BAR_ICON.value))
         items.add(mkTwoLineCheckItem(TOGGLE_LAUNCHER_SHORTCUT, R.string.InuGhostModeLauncherShortcut, R.string.InuGhostModeLauncherShortcutInfo, InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.value))
         items.add(mkSubPageButton(BUTTON_MANAGE_OVERRIDES, LocaleController.getString(R.string.InuGhostOverrides)))
@@ -104,11 +104,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
                 listView?.adapter?.update(true)
             }
-            TOGGLE_AUTO_OFFLINE -> {
-                if (!GhostHelper.isGhostActive()) return
-                val new = InuConfig.GHOST_AUTO_OFFLINE.toggle()
-                setCellChecked(view, new)
-            }
             BUTTON_MANAGE_OVERRIDES -> presentFragment(GhostChatOverridesSettingsActivity())
             TOGGLE_READ_ON_SEND -> {
                 val new = InuConfig.GHOST_READ_ON_SEND.toggle()
@@ -142,7 +137,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_STORY_READ = InuUtils.generateId()
         private val TOGGLE_HIDE_TYPING = InuUtils.generateId()
         private val BUTTON_PRESENCE_MODE = InuUtils.generateId()
-        private val TOGGLE_AUTO_OFFLINE = InuUtils.generateId()
         private val TOGGLE_HIDE_APP_BAR_ICON = InuUtils.generateId()
         private val TOGGLE_LAUNCHER_SHORTCUT = InuUtils.generateId()
         private val BUTTON_MANAGE_OVERRIDES = InuUtils.generateId()
@@ -163,7 +157,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-hide-story-read", R.string.InuGhostHideStoryRead, TOGGLE_HIDE_STORY_READ),
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
-                SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostAutoOffline, TOGGLE_AUTO_OFFLINE),
+                SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostPresenceModeDelayed, BUTTON_PRESENCE_MODE),
                 SearchRegistry.Entry("ghost-hide-app-bar-icon", R.string.InuGhostHideAppBarIcon, TOGGLE_HIDE_APP_BAR_ICON),
                 SearchRegistry.Entry("ghost-launcher-shortcut", R.string.InuGhostModeLauncherShortcut, TOGGLE_LAUNCHER_SHORTCUT),
                 SearchRegistry.Entry("ghost-chat-overrides", R.string.InuGhostOverrides, BUTTON_MANAGE_OVERRIDES),

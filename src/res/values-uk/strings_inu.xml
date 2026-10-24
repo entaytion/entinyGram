@@ -1728,8 +1728,6 @@
     <string name="InuHideChatAvatarInfo">Прибирає аватарку із шапки чату, залишається меню з трьома крапками. Профіль відкривається по тапу на назву.</string>
     <string name="InuAiInsertQuoteInfo">Коли ви натискаєте «Використати» в AI-редакторі, результат замінює чернетку як цитата. Якщо вимкнено, він замінює чернетку звичайним текстом.</string>
     <string name="InuAiOnlyAnswerInfo">Для моделей із міркуванням: ховає хід думок і залишає лише фінальну відповідь. Якщо вимкнено, міркування показується над відповіддю після бульбашки думок.</string>
-    <string name="InuGhostAutoOffline">Автоматично переходити в офлайн</string>
-    <string name="InuGhostAutoOfflineInfo">Повторно надсилає статус «не в мережі» невдовзі після ваших повідомлень чи реакцій.</string>
     <string name="InuViewOnceShowNormal">Показувати як звичайне фото замість відкриття через одноразовий перегляд</string>
     <string name="InuAutoSaveOneTime">Автозбереження одноразового медіа</string>
     <string name="InuSmallGifs">Маленькі GIF</string>

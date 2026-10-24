@@ -1427,8 +1427,6 @@
     <string name="InuGhostPresenceModeHidden">مخفية دائماً</string>
     <string name="InuGhostPresenceModeDelayed">قطع الاتصال بعد وقت قصير من الاتصال</string>
 
-    <string name="InuGhostAutoOffline">قطع الاتصال تلقائياً</string>
-    <string name="InuGhostAutoOfflineInfo">يعيد إرسال حالة عدم الاتصال بعد وقت قصير من إرسال الرسائل أو التفاعلات.</string>
     <string name="InuGhostEnabled">تم تفعيل وضع الشبح</string>
     <string name="InuGhostDisabled">تم تعطيل وضع الشبح</string>
     <string name="InuGhostScope">التطبيق على</string>

@@ -1632,8 +1632,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuGhostPresenceModeHidden">Siempre oculto</string>
     <string name="InuGhostPresenceModeDelayed">Pasar a desconectado poco después de conectarse</string>
 
-    <string name="InuGhostAutoOffline">Pasar a fuera de línea automáticamente</string>
-    <string name="InuGhostAutoOfflineInfo">Reenvía el estado desconectado poco después de enviar mensajes o reacciones.</string>
     <string name="InuGhostEnabled">Modo Fantasma activado</string>
     <string name="InuGhostDisabled">Modo Fantasma desactivado</string>
     <string name="InuGhostScope">Aplicar a</string>

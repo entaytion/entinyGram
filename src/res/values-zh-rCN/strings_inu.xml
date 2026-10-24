@@ -1476,8 +1476,6 @@
     <string name="InuAiModelsLoading">正在加载模型…</string>
     <string name="InuAiModelEnterManually">手动输入模型</string>
     <string name="InuAiTranscribeFetchModelsFailed">无法获取模型：%1$s</string>
-    <string name="InuGhostAutoOffline">自动切换为离线</string>
-    <string name="InuGhostAutoOfflineInfo">在你发送消息或反应后不久，重新发送离线状态。</string>
     <string name="InuViewOnceShowNormal">显示为普通照片，而非限制在一览即焚之后</string>
     <string name="InuAutoSaveOneTime">自动保存一次性媒体</string>
     <string name="InuDisableContactsPermissionNag">隐藏联系人权限请求</string>
