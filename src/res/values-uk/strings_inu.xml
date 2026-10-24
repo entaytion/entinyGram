@@ -1722,6 +1722,8 @@
     <string name="InuCenterTitleChatsInfo">Центрує назву та підпис чату; аватарка лишається ліворуч. Працює окремо.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туди, де меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватар замість кнопки меню: натискання відкриває профіль, довге натискання — меню чату.</string>
+    <string name="InuIosChatHeaderAvatarSwap">Поміняти тап і утримання місцями</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">Аватар відкриває меню чату одним натисканням, а профіль — довгим.</string>
     <string name="InuIosChatHeaderAvatarStatic">Не центрувати аватарку</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Аватар залишається біля кнопки «Назад», по центру лише пілюля із заголовком.</string>
     <string name="InuHideChatAvatar">Сховати аватарку</string>

@@ -1424,6 +1424,8 @@
     <string name="InuCenterTitleChatsInfo">Sohbet başlığını ve alt başlığı ortalar; profil resmi solda kalır. Tek başına çalışır.</string>
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Avatarı menü yerine koy: dokununca profil, uzun basınca sohbet menüsü.</string>
+    <string name="InuIosChatHeaderAvatarSwap">Dokunma ile uzun basmayı değiştir</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">Avatar dokunuşta sohbet menüsünü, uzun basışta profili açar.</string>
     <string name="InuRecentChats">Son sohbetler</string>
     <string name="InuClearRecentChats">Son sohbetleri temizle</string>
     <string name="InuClearRecentChatsAlert">Bu, son açılan sohbetlerin listesini temizler. Herhangi bir sohbet veya mesaj silinmez.</string>

@@ -1394,6 +1394,8 @@
     <string name="InuChatHeaderNoPillInfo">Show the title and subtitle over the wallpaper without the pill.</string>
     <string name="InuIosChatHeaderAvatarSlot">Move avatar to the menu button</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Put the avatar in the menu slot: tap for the profile, long-press for the chat menu.</string>
+    <string name="InuIosChatHeaderAvatarSwap">Swap tap and long-press</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">The avatar button opens the chat menu on tap and the profile on long-press.</string>
     <string name="InuIosChatHeaderAvatarStatic">Do not center the avatar</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Keep the avatar next to the back button; only the title pill is centered.</string>
     <string name="InuHideChatAvatar">Hide avatar</string>

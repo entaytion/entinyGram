@@ -1594,6 +1594,8 @@
     <string name="InuCenterTitleChatsInfo">Центрирует название и подпись чата; аватар остаётся слева. Работает самостоятельно.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватар вместо кнопки меню: нажатие открывает профиль, долгое нажатие — меню чата.</string>
+    <string name="InuIosChatHeaderAvatarSwap">Поменять тап и удержание местами</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">Аватар открывает меню чата по нажатию, а профиль по долгому нажатию.</string>
     <string name="InuRecentChats">Недавние чаты</string>
     <string name="InuClearRecentChats">Очистить недавние чаты</string>
     <string name="InuClearRecentChatsAlert">Это очистит список недавно открытых чатов. Никакие чаты или сообщения не будут удалены.</string>

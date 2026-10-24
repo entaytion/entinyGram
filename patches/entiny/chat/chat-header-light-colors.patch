@@ -4,10 +4,10 @@ Date: Mon, 28 Sep 2026 00:39:21 +0300
 Subject: [*] readable chat header colors on light wallpapers
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 40 +++++++------------
- .../java/org/telegram/ui/ChatActivity.java    | 31 ++++++++------
- .../ui/Components/ChatAvatarContainer.java    | 30 +++++++-------
- 3 files changed, 50 insertions(+), 51 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 40 +++++--------
+ .../java/org/telegram/ui/ChatActivity.java    | 45 +++++++-------
+ .../ui/Components/ChatAvatarContainer.java    | 60 ++++++++++++-------
+ 3 files changed, 76 insertions(+), 69 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -78,7 +78,29 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17706,6 +17706,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -4456,19 +4456,9 @@ public class ChatActivity extends BaseFragment implements
+                         }
+                         return;
+                     }
+-                    // entiny: mirror ChatAvatarContainer's own avatar click -- a linked community takes over the tap and opens CommunitySheet instead.
+-                    if (!avatarContainer.onAvatarClick()) {
+-                        avatarContainer.openProfile(true);
+-                    }
+-                });
+-                headerItem.setOnLongClickListener(v -> {
+-                    if (!avatarContainer.inu_isIosMenuSlotAvatar()) {
+-                        return false;
+-                    }
+-                    inu_headerItem.setShowSubmenuByMove(false);
+-                    inu_headerItem.toggleSubMenu();
+-                    return true;
++                    avatarContainer.inu_onAvatarTap();
+                 });
++                headerItem.setOnLongClickListener(v -> avatarContainer.inu_onAvatarHold());
+                 inu_updateMenuSlotAvatar();
+             }
+ 
+@@ -17706,6 +17696,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -88,7 +110,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44125,22 +44128,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -44125,22 +44118,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }
@@ -131,7 +153,26 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -839,16 +839,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -270,16 +270,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             if (chat != null && chat.linked_community_id != 0) {
+                 ScaleStateListAnimator.apply(avatarImageView, .05f, 1.2f);
+             }
+-            avatarImageView.setOnClickListener(v -> {
+-                if (!onAvatarClick()) {
+-                    openProfile(true);
+-                }
+-            });
++            avatarImageView.setOnClickListener(v -> inu_onAvatarTap());
+             // entiny: avatarImageView is drawn on top of the action bar's menu slot when it takes
+             // that slot over (see onLayout), so it - not headerItem - is what actually receives
+             // touches there. headerItem's own long-click listener for this can never fire without
+             // this forwarding it.
+-            avatarImageView.setOnLongClickListener(v -> inu_isIosMenuSlotAvatar() && onAvatarLongClick());
++            avatarImageView.setOnLongClickListener(v -> inu_onAvatarHold());
+         }
+ 
+         boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
+@@ -839,16 +835,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      // entiny: pill width = max(title, subtitle) measured width + each view's own horizontal padding, not SimpleTextView#getTextWidth (stale after a post-measure setText).
@@ -148,7 +189,7 @@ index 0000000..0000000 100644
          float width = 0;
          if (titleTextView != null) {
              width = Math.max(width, titleTextView.getExactWidthIncludeDrawables()
-@@ -864,7 +855,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -864,7 +851,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              width = Math.max(width, animatedSubtitleTextView.getDrawable().getAnimateToWidth()
                      + animatedSubtitleTextView.getPaddingLeft() + animatedSubtitleTextView.getPaddingRight());
          }
@@ -156,7 +197,7 @@ index 0000000..0000000 100644
          return width;
      }
  
-@@ -968,7 +958,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -968,7 +954,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      // entiny: Saved Messages centers like any other chat header now; only non-chat headers (no dialog yet, reply-comments, Replies pseudo-user) stay excluded.
@@ -165,7 +206,36 @@ index 0000000..0000000 100644
          return parentFragment != null
                  && !parentFragment.isReplyChatComment()
                  && parentFragment.getDialogId() != 0
-@@ -1145,7 +1135,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -996,6 +982,28 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarInMenuSlot() && hasVisibleAvatar();
+     }
+ 
++    // entiny: tap/hold of the menu-slot avatar, swappable via InuUtils.chatAvatarSwapTapAndHold
++    public void inu_onAvatarTap() {
++        if (inu_isIosMenuSlotAvatar() && desu.inugram.helpers.InuUtils.chatAvatarSwapTapAndHold()) {
++            onAvatarLongClick();
++        } else if (!onAvatarClick()) {
++            openProfile(true);
++        }
++    }
++
++    public boolean inu_onAvatarHold() {
++        if (!inu_isIosMenuSlotAvatar()) {
++            return false;
++        }
++        if (desu.inugram.helpers.InuUtils.chatAvatarSwapTapAndHold()) {
++            if (!onAvatarClick()) {
++                openProfile(true);
++            }
++            return true;
++        }
++        return onAvatarLongClick();
++    }
++
+     // entiny: avatar stays at its non-centered (post-back-button) position while title/subtitle center; action bar reserves its room instead.
+     public boolean inu_isStaticAvatar() {
+         return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarStatic() && hasVisibleAvatar();
+@@ -1145,7 +1153,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      public void setRightAvatarPadding(int value) {
          rightAvatarPadding = value;
@@ -173,7 +243,7 @@ index 0000000..0000000 100644
      }
  
      public void setCommunityItemVisible(boolean visible) {
-@@ -2023,10 +2012,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2023,10 +2030,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private int getThemedColor(int key) {
@@ -199,7 +269,7 @@ index 0000000..0000000 100644
          if (currentTypingDrawable != null) {
              currentTypingDrawable.setColor(getThemedColor(Theme.key_chat_status));
          }
-@@ -2055,7 +2058,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2055,7 +2076,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private void checkActionBar(boolean animated) {

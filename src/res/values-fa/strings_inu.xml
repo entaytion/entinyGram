@@ -1229,6 +1229,8 @@
     <string name="InuChatHeaderNoPillInfo">عنوان و زیرعنوان را بدون قرص روی تصویر زمینه نشان بده.</string>
     <string name="InuIosChatHeaderAvatarSlot">انتقال آواتار به دکمه منو</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">آواتار را در جایگاه منو بگذار: ضربه برای نمایه، نگه داشتن برای منوی گفتگو.</string>
+    <string name="InuIosChatHeaderAvatarSwap">جابه‌جایی ضربه و نگه‌داشتن</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">آواتار با یک ضربه منوی گفتگو و با نگه‌داشتن پروفایل را باز می‌کند.</string>
     <string name="InuIosChatHeaderAvatarStatic">وسط‌چین نکردن آواتار</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">آواتار را کنار دکمه بازگشت نگه دار؛ فقط قرص عنوان وسط‌چین می‌شود.</string>
     <string name="InuHideChatAvatar">پنهان کردن آواتار</string>

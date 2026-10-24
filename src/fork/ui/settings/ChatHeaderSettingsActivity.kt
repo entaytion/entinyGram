@@ -62,7 +62,17 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                         InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value,
                     )
                 )
-                if (!InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value) {
+                if (InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value) {
+                    items.add(
+                        mkIconCheckItem(
+                            TOGGLE_IOS_CHAT_HEADER_AVATAR_SWAP,
+                            R.drawable.inu_tabler_dots_vertical,
+                            R.string.InuIosChatHeaderAvatarSwap,
+                            R.string.InuIosChatHeaderAvatarSwapInfo,
+                            InuConfig.IOS_CHAT_HEADER_AVATAR_SWAP.value,
+                        )
+                    )
+                } else {
                     items.add(
                         mkIconCheckItem(
                             TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC,
@@ -175,6 +185,11 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 refreshAll()
             }
 
+            TOGGLE_IOS_CHAT_HEADER_AVATAR_SWAP -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.IOS_CHAT_HEADER_AVATAR_SWAP.toggle()
+                refreshAll()
+            }
+
             TOGGLE_CENTER_TITLE_RIGHT_AVATAR -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.CENTER_TITLE_RIGHT_AVATAR.toggle()
                 refreshAll()
@@ -219,6 +234,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_CHAT_AVATAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT = InuUtils.generateId()
+        private val TOGGLE_IOS_CHAT_HEADER_AVATAR_SWAP = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC = InuUtils.generateId()
         private val TOGGLE_CHAT_HEADER_NO_PILL = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
@@ -239,6 +255,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
                 SearchRegistry.Entry("ios-chat-header-avatar-slot", R.string.InuIosChatHeaderAvatarSlot, TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT),
+                SearchRegistry.Entry("ios-chat-header-avatar-swap", R.string.InuIosChatHeaderAvatarSwap, TOGGLE_IOS_CHAT_HEADER_AVATAR_SWAP),
                 SearchRegistry.Entry("ios-chat-header-avatar-static", R.string.InuIosChatHeaderAvatarStatic, TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC),
                 SearchRegistry.Entry("chat-header-no-pill", R.string.InuChatHeaderNoPill, TOGGLE_CHAT_HEADER_NO_PILL),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),

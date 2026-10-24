@@ -112,7 +112,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **icon packs**: Stock, Solar, VKUI and Phosphor
 - 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram) and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
   - compact bottom navigation bar
-  - compact chat header pill with adjustable avatar placement
+  - compact chat header pill with adjustable avatar placement, optionally in the menu button slot with tap and long-press swappable
   - option to hide the chat avatar and keep the three-dot menu
   - iOS-style input bar with optional compact mode
 - 📡 **action button style**: Accent, Neutral or White - *ported from [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*

@@ -1241,6 +1241,8 @@
     <string name="InuChatHeaderNoPillInfo">إظهار العنوان والعنوان الفرعي فوق الخلفية بدون الكبسولة.</string>
     <string name="InuIosChatHeaderAvatarSlot">نقل الصورة الرمزية إلى زر القائمة</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">وضع الصورة الرمزية في خانة القائمة: انقر لفتح الملف الشخصي، واضغط مطولاً لقائمة المحادثة.</string>
+    <string name="InuIosChatHeaderAvatarSwap">تبديل النقر والضغط المطوّل</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">تفتح الصورة الرمزية قائمة الدردشة بنقرة والملف الشخصي بضغطة مطوّلة.</string>
     <string name="InuIosChatHeaderAvatarStatic">عدم توسيط الصورة الرمزية</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">إبقاء الصورة الرمزية بجانب زر الرجوع؛ تُوسَّط كبسولة العنوان فقط.</string>
     <string name="InuHideChatAvatar">إخفاء الصورة الرمزية</string>

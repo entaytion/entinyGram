@@ -1408,6 +1408,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuChatHeaderNoPillInfo">Muestra el título y subtítulo sobre el fondo de pantalla sin la píldora.</string>
     <string name="InuIosChatHeaderAvatarSlot">Mover avatar al botón de menú</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Coloca el avatar en el hueco del menú: toca para el perfil, mantén para el menú del chat.</string>
+    <string name="InuIosChatHeaderAvatarSwap">Intercambiar toque y pulsación larga</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">El avatar abre el menú del chat con un toque y el perfil con una pulsación larga.</string>
     <string name="InuIosChatHeaderAvatarStatic">No centrar el avatar</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Mantiene el avatar junto al botón de volver; solo la píldora del título se centra.</string>
     <string name="InuHideChatAvatar">Ocultar avatar</string>

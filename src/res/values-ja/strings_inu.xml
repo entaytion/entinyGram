@@ -1412,6 +1412,8 @@
     <string name="InuCenterTitleChatsInfo">チャットのタイトルとサブタイトルを中央に、アバターは左のまま表示します。単独で動作します。</string>
     <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">アバターをメニュー位置に配置：タップでプロフィール、長押しでチャットメニュー。</string>
+    <string name="InuIosChatHeaderAvatarSwap">タップと長押しを入れ替える</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">アバターをタップするとチャットメニュー、長押しするとプロフィールを開きます。</string>
     <string name="InuRecentChats">最近のチャット</string>
     <string name="InuClearRecentChats">最近のチャットをクリア</string>
     <string name="InuClearRecentChatsAlert">最近開いたチャットのリストがクリアされます。チャットやメッセージが削除されることはありません。</string>

@@ -117,6 +117,10 @@ public object InuUtils {
         !hideChatAvatar() && compactChatPill() && desu.inugram.InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value
 
     @JvmStatic
+    fun chatAvatarSwapTapAndHold(): Boolean =
+        chatAvatarInMenuSlot() && desu.inugram.InuConfig.IOS_CHAT_HEADER_AVATAR_SWAP.value
+
+    @JvmStatic
     fun chatAvatarStatic(): Boolean =
         !hideChatAvatar() && compactChatPill() &&
             !chatAvatarInMenuSlot() &&

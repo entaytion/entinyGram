@@ -1409,6 +1409,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuChatHeaderNoPillInfo">Mostra titolo e sottotitolo sopra lo sfondo senza la pillola.</string>
     <string name="InuIosChatHeaderAvatarSlot">Sposta l\'avatar sul pulsante del menu</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Metti l\'avatar nello slot del menu: tocca per il profilo, tieni premuto per il menu della chat.</string>
+    <string name="InuIosChatHeaderAvatarSwap">Scambia tocco e pressione prolungata</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">L\'avatar apre il menu della chat con un tocco e il profilo con una pressione prolungata.</string>
     <string name="InuIosChatHeaderAvatarStatic">Non centrare l\'avatar</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Mantiene l\'avatar accanto al pulsante indietro; solo la pillola del titolo viene centrata.</string>
     <string name="InuHideChatAvatar">Nascondi l\'avatar</string>

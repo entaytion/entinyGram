@@ -1424,6 +1424,8 @@
     <string name="InuCenterTitleChatsInfo">居中聊天标题和副标题；头像保持在左侧。可单独启用。</string>
     <string name="InuIosChatHeaderAvatarSlot">将头像移到菜单按钮处</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">头像放在菜单位置：点按打开资料，长按打开聊天菜单。</string>
+    <string name="InuIosChatHeaderAvatarSwap">互换点按与长按</string>
+    <string name="InuIosChatHeaderAvatarSwapInfo">点按头像打开聊天菜单，长按打开个人资料。</string>
     <string name="InuRecentChats">最近聊天</string>
     <string name="InuClearRecentChats">清除最近聊天</string>
     <string name="InuClearRecentChatsAlert">这将清除最近打开的聊天列表。不会删除任何聊天或消息。</string>
