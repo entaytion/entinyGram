@@ -576,3 +576,4 @@ entiny/tabs/start-tab.patch
 entiny/tabs/tab-counter-default.patch
 bugfix/round-recorder-ae-lock-toggle.patch
 entiny/misc/plugin-dev-provider.patch
+entiny/media/animated-cache-retry-loop.patch

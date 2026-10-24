@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 25 Oct 2026 00:47:20 +0300
+Subject: [*] Stop the animated cache retry loop when the cache file cannot be created
+
+---
+ .../java/org/telegram/messenger/utils/BitmapsCache.java  | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java b/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
+@@ -36,6 +36,7 @@ public class BitmapsCache {
+     public static final int COMPRESS_QUALITY_DEFAULT = 60;
+     private final Cacheable source;
+     private static boolean mkdir;
++    private boolean createFailed;
+     String fileName;
+     int w;
+     int h;
+@@ -227,6 +228,10 @@ public class BitmapsCache {
+                 }
+             }
+ 
++            File cacheDir = file.getParentFile();
++            if (cacheDir != null && !cacheDir.exists()) {
++                cacheDir.mkdirs();
++            }
+             RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+ 
+             if (sharedTools == null) {
+@@ -372,8 +377,10 @@ public class BitmapsCache {
+             fileExist = true;
+             checked = true;
+         } catch (FileNotFoundException e) {
++            createFailed = true;
+             e.printStackTrace();
+         } catch (IOException e) {
++            createFailed = true;
+             e.printStackTrace();
+         } finally {
+             source.releaseForGenerateCache();
+@@ -572,7 +579,7 @@ public class BitmapsCache {
+     }
+ 
+     public boolean needGenCache() {
+-        return !cacheCreated || !fileExist;
++        return !createFailed && (!cacheCreated || !fileExist);
+     }
+ 
+     public void recycle() {
