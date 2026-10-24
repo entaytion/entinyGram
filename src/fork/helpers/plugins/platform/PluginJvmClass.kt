@@ -2,6 +2,7 @@ package desu.inugram.helpers.plugins.platform
 
 import androidx.annotation.Keep
 import dalvik.system.InMemoryDexClassLoader
+import desu.inugram.helpers.plugins.PluginLog
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -73,9 +74,11 @@ internal object PluginJvmClass {
                     val result = callback?.invoke(owner, self ?: owner, args)
                     if (returnType == Void.TYPE) null else convert(result, returnType, "result")
                 }
-            } catch (e: IllegalStateException) {
-                // entiny: void callback racing plugin unload must not crash the host
-                if (returnType == Void.TYPE && e.message?.endsWith("plugin has unloaded") == true) null else throw e
+            } catch (e: RuntimeException) {
+                if (returnType != Void.TYPE) throw e
+                // entiny: a void callback (onClick and the like) has no caller to report to, so a plugin error must not crash the host
+                if (e.message?.endsWith("plugin has unloaded") != true) PluginLog.HOST.e("defineClass", "${owner.name}: void callback failed", e)
+                null
             }
         }
 
