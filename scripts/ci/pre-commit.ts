@@ -1,4 +1,5 @@
-﻿import fs from 'node:fs/promises'
+﻿import { spawnSync } from 'node:child_process'
+import fs from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { parallelMap } from '@fuman/utils'
 import { chalk } from 'zx'
@@ -9,6 +10,12 @@ import {
   getAppliedPatchNames,
   parsePatchName,
 } from '../lib.js'
+
+const resCheck = spawnSync('bun', ['scripts/entinychecker.ts', '--res-only'], { stdio: 'inherit', shell: true })
+if (resCheck.status !== 0) {
+  console.error(chalk.red('resource check failed: fix the strings above (aapt2 would reject them)'))
+  process.exit(1)
+}
 
 if (process.env.SKIP_PATCH_CHECK) {
   process.exit(0)

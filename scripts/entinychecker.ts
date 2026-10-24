@@ -82,7 +82,72 @@ async function findDeadStrings(): Promise<{ dead: string[], total: number }> {
   return { dead, total: declared.size }
 }
 
+const RES_VALUE_RE = /<(string|item)\b([^>]*)>([\s\S]*?)<\/\1>/g
+const FORMAT_RE = /%(\d+\$)?[-#+ 0,(]*\d*(?:\.\d+)?([a-zA-Z%])/g
+
+function checkResValue(raw: string): string[] {
+  const errs: string[] = []
+  const body = raw.replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, '').replace(/<\/?[A-Za-z][^>]*>/g, '')
+  const trimmed = body.trim()
+  const quoted = trimmed.length >= 2 && trimmed.startsWith('"') && trimmed.endsWith('"')
+  const inner = quoted ? trimmed.slice(1, -1) : body
+  if (/(?<!\\)&(?!(amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/.test(raw)) errs.push('bare &')
+  if (!quoted && /(?<!\\)'/.test(inner)) errs.push("unescaped '")
+  if ((inner.match(/(?<!\\)"/g) ?? []).length % 2 === 1) errs.push('unbalanced "')
+  if (/\\u(?![0-9a-fA-F]{4})/.test(body)) errs.push('malformed \\u escape')
+  let plain = 0
+  let positional = 0
+  for (const m of body.matchAll(FORMAT_RE)) {
+    if (m[2] === '%' || m[2] === 'n') continue
+    if (m[1]) positional++
+    else plain++
+  }
+  if (plain > 1) errs.push('multiple non-positional format args')
+  if (plain > 0 && positional > 0) errs.push('mixed positional and non-positional format args')
+  return errs
+}
+
+async function checkResourceFiles(): Promise<number> {
+  const files: string[] = []
+  await walk(join(rootDir, 'src/res'), files, ['.xml'])
+  let problems = 0
+  for (const file of files) {
+    const rel = relative(rootDir, file).replaceAll('\\', '/')
+    if (!/\/values[^/]*\/[^/]+\.xml$/.test(rel)) continue
+    const content = await fs.readFile(file, 'utf8')
+    const seen = new Map<string, number>()
+    for (const m of content.matchAll(RES_VALUE_RE)) {
+      const line = content.slice(0, m.index).split('\n').length
+      const name = m[2].match(/\bname="([^"]+)"/)?.[1]
+      if (m[1] === 'string' && name) {
+        if (seen.has(name)) {
+          console.log(`  ${rel}:${line}  duplicate "${name}" (first at line ${seen.get(name)})`)
+          problems++
+        }
+        seen.set(name, line)
+      }
+      if (m[1] === 'item' && !/quantity=/.test(m[2])) continue
+      for (const err of checkResValue(m[3])) {
+        console.log(`  ${rel}:${line}  ${name ?? '?'}: ${err}`)
+        problems++
+      }
+    }
+    const opens = (content.match(/<string\b/g) ?? []).length
+    const closes = (content.match(/<\/string>/g) ?? []).length
+    if (opens !== closes) {
+      console.log(`  ${rel}  unbalanced <string> tags (${opens} open, ${closes} close)`)
+      problems++
+    }
+  }
+  return problems
+}
+
 async function main() {
+  if (process.argv.includes('--res-only')) {
+    process.exitCode = (await checkResourceFiles()) === 0 ? 0 : 1
+    return
+  }
+
   const files: string[] = []
   for (const dir of ['src/fork', 'src/fork-app', 'src/kotlin']) {
     const full = join(rootDir, dir)
@@ -131,6 +196,14 @@ async function main() {
         console.log(`    ${hit.kind}  ${hit.file}:${hit.line}`)
       }
     }
+    process.exitCode = 1
+  }
+
+  const resProblems = await checkResourceFiles()
+  if (resProblems === 0) {
+    success('All values/*.xml resources are aapt2-safe')
+  } else {
+    warn(`Found ${resProblems} resource problem(s) that can break aapt2 (see above)`)
     process.exitCode = 1
   }
 
