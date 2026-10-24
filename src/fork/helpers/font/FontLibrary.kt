@@ -73,6 +73,7 @@ object FontLibrary {
                 if (pick.variable && pick.wghtMin != pick.wghtMax) {
                     val w = targetWeight.coerceIn(pick.wghtMin, pick.wghtMax)
                     builder.setFontVariationSettings("'wght' $w")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) builder.setWeight(w)
                 }
                 builder.build()
             } catch (e: Throwable) {
@@ -112,6 +113,7 @@ object FontLibrary {
             return when {
                 targetWeight in 400..500 ->
                     sorted.firstOrNull { it.weight in targetWeight..500 }
+                        ?: sorted.firstOrNull { targetWeight == 500 && it.weight in 501..700 }
                         ?: sorted.lastOrNull { it.weight < targetWeight }
                         ?: sorted.firstOrNull { it.weight > 500 }
 
