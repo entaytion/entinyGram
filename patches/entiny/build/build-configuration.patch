@@ -8,7 +8,7 @@ Subject: [*] build configuration: gradle 8 / AGP 8 like inugram, plugin build fi
  TMessagesProj/build.gradle                    |  63 +++++++---
  TMessagesProj/jni/CMakeLists.txt              |   3 +
  TMessagesProj/jni/exports.map                 |   1 +
- TMessagesProj/proguard-rules.pro              |  14 ++-
+ TMessagesProj/proguard-rules.pro              |  17 ++-
  TMessagesProj/src/main/AndroidManifest.xml    |   6 -
  .../java/org/telegram/ui/LaunchActivity.java  |  21 ----
  .../org/telegram/ui/PaymentFormActivity.java  |  28 +++--
@@ -16,7 +16,7 @@ Subject: [*] build configuration: gradle 8 / AGP 8 like inugram, plugin build fi
  build.gradle                                  |  49 +++++++-
  gradle.properties                             |   2 +-
  settings.gradle                               |   6 +-
- 12 files changed, 191 insertions(+), 118 deletions(-)
+ 12 files changed, 194 insertions(+), 118 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
 index 0000000..0000000 100644
@@ -259,7 +259,7 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -63,9 +66,16 @@
+@@ -63,9 +66,19 @@
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**
@@ -273,6 +273,9 @@ index 0000000..0000000 100644
  -keep class desu.inugram.** { *; }
 +-keep class org.telegram.ui.Wallet.WalletEngine2 { *; }
 +-keep class org.telegram.ui.Wallet.WalletEngine2$** { *; }
++# entiny: plugins reach app classes by name, so keep their public members and inlined constants (TextStyleSpan.FLAG_STYLE_SPOILER)
++-keep class org.telegram.ui.** { public *; protected *; }
++-keepclassmembers class org.telegram.** { public static final <fields>; }
  -dontobfuscate
  -dontoptimize
  # /inu
