@@ -10,6 +10,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
@@ -40,9 +41,18 @@ object DialogsM3SectionsHelper {
         val d = adapter.getItem(i) as? TLRPC.Dialog ?: return -1
         return when {
             d.isFolder -> 2
-            InuConfig.DIALOGS_M3_SEPARATE_PINNED.value && d.pinned -> 1
+            InuConfig.DIALOGS_M3_SEPARATE_PINNED.value && isPinned(adapter, d) -> 1
             else -> 0
         }
+    }
+
+    // entiny: folder tabs keep pins in the filter, not in Dialog.pinned
+    private fun isPinned(adapter: DialogsAdapter, d: TLRPC.Dialog): Boolean {
+        val type = adapter.dialogsType
+        if (type != 7 && type != 8) return d.pinned
+        val account = UserConfig.selectedAccount
+        val filter = MessagesController.getInstance(account).selectedDialogFilter[type - 7] ?: return d.pinned
+        return filter.pinnedDialogs.indexOfKey(d.id) >= 0 || PinHelper.isLocallyPinned(account, 0, filter, d.id)
     }
 
     @JvmStatic
