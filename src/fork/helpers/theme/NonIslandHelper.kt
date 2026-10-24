@@ -42,7 +42,8 @@ object NonIslandHelper {
     fun chatElements(): Boolean = InuConfig.NON_ISLAND_CHAT_ELEMENTS.value
 
     @JvmStatic
-    fun chatInputRowHeight(): Int = if (chatElements()) 48 else 44
+    fun chatInputRowHeight(): Int =
+        if (chatElements() || (InuConfig.IOS_INPUT_APPEARANCE.value && !InuConfig.COMPACT_INPUT_SIZE.value)) 48 else 44
 
     @JvmStatic
     fun chatSendIcon(): Int = if (chatElements()) R.drawable.ic_send else R.drawable.send_plane_24

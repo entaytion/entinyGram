@@ -3,6 +3,7 @@ package desu.inugram.ui.settings
 import android.os.Build
 import android.view.View
 import desu.inugram.InuConfig
+import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.ActionButtonStyle
@@ -155,6 +156,9 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             softRebuild()
             showRestartBulletin()
         }
+        if (changed.any { it.id == TOGGLE_IOS_INPUT_APPEARANCE }) {
+            InuHooks.syncChatInputRowHeight()
+        }
         if (changed.any { it.id == TOGGLE_IOS_BUTTON_PLACEMENT || it.id == TOGGLE_IOS_INPUT_APPEARANCE }) {
             inputBarPreviewCell?.updateInputBarState()
         }
@@ -180,6 +184,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             TOGGLE_COMPACT_INPUT_SIZE -> {
                 val new = InuConfig.COMPACT_INPUT_SIZE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                InuHooks.syncChatInputRowHeight()
                 inputBarPreviewCell?.updateInputBarState()
             }
 
