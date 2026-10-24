@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: ixode0 <252606080+ixode0@users.noreply.github.com>
+Date: Sat, 24 Oct 2026 11:11:58 +0000
+Subject: round recorder: AE lock button ignored the setting it was toggling
+
+---
+ .../main/java/org/telegram/messenger/camera/Camera2Session.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
+@@ -579,7 +579,7 @@ public class Camera2Session {
+             if (recordingVideo) {
+                 Boolean aeLockAvailable = cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_LOCK_AVAILABLE) : null;
+                 if (aeLockAvailable == null || aeLockAvailable) {
+-                    boolean lock = aeLocked || desu.inugram.InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.getValue();
++                    boolean lock = aeLocked;
+                     captureRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, lock);
+                 }
+             }
