@@ -11,9 +11,22 @@ import zipfile
 from pathlib import Path
 
 
+# Windows consoles default to a legacy code page; MAT HTML is UTF-8.
+for stream in (sys.stdout, sys.stderr):
+    if hasattr(stream, "reconfigure"):
+        stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 REPORTS = {
     "Leak_Suspects": "org.eclipse.mat.api:suspects",
     "Top_Consumers": "org.eclipse.mat.api:top_components",
+}
+
+# MAT names the archive after the report title: newer builds write "_Top_Components.zip",
+# older ones "_Top_Consumers.zip".
+REPORT_ALIASES = {
+    "Leak_Suspects": ["Leak_Suspects"],
+    "Top_Consumers": ["Top_Components", "Top_Consumers"],
 }
 
 
@@ -32,13 +45,29 @@ def mat_executable(mat: str | None) -> Path | None:
         p = Path(mat).expanduser()
         if p.suffix == ".app":
             return p / "Contents" / "MacOS" / "MemoryAnalyzer"
+        if p.is_dir():
+            for name in ("MemoryAnalyzerc.exe", "MemoryAnalyzer.exe"):
+                if (p / name).exists():
+                    return p / name
         return p
-    default = Path("/Applications/MemoryAnalyzer.app/Contents/MacOS/MemoryAnalyzer")
-    return default if default.exists() else None
+    candidates = [
+        Path("/Applications/MemoryAnalyzer.app/Contents/MacOS/MemoryAnalyzer"),
+        Path.home() / "Downloads" / "mat" / "mat" / "MemoryAnalyzerc.exe",
+        Path.home() / "mat" / "mat" / "MemoryAnalyzerc.exe",
+        Path("C:/Program Files/mat/MemoryAnalyzerc.exe"),
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return None
 
 
 def report_zip(dump: Path, suffix: str) -> Path:
-    return dump.with_name(f"{dump.stem}_{suffix}.zip")
+    paths = [dump.with_name(f"{dump.stem}_{name}.zip") for name in REPORT_ALIASES[suffix]]
+    for path in paths:
+        if path.exists():
+            return path
+    return paths[0]
 
 
 def run_mat(dump: Path, mat: Path, xmx: str) -> None:
@@ -52,6 +81,7 @@ def run_mat(dump: Path, mat: Path, xmx: str) -> None:
         *REPORTS.values(),
         "-vmargs",
         f"-Xmx{xmx}",
+        "-DhprofStrictnessWarning=true",
     ]
     subprocess.run(cmd, check=True)
 
@@ -88,6 +118,7 @@ def main() -> int:
             print("Install MAT or pass --mat /path/to/MemoryAnalyzer.app.", file=sys.stderr)
             return 3
         run_mat(dump, mat, args.xmx)
+        zips = {name: report_zip(dump, name) for name in REPORTS}
 
     missing = [str(p) for p in zips.values() if not p.exists()]
     if missing:

@@ -23,14 +23,18 @@ equinox launcher. `build_and_run.sh` handles compile + jar + registration + laun
 Java is not available inside the agent sandbox — run with the sandbox disabled.
 
 ```bash
-MAT=/Applications/MemoryAnalyzer.app \
-  scripts/heapprobe/build_and_run.sh <dump.ec.hprof> <command> [args...]
+# macOS
+MAT=/Applications/MemoryAnalyzer.app scripts/heapprobe/build_and_run.sh <dump.ec.hprof> <command> [args...]
+# Windows (Git Bash): MAT is the folder that holds MemoryAnalyzerc.exe (no Contents/Eclipse)
+MAT="$HOME/Downloads/mat/mat" bash scripts/heapprobe/build_and_run.sh <dump.ec.hprof> <command> [args...]
 ```
 
-First run compiles `HeapProbeApp.java`, jars it into `$MAT/Contents/Eclipse/plugins/`,
-and appends one line to `bundles.info` (backed up as `bundles.info.bak`). Later runs skip
-straight to launch unless the `.java` changed. A `$` in a class name must be single-quoted
-so the shell doesn't treat it as a variable: `'...LPhotoPaintView$2'`.
+The script handles both layouts: on Windows it launches `MemoryAnalyzerc.exe`, converts the
+javac classpath to native `;`-separated paths with `cygpath`, and kills strays with
+`taskkill` (macOS: `pkill`). First run compiles `HeapProbeApp.java`, jars it into
+`<mat>/plugins/`, and appends one line to `bundles.info` (backed up as `bundles.info.bak`).
+Later runs skip straight to launch unless the `.java` changed. A `$` in a class name must be
+single-quoted so the shell doesn't treat it as a variable: `'...LPhotoPaintView$2'`.
 
 Parsing a ~600 MB dump the first time takes a few minutes (MAT builds its index next to the
 dump). Subsequent runs reuse that index and start in seconds.
@@ -45,6 +49,16 @@ dump). Subsequent runs reuse that index and start in seconds.
 | `paths` | `<class> [objs=3] [paths=4]` | **strong** GC-root paths (weak/soft/phantom excluded) for the biggest instances |
 | `tally` | `<class> [kw1,kw2,...]` | one shortest strong path per instance, bucketed by first matching holder — the **root distribution** of a multiply-held cohort |
 | `observers` | `<class>` | how many instances sit in `NotificationCenter` observer lists, by event id — the add/remove-asymmetry smoking gun |
+| `inspect` | `<class>` | first 5 instances: class/superclass, GC-root type, retained size, outbound refs — the quick "what is this thing holding" pass |
+| `root` | `<0xADDR>` | GC-root type + context + inbound referers for one address from a `paths`/`tally` output — use when a path ends at something that doesn't look like a root |
+
+### `inspect` / `root` — answering "why is this specific object alive"
+
+`inspect` prints the runtime class of the instance and every outbound field, which is how you
+map a generated `Foo$12` back to its captured `this$0`/`val$...` fields. `root` takes an
+address straight from a path line (`OBJECT @ 0x...`) and explains the root type
+(`JAVA_LOCAL`, `NATIVE_STACK`, `SYSTEM_CLASS`, ...) plus who points at it. Together they turn
+"NotificationCenter holds something" into "this exact field of this exact class holds it".
 
 ### `tally` is the workhorse for multiply-held cohorts
 

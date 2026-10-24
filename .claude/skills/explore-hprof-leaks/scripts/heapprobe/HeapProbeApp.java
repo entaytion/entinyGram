@@ -43,6 +43,9 @@ import org.eclipse.mat.snapshot.model.NamedReference;
  *                                               first-strong-holder distribution
  *   observers <class>                           how many instances sit in NotificationCenter
  *                                               observer lists, grouped by eventId
+ *   inspect   <class>                           first 5 instances: class hierarchy, GC-root
+ *                                               type, retained size, outbound refs
+ *   root      <0xADDR>                          GC-root info + inbound refs for one address
  */
 public class HeapProbeApp implements IApplication {
 
@@ -54,7 +57,7 @@ public class HeapProbeApp implements IApplication {
         String[] args = (String[]) ctx.getArguments().get("application.args");
         if (args == null || args.length < 2) {
             System.out.println("usage: heapprobe <dump> <command> <args...>");
-            System.out.println("commands: counts|histogram|inbound|paths|tally|observers");
+            System.out.println("commands: counts|histogram|inbound|paths|tally|observers|inspect|root");
             return IApplication.EXIT_OK;
         }
         File dump = new File(args[0]);
@@ -75,6 +78,8 @@ public class HeapProbeApp implements IApplication {
                                       rest.length > 2 ? Integer.parseInt(rest[2]) : 4); break;
                 case "tally":     tally(rest[0], rest.length > 1 ? rest[1] : ""); break;
                 case "observers": countObservers(rest[0]); break;
+                case "inspect": inspect(rest[0]); break;
+                case "root": rootInfo(rest[0]); break;
                 default: System.out.println("unknown command: " + cmd);
             }
         } finally {
@@ -87,6 +92,47 @@ public class HeapProbeApp implements IApplication {
     public void stop() {}
 
     // ---- commands -----------------------------------------------------------
+
+    private void rootInfo(String hexAddr) throws Exception {
+        long addr = Long.parseLong(hexAddr.replace("0x", ""), 16);
+        int id = snapshot.mapAddressToId(addr);
+        IObject obj = snapshot.getObject(id);
+        System.out.println("OBJECT @ 0x" + Long.toHexString(addr) + " class=" + obj.getClazz().getName() + " isGCRoot=" + snapshot.isGCRoot(id));
+        if (snapshot.isGCRoot(id)) {
+            for (org.eclipse.mat.snapshot.model.GCRootInfo root : snapshot.getGCRootInfo(id)) {
+                System.out.println("  ROOT TYPE: " + org.eclipse.mat.snapshot.model.GCRootInfo.getTypeAsString(root.getType()));
+                System.out.println("  CONTEXT ID: " + root.getContextId() + " CONTEXT ADDR: 0x" + Long.toHexString(root.getContextAddress()));
+            }
+        }
+        System.out.println("INBOUND:");
+        for (int inId : snapshot.getInboundRefererIds(id)) {
+            IObject inObj = snapshot.getObject(inId);
+            System.out.println("  <- 0x" + Long.toHexString(snapshot.mapIdToAddress(inId)) + " " + inObj.getTechnicalName() + " isRoot=" + snapshot.isGCRoot(inId));
+        }
+    }
+
+    private void inspect(String className) throws Exception {
+        int[] ids = idsFor(className);
+        System.out.println("==== INSPECT " + className + " count=" + ids.length + " ====");
+        int limit = Math.min(ids.length, 5);
+        for (int i = 0; i < limit; i++) {
+            int id = ids[i];
+            IObject obj = snapshot.getObject(id);
+            long addr = snapshot.mapIdToAddress(id);
+            boolean isRoot = snapshot.isGCRoot(id);
+            System.out.println("INSTANCE #" + i + " @ 0x" + Long.toHexString(addr) + " isGCRoot=" + isRoot + " retained=" + snapshot.getRetainedHeapSize(id));
+            if (isRoot) {
+                for (org.eclipse.mat.snapshot.model.GCRootInfo root : snapshot.getGCRootInfo(id)) {
+                    System.out.println("  GC ROOT TYPE: " + org.eclipse.mat.snapshot.model.GCRootInfo.getTypeAsString(root.getType()));
+                }
+            }
+            IClass cls = obj.getClazz();
+            System.out.println("  class: " + cls.getName() + " super: " + (cls.getSuperClass() != null ? cls.getSuperClass().getName() : "none"));
+            for (NamedReference ref : obj.getOutboundReferences()) {
+                System.out.println("  outbound: " + ref.getName() + " -> " + (ref.getObject() != null ? ref.getObject().getTechnicalName() : "null"));
+            }
+        }
+    }
 
     private void counts(String className) throws Exception {
         int[] ids = idsFor(className);

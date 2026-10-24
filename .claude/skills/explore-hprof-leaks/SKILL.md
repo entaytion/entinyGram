@@ -9,9 +9,13 @@ Target: $ARGUMENTS
 
 ## Workflow
 
-1. Locate inputs: target `.hprof`, converted `.ec.hprof`, existing `*_Leak_Suspects.zip`, `*_Top_Consumers.zip`, MAT install path, repro notes, build/version. The file may be provided in Input above.
+1. Locate inputs: target `.hprof`, converted `.ec.hprof`, existing `*_Leak_Suspects.zip` / `*_Top_Components.zip` (older MAT: `*_Top_Consumers.zip`), MAT install path, repro notes, build/version. The file may be provided in Input above.
 2. Prefer an already converted MAT-compatible dump (`*.ec.hprof`). Android hprofs are not MAT-compatible as-is.
-3. If only Android hprof exists, convert with `~/Library/Android/sdk/platform-tools/hprof-conv my-oom.hprof my-oom.ec.hprof`. Convention: append `.ec.hprof` for Eclipse-compatible files. If input is already `.ec.hprof`, skip conversion.
+3. If only Android hprof exists, convert with the SDK's `hprof-conv` — macOS
+   `~/Library/Android/sdk/platform-tools/hprof-conv`, Windows
+   `%LOCALAPPDATA%\Android\Sdk\platform-tools\hprof-conv.exe` (Git Bash:
+   `$LOCALAPPDATA/Android/Sdk/platform-tools/hprof-conv.exe`). Convention: append `.ec.hprof`
+   for Eclipse-compatible files. If input is already `.ec.hprof`, skip conversion.
 4. Run `scripts/extract_mat_reports.py <dump>` first. It reuses existing MAT zip reports, or can run MAT if available. This gives the class histogram + top consumers, which is the fastest first look.
 5. Read stripped report text: system overview, top consumers, class histogram, thread overview, leak suspects.
 6. If MAT says "No leak suspect", keep going. Abnormal instance counts and retained cohorts often matter more than MAT's suspect verdict.
@@ -32,16 +36,24 @@ python3 /path/to/explore-hprof-leaks/scripts/extract_mat_reports.py private/my-o
 If reports are absent and MAT is installed:
 
 ```bash
-python3 /path/to/explore-hprof-leaks/scripts/extract_mat_reports.py private/my-oom.ec.hprof --mat /Applications/MemoryAnalyzer.app --xmx 8g
+# macOS
+python3 /path/to/explore-hprof-leaks/scripts/extract_mat_reports.py dump.ec.hprof --mat /Applications/MemoryAnalyzer.app --xmx 8g
+# Windows (Git Bash) — point --mat at the folder holding MemoryAnalyzerc.exe
+python /path/to/explore-hprof-leaks/scripts/extract_mat_reports.py dump.ec.hprof --mat "$HOME/Downloads/mat/mat" --xmx 6g
 ```
 
-MAT macOS notes:
-- Android hprofs must be converted before MAT: `~/Library/Android/sdk/platform-tools/hprof-conv my-oom.hprof my-oom.ec.hprof`.
-- `.ec.hprof` means Eclipse-compatible; do not reconvert it.
-- Headless parser is usually `/Applications/MemoryAnalyzer.app/Contents/Eclipse/ParseHeapDump.sh`.
-- The app's default `MemoryAnalyzer.ini` may have `-Xmx1024m`; this is too small for ~700 MB dumps.
-- Prefer passing larger heap via the script over editing global app files.
-- Reports are usually named `<dump-base>_Leak_Suspects.zip` and `<dump-base>_Top_Consumers.zip`.
+MAT notes:
+- Android hprofs must be converted before MAT (`hprof-conv`, see step 3). `.ec.hprof` means
+  Eclipse-compatible; do not reconvert it.
+- Headless parser: macOS `/Applications/MemoryAnalyzer.app/Contents/Eclipse/ParseHeapDump.sh`;
+  Windows `<mat>\ParseHeapDump.bat` or `MemoryAnalyzerc.exe` directly. The script picks the
+  launcher itself, Windows included.
+- The app's default `MemoryAnalyzer.ini` may have `-Xmx1024m`; this is too small for large
+  dumps (300 MB+ needs 6–8 GB).
+- On Git Bash do **not** wrap the `.bat` in `cmd //c '"..."'` — quoting breaks. Call
+  `MemoryAnalyzerc.exe` with plain args.
+- Reports are named `<dump-base>_Leak_Suspects.zip` plus `<dump-base>_Top_Components.zip`
+  (older MAT builds: `_Top_Consumers.zip`); the extractor accepts both.
 - Always run it outside the sandbox, Java is not available inside the sandbox.
 
 ## Operational gotchas (these cost real time — read before parsing)
@@ -50,8 +62,16 @@ MAT macOS notes:
   `MemoryAnalyzer` from a prior run (a probe that didn't exit, a killed parse) keeps the
   equinox `-clean` configuration lock. The next invocation then *silently blocks* — near-zero
   CPU, ~40 MB RSS, no progress, no error — instead of failing. If a parse isn't churning
-  (a real parse uses GBs of RSS and steady CPU), check `ps aux | rg MemoryAnalyzer` and
-  `kill -9` the strays before retrying. `build_and_run.sh` does this automatically.
+  (a real parse uses GBs of RSS and steady CPU), look for strays (`ps aux | rg MemoryAnalyzer`
+  on macOS, `tasklist | rg -i memoryanalyzer` on Windows) and kill them
+  (`kill -9`, or `taskkill //F //IM MemoryAnalyzerc.exe` in Git Bash) before retrying.
+  `build_and_run.sh` does this automatically.
+- **`SnapshotException: Heap dump record 0x.. size .. is not a supported record type`** at a
+  tiny offset (MAT exits code 13) — some vendor/Android dumps carry a nonstandard leading
+  record that MAT's strict parser rejects even though the rest of the file is fine. Check the
+  header/next record with a hex dump; if standard records follow, rerun MAT with
+  `-DhprofStrictnessWarning=true` in `-vmargs` (the extractor script already passes it) and
+  the dump parses fully. Only give up if parsing then fails deeper in the file.
 - **Truncated dump = unrecoverable, don't retry.** If `hprof-conv` prints
   `ERROR: read N of M bytes`, the source hprof was captured incompletely (the dump was
   interrupted mid-write). MAT's `Pass2Parser` will throw on the incomplete dump segment.
@@ -65,8 +85,11 @@ MAT macOS notes:
 
 Once the reports point at a suspect cohort, use `scripts/heapprobe/build_and_run.sh` to prove
 the retention. It's a small MAT plugin exposing `counts` / `histogram` / `inbound` / `paths`
-/ `tally` / `observers`. `tally` (first-strong-holder distribution) and `paths` (weak-excluded
-strong paths) are the ones that most often crack a case. Full docs + when to reach for each:
+/ `tally` / `observers` / `inspect` / `root`. `tally` (first-strong-holder distribution) and
+`paths` (weak-excluded strong paths) are the ones that most often crack a case; `inspect`
+dumps class hierarchy + GC-root type + outbound refs for a few instances, and `root` explains
+one address from a path. The script auto-detects the MAT layout on macOS and Windows
+(classpath separator included) — just pass `MAT=<root>`. Full docs + when to reach for each:
 `references/heapprobe.md`.
 
 **Feel free to expand `HeapProbeApp.java`** for whatever the current dump needs — a bespoke
