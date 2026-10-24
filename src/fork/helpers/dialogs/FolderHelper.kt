@@ -221,6 +221,11 @@ object FolderHelper {
         return FilterTabsView.TAB_PADDING_WIDTH
     }
 
+    // entiny: tab width is measured before the tab joins the strip, so the default tab cannot be resolved via the view yet
+    @JvmStatic
+    fun isDefaultFilterTab(filters: List<MessagesController.DialogFilter>, tabId: Int): Boolean =
+        tabId >= 0 && tabId < filters.size && filters[tabId].isDefault
+
     @JvmStatic
     fun shouldSkipDefaultTab(totalFilters: Int): Boolean {
         return InuConfig.HIDE_ALL_CHATS_TAB.value && totalFilters > 1
