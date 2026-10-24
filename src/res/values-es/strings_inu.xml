@@ -392,7 +392,7 @@ Sistema: %6$s
     <string name="InuBottomTabsHide">Ocultar pestañas inferiores</string>
 <string name="InuBottomTabsHideInfo">Los elementos se mueven al menú hamburguesa de la pantalla principal</string>
     <string name="InuBottomTabsHideTopSearch">Ocultar búsqueda superior</string>
-    <string name="InuBottomTabsHideTopSearchInfo">Cuando la búsqueda está habilitada en las pestañas inferiores, oculta el campo de búsqueda arriba</string>
+    <string name="InuBottomTabsHideTopSearchInfo">Ocultar el campo de búsqueda sobre la lista de chats</string>
     <string name="InuBottomTabsSeparateSearch">Botón de búsqueda separado</string>
     <string name="InuBottomTabsSeparateSearchInfo">Muestra la búsqueda como un botón redondo junto a las pestañas inferiores</string>
     <string name="InuCompactMode">Modo compacto</string>

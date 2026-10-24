@@ -285,7 +285,7 @@
     <string name="InuBottomTabsHide">پنهان کردن زبانه‌های پایین</string>
     <string name="InuBottomTabsHideInfo">موارد به منوی همبرگری صفحه اصلی منتقل می‌شوند</string>
     <string name="InuBottomTabsHideTopSearch">پنهان کردن جستجوی بالا</string>
-    <string name="InuBottomTabsHideTopSearchInfo">وقتی جستجو در زبانه‌های پایین فعال است، کادر جستجوی بالای فهرست گفتگوها پنهان شود</string>
+    <string name="InuBottomTabsHideTopSearchInfo">پنهان کردن کادر جستجو بالای فهرست گفتگوها</string>
     <string name="InuBottomTabsSeparateSearch">دکمه جستجوی جداگانه</string>
     <string name="InuBottomTabsSeparateSearchInfo">جستجو را به‌صورت دکمه‌ای گرد کنار زبانه‌های پایین نشان بده</string>
     <string name="InuCompactMode">حالت فشرده</string>

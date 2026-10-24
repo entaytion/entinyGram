@@ -392,7 +392,7 @@ Sistema: %6$s
     <string name="InuBottomTabsHide">Nascondi le schede in basso</string>
 <string name="InuBottomTabsHideInfo">Le voci vengono spostate nel menu hamburger della schermata principale</string>
     <string name="InuBottomTabsHideTopSearch">Nascondi la ricerca in alto</string>
-    <string name="InuBottomTabsHideTopSearchInfo">Quando la Ricerca è attiva nelle schede in basso, nasconde il campo di ricerca sopra l\'elenco chat</string>
+    <string name="InuBottomTabsHideTopSearchInfo">Nascondi il campo di ricerca sopra l\'elenco delle chat</string>
     <string name="InuBottomTabsSeparateSearch">Pulsante di ricerca separato</string>
     <string name="InuBottomTabsSeparateSearchInfo">Mostra la Ricerca come pulsante rotondo accanto alle schede in basso</string>
     <string name="InuCompactMode">Modalità compatta</string>

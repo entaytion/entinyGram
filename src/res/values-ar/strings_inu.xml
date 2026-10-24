@@ -285,7 +285,7 @@
     <string name="InuBottomTabsHide">إخفاء علامات التبويب السفلية</string>
     <string name="InuBottomTabsHideInfo">تُنقل العناصر إلى القائمة الجانبية في الشاشة الرئيسية</string>
     <string name="InuBottomTabsHideTopSearch">إخفاء البحث العلوي</string>
-    <string name="InuBottomTabsHideTopSearchInfo">عند تفعيل البحث في علامات التبويب السفلية، يُخفى حقل البحث فوق قائمة المحادثات</string>
+    <string name="InuBottomTabsHideTopSearchInfo">إخفاء حقل البحث أعلى قائمة الدردشات</string>
     <string name="InuBottomTabsSeparateSearch">زر بحث منفصل</string>
     <string name="InuBottomTabsSeparateSearchInfo">إظهار البحث كزر دائري بجانب علامات التبويب السفلية</string>
     <string name="InuCompactMode">الوضع المضغوط</string>

@@ -246,7 +246,7 @@
     <string name="InuBottomTabsHide">Приховати нижні вкладки</string>
     <string name="InuBottomTabsHideInfo">Елементи переміщуються у бічне меню головного екрана</string>
     <string name="InuBottomTabsHideTopSearch">Приховати верхній пошук</string>
-    <string name="InuBottomTabsHideTopSearchInfo">Приховувати поле пошуку над списком чатів, якщо пошук увімкнено в нижній панелі</string>
+    <string name="InuBottomTabsHideTopSearchInfo">Приховати поле пошуку над списком чатів</string>
     <string name="InuBottomTabsSeparateSearch">Окрема кнопка пошуку</string>
     <string name="InuBottomTabsSeparateSearchInfo">Показувати пошук круглою кнопкою поруч із нижньою панеллю</string>
     <string name="InuShowTabTitles">Показувати підписи вкладок</string>

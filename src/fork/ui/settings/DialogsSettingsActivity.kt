@@ -267,14 +267,6 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 )
             }
             items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_HIDE_TOP_SEARCH,
-                    R.string.InuBottomTabsHideTopSearch,
-                    R.string.InuBottomTabsHideTopSearchInfo,
-                    InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH.value
-                )
-            )
-            items.add(
                 UItem.asButton(
                     BUTTON_START_TAB,
                     LocaleController.getString(R.string.InuStartTab),
@@ -289,6 +281,14 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_TOP_SEARCH,
+                R.string.InuBottomTabsHideTopSearch,
+                R.string.InuBottomTabsHideTopSearchInfo,
+                InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH.value
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(

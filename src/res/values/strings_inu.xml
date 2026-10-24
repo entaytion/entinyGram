@@ -383,7 +383,7 @@
     <string name="InuBottomTabsHide">Hide bottom tabs</string>
 <string name="InuBottomTabsHideInfo">Items are moved into the hamburger menu of the main screen</string>
     <string name="InuBottomTabsHideTopSearch">Hide top search</string>
-    <string name="InuBottomTabsHideTopSearchInfo">When Search is enabled in the bottom tabs, hide the search field above the chat list</string>
+    <string name="InuBottomTabsHideTopSearchInfo">Hide the search field above the chat list</string>
     <string name="InuBottomTabsSeparateSearch">Separate Search button</string>
     <string name="InuBottomTabsSeparateSearchInfo">Show Search as a round button beside the bottom tabs</string>
     <string name="InuCompactMode">Compact mode</string>

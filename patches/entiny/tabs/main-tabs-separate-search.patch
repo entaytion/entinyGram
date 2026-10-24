@@ -130,7 +130,7 @@ index 0000000..0000000 100644
 +    }
 +
 +    private boolean shouldSuppressSearchFieldSpace() {
-+        return hasBottomSearchTab() && InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH.getValue() && animatorSearchVisible.getFloatValue() <= 0.01f;
++        return InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH.getValue() && animatorSearchVisible.getFloatValue() <= 0.01f;
 +    }
 +
      public boolean isStarsSubscriptionHintVisible() {
@@ -189,7 +189,7 @@ index 0000000..0000000 100644
  
          final int maxScrollWithoutSearch = getMaxScrollYOffsetWithoutSearch();
 -        final float alphaByScrollOffset = NonIslandHelper.globalSearch() ? 0 : 1f - MathUtils.clamp((-scrollYOffset - maxScrollWithoutSearch) / dp(SEARCH_FIELD_HEIGHT), 0, 1);
-+        final float alphaByScrollOffset = NonIslandHelper.globalSearch() || (hasMainTabs && MainTabsHelper.hasSearchTab() && InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH.getValue())
++        final float alphaByScrollOffset = NonIslandHelper.globalSearch() || InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH.getValue()
 +            ? 0 : 1f - MathUtils.clamp((-scrollYOffset - maxScrollWithoutSearch) / dp(SEARCH_FIELD_HEIGHT), 0, 1);
  
          final float actionModeVisible = Math.max(progressToActionMode, animatorActionModeVisible.getFloatValue());
