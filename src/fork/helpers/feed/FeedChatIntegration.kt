@@ -40,6 +40,7 @@ class FeedChatIntegration(
     private var viewportActive = false
     private var preserveScrollLoadIndex = -1
     private var lastPagedownCount = -1
+    private var lastShownPagedownCount = -1
 
     private val settleAtNewestRunnable = Runnable { settleAtNewestNow() }
 
@@ -396,7 +397,12 @@ class FeedChatIntegration(
         }
         if (unreadBelow != lastPagedownCount) {
             lastPagedownCount = unreadBelow
-            host.setPagedownCount(unreadBelow)
+        }
+        // entiny: the badge counts every new post of the feed, not just the ones already scrolled past
+        val shownCount = if (unreadBelow > 0) maxOf(unreadBelow, FeedController.getInstance(currentAccount).getUnreadCount()) else 0
+        if (shownCount != lastShownPagedownCount) {
+            lastShownPagedownCount = shownCount
+            host.setPagedownCount(shownCount)
         }
         if (unreadBelow > 0) {
             pagedownShownByScroll = false
@@ -530,6 +536,7 @@ class FeedChatIntegration(
 
     fun onFeedExclusionsChanged() {
         lastPagedownCount = -1
+        lastShownPagedownCount = -1
         updatePagedownCounter()
         NotificationCenter.getInstance(currentAccount).postNotificationName(
             NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_READ_DIALOG_MESSAGE
@@ -606,6 +613,7 @@ class FeedChatIntegration(
             host.restoreScrollAnchor(anchor)
         }
         lastPagedownCount = -1
+        lastShownPagedownCount = -1
         updatePagedownCounter()
         host.invalidateVisiblePart()
     }
@@ -812,6 +820,7 @@ class FeedChatIntegration(
         preserveScrollLoadIndex = -1
         unreadDivider = null
         lastPagedownCount = -1
+        lastShownPagedownCount = -1
         pagedownShownByScroll = false
         totalScrollDy = 0
         pendingHideDialogId = 0L
