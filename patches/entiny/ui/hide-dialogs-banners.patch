@@ -62,7 +62,7 @@ index 0000000..0000000 100644
                  showDialog(new AlertDialog.Builder(getParentActivity())
                      .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
                      .setMessage(getString(R.string.PermissionFSILockscreen))
-@@ -10666,7 +10671,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10670,7 +10675,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              permissons.add(Manifest.permission.POST_NOTIFICATIONS);
          }

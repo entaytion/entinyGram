@@ -9,9 +9,9 @@ Subject: Add folder tab customization: indicator stroke, bottom placement, hide 
 - reserve list bottom padding for the bottom-anchored tabs bar so future content cannot render underneath it
 ---
  .../messenger/MessagesController.java         |  3 ++
- .../ui/Components/FilterTabsView.java         | 11 ++++--
- .../java/org/telegram/ui/DialogsActivity.java | 35 +++++++++++++------
- 3 files changed, 36 insertions(+), 13 deletions(-)
+ .../ui/Components/FilterTabsView.java         | 11 ++++-
+ .../java/org/telegram/ui/DialogsActivity.java | 45 ++++++++++++++-----
+ 3 files changed, 45 insertions(+), 14 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -133,17 +133,29 @@ index 0000000..0000000 100644
              filterTabsView.setTranslationY(totalOffset - (NonIslandHelper.globalSearch() ? 0 : searchOffset) - (NonIslandHelper.foldersBar() ? dp(NonIslandHelper.foldersBarOverlapDp()) * getFilterTabsVisibilityFactor(false) : 0));
              filtersTabVisibility = filterTabsView.getAlpha();
              filtersTabHeight = dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 7) * filtersTabVisibility;
-@@ -9059,6 +9065,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9059,6 +9065,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  storyHint.setTranslationY(baseTranslationY - dp(52));
              }
          }
 +        if (filterTabsView != null && FolderHelper.atBottom()) {
-+            filterTabsView.setTranslationY(FolderHelper.bottomTabsTranslationY(navigationBarHeight, additionFloatingButtonOffset, additionalFloatingTranslation, floatingButtonPanOffset));
++            filterTabsView.setTranslationY(FolderHelper.bottomTabsTranslationY(navigationBarHeight, additionFloatingButtonOffset, additionalFloatingTranslation, floatingButtonPanOffset) - FolderHelper.shareBarLift(inu_shareBarHeight(), navigationBarHeight, animatorForwardButtonVisible.getFloatValue()));
 +        }
++    }
++
++    private int inu_shareBarHeight() {
++        return commentView == null || chatInputViewsContainer == null ? 0 : (int) (windowInsetsStateHolder.getAnimatedMaxBottomInset() + dp(16) + chatInputViewsContainer.getInputBubbleHeight());
      }
  
      public boolean storiesEnabled = true;
-@@ -14482,7 +14491,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14275,6 +14288,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             chatInputViewsContainer.getFadeView().setAlpha(factor);
+             chatInputViewsContainer.getFadeView().setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
+         }
++        checkUi_chatListViewPaddingsBottom();
+     }
+ 
+     private void checkUi_topPanelVisible() {
+@@ -14482,7 +14496,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          final int actionBarHeight = actionBar.getMeasuredHeight()
              + dp(DialogsActivity.SEARCH_FIELD_HEIGHT)
              + dp(hasStories ? DialogStoriesCell.HEIGHT_IN_DP : 0)
@@ -152,7 +164,12 @@ index 0000000..0000000 100644
              + (topPanelLayout != null && topPanelLayout.getVisibility() == View.VISIBLE ? topPanelLayout.getSumHeightOfAllVisibleChild() : 0)
              + ((int) scrollYOffset);
  
-@@ -14526,7 +14535,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14522,11 +14536,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     private int calculateListViewPaddingBottom() {
+         if (commentView != null) {
+-            return (int) (windowInsetsStateHolder.getAnimatedMaxBottomInset() + dp(9) + chatInputViewsContainer.getInputBubbleHeight() + dp(7) + dp(2));
++            return (int) (windowInsetsStateHolder.getAnimatedMaxBottomInset() + dp(9) + chatInputViewsContainer.getInputBubbleHeight() + dp(7) + dp(2)) + (filterTabsView != null && FolderHelper.atBottom() ? dp(FolderHelper.bottomReservedHeightDp()) : 0);
          } else if (communityId != 0) {
              return navigationBarHeight + dp(12 + 48 + 12);
          } else {
@@ -165,3 +182,13 @@ index 0000000..0000000 100644
          }
      }
  
+@@ -14589,6 +14607,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 }
+             }
+         }
++        if (filterTabsView != null && FolderHelper.atBottom()) {
++            updateFloatingButtonOffset();
++        }
+     }
+ 
+     private void drawHeaderShadow(Canvas canvas, int sy) {

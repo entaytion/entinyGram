@@ -320,6 +320,11 @@ object FolderHelper {
     @JvmStatic
     fun bottomReservedHeightDp(): Int = getTabBarHeightDp() + TAB_BAR_BOTTOM_MARGIN_DP
 
+    // entiny: with the share bar open the bottom tabs sit above it instead of covering its send button
+    @JvmStatic
+    fun shareBarLift(barHeightPx: Int, navigationBarHeight: Int, factor: Float): Float =
+        if (!atBottom()) 0f else maxOf(0f, barHeightPx - navigationBarHeight - AndroidUtilities.dp(2f).toFloat()) * factor
+
     @JvmStatic
     @JvmOverloads
     fun bottomTabsTranslationY(

@@ -121,7 +121,7 @@ index 0000000..0000000 100644
              if (!onlySelect) {
                  observersGroup.addGlobal(NotificationCenter.closeSearchByActiveAction);
                  observersGroup.addGlobal(NotificationCenter.proxySettingsChanged);
-@@ -10895,6 +10896,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10899,6 +10900,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          } else if (id == NotificationCenter.proxySettingsChanged) {
              updateProxyButton(false, false);
