@@ -10,6 +10,8 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -279,11 +281,34 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
         override fun getItemCount(): Int = messages.size
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            RecyclerListView.Holder(BookmarkCell(context))
+            RecyclerListView.Holder(BookmarkRow(context))
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             val message = messages.getOrNull(position) ?: return
-            (holder.itemView as BookmarkCell).bind(message)
+            (holder.itemView as BookmarkRow).bind(message)
+        }
+    }
+
+    // entiny: a button beside the message jumps straight to it in the chat
+    private inner class BookmarkRow(context: Context) : FrameLayout(context) {
+        private val cell = BookmarkCell(context)
+        private val goButton = ImageView(context)
+
+        init {
+            addView(cell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat()))
+            goButton.scaleType = ImageView.ScaleType.CENTER
+            goButton.setImageResource(R.drawable.msg_openin)
+            goButton.colorFilter = android.graphics.PorterDuffColorFilter(Theme.getColor(Theme.key_chat_serviceText), android.graphics.PorterDuff.Mode.MULTIPLY)
+            goButton.background = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(34f), Theme.getColor(Theme.key_chat_serviceBackground), Theme.getColor(Theme.key_listSelector))
+            goButton.contentDescription = LocaleController.getString(R.string.InuShowInChat)
+            goButton.setOnClickListener { cell.messageObject?.let { showInChat(it) } }
+            addView(goButton, LayoutHelper.createFrame(34, 34f, Gravity.RIGHT or Gravity.CENTER_VERTICAL, 0f, 0f, 6f, 0f))
+        }
+
+        fun bind(message: MessageObject) {
+            cell.bind(message)
+            (goButton.layoutParams as LayoutParams).gravity = (if (message.isOutOwner) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL
+            goButton.requestLayout()
         }
     }
 
