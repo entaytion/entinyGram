@@ -204,5 +204,6 @@
   "unlimited-pinned-chats": "restrictions",
   "unread-badge-on-back-button": "chat",
   "user-info-saver": "privacy",
-  "wide-channel-posts": "restrictions"
+  "wide-channel-posts": "restrictions",
+  "emoji-view-observer-leak": "chat"
 }

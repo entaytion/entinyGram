@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 25 Oct 2026 01:24:04 +0300
+Subject: fix emoji view observer leak
+
+---
+ .../src/main/java/org/telegram/ui/Components/EmojiView.java   | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+@@ -6203,8 +6203,10 @@ public class EmojiView extends FrameLayout implements
+             if (visibility != GONE) {
+                 Emoji.sortEmoji();
+                 emojiAdapter.notifyDataSetChanged();
++                NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.stickersDidLoad);
+                 NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.stickersDidLoad);
+                 if (stickersGridAdapter != null) {
++                    NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.recentDocumentsDidLoad);
+                     NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.recentDocumentsDidLoad);
+                     updateStickerTabs(false);
+                     reloadStickersAdapter();
+@@ -6229,6 +6231,8 @@ public class EmojiView extends FrameLayout implements
+     }
+ 
+     public void onDestroy() {
++        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.stickersDidLoad);
++        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.recentDocumentsDidLoad);
+         if (observersGroup != null) {
+             observersGroup.removeAllObservers();
+             observersGroup = null;

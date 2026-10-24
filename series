@@ -577,3 +577,4 @@ entiny/tabs/tab-counter-default.patch
 bugfix/round-recorder-ae-lock-toggle.patch
 entiny/misc/plugin-dev-provider.patch
 entiny/media/animated-cache-retry-loop.patch
+entiny/chat/emoji-view-observer-leak.patch
