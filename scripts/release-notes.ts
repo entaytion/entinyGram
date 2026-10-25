@@ -350,7 +350,7 @@ function buildPrompt(info: BuildInfo, commits: Commit[], offered: RegistryEntry[
   return lines.join('\n')
 }
 
-async function callChat(c: Candidate, prompt: string, maxTokens = 3000, deadline = Infinity): Promise<string> {
+async function callChat(c: Candidate, prompt: string, maxTokens = 8192, deadline = Infinity): Promise<string> {
   const { url, key, model } = c
   for (let attempt = 0; ; attempt++) {
     const res = await fetch(url, {
@@ -368,13 +368,15 @@ async function callChat(c: Candidate, prompt: string, maxTokens = 3000, deadline
         ],
         temperature: 0,
         max_tokens: maxTokens,
+        response_format: { type: 'json_object' },
       }),
     })
     const text = await res.text()
     if (res.ok) {
-      const data = JSON.parse(text) as { choices?: { message?: { content?: string } }[] }
+      const data = JSON.parse(text) as { choices?: { message?: { content?: string }, finish_reason?: string }[] }
       const out = data?.choices?.[0]?.message?.content
       if (!out) throw new Error(`${model}: empty response`)
+      if (data?.choices?.[0]?.finish_reason === 'length') throw new Error(`${model}: answer cut off at ${maxTokens} tokens`)
       return out
     }
     // Free tier is 15 requests per minute per model and the body says how long to wait; that is a
@@ -508,7 +510,7 @@ async function aiNotes(candidates: Candidate[], info: BuildInfo, commits: Commit
     if (skipped.has(c.model)) continue
     try {
       console.log(`==> release-notes: calling ${c.model}`)
-      const notes = parseNotes(await callChat(c, prompt, 3000, deadline), offered)
+      const notes = parseNotes(await callChat(c, prompt, 8192, deadline), offered)
       if (!notes.en && !notes.uk && !notes.tg_uk) throw new Error('empty ai notes')
       // A weak model sometimes answers every language in English; reject it so the next model gets a turn.
       const cyrillic = (t: string) => (t.match(/[а-щьюяіїєґ]/gi) ?? []).length / Math.max(1, (t.match(/\p{L}/gu) ?? []).length)
@@ -653,8 +655,31 @@ let notes: { en: string, uk: string, changelog_en: string, changelog_ua: string,
 // On a pre-release nothing reads the AI text: the GitHub release step, the website publish and the
 // main-channel post are all skipped, and the CI channel gets the commit list this script also writes.
 const skipAi = process.env.PRE_RELEASE === 'true'
-const candidates = ours.length > 0 && !skipAi ? await buildCandidates() : []
-if (candidates.length > 0) {
+const draftMode = process.env.DRAFT_MODE === 'true'
+
+// entiny: a draft made earlier by release-notes.yml replaces the AI call; only the CI list is rebuilt
+let draft: typeof notes | null = null
+const draftDir = process.env.DRAFT_DIR
+if (draftDir && !skipAi && !draftMode) {
+  try {
+    draft = JSON.parse(await fs.readFile(join(draftDir, 'release-notes.json'), 'utf8'))
+    const meta = JSON.parse(await fs.readFile(join(draftDir, 'meta.json'), 'utf8')) as { base: string, head: string }
+    if (meta.base !== (process.env.DRAFT_BASE ?? '')) {
+      console.warn('release-notes: draft was made for another release range; ignoring it')
+      draft = null
+    } else {
+      const known = new Set((info.commits ?? []).map(c => c.sha))
+      console.log(`release-notes: using draft made at ${meta.head.slice(0, 7)}; draft head ${known.has(meta.head) ? 'is' : 'is NOT'} among this release's commits`)
+    }
+  } catch {
+    draft = null
+  }
+}
+
+const candidates = ours.length > 0 && !skipAi && !draft ? await buildCandidates() : []
+if (draft) {
+  notes = draft
+} else if (candidates.length > 0) {
   try {
     notes = await aiNotes(candidates, info, ours, registry)
   } catch (e) {
@@ -667,7 +692,7 @@ if (candidates.length > 0) {
 }
 
 // Upstream commits are deliberately kept away from the model, so their credit line is written here.
-const sync = ours.some(mentionsSync) ? null : upstreamLine(theirs)
+const sync = draft || ours.some(mentionsSync) ? null : upstreamLine(theirs)
 if (sync) {
   notes.en = append(notes.en, '•', sync.en)
   notes.uk = append(notes.uk, '•', sync.uk)
@@ -680,7 +705,7 @@ if (sync) {
 
 notes.tg_ci = ciList(commits, info.repo)
 
-if (!skipAi) {
+if (!skipAi && !draftMode) {
   try {
     const assetsChangelogPath = resolve('assets/changelog.json')
     let existing: Record<string, { ua: string, en: string }> = {}

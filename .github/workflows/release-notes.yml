@@ -1,0 +1,74 @@
+name: Release notes draft
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: release-notes-draft
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  draft:
+    name: Draft
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - run: bun install --frozen-lockfile
+
+      - name: Collect commits since the last release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LAST_RELEASE_SHA: ${{ vars.LAST_RELEASE_SHA }}
+        run: |
+          mkdir -p out
+          base="$LAST_RELEASE_SHA"
+          if [ -n "$base" ] && ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            base=
+          fi
+          if [ -z "$base" ]; then
+            tag=$(gh release list --exclude-pre-releases --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+            [ -n "$tag" ] && base=$(git rev-list -n 1 "$tag")
+          fi
+          commits_json=$(bun run tsx scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
+          jq -n --arg repo "$GITHUB_REPOSITORY" --argjson commits "$commits_json" \
+            '{verName:"draft",repo:$repo,commits:$commits}' > out/build-info.json
+          jq -n --arg base "$LAST_RELEASE_SHA" --arg head "$GITHUB_SHA" --arg at "$(date -u +%FT%TZ)" \
+            '{base:$base,head:$head,createdAt:$at}' > out/meta.json
+
+      - name: Dump settings registry
+        run: bun run tsx scripts/dump-registry.ts out
+
+      - name: Generate release notes
+        env:
+          GEMINI_API_KEY:  ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+          GEMINI_BASE_URL: ${{ vars.GEMINI_BASE_URL }}
+          GEMINI_MODEL:    ${{ vars.GEMINI_MODEL }}
+          DRAFT_MODE:      'true'
+        run: bun run tsx scripts/release-notes.ts out
+
+      - name: Push draft to the release-notes-draft branch
+        run: |
+          git config user.email ci@entinygram
+          git config user.name 'entinygram ci'
+          dir=$(mktemp -d)
+          cp out/release-notes.json out/meta.json "$dir/"
+          git checkout --orphan release-notes-draft
+          git rm -rf --quiet . || true
+          cp "$dir"/release-notes.json "$dir"/meta.json .
+          git add release-notes.json meta.json
+          HUSKY=0 git commit -q -m "[=] release notes draft"
+          git push --force origin release-notes-draft

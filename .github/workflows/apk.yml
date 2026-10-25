@@ -321,6 +321,14 @@ jobs:
       - name: Dump settings registry
         run: bun run tsx scripts/dump-registry.ts out
 
+      - name: Fetch release notes draft
+        continue-on-error: true
+        run: |
+          mkdir -p draft
+          git fetch --depth=1 origin release-notes-draft
+          git show FETCH_HEAD:release-notes.json > draft/release-notes.json
+          git show FETCH_HEAD:meta.json > draft/meta.json
+
       - name: Generate release notes
         env:
           GEMINI_API_KEY:  ${{ secrets.GEMINI_API_KEY }}
@@ -329,6 +337,8 @@ jobs:
           GEMINI_MODEL:    ${{ vars.GEMINI_MODEL }}
           # Boolean input quirk: `== 'true'` never matches a real boolean, so accept both shapes.
           PRE_RELEASE:     ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
+          DRAFT_DIR:       draft
+          DRAFT_BASE:      ${{ vars.LAST_RELEASE_SHA }}
         run: bun run tsx scripts/release-notes.ts out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
