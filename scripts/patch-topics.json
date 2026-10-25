@@ -189,6 +189,7 @@
   "simple-text-view-left-slot": "ui",
   "simple-text-view-right-slot": "ui",
   "rtl-gradient-ellipsize": "ui",
+  "dialogs-menu-proxy": "ui",
   "small-gifs": "media",
   "startup-optimizations": "misc",
   "sticker-maker-segmentation-crash": "media",

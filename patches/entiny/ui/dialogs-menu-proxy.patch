@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 01:27:44 +0200
+Subject: Option to hide the proxy entry in the dialogs menu
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -14249,7 +14249,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             final boolean proxyVisible = proxyEnabled && !TextUtils.isEmpty(proxyAddress)
+                     || getMessagesController().blockedCountry && !SharedConfig.proxyList.isEmpty();
+ 
+-            if (proxyVisible) {
++            if (proxyVisible && desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.PROXY)) {
+                 io.addGap();
+                 io.add(proxyMenuSubItem);
+             }

@@ -175,6 +175,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         EDITED_MESSAGES("edited_messages", listOf(ChatActionsHelper.ACTION_EDITED_MESSAGES), R.string.InuEditedArchive, R.drawable.msg_edit),
         GHOST_MODE("ghost_mode", listOf(ChatActionsHelper.ACTION_GHOST_MODE), R.string.InuGhostMode, R.drawable.inu_ghost),
         CHAT_EXPORT("chat_export", listOf(ChatActionsHelper.ACTION_CHAT_EXPORT), R.string.InuChatExport, R.drawable.msg_share_solar),
+        CHAT_PROXY("chat_proxy", listOf(ChatActionsHelper.ACTION_CHAT_PROXY), R.string.ProxySettings, R.drawable.outline_shield_check),
         CHAT_LOCAL_NAME("chat_local_name", listOf(ChatActionsHelper.ACTION_CHAT_LOCAL_NAME), R.string.InuLocalName, R.drawable.msg_edit),
         CHAT_MARK_READ("chat_mark_read", listOf(ChatActionsHelper.ACTION_CHAT_MARK_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
         CHAT_DELETE_MY_MESSAGES("chat_delete_my_messages", listOf(ChatActionsHelper.ACTION_CHAT_DELETE_MY_MESSAGES), R.string.InuDeleteMyMessages, R.drawable.msg_delete),
@@ -201,7 +202,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
             Item.RECENT_ACTIONS, Item.GO_TO_BEGINNING, Item.GO_TO_MESSAGE,
             Item.STATISTICS, Item.ADMINISTRATORS, Item.PERMISSIONS, Item.INVITE_LINKS,
             Item.LINKED_CHAT, Item.HIDE_TITLE, Item.CLEAR_DELETED,
-            Item.CHAT_EXPORT, Item.CHAT_LOCAL_NAME, Item.CHAT_MARK_READ, Item.CHAT_DELETE_MY_MESSAGES,
+            Item.CHAT_EXPORT, Item.CHAT_LOCAL_NAME, Item.CHAT_MARK_READ, Item.CHAT_DELETE_MY_MESSAGES, Item.CHAT_PROXY,
         )
     }
 }
@@ -324,6 +325,7 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
         MY_PROFILE("my_profile", R.string.MyProfile, R.drawable.left_status_profile),
         CONTACTS("contacts", R.string.Contacts, R.drawable.msg_contacts),
         ARCHIVE("archive", R.string.ArchivedChats, R.drawable.msg_archive),
+        PROXY("proxy", R.string.ProxySettings, R.drawable.outline_shield_check),
         GHOST_MODE("ghost_mode", R.string.InuGhostMode, R.drawable.inu_ghost),
         PARANOIA("paranoia", R.string.InuParanoiaMode, R.drawable.inu_tabler_spy),
         RESTART_APP("restart_app", R.string.InuRestartApp, R.drawable.msg_retry),
