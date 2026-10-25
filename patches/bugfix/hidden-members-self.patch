@@ -1,0 +1,86 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 24 Oct 2026 20:10:15 +0400
+Subject: show own account in members list when members are hidden
+
+---
+ .../java/org/telegram/ui/ProfileActivity.java | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -497,6 +497,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+     private boolean loadingUsers;
+     private LongSparseArray<TLRPC.ChatParticipant> participantsMap = new LongSparseArray<>();
+     private boolean usersEndReached;
++    private boolean inu_loadingSelfParticipant;
+ 
+     private long banFromGroup;
+     private float backwardTransitionFromExtraHeight;
+@@ -7853,10 +7854,56 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             loadingUsers = false;
+             saveScrollPosition();
+             updateListAnimated(true);
++            if (usersEndReached) {
++                inu_ensureSelfParticipant();
++            }
+         }), delay));
+         getConnectionsManager().bindRequestToGuid(reqId, classGuid);
+     }
+ 
++    private void inu_ensureSelfParticipant() {
++        if (participantsMap == null || chatInfo == null || chatInfo.participants == null || !chatInfo.participants_hidden || ChatObject.isNotInChat(currentChat)) {
++            return;
++        }
++        final long selfId = getUserConfig().getClientUserId();
++        for (int a = 0; a < chatInfo.participants.participants.size(); a++) {
++            if (chatInfo.participants.participants.get(a).user_id == selfId) {
++                return;
++            }
++        }
++        final TLRPC.ChatParticipant loaded = participantsMap.get(selfId);
++        if (loaded != null) {
++            chatInfo.participants.participants.add(loaded);
++            saveScrollPosition();
++            updateListAnimated(true);
++            return;
++        }
++        if (loadingUsers || inu_loadingSelfParticipant) {
++            return;
++        }
++        inu_loadingSelfParticipant = true;
++        final TLRPC.TL_channels_getParticipant req = new TLRPC.TL_channels_getParticipant();
++        req.channel = getMessagesController().getInputChannel(chatId);
++        req.participant = getMessagesController().getInputPeer(selfId);
++        final int reqId = getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
++            inu_loadingSelfParticipant = false;
++            if (!(response instanceof TLRPC.TL_channels_channelParticipant) || participantsMap == null) {
++                return;
++            }
++            final TLRPC.TL_channels_channelParticipant res = (TLRPC.TL_channels_channelParticipant) response;
++            getMessagesController().putUsers(res.users, false);
++            getMessagesController().putChats(res.chats, false);
++            final TLRPC.TL_chatChannelParticipant participant = new TLRPC.TL_chatChannelParticipant();
++            participant.channelParticipant = res.participant;
++            participant.inviter_id = res.participant.inviter_id;
++            participant.user_id = selfId;
++            participant.date = res.participant.date;
++            participantsMap.put(selfId, participant);
++            inu_ensureSelfParticipant();
++        }));
++        getConnectionsManager().bindRequestToGuid(reqId, classGuid);
++    }
++
+     private AnimatorSet headerAnimatorSet;
+     private AnimatorSet headerShadowAnimatorSet;
+     private float mediaHeaderAnimationProgress;
+@@ -9351,6 +9398,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 if (currentChat.megagroup && (loadChannelParticipants || !byChannelUsers)) {
+                     getChannelParticipants(true);
+                 }
++                inu_ensureSelfParticipant();
+ 
+                 updateAutoDeleteItem();
+                 updateTtlIcon();

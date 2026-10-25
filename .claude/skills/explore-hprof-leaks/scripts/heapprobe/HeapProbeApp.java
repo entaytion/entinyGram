@@ -80,6 +80,10 @@ public class HeapProbeApp implements IApplication {
                 case "observers": countObservers(rest[0]); break;
                 case "inspect": inspect(rest[0]); break;
                 case "root": rootInfo(rest[0]); break;
+                case "queue":     dumpQueues(); break;
+                case "owners":    ownerSignatures(rest[0]); break;
+                case "fields":    dumpFields(rest[0], rest.length > 1 ? Integer.parseInt(rest[1]) : 5,
+                                      rest.length > 2 && rest[2].equals("inbound")); break;
                 default: System.out.println("unknown command: " + cmd);
             }
         } finally {
@@ -274,6 +278,81 @@ public class HeapProbeApp implements IApplication {
             .forEach(e -> System.out.println("    eventId=" + e.getKey() + " occurrences=" + e.getValue()));
     }
 
+    // histogram of "which owner objects reference this instance", looking through Object[]/ArrayList containers
+    private void ownerSignatures(String className) throws Exception {
+        int[] ids = idsFor(className);
+        Map<String, int[]> hist = new HashMap<>();
+        for (int id : ids) {
+            java.util.TreeSet<String> owners = new java.util.TreeSet<>();
+            for (int from : snapshot.getInboundRefererIds(id)) {
+                String cn = snapshot.getObject(from).getClazz().getName();
+                if (cn.equals("java.lang.Object[]"))
+                    for (int list : snapshot.getInboundRefererIds(from)) {
+                        String lcn = snapshot.getObject(list).getClazz().getName();
+                        for (int owner : snapshot.getInboundRefererIds(list))
+                            owners.add(snapshot.getObject(owner).getClazz().getName() + refsTo(owner, list) + "/" + lcn);
+                    }
+                else owners.add(cn + refsTo(from, id));
+            }
+            hist.computeIfAbsent(owners.toString(), k -> new int[1])[0]++;
+        }
+        System.out.println("\n==== OWNERS " + className + " count=" + ids.length + " ====");
+        hist.entrySet().stream().sorted((a, b) -> b.getValue()[0] - a.getValue()[0]).limit(20)
+            .forEach(e -> System.out.println("  " + e.getValue()[0] + "  " + e.getKey()));
+    }
+
+    private void dumpQueues() throws Exception {
+        for (int qid : idsFor("android.os.MessageQueue")) {
+            IObject q = snapshot.getObject(qid);
+            Map<String, int[]> hist = new HashMap<>();
+            Map<String, long[]> whenRange = new HashMap<>();
+            int n = 0;
+            Object cur = q.resolveValue("mMessages");
+            while (cur instanceof IObject && n < 2_000_000) {
+                IObject m = (IObject) cur;
+                Object cb = m.resolveValue("callback");
+                Object target = m.resolveValue("target");
+                String key = cb instanceof IObject ? ((IObject) cb).getClazz().getName()
+                    : (target instanceof IObject ? ((IObject) target).getClazz().getName() : "null") + " what=" + m.resolveValue("what");
+                hist.computeIfAbsent(key, k -> new int[1])[0]++;
+                long when = ((Number) m.resolveValue("when")).longValue();
+                long[] r = whenRange.computeIfAbsent(key, k -> new long[]{Long.MAX_VALUE, Long.MIN_VALUE});
+                r[0] = Math.min(r[0], when); r[1] = Math.max(r[1], when);
+                cur = m.resolveValue("next");
+                n++;
+            }
+            if (n == 0) continue;
+            System.out.println("\n==== QUEUE " + q.getTechnicalName() + " messages=" + n + " ====");
+            hist.entrySet().stream().sorted((a, b) -> b.getValue()[0] - a.getValue()[0]).limit(25)
+                .forEach(e -> System.out.println("  " + e.getValue()[0] + "  " + e.getKey()
+                    + "  when=[" + whenRange.get(e.getKey())[0] + ".." + whenRange.get(e.getKey())[1] + "]"));
+        }
+    }
+
+    private void dumpFields(String className, int limit, boolean withInbound) throws Exception {
+        int[] ids = idsFor(className);
+        System.out.println("\n==== FIELDS " + className + " count=" + ids.length + " ====");
+        for (int i = 0; i < Math.min(ids.length, limit); i++) {
+            printFields("OBJECT", ids[i]);
+            if (withInbound)
+                for (int from : snapshot.getInboundRefererIds(ids[i])) printFields("  <- " + refsTo(from, ids[i]), from);
+        }
+    }
+
+    private void printFields(String label, int id) throws Exception {
+        IObject o = snapshot.getObject(id);
+        System.out.println(label + " " + o.getTechnicalName());
+        if (!(o instanceof org.eclipse.mat.snapshot.model.IInstance)) return;
+        for (org.eclipse.mat.snapshot.model.Field f : ((org.eclipse.mat.snapshot.model.IInstance) o).getFields()) {
+            Object v = f.getValue();
+            if (v instanceof org.eclipse.mat.snapshot.model.ObjectReference) {
+                long addr = ((org.eclipse.mat.snapshot.model.ObjectReference) v).getObjectAddress();
+                v = addr == 0 ? "null" : obj(snapshot.mapAddressToId(addr));
+            }
+            System.out.println("      " + f.getName() + " = " + v);
+        }
+    }
+
     // ---- helpers ------------------------------------------------------------
 
     private Map<IClass, Set<String>> excludeMap() throws Exception {
@@ -285,6 +364,14 @@ public class HeapProbeApp implements IApplication {
                 Set<String> s = new HashSet<>();
                 s.add("referent");
                 m.put(c, s);
+            }
+        // HEAPPROBE_EXCLUDE="android.os.Message:callback,Foo$Bar:field" also cuts these edges
+        String extra = System.getenv("HEAPPROBE_EXCLUDE");
+        if (extra != null && !extra.isEmpty())
+            for (String spec : extra.split(",")) {
+                String[] parts = spec.split(":", 2);
+                for (IClass c : snapshot.getClassesByName(parts[0], true))
+                    m.computeIfAbsent(c, k -> new HashSet<>()).add(parts[1]);
             }
         return m;
     }

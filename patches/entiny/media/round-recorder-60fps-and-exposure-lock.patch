@@ -1,16 +1,16 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Wed, 21 Oct 2026 12:26:58 +0300
+Date: Mon, 26 Oct 2026 00:05:22 +0200
 Subject: Add 60 FPS round video, exposure lock, and exposure compensation buttons
 
 ---
- .../messenger/camera/Camera2Session.java      | 75 +++++++++++++-
+ .../messenger/camera/Camera2Session.java      | 74 +++++++++++++-
  .../ui/Components/InstantCameraView.java      | 98 +++++++++++++++----
  .../ui/Components/InstantCameraView2.java     |  8 +-
  .../round/RoundVideoCameraController.java     |  1 +
  .../round/RoundVideoCodecRecorder.java        |  4 +-
  .../recorder/round/RoundVideoSession.java     |  3 +-
- 6 files changed, 162 insertions(+), 27 deletions(-)
+ 6 files changed, 162 insertions(+), 26 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
 index 0000000..0000000 100644
@@ -77,12 +77,11 @@ index 0000000..0000000 100644
      private void updateCaptureRequest() {
          if (cameraDevice == null || surface == null || captureSession == null) return;
          try {
-@@ -508,11 +555,35 @@ public class Camera2Session {
+@@ -508,10 +555,35 @@ public class Camera2Session {
              captureRequestBuilder.set(CaptureRequest.FLASH_MODE, flashing ? (recordingVideo ? CaptureRequest.FLASH_MODE_TORCH : CaptureRequest.FLASH_MODE_SINGLE) : CaptureRequest.FLASH_MODE_OFF);
  
              if (recordingVideo) {
--                // inu: capping to 30 fps to prevent a/v sync drift. more of a workaround, but it works :shrug:
--                captureRequestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<Integer>(30, 30));
+-                captureRequestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<Integer>(30, 60));
 +                Range<Integer> fpsRange;
 +                if (desu.inugram.InuConfig.ROUND_RECORDER_60FPS.getValue()) {
 +                    fpsRange = desu.inugram.helpers.chat.RoundRecorderHelper.selectFpsRange(cameraCharacteristics, true);
@@ -386,7 +385,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCamer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
-@@ -378,14 +378,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -384,14 +384,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
          progressView.setProgress(0f);
          showInitialPlaceholder();
          upload = new TelegramRoundVideoUpload(currentAccount, secretChat);
@@ -394,7 +393,7 @@ index 0000000..0000000 100644
 +        activeOutputResolution = desu.inugram.helpers.chat.RoundRecorderHelper.outputResolution(SharedSettings.roundVideoOutputResolution.get());
          session = new RoundVideoSession.Builder(getContext(), textureView)
                  .setOutputDirectory(new File(ApplicationLoader.getFilesDirFixed(), "cache"))
--                .setInitialFacing(SharedSettings.roundVideoLastCamera.get())
+-                .setInitialFacing(VoiceRecorderHelper.nextCameraFront ? RoundVideoSession.CameraFacing.FRONT : RoundVideoSession.CameraFacing.BACK)
 +                .setInitialFacing(fromPaused ? SharedSettings.roundVideoLastCamera.get() : desu.inugram.helpers.chat.VoiceRecorderHelper.initialRoundFacing())
                  .setOutputResolution(activeOutputResolution)
 -                .setVideoBitrate(SharedSettings.roundVideoVideoBitrate.get())
@@ -409,7 +408,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/Round
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
-@@ -2771,6 +2771,7 @@ final class RoundVideoCameraController {
+@@ -2772,6 +2772,7 @@ final class RoundVideoCameraController {
          if (cameraResolution == RoundVideoSession.CameraResolution.LOW) {
              return outputResolution.getSize();
          }

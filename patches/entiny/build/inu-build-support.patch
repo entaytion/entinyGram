@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.pet>
-Date: Sat, 26 Sep 2026 21:53:56 +0400
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:43:40 +0200
 Subject: build support stuff for fork-specific code: - added kotlin - bumped min sdk to 26, removed desugaring - versioning
 
 ---
  .gitmodules                                   |   3 +
- TMessagesProj/build.gradle                    | 175 +++++++++-------
+ TMessagesProj/build.gradle                    | 176 ++++++++++-------
  TMessagesProj/proguard-rules.pro              |  15 ++
  TMessagesProj/src/main/AndroidManifest.xml    |   7 +
  .../org/telegram/messenger/BuildVars.java     |  12 +-
@@ -19,7 +19,7 @@ Subject: build support stuff for fork-specific code: - added kotlin - bumped min
  build.gradle                                  |  19 +-
  gradle.properties                             |   2 +-
  settings.gradle                               |  40 +++-
- 15 files changed, 358 insertions(+), 171 deletions(-)
+ 15 files changed, 359 insertions(+), 171 deletions(-)
  create mode 100644 TMessagesProj_App/jni/CMakeLists.txt
  create mode 160000 TMessagesProj_App/jni/lsplant
 
@@ -63,12 +63,13 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:8.0.0'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -102,11 +104,77 @@ dependencies {
+@@ -102,11 +104,78 @@ dependencies {
      api project(":TMessagesProj_Modules:media3:media-lib-session")
      api project(':jlatexmath')
  
 +    // inu
 +    implementation 'org.maplibre.gl:android-sdk:13.1.0'
++    implementation 'com.caverock:androidsvg-aar:1.4'
 +    androidTestImplementation 'androidx.test:runner:1.6.2'
 +    androidTestImplementation 'junit:junit:4.13.2'
 +    androidTestImplementation "org.jetbrains.kotlin:kotlin-test:2.1.20"
@@ -142,7 +143,7 @@ index 0000000..0000000 100644
  }
  
  android {
-@@ -114,10 +182,20 @@ android {
+@@ -114,10 +183,20 @@ android {
      buildToolsVersion '36.0.0'
      ndkVersion "27.2.12479018"
  
@@ -163,7 +164,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -130,23 +208,31 @@ android {
+@@ -130,23 +209,31 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
@@ -191,7 +192,7 @@ index 0000000..0000000 100644
          externalNativeBuild {
              cmake {
                  version '3.22.1'
--                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-21' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-23' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
 +                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-26' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
                  targets 'tmessages.49'
 +                if (rootProject.ext.ccachePath) {
@@ -200,7 +201,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -157,64 +243,13 @@ android {
+@@ -157,64 +244,13 @@ android {
              shrinkResources false
              multiDexEnabled true
              ndk.debugSymbolLevel = 'FULL'
@@ -269,7 +270,7 @@ index 0000000..0000000 100644
          }
  
          release {
-@@ -222,12 +257,13 @@ android {
+@@ -222,12 +258,13 @@ android {
              shrinkResources false
              multiDexEnabled true
              ndk.debugSymbolLevel = 'FULL'
@@ -286,7 +287,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -245,7 +281,6 @@ def getProps(String propName) {
+@@ -245,7 +282,6 @@ def getProps(String propName) {
          return "";
      }
  }
@@ -294,7 +295,7 @@ index 0000000..0000000 100644
  
  task checkVisibility {
      doFirst {
-@@ -267,4 +302,10 @@ task checkVisibility {
+@@ -267,4 +303,10 @@ task checkVisibility {
      }
  }
  
@@ -489,7 +490,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -935,29 +935,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -954,29 +954,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
      }
  
      public String getVersionName() {
@@ -684,7 +685,7 @@ index 0000000..0000000 100644
 +        if (!rootProject.ext.inuPluginless) externalNativeBuild {
              cmake {
 -                version '3.22.1'
--                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-21' // , '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-23' // , '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
 -                targets 'tmessages.49'
 +                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-26' // , '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
 +                targets 'lsplant'

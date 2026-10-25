@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -111,6 +111,7 @@ import java.util.concurrent.CountDownLatch;
+@@ -112,6 +112,7 @@ import java.util.concurrent.CountDownLatch;
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.regex.Matcher;
  import java.util.regex.Pattern;
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  
  @SuppressWarnings("unchecked")
  public class MediaDataController extends BaseController {
-@@ -1762,10 +1763,12 @@ public class MediaDataController extends BaseController {
+@@ -1763,10 +1764,12 @@ public class MediaDataController extends BaseController {
      }
  
      public ArrayList<TLRPC.StickerSetCovered> getFeaturedStickerSets() {
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
          return featuredStickerSets[1];
      }
  
-@@ -2268,6 +2271,7 @@ public class MediaDataController extends BaseController {
+@@ -2269,6 +2272,7 @@ public class MediaDataController extends BaseController {
      }
  
      public void loadFeaturedStickers(boolean emoji, boolean cache) {

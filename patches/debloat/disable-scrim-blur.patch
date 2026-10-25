@@ -4,14 +4,14 @@ Date: Wed, 29 Apr 2026 17:59:48 +0300
 Subject: option to disable scrim blur throughout the app
 
 ---
- .../telegram/messenger/AndroidUtilities.java  |  7 +++++++
- .../ui/Components/BlurBehindDrawable.java     | 15 +++++++++++++++
- .../telegram/ui/Components/ScrimOptions.java  | 10 +++++++++-
- .../org/telegram/ui/ContentPreviewViewer.java |  4 ++--
- .../java/org/telegram/ui/DialogsActivity.java | 10 ++++++++++
- .../org/telegram/ui/MessageSendPreview.java   | 19 +++++++++++++++----
- .../java/org/telegram/ui/TopicsFragment.java  | 12 ++++++++++++
- 7 files changed, 70 insertions(+), 7 deletions(-)
+ .../telegram/messenger/AndroidUtilities.java    |  7 +++++++
+ .../ui/Components/BlurBehindDrawable.java       | 15 +++++++++++++++
+ .../telegram/ui/Components/ScrimOptions.java    | 10 +++++++++-
+ .../org/telegram/ui/ContentPreviewViewer.java   |  4 ++--
+ .../java/org/telegram/ui/DialogsActivity.java   | 10 ++++++++++
+ .../org/telegram/ui/MessageSendPreview.java     | 17 ++++++++++++++---
+ .../java/org/telegram/ui/TopicsFragment.java    | 12 ++++++++++++
+ 7 files changed, 69 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 index 0000000..0000000 100644
@@ -132,16 +132,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
-@@ -161,7 +161,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
-             @Override
-             protected void dispatchDraw(@NonNull Canvas canvas) {
-                 if (activityVisibilityController != null) {
--                    activityVisibilityController.setHidden(openProgress == 1 && blurBitmapPaint != null);
-+                    activityVisibilityController.setHidden(openProgress == 1 && blurBitmapPaint != null && !desu.inugram.InuConfig.DISABLE_SCRIM_BLUR.getValue());
-                 }
- 
-                 if (openProgress > 0 && blurBitmapPaint != null) {
-@@ -1166,7 +1166,9 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+@@ -1159,7 +1159,9 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
                  WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
                  WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION |
                  WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
@@ -152,7 +143,7 @@ index 0000000..0000000 100644
          params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
          window.setAttributes(params);
  
-@@ -1694,6 +1696,15 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+@@ -1687,6 +1689,15 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
          if (dismissing) return;
          dismissing = true;
  
@@ -168,7 +159,7 @@ index 0000000..0000000 100644
          SpoilerEffect2.pause(SpoilerEffect2.TYPE_DEFAULT, false);
          if (spoilerEffect2 != null) {
              spoilerEffect2.detach(windowView);
-@@ -1776,13 +1787,13 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+@@ -1765,13 +1776,13 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
                      closing = false;
                  }
                  if (editText != null) {

@@ -99,10 +99,10 @@ index 0000000..0000000 100644
 -    }
 +    // pure-java osm renderer, no native libs (replaces maplibre, which cost ~12MB of .so per ABI)
 +    implementation 'org.osmdroid:osmdroid-android:6.1.20'
+     implementation 'com.caverock:androidsvg-aar:1.4'
      androidTestImplementation 'androidx.test:runner:1.6.2'
      androidTestImplementation 'junit:junit:4.13.2'
-     androidTestImplementation "org.jetbrains.kotlin:kotlin-test:2.1.20"
-@@ -185,7 +194,7 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
+@@ -178,7 +187,7 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
  }
  
  android {
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
      buildToolsVersion '36.0.0'
      ndkVersion "27.2.12479018"
  
-@@ -200,9 +209,7 @@ android {
+@@ -193,9 +202,7 @@ android {
      }
  
      // inu
@@ -122,7 +122,7 @@ index 0000000..0000000 100644
      // end inu
  
      externalNativeBuild {
-@@ -212,6 +219,10 @@ android {
+@@ -205,6 +212,10 @@ android {
          }
      }
  
@@ -133,7 +133,7 @@ index 0000000..0000000 100644
      lintOptions {
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
-@@ -223,9 +234,6 @@ android {
+@@ -216,9 +227,6 @@ android {
          targetCompatibility JavaVersion.VERSION_1_8
      }
  
@@ -143,7 +143,7 @@ index 0000000..0000000 100644
  
      defaultConfig {
          buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
-@@ -235,7 +243,12 @@ android {
+@@ -228,7 +236,12 @@ android {
          targetSdkVersion 36
  
          ndk {
@@ -157,7 +157,7 @@ index 0000000..0000000 100644
          }
  
          externalNativeBuild {
-@@ -243,6 +256,9 @@ android {
+@@ -236,6 +249,9 @@ android {
                  version '3.22.1'
                  arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-26' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
                  targets 'tmessages.49'
@@ -167,7 +167,7 @@ index 0000000..0000000 100644
                  if (rootProject.ext.ccachePath) {
                      arguments += ["-DCMAKE_C_COMPILER_LAUNCHER=${rootProject.ext.ccachePath}", "-DCMAKE_CXX_COMPILER_LAUNCHER=${rootProject.ext.ccachePath}"]
                  }
-@@ -255,6 +271,7 @@ android {
+@@ -248,6 +264,7 @@ android {
              jniDebuggable true
              shrinkResources false
              multiDexEnabled true
@@ -175,7 +175,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
-@@ -267,9 +284,15 @@ android {
+@@ -260,9 +277,15 @@ android {
  
          release {
              jniDebuggable false
@@ -192,7 +192,7 @@ index 0000000..0000000 100644
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
              buildConfigField "String", "INU_BUILD_TYPE", "\"" + (System.getenv('INU_BUILD_TYPE') ?: 'debug') + "\""
-@@ -280,6 +303,10 @@ android {
+@@ -273,6 +296,10 @@ android {
          }
      }
  
@@ -310,7 +310,7 @@ index 0000000..0000000 100644
  
  import org.telegram.PhoneFormat.PhoneFormat;
  import org.telegram.messenger.AccountInstance;
-@@ -1948,15 +1945,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1951,15 +1948,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
                      final LinkManager linkManager = new LinkManager(this, intentAccount[0], progress, openedTelegram);
                      if (linkManager.handle(data)) {
@@ -326,7 +326,7 @@ index 0000000..0000000 100644
                          return true;
                      }
  
-@@ -2865,15 +2853,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -2878,15 +2866,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                  }
                              }
                          }

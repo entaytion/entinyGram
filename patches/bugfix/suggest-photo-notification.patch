@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 22 Oct 2026 06:23:45 +0400
+Subject: fix empty notification for suggested profile photo
+
+---
+ .../java/org/telegram/messenger/NotificationsController.java  | 4 ++--
+ .../java/org/telegram/messenger/PushListenerController.java   | 4 ++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+@@ -2224,7 +2224,7 @@ public class NotificationsController extends BaseController implements Notificat
+                         return messageObject.messageText.toString();
+                     } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionGiveawayResults) {
+                         return messageObject.messageText.toString();
+-                    } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSuggestBirthday) {
++                    } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSuggestBirthday || messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSuggestProfilePhoto) {
+                         return messageObject.messageText.toString();
+                     } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionPinMessage) {
+                         if (chat != null && (!ChatObject.isChannel(chat) || chat.megagroup)) {
+@@ -2754,7 +2754,7 @@ public class NotificationsController extends BaseController implements Notificat
+                             msg = messageObject.messageText.toString();
+                         } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionStarGiftUnique) {
+                             msg = messageObject.messageText.toString();
+-                        } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSuggestBirthday) {
++                        } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSuggestBirthday || messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSuggestProfilePhoto) {
+                             msg = messageObject.messageText.toString();
+                         } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionPaidMessagesRefunded || messageObject.messageOwner.action instanceof TLRPC.TL_messageActionPaidMessagesPrice) {
+                             msg = messageObject.messageText.toString();
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java b/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
+@@ -819,6 +819,10 @@ public class PushListenerController {
+                                             messageText = LocaleController.formatString(R.string.NotificationMessageSuggestBirthday, args[0]);
+                                             break;
+                                         }
++                                        case "MESSAGE_SUGGEST_USERPIC": {
++                                            messageText = LocaleController.formatString(R.string.ActionSuggestPhotoToYouDescription, args[0]);
++                                            break;
++                                        }
+                                         case "MESSAGES": {
+                                             messageText = LocaleController.formatString(R.string.NotificationMessageAlbum, args[0]);
+                                             localMessage = true;

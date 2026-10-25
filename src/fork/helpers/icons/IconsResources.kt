@@ -2,7 +2,6 @@
 
 package desu.inugram.helpers.icons
 
-import android.annotation.SuppressLint
 import android.content.res.AssetFileDescriptor
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -16,17 +15,11 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import desu.inugram.InuConfig
 import java.io.InputStream
 
 class IconsResources(private val resources: Resources) : Resources(resources.assets, resources.displayMetrics, resources.configuration) {
     fun wrapsResources(resources: Resources): Boolean {
         return this.resources === resources
-    }
-
-    // entiny: sync base resources config directly to prevent wrapped internals from freezing across rotation
-    fun syncConfigurationFrom(base: Resources) {
-        super.updateConfiguration(base.configuration, base.displayMetrics)
     }
 
     override fun getAnimation(id: Int): XmlResourceParser = resources.getAnimation(id)
@@ -41,14 +34,17 @@ class IconsResources(private val resources: Resources) : Resources(resources.ass
     override fun getDimensionPixelSize(id: Int): Int = resources.getDimensionPixelSize(id)
     override fun getDisplayMetrics(): DisplayMetrics = resources.displayMetrics
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    override fun getDrawable(id: Int): Drawable = resources.getDrawable(getConversion(id))
+    override fun getDrawable(id: Int): Drawable = getDrawableForDensity(id, 0, null)!!
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    override fun getDrawable(id: Int, theme: Theme?): Drawable = resources.getDrawable(getConversion(id), theme)
+    override fun getDrawable(id: Int, theme: Theme?): Drawable = getDrawableForDensity(id, 0, theme)!!
 
-    override fun getDrawableForDensity(id: Int, density: Int): Drawable? = resources.getDrawableForDensity(getConversion(id), density)
-    override fun getDrawableForDensity(id: Int, density: Int, theme: Theme?): Drawable? = resources.getDrawableForDensity(getConversion(id), density, theme)
+    override fun getDrawableForDensity(id: Int, density: Int): Drawable? = getDrawableForDensity(id, density, null)
+    override fun getDrawableForDensity(id: Int, density: Int, theme: Theme?): Drawable? {
+        for (pack in IconPackHelper.getActivePacks()) {
+            pack.loadDrawable(resources, id, density, theme)?.let { return it }
+        }
+        return resources.getDrawableForDensity(id, density, theme)
+    }
     override fun getFloat(id: Int): Float = resources.getFloat(id)
     override fun getFont(id: Int): Typeface = resources.getFont(id)
     override fun getFraction(id: Int, base: Int, pbase: Int): Float = resources.getFraction(id, base, pbase)
@@ -82,13 +78,4 @@ class IconsResources(private val resources: Resources) : Resources(resources.ass
     override fun parseBundleExtra(tagName: String, attrs: AttributeSet, outBundle: Bundle) = resources.parseBundleExtra(tagName, attrs, outBundle)
     override fun parseBundleExtras(parser: XmlResourceParser, outBundle: Bundle) = resources.parseBundleExtras(parser, outBundle)
     override fun updateConfiguration(config: Configuration?, metrics: DisplayMetrics?) = resources.updateConfiguration(config, metrics)
-
-    private fun getConversion(icon: Int): Int {
-        return when (InuConfig.ICON_REPLACEMENT.value) {
-            InuConfig.IconReplacementItem.SOLAR -> SolarIconPack.map(icon)
-            InuConfig.IconReplacementItem.VKUI -> VkIconPack.map(icon)
-            InuConfig.IconReplacementItem.PHOSPHOR -> PhosphorIconPack.map(icon)
-            else -> icon
-        }
-    }
 }

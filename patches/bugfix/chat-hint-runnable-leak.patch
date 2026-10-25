@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 23 Oct 2026 14:01:12 +0400
+Subject: fix chat hint timers leaking closed chats
+
+---
+ .../java/org/telegram/ui/ChatActivity.java    | 22 ++++++++++++-------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -3489,6 +3489,9 @@ public class ChatActivity extends BaseFragment implements
+             AndroidUtilities.cancelRunOnUIThread(chatInviteRunnable);
+             chatInviteRunnable = null;
+         }
++        AndroidUtilities.cancelRunOnUIThread(inu_checkSavedMessagesTagHintRunnable);
++        AndroidUtilities.cancelRunOnUIThread(inu_checkBotMessageHintRunnable);
++        AndroidUtilities.cancelRunOnUIThread(inu_checkConversionDateTimeToastRunnable);
+         getNotificationCenter().removePostponeNotificationsCallback(postponeNotificationsWhileLoadingCallback);
+         getMessagesController().setLastCreatedDialogId(dialog_id, chatMode == MODE_SCHEDULED, false);
+ 
+@@ -7165,8 +7168,8 @@ public class ChatActivity extends BaseFragment implements
+                         savedMessagesTagHint.hide();
+                     } else if (!savedMessagesTagHintShown) {
+                         lastScrollTime = System.currentTimeMillis();
+-                        AndroidUtilities.cancelRunOnUIThread(ChatActivity.this::checkSavedMessagesTagHint);
+-                        AndroidUtilities.runOnUIThread(ChatActivity.this::checkSavedMessagesTagHint, 2000);
++                        AndroidUtilities.cancelRunOnUIThread(inu_checkSavedMessagesTagHintRunnable);
++                        AndroidUtilities.runOnUIThread(inu_checkSavedMessagesTagHintRunnable, 2000);
+                     }
+                 }
+                 if (videoConversionTimeHint != null && videoConversionTimeHint.shown()) {
+@@ -7175,8 +7178,8 @@ public class ChatActivity extends BaseFragment implements
+                 if (botMessageHint != null && botMessageHint.shown()) {
+                     botMessageHint.hide();
+                 } else {
+-                    AndroidUtilities.cancelRunOnUIThread(ChatActivity.this::checkBotMessageHint);
+-                    AndroidUtilities.runOnUIThread(ChatActivity.this::checkBotMessageHint, 2000);
++                    AndroidUtilities.cancelRunOnUIThread(inu_checkBotMessageHintRunnable);
++                    AndroidUtilities.runOnUIThread(inu_checkBotMessageHintRunnable, 2000);
+                 }
+                 if (factCheckHint != null) {
+                     factCheckHint.hide();
+@@ -28105,8 +28108,8 @@ public class ChatActivity extends BaseFragment implements
+             videoConversionTimeHint.setJointPx(0, -dp(16) + loc[0] + foundCell.timeX + foundCell.timeWidth / 2f);
+             videoConversionTimeHint.show();
+         } else {
+-            AndroidUtilities.cancelRunOnUIThread(ChatActivity.this::checkConversionDateTimeToast);
+-            AndroidUtilities.runOnUIThread(ChatActivity.this::checkConversionDateTimeToast, 2000);
++            AndroidUtilities.cancelRunOnUIThread(inu_checkConversionDateTimeToastRunnable);
++            AndroidUtilities.runOnUIThread(inu_checkConversionDateTimeToastRunnable, 2000);
+         }
+     }
+ 
+@@ -28136,6 +28139,9 @@ public class ChatActivity extends BaseFragment implements
+ 
+     private long lastScrollTime;
+     private boolean savedMessagesTagHintShown;
++    private final Runnable inu_checkSavedMessagesTagHintRunnable = this::checkSavedMessagesTagHint;
++    private final Runnable inu_checkBotMessageHintRunnable = this::checkBotMessageHint;
++    private final Runnable inu_checkConversionDateTimeToastRunnable = this::checkConversionDateTimeToast;
+     private void checkSavedMessagesTagHint() {
+         if (savedMessagesTagHint == null || savedMessagesTagHint.shown() || savedMessagesTagHintShown || !checkedSavedMessagesHint) {
+             return;
+@@ -28169,8 +28175,8 @@ public class ChatActivity extends BaseFragment implements
+ 
+                 MessagesController.getGlobalMainSettings().edit().putInt("savedsearchtaghint", 1).apply();
+             } else {
+-                AndroidUtilities.cancelRunOnUIThread(ChatActivity.this::checkSavedMessagesTagHint);
+-                AndroidUtilities.runOnUIThread(ChatActivity.this::checkSavedMessagesTagHint, 2000);
++                AndroidUtilities.cancelRunOnUIThread(inu_checkSavedMessagesTagHintRunnable);
++                AndroidUtilities.runOnUIThread(inu_checkSavedMessagesTagHintRunnable, 2000);
+             }
+         }
+     }

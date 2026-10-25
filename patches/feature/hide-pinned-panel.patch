@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -455,7 +455,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -457,7 +457,7 @@ public class ChatActivity extends BaseFragment implements
      private ComposeDrawable otherIcon;
      private ActionBarMenu.LazyItem attachItem;
      private ActionBarMenuItem.Item savedChatsItem, savedChatsGap;;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
      private ActionBarMenu.LazyItem editTextItem;
      protected ActionBarMenuItem searchItem;
      protected ActionBarMenuItem topicCreateItem;
-@@ -750,13 +750,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -752,13 +752,13 @@ public class ChatActivity extends BaseFragment implements
  
      private Runnable checkPaddingsRunnable;
  
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      private int maxPinnedMessageId;
      private HashMap<Integer, MessageObject> pinnedMessageObjects = new HashMap<>();
      private SparseArray<Boolean> loadingPinnedMessages = new SparseArray<>();
-@@ -11683,6 +11683,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -11692,6 +11692,7 @@ public class ChatActivity extends BaseFragment implements
          pinnedListButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_inappPlayerClose) & 0x19ffffff));
          pinnedMessageView.addView(pinnedListButton, LayoutHelper.createFrame(36, 48, Gravity.RIGHT | Gravity.TOP, 0, 0, 7, 0));
          pinnedListButton.setOnClickListener(v -> openPinnedMessagesList(false));
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  
          closePinned = new ImageView(getContext());
          closePinned.setImageResource(R.drawable.miniplayer_close);
-@@ -11735,6 +11736,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -11744,6 +11745,7 @@ public class ChatActivity extends BaseFragment implements
                  updatePinnedMessageView(true);
              }
          });
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
  
          updatePinnedListButton(false);
      }
-@@ -28478,7 +28480,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28659,7 +28661,7 @@ public class ChatActivity extends BaseFragment implements
          return false;
      }
  
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
          updatePinnedMessageView(animated, 0);
      }
  
-@@ -28597,6 +28599,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28778,6 +28780,7 @@ public class ChatActivity extends BaseFragment implements
          if (currentEncryptedChat != null || chatMode != 0) {
              return;
          }

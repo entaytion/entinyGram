@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -24456,6 +24456,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -24489,6 +24489,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isSponsoredDisabled() {
@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -25274,7 +25274,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25458,7 +25458,7 @@ public class ChatActivity extends BaseFragment implements
      private Pattern sponsoredUrlPattern;
      private MessageObject botSponsoredMessage;
      private void addSponsoredMessages(boolean animated) {
@@ -88,7 +88,7 @@ index 0000000..0000000 100644
              return;
          }
          MessagesController.SponsoredMessagesInfo res = getMessagesController().getSponsoredMessages(dialog_id);
-@@ -37145,7 +37145,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37345,7 +37345,7 @@ public class ChatActivity extends BaseFragment implements
          private int messagesEndRow;
  
          public ArrayList<MessageObject> getMessages() {

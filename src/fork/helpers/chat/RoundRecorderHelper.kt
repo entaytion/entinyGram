@@ -62,6 +62,16 @@ object RoundRecorderHelper {
     fun zoomLevelsFor(maxZoom: Float): List<Float> =
         ZOOM_BUTTON_CANDIDATES.filter { it <= maxZoom + 0.01f }.ifEmpty { listOf(1f) }
 
+    // new recorder's setZoom takes linear progress over [1, maxRatio]
+    @JvmStatic
+    fun zoomTToProgress(t: Float, maxRatio: Float): Float =
+        if (maxRatio <= 1f) 0f else (mapZoomT(t.coerceIn(0f, 1f), 1f, maxRatio) - 1f) / (maxRatio - 1f)
+
+    @JvmStatic
+    fun zoomProgressToT(progress: Float, maxRatio: Float): Float =
+        tFromZoom(1f + progress * (maxRatio - 1f), 1f, maxRatio)
+
+    // c2 and c1 are mutually exclusive (depends on useCamera2); pass both, only the live one matters
     @JvmStatic
     fun currentZoomT(c2: Camera2Session?, c1: CameraSession?): Float = when {
         c2 != null -> tFromZoom(c2.zoom, c2.minZoom, c2.maxZoom)

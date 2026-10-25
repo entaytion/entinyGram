@@ -54,6 +54,7 @@ import desu.inugram.helpers.WebAppHelper
 import desu.inugram.helpers.cloud.SettingsBackupHelper
 import desu.inugram.helpers.font.FontImportHelper
 import desu.inugram.helpers.menu.MenuOrderEntry
+import desu.inugram.helpers.icons.IconPackHelper
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.reorderByMenu
 import desu.inugram.helpers.security.GhostHelper
@@ -547,8 +548,16 @@ object ChatHelper {
             icons.add(R.drawable.msg_retry)
         }
 
-        val chatInfo = activity.currentChatInfo
-        if (chatInfo != null && chatInfo.can_view_stats && selectedObject.id > 0 && !selectedObject.isStory) {
+        val owner = selectedObject.messageOwner
+        val statsChat = when {
+            owner.fwd_from == null -> activity.currentChat
+            owner.fwd_from.saved_from_msg_id != 0 && selectedObject.fromChatId < 0 ->
+                activity.messagesController.getChat(-selectedObject.fromChatId)
+            else -> null
+        }
+        if ((owner.views > 0 || owner.forwards > 0) && ChatObject.hasAdminRights(statsChat) &&
+            selectedObject.id > 0 && !selectedObject.isStory
+        ) {
             items.add(LocaleController.getString(R.string.Statistics))
             options.add(ChatActivity.OPTION_STATISTICS)
             icons.add(R.drawable.msg_stats)
@@ -2015,10 +2024,12 @@ object ChatHelper {
         val isSettings = name.endsWith(SettingsBackupHelper.FILENAME_SUFFIX)
         val isPlugin = !isSettings && name.endsWith(".inu.js", ignoreCase = true)
         val isFont = !isSettings && !isPlugin && FontImportHelper.isFontFileName(name)
-        if (!isSettings && !isPlugin && !isFont) return false
+        val isIconPack = !isSettings && !isPlugin && !isFont && IconPackHelper.isIconPackFileName(name)
+        if (!isSettings && !isPlugin && !isFont && !isIconPack) return false
         val file = resolveFile()?.takeIf { it.exists() } ?: return false
         when {
             isSettings -> SettingsBackupHelper.startImportFromFile(fragment, file)
+            isIconPack -> IconPackHelper.startImportFromFile(fragment, file)
             // #if PLUGINS
             isPlugin && PluginManager.isEngineEnabled() -> PluginImportHelper.startImportFromFile(fragment, file)
             isPlugin -> showPluginsUnavailableDialog(

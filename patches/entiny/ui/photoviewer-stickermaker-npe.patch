@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -7139,7 +7139,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7142,7 +7142,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              @Override
              public void setAlpha(float alpha) {
                  super.setAlpha(alpha);

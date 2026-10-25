@@ -1,0 +1,72 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 22 Oct 2026 10:12:08 +0400
+Subject: fix editing rich messages with hashtags and mentions
+
+---
+ .../messenger/SendMessagesHelper.java         | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -9909,6 +9909,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+     }
+ 
+     public static TL_iv.PageBlock toInputPageBlock(TL_iv.PageBlock block) {
++        block = inu_copyWithoutAutoEntities(block);
+         if (block instanceof TL_iv.pageBlockMap) {
+             TL_iv.pageBlockMap map = (TL_iv.pageBlockMap) block;
+             TL_iv.inputPageBlockMap input = new TL_iv.inputPageBlockMap();
+@@ -9922,6 +9923,50 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         return block;
+     }
+ 
++    // server detects these entities itself and rejects them in input with RICH_MESSAGE_RICH_TEXT_INVALID
++    private static TL_iv.PageBlock inu_copyWithoutAutoEntities(TL_iv.PageBlock block) {
++        if (block == null) return null;
++        try {
++            final SerializedData out = new SerializedData(block.getObjectSize());
++            block.serializeToStream(out);
++            final SerializedData in = new SerializedData(out.toByteArray());
++            out.cleanup();
++            final TL_iv.PageBlock copy = TL_iv.PageBlock.TLdeserialize(in, in.readInt32(true), true);
++            in.cleanup();
++            inu_stripAutoEntities(copy);
++            return copy;
++        } catch (Exception e) {
++            FileLog.e(e);
++            return block;
++        }
++    }
++
++    private static boolean inu_isAutoEntity(Object text) {
++        return text instanceof TL_iv.textMention || text instanceof TL_iv.textHashtag || text instanceof TL_iv.textBotCommand
++            || text instanceof TL_iv.textCashtag || text instanceof TL_iv.textAutoUrl || text instanceof TL_iv.textAutoEmail
++            || text instanceof TL_iv.textAutoPhone || text instanceof TL_iv.textBankCard || text instanceof TL_iv.textTonAddress;
++    }
++
++    @SuppressWarnings("unchecked")
++    private static Object inu_stripAutoEntities(Object obj) {
++        while (inu_isAutoEntity(obj)) obj = ((TL_iv.RichText) obj).text;
++        if (obj == null || obj.getClass().getEnclosingClass() != TL_iv.class) return obj;
++        for (java.lang.reflect.Field f : obj.getClass().getFields()) {
++            if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
++            try {
++                final Object v = f.get(obj);
++                if (v instanceof List) {
++                    final List<Object> list = (List<Object>) v;
++                    for (int i = 0; i < list.size(); i++) list.set(i, inu_stripAutoEntities(list.get(i)));
++                } else {
++                    final Object stripped = inu_stripAutoEntities(v);
++                    if (stripped != v) f.set(obj, stripped);
++                }
++            } catch (IllegalAccessException ignored) {}
++        }
++        return obj;
++    }
++
+     private static TLRPC.InputGeoPoint toInputGeoPoint(TLRPC.GeoPoint geo) {
+         if (!(geo instanceof TLRPC.TL_geoPoint)) {
+             return new TLRPC.TL_inputGeoPointEmpty();

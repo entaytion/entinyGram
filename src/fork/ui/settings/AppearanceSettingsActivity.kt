@@ -10,6 +10,7 @@ import desu.inugram.InuConfig
 import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.icons.IconPackHelper
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -71,7 +72,19 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         val ctx = context ?: return
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
         items.add(mkSubPageButton(BUTTON_FONTS, LocaleController.getString(R.string.InuFonts)))
-        items.add(mkTwoLineEntry(BUTTON_ICON_REPLACEMENT, R.drawable.phosphor_palette, LocaleController.getString(R.string.InuIconReplacement), IconPacksSettingsActivity.currentPackLabel()))
+        items.add(mkTwoLineEntry(BUTTON_ICON_REPLACEMENT, R.drawable.phosphor_palette, LocaleController.getString(R.string.InuIconReplacement), IconPackHelper.getActivePacksSummary()))
+        items.add(
+            mkTwoLineEntry(
+                BUTTON_NOTIFICATION_ICON,
+                R.drawable.phosphor_palette,
+                LocaleController.getString(R.string.InuNotificationIcon),
+                when (InuConfig.NOTIFICATION_ICON.value) {
+                    InuConfig.NotificationIconItem.INUGRAM -> LocaleController.getString(R.string.InuNotificationIconInugram)
+                    InuConfig.NotificationIconItem.OLD_ENTINYGRAM -> LocaleController.getString(R.string.InuNotificationIconOldEntinygram)
+                    else -> LocaleController.getString(R.string.InuNotificationIconTelegram)
+                },
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDesignStyle)))
@@ -183,7 +196,20 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 avatarCornerPreview?.updatePreview()
             }
 
-            BUTTON_ICON_REPLACEMENT -> presentFragment(IconPacksSettingsActivity())
+            BUTTON_ICON_REPLACEMENT -> presentFragment(IconPacksActivity())
+            BUTTON_NOTIFICATION_ICON -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuNotificationIconTelegram),
+                    LocaleController.getString(R.string.InuNotificationIconInugram),
+                    LocaleController.getString(R.string.InuNotificationIconOldEntinygram),
+                ),
+                InuConfig.NOTIFICATION_ICON.value,
+            ) { which ->
+                InuConfig.NOTIFICATION_ICON.value = which
+                showRestartBulletin()
+                listView.adapter.update(false)
+            }
 
             BUTTON_FONTS -> presentFragment(FontsSettingsActivity())
 
@@ -240,6 +266,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_REDUCE_MENU_MOTION = InuUtils.generateId()
         private val TOGGLE_UNIFIED_CORNER_RADIUS = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
+        private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
         private val BUTTON_IOS_STYLE = InuUtils.generateId()
         private val BUTTON_MATERIAL3 = InuUtils.generateId()
@@ -270,6 +297,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("reduce-menu-motion", R.string.InuReduceMenuMotion, TOGGLE_REDUCE_MENU_MOTION),
                 SearchRegistry.Entry("unified-corner-radius", R.string.InuUnifiedCornerRadius, TOGGLE_UNIFIED_CORNER_RADIUS),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
+                SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),
                 SearchRegistry.Entry("non-island-folders-bar", R.string.InuNonIslandFoldersBar, TOGGLE_NON_ISLAND_FOLDERS_BAR),

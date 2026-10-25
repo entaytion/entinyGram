@@ -21,7 +21,6 @@ import desu.inugram.ui.settings.DatacenterStatusActivity
 import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
-import desu.inugram.ui.settings.IconPacksSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.IosStyleSettingsActivity
 import desu.inugram.ui.settings.Material3SettingsActivity
@@ -78,7 +77,6 @@ object SearchRegistry {
             DrawerSettingsActivity.PAGE,
             DrawerMenuOrderActivity.PAGE,
             MenusSettingsActivity.PAGE,
-            IconPacksSettingsActivity.PAGE,
             FontsSettingsActivity.PAGE,
             FontStackActivity.PAGE,
             CategoryChatsSettingsActivity.PAGE,

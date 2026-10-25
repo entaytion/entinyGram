@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -797,9 +797,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -799,9 +799,9 @@ public class ChatActivity extends BaseFragment implements
      private AnimatorSet runningAnimation;
      private int runningAnimationIndex = -1;
  
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
      private boolean forbidForwardingWithDismiss;
      public MessagePreviewParams messagePreviewParams;
      public MessageSuggestionParams messageSuggestionParams;
-@@ -1714,6 +1714,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -1716,6 +1716,10 @@ public class ChatActivity extends BaseFragment implements
              if (isTryingTextSelection() || hasTextSelection() || inPreviewMode || isInsideContainer) {
                  return false;
              }
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
              wasManualScroll = true;
              boolean result = true;
              boolean showMenu = true;
-@@ -1940,6 +1944,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -1942,6 +1946,11 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean hasDoubleTap(View view, int position) {
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
              if (isQuickRepliesOrWelcomeMessagesMode()) return false;
              String reactionStringSetting = getMediaDataController().getDoubleTapReaction();
              TLRPC.TL_availableReaction reaction = getMediaDataController().getReactionsMap().get(reactionStringSetting);
-@@ -1966,6 +1975,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -1968,6 +1977,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public void onDoubleTap(View view, int position, float x, float y) {
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
              if (getParentActivity() == null || isSecretChat() || isInScheduleMode() || isInPreviewMode() || isQuickRepliesOrWelcomeMessagesMode()) {
                  return;
              }
-@@ -30886,6 +30896,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -31067,6 +31077,12 @@ public class ChatActivity extends BaseFragment implements
          return createMenu(v, single, listView, x, y, searchGroup, longpress, false);
      }
  
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
      @SuppressLint("ClickableViewAccessibility")
      private boolean createMenu(View v, boolean single, boolean listView, float x, float y, boolean searchGroup, boolean longpress, boolean suggestEdit) {
          if (actionBar.isActionModeShowed() || isReport()) {
-@@ -32323,6 +32339,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32504,6 +32520,7 @@ public class ChatActivity extends BaseFragment implements
                  final boolean tags = getUserConfig().getClientUserId() == getDialogId();
                  reactionsLayout = new ReactionsContainerLayout(tags ? ReactionsContainerLayout.TYPE_TAGS : ReactionsContainerLayout.TYPE_DEFAULT, ChatActivity.this, contentView.getContext(), currentAccount, getResourceProvider());
                  reactionsLayout.setBackgroundFactory(scrimBlur3Factory, BlurredBackgroundProviderImpl.messageMenuReactionsBackground(resourceProvider));
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
                  if (tags) {
                      reactionsLayout.setHint(getUserConfig().isPremium() ? LocaleController.getString(R.string.SavedTagReactionsHint2) : AndroidUtilities.replaceSingleTag(LocaleController.getString(R.string.SavedTagReactionsPremiumHint), Theme.key_windowBackgroundWhiteBlueText2, 0, () -> {
                          closeMenu(false);
-@@ -33518,7 +33535,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33699,7 +33716,7 @@ public class ChatActivity extends BaseFragment implements
          MediaController.saveFile(path, getParentActivity(), messageObject.isVideo() ? 1 : 0, null, null);
      }
  

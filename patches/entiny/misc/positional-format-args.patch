@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/res/values/strings.xml b/TMessagesProj/src/m
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/values/strings.xml
 +++ b/TMessagesProj/src/main/res/values/strings.xml
-@@ -5997,8 +5997,8 @@
+@@ -5998,8 +5998,8 @@
      <string name="TopicClosedByAdmin">The topic is closed</string>
      <string name="AlmostDone">Almost done</string>
      <string name="TopicEmptyViewDescription">Send first message to start the topic</string>
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
      <string name="FloatingDebugEnable">Enable floating debug</string>
      <string name="FloatingDebugDisable">Disable floating debug</string>
      <string name="DebugClearLocalDatabaseSuccess">Cleared local database.</string>
-@@ -6668,10 +6668,10 @@
+@@ -6669,10 +6669,10 @@
      <string name="StorySave">Save to profile</string>
      <string name="StorySavedTitle_one">%d story saved to your profile</string>
      <string name="StorySavedTitle_other">%d stories saved to your profile</string>
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
      <string name="StorySavedSubtitle">Saved stories can be viewed by others on your profile until you remove them.</string>
      <string name="StoryArchived_one">%d story is hidden from your profile</string>
      <string name="StoryArchived_other">%d stories are hidden from your profile</string>
-@@ -6936,8 +6936,8 @@
+@@ -6937,8 +6937,8 @@
      <string name="SortByReactions">Reactions First</string>
      <string name="SortByReposts">Reposts First</string>
      <string name="SortByTime">Newest First</string>
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
      <string name="NoContactsViewed">None of your contacts viewed this story.</string>
      <string name="Viewers">Viewers</string>
      <string name="StealthModeConfirmTitle">You are in Stealth Mode now</string>
-@@ -7351,8 +7351,8 @@
+@@ -7352,8 +7352,8 @@
      <string name="UnconfirmedAuthSingleBot">%1$s connected to your account from %2$s. Was this you?</string>
      <string name="UnconfirmedAuthMultiple_one">We detected new %d login to your account. Is it you?</string>
      <string name="UnconfirmedAuthMultiple_other">We detected new %d logins to your account. Is it you?</string>
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
      <string name="UnconfirmedAuthDeniedTitle_one">New Login Prevented</string>
      <string name="UnconfirmedAuthDeniedTitle_other">New Logins Prevented</string>
      <string name="UnconfirmedAuthDeniedMessageSingle">We have terminated the login attempt from %s.</string>
-@@ -8930,12 +8930,12 @@
+@@ -8931,12 +8931,12 @@
      <string name="Gift2HideChannelInfo">You can hide your name and message from all visitors of this channel except its admins.</string>
      <string name="Gift2HideSelf">Hide My Name</string>
      <string name="Gift2HideSelfInfo">Hide my name and message from visitors to my profile</string>
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
      <string name="Gift2AuctionInfo3">**%1$s** gifts are dropped in **%2$d** rounds\nto the top **%3$d** bidders. %4$s</string>
      <string name="Gift2AuctionTableStarted">Started</string>
      <string name="Gift2AuctionTableEnded">Ended</string>
-@@ -9002,7 +9002,7 @@
+@@ -9003,7 +9003,7 @@
      <string name="Gift2SendYourBalance_other">Your balance is %d Stars</string>
      <string name="Gift2ActionTitle">Gift from </string>
      <string name="Gift2ActionTitleTo">Gift for </string>
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
      <string name="Gift2ActionWonActionText">You bought this gift at auction for %s Stars.</string>
      <string name="Gift2ActionUpgradeTitle">Upgrade from </string>
      <string name="Gift2ActionUpgradeUnknownTitle">Upgrade from unknown</string>
-@@ -9105,8 +9105,8 @@
+@@ -9106,8 +9106,8 @@
      <string name="Gift2InfoConverted_other">You converted this gift to **%d** Stars.</string>
      <string name="Gift2InfoChannelConverted_one">Your channel converted this gift to **%d** Star.</string>
      <string name="Gift2InfoChannelConverted_other">Your channel converted this gift to **%d** Stars.</string>
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
      <string name="Gift2InfoOutPinned">%1$s kept this gift in your Profile.</string>
      <string name="Gift2InSenderHidden2">Only you can see the senderʼs name.</string>
      <string name="Gift2InSenderMessageHidden2">Only you can see the senderʼs name and message.</string>
-@@ -9933,30 +9933,30 @@
+@@ -9960,30 +9960,30 @@
      <string name="SuggestAPostBelowHint">Tap here to suggest a post for %s</string>
      <string name="SuggestAPostBelowSubtitle">Tap to offer a price for publishing</string>
      <string name="SuggestAPostBelowSubtitleStars">⭐️ %s for publishing anytime</string>
@@ -150,7 +150,7 @@ index 0000000..0000000 100644
  
      <string name="SuggestionAgreementDeclinedYou">❌ **%s** rejected your message.</string>
      <string name="SuggestionAgreementDeclinedThis">❌ **%s** rejected this message.</string>
-@@ -10163,11 +10163,11 @@
+@@ -10190,11 +10190,11 @@
      <string name="StarRatingDescription">This rating reflects **%s\'s** activity\non Telegram. What affects it:</string>
      <string name="StarRatingSelfDescription">This rating reflects your activity\non Telegram. What affects it:</string>
      <string name="StarRatingTitle1">Gifts from Telegram</string>
@@ -165,7 +165,7 @@ index 0000000..0000000 100644
      <string name="StarRatingButtonUnderstood">Understood</string>
      <string name="StoriesAlbum">Album</string>
      <string name="StoriesAlbumCreateNew">Create a New Album</string>
-@@ -10291,8 +10291,8 @@
+@@ -10318,8 +10318,8 @@
      <string name="GiftAuctionInfoText">Join the battle for exclusive gifts.</string>
      <string name="GiftAuctionInfo1Header_one">Top %d Bidder</string>
      <string name="GiftAuctionInfo1Header_other">Top %d Bidders</string>
@@ -176,7 +176,7 @@ index 0000000..0000000 100644
      <string name="GiftAuctionInfo2Header">Bid Carryover</string>
      <string name="GiftAuctionInfo2Text_one">If your bid leaves the top %d, it will automatically join the next round.</string>
      <string name="GiftAuctionInfo2Text_other">If your bid leaves the top %d, it will automatically join the next round.</string>
-@@ -10438,9 +10438,9 @@
+@@ -10465,9 +10465,9 @@
      <string name="Gift2ActiveAuctionsActiveStatusOutbid">You\'ve been outbid.</string>
      <string name="Gift2ActiveAuctionsActiveStatusEarly">You\'ve placed an early bid.</string>
  
@@ -188,7 +188,7 @@ index 0000000..0000000 100644
      <string name="Gift2ActiveAuctionsActiveBidOutbid">Your bid **%s** is outbid</string>
      <string name="Gift2AuctionsItemsBought2_one">%1$d %2$s item bought ></string>
      <string name="Gift2AuctionsItemsBought2_other">%1$d %2$s items bought ></string>
-@@ -10455,7 +10455,7 @@
+@@ -10482,7 +10482,7 @@
      <string name="Gift2AuctionsBidHasBeenPlaced">Your bid has been placed</string>
      <string name="Gift2AuctionsBidHasBeenIncreased">Your bid has been increased</string>
      <string name="Gift2AuctionsChangeRecipient">Change Recipient</string>
@@ -197,7 +197,7 @@ index 0000000..0000000 100644
      <string name="Passkey">Passkeys</string>
      <string name="PasskeyDeleteTitle">Delete Passkey</string>
      <string name="PasskeyDeleteText">Once deleted, this passkey can\'t be used to log in.\n\nDon\'t forget to remove it from your password manager too.</string>
-@@ -10514,7 +10514,7 @@
+@@ -10541,7 +10541,7 @@
      <string name="GiftOfferRowValue">Value</string>
      <string name="GiftOfferRowDuration">Duration</string>
      <string name="GiftOfferPay">Pay ⭐️%s</string>

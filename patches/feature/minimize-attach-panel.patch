@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.pet>
-Date: Mon, 31 Aug 2026 22:47:32 +0400
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:02:15 +0200
 Subject: allow minimizing the attach panel without discarding the selection
 
 ---
@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13794,8 +13794,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -13807,8 +13807,11 @@ public class ChatActivity extends BaseFragment implements
              chatAttachAlert.setMaxSelectedPhotos(-1, true);
          }
          chatAttachAlert.enableDefaultMode();
@@ -27,14 +27,14 @@ index 0000000..0000000 100644
          chatAttachAlert.parentThemeDelegate = themeDelegate;
          showDialog(chatAttachAlert);
      }
-@@ -30246,6 +30249,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30429,6 +30432,7 @@ public class ChatActivity extends BaseFragment implements
+     public void onResume() {
          super.onResume();
          checkShowBlur(false);
-         inu_updateMenuSlotAvatar();
 +        desu.inugram.helpers.chat.AttachMinimizeHelper.syncBadge(this);
+         inu_updateMenuSlotAvatar();
          activityResumeTime = System.currentTimeMillis();
          if (openImport && getSendMessagesHelper().getImportingHistory(dialog_id) != null) {
-             ImportingAlert alert = new ImportingAlert(getParentActivity(), null, this, themeDelegate);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java

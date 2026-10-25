@@ -155,6 +155,14 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                     ),
                 )
             )
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_BLOCKED_MESSAGES_REPLIES,
+                    R.string.InuBlockedMessagesHideReplies,
+                    R.string.InuBlockedMessagesHideRepliesInfo,
+                    InuConfig.BLOCKED_MESSAGES_HIDE_REPLIES.value,
+                )
+            )
         }
         items.add(UItem.asShadow(null))
 
@@ -372,6 +380,13 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             }
 
             BUTTON_BLOCKED_MESSAGES_EXTRA -> openBlockedExtraPicker()
+
+            TOGGLE_BLOCKED_MESSAGES_REPLIES -> {
+                val new = InuConfig.BLOCKED_MESSAGES_HIDE_REPLIES.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                BlockedMessagesHelper.notifyChanged(currentAccount)
+            }
+
             BUTTON_PINNED_REACTIONS -> presentFragment(PinnedReactionsActivity())
             BUTTON_DOUBLE_TAP_INCOMING -> showDoubleTapSelector(view, DoubleTapContext.INCOMING)
             BUTTON_DOUBLE_TAP_OUTGOING -> showDoubleTapSelector(view, DoubleTapContext.OUTGOING)
@@ -460,6 +475,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_MEDIA_SPOILER_MODE = InuUtils.generateId()
         private val BUTTON_BLOCKED_MESSAGES_MODE = InuUtils.generateId()
         private val BUTTON_BLOCKED_MESSAGES_EXTRA = InuUtils.generateId()
+        private val TOGGLE_BLOCKED_MESSAGES_REPLIES = InuUtils.generateId()
 
         private fun textSpoilerModeLabel(value: Int): String = when (value) {
             InuConfig.TextSpoilerModeItem.SIMPLE -> LocaleController.getString(R.string.InuTextSpoilerModeSimple)
@@ -516,6 +532,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("media-spoiler-mode", R.string.InuMediaSpoilerMode, BUTTON_MEDIA_SPOILER_MODE),
                 SearchRegistry.Entry("blocked-messages-mode", R.string.InuBlockedMessagesMode, BUTTON_BLOCKED_MESSAGES_MODE),
                 SearchRegistry.Entry("blocked-messages-extra", R.string.InuBlockedMessagesExtra, BUTTON_BLOCKED_MESSAGES_EXTRA),
+                SearchRegistry.Entry("blocked-messages-replies", R.string.InuBlockedMessagesHideReplies, TOGGLE_BLOCKED_MESSAGES_REPLIES),
             ),
         )
     }

@@ -248,7 +248,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         items.add(
-            UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuDownloadsAndNetwork)))
+            UItem.asHeader(LocaleController.getString(R.string.InuDownloadsAndNetwork))
         )
         items.add(
             UItem.asCheck(

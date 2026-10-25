@@ -365,10 +365,22 @@
     <string name="InuMessageInput">消息输入框</string>
     <string name="InuAttachmentSheet">附件面板</string>
     <string name="InuIconReplacement">图标包</string>
-    <string name="InuIconReplacementOff">默认</string>
-    <string name="InuIconReplacementSolar">Solar by @Design480</string>
-    <string name="InuIconReplacementVkui">VKUI by VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
+    <string name="InuIconPackLoadFromFile">从文件加载</string>
+    <string name="InuIconPacksInstalled">已安装的图标包</string>
+    <string name="InuIconPacksOrderInfo">图标按上方的优先级顺序匹配。长按以删除</string>
+    <string name="InuIconPacksUnsavedAlert">图标包有未保存的更改。要应用并重启应用吗？</string>
+    <string name="InuIconPacksApply">应用并重启</string>
+    <string name="InuIconPacksTelegram">Telegram</string>
+    <string name="InuIconPacksTelegramInfo">默认图标</string>
+    <string name="InuIconPackBundled">内置</string>
+    <string name="InuIconPackInvalid">此文件不是有效的图标包</string>
+    <string name="InuIconPackInstall">安装</string>
+    <string name="InuIconPackInstalled">图标包已安装</string>
+    <string name="InuIconPackByAuthor">作者 %1$s · %2$s</string>
+    <string name="InuIconPackIcons_other">%1$d 个图标</string>
+    <string name="InuIconPackDelete">删除图标包</string>
+    <string name="InuIconPackDeleteConfirm">删除 %1$s？</string>
+
     <string name="InuMapsHeader">地图</string>
     <string name="InuMapProvider">地图视图提供方</string>
     <string name="InuMapProviderGoogle">Google 地图</string>
@@ -747,6 +759,8 @@
     <string name="InuBlockedMessagesModeHide">隐藏</string>
     <string name="InuBlockedMessagesExtra">同时隐藏来自以下用户的消息</string>
     <string name="InuBlockedMessagesExtraCount">%1$d 位用户</string>
+    <string name="InuBlockedMessagesHideReplies">同时隐藏回复他们的消息</string>
+    <string name="InuBlockedMessagesHideRepliesInfo">回复被屏蔽用户消息的传入消息</string>
     <string name="InuHideMessages">隐藏消息</string>
     <string name="InuShowHiddenMessages">显示消息</string>
     <string name="InuSpoilers">剧透</string>
@@ -783,6 +797,9 @@
     <string name="InuGoToMessage">跳到消息</string>
     <string name="InuGoToMessagePrompt">消息 ID</string>
     <string name="InuParanoiaHideFolders">隐藏文件夹</string>
+    <string name="InuParanoiaHideMyStories">隐藏我的快拍</string>
+    <string name="InuParanoiaHideStars">隐藏 Telegram Stars</string>
+    <string name="InuParanoiaHideGram">隐藏 GRAM</string>
     <string name="InuParanoiaSelectWhitelist">要显示的聊天</string>
     <string name="InuParanoiaWhitelist">白名单模式</string>
     <string name="InuBotSettings">机器人设置</string>
@@ -1316,7 +1333,6 @@
     <string name="InuNo">否</string>
     <string name="InuNoProfilePhotos">未找到个人头像</string>
     <string name="InuNotificationIconOldEntinygram">旧版 entinyGram</string>
-    <string name="InuNotificationIconInfo">在小米（MIUI/HyperOS）上，系统可能会把此图标替换为应用图标，因此所选图标可能不会显示</string>
     <string name="InuPoweredByProvider">翻译由 %1$s 提供支持。</string>
     <string name="InuProfilePhotosDeleted">已删除所有个人头像</string>
     <string name="InuProfilePhotosDeletedCount">已删除 %1$d 张头像</string>
@@ -1396,7 +1412,6 @@
     <string name="InuIosChatHeaderInfo">iOS 风格的紧凑聊天标题胶囊，悬浮居中。</string>
     <string name="InuChatHeaderNoPill">隐藏胶囊背景</string>
     <string name="InuChatHeaderNoPillInfo">标题和副标题直接显示在壁纸上，不带胶囊。</string>
-    <string name="InuParanoiaHideMyStories">隐藏我的快拍</string>
     <string name="InuStopBot">停止机器人</string>
     <string name="InuStopBotAction">停止</string>
     <string name="InuStopBotAlert">确定要停止 **%1$s** 吗？它将无法再向你发送消息。</string>

@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 25 Oct 2026 17:39:41 +0400
+Subject: fix newly scheduled messages disappearing until reload
+
+---
+ .../src/main/java/org/telegram/messenger/MessagesStorage.java  | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -14016,6 +14016,9 @@ public class MessagesStorage extends BaseController {
+                 }
+             }
+         } else if (_oldId > 0) {
++            if (_oldId == newId) {
++                return null;
++            }
+             TL_update.TL_updateDeleteScheduledMessages update = new TL_update.TL_updateDeleteScheduledMessages();
+             update.messages.add(oldMessageId);
+             if (DialogObject.isChatDialog(dialogId)) {

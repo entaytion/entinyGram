@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 25 Oct 2026 22:43:30 +0400
+Subject: reduce action bar shadow
+
+---
+ .../src/main/java/org/telegram/ui/ActionBar/ActionBar.java      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2856,7 +2856,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         }
+ 
+         setBackgroundColor(ColorUtils.blendARGB(lowerColor, topColor, factor));
+-        setShadowAlpha((int) ((1.0f - onTopAnimated) * 0xFF));
++        setShadowAlpha((int) ((1.0f - onTopAnimated) * 0x7F));
+         if (blurredBackground) {
+             invalidate();
+         }

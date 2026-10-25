@@ -31,7 +31,7 @@ index 0000000..0000000 100644
      private boolean rightImageIsVideo;
      private boolean centerImageTransformLocked = false;
      private Matrix centerImageTransform = new Matrix();
-@@ -7800,6 +7800,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7803,6 +7803,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  if (paintingOverlay.getVisibility() == View.VISIBLE) {
                      containerView.requestLayout();
                  }
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
              }
              if (imageReceiver == centerImage && set && placeProvider != null && placeProvider.scaleToFill() && !ignoreDidSetImage && sendPhotoType != SELECT_TYPE_AVATAR && sendPhotoType != SELECT_TYPE_STICKER) {
                  if (!wasLayout) {
-@@ -16051,6 +16052,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16055,6 +16056,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
  
          if (!sameImage) {
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
              draggingDown = false;
              translationX = 0;
              translationY = 0;
-@@ -16208,6 +16210,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16212,6 +16214,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  videoFrameBitmap = null;
              }
          }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          currentImageHasFace = 0;
          currentImageFaceKey = null;
          inu_waitingForFacesOpen = false;
-@@ -18285,6 +18288,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18290,6 +18293,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              qualityPicker.cancelButton.callOnClick();
              return;
          }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
          isVisibleOrAnimating = false;
          openedFullScreenVideo = false;
          try {
-@@ -18969,6 +18973,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18974,6 +18978,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
      public void onResume() {
          redraw(0); //workaround for camera bug
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
          if (videoPlayer != null) {
              videoPlayer.seekTo(videoPlayer.getCurrentPosition() + 1);
              if (playerLooping) {
-@@ -18983,6 +18988,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18988,6 +18993,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      public void onConfigurationChanged(Configuration newConfig) {}
  
      public void onPause() {

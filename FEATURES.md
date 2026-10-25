@@ -109,7 +109,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **standalone AMOLED theme** - *ported from NagramX Turbo*
 - 📡 **theme switch recovery**: fixes interrupted theme transitions and stale Monet palettes
 - 📡 **liquid glass controls**: adjustable refraction angle and intensity - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
-- 📡 **icon packs**: Stock, Solar, VKUI and Phosphor
+- 📡 **icon packs**: stackable `.icons` packs with a bundled Solar pack
 - 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram) and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
   - compact bottom navigation bar
   - compact chat header pill with adjustable avatar placement, optionally in the menu button slot with tap and long-press swappable
@@ -249,9 +249,10 @@ the sections below contain the broader feature set: inugram functionality, featu
   - customizable drawer items
 - monet (material you) theme support - *based on [NagramX](https://github.com/risin42/NagramX)*, 🐶 improved. plus a quick switcher in appearance settings (light/dark/amoled/auto)
 - 🐶 classic ui mode for folders bar, shared media tabs, global search and chat elements (reverts the >12.6 "liquid glass" look)
-- icon replacement (solar pack by [480 Design](https://t.me/Design480) - *ported from [NagramX](https://github.com/risin42/NagramX)*; vkui pack by [VK](https://github.com/VKCOM/icons) - *ported from [Catogram](https://github.com/Catogram/Catogram)*)
+- icon packs: stackable `.icons` packs (svg/png/webp icons and `lottie:` animations + metadata.json), installed from a file or by opening them in a chat; bundled solar pack by [@r4in80w](https://t.me/r4in80w) - *ported from [NagramX](https://github.com/risin42/NagramX)*
 - 22 concept launcher icons (Inu tribute, Radar, Constellation, Orbit, Avatar, Nothing, Mono, Sunset, Amethyst, Aurora, Google ’26, Lunar, Math Book, Jungle, Gold, Dish, Blush, Nox Sky, Inverse, osu!, Among Us, Crimson) in the app icon picker, free for everyone - *icons by [@xiurann](https://t.me/xiurann) and [@mkr_infinity](https://t.me/mkr_infinity)*
 - notification icon: Telegram (default) or entinyGram
+- 🐶 animated splash screen follows the selected app icon and Monet theme (Android 12+)
 - show seconds in timestamps
 - override Telegram's detected device performance class
 - 🐶 disable animated avatars in chats independently of video autoplay from Power Saving → Effects in chats
@@ -387,6 +388,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 restrict/ban menu items the avatar long-tap menu
 - hide messages from blocked users: with a spoiler or completely - *partially ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
   - also hide messages from a custom list of users/channels without blocking them (via settings picker or profile menu)
+  - optionally also hide replies to those users
 
 ### message input / formatting
 
@@ -404,6 +406,7 @@ the sections below contain the broader feature set: inugram functionality, featu
   - keep zoom on pinch release
   - gentler exponential zoom curve (like in normal camera apps)
   - toggle to disable dual-camera mode
+  - new experimental (stock) Camera2 recorder, enabled by default
 - stock experimental voice/round recorder settings visible in release builds
 
 ### photo viewer
@@ -440,6 +443,8 @@ the sections below contain the broader feature set: inugram functionality, featu
   - optionally hide all other accounts while enabled
   - optionally collapse folder tabs (show only All Chats) while enabled
   - optionally hide your own stories (ring, profile tabs, archive) while enabled
+  - optionally show Telegram Stars balance as 0 with no transactions or stats while enabled
+  - optionally hide the Money wallet and show Gram Earnings as 0 with no transactions or stats while enabled
   - optional launcher long-press shortcut to enter it quickly (hidden while active)
 - biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - optional biometric lock on Archived Chats — ask once per app session or every time you open the archive
@@ -556,6 +561,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - custom emoji reaction burst respects litemode (stock only gated the "around" animation of regular emoji)
 - expired once-view/self-destruct media now reliably shows the "Expired video/photo" placeholder instead of sometimes getting stuck showing live media (stock bug: the refresh triggered when `SecretMediaViewer` closes checked the media fields directly, which aren't cleared yet at that point — only a separate `forceExpired` flag is)
 - reaction counter shift during long-tap menu
+- media caption hiding and then revealing top-down when reactions first appear on the message
 - reactions silently disappearing right after being sent (stale server read race); for a few seconds after a send, server answers that lose or undercount your own reaction are corrected from the local state
 - seen reactions coming back to the unread reactions counter (stock only told the server once the local counter hit 0, so every server count reload resurrected them); each read is now reported via `readMessageContents`
 - reactions vanishing for a moment after editing a message that got reacted to while the edit was open (the edit applied a stale copy of the message)
@@ -606,7 +612,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - photo viewer crop showing a black screen, captions going missing and broken pip transitions after the viewer moves to another activity
 - chat preview no longer marks visible reactions/poll votes as read
 - dialogs list briefly flashing over the lockscreen after ending/declining a call
-- fix camera2api a/v sync issue in round messages
 - forward bar showing stale message count/senders after deselecting messages in the forward options sheet
 - forwarding with captions removed no longer blanks out text-only messages in the optimistic copy (stock only checked `media != null`, but locally-sent text messages carry `messageMediaEmpty` sometimes)
 - cross-peer reply: clear stale quote so a leftover quote-reply target doesn't override the new one at send
@@ -627,7 +632,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - comments/topic thread restored as plain group chat after activity recreation
 - phantom message selection after back-gesture swipe over a reply header (leaked long-press timer)
 - fix deeplinking to a non-primary album member sometimes mis-anchoring
-- a bunch of stock memory/resource leaks (incl. `NativeByteBuffer` wrapper pool growing unbounded on write-heavy threads, reply-line sticker emoji never detaching and pinning closed chats via the global emoji cache, story viewer input/mention observers, `BotLocation` caching an activity context)
+- a bunch of stock memory/resource leaks (incl. `NativeByteBuffer` wrapper pool growing unbounded on write-heavy threads, reply-line sticker emoji never detaching and pinning closed chats via the global emoji cache, story viewer input/mention observers, `BotLocation` caching an activity context, saved messages tag hint timers re-posting forever after the chat is closed, detached/measuring message cells registering animated emoji in the global cache, instant view sheets never unregistering their observers)
 - correctly handle "Open in..." in ChatAttachAlert: open editor before sending + support multi-attach
 - avatar of a bubble right below a topic separator (forum "All" tab) only clickable in its lower part
 - opt out of android media resumption, so a phantom telegram player chip no longer reappears in quick settings after a reboot or once the app process is gone
@@ -660,6 +665,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - avatar long-press preview stuck on blurred placeholder after the cached profile photo reference expired (stock used the often-null `UserFull.user` and a parent that cannot refresh profile photo references)
 - fix bottom progress bar on video bubbles now following inline playback (autoplay & play-with-sound)
 - correctly publish album name for streamed music
+- music player playlist covers matching the player cover (stock list used the uploaded thumb while the player used the file's embedded cover or an iTunes lookup)
 - permanently white/stale message bubbles on low-memory devices (stock bug: `MessageDrawable` committed its radius/color cache keys even when the bitmap allocation for the bubble nine-patch failed, so the stale drawable was never rebuilt; the shadow nine-patch also recycled its old bitmap before allocating the new one, leaving a recycled bitmap in use)
 - group call recording timer showing a nonsense duration (the whole unix epoch, e.g. `496691:48:15`) right after starting a recording: stock flips the local `recording` flag optimistically while `record_start_date` is still 0
 - opening a forum is faster: its menu, search and empty-state views are created on demand
@@ -667,3 +673,5 @@ the sections below contain the broader feature set: inugram functionality, featu
 - a busy channel no longer loses its whole cached history whenever the server answers "difference too long" (stock wiped every cached message, which could block the message database for minutes on big chats and stopped music playing from that chat); the cache is kept but reloaded from the server, and channel messages deleted while the app was not watching now disappear once their part of the history is loaded (stock kept them forever)
 - new channel messages sometimes appearing minutes late (until the next update in that chat): stock threw away channel updates that arrived while it was already fetching a channel's missed updates, and replayed the waiting ones before applying the fetched state
 - a sent message moves into its server order once confirmed (e.g. a photo that finished uploading after a later text moves below that text), so the local order matches what the recipient sees
+- hashtag search in another channel (`#tag@channel`): no more huge empty gap above the results, last message in "show as chat" no longer hidden under the bottom bar, long-tapping a reaction on a channel post shows the reaction instead of failing to load reactors
+- search result previews with a media thumbnail no longer drift to the right while scrolling

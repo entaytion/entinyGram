@@ -67,6 +67,8 @@ object Material3PredictiveBack {
         private var savedClipToOutline = false
         private var savedCvbBackground: Drawable? = null
         private var savedCvbForeground: Drawable? = null
+        // cvb children can be detached mid-gesture (attached sheets) and must still get reset
+        private val transformedChildren = HashSet<View>()
         private val scrim = ColorDrawable(Color.BLACK).apply { alpha = Material3BackMotion.SCRIM_ALPHA_BYTE }
 
         private val outlineProvider = object : ViewOutlineProvider() {
@@ -168,7 +170,12 @@ object Material3PredictiveBack {
             cvb.background = enterBg?.constantState?.newDrawable()
                 ?: ColorDrawable(Theme.getColor(Theme.key_windowBackgroundWhite))
             cvb.foreground = scrim
-            cvb.eachChild { it.setLayerType(View.LAYER_TYPE_HARDWARE, null) }
+            // Promote entering children to HW layers so per-frame scale/translate is texture-only.
+            // (stock already put cv on a HW layer in prepareForMoving.)
+            cvb.eachChild {
+                it.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                transformedChildren.add(it)
+            }
         }
 
         private fun applyFrame(p: Float, touchY: Float) {
@@ -197,6 +204,7 @@ object Material3PredictiveBack {
             cv.invalidateOutline()
 
             cvb.eachChild {
+                transformedChildren.add(it)
                 it.translationX = -enterOffsetPx
                 it.translationY = ty
                 it.scaleX = scale
@@ -209,7 +217,10 @@ object Material3PredictiveBack {
         ): ValueAnimator = ValueAnimator.ofFloat(from, to).apply {
             addUpdateListener {
                 val v = it.animatedValue as Float
-                cvb.eachChild { c -> apply(c, v) }
+                cvb.eachChild { c ->
+                    transformedChildren.add(c)
+                    apply(c, v)
+                }
             }
         }
 
@@ -284,14 +295,16 @@ object Material3PredictiveBack {
                 it.clipToOutline = savedClipToOutline
                 it.outlineProvider = savedOutlineProvider ?: ViewOutlineProvider.BACKGROUND
             }
+            layout.containerViewBack?.eachChild { transformedChildren.add(it) }
+            transformedChildren.forEach {
+                it.translationX = 0f
+                it.translationY = 0f
+                it.scaleX = 1f
+                it.scaleY = 1f
+                it.setLayerType(View.LAYER_TYPE_NONE, null)
+            }
+            transformedChildren.clear()
             layout.containerViewBack?.let { cvb ->
-                cvb.eachChild {
-                    it.translationX = 0f
-                    it.translationY = 0f
-                    it.scaleX = 1f
-                    it.scaleY = 1f
-                    it.setLayerType(View.LAYER_TYPE_NONE, null)
-                }
                 cvb.background = savedCvbBackground
                 cvb.foreground = savedCvbForeground
             }

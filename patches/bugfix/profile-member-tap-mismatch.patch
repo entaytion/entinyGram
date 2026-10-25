@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 24 Oct 2026 20:26:53 +0400
+Subject: fix member long-taps hitting wrong user while list refreshes
+
+---
+ .../org/telegram/ui/Components/SharedMediaLayout.java  |  9 +++++++++
+ .../src/main/java/org/telegram/ui/ProfileActivity.java | 10 +++++-----
+ 2 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -11076,6 +11076,15 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+ 
+         public ChatUsersAdapter(Context context) {
+             mContext = context;
++            setHasStableIds(true);
++        }
++
++        @Override
++        public long getItemId(int position) {
++            if (chatInfo == null || chatInfo.participants.participants.isEmpty()) {
++                return 0;
++            }
++            return chatInfo.participants.participants.get(sortedUsers.isEmpty() ? position : sortedUsers.get(position)).user_id;
+         }
+ 
+         @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -4558,10 +4558,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 ReportBottomSheet.openChat(ProfileActivity.this, getDialogId());
+             } else if (position >= membersStartRow && position < membersEndRow) {
+                 TLRPC.ChatParticipant participant;
+-                if (!sortedUsers.isEmpty()) {
+-                    participant = chatInfo.participants.participants.get(sortedUsers.get(position - membersStartRow));
++                if (!visibleSortedUsers.isEmpty()) {
++                    participant = visibleChatParticipants.get(visibleSortedUsers.get(position - membersStartRow));
+                 } else {
+-                    participant = chatInfo.participants.participants.get(position - membersStartRow);
++                    participant = visibleChatParticipants.get(position - membersStartRow);
+                 }
+                 onMemberClick(participant, false, view);
+             } else if (position == addMemberRow) {
+@@ -5116,8 +5116,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     return true;
+                 } else if (position >= membersStartRow && position < membersEndRow) {
+                     final TLRPC.ChatParticipant participant;
+-                    if (!sortedUsers.isEmpty()) {
+-                        participant = visibleChatParticipants.get(sortedUsers.get(position - membersStartRow));
++                    if (!visibleSortedUsers.isEmpty()) {
++                        participant = visibleChatParticipants.get(visibleSortedUsers.get(position - membersStartRow));
+                     } else {
+                         participant = visibleChatParticipants.get(position - membersStartRow);
+                     }

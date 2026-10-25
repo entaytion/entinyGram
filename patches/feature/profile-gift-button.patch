@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.pet>
-Date: Wed, 21 Oct 2026 12:31:44 +0300
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:10:56 +0200
 Subject: show send gift in profile menu, toggle for header gift action
 
 ---
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -9259,10 +9259,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9303,10 +9303,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      avatarImage.setHasStories(needInsetForStories());
                  }
                  if (chatId != 0) {
@@ -24,7 +24,7 @@ index 0000000..0000000 100644
                      }
                  }
              }
-@@ -10509,10 +10509,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10557,10 +10557,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          fetchUsersFromChannelInfo();
          inu_fetchLinkedChannelMessage();
          if (chatId != 0) {
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -12439,7 +12439,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12495,7 +12495,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      otherItem.addSubItem(delete_contact, R.drawable.msg_delete, LocaleController.getString(R.string.DeleteContact));
                  }
                  if (!UserObject.isDeleted(user) && !isBot && currentEncryptedChat == null && !userBlocked && userId != 333000 && userId != 777000 && userId != 42777) {
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                          StarsController.getInstance(currentAccount).loadStarGifts();
                          if (!desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue()) {
                          otherItem.addSubItem(gift_premium, R.drawable.msg_gift_premium, LocaleController.getString(R.string.ProfileSendAGift));
-@@ -12536,7 +12536,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12592,7 +12592,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          otherItem.addSubItem(share, R.drawable.msg_share, LocaleController.getString(R.string.BotShare));
                          shareAction = !chat.creator;
                      }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
                          StarsController.getInstance(currentAccount).loadStarGifts();
                          if (!desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue()) {
                          otherItem.addSubItem(gift_premium, R.drawable.msg_gift_premium, LocaleController.getString(R.string.ProfileSendAGiftToChannel));
-@@ -12633,7 +12633,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12689,7 +12689,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              actionsView.set(ProfileActionsView.KEY_VOICE_CHAT, voiceChatAction && !desu.inugram.InuConfig.HIDE_PROFILE_LIVE_ACTIONS_BUTTON.getValue());
              actionsView.set(ProfileActionsView.KEY_STREAM, streamAction && !desu.inugram.InuConfig.HIDE_PROFILE_LIVE_ACTIONS_BUTTON.getValue());
  

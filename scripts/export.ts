@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import fs from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { parallelMap } from '@fuman/utils'
@@ -16,6 +17,11 @@ import {
   writeSeries,
 } from './lib.js'
 
+interface CacheEntry {
+  commitId: string
+  hash: string
+}
+
 async function listFilesRecursive(dir: string): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => [])
   const files: string[] = []
@@ -32,49 +38,8 @@ async function listFilesRecursive(dir: string): Promise<string[]> {
   return files
 }
 
-async function clearExportedPatchFiles() {
-  for (const file of await listFilesRecursive(patchesDir)) {
-    if (file.endsWith('.patch')) {
-      await fs.unlink(file)
-    }
-  }
-}
-
-async function exportPatchFile(repoDir: string, patchName: string, commitId: string) {
-  const parsed = parsePatchName(patchName)
-  const git = cd(repoDir)
-
-  const files = (await git`git diff-tree --no-commit-id --name-only -r ${commitId}`)
-    .stdout
-    .split(/\r?\n/)
-    .map(line => line.trim())
-    .filter(Boolean)
-
-  if (files.length === 0) {
-    warn(`Patch ${patchName} is empty`)
-  }
-
-  const targetDir = join(patchesDir, parsed.dir)
-  const targetFile = join(targetDir, `${parsed.name}.patch`)
-  await ensureDir(targetDir)
-
-  step(`Exporting ${patchName} -> ${relative(rootDir, targetFile)}`)
-  const stable = await generateStablePatchFromCommit(repoDir, commitId)
-  // Rare race under concurrent export (Windows cmd.exe subprocess piping) can hand back a
-  // truncated/garbled multi-byte read that decodes with U+FFFD. Never let that land silently
-  // on disk — one retry clears it in practice since the corruption isn't deterministic.
-  if (stable.includes('�')) {
-    warn(`Detected corrupted output while exporting ${patchName}, retrying once`)
-    const retry = await generateStablePatchFromCommit(repoDir, commitId)
-    if (retry.includes('�')) {
-      throw new Error(`Corrupted (U+FFFD) output persisted for ${patchName} after retry - aborting export`)
-    }
-    await fs.writeFile(targetFile, retry)
-    return parsed
-  }
-  await fs.writeFile(targetFile, stable)
-
-  return parsed
+function hashPatch(patch: string) {
+  return createHash('sha1').update(patch).digest('hex')
 }
 
 const repoDir = resolveFromRoot(process.argv[2], worktreeDir)
@@ -84,24 +49,63 @@ if (dirty) {
   warn(`Worktree has uncommitted changes:\n${dirty}`)
 }
 
+const cacheFile = (await cd(repoDir)`git rev-parse --path-format=absolute --git-path inu-export-cache.json`).stdout.trim()
+const cache: Record<string, CacheEntry> = JSON.parse(await fs.readFile(cacheFile, 'utf8').catch(() => '{}'))
+const nextCache: Record<string, CacheEntry> = {}
+
 const [patchNames, commitIds] = await Promise.all([
   getAppliedPatchNames(repoDir),
   getAllPatchCommitIds(repoDir),
 ])
-await clearExportedPatchFiles()
 
-const entries = await parallelMap(patchNames, async (patchName) => {
+let regenerated = 0
+const exported = await parallelMap(patchNames, async (patchName) => {
   const commitId = commitIds.get(patchName)
   if (!commitId) throw new Error(`No commit id for applied patch ${patchName}`)
-  const patch = await exportPatchFile(repoDir, patchName, commitId)
-  return patch.seriesEntry
+
+  const parsed = parsePatchName(patchName)
+  const targetFile = join(patchesDir, parsed.dir, `${parsed.name}.patch`)
+  const current = await fs.readFile(targetFile, 'utf8').catch(() => null)
+  const cached = cache[patchName]
+
+  let patch = current
+  if (patch === null || cached?.commitId !== commitId || cached.hash !== hashPatch(patch)) {
+    step(`Exporting ${patchName} -> ${relative(rootDir, targetFile)}`)
+    patch = await generateStablePatchFromCommit(repoDir, commitId)
+    if (patch.includes('�')) {
+      warn(`Detected corrupted output while exporting ${patchName}, retrying once`)
+      patch = await generateStablePatchFromCommit(repoDir, commitId)
+      if (patch.includes('�')) throw new Error(`Corrupted (U+FFFD) output persisted for ${patchName} after retry - aborting export`)
+    }
+    regenerated++
+    if (patch !== current) {
+      await ensureDir(join(patchesDir, parsed.dir))
+      await fs.writeFile(targetFile, patch)
+    }
+  }
+
+  if (!patch.includes('\ndiff --git ')) {
+    warn(`Patch ${patchName} is empty`)
+  }
+
+  nextCache[patchName] = { commitId, hash: hashPatch(patch) }
+  return { seriesEntry: parsed.seriesEntry, targetFile }
 })
 
-await writeSeries(entries)
+const targetFiles = new Set(exported.map(it => it.targetFile))
+for (const file of await listFilesRecursive(patchesDir)) {
+  if (file.endsWith('.patch') && !targetFiles.has(file)) {
+    step(`Removing stale ${relative(rootDir, file)}`)
+    await fs.unlink(file)
+  }
+}
+
+await writeSeries(exported.map(it => it.seriesEntry))
+await fs.writeFile(cacheFile, JSON.stringify(nextCache))
 
 // warn again because it might get lost in logs
 if (dirty) {
   warn(`Worktree has uncommitted changes:\n${dirty}`)
 }
 
-success(`Exported ${entries.length} ${entries.length === 1 ? 'patch' : 'patches'}`)
+success(`Exported ${exported.length} ${exported.length === 1 ? 'patch' : 'patches'} (${regenerated} regenerated)`)

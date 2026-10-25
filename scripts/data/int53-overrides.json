@@ -3,11 +3,9 @@
     "It is guaranteed that user/chat/channel ids fit in int53,",
     "as well as file size (up to 4 gigs),",
     "so we can safely replace `long` with `int53` for simpler usage from within JS.",
-    "Note: this is a non-exhaustive list",
-    "When contributing, please maintain alphabetical key ordering"
+    "Only constructors and fields stock declares belong here."
   ],
   "class": {
-    "_": "Dummy line teehee~",
     "aiComposeTone": [
       "author_id"
     ],
@@ -19,9 +17,6 @@
       "file_size_max"
     ],
     "boost": [
-      "user_id"
-    ],
-    "botBusinessConnection": [
       "user_id"
     ],
     "botInfo": [
@@ -62,7 +57,8 @@
       "id",
       "guard_bot_id",
       "linked_chat_id",
-      "recent_requesters"
+      "recent_requesters",
+      "migrated_from_chat_id"
     ],
     "channelParticipant": [
       "user_id"
@@ -95,7 +91,8 @@
       "id"
     ],
     "chatFull": [
-      "id"
+      "id",
+      "recent_requesters"
     ],
     "chatInviteExported": [
       "admin_id"
@@ -152,6 +149,24 @@
     "contactStatus": [
       "user_id"
     ],
+    "decryptedMessageMediaAudio": [
+      "size"
+    ],
+    "decryptedMessageMediaContact": [
+      "user_id"
+    ],
+    "decryptedMessageMediaDocument": [
+      "size"
+    ],
+    "decryptedMessageMediaExternalDocument": [
+      "size"
+    ],
+    "decryptedMessageMediaPhoto": [
+      "size"
+    ],
+    "decryptedMessageMediaVideo": [
+      "size"
+    ],
     "dialogCommunity": [
       "community_id"
     ],
@@ -159,6 +174,9 @@
       "community_id"
     ],
     "document": [
+      "size"
+    ],
+    "documentEncrypted": [
       "size"
     ],
     "encryptedChat": [
@@ -224,9 +242,6 @@
     "inputUserFromMessage": [
       "user_id"
     ],
-    "keyboardButtonUserProfile": [
-      "user_id"
-    ],
     "mediaAreaChannelPost": [
       "channel_id"
     ],
@@ -270,6 +285,9 @@
     "messageActionNewCreatorPending": [
       "new_creator_id"
     ],
+    "messageActionSetMessagesTTL": [
+      "auto_setting_from"
+    ],
     "messageEntityMentionName": [
       "user_id"
     ],
@@ -279,17 +297,12 @@
     "messageMediaGiveaway": [
       "channels"
     ],
+    "messageMediaGiveawayResults": [
+      "channel_id",
+      "winners"
+    ],
     "messageReplies": [
       "channel_id"
-    ],
-    "messageUserVote": [
-      "user_id"
-    ],
-    "messageUserVoteInputOption": [
-      "user_id"
-    ],
-    "messageUserVoteMultiple": [
-      "user_id"
     ],
     "messages.chatInviteJoinResultWebView": [
       "bot_id"
@@ -299,6 +312,12 @@
     ],
     "notifyCommunity": [
       "community_id"
+    ],
+    "payments.checkedGiftCode": [
+      "to_id"
+    ],
+    "payments.giveawayInfo": [
+      "admin_disallowed_chat_id"
     ],
     "payments.paymentForm": [
       "bot_id"
@@ -361,17 +380,11 @@
     "recentMeUrlUser": [
       "user_id"
     ],
-    "requestedPeerChannel": [
-      "channel_id"
-    ],
-    "requestedPeerChat": [
-      "chat_id"
-    ],
-    "requestedPeerUser": [
-      "user_id"
-    ],
     "secureFile": [
       "size"
+    ],
+    "starGiftAuctionState": [
+      "top_bidders"
     ],
     "starRefProgram": [
       "bot_id"
@@ -394,43 +407,16 @@
     "textMentionName": [
       "user_id"
     ],
-    "updateBotCallbackQuery": [
-      "user_id"
-    ],
-    "updateBotChatInviteRequester": [
-      "user_id"
-    ],
     "updateBotCommands": [
       "bot_id"
-    ],
-    "updateBotInlineQuery": [
-      "user_id"
-    ],
-    "updateBotInlineSend": [
-      "user_id"
     ],
     "updateBotMenuButton": [
       "bot_id"
     ],
-    "updateBotPrecheckoutQuery": [
-      "user_id"
-    ],
     "updateBotPurchasedPaidMedia": [
       "user_id"
     ],
-    "updateBotShippingQuery": [
-      "user_id"
-    ],
-    "updateBotStarsSubscription": [
-      "user_id"
-    ],
-    "updateBotStopped": [
-      "user_id"
-    ],
     "updateBotSubscriptionExpire": [
-      "user_id"
-    ],
-    "updateBusinessBotCallbackQuery": [
       "user_id"
     ],
     "updateChannel": [
@@ -450,12 +436,6 @@
       "actor_id",
       "user_id"
     ],
-    "updateChannelPinnedTopic": [
-      "channel_id"
-    ],
-    "updateChannelPinnedTopics": [
-      "channel_id"
-    ],
     "updateChannelReadMessagesContents": [
       "channel_id"
     ],
@@ -473,11 +453,6 @@
     ],
     "updateChat": [
       "chat_id"
-    ],
-    "updateChatParticipant": [
-      "chat_id",
-      "actor_id",
-      "user_id"
     ],
     "updateChatParticipantAdd": [
       "chat_id",
@@ -503,9 +478,6 @@
       "channel_id"
     ],
     "updateEphemeralBotCallbackQuery": [
-      "user_id"
-    ],
-    "updateInlineBotCallbackQuery": [
       "user_id"
     ],
     "updateManagedBot": [
@@ -588,9 +560,6 @@
       "personal_channel_id",
       "bot_manager_id"
     ],
-    "userStories": [
-      "user_id"
-    ],
     "walletTransactionPeerChannel": [
       "channel_id"
     ],
@@ -605,15 +574,11 @@
     ]
   },
   "method": {
-    "_": "Dummy line teehee~",
     "account.acceptAuthorization": [
       "bot_id"
     ],
     "account.getAuthorizationForm": [
       "bot_id"
-    ],
-    "account.initTakeoutSession": [
-      "file_max_size"
     ],
     "account.registerDevice": [
       "other_uids"
@@ -651,14 +616,14 @@
     "messages.getCommonChats": [
       "max_id"
     ],
-    "messages.getDocumentByHash": [
-      "size"
-    ],
     "messages.getFullChat": [
       "chat_id"
     ],
     "messages.migrateChat": [
       "chat_id"
+    ],
+    "phone.deleteConferenceCallParticipants": [
+      "ids"
     ],
     "upload.getCdnFile": [
       "offset"
@@ -667,9 +632,6 @@
       "offset"
     ],
     "upload.getFile": [
-      "offset"
-    ],
-    "upload.getFileHashes": [
       "offset"
     ]
   }

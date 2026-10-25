@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:11:29 +0200
+Subject: allow adding or replacing message media while slow mode is active
+
+---
+ .../java/org/telegram/ui/Components/ChatActivityEnterView.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -6736,7 +6736,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+     }
+ 
+     public CharSequence getSlowModeTimer() {
+-        return slowModeTimer > 0 ? slowModeButton.getText() : null;
++        return slowModeTimer > 0 && editingMessageObject == null ? slowModeButton.getText() : null;
+     }
+ 
+     public int getSlowModePillWidth() {

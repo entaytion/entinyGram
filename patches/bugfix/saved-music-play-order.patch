@@ -1,0 +1,74 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:12:14 +0200
+Subject: play saved music top to bottom
+
+---
+ .../java/org/telegram/messenger/MediaController.java   | 10 +++++++---
+ .../org/telegram/ui/Components/AudioPlayerAlert.java   |  4 ++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -3035,7 +3035,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+         }
+ 
+         int inu_playlistNum = currentPlaylistNum;
+-        boolean last = traversePlaylist(currentPlayList, SharedConfig.playOrderReversed ? +1 : -1);
++        boolean last = traversePlaylist(currentPlayList, inu_isPlayOrderForward() ? +1 : -1);
+         if (byStop && SharedConfig.repeatMode == 0 && !forceLoopCurrentPlaylist && desu.inugram.helpers.media.NextAudioHelper.stopAfterMusic()) {
+             last = true;
+             currentPlaylistNum = inu_playlistNum;
+@@ -3100,7 +3100,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+             return;
+         }
+ 
+-        traversePlaylist(currentPlayList, SharedConfig.playOrderReversed ? -1 : 1);
++        traversePlaylist(currentPlayList, inu_isPlayOrderForward() ? -1 : 1);
+         if (currentPlaylistNum >= currentPlayList.size()) {
+             return;
+         }
+@@ -3177,7 +3177,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+             return;
+         }
+         int nextIndex;
+-        if (SharedConfig.playOrderReversed) {
++        if (inu_isPlayOrderForward()) {
+             nextIndex = currentPlaylistNum + 1;
+             if (nextIndex >= currentPlayList.size()) {
+                 nextIndex = 0;
+@@ -4507,6 +4507,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+         return playlist;
+     }
+ 
++    public boolean inu_isPlayOrderForward() {
++        return SharedConfig.playOrderReversed != (currentSavedMusicList != null);
++    }
++
+     public MessagesController.SavedMusicList getMusicList() {
+         return currentSavedMusicList;
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+@@ -1622,7 +1622,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+                     idx++;
+                 }
+                 if (idx >= 0) {
+-                    if (SharedConfig.playOrderReversed) {
++                    if (MediaController.getInstance().inu_isPlayOrderForward()) {
+                         layoutManager.scrollToPosition(idx);
+                     } else {
+                         layoutManager.scrollToPosition(playlist.size() - idx);
+@@ -2589,7 +2589,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+             if (searchWas) {
+                 messageObject = searchResult.get(position);
+                 needDivider = position + 1 < searchResult.size();
+-            } else if (savedMusicList != null ? !SharedConfig.playOrderReversed : SharedConfig.playOrderReversed) {
++            } else if (MediaController.getInstance().inu_isPlayOrderForward()) {
+                 messageObject = playlist.get(position);
+                 needDivider = position + 1 < playlist.size();
+             } else {

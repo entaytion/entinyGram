@@ -438,10 +438,25 @@
     <string name="InuMessageInput">Поле ввода</string>
     <string name="InuAttachmentSheet">Панель вложений</string>
     <string name="InuIconReplacement">Набор иконок</string>
-    <string name="InuIconReplacementOff">По умолчанию</string>
-    <string name="InuIconReplacementSolar">Solar от @Design480</string>
-    <string name="InuIconReplacementVkui">VKUI от VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
+    <string name="InuIconPackLoadFromFile">Загрузить из файла</string>
+    <string name="InuIconPacksInstalled">Установленные наборы</string>
+    <string name="InuIconPacksOrderInfo">Иконки берутся по приоритету в порядке выше. Зажмите, чтобы удалить</string>
+    <string name="InuIconPacksUnsavedAlert">Есть несохранённые изменения наборов иконок. Применить их и перезапустить приложение?</string>
+    <string name="InuIconPacksApply">Применить и перезапустить</string>
+    <string name="InuIconPacksTelegram">Telegram</string>
+    <string name="InuIconPacksTelegramInfo">Стандартные иконки</string>
+    <string name="InuIconPackBundled">встроенный</string>
+    <string name="InuIconPackInvalid">Этот файл не является набором иконок</string>
+    <string name="InuIconPackInstall">Установить</string>
+    <string name="InuIconPackInstalled">Набор иконок установлен</string>
+    <string name="InuIconPackByAuthor">От %1$s · %2$s</string>
+    <string name="InuIconPackIcons_one">%1$d иконка</string>
+    <string name="InuIconPackIcons_few">%1$d иконки</string>
+    <string name="InuIconPackIcons_many">%1$d иконок</string>
+    <string name="InuIconPackIcons_other">%1$d иконки</string>
+    <string name="InuIconPackDelete">Удалить набор иконок</string>
+    <string name="InuIconPackDeleteConfirm">Удалить %1$s?</string>
+
     <string name="InuMapsHeader">Карты</string>
     <string name="InuMapProvider">Источник карт</string>
     <string name="InuMapProviderGoogle">Google Карты</string>
@@ -869,6 +884,8 @@
     <string name="InuBlockedMessagesModeHide">Скрывать</string>
     <string name="InuBlockedMessagesExtra">Также скрывать сообщения от</string>
     <string name="InuBlockedMessagesExtraCount">%1$d собес-в</string>
+    <string name="InuBlockedMessagesHideReplies">Также скрывать ответы им</string>
+    <string name="InuBlockedMessagesHideRepliesInfo">Входящие сообщения, которые отвечают на сообщение заблокированного пользователя</string>
     <string name="InuHideMessages">Скрыть сообщения</string>
     <string name="InuShowHiddenMessages">Показать сообщения</string>
     <string name="InuSpoilers">Спойлеры</string>
@@ -913,6 +930,9 @@
     <string name="InuGoToMessage">Перейти к сообщению</string>
     <string name="InuGoToMessagePrompt">ID сообщения</string>
     <string name="InuParanoiaHideFolders">Скрыть папки</string>
+    <string name="InuParanoiaHideMyStories">Скрыть мои истории</string>
+    <string name="InuParanoiaHideStars">Скрыть Telegram Stars</string>
+    <string name="InuParanoiaHideGram">Скрыть GRAM</string>
     <string name="InuParanoiaSelectWhitelist">Чаты для показа</string>
     <string name="InuParanoiaWhitelist">Режим белого списка</string>
     <string name="InuBotSettings">Настройки бота</string>
@@ -1497,7 +1517,6 @@
     <string name="InuAiSummaryTemperatureInfo">Меньшие значения держат пересказ ближе к оригиналу. Пока вы не меняли, используется температура редактора.</string>
     <string name="InuAppIconOldEntinygram">Старый entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">Старый entinyGram</string>
-    <string name="InuNotificationIconInfo">На Xiaomi (MIUI/HyperOS) система может подменять эту иконку иконкой приложения, поэтому выбор там может быть незаметен</string>
     <string name="InuShowDrawerAccounts">Аккаунты в боковом меню</string>
     <string name="InuShowDrawerAccountsInfo">Показывать переключатель аккаунтов под профилем в боковой панели.</string>
     <string name="InuYes">Да</string>
@@ -1576,7 +1595,6 @@
     <string name="InuIosChatHeaderInfo">Компактная таблетка шапки чата, плавающая посередине, как в iOS.</string>
     <string name="InuChatHeaderNoPill">Скрыть фон таблетки</string>
     <string name="InuChatHeaderNoPillInfo">Показывать заголовок и подзаголовок поверх обоев, без пилюли.</string>
-    <string name="InuParanoiaHideMyStories">Скрыть мои истории</string>
     <string name="InuStopBot">Остановить бота</string>
     <string name="InuStopBotAction">Остановить</string>
     <string name="InuStopBotAlert">Остановить **%1$s**? Бот больше не сможет отправлять вам сообщения.</string>

@@ -624,7 +624,6 @@ Sistema: %6$s
     <string name="InuNotificationIconTelegram">Telegram</string>
     <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">entinyGram vecchio</string>
-    <string name="InuNotificationIconInfo">Su Xiaomi (MIUI/HyperOS) il sistema può sostituire questa icona con quella dell\'app, quindi la scelta potrebbe non essere visibile lì</string>
     <string name="InuAppIconOldEntinygram">entinyGram vecchio</string>
     <string name="InuDisableChatBubbles">Disattiva le bolle di notifica di Android</string>
     <string name="InuKeepChatsInStack">Mantieni aperte le chat precedenti</string>
@@ -779,10 +778,6 @@ Sistema: %6$s
     <string name="InuMessageInput">Campo del messaggio</string>
     <string name="InuAttachmentSheet">Pannello degli allegati</string>
     <string name="InuIconReplacement">Pacchetto di icone</string>
-    <string name="InuIconReplacementOff">Predefinito</string>
-    <string name="InuIconReplacementSolar">Solar by @Design480</string>
-    <string name="InuIconReplacementVkui">VKUI by VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">Mappe</string>
     <string name="InuMapProvider">Fornitore della vista mappa</string>

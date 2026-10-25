@@ -485,6 +485,8 @@
     <string name="InuBlockedMessagesModeHide">Hide</string>
     <string name="InuBlockedMessagesExtra">Also hide messages from</string>
     <string name="InuBlockedMessagesExtraCount">%1$d peers</string>
+    <string name="InuBlockedMessagesHideReplies">Also hide replies to them</string>
+    <string name="InuBlockedMessagesHideRepliesInfo">Incoming messages that reply to a message from a blocked user</string>
     <string name="InuHideMessages">Hide messages</string>
     <string name="InuShowHiddenMessages">Show messages</string>
     <string name="InuSpoilers">Spoilers</string>
@@ -615,7 +617,6 @@
     <string name="InuNotificationIconTelegram">Telegram</string>
     <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">Old entinyGram</string>
-    <string name="InuNotificationIconInfo">On Xiaomi (MIUI/HyperOS) the system may replace this icon with the app icon, so the choice might not be visible there</string>
     <string name="InuAppIconOldEntinygram">Old entinyGram</string>
     <string name="InuDisableChatBubbles">Disable Android notification bubbles</string>
     <string name="InuKeepChatsInStack">Keep previous chats open</string>
@@ -770,10 +771,22 @@
     <string name="InuMessageInput">Message input</string>
     <string name="InuAttachmentSheet">Attachment sheet</string>
     <string name="InuIconReplacement">Icon pack</string>
-    <string name="InuIconReplacementOff">Default</string>
-    <string name="InuIconReplacementSolar">Solar by @Design480</string>
-    <string name="InuIconReplacementVkui">VKUI by VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
+    <string name="InuIconPackLoadFromFile">Load from file</string>
+    <string name="InuIconPacksInstalled">Installed packs</string>
+    <string name="InuIconPacksOrderInfo">Icons are resolved in the priority order above. Long-tap to delete</string>
+    <string name="InuIconPacksUnsavedAlert">You have unsaved icon pack changes. Apply them and restart the app?</string>
+    <string name="InuIconPacksApply">Apply and restart</string>
+    <string name="InuIconPacksTelegram">Telegram</string>
+    <string name="InuIconPacksTelegramInfo">Default icons</string>
+    <string name="InuIconPackBundled">bundled</string>
+    <string name="InuIconPackInvalid">This file is not a valid icon pack</string>
+    <string name="InuIconPackInstall">Install</string>
+    <string name="InuIconPackInstalled">Icon pack installed</string>
+    <string name="InuIconPackByAuthor">By %1$s · %2$s</string>
+    <string name="InuIconPackIcons_one">%1$d icon</string>
+    <string name="InuIconPackIcons_other">%1$d icons</string>
+    <string name="InuIconPackDelete">Delete icon pack</string>
+    <string name="InuIconPackDeleteConfirm">Delete %1$s?</string>
 
     <string name="InuMapsHeader">Maps</string>
     <string name="InuMapProvider">Map view provider</string>
@@ -1286,6 +1299,8 @@
     <string name="InuParanoiaHideOtherAccounts">Hide other accounts</string>
     <string name="InuParanoiaHideFolders">Hide folders</string>
     <string name="InuParanoiaHideMyStories">Hide my stories</string>
+    <string name="InuParanoiaHideStars">Hide Telegram Stars</string>
+    <string name="InuParanoiaHideGram">Hide GRAM</string>
     <string name="InuParanoiaDisguise">Disguise as Telegram</string>
     <string name="InuParanoiaDisguiseInfo">Only the launcher icon and name change; notifications still say \"entinyGram\".</string>
     <string name="InuDisguiseName" translatable="false">Telegram</string>

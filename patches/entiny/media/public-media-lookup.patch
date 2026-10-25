@@ -82,7 +82,7 @@ index 0000000..0000000 100644
                      if (saveCustomPath) {
                          operation.pathSaveData = new FilePathDatabase.PathData(documentId, dcId, type);
                      }
-@@ -1450,7 +1496,8 @@ public class FileLoader extends BaseController {
+@@ -1458,7 +1504,8 @@ public class FileLoader extends BaseController {
                  return new File(path);
              }
          }
@@ -96,7 +96,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -12174,6 +12174,9 @@ public class MessageObject {
+@@ -12187,6 +12187,9 @@ public class MessageObject {
                  if (!mediaExists) {
                      mediaExists = file.exists();
                  }

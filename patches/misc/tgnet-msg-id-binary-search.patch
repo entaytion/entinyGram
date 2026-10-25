@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 24 Oct 2026 21:02:04 +0400
+Subject: look up processed msg_ids with binary search
+
+---
+ TMessagesProj/jni/tgnet/ConnectionSession.cpp | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/jni/tgnet/ConnectionSession.cpp b/TMessagesProj/jni/tgnet/ConnectionSession.cpp
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionSession.cpp
++++ b/TMessagesProj/jni/tgnet/ConnectionSession.cpp
+@@ -87,7 +87,7 @@ int32_t MessageIdWindow::check(int64_t messageId) {
+     if (minMessageId != 0 && messageId < minMessageId) {
+         return 2;
+     }
+-    if (std::find(messageIds.begin(), messageIds.end(), messageId) != messageIds.end()) {
++    if (std::binary_search(messageIds.begin(), messageIds.end(), messageId)) {
+         return 1;
+     }
+     return 0;
+@@ -95,11 +95,10 @@ int32_t MessageIdWindow::check(int64_t messageId) {
+ 
+ void MessageIdWindow::add(int64_t messageId) {
+     if (messageIds.size() > 2000) {
+-        std::sort(messageIds.begin(), messageIds.end());
+         messageIds.erase(messageIds.begin(), messageIds.begin() + 1000);
+-        minMessageId = *(messageIds.begin());
++        minMessageId = messageIds.front();
+     }
+-    messageIds.push_back(messageId);
++    messageIds.insert(std::upper_bound(messageIds.begin(), messageIds.end(), messageId), messageId);
+ }
+ 
+ void MessageIdWindow::clear() {

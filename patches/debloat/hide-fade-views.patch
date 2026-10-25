@@ -48,7 +48,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-@@ -1336,6 +1336,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1367,6 +1367,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
          bottomFadeView = new View(context) {
              @Override
              public void draw(@NonNull Canvas canvas) {

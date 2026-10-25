@@ -496,7 +496,6 @@
     <string name="InuNotificationIconTelegram">Telegram</string>
     <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">entinyGram القديمة</string>
-    <string name="InuNotificationIconInfo">على أجهزة Xiaomi (MIUI/HyperOS) قد يستبدل النظام هذه الأيقونة بأيقونة التطبيق، لذا قد لا يظهر الاختيار هناك</string>
     <string name="InuAppIconOldEntinygram">entinyGram القديمة</string>
     <string name="InuDisableChatBubbles">تعطيل فقاعات إشعارات Android</string>
     <string name="InuKeepChatsInStack">إبقاء المحادثات السابقة مفتوحة</string>
@@ -648,10 +647,6 @@
     <string name="InuMessageInput">إدخال الرسالة</string>
     <string name="InuAttachmentSheet">ورقة المرفقات</string>
     <string name="InuIconReplacement">حزمة الأيقونات</string>
-    <string name="InuIconReplacementOff">الافتراضية</string>
-    <string name="InuIconReplacementSolar">Solar من @Design480</string>
-    <string name="InuIconReplacementVkui">VKUI من VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">الخرائط</string>
     <string name="InuMapProvider">مزود عرض الخريطة</string>

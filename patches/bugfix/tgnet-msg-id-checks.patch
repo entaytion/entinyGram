@@ -1,0 +1,304 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 24 Oct 2026 20:35:39 +0400
+Subject: check incoming msg_ids like tdlib so requests don't hang after reconnect
+
+---
+ TMessagesProj/jni/tgnet/ConnectionSession.cpp | 49 +++++++++--
+ TMessagesProj/jni/tgnet/ConnectionSession.h   | 20 ++++-
+ .../jni/tgnet/ConnectionsManager.cpp          | 84 +++++++++----------
+ TMessagesProj/jni/tgnet/ConnectionsManager.h  |  2 +
+ 4 files changed, 103 insertions(+), 52 deletions(-)
+
+diff --git a/TMessagesProj/jni/tgnet/ConnectionSession.cpp b/TMessagesProj/jni/tgnet/ConnectionSession.cpp
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionSession.cpp
++++ b/TMessagesProj/jni/tgnet/ConnectionSession.cpp
+@@ -19,6 +19,8 @@ ConnectionSession::ConnectionSession(int32_t instance) {
+ 
+ void ConnectionSession::recreateSession() {
+     processedMessageIds.clear();
++    inu_processedUpdateIds.clear();
++    inu_hasServerTimeDifference = false;
+     messagesIdsForConfirmation.clear();
+     processedSessionChanges.clear();
+     nextSeqNo = 0;
+@@ -56,22 +58,53 @@ int32_t ConnectionSession::isMessageIdProcessed(int64_t messageId) {
+     if (!(messageId & 1)) {
+         return 1;
+     }
+-    if (minProcessedMessageId != 0 && messageId < minProcessedMessageId) {
++    return processedMessageIds.check(messageId);
++}
++
++void ConnectionSession::addProcessedMessageId(int64_t messageId) {
++    processedMessageIds.add(messageId);
++}
++
++int32_t ConnectionSession::inu_checkUpdateMessageId(int64_t messageId) {
++    int32_t status = inu_processedUpdateIds.check(messageId);
++    if (status == 0) {
++        inu_processedUpdateIds.add(messageId);
++    }
++    return status;
++}
++
++bool ConnectionSession::inu_isMessageIdTimeValid(int64_t messageId) {
++    int64_t now = ConnectionsManager::getInstance(instanceNum).getCurrentTimeMonotonicMillis();
++    auto messageTime = (int64_t) (messageId / 4294967296.0 * 1000);
++    if (!inu_hasServerTimeDifference || messageTime - now > inu_serverTimeDifference) {
++        inu_hasServerTimeDifference = true;
++        inu_serverTimeDifference = messageTime - now;
++    }
++    return messageTime > now + inu_serverTimeDifference - 300000;
++}
++
++int32_t MessageIdWindow::check(int64_t messageId) {
++    if (minMessageId != 0 && messageId < minMessageId) {
+         return 2;
+     }
+-    if (std::find(processedMessageIds.begin(), processedMessageIds.end(), messageId) != processedMessageIds.end()) {
++    if (std::find(messageIds.begin(), messageIds.end(), messageId) != messageIds.end()) {
+         return 1;
+     }
+     return 0;
+ }
+ 
+-void ConnectionSession::addProcessedMessageId(int64_t messageId) {
+-    if (processedMessageIds.size() > 300) {
+-        std::sort(processedMessageIds.begin(), processedMessageIds.end());
+-        processedMessageIds.erase(processedMessageIds.begin(), processedMessageIds.begin() + 100);
+-        minProcessedMessageId = *(processedMessageIds.begin());
++void MessageIdWindow::add(int64_t messageId) {
++    if (messageIds.size() > 2000) {
++        std::sort(messageIds.begin(), messageIds.end());
++        messageIds.erase(messageIds.begin(), messageIds.begin() + 1000);
++        minMessageId = *(messageIds.begin());
+     }
+-    processedMessageIds.push_back(messageId);
++    messageIds.push_back(messageId);
++}
++
++void MessageIdWindow::clear() {
++    messageIds.clear();
++    minMessageId = 0;
+ }
+ 
+ bool ConnectionSession::hasMessagesToConfirm() {
+diff --git a/TMessagesProj/jni/tgnet/ConnectionSession.h b/TMessagesProj/jni/tgnet/ConnectionSession.h
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionSession.h
++++ b/TMessagesProj/jni/tgnet/ConnectionSession.h
+@@ -13,6 +13,18 @@
+ #include <vector>
+ #include "Defines.h"
+ 
++class MessageIdWindow {
++
++public:
++    int32_t check(int64_t messageId);
++    void add(int64_t messageId);
++    void clear();
++
++private:
++    int64_t minMessageId = 0;
++    std::vector<int64_t> messageIds;
++};
++
+ class ConnectionSession {
+ 
+ public:
+@@ -24,6 +36,8 @@ public:
+     uint32_t generateMessageSeqNo(bool increment);
+     int32_t isMessageIdProcessed(int64_t messageId);
+     void addProcessedMessageId(int64_t messageId);
++    int32_t inu_checkUpdateMessageId(int64_t messageId);
++    bool inu_isMessageIdTimeValid(int64_t messageId);
+     bool hasMessagesToConfirm();
+     void addMessageToConfirm(int64_t messageId);
+     NetworkMessage *generateConfirmationRequest();
+@@ -34,9 +48,11 @@ private:
+     int32_t instanceNum;
+     int64_t sessionId;
+     uint32_t nextSeqNo = 0;
+-    int64_t minProcessedMessageId = 0;
++    bool inu_hasServerTimeDifference = false;
++    int64_t inu_serverTimeDifference = 0;
+ 
+-    std::vector<int64_t> processedMessageIds;
++    MessageIdWindow processedMessageIds;
++    MessageIdWindow inu_processedUpdateIds;
+     std::vector<int64_t> messagesIdsForConfirmation;
+     std::vector<int64_t> processedSessionChanges;
+ };
+diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
++++ b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
+@@ -959,6 +959,9 @@ void ConnectionsManager::onConnectionDataReceived(Connection *connection, Native
+         uint32_t messageLength = data->readUint32(&error);
+ 
+         int32_t processedStatus = connection->isMessageIdProcessed(messageId);
++        if (processedStatus == 0 && !connection->inu_isMessageIdTimeValid(messageId)) {
++            processedStatus = 2;
++        }
+ 
+         if (messageSeqNo % 2 != 0) {
+             connection->addMessageToConfirm(messageId);
+@@ -975,38 +978,28 @@ void ConnectionsManager::onConnectionDataReceived(Connection *connection, Native
+                 req_msg_id = res->req_msg_id;
+             }
+             if (processedStatus == 2) {
+-                if (object == nullptr) {
+-                    connection->recreateSession();
+-                    for (auto & runningRequest : runningRequests) {
+-                        Request *request = runningRequest.get();
+-                        Datacenter *requestDatacenter = getDatacenterWithId(request->datacenterId);
+-                        if (request->connectionType & connection->getConnectionType() && requestDatacenter != nullptr && requestDatacenter->getDatacenterId() == datacenter->getDatacenterId()) {
+-                            request->clear(true);
+-                        }
+-                    }
+-                    connection->reconnect();
+-                    return;
+-                } else {
+-                    delete object;
+-                    object = nullptr;
+-                }
++                if (LOGS_ENABLED) DEBUG_D("connection(%p, account%u, dc%u, type %d) received too old message 0x%" PRIx64 " on 0x%" PRIx64 ", recreating session", connection, instanceNum, datacenter->getDatacenterId(), connection->getConnectionType(), messageId, req_msg_id);
++                delete object;
++                inu_recreateSession(connection);
++                return;
+             }
+         }
+         if (!processedStatus) {
++            connection->addProcessedMessageId(messageId);
+             if (object != nullptr) {
+                 lastProtocolUsefullData = true;
+                 connection->setHasUsefullData();
+                 if (LOGS_ENABLED) DEBUG_D("connection(%p, account%u, dc%u, type %d) received object %s", connection, instanceNum, datacenter->getDatacenterId(), connection->getConnectionType(), typeid(*object).name());
++                int64_t sessionId = connection->getSessionId();
+                 processServerResponse(object, messageId, messageSeqNo, messageServerSalt, connection, 0, 0);
+-                connection->addProcessedMessageId(messageId);
+                 delete object;
+-                if (connection->getConnectionType() == ConnectionTypePush) {
++                if (connection->getSessionId() == sessionId && connection->getConnectionType() == ConnectionTypePush) {
+                     std::vector<std::unique_ptr<NetworkMessage>> messages;
+                     sendMessagesToConnectionWithConfirmation(messages, connection, false);
+                 }
+             } else {
+                 if (LOGS_ENABLED) DEBUG_D("connection(%p, account%u, dc%u, type %d) received unparsed packet on 0x%" PRIx64, connection, instanceNum, datacenter->getDatacenterId(), connection->getConnectionType(), req_msg_id);
+-                if (delegate != nullptr) {
++                if (inu_shouldProcessUpdate(connection, messageId) && delegate != nullptr) {
+                     delegate->onUnparsedMessageReceived(messageId, data, connection->getConnectionType(), instanceNum);
+                 }
+             }
+@@ -1150,42 +1143,25 @@ void ConnectionsManager::processServerResponse(TLObject *message, int64_t messag
+         auto response = (TL_msg_container *) message;
+         size_t count = response->messages.size();
+         if (LOGS_ENABLED) DEBUG_D("received container with %d items", (int32_t) count);
++        int64_t sessionId = connection->getSessionId();
+         for (uint32_t a = 0; a < count; a++) {
+             TL_message *innerMessage = response->messages[a].get();
+             int64_t innerMessageId = innerMessage->msg_id;
+             if (innerMessage->seqno % 2 != 0) {
+                 connection->addMessageToConfirm(innerMessageId);
+             }
+-            int32_t processedStatus = connection->isMessageIdProcessed(innerMessageId);
+-            if (processedStatus == 2) {
+-                if (innerMessage->unparsedBody != nullptr) {
+-                    connection->recreateSession();
+-                    for (auto & runningRequest : runningRequests) {
+-                        Request *request = runningRequest.get();
+-                        Datacenter *requestDatacenter = getDatacenterWithId(request->datacenterId);
+-                        if (request->connectionType & connection->getConnectionType() && requestDatacenter != nullptr && requestDatacenter->getDatacenterId() == datacenter->getDatacenterId()) {
+-                            request->clear(true);
+-                        }
+-                    }
+-                    connection->reconnect();
+-                    return;
+-                }
+-                processedStatus = 0;
+-            }
+-            if (processedStatus) {
+-                if (LOGS_ENABLED) DEBUG_D("inner message %d id 0x%" PRIx64 " already processed", a, innerMessageId);
+-                continue;
+-            }
+             if (innerMessage->unparsedBody != nullptr) {
+                 if (LOGS_ENABLED) DEBUG_D("inner message %d id 0x%" PRIx64 " is unparsed", a, innerMessageId);
+-                if (delegate != nullptr) {
++                if (inu_shouldProcessUpdate(connection, innerMessageId) && delegate != nullptr) {
+                     delegate->onUnparsedMessageReceived(innerMessageId, innerMessage->unparsedBody.get(), connection->getConnectionType(), instanceNum);
+                 }
+             } else {
+                 if (LOGS_ENABLED) DEBUG_D("inner message %d id 0x%" PRIx64 " process", a, innerMessageId);
+                 processServerResponse(innerMessage->body.get(), 0, innerMessage->seqno, messageSalt, connection, innerMessageId, messageId);
+             }
+-            connection->addProcessedMessageId(innerMessageId);
++            if (connection->getSessionId() != sessionId) {
++                return;
++            }
+         }
+     } else if (typeInfo == typeid(TL_pong)) {
+         if (connection->getConnectionType() == ConnectionTypePush) {
+@@ -1757,7 +1733,7 @@ void ConnectionsManager::processServerResponse(TLObject *message, int64_t messag
+             delete object;
+         } else {
+             if (LOGS_ENABLED) DEBUG_D("connection(%p, account%u, dc%u, type %d) received unparsed from gzip object on 0x%" PRIx64, connection, instanceNum, datacenter->getDatacenterId(), connection->getConnectionType(), messageId);
+-            if (delegate != nullptr) {
++            if (inu_shouldProcessUpdate(connection, messageId != 0 ? messageId : innerMsgId) && delegate != nullptr) {
+                 delegate->onUnparsedMessageReceived(messageId, data, connection->getConnectionType(), instanceNum);
+             }
+         }
+@@ -1777,7 +1753,7 @@ void ConnectionsManager::processServerResponse(TLObject *message, int64_t messag
+                 delegate->onInternalPushReceived(instanceNum);
+             }
+         } else {
+-            if (delegate != nullptr) {
++            if (inu_shouldProcessUpdate(connection, messageId != 0 ? messageId : innerMsgId) && delegate != nullptr) {
+                 NativeByteBuffer *data = BuffersStorage::getInstance().getFreeBuffer(message->getObjectSize());
+                 message->serializeToStream(data);
+                 data->position(0);
+@@ -1788,6 +1764,30 @@ void ConnectionsManager::processServerResponse(TLObject *message, int64_t messag
+     }
+ }
+ 
++void ConnectionsManager::inu_recreateSession(Connection *connection) {
++    Datacenter *datacenter = connection->getDatacenter();
++    connection->recreateSession();
++    for (auto & runningRequest : runningRequests) {
++        Request *request = runningRequest.get();
++        Datacenter *requestDatacenter = getDatacenterWithId(request->datacenterId);
++        if (request->connectionType & connection->getConnectionType() && requestDatacenter != nullptr && requestDatacenter->getDatacenterId() == datacenter->getDatacenterId()) {
++            request->clear(true);
++        }
++    }
++    connection->reconnect();
++}
++
++bool ConnectionsManager::inu_shouldProcessUpdate(Connection *connection, int64_t messageId) {
++    int32_t status = connection->inu_checkUpdateMessageId(messageId);
++    if (status == 2) {
++        if (LOGS_ENABLED) DEBUG_D("connection(%p, account%u, dc%u, type %d) received too old update 0x%" PRIx64 ", recreating session", connection, instanceNum, connection->getDatacenter()->getDatacenterId(), connection->getConnectionType(), messageId);
++        inu_recreateSession(connection);
++    } else if (status == 1) {
++        if (LOGS_ENABLED) DEBUG_D("connection(%p, account%u, dc%u, type %d) skipped duplicate update 0x%" PRIx64, connection, instanceNum, connection->getDatacenter()->getDatacenterId(), connection->getConnectionType(), messageId);
++    }
++    return status == 0;
++}
++
+ void ConnectionsManager::sendPing(Datacenter *datacenter, bool usePushConnection) {
+     if (usePushConnection && (currentUserId == 0 || !usePushConnection)) {
+         return;
+diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.h b/TMessagesProj/jni/tgnet/ConnectionsManager.h
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionsManager.h
++++ b/TMessagesProj/jni/tgnet/ConnectionsManager.h
+@@ -98,6 +98,8 @@ private:
+     void select();
+     void wakeup();
+     void processServerResponse(TLObject *message, int64_t messageId, int32_t messageSeqNo, int64_t messageSalt, Connection *connection, int64_t innerMsgId, int64_t containerMessageId);
++    void inu_recreateSession(Connection *connection);
++    bool inu_shouldProcessUpdate(Connection *connection, int64_t messageId);
+     void sendPing(Datacenter *datacenter, bool usePushConnection);
+     void sendMessagesToConnection(std::vector<std::unique_ptr<NetworkMessage>> &messages, Connection *connection, bool reportAck);
+     void sendMessagesToConnectionWithConfirmation(std::vector<std::unique_ptr<NetworkMessage>> &messages, Connection *connection, bool reportAck);

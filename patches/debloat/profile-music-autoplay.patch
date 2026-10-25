@@ -4,18 +4,22 @@ Date: Wed, 12 Aug 2026 22:30:08 +0400
 Subject: Dont auto-play music when opening the profile music player
 
 ---
- .../java/org/telegram/messenger/MediaController.java | 12 ++++++++++++
- .../main/java/org/telegram/ui/ProfileActivity.java   |  8 +++++++-
- 2 files changed, 19 insertions(+), 1 deletion(-)
+ .../org/telegram/messenger/MediaController.java  | 16 ++++++++++++++++
+ .../java/org/telegram/ui/ProfileActivity.java    | 14 ++++++++++++--
+ 2 files changed, 28 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -3684,6 +3684,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -3685,6 +3685,22 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
          return playMessage(messageObject, false);
      }
  
++    public boolean inu_isMessagePreparedOnly() {
++        return playingMessageObject != null && audioPlayer == null && videoPlayer == null && !downloadingCurrentMessage;
++    }
++
 +    public boolean inu_prepareMessage(final MessageObject messageObject) {
 +        if (messageObject == null) {
 +            return false;
@@ -35,11 +39,12 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -3910,7 +3910,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3936,8 +3936,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      MediaController.getInstance().currentSavedMusicList = savedMusicList;
                      MediaController.getInstance().getPlaylist().clear();
                      MediaController.getInstance().getPlaylist().addAll(savedMusicList.list);
 -                    if (!sameList) MediaController.getInstance().playMessage(savedMusicList.list.get(0));
+-                    showDialog(new AudioPlayerAlert(getContext(), getResourceProvider()));
 +                    if (!sameList) {
 +                        if (desu.inugram.InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY.getValue()) {
 +                            MediaController.getInstance().inu_prepareMessage(savedMusicList.list.get(0));
@@ -47,6 +52,11 @@ index 0000000..0000000 100644
 +                            MediaController.getInstance().playMessage(savedMusicList.list.get(0));
 +                        }
 +                    }
-                     showDialog(new AudioPlayerAlert(getContext(), getResourceProvider()));
++                    showDialog(new AudioPlayerAlert(getContext(), getResourceProvider()), dialog -> {
++                        if (MediaController.getInstance().currentSavedMusicList == savedMusicList && MediaController.getInstance().inu_isMessagePreparedOnly()) {
++                            MediaController.getInstance().cleanup();
++                        }
++                    });
                  }
              });
+ 

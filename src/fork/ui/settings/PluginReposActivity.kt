@@ -258,7 +258,7 @@ private class RepoRow(context: Context) : LinearLayout(context) {
         officialPill.visibility = if (PluginRepos.isOfficial(repo)) VISIBLE else GONE
         title.setWarning(if (failed) tierColors(GrantTier.CAUTION).first else null)
         subtitle.text = "@${repo.username}"
-        description.text = if (about.isNullOrEmpty()) "" else linkPluginUsernames(about, onUsernameClick)
+        description.text = if (about.isNullOrEmpty()) "" else InuUtils.linkUsernames(about, onUsernameClick)
         description.visibility = if (about.isNullOrEmpty()) GONE else VISIBLE
         setOnClickListener { onOpen() }
         openChannelAction.setOnClickListener { onOpenChannel() }

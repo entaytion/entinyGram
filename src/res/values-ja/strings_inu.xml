@@ -366,10 +366,22 @@
     <string name="InuMessageInput">メッセージ入力欄</string>
     <string name="InuAttachmentSheet">添付シート</string>
     <string name="InuIconReplacement">アイコンパック</string>
-    <string name="InuIconReplacementOff">デフォルト</string>
-    <string name="InuIconReplacementSolar">Solar by @Design480</string>
-    <string name="InuIconReplacementVkui">VKUI by VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
+    <string name="InuIconPackLoadFromFile">ファイルから読み込む</string>
+    <string name="InuIconPacksInstalled">インストール済みのパック</string>
+    <string name="InuIconPacksOrderInfo">アイコンは上の優先順位で適用されます。長押しで削除</string>
+    <string name="InuIconPacksUnsavedAlert">アイコンパックの変更が保存されていません。適用してアプリを再起動しますか？</string>
+    <string name="InuIconPacksApply">適用して再起動</string>
+    <string name="InuIconPacksTelegram">Telegram</string>
+    <string name="InuIconPacksTelegramInfo">デフォルトのアイコン</string>
+    <string name="InuIconPackBundled">内蔵</string>
+    <string name="InuIconPackInvalid">このファイルは有効なアイコンパックではありません</string>
+    <string name="InuIconPackInstall">インストール</string>
+    <string name="InuIconPackInstalled">アイコンパックをインストールしました</string>
+    <string name="InuIconPackByAuthor">作者: %1$s · %2$s</string>
+    <string name="InuIconPackIcons_other">%1$d 個のアイコン</string>
+    <string name="InuIconPackDelete">アイコンパックを削除</string>
+    <string name="InuIconPackDeleteConfirm">%1$s を削除しますか？</string>
+
     <string name="InuMapsHeader">地図</string>
     <string name="InuMapProvider">地図ビューのプロバイダー</string>
     <string name="InuMapProviderGoogle">Google マップ</string>
@@ -748,6 +760,8 @@
     <string name="InuBlockedMessagesModeHide">非表示</string>
     <string name="InuBlockedMessagesExtra">次のユーザーからのメッセージも非表示にする</string>
     <string name="InuBlockedMessagesExtraCount">%1$d 人</string>
+    <string name="InuBlockedMessagesHideReplies">そのユーザーへの返信も非表示にする</string>
+    <string name="InuBlockedMessagesHideRepliesInfo">ブロックしたユーザーのメッセージに返信している受信メッセージ</string>
     <string name="InuHideMessages">メッセージを非表示にする</string>
     <string name="InuShowHiddenMessages">メッセージを表示する</string>
     <string name="InuSpoilers">スポイラー</string>
@@ -783,6 +797,9 @@
     <string name="InuGoToMessage">メッセージへ移動</string>
     <string name="InuGoToMessagePrompt">メッセージ ID</string>
     <string name="InuParanoiaHideFolders">フォルダーを隠す</string>
+    <string name="InuParanoiaHideMyStories">自分のストーリーを非表示</string>
+    <string name="InuParanoiaHideStars">Telegram Stars を非表示</string>
+    <string name="InuParanoiaHideGram">GRAM を非表示</string>
     <string name="InuParanoiaSelectWhitelist">表示するチャット</string>
     <string name="InuParanoiaWhitelist">ホワイトリストモード</string>
     <string name="InuBotSettings">ボット設定</string>
@@ -1315,7 +1332,6 @@
     <string name="InuNo">いいえ</string>
     <string name="InuNoProfilePhotos">プロフィール写真が見つかりません</string>
     <string name="InuNotificationIconOldEntinygram">旧 entinyGram</string>
-    <string name="InuNotificationIconInfo">Xiaomi（MIUI/HyperOS）では、システムがこのアイコンをアプリのアイコンに置き換える場合があり、選択が反映されないことがあります</string>
     <string name="InuPoweredByProvider">翻訳提供: %1$s</string>
     <string name="InuProfilePhotosDeleted">すべてのプロフィール写真を削除しました</string>
     <string name="InuProfilePhotosDeletedCount">%1$d 枚のプロフィール写真を削除しました</string>
@@ -1383,7 +1399,6 @@
     <string name="InuIosChatHeaderInfo">iOS風のコンパクトなチャットヘッダーピルを中央に浮かせます。</string>
     <string name="InuChatHeaderNoPill">ピルの背景を非表示</string>
     <string name="InuChatHeaderNoPillInfo">ピルなしで、タイトルとサブタイトルを壁紙の上に表示します。</string>
-    <string name="InuParanoiaHideMyStories">自分のストーリーを非表示</string>
     <string name="InuRegexFilterStatusEnabled">有効</string>
     <string name="InuStopBot">ボットを停止</string>
     <string name="InuStopBotAction">停止</string>

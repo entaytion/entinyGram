@@ -1,17 +1,18 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Dubzer <me@dubzer.dev>
-Date: Wed, 21 Oct 2026 12:31:15 +0300
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:09:56 +0200
 Subject: match splash screen to the selected app icon and monet theme
 
 ---
- TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java | 1 +
- 1 file changed, 1 insertion(+)
+ TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java  | 1 +
+ .../src/main/java/org/telegram/ui/LauncherIconController.java    | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -7418,6 +7418,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7540,6 +7540,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                  checkNavigationBarColor = (boolean) args[1];
              }
              checkSystemBarColors(args.length > 2 && (boolean) args[2], true, checkNavigationBarColor && !isNavigationBarColorFrozen && !actionBarLayout.isTransitionAnimationInProgress());
@@ -19,3 +20,15 @@ index 0000000..0000000 100644
          } else if (id == NotificationCenter.needSetDayNightTheme) {
              boolean instant = false;
              if (args[2] != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
+@@ -32,6 +32,7 @@ public class LauncherIconController {
+                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+         }
+         desu.inugram.helpers.SplashThemeHelper.apply(LaunchActivity.instance);
++        desu.inugram.helpers.SplashScreenHelper.sync(LaunchActivity.instance);
+     }
+ 
+     public enum LauncherIcon {

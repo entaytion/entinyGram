@@ -6,6 +6,8 @@
   "scripts": {
     "setup": "bun scripts/setup.ts",
     "generate-icons": "bun scripts/generate-icons.ts",
+    "generate-icon-packs": "bun scripts/generate-icon-packs.ts",
+    "generate-tl": "bun scripts/generate-tl.ts",
     "export": "bun scripts/export.ts",
     "rebase": "bun scripts/rebase.ts",
     "find-patches": "bun scripts/find-patches.ts",
@@ -15,10 +17,11 @@
     "check-translations": "bun scripts/check-translations.ts",
     "build-debug": "bun scripts/generate-grants.ts && cd worktree && ./gradlew TMessagesProj_App:assembleDebug",
     "run-debug": "cd worktree && ./gradlew TMessagesProj_App:installDebug && adb shell am start ua.entaytion.entinygram/org.telegram.ui.LaunchActivity",
+    "build-debug-pluginless": "cd worktree-pluginless && ./gradlew TMessagesProj_App:assembleDebug",
+    "check-plugin-syntax": "for f in src/test/plugins/*.js $(find src/native/src -name '*.js'); do node --check \"$f\" || exit 1; done",
+    "typecheck-plugins": "bun run check-plugin-syntax && bun scripts/generate-tl.ts && bun scripts/generate-grants.ts && tsc -p sdk/types/tsconfig.self.json --noEmit && tsc -p src/test/plugins --noEmit",
     "prepare": "husky",
-    "generate-tl": "bun scripts/generate-tl.ts",
-    "generate-grants": "bun scripts/generate-grants.ts",
-    "build-debug-pluginless": "cd worktree-pluginless && ./gradlew TMessagesProj_App:assembleDebug"
+    "generate-grants": "bun scripts/generate-grants.ts"
   },
   "dependencies": {
     "@antfu/eslint-config": "^8.1.0",

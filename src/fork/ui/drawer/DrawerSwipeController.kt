@@ -75,7 +75,8 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
 
     val canOpenFromBackGesture: Boolean
         get() = allowOpenDrawer && !drawerOpened && drawerPosition == 0f &&
-            drawerWidth > 0 && canTrackGesture()
+            drawerWidth > 0 && canTrackGesture() &&
+            (getVisibleFragment() as? DialogsActivity)?.actionBar?.isActionModeShowed != true
 
     fun dragDrawerTo(value: Float) {
         cancelCurrentAnimation()

@@ -327,8 +327,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
         textRes: Int,
         infoRes: Int,
         checked: Boolean,
-        experimental: Boolean = false
-    ): UItem = mkTwoLineCheckItem(id, textRes, infoRes, checked, experimental, split = true)
+    ): UItem = mkTwoLineCheckItem(id, textRes, infoRes, checked, split = true)
 
 
     protected fun addExperimentalSpan(string: CharSequence): CharSequence {

@@ -4,10 +4,10 @@ Date: Mon, 4 May 2026 22:23:00 +0200
 Subject: customizable accounts order in settings and quick account switcher
 
 ---
- .../telegram/ui/Components/AlertsCreator.java |  5 +++++
- .../org/telegram/ui/MainTabsActivity.java     | 11 +---------
- .../org/telegram/ui/SettingsActivity.java     | 22 ++++++++++---------
- 3 files changed, 18 insertions(+), 20 deletions(-)
+ .../telegram/ui/Components/AlertsCreator.java   |  5 +++++
+ .../java/org/telegram/ui/MainTabsActivity.java  | 11 +----------
+ .../java/org/telegram/ui/SettingsActivity.java  | 17 +++++++----------
+ 3 files changed, 13 insertions(+), 20 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
 index 0000000..0000000 100644
@@ -52,8 +52,8 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -306,6 +306,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
-                     finishFragment();
+@@ -317,6 +317,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+                     }
                  } else if (id == 2) {
                      presentSettingFragment(new LogoutActivity());
 +                } else if (id == 98) {
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                  }
              }
          });
-@@ -341,6 +343,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -352,6 +354,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          otherItem = menu.addItem(1, R.drawable.ic_ab_other);
          otherItem.setContentDescription(getString(R.string.AccDescrMoreOptions));
@@ -71,20 +71,15 @@ index 0000000..0000000 100644
          otherItem.addSubItem(2, R.drawable.msg_leave, getString(R.string.LogOut));
  
          search = new ProfileActivity.SearchAdapter(this, context) {
-@@ -503,6 +508,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
-         return fragmentView = contentView;
+@@ -633,6 +638,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+     public void onResume() {
+         super.onResume();
+         if (listView.adapter != null) {
++            listView.adapter.update(true);
+             listView.adapter.notifyDataSetChanged();
+         }
      }
- 
-+    @Override
-+    public void onResume() {
-+        super.onResume();
-+        if (listView != null) listView.adapter.update(true);
-+    }
-+
-     @Override
-     public void onFragmentDestroy() {
-         super.onFragmentDestroy();
-@@ -634,16 +645,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -653,16 +659,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                  accountNumbers.add(a);
              }
          }

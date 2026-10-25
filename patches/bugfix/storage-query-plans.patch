@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.pet>
-Date: Sat, 17 Oct 2026 22:26:33 +0200
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:09:25 +0200
 Subject: fix sqlite picking slow plans on some storage queries
 
 ---
@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5603,7 +5603,7 @@ public class MediaDataController extends BaseController {
+@@ -5604,7 +5604,7 @@ public class MediaDataController extends BaseController {
              try {
                  int lastTime = 0;
                  int lastMid = 0;

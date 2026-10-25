@@ -5,8 +5,9 @@ Subject: add custom resource loader for icon replacement
 
 ---
  .../ui/Components/ProfileActionsView.java        |  2 +-
+ .../telegram/ui/Components/RLottieDrawable.java  |  7 ++++---
  .../java/org/telegram/ui/LaunchActivity.java     | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ 3 files changed, 21 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
 index 0000000..0000000 100644
@@ -17,10 +18,38 @@ index 0000000..0000000 100644
                          invalidate();
                      }
 -                    if (hit.supportsAnimate != 0) {
-+                    if (hit.supportsAnimate != 0 && desu.inugram.InuConfig.ICON_REPLACEMENT.getValue() == desu.inugram.InuConfig.IconReplacementItem.OFF) {
++                    if (hit.supportsAnimate != 0 && (desu.inugram.InuConfig.ICON_PACKS.getValue().isEmpty() || desu.inugram.helpers.icons.IconPackHelper.isLottieReplaced(hit.supportsAnimate))) {
                          hit.updateDrawable(true, hit.supportsAnimate);
                      }
                      hit.startTime = System.currentTimeMillis();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
+@@ -643,7 +643,8 @@ public class RLottieDrawable extends BitmapDrawable implements Animatable, Bitma
+         args = new NativePtrArgs();
+         args.colorReplacement = colorReplacement == null ? null : colorReplacement.clone();
+ 
+-        final long found = ResLottieMeta.find(rawRes);
++        final String inu_packJson = desu.inugram.helpers.icons.IconPackHelper.getLottieJson(rawRes);
++        final long found = inu_packJson != null ? ResLottieMeta.NOT_FOUND : ResLottieMeta.find(rawRes);
+         if (found != ResLottieMeta.NOT_FOUND) {
+             pendingNativeInit = true;
+             args.resId = rawRes;
+@@ -654,11 +655,11 @@ public class RLottieDrawable extends BitmapDrawable implements Animatable, Bitma
+         } else {
+             isSingleChannel = false;
+ 
+-            if (BuildConfig.DEBUG_PRIVATE_VERSION) {
++            if (inu_packJson == null && BuildConfig.DEBUG_PRIVATE_VERSION) {
+                 throw new IllegalArgumentException("rawRes not found");
+             }
+ 
+-            String jsonString = readRes(rawRes);
++            String jsonString = inu_packJson != null ? inu_packJson : readRes(rawRes);
+             if (TextUtils.isEmpty(jsonString)) {
+                 args = null;
+                 return;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
@@ -44,7 +73,7 @@ index 0000000..0000000 100644
 +    @Override
 +    public Resources getResources() {
 +        Resources baseResources = super.getResources();
-+        if (desu.inugram.InuConfig.ICON_REPLACEMENT.getValue() == desu.inugram.InuConfig.IconReplacementItem.OFF) {
++        if (desu.inugram.InuConfig.ICON_PACKS.getValue().isEmpty()) {
 +            return baseResources;
 +        }
 +        if (customResources == null || !customResources.wrapsResources(baseResources)) {

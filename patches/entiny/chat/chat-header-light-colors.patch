@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -2066,7 +2066,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2068,7 +2068,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                      contains |= glassDrawableMenu != null && glassDrawableMenu.getBounds().contains(x, y);
                  }
  
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
                      return false;
                  }
              }
-@@ -2566,6 +2566,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2568,6 +2568,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
      }
  
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          if (inu_needsUpdateGlassBounds()) {
-@@ -2583,30 +2591,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2585,30 +2593,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int t = inu_glassTop;
          final int b = inu_glassBottom;
  
@@ -78,7 +78,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4456,19 +4456,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -4458,19 +4458,9 @@ public class ChatActivity extends BaseFragment implements
                          }
                          return;
                      }
@@ -100,7 +100,7 @@ index 0000000..0000000 100644
                  inu_updateMenuSlotAvatar();
              }
  
-@@ -17706,6 +17696,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17844,6 +17834,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44125,22 +44118,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -44325,22 +44318,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }

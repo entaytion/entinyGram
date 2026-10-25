@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -6852,6 +6852,7 @@ public class MediaDataController extends BaseController {
+@@ -6853,6 +6853,7 @@ public class MediaDataController extends BaseController {
                  if (arrayList != null) {
                      for (int b = 0; b < arrayList.size(); b++) {
                          MessageObject m = arrayList.get(b);
@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -20999,6 +20999,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21014,6 +21014,7 @@ public class MessagesController extends BaseController implements NotificationCe
                                      updateDialogs = true;
                                      break;
                                  } else if (oldObject.getDialogId() == newMessage.getDialogId() && oldObject.messageOwner.action instanceof TLRPC.TL_messageActionPinMessage && oldObject.replyMessageObject != null && oldObject.replyMessageObject.getId() == newMessage.getId()) {
@@ -50,7 +50,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -25574,6 +25574,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25758,6 +25758,7 @@ public class ChatActivity extends BaseFragment implements
                  if (update == null) {
                      object.replyMessageObject = emptyMessage;
                  } else {

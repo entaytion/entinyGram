@@ -1,0 +1,86 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 25 Oct 2026 21:24:55 +0400
+Subject: show embedded audio cover in player playlist, matching the player
+
+---
+ .../messenger/audioinfo/AudioInfo.java         |  3 +--
+ .../org/telegram/ui/Cells/AudioPlayerCell.java | 18 ++++++++++++++++++
+ .../ui/Components/AudioPlayerAlert.java        |  2 +-
+ 3 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/audioinfo/AudioInfo.java b/TMessagesProj/src/main/java/org/telegram/messenger/audioinfo/AudioInfo.java
+index 0000000..0000000 100755
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/audioinfo/AudioInfo.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/audioinfo/AudioInfo.java
+@@ -147,12 +147,11 @@ public abstract class AudioInfo {
+     }
+ 
+ 	public static AudioInfo getAudioInfo(File file) {
+-        try {
++        try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
+             byte header[] = new byte[12];
+             RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+             randomAccessFile.readFully(header, 0, 8);
+             randomAccessFile.close();
+-            InputStream input = new BufferedInputStream(new FileInputStream(file));
+             if (header[4] == 'f' && header[5] == 't' && header[6] == 'y' && header[7] == 'p') {
+                 return new M4AInfo(input);
+             } else if (header[0] == 'f' && header[1] == 'L' && header[2] == 'a' && header[3] == 'c') {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AudioPlayerCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AudioPlayerCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AudioPlayerCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AudioPlayerCell.java
+@@ -34,6 +34,7 @@ import org.telegram.messenger.Emoji;
+ import org.telegram.messenger.FileLoader;
+ import org.telegram.messenger.FileLog;
+ import org.telegram.messenger.ImageLoader;
++import org.telegram.messenger.ImageReceiver;
+ import org.telegram.messenger.LocaleController;
+ import org.telegram.messenger.MediaController;
+ import org.telegram.messenger.MessageObject;
+@@ -191,6 +192,7 @@ public class AudioPlayerCell extends FrameLayout implements DownloadController.F
+                 radialProgress.setImageOverlay(null, null, null);
+             }
+         }
++        inu_loadId3Cover(false);
+         requestLayout();
+         updateButtonState(false, false);
+     }
+@@ -476,6 +478,22 @@ public class AudioPlayerCell extends FrameLayout implements DownloadController.F
+     public void onSuccessDownload(String fileName) {
+         radialProgress.setProgress(1, true);
+         updateButtonState(false, true);
++        inu_loadId3Cover(true);
++    }
++
++    private void inu_loadId3Cover(boolean crossfade) {
++        final MessageObject messageObject = currentMessageObject;
++        desu.inugram.helpers.media.AudioCoverHelper.loadSmallCover(messageObject, cover -> {
++            if (currentMessageObject != messageObject) {
++                return;
++            }
++            final ImageReceiver overlay = radialProgress.overlayImageView;
++            overlay.setCrossfadeWithOldImage(crossfade);
++            overlay.setForceCrossfade(crossfade);
++            radialProgress.setImageOverlay(cover);
++            overlay.setCrossfadeWithOldImage(false);
++            overlay.setForceCrossfade(false);
++        });
+     }
+ 
+     @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+@@ -2407,8 +2407,8 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+             TLRPC.Document document = messageObject.getDocument();
+             currentFile = FileLoader.getAttachFileName(document);
+             currentAudioFinishedLoading = false;
+-            String artworkUrl = messageObject.getArtworkUrl(false);
+             final ImageLocation thumbImageLocation = getArtworkThumbImageLocation(messageObject);
++            String artworkUrl = thumbImageLocation != null && thumbImageLocation.path == null ? null : messageObject.getArtworkUrl(false);
+             if (!TextUtils.isEmpty(artworkUrl)) {
+                 imageView.setImage(ImageLocation.getForPath(artworkUrl), null, thumbImageLocation, null, null, 0, 1, messageObject);
+             } else if (thumbImageLocation != null) {

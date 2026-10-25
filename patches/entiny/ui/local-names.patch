@@ -37,7 +37,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6860,6 +6860,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6864,6 +6864,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
          desu.inugram.helpers.badges.BadgeRegistry.applyTo(user);
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
          fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
          TLRPC.User oldUser = users.get(user.id);
          if (oldUser == user && !force) {
-@@ -6996,6 +6997,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -7000,6 +7001,7 @@ public class MessagesController extends BaseController implements NotificationCe
              return;
          }
          desu.inugram.helpers.badges.BadgeRegistry.applyTo(chat);
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
          TLRPC.Chat oldChat = chats.get(chat.id);
          if (oldChat == chat) {
              return;
-@@ -7727,6 +7729,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -7731,6 +7733,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      if (old != null) {
                          res.full_chat.inviterId = old.inviterId;
                      }
@@ -61,15 +61,15 @@ index 0000000..0000000 100644
                      fullChats.put(chatId, res.full_chat);
                      getTranslateController().updateDialogFull(-chatId);
  
-@@ -7841,6 +7844,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -7845,6 +7848,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
                          }
                      }
 +                    desu.inugram.helpers.profile.LocalNameHelper.applyTo(userFull, currentAccount);
                      fullUsers.put(user.id, userFull);
+                     final boolean contactBlockedChanged = syncUserContactBlocked(user.id, userFull);
                      getTranslateController().updateDialogFull(user.id);
-                     StarsController.getInstance(currentAccount).invalidateProfileGifts(userFull);
-@@ -10466,6 +10470,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10474,6 +10478,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void putChatFull(TLRPC.ChatFull chatFull) {
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
          fullChats.put(chatFull.id, chatFull);
          getTranslateController().updateDialogFull(-chatFull.id);
      }
-@@ -10479,6 +10484,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10487,6 +10492,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
              }
              if (info != null) {
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                  if (fullChats.get(chatId) == null) {
                      fullChats.put(chatId, info);
                      getTranslateController().updateDialogFull(-chatId);
-@@ -10526,6 +10532,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10534,6 +10540,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
              }
              if (info != null) {

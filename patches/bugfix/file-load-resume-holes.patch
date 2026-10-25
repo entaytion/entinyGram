@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 25 Oct 2026 17:16:14 +0400
+Subject: fix interrupted downloads resuming with unfilled gaps
+
+---
+ .../java/org/telegram/messenger/FileLoadOperation.java     | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+@@ -1173,6 +1173,7 @@ public class FileLoadOperation {
+                 }
+             }
+ 
++            boolean inu_partsRead = false;
+             if (fileNameParts != null) {
+                 cacheFileParts = new File(tempPath, fileNameParts);
+                 if (!cacheFileTemp.exists()) {
+@@ -1191,6 +1192,7 @@ public class FileLoadOperation {
+                                 notLoadedBytesRanges.add(new Range(start, end));
+                                 notRequestedBytesRanges.add(new Range(start, end));
+                             }
++                            inu_partsRead = true;
+                         }
+                     }
+                 } catch (Exception e) {
+@@ -1215,8 +1217,9 @@ public class FileLoadOperation {
+                         requestedBytesCount = downloadedBytes = floorDiv(cacheFileTemp.length(), currentDownloadChunkSize) * currentDownloadChunkSize;
+                     }
+                     if (notLoadedBytesRanges != null && notLoadedBytesRanges.isEmpty()) {
+-                        notLoadedBytesRanges.add(new Range(downloadedBytes, totalBytesCount));
+-                        notRequestedBytesRanges.add(new Range(downloadedBytes, totalBytesCount));
++                        long inu_loadedPrefix = inu_partsRead ? downloadedBytes : 0;
++                        notLoadedBytesRanges.add(new Range(inu_loadedPrefix, totalBytesCount));
++                        notRequestedBytesRanges.add(new Range(inu_loadedPrefix, totalBytesCount));
+                     }
+                 }
+             } else if (notLoadedBytesRanges != null && notLoadedBytesRanges.isEmpty()) {

@@ -494,7 +494,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -344,6 +344,7 @@ import java.util.concurrent.atomic.AtomicReference;
+@@ -347,6 +347,7 @@ import java.util.concurrent.atomic.AtomicReference;
  import java.util.zip.ZipEntry;
  import java.util.zip.ZipOutputStream;
  
@@ -502,7 +502,7 @@ index 0000000..0000000 100644
  import me.vkryl.android.animator.BoolAnimator;
  import me.vkryl.core.reference.ReferenceList;
  
-@@ -2297,8 +2298,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -2313,8 +2314,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
          setActionsMode();
  
@@ -513,7 +513,7 @@ index 0000000..0000000 100644
  
          return true;
      }
-@@ -16953,8 +16954,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -17013,8 +17014,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          final int additionalList = dp(48);
@@ -537,7 +537,7 @@ index 0000000..0000000 100644
  import org.telegram.PhoneFormat.PhoneFormat;
  import org.telegram.messenger.AndroidUtilities;
  import org.telegram.messenger.ApplicationLoader;
-@@ -219,7 +221,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -220,7 +222,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              hasMainTabs = arguments.getBoolean("hasMainTabs", false);
          }
  
@@ -546,7 +546,7 @@ index 0000000..0000000 100644
          return super.onFragmentCreate();
      }
  
-@@ -2070,8 +2072,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -2110,8 +2112,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          }
  
          final int additionalList = dp(48);

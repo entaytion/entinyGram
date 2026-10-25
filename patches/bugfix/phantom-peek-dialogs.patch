@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -11702,13 +11702,15 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -11710,13 +11710,15 @@ public class MessagesController extends BaseController implements NotificationCe
                              if (!res.dialogs.isEmpty()) {
                                  TLRPC.Dialog dialog = res.dialogs.get(0);
  

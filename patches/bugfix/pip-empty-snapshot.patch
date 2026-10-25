@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                                  if (textureImageView != null) {
                                      textureImageView.setVisibility(View.VISIBLE);
                                      textureImageView.setImageBitmap(currentBitmap);
-@@ -6583,8 +6583,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6586,8 +6586,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
                  if (usedSurfaceView) {
                      Bitmap toBitmap = Bitmap.createBitmap(videoSurfaceView.getWidth(), videoSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
                      });
                  } else {
                      Bitmap src = videoTextureView.getBitmap(videoTextureView.getWidth(), videoTextureView.getHeight());
-@@ -9050,8 +9054,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9053,8 +9057,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      try {
                          if (usedSurfaceView) {
                              Bitmap toBitmap = Bitmap.createBitmap(bitmap);
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
                                  animation.replaceAnimatedBitmap(toBitmap);
                                  animation.invalidateInternal();
                              });
-@@ -9141,27 +9145,23 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9144,27 +9148,23 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      Bitmap bitmap = Bitmaps.createBitmap(videoSurfaceView.getWidth(), videoSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
                      awaitBeforeAnimation = true;
                      final boolean[] started = new boolean[1];

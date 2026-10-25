@@ -4,22 +4,31 @@ Date: Thu, 23 Jul 2026 10:27:30 +0400
 Subject: send mp4 from Files as a proper video
 
 ---
- .../main/java/org/telegram/messenger/SendMessagesHelper.java   | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../org/telegram/messenger/SendMessagesHelper.java  | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -9665,6 +9665,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -9424,7 +9424,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+     private final static int ERROR_TYPE_UNSUPPORTED = 1;
+     private final static int ERROR_TYPE_FILE_TOO_LARGE = 2;
+ 
+-    private static int prepareSendingDocumentInternal(AccountInstance accountInstance, String path, String originalPath, Uri uri, String mime, long dialogId, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, final ArrayList<TLRPC.MessageEntity> entities, final MessageObject editingMessageObject, long[] groupId, boolean isGroupFinal, CharSequence caption, boolean notify, int scheduleDate, int scheduleRepeatPeriod, Integer[] docType, boolean forceDocument, SendMessageChatArguments sendMessageChatArguments, long effectId, boolean invertMedia, long payStars, long monoForumPeerId, MessageSuggestionParams suggestionParams, PollSendParams pollSendParams, int pollIndex) {
++    private static int prepareSendingDocumentInternal(AccountInstance accountInstance, String path, String originalPath, Uri uri, String mime, long dialogId, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, final ArrayList<TLRPC.MessageEntity> entities, final MessageObject editingMessageObject, long[] groupId, boolean isGroupFinal, CharSequence caption, boolean notify, int scheduleDate, int scheduleRepeatPeriod, Integer[] docType, boolean forceDocument, SendMessageChatArguments sendMessageChatArguments, long effectId, boolean invertMedia, long payStars, long monoForumPeerId, MessageSuggestionParams suggestionParams, PollSendParams pollSendParams, int pollIndex, boolean inu_mp4AsVideo) {
+         final long forcedPollGroupId = pollSendParams != null ? pollSendParams.groupId : 0;
+ 
+         if ((path == null || path.length() == 0) && uri == null) {
+@@ -9675,6 +9675,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  }
              }
          }
-+        final boolean inu_sendMp4DocumentAsVideo = desu.inugram.helpers.media.MediaSendHelper.prepareMp4Document(document, path, isEncrypted, forceDocument);
++        final boolean inu_sendMp4DocumentAsVideo = desu.inugram.helpers.media.MediaSendHelper.prepareMp4Document(document, path, isEncrypted, forceDocument && inu_mp4AsVideo);
          final String captionFinal = caption != null ? caption.toString() : "";
  
          final TLRPC.TL_document documentFinal = document;
-@@ -9674,7 +9675,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -9684,7 +9685,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (originalPath != null) {
              params.put("originalPath", originalPath);
          }
@@ -28,3 +37,39 @@ index 0000000..0000000 100644
              params.put("forceDocument", "1");
          }
          if (parentFinal != null) {
+@@ -10150,7 +10151,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     mediaCount++;
+                     long prevGroupId = groupId[0];
+                     final boolean isGroupFinal = !forcedPollDoNotSendFinal && (pollSendParams == null && mediaCount == 10 || a == count - 1);
+-                    error = prepareSendingDocumentInternal(accountInstance, paths.get(a), originalPaths.get(a), null, mime, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, a == 0 ? captionEntities : null, editingMessageObject, groupId, isGroupFinal, captionFinal, notify, scheduleDate, scheduleRepeatPeriod, docType, inputContent == null, sendMessageChatArguments, first ? effectId : 0, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendIndexes!= null ? pollSendIndexes.get(a) : -1);
++                    error = prepareSendingDocumentInternal(accountInstance, paths.get(a), originalPaths.get(a), null, mime, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, a == 0 ? captionEntities : null, editingMessageObject, groupId, isGroupFinal, captionFinal, notify, scheduleDate, scheduleRepeatPeriod, docType, inputContent == null, sendMessageChatArguments, first ? effectId : 0, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendIndexes!= null ? pollSendIndexes.get(a) : -1, true);
+                     first = false;
+                     if (prevGroupId != groupId[0] || groupId[0] == -1) {
+                         mediaCount = 1;
+@@ -10180,7 +10181,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     mediaCount++;
+                     long prevGroupId = groupId[0];
+                     final boolean isGroupFinal = !forcedPollDoNotSendFinal && (pollSendParams == null && mediaCount == 10 || a == count - 1);
+-                    error = prepareSendingDocumentInternal(accountInstance, null, null, uris.get(a), mime, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, captionEntitiesFinal, editingMessageObject, groupId, isGroupFinal, captionFinal, notify, scheduleDate, scheduleRepeatPeriod, docType, inputContent == null, sendMessageChatArguments, first ? effectId : 0, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendUriIndexes != null ? pollSendUriIndexes.get(a) : -1);
++                    error = prepareSendingDocumentInternal(accountInstance, null, null, uris.get(a), mime, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, captionEntitiesFinal, editingMessageObject, groupId, isGroupFinal, captionFinal, notify, scheduleDate, scheduleRepeatPeriod, docType, inputContent == null, sendMessageChatArguments, first ? effectId : 0, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendUriIndexes != null ? pollSendUriIndexes.get(a) : -1, true);
+                     first = false;
+                     if (prevGroupId != groupId[0] || groupId[0] == -1) {
+                         mediaCount = 1;
+@@ -11746,7 +11747,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                         mediaCount = 0;
+                     }
+                     mediaCount++;
+-                    int error = prepareSendingDocumentInternal(accountInstance, sendAsDocuments.get(a), sendAsDocumentsOriginal.get(a), sendAsDocumentsUri.get(a), extension, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, sendAsDocumentsEntities.get(a), editingMessageObject, groupId2, mediaCount == 10 || a == documentsCount - 1, sendAsDocumentsCaptions.get(a), notify, scheduleDate, 0, null, forceDocument, sendMessageChatArguments, effectId, invertMedia, payStars, monoForumPeerId, suggestionParams, null, -1);
++                    int error = prepareSendingDocumentInternal(accountInstance, sendAsDocuments.get(a), sendAsDocumentsOriginal.get(a), sendAsDocumentsUri.get(a), extension, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, sendAsDocumentsEntities.get(a), editingMessageObject, groupId2, mediaCount == 10 || a == documentsCount - 1, sendAsDocumentsCaptions.get(a), notify, scheduleDate, 0, null, forceDocument, sendMessageChatArguments, effectId, invertMedia, payStars, monoForumPeerId, suggestionParams, null, -1, false);
+                     handleError(error, accountInstance);
+                 }
+             }
+@@ -12295,7 +12296,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     }
+                 });
+             } else {
+-                prepareSendingDocumentInternal(accountInstance, videoPath, videoPath, null, null, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, entities, editingMessageObject, null, false, caption, notify, scheduleDate, scheduleRepeatPeriod, null, forceDocument, sendMessageChatArguments, 0, invertMedia, stars, monoForumPeerId, suggestionParams, null, -1);
++                prepareSendingDocumentInternal(accountInstance, videoPath, videoPath, null, null, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, entities, editingMessageObject, null, false, caption, notify, scheduleDate, scheduleRepeatPeriod, null, forceDocument, sendMessageChatArguments, 0, invertMedia, stars, monoForumPeerId, suggestionParams, null, -1, false);
+             }
+         }).start();
+     }

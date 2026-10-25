@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 23 Oct 2026 14:04:40 +0400
+Subject: fix instant view sheets never unregistering observers
+
+---
+ .../src/main/java/org/telegram/ui/ArticleViewer.java     | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
+@@ -15776,6 +15776,15 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+         @Override
+         public void release() {
+             released = true;
++            NotificationCenter.getInstance(currentAccount).removeObserver(ArticleViewer.this, NotificationCenter.messagePlayingProgressDidChanged);
++            NotificationCenter.getInstance(currentAccount).removeObserver(ArticleViewer.this, NotificationCenter.messagePlayingDidReset);
++            NotificationCenter.getInstance(currentAccount).removeObserver(ArticleViewer.this, NotificationCenter.messagePlayingPlayStateChanged);
++            NotificationCenter.getInstance(currentAccount).removeObserver(ArticleViewer.this, NotificationCenter.messagePlayingDidStart);
++            NotificationCenter.getInstance(currentAccount).removeObserver(ArticleViewer.this, NotificationCenter.emojiLoaded);
++            if (activityVisibilityController != null) {
++                activityVisibilityController.destroy();
++                activityVisibilityController = null;
++            }
+             if (pages[0] != null && pages[0].swipeBack) {
+                 pages[0].swipeContainer.setSwipeOffsetY(-pages[0].swipeContainer.offsetY + pages[0].swipeContainer.topActionBarOffsetY);
+                 pages[0].swipeBack = false;

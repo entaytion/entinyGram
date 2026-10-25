@@ -30,6 +30,11 @@ object BlockedMessagesHelper {
         }
         InuConfig.prefs.edit { putStringSet(getExtraHiddenKey(account), ids.map(Long::toString).toHashSet()) }
         invalidateVisible()
+        notifyChanged(account)
+    }
+
+    @JvmStatic
+    fun notifyChanged(account: Int) {
         NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.blockedUsersDidLoad)
     }
 
@@ -272,12 +277,24 @@ object BlockedMessagesHelper {
         // entiny: forwarded channel post carries peer id as both fromChatId and fwd_from.from_id; don't blackout real announcements
         if (messageObject.isForwardedChannelPost) return false
         if (isBlockedPeer(messageObject.currentAccount, messageObject.fromChatId)) return true
+        if (InuConfig.BLOCKED_MESSAGES_HIDE_REPLIES.value && !messageObject.isOutOwner() && isReplyToBlocked(messageObject)) return true
         val forwardedFrom = messageObject.messageOwner.fwd_from?.from_id ?: return false
         return isBlockedPeer(messageObject.currentAccount, MessageObject.getPeerId(forwardedFrom))
     }
 
     private fun isRegexFilteredMessage(messageObject: MessageObject?): Boolean {
         return RegexFilterHelper.isMessageFiltered(messageObject)
+    }
+
+    private fun isReplyToBlocked(messageObject: MessageObject): Boolean {
+        val reply = messageObject.replyMessageObject
+        if (reply != null && reply.messageOwner != null && reply.messageOwner !is TLRPC.TL_messageEmpty &&
+            isBlockedPeer(messageObject.currentAccount, reply.fromChatId)
+        ) {
+            return true
+        }
+        val from = messageObject.messageOwner.reply_to?.reply_from?.from_id ?: return false
+        return isBlockedPeer(messageObject.currentAccount, MessageObject.getPeerId(from))
     }
 
     private fun isBlockedPeer(currentAccount: Int, peerId: Long): Boolean {

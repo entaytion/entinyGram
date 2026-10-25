@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -6514,7 +6514,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6553,7 +6553,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          if (listView == null) return;
          final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) avatarContainer.getLayoutParams();
          avatarX = listView.getMeasuredWidth() / 2f - (params.width * avatarScale * 0.5f);
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
              avatarX = lerp(prevAvatarTranslation, avatarX, avatarAnimationProgress);
          }
          avatarContainer.setTranslationX(avatarX);
-@@ -10227,7 +10227,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10275,7 +10275,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      final ViewGroup previousRoot = previousTransitionMainFragment != null && previousTransitionMainFragment.getFragmentView() instanceof ViewGroup
                          ? (ViewGroup) previousTransitionMainFragment.getFragmentView()
                          : previousTransitionFragment.getContentView();
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                      if (avatarContainer.getTitleTextView() != null) {
                          SimpleTextView titleView = avatarContainer.getTitleTextView();
                          int textOffset = titleView.getTextStartX() - (int) titleView.getX();
-@@ -10332,7 +10332,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10380,7 +10380,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              if (previousFragment instanceof ChatActivity) {
                  ChatAvatarContainer avatarContainer = ((ChatActivity) previousFragment).getAvatarContainer();
                  AndroidUtilities.doOnPreDraw(avatarContainer, () -> {

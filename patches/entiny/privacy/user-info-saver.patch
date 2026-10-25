@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -8123,6 +8123,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8131,6 +8131,7 @@ public class MessagesController extends BaseController implements NotificationCe
              settings.business_bot_manage_url = "https://telegram.org/";
          }
          editor.apply();
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          userPeerSettings.put(dialogId, settings);
          getNotificationCenter().postNotificationName(NotificationCenter.peerSettingsDidLoad, dialogId);
      }
-@@ -8130,9 +8131,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8138,9 +8139,9 @@ public class MessagesController extends BaseController implements NotificationCe
      public TLRPC.PeerSettings getPeerSettings(long dialogId) {
          TLRPC.UserFull userFull = getUserFull(dialogId);
          if (userFull != null && userFull.settings != null) {

@@ -157,7 +157,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -1083,6 +1083,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -1088,6 +1088,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  AndroidUtilities.rectTmp.set(inset, inset, thisWidth - inset, thisHeight - inset);
                  clipPath.addRoundRect(AndroidUtilities.rectTmp, r, r, Path.Direction.CW);
                  canvas.clipPath(clipPath);
@@ -169,7 +169,7 @@ index 0000000..0000000 100644
              }
  
              canvas.save();
-@@ -5411,6 +5416,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5437,6 +5442,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          };
          avatarImage.createBlurEffect(getActionsExtraHeight());
@@ -177,7 +177,7 @@ index 0000000..0000000 100644
          avatarImage.getImageReceiver().setAllowDecodeSingleFrame(true);
          avatarImage.setRoundRadiusForExpand(getSmallAvatarRoundRadius());
          avatarImage.setPivotX(0);
-@@ -6496,6 +6502,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6531,6 +6537,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private int getSmallAvatarRoundRadius() {
@@ -200,7 +200,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java
-@@ -954,6 +954,7 @@ public class ProfileActivity2 extends BaseFragment implements
+@@ -955,6 +955,7 @@ public class ProfileActivity2 extends BaseFragment implements
          public AvatarImage(Context context, Theme.ResourcesProvider resourcesProvider) {
              super(context);
              this.resourcesProvider = resourcesProvider;
@@ -208,7 +208,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -990,7 +991,8 @@ public class ProfileActivity2 extends BaseFragment implements
+@@ -991,7 +992,8 @@ public class ProfileActivity2 extends BaseFragment implements
              final float avatarCy =     lerp3(dpf2(28), dpf2(59), expandedHeight / 2.0f, relativeTop);
              final float avatarW =      lerp3(dpf2(42), dpf2(90), getWidth(), relativeTop);
              final float avatarH =      lerp3(dpf2(42), dpf2(90), expandedHeight, relativeTop);
@@ -218,7 +218,7 @@ index 0000000..0000000 100644
  
              avatarRect.set(
                  avatarCx - avatarW / 2.0f,
-@@ -999,6 +1001,7 @@ public class ProfileActivity2 extends BaseFragment implements
+@@ -1000,6 +1002,7 @@ public class ProfileActivity2 extends BaseFragment implements
                  avatarCy + avatarH / 2.0f
              );
  

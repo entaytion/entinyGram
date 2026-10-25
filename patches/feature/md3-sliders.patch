@@ -4,10 +4,31 @@ Date: Sun, 16 Aug 2026 19:18:57 +0400
 Subject: Material 3 style sliders
 
 ---
+ .../ui/Components/AudioPlayerAlert.java       |  2 ++
  .../telegram/ui/Components/SeekBarView.java   | 28 ++++++++++-------
  .../ui/Components/SlideChooseView.java        | 31 ++++++++++---------
- 2 files changed, 33 insertions(+), 26 deletions(-)
+ 3 files changed, 35 insertions(+), 26 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+@@ -703,6 +703,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+             }
+         };
+         seekBarView.setLineWidth(4);
++        desu.inugram.helpers.theme.M3SliderHelper.setWavyPlaying(seekBarView, !MediaController.getInstance().isMessagePaused(), false);
+         seekBarView.setDelegate(new SeekBarView.SeekBarViewDelegate() {
+             @Override
+             public void onSeekBarDrag(boolean stop, float progress) {
+@@ -2357,6 +2358,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+             updateProgress(messageObject, !sameMessageObject);
+             updateCover(messageObject, !sameMessageObject);
+ 
++            desu.inugram.helpers.theme.M3SliderHelper.setWavyPlaying(seekBarView, !MediaController.getInstance().isMessagePaused(), true);
+             if (MediaController.getInstance().isMessagePaused()) {
+                 playPauseDrawable.setPause(false);
+                 playButton.setContentDescription(LocaleController.getString(R.string.AccActionPlay));
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SeekBarView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SeekBarView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SeekBarView.java

@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 22 Oct 2026 12:11:11 +0400
+Subject: fix voice button staying invisible after editing a message during slow mode
+
+---
+ .../org/telegram/ui/Components/ChatActivityEnterView.java   | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -10763,9 +10763,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+                     attachButton.setScaleX(0.5f);
+                     attachButton.setScaleY(0.5f);
+                 }
+-                audioVideoButtonContainer.setScaleX(0.1f);
+-                audioVideoButtonContainer.setScaleY(0.1f);
+-                audioVideoButtonContainer.setAlpha(0.0f);
++                audioVideoSendButton.setScaleX(0.1f);
++                audioVideoSendButton.setScaleY(0.1f);
++                audioVideoSendButton.setAlpha(0.0f);
+                 audioVideoButtonContainer.setVisibility(GONE);
+             } else {
+                 getSendButtonInternal().setScaleX(0.1f);

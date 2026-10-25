@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -1001,7 +1001,7 @@ public class MediaDataController extends BaseController {
+@@ -1002,7 +1002,7 @@ public class MediaDataController extends BaseController {
                      AndroidUtilities.runOnUIThread(() -> getMediaDataController().loadRecents(MediaDataController.TYPE_FAVE, false, false, true));
                  }
              });
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
          } else {
              if (type == TYPE_IMAGE && remove) {
                  NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_STICKER, document, StickerSetBulletinLayout.TYPE_REMOVED_FROM_RECENT);
-@@ -1115,7 +1115,7 @@ public class MediaDataController extends BaseController {
+@@ -1116,7 +1116,7 @@ public class MediaDataController extends BaseController {
          if (!found) {
              recentGifs.add(0, document);
          }
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
              TLRPC.Document old = recentGifs.remove(recentGifs.size() - 1);
              getMessagesStorage().getStorageQueue().postRunnable(() -> {
                  try {
-@@ -2063,6 +2063,9 @@ public class MediaDataController extends BaseController {
+@@ -2064,6 +2064,9 @@ public class MediaDataController extends BaseController {
                              arrayList = res.stickers;
                          }
                      }
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                      processLoadedRecentDocuments(type, arrayList, false, 0, true);
                  });
              }
-@@ -2090,12 +2093,12 @@ public class MediaDataController extends BaseController {
+@@ -2091,12 +2094,12 @@ public class MediaDataController extends BaseController {
                      SQLiteDatabase database = getMessagesStorage().getDatabase();
                      int maxCount;
                      if (gif) {

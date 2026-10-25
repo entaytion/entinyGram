@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -3535,6 +3535,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3553,6 +3553,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
          if (myProfile) {
              bottomButtonsContainer = new FrameLayout(context);
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  
              bottomButtonContainer = new FrameLayout[2];
              bottomButton = new ButtonWithCounterView[2];
-@@ -6147,7 +6148,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6178,7 +6179,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          } else {
              buttonsTranslationY = dp(72);
          }

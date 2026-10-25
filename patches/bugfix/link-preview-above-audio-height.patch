@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 25 Oct 2026 17:41:02 +0400
+Subject: fix text overflowing bubble with audio link preview above text
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -8464,7 +8464,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                             if (MessageObject.isVoiceDocument(document)) {
+                                 createDocumentLayout(backgroundWidth - dp(10), messageObject);
+                                 mediaOffsetY = (linkPreviewAbove ? 0 : currentMessageObject.textHeight(transitionParams)) + dp(8) + linkPreviewHeight;
+-                                totalHeight += dp(44 + (hasLinkPreview ? 4 : (linkPreviewAbove ? -4 : 0)));
++                                totalHeight += dp(44 + (hasLinkPreview ? 4 : 0) + (linkPreviewAbove ? 10 : 0));
+                                 linkPreviewHeight += dp(44 + (hasLinkPreview ? 4 : 0));
+ 
+                                 maxWidth = maxWidth - dp(86);
+@@ -8477,7 +8477,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                             } else if (MessageObject.isMusicDocument(document)) {
+                                 int durationWidth = createDocumentLayout(backgroundWidth - dp(10), messageObject);
+                                 mediaOffsetY = (linkPreviewAbove ? 0 : currentMessageObject.textHeight(transitionParams)) + dp(8) + linkPreviewHeight;
+-                                totalHeight += dp(56 + (linkPreviewAbove ? -4 : 0));
++                                totalHeight += dp(linkPreviewAbove ? 70 : 56);
+                                 linkPreviewHeight += dp(60);
+ 
+                                 maxWidth = maxWidth - dp(86);

@@ -1,12 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sat, 22 Aug 2026 00:37:44 +0300
+Date: Mon, 26 Oct 2026 00:01:13 +0200
 Subject: Add folder tab customization: indicator stroke, bottom placement, hide archive from chat list
 
-- tab indicator stroke style and hide-archive-from-list ported from NagramXF (FilterTabsView, MessagesController)
-- move folder tabs to the bottom of the screen, reusing existing FAB offset fields instead of duplicating NagramXF's scroll-hide bookkeeping (DialogsActivity, FolderHelper, DialogsFabHelper)
-- fix actionbar blur height and search field positioning still reserving top space for the tabs bar after it moved to the bottom
-- reserve list bottom padding for the bottom-anchored tabs bar so future content cannot render underneath it
 ---
  .../messenger/MessagesController.java         |  3 ++
  .../ui/Components/FilterTabsView.java         | 11 ++++-
@@ -17,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -9867,6 +9867,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9875,6 +9875,9 @@ public class MessagesController extends BaseController implements NotificationCe
          if (dialogs == null) {
              return new ArrayList<>();
          }
@@ -89,11 +85,11 @@ index 0000000..0000000 100644
              final float filterTabsVisibility = getFilterTabsVisibilityFactor(false);
              final float topPanelsVisibility = topPanelLayout != null ? topPanelLayout.getMetadata().getTotalVisibility() : 0f;
  
--            t += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 14) * filterTabsVisibility);
--            additionalPadding += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 14) * filterTabsVisibility);
+-            t += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
+-            additionalPadding += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
 +            if (!FolderHelper.atBottom()) {
-+                t += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 14) * filterTabsVisibility);
-+                additionalPadding += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 14) * filterTabsVisibility);
++                t += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
++                additionalPadding += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
 +            }
  
              if (topPanelLayout != null) {
@@ -130,9 +126,9 @@ index 0000000..0000000 100644
  
 -        if (filterTabsView != null) {
 +        if (filterTabsView != null && !FolderHelper.atBottom()) {
-             filterTabsView.setTranslationY(totalOffset - (NonIslandHelper.globalSearch() ? 0 : searchOffset) - (NonIslandHelper.foldersBar() ? dp(NonIslandHelper.foldersBarOverlapDp()) * getFilterTabsVisibilityFactor(false) : 0));
+             filterTabsView.setTranslationY(totalOffset - (NonIslandHelper.globalSearch() ? 0 : searchOffset) - (NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarOverlap() * getFilterTabsVisibilityFactor(false) : 0));
              filtersTabVisibility = filterTabsView.getAlpha();
-             filtersTabHeight = dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 7) * filtersTabVisibility;
+             filtersTabHeight = (NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 7)) * filtersTabVisibility;
 @@ -9059,6 +9065,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  storyHint.setTranslationY(baseTranslationY - dp(52));
              }

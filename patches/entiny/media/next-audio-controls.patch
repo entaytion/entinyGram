@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -2621,7 +2621,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -2622,7 +2622,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  hasAudioFocus = 0;
                  int index = -1;
                  if (voiceMessagesPlaylist != null) {
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                          voiceMessagesPlaylist.remove(index);
                          voiceMessagesPlaylistMap.remove(lastFile.getId());
                          if (voiceMessagesPlaylist.isEmpty()) {
-@@ -3032,7 +3032,12 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -3033,7 +3033,12 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              return;
          }
  
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
          if (last && byStop && SharedConfig.repeatMode == 0 && !forceLoopCurrentPlaylist) {
              if (audioPlayer != null || videoPlayer != null) {
                  if (audioPlayer != null) {
-@@ -3143,7 +3148,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -3144,7 +3149,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
      }
  
      private void checkIsNextVoiceFileDownloaded(int currentAccount) {
@@ -42,7 +42,7 @@ index 0000000..0000000 100644
              return;
          }
          MessageObject nextAudio = voiceMessagesPlaylist.get(1);
-@@ -3162,7 +3167,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -3163,7 +3168,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
      }
  
      private void checkIsNextMusicFileDownloaded(int currentAccount) {

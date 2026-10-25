@@ -281,6 +281,8 @@
     <string name="InuBlockedMessagesModeHide">Gizle</string>
     <string name="InuBlockedMessagesExtra">Ayrıca şunlardan gelen mesajları da gizle:</string>
     <string name="InuBlockedMessagesExtraCount">%1$d kişi/grup</string>
+    <string name="InuBlockedMessagesHideReplies">Onlara verilen yanıtları da gizle</string>
+    <string name="InuBlockedMessagesHideRepliesInfo">Engellenen bir kullanıcının mesajına yanıt veren gelen mesajlar</string>
     <string name="InuHideMessages">Mesajları gizle</string>
     <string name="InuShowHiddenMessages">Mesajları göster</string>
     <string name="InuSpoilers">Sürprizler (Spoilers)</string>
@@ -486,10 +488,23 @@
     <string name="InuMessageInput">Mesaj girişi</string>
     <string name="InuAttachmentSheet">Ek paneli</string>
     <string name="InuIconReplacement">Simge paketi</string>
-    <string name="InuIconReplacementOff">Varsayılan</string>
-    <string name="InuIconReplacementSolar">@Design480 tarafından Solar</string>
-    <string name="InuIconReplacementVkui">VK tarafından VKUI</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
+    <string name="InuIconPackLoadFromFile">Dosyadan yükle</string>
+    <string name="InuIconPacksInstalled">Yüklü paketler</string>
+    <string name="InuIconPacksOrderInfo">Simgeler yukarıdaki öncelik sırasına göre seçilir. Silmek için uzun basın</string>
+    <string name="InuIconPacksUnsavedAlert">Kaydedilmemiş simge paketi değişiklikleriniz var. Uygulanıp uygulama yeniden başlatılsın mı?</string>
+    <string name="InuIconPacksApply">Uygula ve yeniden başlat</string>
+    <string name="InuIconPacksTelegram">Telegram</string>
+    <string name="InuIconPacksTelegramInfo">Varsayılan simgeler</string>
+    <string name="InuIconPackBundled">dahili</string>
+    <string name="InuIconPackInvalid">Bu dosya geçerli bir simge paketi değil</string>
+    <string name="InuIconPackInstall">Yükle</string>
+    <string name="InuIconPackInstalled">Simge paketi yüklendi</string>
+    <string name="InuIconPackByAuthor">%1$s · %2$s</string>
+    <string name="InuIconPackIcons_one">%1$d simge</string>
+    <string name="InuIconPackIcons_other">%1$d simge</string>
+    <string name="InuIconPackDelete">Simge paketini sil</string>
+    <string name="InuIconPackDeleteConfirm">%1$s silinsin mi?</string>
+
     <string name="InuMapsHeader">Haritalar</string>
     <string name="InuMapProvider">Harita görünümü sağlayıcısı</string>
     <string name="InuMapProviderGoogle">Google Haritalar</string>
@@ -842,6 +857,9 @@
     <string name="InuParanoiaDisableNotifications">Bildirimleri devre dışı bırak</string>
     <string name="InuParanoiaHideOtherAccounts">Diğer hesapları gizle</string>
     <string name="InuParanoiaHideFolders">Klasörleri gizle</string>
+    <string name="InuParanoiaHideMyStories">Hikayelerimi gizle</string>
+    <string name="InuParanoiaHideStars">Telegram Stars\'ı gizle</string>
+    <string name="InuParanoiaHideGram">GRAM\'ı gizle</string>
     <string name="InuParanoiaDisguise">Telegram olarak gizle</string>
     <string name="InuParanoiaDisguiseInfo">Yalnızca başlatıcı simgesi ve adı değişir; bildirimlerde hâlâ \"entinyGram\" görünür.</string>
     <string name="InuParanoiaMode">Paranoia modu</string>
@@ -1316,7 +1334,6 @@
     <string name="InuNo">Hayır</string>
     <string name="InuNoProfilePhotos">Profil fotoğrafı bulunamadı</string>
     <string name="InuNotificationIconOldEntinygram">Eski entinyGram</string>
-    <string name="InuNotificationIconInfo">Xiaomi cihazlarda (MIUI/HyperOS) sistem bu simgeyi uygulama simgesiyle değiştirebilir; bu nedenle seçim orada görünmeyebilir</string>
     <string name="InuPoweredByProvider">Çeviriler %1$s tarafından desteklenmektedir.</string>
     <string name="InuProfilePhotosDeleted">Tüm profil fotoğrafları silindi</string>
     <string name="InuProfilePhotosDeletedCount">%1$d profil fotoğrafı silindi</string>
@@ -1396,7 +1413,6 @@
     <string name="InuIosChatHeaderInfo">Ortada yüzen, iOS tarzı kompakt sohbet başlığı hapı.</string>
     <string name="InuChatHeaderNoPill">Hap arka planını gizle</string>
     <string name="InuChatHeaderNoPillInfo">Başlık ve alt başlığı hap olmadan duvar kâğıdının üzerinde göster.</string>
-    <string name="InuParanoiaHideMyStories">Hikayelerimi gizle</string>
     <string name="InuStopBot">Botu durdur</string>
     <string name="InuStopBotAction">Durdur</string>
     <string name="InuStopBotAlert">**%1$s** botunu durdurmak istediğinizden emin misiniz? Artık size mesaj gönderemeyecek.</string>

@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Thu, 8 Oct 2026 21:59:48 +0300
+Date: Mon, 26 Oct 2026 00:07:48 +0200
 Subject: [+] md3 player
 
 ---
@@ -17,7 +17,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -4062,6 +4062,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -4067,6 +4067,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                          if (Math.abs(currentMusicPlaybackSpeed - 1.0f) > 0.001f) {
                              audioPlayer.setPlaybackSpeed(Math.round(currentMusicPlaybackSpeed * 10f) / 10f);
                          }
@@ -30,7 +30,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -38076,7 +38076,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38260,7 +38260,7 @@ public class ChatActivity extends BaseFragment implements
                      cell.resetPressedLink(-1);
                  }
                  if (!messageObject.isVoice()) {
@@ -136,7 +136,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -3124,7 +3124,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -3143,7 +3143,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              } else if (showPlayer) {
                  if (!actionBarLayout.getFragmentStack().isEmpty()) {
                      BaseFragment fragment = actionBarLayout.getFragmentStack().get(0);
@@ -169,12 +169,12 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -3918,7 +3918,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3944,7 +3944,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                              MediaController.getInstance().playMessage(savedMusicList.list.get(0));
                          }
                      }
--                    showDialog(new AudioPlayerAlert(getContext(), getResourceProvider()));
-+                    showDialog(desu.inugram.helpers.player.Md3PlayerHelper.create(getContext(), getResourceProvider()));
-                 }
-             });
- 
+-                    showDialog(new AudioPlayerAlert(getContext(), getResourceProvider()), dialog -> {
++                    showDialog(desu.inugram.helpers.player.Md3PlayerHelper.create(getContext(), getResourceProvider()), dialog -> {
+                         if (MediaController.getInstance().currentSavedMusicList == savedMusicList && MediaController.getInstance().inu_isMessagePreparedOnly()) {
+                             MediaController.getInstance().cleanup();
+                         }

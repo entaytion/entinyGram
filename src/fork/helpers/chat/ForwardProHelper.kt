@@ -161,7 +161,7 @@ object ForwardProHelper {
 
         val authorIcon = makeToggle(R.drawable.msg_openprofile, R.string.ShowSendersName)
         val silentIcon = makeToggle(R.drawable.input_notify_off, R.string.SendWithoutSound)
-        val scheduleIcon = makeToggle(R.drawable.msg_calendar2_solar, R.string.ScheduleMessage)
+        val scheduleIcon = makeToggle(R.drawable.msg_calendar2, R.string.ScheduleMessage)
         val captionIcon = makeToggle(R.drawable.outline_caption_24, R.string.InuForwardProHideCaption)
         state.authorIcon = authorIcon
         state.silentSendIcon = silentIcon

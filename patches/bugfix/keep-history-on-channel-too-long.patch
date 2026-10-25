@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -1943,7 +1943,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1944,7 +1944,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              }
          } else if (id == NotificationCenter.removeAllMessagesFromDialog) {
              long did = (Long) args[0];
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -11832,6 +11832,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -11840,6 +11840,9 @@ public class MessagesController extends BaseController implements NotificationCe
                          if (res.messages.size() > count) {
                              res.messages.remove(0);
                          }

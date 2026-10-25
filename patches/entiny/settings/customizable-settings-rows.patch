@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -9670,6 +9670,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9718,6 +9718,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          if (listAdapter != null) {
              // saveScrollPosition();
              firstLayout = true;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              listAdapter.notifyDataSetChanged();
          }
          if (!parentLayout.isInPreviewMode() && blurredView != null && blurredView.getVisibility() == View.VISIBLE) {
-@@ -10843,6 +10844,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10893,6 +10894,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      }
                  }
                  infoStartRow = rowCount;
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                  if (!isBot && (hasPhone || !hasInfo)) {
                      phoneRow = rowCount++;
                  }
-@@ -10854,6 +10874,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10904,6 +10924,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
                  if (ProfileHelper.shouldShowIdRow()) inu_idRow = rowCount++;
                  if (ProfileHelper.shouldShowRegDateRow(userId, currentChat)) inu_regDateRow = rowCount++;
@@ -58,7 +58,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -704,6 +704,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -718,6 +718,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          // inu: the accounts list is hidden entirely - switching happens from the drawer/avatar
          // (ported from inugram PR #34, made unconditional)
  
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
          if (!desu.inugram.helpers.security.ParanoiaHelper.shouldHideSettings()) {
              items.add(SettingCell.Factory.of(99, IconBackgroundColors.ENTINY.top, IconBackgroundColors.ENTINY.bottom, R.drawable.icon_settings_inu, getString(R.string.InuSettings), getString(R.string.InuSettingsInfo)));
              items.add(UItem.asShadow(null));
-@@ -778,6 +782,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -792,6 +796,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              items.add(SettingCell.Factory.of(22, 0xFFF45255, 0xFFDF3955, 0, getString(R.string.DebugClearLogs)));
          }
  

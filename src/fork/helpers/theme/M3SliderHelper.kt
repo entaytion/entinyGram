@@ -17,7 +17,9 @@ import org.telegram.ui.Components.Easings
 import org.telegram.ui.Components.SeekBarView
 import org.telegram.ui.Components.SlideChooseView
 import java.util.WeakHashMap
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -60,7 +62,25 @@ object M3SliderHelper {
     private const val MIN_TICK_SPACING = 16f
     private const val MAX_TICK_COUNT = 7
 
+    // wavy playback progress, values from SystemUI's media SquigglyProgress
+    private const val WAVE_LENGTH = 20f
+    private const val WAVE_AMPLITUDE = 1.5f
+    private const val WAVE_SPEED = 8f
+    private const val WAVE_STROKE = 3f
+    private const val WAVE_HANDLE_WIDTH = 5f
+    private const val WAVE_HANDLE_HEIGHT = 17f
+    private const val WAVE_IN_DELAY = 60L
+    private const val WAVE_IN_DURATION = 800L
+    private const val WAVE_OUT_DURATION = 550L
+    private val waveInInterpolator = CubicBezierInterpolator(0.05, 0.7, 0.1, 1.0)
+    private val waveOutInterpolator = CubicBezierInterpolator(0.0, 0.0, 0.0, 1.0)
+
     private val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val wavePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+    }
+    private val wavePath = Path()
     private val handlePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val rect = RectF()
@@ -72,6 +92,15 @@ object M3SliderHelper {
         // would pin this entry's WeakHashMap key forever. The draw path invalidates instead.
         val handleWidth = AnimatedFloat(0, 120, CubicBezierInterpolator.DEFAULT)
         var lastUpdateTime = 0L
+
+        var wavy = false
+        var wavePlaying = false
+        var waveVisible = false
+        var waveFrom = 0f
+        var waveTo = 0f
+        var waveAnimStart = 0L
+        var wavePhase = 0f
+        var lastWaveFrameTime = 0L
     }
 
     // per-view animation state; entries must not reference their key or they never get collected
@@ -93,6 +122,106 @@ object M3SliderHelper {
         val token = tokenPrefix + (if (theme.inu_isMonetNight()) "dark" else "light") + modifiers
         val color = MonetHelper.getColor(token)
         return if (color == 0) themed else color
+    }
+
+    /**
+     * Turns [view] into a thin wavy playback slider, like the system media notification:
+     * the played part waves and scrolls while [playing], flattening out when paused or dragged.
+     */
+    @JvmStatic
+    fun setWavyPlaying(view: SeekBarView, playing: Boolean, animated: Boolean) {
+        val state = stateFor(view)
+        state.wavePlaying = playing
+        setWaveVisible(state, playing && !view.isDragging, state.wavy && animated)
+        state.wavy = true
+        state.lastWaveFrameTime = SystemClock.elapsedRealtime()
+        view.invalidate()
+    }
+
+    private fun setWaveVisible(state: State, visible: Boolean, animated: Boolean) {
+        val target = if (visible) 1f else 0f
+        if (!animated) {
+            state.waveFrom = target
+            state.waveAnimStart = 0L
+        } else if (state.waveVisible != visible) {
+            state.waveFrom = waveFraction(state)
+            state.waveAnimStart = SystemClock.elapsedRealtime()
+        }
+        state.waveVisible = visible
+        state.waveTo = target
+    }
+
+    private fun waveFraction(state: State): Float {
+        if (state.waveAnimStart == 0L) return state.waveTo
+        val elapsed = SystemClock.elapsedRealtime() - state.waveAnimStart
+        val t = if (state.waveVisible) {
+            ((elapsed - WAVE_IN_DELAY).coerceAtLeast(0L) / WAVE_IN_DURATION.toFloat()).coerceAtMost(1f)
+        } else {
+            (elapsed / WAVE_OUT_DURATION.toFloat()).coerceAtMost(1f)
+        }
+        if (t >= 1f) {
+            state.waveAnimStart = 0L
+            return state.waveTo
+        }
+        val interpolator = if (state.waveVisible) waveInInterpolator else waveOutInterpolator
+        return AndroidUtilities.lerp(state.waveFrom, state.waveTo, interpolator.getInterpolation(t))
+    }
+
+    private fun drawWavy(view: SeekBarView, canvas: Canvas, state: State, left: Float, right: Float, cx: Float, cy: Float): Boolean {
+        setWaveVisible(state, state.wavePlaying && !view.isDragging, true)
+        val fraction = waveFraction(state)
+        val waveLength = AndroidUtilities.dpf2(WAVE_LENGTH)
+        val amplitude = AndroidUtilities.dpf2(WAVE_AMPLITUDE) * fraction
+        val stroke = AndroidUtilities.dpf2(WAVE_STROKE)
+
+        val now = SystemClock.elapsedRealtime()
+        val scrolling = state.waveVisible
+        if (scrolling) {
+            state.wavePhase = (state.wavePhase + (now - state.lastWaveFrameTime) / 1000f * AndroidUtilities.dpf2(WAVE_SPEED)) % waveLength
+        }
+        state.lastWaveFrameTime = now
+
+        wavePaint.strokeWidth = stroke
+        wavePaint.color = inactiveColor(view.getThemedColor(Theme.key_player_progressBackground))
+        if (right > cx) canvas.drawLine(cx, cy, right, cy, wavePaint)
+
+        if (view.bufferedProgress > 0f) {
+            val bufferedRight = min(left + view.bufferedProgress * (right - left), right)
+            if (bufferedRight > cx) {
+                wavePaint.color = bufferedColor(view.getThemedColor(Theme.key_player_progressCachedBackground))
+                canvas.drawLine(cx, cy, bufferedRight, cy, wavePaint)
+            }
+        }
+
+        val activeColor = view.outerPaint1.color
+        wavePaint.color = activeColor
+        if (cx > left) {
+            val waveStart = left - state.wavePhase - waveLength / 2f
+            val half = waveLength / 2f
+            wavePath.rewind()
+            wavePath.moveTo(waveStart, cy + amplitude)
+            var x = waveStart
+            var sign = 1f
+            while (x < cx) {
+                sign = -sign
+                val midX = x + half / 2f
+                wavePath.cubicTo(midX, cy - sign * amplitude, midX, cy + sign * amplitude, x + half, cy + sign * amplitude)
+                x += half
+            }
+
+            val clip = amplitude + stroke
+            canvas.save()
+            canvas.clipRect(left, cy - clip, cx, cy + clip)
+            canvas.drawPath(wavePath, wavePaint)
+            canvas.restore()
+
+            val startY = cy + cos((left - waveStart) / waveLength * 2 * PI).toFloat() * amplitude
+            canvas.drawPoint(left, startY, wavePaint)
+        }
+
+        drawHandle(canvas, cx, cy, AndroidUtilities.dpf2(WAVE_HANDLE_WIDTH), AndroidUtilities.dpf2(WAVE_HANDLE_HEIGHT), activeColor)
+
+        return scrolling || state.waveAnimStart != 0L
     }
 
     /** Current animated handle width in px; narrows while dragging like the M3 pressed state. */
@@ -147,11 +276,18 @@ object M3SliderHelper {
             invalidate = true
         }
 
-        val activeColor = view.outerPaint1.color
-        val inactiveColor = inactiveColor(view.getThemedColor(Theme.key_player_progressBackground))
         val cy = view.measuredHeight / 2f
         val left = view.selectorWidth / 2f
         val right = width - view.selectorWidth / 2f
+
+        val state = states[view]
+        if (state != null && state.wavy) {
+            if (drawWavy(view, canvas, state, left, right, cx, cy) || invalidate) view.postInvalidateOnAnimation()
+            return true
+        }
+
+        val activeColor = view.outerPaint1.color
+        val inactiveColor = inactiveColor(view.getThemedColor(Theme.key_player_progressBackground))
         val hw = handleWidth(view, view.isDragging) / 2f
         val gap = AndroidUtilities.dpf2(GAP)
         val outerR = AndroidUtilities.dpf2(OUTER_RADIUS)

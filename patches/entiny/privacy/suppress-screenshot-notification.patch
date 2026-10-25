@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -1871,7 +1871,9 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1872,7 +1872,9 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
          }
          if (send) {
              if (lastSecretChat != null) {

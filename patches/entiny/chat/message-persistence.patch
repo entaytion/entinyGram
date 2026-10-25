@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -9295,6 +9295,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9303,6 +9303,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
          ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
          if (objs != null) {
              for (int i = 0; i < objs.size(); ++i) {
-@@ -9369,6 +9370,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9377,6 +9378,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  getMessagesStorage().markMessagesAsDeleted(dialogId, messages, true, false, ChatActivity.MODE_WELCOME_MESSAGES, topicId);
              } else {
                  if (channelId == 0) {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -18745,6 +18747,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18757,6 +18759,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
  
                      ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                      Integer value = read_max.get(message.dialog_id);
-@@ -21338,6 +21341,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21353,6 +21356,7 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -175,7 +175,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -1700,6 +1700,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -1708,6 +1708,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              } else if (scheduled) {
                  mode = ChatActivity.MODE_SCHEDULED;
              }
@@ -183,7 +183,7 @@ index 0000000..0000000 100644
              getMessagesController().deleteMessages(messageIds, null, null, dialogId, topicId, false, mode);
          }
      }
-@@ -3106,6 +3107,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3114,6 +3115,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  messageObject.editingMessageEntities = newMsg.entities;
                  path = newMsg.attachPath;
              } else {
@@ -191,7 +191,7 @@ index 0000000..0000000 100644
                  messageObject.previousMedia = newMsg.media;
                  messageObject.previousMessage = newMsg.message;
                  messageObject.previousMessageEntities = newMsg.entities;
-@@ -3627,6 +3629,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3635,6 +3637,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  req.flags |= TLObject.FLAG_18;
              }
          }
@@ -203,7 +203,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -4187,7 +4187,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -4188,7 +4188,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      }
  
      private boolean checkDateMotionEvent(MotionEvent event) {
@@ -212,7 +212,7 @@ index 0000000..0000000 100644
              return false;
          }
          int x = (int) getEventX(event);
-@@ -4205,7 +4205,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -4206,7 +4206,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  if (timePressed) {
                      timePressed = false;
                      playSoundEffect(SoundEffectConstants.CLICK);
@@ -223,7 +223,7 @@ index 0000000..0000000 100644
                      invalidate();
                      result = true;
                  }
-@@ -6906,6 +6908,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6907,6 +6909,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  currentMessageObject.richLayout.detach(this);
              }
              currentMessageObject = messageObject;
@@ -231,7 +231,7 @@ index 0000000..0000000 100644
              currentMessagesGroup = groupedMessages;
              wasAllChats = isAllChats;
              lastTime = -2;
-@@ -28151,6 +28154,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -28182,6 +28185,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
      @Override
      public void setAlpha(float alpha) {
@@ -243,7 +243,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -25626,6 +25626,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -25810,6 +25810,9 @@ public class ChatActivity extends BaseFragment implements
          for (int a = 0, N = ids.size(); a < N; a++) {
              MessageObject object = messagesDict[0].get(ids.get(a));
              if (object != null) {
@@ -253,7 +253,7 @@ index 0000000..0000000 100644
                  if (update == null) {
                      object.replyMessageObject = emptyMessage;
                  } else {
-@@ -26716,7 +26719,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -26900,7 +26903,8 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                  }
@@ -263,7 +263,7 @@ index 0000000..0000000 100644
                  if (obj.scheduled && sent) {
                      obj.scheduledSent = true;
                  }
-@@ -26725,6 +26729,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -26909,6 +26913,16 @@ public class ChatActivity extends BaseFragment implements
                  }
                  int index = chatAdapter != null && chatAdapter.isFiltered && filteredMessagesDict != null ? chatAdapter.filteredMessages.indexOf(filteredMessagesDict.get(mid)) : messages.indexOf(obj);
                  if (index != -1) {
@@ -280,7 +280,7 @@ index 0000000..0000000 100644
                      if (obj.scheduled) {
                          scheduledMessagesCount--;
                          updateScheduled = true;
-@@ -26832,6 +26846,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -27016,6 +27030,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      updated = true;

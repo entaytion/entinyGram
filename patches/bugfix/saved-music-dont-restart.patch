@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 25 Oct 2026 18:15:05 +0400
+Subject: dont restart saved music playlist when re-opening from profile
+
+---
+ .../src/main/java/org/telegram/ui/ProfileActivity.java        | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -3927,9 +3927,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 }
+                 if (!savedMusicList.list.isEmpty()) {
+                     boolean sameList = false;
++                    final MessageObject inu_playingMessage = MediaController.getInstance().getPlayingMessageObject();
+                     if (
+                         MediaController.getInstance().currentSavedMusicList != savedMusicList ||
+-                        !MediaController.getInstance().isPlayingMessage(savedMusicList.list.get(0))
++                        !MediaController.getInstance().isPlayingMessage(inu_playingMessage) ||
++                        !savedMusicList.list.contains(inu_playingMessage)
+                     ) {
+                         MediaController.getInstance().cleanup();
+                     } else {

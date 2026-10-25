@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 24 Oct 2026 16:32:52 +0400
+Subject: fix personal channel post in profile stuck on an older cached message
+
+---
+ .../main/java/org/telegram/ui/Cells/ProfileChannelCell.java  | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileChannelCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileChannelCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileChannelCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileChannelCell.java
+@@ -301,6 +301,9 @@ public class ProfileChannelCell extends FrameLayout implements Theme.Colorable {
+                         }
+                     }
+                     cursor.dispose();
++                    if (!messages.isEmpty() && messages.get(0).id != message_id) {
++                        messages.clear();
++                    }
+ 
+                     if (!messages.isEmpty()) {
+                         if (!usersToLoad.isEmpty()) {
+@@ -370,7 +373,7 @@ public class ProfileChannelCell extends FrameLayout implements Theme.Colorable {
+ 
+                             if (!res.messages.isEmpty()) {
+                                 messageObjects.clear();
+-                                Collections.sort(messages, Comparator.comparingInt(msg -> msg.id));
++                                Collections.sort(res.messages, Comparator.comparingInt(msg -> msg.id));
+                                 final TLRPC.Message lastMessage = res.messages.get(res.messages.size() - 1);
+                                 final long grouped_id = lastMessage.grouped_id;
+                                 if (grouped_id != 0) {

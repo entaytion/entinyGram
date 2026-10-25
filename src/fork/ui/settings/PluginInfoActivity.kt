@@ -94,6 +94,7 @@ class PluginInfoActivity(private val plugin: Plugin) : SettingsPageActivity() {
     override fun onResume() {
         super.onResume()
         PluginManager.addOnChangedListener(onPluginChanged)
+        onPluginChanged()
         pollMemoryUsage.run()
     }
 
@@ -587,7 +588,7 @@ class PluginInfoHeaderView(context: Context) : LinearLayout(context) {
         manifest.author?.let { author ->
             if (metaText.isNotEmpty()) metaText.append(" · ")
             val formatted = LocaleController.formatString(R.string.InuPluginsByAuthor, author)
-            metaText.append(linkPluginUsernames(formatted) { username -> onAuthorClick?.invoke(username) })
+            metaText.append(InuUtils.linkUsernames(formatted) { username -> onAuthorClick?.invoke(username) })
         }
 
         meta.text = metaText
@@ -611,33 +612,5 @@ internal fun formatPluginDescription(text: String, onUsernameClick: (String) -> 
     val entities = MediaDataController.getInstance(UserConfig.selectedAccount).getEntities(message, true)
     val styled = SpannableStringBuilder(message[0].toString())
     MessageObject.addEntitiesToText(styled, entities, false, false, false, false)
-    return linkPluginUsernames(styled, onUsernameClick)
-}
-
-internal fun linkPluginUsernames(text: CharSequence, onClick: (String) -> Unit): CharSequence {
-    val result = SpannableStringBuilder(text)
-    val links = result.getSpans(0, result.length, URLSpan::class.java)
-    MessageObject.addUrlsByPattern(false, result, false, 0, 0, false)
-    for (span in result.getSpans(0, result.length, URLSpan::class.java)) {
-        if (span in links) continue
-        val start = result.getSpanStart(span)
-        val end = result.getSpanEnd(span)
-        result.removeSpan(span)
-        if (!span.url.startsWith("@") || links.any { result.getSpanStart(it) < end && start < result.getSpanEnd(it) }) continue
-        result.setSpan(
-            object : ClickableSpan() {
-                override fun onClick(widget: View) {
-                    onClick(span.url.substring(1))
-                }
-
-                override fun updateDrawState(ds: TextPaint) {
-                    ds.color = ds.linkColor
-                }
-            },
-            start,
-            end,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-        )
-    }
-    return result
+    return InuUtils.linkUsernames(styled, onUsernameClick)
 }

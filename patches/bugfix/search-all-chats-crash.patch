@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 25 Oct 2026 23:09:03 +0400
+Subject: fix crash on 'search in all chats' after empty filtered search
+
+---
+ .../java/org/telegram/ui/Adapters/DialogsSearchAdapter.java  | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
+@@ -1714,9 +1714,8 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+                 view = messagesEmptyLayout = new EmptyLayout(mContext, resourcesProvider, () -> {
+                     currentMessagesFilter = Filter.All;
+                     searchResultMessages.clear();
+-                    if (messagesSectionPosition >= 0 && messagesSectionPosition < getItemCount()) {
+-                        notifyItemChanged(messagesSectionPosition);
+-                    }
++                    forceLoadingMessages = true;
++                    notifyDataSetChanged();
+                     loadMoreSearchMessages();
+                 });
+                 messagesEmptyLayout.setQuery(lastMessagesSearchString);

@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
-@@ -1249,7 +1249,7 @@ public class FileLoader extends BaseController {
+@@ -1257,7 +1257,7 @@ public class FileLoader extends BaseController {
                  } else if (MessageObject.getMedia(message).webpage.photo != null) {
                      ArrayList<TLRPC.PhotoSize> sizes = MessageObject.getMedia(message).webpage.photo.sizes;
                      if (sizes.size() > 0) {
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                          if (sizeFull != null) {
                              return getAttachFileName(sizeFull);
                          }
-@@ -1304,7 +1304,7 @@ public class FileLoader extends BaseController {
+@@ -1312,7 +1312,7 @@ public class FileLoader extends BaseController {
                  } else if (MessageObject.getMedia(message).webpage.photo != null) {
                      ArrayList<TLRPC.PhotoSize> sizes = MessageObject.getMedia(message).webpage.photo.sizes;
                      if (sizes.size() > 0) {
@@ -34,7 +34,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -3202,6 +3202,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3203,6 +3203,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          } else {
                              MediaController.getInstance().pauseMessage(currentMessageObject);
                          }

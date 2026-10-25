@@ -1,27 +1,26 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.su>
-Date: Fri, 17 Jul 2026 00:36:33 +0400
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:00:07 +0200
 Subject: fix crash when opening a profile whose note was removed server-side
 
 ---
- .../java/org/telegram/ui/ProfileActivity.java     | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ .../main/java/org/telegram/ui/ProfileActivity.java | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -13630,8 +13630,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-                         TLRPC.Chat c = chatId != 0 ? getMessagesController().getChat(chatId) : null;
+@@ -13683,7 +13683,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          detailCell.setTextAndValue(ProfileHelper.getRegDateValue(userId, c), ProfileHelper.getRegDateSubtitle(userId, c, u), false);
                      } else if (position == noteRow) {
--                        final TLRPC.UserFull userInfo = getMessagesController().getUserFull(userId);
+                         final TLRPC.UserFull userInfo = getMessagesController().getUserFull(userId);
 -                        if (userInfo == null) return;
 +                        if (userInfo == null || userInfo.note == null) return;
                          TLRPC.TL_textWithEntities note = userInfo.note;
                          CharSequence text;
                          if (!UserConfig.getInstance(currentAccount).isPremium()) {
-@@ -16411,8 +16410,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16472,8 +16472,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          final ItemOptions o = ItemOptions.makeOptions(this, view);
          o.setScrimViewBackground(listView.getClipBackground(view));
          o.setLongPressSelectionEnabled(false);
@@ -32,7 +31,7 @@ index 0000000..0000000 100644
              final CharSequence text = MessageObject.formatTextWithEntities(userInfo.note, false);
              AndroidUtilities.addToClipboard(text);
              BulletinFactory.of(ProfileActivity.this)
-@@ -16430,11 +16429,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16491,11 +16491,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  .setTitle(getString(R.string.ProfileNotesRemoveTitle))
                  .setMessage(getString(R.string.ProfileNotesRemoveText))
                  .setPositiveButton(getString(R.string.Delete), (di, w) -> {

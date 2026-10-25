@@ -109,13 +109,12 @@ object NonIslandHelper {
 
     const val FOLDERS_BAR_HEIGHT_DP = 44
     const val FOLDERS_BAR_OVERLAP_DP = 10
-    const val FOLDERS_BAR_VISIBLE_HEIGHT_DP = FOLDERS_BAR_HEIGHT_DP - FOLDERS_BAR_OVERLAP_DP
 
     @JvmStatic
-    fun foldersBarOverlapDp(): Int = if (globalSearch()) FOLDERS_BAR_OVERLAP_DP else 0
+    fun getFoldersBarOverlap(): Int = if (globalSearch()) dp(FOLDERS_BAR_OVERLAP_DP.toFloat()) else 0
 
     @JvmStatic
-    fun foldersBarVisibleHeightDp(): Int = FOLDERS_BAR_HEIGHT_DP - foldersBarOverlapDp()
+    fun getFoldersBarVisibleHeight(): Int = dp(FOLDERS_BAR_HEIGHT_DP.toFloat()) - getFoldersBarOverlap()
 
     @JvmStatic
     fun applyMd3TabsStyle(indicator: GradientDrawable, listView: RecyclerListView, selectorColor: Int) {

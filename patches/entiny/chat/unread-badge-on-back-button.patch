@@ -88,7 +88,7 @@ index 0000000..0000000 100644
          } else {
              textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
-@@ -1618,7 +1639,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1620,7 +1641,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          int childCount = getChildCount();
          for (int i = 0; i < childCount; i++) {
              View child = getChildAt(i);
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
                  continue;
              }
              measureChildWithMargins(child, widthMeasureSpec, 0, MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY), 0);
-@@ -1647,6 +1668,18 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1649,6 +1670,18 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
              textLeft = glassMode ? dp(76) : dp(AndroidUtilities.isTablet() ? 80 : 72);
@@ -116,7 +116,7 @@ index 0000000..0000000 100644
          } else {
              textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
-@@ -1743,7 +1776,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1745,7 +1778,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          int childCount = getChildCount();
          for (int i = 0; i < childCount; i++) {
              View child = getChildAt(i);
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
                  continue;
              }
  
-@@ -2437,7 +2470,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2439,7 +2472,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          // entiny: back button's own slot; both the symmetric room and the placement clamp derive from it.
          final int baseLeft = hasBackButton ? s + p : 0;
          // entiny: static avatar only needs the placement clamp, not the symmetric room -- it implies the compact pill, so clamping is enough to keep clear of it.
@@ -135,7 +135,7 @@ index 0000000..0000000 100644
                  chatAvatarContainer == null ? 0 : chatAvatarContainer.inu_getStaticAvatarReserve());
          int leftDefault = leftLimit;
          int rightDefault = width - rightOffset;
-@@ -2486,7 +2520,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2488,7 +2522,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              // entiny: not centered -- pill spans the full back-button-to-menu room, container stays at its own margins (left-aligned), unlike stock's shrink-then-recenter.
              final int stockRightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
@@ -144,7 +144,7 @@ index 0000000..0000000 100644
              leftDefault = stockLeft;
              rightDefault = width - stockRightOffset;
              if (chatAvatarContainer != null && chatAvatarContainer.getLayoutParams() instanceof MarginLayoutParams) {
-@@ -2563,7 +2597,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2565,7 +2599,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorMenuItemsWidth != null && animatorMenuItemsWidth.isAnimating())
                  || (animatorHasMenuItems != null && animatorHasMenuItems.isAnimating())
                  || (animatorAvatarContainerWidth != null && animatorAvatarContainerWidth.isAnimating())
@@ -154,7 +154,7 @@ index 0000000..0000000 100644
      }
  
      public boolean inu_hideChatPill() {
-@@ -2605,7 +2640,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2607,7 +2642,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              glassDrawable.draw(canvas);
          }
          if (glassDrawableBack != null && hasBackButton && !inu_nonIsland) {
@@ -168,7 +168,7 @@ index 0000000..0000000 100644
              glassDrawableBack.draw(canvas);
          }
          if (glassDrawableMenu != null && menuWidth > 0 && !glassOnlyBack && !doNotDrawGlassMenu && !inu_nonIsland) {
-@@ -2819,4 +2859,242 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2821,4 +2861,242 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              invalidate();
          }
      }
@@ -572,7 +572,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -2998,6 +2998,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -3000,6 +3000,7 @@ public class ChatActivity extends BaseFragment implements
              observersGroup.add(NotificationCenter.didLoadSponsoredMessages);
          }
          observersGroup
@@ -580,7 +580,7 @@ index 0000000..0000000 100644
              .add(NotificationCenter.updatedChatRanks)
              .add(NotificationCenter.premiumFloodWaitReceived)
              .add(NotificationCenter.messagesDidLoad)
-@@ -3804,7 +3805,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -3806,7 +3807,13 @@ public class ChatActivity extends BaseFragment implements
          if (inPreviewMode) {
              actionBar.setBackButtonDrawable(null);
          } else {
@@ -595,7 +595,7 @@ index 0000000..0000000 100644
          }
  
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-@@ -21087,6 +21094,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -21263,6 +21270,8 @@ public class ChatActivity extends BaseFragment implements
      public void didReceivedNotification(int id, int account, final Object... args) {
          if (id == NotificationCenter.messagesDidLoad) {
              didReceivedNotification_messagesDidLoad(id, account, args);
@@ -604,7 +604,7 @@ index 0000000..0000000 100644
          } else {
              didReceivedNotification2(id, account, args);
              didReceivedNotification3(id, account, args);
-@@ -48229,6 +48238,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48446,6 +48455,7 @@ public class ChatActivity extends BaseFragment implements
              avatarContainer.setScaleY(scale);
              avatarContainer.setAlpha(factor);
              avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);

@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5010,7 +5010,7 @@ public class MediaDataController extends BaseController {
+@@ -5011,7 +5011,7 @@ public class MediaDataController extends BaseController {
              maxShortcuts = 5;
          }
          ArrayList<TLRPC.TL_topPeer> hintsFinal = new ArrayList<>();
@@ -31,7 +31,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9057,6 +9057,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -9059,6 +9059,10 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  
@@ -42,7 +42,7 @@ index 0000000..0000000 100644
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
              savedMessagesHint.setMultilineText(true);
-@@ -9185,6 +9189,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9187,6 +9191,7 @@ public class ChatActivity extends BaseFragment implements
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
          Timer.finish(t);
  

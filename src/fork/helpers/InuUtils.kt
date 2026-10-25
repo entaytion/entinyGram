@@ -5,10 +5,16 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.style.ClickableSpan
+import android.text.style.URLSpan
 import android.view.View
 import androidx.core.content.FileProvider
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
+import org.telegram.messenger.MessageObject
 import org.telegram.tgnet.NativeByteBuffer
 import org.telegram.tgnet.SerializedData
 import org.telegram.tgnet.TLObject
@@ -44,6 +50,35 @@ public object InuUtils {
         exitProcess(0)
     }
 
+    fun linkUsernames(text: CharSequence, onClick: (String) -> Unit): CharSequence {
+        val result = SpannableStringBuilder(text)
+        val links = result.getSpans(0, result.length, URLSpan::class.java)
+        MessageObject.addUrlsByPattern(false, result, false, 0, 0, false)
+        for (span in result.getSpans(0, result.length, URLSpan::class.java)) {
+            if (span in links) continue
+            val start = result.getSpanStart(span)
+            val end = result.getSpanEnd(span)
+            result.removeSpan(span)
+            if (!span.url.startsWith("@") || links.any { result.getSpanStart(it) < end && start < result.getSpanEnd(it) }) continue
+            result.setSpan(
+                object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        onClick(span.url.substring(1))
+                    }
+
+                    override fun updateDrawState(ds: TextPaint) {
+                        ds.color = ds.linkColor
+                    }
+                },
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
+        return result
+    }
+
+    /** Sets the system clipboard to a content URI for the given file. Caller handles bulletins. */
     @JvmStatic
     fun copyFileUriToClipboard(file: File): Boolean = runCatching {
         val context = ApplicationLoader.applicationContext

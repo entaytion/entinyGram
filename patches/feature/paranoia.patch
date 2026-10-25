@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Wed, 21 Oct 2026 12:23:00 +0300
+Date: Sun, 25 Oct 2026 23:59:06 +0200
 Subject: paranoia mode (hide chats, accounts, disguise as stock app)
 
 ---
+ .../telegram/messenger/AppGlobalConfig.java   | 14 +++++++-
  .../messenger/ContactsController.java         |  3 ++
  .../messenger/MediaDataController.java        |  3 ++
  .../messenger/MessagesController.java         | 29 +++++++++++-----
@@ -16,11 +17,48 @@ Subject: paranoia mode (hide chats, accounts, disguise as stock app)
  .../ui/Components/SharedMediaLayout.java      | 12 +++----
  .../java/org/telegram/ui/DialogsActivity.java |  5 +--
  .../org/telegram/ui/GroupCreateActivity.java  |  4 ++-
+ .../java/org/telegram/ui/LogoutActivity.java  |  2 +-
  .../telegram/ui/PrivacyControlActivity.java   |  4 +++
  .../java/org/telegram/ui/ProfileActivity.java |  2 +-
+ .../telegram/ui/Stars/BotStarsActivity.java   |  1 +
+ .../telegram/ui/Stars/BotStarsController.java |  4 +--
+ .../telegram/ui/Stars/StarsController.java    |  3 ++
  .../ui/Stories/StoriesController.java         | 33 +++++++++++++++++++
- 15 files changed, 101 insertions(+), 24 deletions(-)
+ .../org/telegram/ui/Wallet/GramWallet.java    |  2 +-
+ 21 files changed, 122 insertions(+), 29 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java
+@@ -112,7 +112,15 @@ public class AppGlobalConfig {
+ 
+     public final ConfigStringSet botAllowedSuffixes = ofStringSet("bot_allowed_suffixes", Collections.singleton("bot"));
+ 
+-    public final ConfigBoolean walletAvailable = ofBoolean("wallet_available", BuildVars.DEBUG_VERSION);
++    public final ConfigBoolean walletAvailable = new ConfigBoolean("wallet_available", BuildVars.DEBUG_VERSION) {
++        @Override
++        public boolean get() {
++            return super.get() && !desu.inugram.helpers.security.ParanoiaHelper.shouldHideWallet();
++        }
++    };
++    {
++        map.put("wallet_available", walletAvailable.handler);
++    }
+     public final ConfigBoolean walletPaidMessageRecipientMessageAmountCheck = ofBoolean("wallet_paid_message_recipient_message_amount_check", true);
+     public final ConfigLong walletTransferMinNanos = ofLong("wallet_transfer_min_nanos", 100_000_000);
+     public final ConfigLong walletGaslessMinNanos = ofLong("wallet_gasless_min_nanos", 100_000_000);
+@@ -383,6 +391,10 @@ public class AppGlobalConfig {
+             return handler.value;
+         }
+ 
++        public boolean inu_getUnfiltered() {
++            return handler.value;
++        }
++
+         private static class Internal implements ConfigInternal {
+             private final String name;
+             private final boolean defaultValue;
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
@@ -53,7 +91,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5182,6 +5182,7 @@ public class MediaDataController extends BaseController {
+@@ -5183,6 +5183,7 @@ public class MediaDataController extends BaseController {
                          arrayList.clear();
                      }
                  }
@@ -61,7 +99,7 @@ index 0000000..0000000 100644
              } catch (Throwable ignore) {
  
              }
-@@ -5256,6 +5257,7 @@ public class MediaDataController extends BaseController {
+@@ -5257,6 +5258,7 @@ public class MediaDataController extends BaseController {
                          inlineBots = inlineBotsNew;
                          guestBots = guestsBotsNew;
                          webapps = webappsNew;
@@ -69,7 +107,7 @@ index 0000000..0000000 100644
                          buildShortcuts();
                          getNotificationCenter().postNotificationName(NotificationCenter.reloadHints);
                          getNotificationCenter().postNotificationName(NotificationCenter.reloadInlineHints);
-@@ -5315,6 +5317,7 @@ public class MediaDataController extends BaseController {
+@@ -5316,6 +5318,7 @@ public class MediaDataController extends BaseController {
                          }
                      }
                      getUserConfig().saveConfig(false);
@@ -81,7 +119,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -7795,7 +7795,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -7799,7 +7799,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          getMediaDataController().putBotInfo(user.id, userFull.bot_info);
                      }
                      int index = blockePeers.indexOfKey(user.id);
@@ -90,7 +128,7 @@ index 0000000..0000000 100644
                          if (index < 0) {
                              blockePeers.put(user.id, 1);
                              getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
-@@ -8690,7 +8690,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8698,7 +8698,10 @@ public class MessagesController extends BaseController implements NotificationCe
          if (blockePeers.indexOfKey(id) >= 0) {
              return;
          }
@@ -102,7 +140,7 @@ index 0000000..0000000 100644
          if (user != null) {
              if (user.bot) {
                  getMediaDataController().removeInline(id);
-@@ -8698,7 +8701,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8706,7 +8709,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  getMediaDataController().removePeer(id);
              }
          }
@@ -111,7 +149,7 @@ index 0000000..0000000 100644
              totalBlockedCount++;
          }
          getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
-@@ -8883,8 +8886,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8891,8 +8894,10 @@ public class MessagesController extends BaseController implements NotificationCe
                  return;
              }
          }
@@ -124,7 +162,7 @@ index 0000000..0000000 100644
          if (user != null) {
              req.id = getInputPeer(user);
          } else {
-@@ -8904,7 +8909,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8912,7 +8917,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          loadingBlockedPeers = true;
          TLRPC.TL_contacts_getBlocked req = new TLRPC.TL_contacts_getBlocked();
@@ -133,7 +171,7 @@ index 0000000..0000000 100644
          req.limit = reset ? 20 : 100;
          getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
              if (response != null) {
-@@ -8914,13 +8919,16 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8922,13 +8927,16 @@ public class MessagesController extends BaseController implements NotificationCe
                  getMessagesStorage().putUsersAndChats(res.users, res.chats, true, true);
                  if (reset) {
                      blockePeers.clear();
@@ -150,7 +188,7 @@ index 0000000..0000000 100644
                  loadingBlockedPeers = false;
                  getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
              }
-@@ -9629,7 +9637,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9637,7 +9645,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public ArrayList<TLRPC.Dialog> getAllDialogs() {
@@ -159,7 +197,7 @@ index 0000000..0000000 100644
      }
  
      public void putDialogsEndReachedAfterRegistration() {
-@@ -10471,7 +10479,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10479,7 +10487,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      StarsController.getInstance(currentAccount).invalidateProfileGifts(info);
  
                      int index = blockePeers.indexOfKey(user.id);
@@ -168,7 +206,7 @@ index 0000000..0000000 100644
                          if (index < 0) {
                              blockePeers.put(user.id, 1);
                              getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
-@@ -19223,7 +19231,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19238,7 +19246,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  TL_update.TL_updatePeerBlocked finalUpdate = (TL_update.TL_updatePeerBlocked) baseUpdate;
                  getMessagesStorage().getStorageQueue().postRunnable(() -> AndroidUtilities.runOnUIThread(() -> {
                      long id = MessageObject.getPeerId(finalUpdate.peer_id);
@@ -177,7 +215,7 @@ index 0000000..0000000 100644
                          if (blockePeers.indexOfKey(id) < 0) {
                              blockePeers.put(id, 1);
                          }
-@@ -22210,6 +22218,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22225,6 +22233,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          for (int a = 0, N = allDialogs.size(); a < N; a++) {
              TLRPC.Dialog d = allDialogs.get(a);
@@ -185,7 +223,7 @@ index 0000000..0000000 100644
              final boolean isCommunity = d instanceof TLRPC.TL_dialogCommunity;
              if (d instanceof TLRPC.TL_dialog || isCommunity) {
                  long dialogId = d.id;
-@@ -22423,6 +22432,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22438,6 +22447,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
                  for (int a = 0, N = allDialogs.size(); a < N; a++) {
                      final TLRPC.Dialog d = allDialogs.get(a);
@@ -193,7 +231,7 @@ index 0000000..0000000 100644
                      final boolean isCommunity = d instanceof TLRPC.TL_dialogCommunity;
                      if (d instanceof TLRPC.TL_dialog || isCommunity) {
                          long dialogId = d.id;
-@@ -22462,6 +22472,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22477,6 +22487,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          for (int a = 0, N = allDialogs.size(); a < N; a++) {
              TLRPC.Dialog d = allDialogs.get(a);
@@ -427,7 +465,7 @@ index 0000000..0000000 100644
              this.initialTab = getInitialTab();
          } else if (!inuPreferMediaTab && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
              this.initialTab = TAB_GIFTS;
-@@ -6820,10 +6820,10 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6827,10 +6827,10 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
      }
  
      public void setUserInfo(TLRPC.UserFull userInfo) {
@@ -440,7 +478,7 @@ index 0000000..0000000 100644
              scrollToPage(TAB_STORIES);
          }
      }
-@@ -6923,7 +6923,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6930,7 +6930,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
          final TLRPC.User user = dialog_id <= 0 || profileActivity == null ? null : profileActivity.getMessagesController().getUser(dialog_id);
          boolean hasEditBotPreviews = user != null && user.bot && user.bot_has_main_app && user.bot_can_edit;
          boolean hasBotPreviews = user != null && user.bot && !user.bot_can_edit && (userInfo != null && userInfo.bot_info != null && userInfo.bot_info.has_preview_medias) && !hasEditBotPreviews;
@@ -449,7 +487,7 @@ index 0000000..0000000 100644
          boolean hasGifts = giftsContainer != null && (userInfo != null && userInfo.stargifts_count > 0 || info != null && info.stargifts_count > 0);
          final TLRPC.ProfileTab main_tab = info != null ? info.main_tab : userInfo != null ? userInfo.main_tab : null;
          int changed = 0;
-@@ -7037,7 +7037,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -7044,7 +7044,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              }
              if (hasBotPreviews) {
                  tabs.add(new Pair(TAB_STORIES, getString(R.string.ProfileBotPreviewTab)));
@@ -510,6 +548,19 @@ index 0000000..0000000 100644
                              continue;
                          }
                          contacts.add(chat);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
+@@ -170,7 +170,7 @@ public class LogoutActivity extends BaseFragment {
+         GramWallet.ensureLocalWalletBalances(currentAccount, () -> {
+             progressDialog.dismiss();
+             long localGramBalance = 0L;
+-            if (MessagesController.getInstance(currentAccount).config.walletAvailable.get()) {
++            if (MessagesController.getInstance(currentAccount).config.walletAvailable.inu_getUnfiltered()) {
+                 final GramWallet wallet = GramWallet.getInstance(currentAccount);
+                 if (wallet.getBalance() > 0 && !wallet.isBackupEnabled() && !wallet.cantAccessWallet()) {
+                     localGramBalance += wallet.getBalance();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PrivacyControlActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PrivacyControlActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PrivacyControlActivity.java
@@ -550,7 +601,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -10644,7 +10644,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10690,7 +10690,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          }
          if (!hasMedia && userInfo != null) {
@@ -559,6 +610,68 @@ index 0000000..0000000 100644
          }
          if (!hasMedia && userInfo != null && userInfo.bot_info != null) {
              hasMedia = userInfo.bot_info.has_preview_medias;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsActivity.java
+@@ -739,6 +739,7 @@ public class BotStarsActivity extends BaseFragment implements NotificationCenter
+     private int stats_dc = -1;
+     @Override
+     public boolean onFragmentCreate() {
++        if (desu.inugram.helpers.security.ParanoiaHelper.shouldHideRevenue(currentAccount, bot_id, type == TYPE_TON)) return false;
+         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.botStarsUpdated);
+         checkStats();
+         return super.onFragmentCreate();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsController.java b/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsController.java
+@@ -122,7 +122,7 @@ public class BotStarsController {
+             req.dark = Theme.isCurrentThemeDark();
+             req.peer = MessagesController.getInstance(currentAccount).getInputPeer(did);
+             ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+-                if (res instanceof TLRPC.TL_payments_starsRevenueStats) {
++                if (res instanceof TLRPC.TL_payments_starsRevenueStats && !desu.inugram.helpers.security.ParanoiaHelper.shouldHideRevenue(currentAccount, did, false)) {
+                     TLRPC.TL_payments_starsRevenueStats r = (TLRPC.TL_payments_starsRevenueStats) res;
+                     botStarsStats.put(did, r);
+                 } else {
+@@ -151,7 +151,7 @@ public class BotStarsController {
+                 stats_dc = ConnectionsManager.DEFAULT_DATACENTER_ID;
+             }
+             ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+-                if (res instanceof TLRPC.TL_payments_starsRevenueStats) {
++                if (res instanceof TLRPC.TL_payments_starsRevenueStats && !desu.inugram.helpers.security.ParanoiaHelper.shouldHideRevenue(currentAccount, did, true)) {
+                     TLRPC.TL_payments_starsRevenueStats r = (TLRPC.TL_payments_starsRevenueStats) res;
+                     tonStats.put(did, r);
+                 } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java
+@@ -182,6 +182,7 @@ public class StarsController {
+                 lastBalanceLoaded = System.currentTimeMillis();
+                 if (res instanceof TL_stars.StarsStatus) {
+                     TL_stars.StarsStatus r = (TL_stars.StarsStatus) res;
++                    desu.inugram.helpers.security.ParanoiaHelper.filterStarsStatus(ton, r);
+                     MessagesController.getInstance(currentAccount).putUsers(r.users, false);
+                     MessagesController.getInstance(currentAccount).putChats(r.chats, false);
+ 
+@@ -263,6 +264,7 @@ public class StarsController {
+     }
+ 
+     public void updateBalance(TL_stars.StarsAmount balance) {
++        balance = desu.inugram.helpers.security.ParanoiaHelper.filterStarsBalance(ton, balance);
+         if (!this.balance.equals(balance)) {
+             this.balance = balance;
+             this.minus = 0;
+@@ -599,6 +601,7 @@ public class StarsController {
+             loading[type] = false;
+             if (res instanceof TL_stars.StarsStatus) {
+                 TL_stars.StarsStatus r = (TL_stars.StarsStatus) res;
++                desu.inugram.helpers.security.ParanoiaHelper.filterStarsStatus(ton, r);
+                 MessagesController.getInstance(currentAccount).putUsers(r.users, false);
+                 MessagesController.getInstance(currentAccount).putChats(r.chats, false);
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
@@ -673,3 +786,16 @@ index 0000000..0000000 100644
  
              loading = true;
  
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Wallet/GramWallet.java b/TMessagesProj/src/main/java/org/telegram/ui/Wallet/GramWallet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Wallet/GramWallet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Wallet/GramWallet.java
+@@ -153,7 +153,7 @@ public class GramWallet implements GramWalletStreaming.IGramWalletStreamingSubsc
+     }
+ 
+     public static void ensureLocalWalletBalances(int currentAccount, Runnable whenDone) {
+-        if (!MessagesController.getInstance(currentAccount).config.walletAvailable.get()) {
++        if (!MessagesController.getInstance(currentAccount).config.walletAvailable.inu_getUnfiltered()) {
+             whenDone.run();
+             return;
+         }

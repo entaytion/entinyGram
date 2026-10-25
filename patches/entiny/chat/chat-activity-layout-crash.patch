@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -6714,15 +6714,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -6716,15 +6716,11 @@ public class ChatActivity extends BaseFragment implements
  
              @Override
              public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {

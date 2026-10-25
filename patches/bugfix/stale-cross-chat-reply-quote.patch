@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3606,6 +3606,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -3608,6 +3608,7 @@ public class ChatActivity extends BaseFragment implements
                  if (chatActivity.chatActivityEnterView == null || chatActivity.chatActivityEnterView.getVisibility() != View.VISIBLE) {
                      chatActivity.replyingQuote = quote;
                      chatActivity.replyingMessageObject = messageObject;
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
                      chatActivity.forbidForwardingWithDismiss = false;
                      chatActivity.messagePreviewParams = new MessagePreviewParams(chatActivity.currentEncryptedChat != null, chatActivity.isPeerNoForwards(), ChatObject.isMonoForum(chatActivity.currentChat));
                      chatActivity.messagePreviewParams.updateReply(chatActivity.replyingMessageObject, chatActivity.getGroup(messageObject.getGroupId()), chatActivity.getDialogId(), chatActivity.replyingQuote);
-@@ -5190,6 +5191,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -5192,6 +5193,8 @@ public class ChatActivity extends BaseFragment implements
                                  }
                              }
                              replyingMessageObject = message;
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
                              Bundle args = new Bundle();
                              args.putBoolean("onlySelect", true);
                              args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-@@ -30419,7 +30422,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30603,7 +30606,7 @@ public class ChatActivity extends BaseFragment implements
          CharSequence draftMessage = null;
          MessageObject replyMessage = null;
          boolean searchWebpage = true;
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
              replyMessage = replyingMessageObject;
              draftMessage = AndroidUtilities.getTrimmedString(chatActivityEnterView.getDraftMessage());
              searchWebpage = chatActivityEnterView.isMessageWebPageSearchEnabled();
-@@ -34030,6 +34033,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34218,6 +34221,7 @@ public class ChatActivity extends BaseFragment implements
                      }
                      replyingMessageObject = messageObject;
                      replyingQuote = null;

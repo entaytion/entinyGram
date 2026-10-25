@@ -208,8 +208,9 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/drawable',
   },
   {
-    source: 'src/res/drawable/vkui/*',
-    target: 'TMessagesProj/src/main/res/drawable',
+    source: 'src/res/assets/icon_packs',
+    target: 'TMessagesProj/src/main/assets/icon_packs',
+    directory: true,
   },
   {
     source: 'src/res/drawable/phosphor/*',

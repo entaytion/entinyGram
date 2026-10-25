@@ -1,27 +1,25 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.pet>
-Date: Fri, 9 Oct 2026 02:45:43 +0200
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 00:03:55 +0200
 Subject: customizable edit date mode (send date vs edit date)
 
 ---
- .../main/java/org/telegram/ui/Cells/ChatMessageCell.java   | 7 ++++---
- .../org/telegram/ui/Components/MessagePrivateSeenView.java | 4 ++--
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java    | 6 ++----
+ .../org/telegram/ui/Components/MessagePrivateSeenView.java  | 4 ++--
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -18539,14 +18539,15 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18570,14 +18570,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          } else if (currentMessageObject.isRepostPreview) {
              timeString = LocaleController.formatSmallDateChat(messageObject.messageOwner.date) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
          } else if (edited) {
 -            if (desu.inugram.InuConfig.COMPACT_EDITED.getValue()) {
-+            final boolean inu_useEditDate = desu.inugram.helpers.chat.ChatHelper.shouldUseEditedDate(currentAccount);
-+            if (desu.inugram.InuConfig.COMPACT_EDITED.getValue() && !inu_useEditDate) {
-                 timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+-                timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
 -            } else if (AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get()) {
-+            } else if (inu_useEditDate) {
++            if (desu.inugram.helpers.chat.ChatHelper.shouldUseEditedDate(currentAccount)) {
                  int editDate = currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date;
                  if (editDate == 0 && currentMessageObject.isEditing()) {
                      editDate = ConnectionsManager.getInstance(currentAccount).getCurrentTime();

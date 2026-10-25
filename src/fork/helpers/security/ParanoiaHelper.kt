@@ -8,6 +8,7 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
+import org.telegram.tgnet.tl.TL_stars
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.LauncherIconController
 import org.telegram.ui.LauncherIconController.LauncherIcon
@@ -106,6 +107,40 @@ object ParanoiaHelper {
     @JvmStatic
     fun hidesStoriesOf(account: Int, dialogId: Long): Boolean =
         shouldHideMyStories() && dialogId == UserConfig.getInstance(account).clientUserId
+
+    var hideStars: Boolean
+        get() = prefs.getBoolean("hideStars", false)
+        set(value) = prefs.edit { putBoolean("hideStars", value) }
+
+    var hideGram: Boolean
+        get() = prefs.getBoolean("hideGram", false)
+        set(value) = prefs.edit { putBoolean("hideGram", value) }
+
+    @JvmStatic
+    fun shouldHideWallet(): Boolean = isParanoia() && hideGram
+
+    @JvmStatic
+    fun shouldHideStars(ton: Boolean): Boolean = isParanoia() && if (ton) hideGram else hideStars
+
+    @JvmStatic
+    fun shouldHideRevenue(account: Int, dialogId: Long, ton: Boolean): Boolean =
+        shouldHideStars(ton) && dialogId == UserConfig.getInstance(account).clientUserId
+
+    @JvmStatic
+    fun filterStarsBalance(ton: Boolean, balance: TL_stars.StarsAmount): TL_stars.StarsAmount = when {
+        !shouldHideStars(ton) -> balance
+        ton -> TL_stars.TL_starsTonAmount()
+        else -> TL_stars.StarsAmount.ofStars(0)
+    }
+
+    @JvmStatic
+    fun filterStarsStatus(ton: Boolean, status: TL_stars.StarsStatus) {
+        if (!shouldHideStars(ton)) return
+        status.balance = filterStarsBalance(ton, status.balance)
+        status.history.clear()
+        status.flags = status.flags and 1.inv()
+        status.next_offset = null
+    }
 
     var disguiseIcon: Boolean
         get() = prefs.getBoolean("disguiseIcon", false)

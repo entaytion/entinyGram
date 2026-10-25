@@ -47,7 +47,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -14823,6 +14823,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14835,6 +14835,9 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogAsRead(long dialogId, int maxPositiveId, int maxNegativeId, int maxDate, boolean popup, long threadId, int countDiff, boolean readNow, int scheduledCount) {
@@ -134,7 +134,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11560,7 +11560,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11616,7 +11616,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      if (userInfo != null && userInfo.stars_rating != null && userInfo.stars_rating.stars < 0) {
                          newString2 = getString(R.string.StarRatingLevelNegative).toLowerCase(Locale.ROOT);
                      } else {

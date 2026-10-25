@@ -316,7 +316,7 @@ index 0000000..0000000 100644
  
          switchingAccount = false;
      }
-@@ -3346,6 +3346,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -3365,6 +3365,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                              dialogsActivity.setInitialSearchString(searchQuery);
                          }
                          actionBarLayout.addFragmentToStack(mainTabsActivity, INavigationLayout.FORCE_NOT_ATTACH_VIEW);
@@ -324,7 +324,7 @@ index 0000000..0000000 100644
                      }
                  }
              } else {
-@@ -3359,6 +3360,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -3378,6 +3379,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                              dialogsActivity.setInitialSearchString(searchQuery);
                          }
                          actionBarLayout.addFragmentToStack(mainTabsActivity, INavigationLayout.FORCE_NOT_ATTACH_VIEW);
@@ -361,20 +361,20 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -4002,6 +4002,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -4028,6 +4028,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      case ProfileActionsView.KEY_SETTINGS:
                          presentFragment(new SettingsActivity());
                          break;
 +                    case ProfileActionsView.KEY_QR: {
 +                        Bundle args = new Bundle();
 +                        args.putLong("user_id", userId);
-+                        presentFragment(new QrActivity(args));
++                        presentFragment(new QrShareActivity(args));
 +                        break;
 +                    }
                  }
              });
          }
-@@ -5763,7 +5769,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5790,7 +5796,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      actionsView.beginApplyingActions();
                      actionsView.addCameraAction();
                      actionsView.addEditInfo();
@@ -391,7 +391,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -687,7 +687,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -701,7 +701,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              items.add(UItem.asShadow(null));
          }
  
@@ -404,7 +404,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActivity.java
-@@ -1298,6 +1298,7 @@ public class TwoStepVerificationActivity extends BaseFragment implements Notific
+@@ -1300,6 +1300,7 @@ public class TwoStepVerificationActivity extends BaseFragment implements Notific
          if (otherwiseReloginDays >= 0) {
              final Bundle args = new Bundle();
              args.putBoolean("afterSignup", true);
