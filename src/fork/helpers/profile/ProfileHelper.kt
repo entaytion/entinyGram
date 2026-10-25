@@ -640,6 +640,9 @@ object ProfileHelper {
         if (chat?.photo is TLRPC.TL_chatPhoto) {
             return (chat.photo as TLRPC.TL_chatPhoto).dc_id
         }
+        if (user != null && user.id == UserConfig.getInstance(UserConfig.selectedAccount).clientUserId) {
+            return ConnectionsManager.getInstance(UserConfig.selectedAccount).currentDatacenterId
+        }
         return 0
     }
 
