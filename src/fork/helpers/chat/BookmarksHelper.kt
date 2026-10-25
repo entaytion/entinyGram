@@ -6,7 +6,7 @@ import org.telegram.messenger.MessagesStorage
 
 // entiny: inspired by NagramX bookmarks
 object BookmarksHelper {
-    const val MAX_PER_CHAT = 30
+    const val MAX_PER_CHAT = 500
 
     enum class Result { ADDED, REMOVED, LIMIT }
 

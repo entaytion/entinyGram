@@ -121,7 +121,7 @@ class TosSettingsActivity : SettingsPageActivity() {
                 unlimitedPinsSlider = SliderCell(
                     context,
                     min = 5f,
-                    max = 100f,
+                    max = 500f,
                     defaultValue = InuConfig.UNLIMITED_PINNED_CHATS_COUNT.default.toFloat(),
                     initialValue = InuConfig.UNLIMITED_PINNED_CHATS_COUNT.value.toFloat(),
                     step = 1f,

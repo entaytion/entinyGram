@@ -214,7 +214,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **sticker pack ZIP**: download a whole sticker or emoji pack as a ZIP from the pack menu
 - 📡 **hide reactions**: separate toggles to hide reactions on messages, disable setting them, and hide reaction badges in the chat list
 - 📡 **next audio controls**: don't preload the next track, don't auto-play the next music or voice message - *voice auto-play inspired by [ForkGram](https://github.com/forkgram/TelegramAndroid)*
-- 📡 **bookmarks**: bookmark messages from the message menu (up to 30 per chat), see a star next to the time and browse them by chat in a separate screen with tabs - *inspired by NagramX*
+- 📡 **bookmarks**: bookmark messages from the message menu (up to 500 per chat), see a star next to the time and browse them by chat in a separate screen with tabs - *inspired by NagramX*
 - 📡 **group entinyGram menu items**: toggle in message menu order to collapse entinyGram-specific items into a single "entinyGram" submenu
 - 📡 **plugin catalog**: the @entinyGramPlugins repository is built in and cannot be removed, a plugin that needs the SDK installs it automatically, plugins are split into the developer's and others' with sorting, and plugin pages show permissions, dependencies and version history
 
