@@ -272,6 +272,7 @@ object ApkInstaller {
                     return
                 }
                 abandonSession(i.getIntExtra(PackageInstaller.EXTRA_SESSION_ID, 0))
+                showInstallError(status)
             }
             if (isFailure(status)) {
                 abandonSession(i.getIntExtra(PackageInstaller.EXTRA_SESSION_ID, 0))
