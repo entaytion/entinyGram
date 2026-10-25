@@ -573,7 +573,7 @@ index 0000000..0000000 100644
      def taskName = "buildInuNative${buildType.capitalize()}"
      def outputDir = new File(rustJniLibsDir, buildType)
 +    def stockJniTask = "copy${buildType.capitalize()}JniLibsProjectOnly"
-+    def stockLib = project(':TMessagesProj').file("build/intermediates/library_jni/$buildType/$stockJniTask/jni/arm64-v8a/libtmessages.49.so")
++    def stockLib = project(':TMessagesProj').file("build/intermediates/library_jni/$buildType/$stockJniTask/jni/${System.getenv('ABI_FILTERS') ?: 'arm64-v8a'}/libtmessages.49.so")
 +    def sqliteLinkDir = file("$buildDir/inuSqliteLink/$buildType")
      tasks.register(taskName, Exec) {
 +        dependsOn ":TMessagesProj:$stockJniTask"
