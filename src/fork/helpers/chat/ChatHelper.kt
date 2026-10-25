@@ -1070,8 +1070,13 @@ object ChatHelper {
                         val dialogId = selectedObject.getDialogId()
                         val label = LocaleController.getString(R.string.InuBookmarks)
                         val spannable = SpannableStringBuilder(text)
-                        val start = spannable.toString().indexOf(label)
-                        if (start >= 0) {
+                        var start = spannable.toString().indexOf(label)
+                        var length = label.length
+                        if (start < 0) {
+                            start = spannable.toString().lastIndexOf(' ') + 1
+                            length = spannable.length - start
+                        }
+                        if (length > 0) {
                             spannable.setSpan(object : ClickableSpan() {
                                 override fun onClick(widget: View) {
                                     activity.presentFragment(desu.inugram.ui.BookmarksActivity(dialogId))
@@ -1081,9 +1086,9 @@ object ChatHelper {
                                     ds.color = Theme.getColor(Theme.key_undo_cancelColor)
                                     ds.isUnderlineText = true
                                 }
-                            }, start, start + label.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            }, start, start + length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
-                        bulletins.createSimpleBulletin(R.raw.saved_messages, if (start >= 0) spannable else text)
+                        bulletins.createSimpleBulletin(R.raw.saved_messages, if (length > 0) spannable else text)
                     }
                     else -> bulletins.createSimpleBulletin(R.raw.saved_messages, text)
                 }

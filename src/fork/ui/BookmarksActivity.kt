@@ -10,8 +10,6 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +30,7 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ActionBar.ThemeDescription
 import org.telegram.ui.Cells.ChatMessageCell
+import org.telegram.ui.PhotoViewer
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
@@ -96,7 +95,7 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
             try {
                 val obj = MessageObject(currentAccount, byId[id] ?: placeholder(id), false, true)
                 obj.messageOwner.media?.ttl_seconds = 0
-                obj.forceAvatar = true
+                obj.forceAvatar = !obj.isOutOwner
                 built.add(obj)
             } catch (e: Throwable) {
                 android.util.Log.d("BookmarksActivity", "message $id build failed", e)
@@ -156,8 +155,7 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
                     // flush any deferred message object now that the cell is attached
                     child.freezeCell(false)
                     val msg = child.messageObject
-                    if (msg != null) msg.forceAvatar = true
-                    if (msg != null) {
+                    if (msg != null && !msg.isOutOwner) {
                         child.isAvatarVisible = true
                         child.setAvatar(msg)
                     }
@@ -281,34 +279,11 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
         override fun getItemCount(): Int = messages.size
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            RecyclerListView.Holder(BookmarkRow(context))
+            RecyclerListView.Holder(BookmarkCell(context).apply { layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) })
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             val message = messages.getOrNull(position) ?: return
-            (holder.itemView as BookmarkRow).bind(message)
-        }
-    }
-
-    // entiny: a button beside the message jumps straight to it in the chat
-    private inner class BookmarkRow(context: Context) : FrameLayout(context) {
-        private val cell = BookmarkCell(context)
-        private val goButton = ImageView(context)
-
-        init {
-            addView(cell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat()))
-            goButton.scaleType = ImageView.ScaleType.CENTER
-            goButton.setImageResource(R.drawable.msg_openin)
-            goButton.colorFilter = android.graphics.PorterDuffColorFilter(Theme.getColor(Theme.key_chat_serviceText), android.graphics.PorterDuff.Mode.MULTIPLY)
-            goButton.background = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(34f), Theme.getColor(Theme.key_chat_serviceBackground), Theme.getColor(Theme.key_listSelector))
-            goButton.contentDescription = LocaleController.getString(R.string.InuShowInChat)
-            goButton.setOnClickListener { cell.messageObject?.let { showInChat(it) } }
-            addView(goButton, LayoutHelper.createFrame(34, 34f, Gravity.RIGHT or Gravity.CENTER_VERTICAL, 0f, 0f, 6f, 0f))
-        }
-
-        fun bind(message: MessageObject) {
-            cell.bind(message)
-            (goButton.layoutParams as LayoutParams).gravity = (if (message.isOutOwner) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL
-            goButton.requestLayout()
+            (holder.itemView as BookmarkCell).bind(message)
         }
     }
 
@@ -317,6 +292,13 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
             setFullyDraw(true)
             // entiny: empty delegate keeps canPerformActions false so the row long click handles touches
             setDelegate(object : ChatMessageCellDelegate {
+                override fun didPressImage(cell: ChatMessageCell, x: Float, y: Float, fullPreview: Boolean) {
+                    val msg = cell.messageObject ?: return
+                    if (!msg.isPhoto && !msg.isVideo && !msg.isGif) return
+                    PhotoViewer.getInstance().setParentActivity(this@BookmarksActivity)
+                    PhotoViewer.getInstance().openPhoto(msg, null, dialogId, 0L, 0L, PhotoViewer.EmptyPhotoViewerProvider())
+                }
+
                 override fun didPressUrl(cell: ChatMessageCell, url: CharacterStyle?, longPress: Boolean) {
                     if (longPress) return
                     val link = (url as? URLSpan)?.url ?: return
@@ -330,11 +312,11 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
         }
 
         fun bind(message: MessageObject) {
-            isChat = dialogId < 0
+            isChat = dialogId < 0 || !message.isOutOwner
             setMessageObject(message, null, false, false, false)
             // entiny: force avatar visibility/rendering in standalone list
-            isAvatarVisible = true
-            setAvatar(message)
+            isAvatarVisible = !message.isOutOwner
+            if (isAvatarVisible) setAvatar(message)
         }
     }
 }
