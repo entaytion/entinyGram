@@ -168,6 +168,7 @@ object InuHooks {
     fun onUpdate(update: TLObject?, account: Int) {
         if (update is TL_update.TL_updateUserStatus) {
             desu.inugram.helpers.security.PresenceHelper.onStatusUpdate(update, account)
+            desu.inugram.helpers.security.LastSeenHelper.onUserStatus(account, update.user_id, update.status)
         }
         LoginHelper.onUpdate(update, account)
     }

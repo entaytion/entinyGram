@@ -6,6 +6,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesStorage
+import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 
 object LastSeenHelper {
@@ -16,25 +17,31 @@ object LastSeenHelper {
 
     @JvmStatic
     fun onUserStatus(account: Int, user: TLRPC.User) {
+        onUserStatus(account, user.id, user.status)
+    }
+
+    @JvmStatic
+    fun onUserStatus(account: Int, userId: Long, status: TLRPC.UserStatus?) {
         if (!InuConfig.SAVE_LAST_SEEN.value) return
-        val status = user.status ?: return
-        val now = (System.currentTimeMillis() / 1000L).toInt()
+        status ?: return
+        val now = ConnectionsManager.getInstance(account).currentTime
+        val offline = status is TLRPC.TL_userStatusOffline
         val seen = when {
             status is TLRPC.TL_userStatusOnline || status.expires > now -> now
-            status is TLRPC.TL_userStatusOffline && status.expires > 0 -> status.expires
+            offline && status.expires > 0 -> status.expires
             else -> return
         }
         val storage = MessagesStorage.getInstance(account) ?: return
         ensureLoaded(account, storage)
         synchronized(cache) {
             val users = cache.get(account) ?: LongSparseArray<Int>().also { cache.put(account, it) }
-            val prev = users.get(user.id)
-            if (prev != null && (seen <= prev || seen - prev < WRITE_THROTTLE_SEC)) return
-            users.put(user.id, seen)
+            val prev = users.get(userId)
+            if (prev != null && (seen <= prev || !offline && seen - prev < WRITE_THROTTLE_SEC)) return
+            users.put(userId, seen)
         }
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            InuDatabaseHelper.saveLastSeen(db, user.id, seen)
+            InuDatabaseHelper.saveLastSeen(db, userId, seen)
         }
     }
 
