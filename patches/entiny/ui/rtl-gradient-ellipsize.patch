@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 01:17:42 +0200
+Subject: Show the logical start of truncated RTL text in gradient-ellipsized views
+
+---
+ .../java/org/telegram/ui/ActionBar/SimpleTextView.java     | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+@@ -82,6 +82,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+ 
+     private boolean scrollNonFitText;
+     private boolean textDoesNotFit;
++    private boolean inu_rtlTruncated;
+     private float scrollingOffset;
+     private long lastUpdateTime;
+     private int currentScrollDelay;
+@@ -285,7 +286,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+         if (forceEllipsizeByGradientLeft != null) {
+             ellipsizeLeft = forceEllipsizeByGradientLeft;
+         } else {
+-            ellipsizeLeft = false;
++            ellipsizeLeft = inu_rtlTruncated;
+ //            ellipsizeLeft = getAlignment() == Layout.Alignment.ALIGN_NORMAL && LocaleController.isRTL || getAlignment() == Layout.Alignment.ALIGN_OPPOSITE && !LocaleController.isRTL;
+         }
+         if ((fadeEllpsizePaint == null || fadeEllpsizePaintWidth != dp(ellipsizeByGradientWidthDp) || ellipsizeByGradientLeft != ellipsizeLeft) && ellipsizeByGradient) {
+@@ -384,6 +385,10 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 }
+             }
+             textDoesNotFit = textWidth + rightDrawableWidth > (width - paddingRight);
++            inu_rtlTruncated = ellipsizeByGradient && !scrollNonFitText && textDoesNotFit && layout.getParagraphDirection(0) == Layout.DIR_RIGHT_TO_LEFT && (gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT;
++            if (inu_rtlTruncated) {
++                offsetX -= textWidth + rightDrawableWidth - (width - paddingRight);
++            }
+             checkUi_layerType();
+ 
+             if (fullLayout != null && fullLayoutAdditionalWidth > 0) {
