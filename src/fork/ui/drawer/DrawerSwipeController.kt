@@ -22,6 +22,7 @@ import android.widget.FrameLayout
 import androidx.annotation.Keep
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.R
@@ -225,7 +226,8 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         if (mainTabs != null && mainTabs.viewPager?.currentPosition != 0) return true
         val top = getVisibleFragment() as? DialogsActivity ?: return false
         val tabs = top.filterTabsView ?: return false
-        return tabs.visibility == View.VISIBLE && !tabs.isFirstTabSelected
+        if (tabs.visibility != View.VISIBLE) return false
+        return !tabs.isFirstTabSelected || InuConfig.FOLDERS_INFINITE_SWIPE.value && tabs.tabsCount >= 2
     }
 
     private fun updateGestureExclusion() {
