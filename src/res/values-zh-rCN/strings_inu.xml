@@ -1561,8 +1561,6 @@
     <string name="InuForwardProUseStock">官方 Telegram</string>
     <string name="InuForwardProPlaceholder">消息文本</string>
     <string name="InuForwardProEmptyNotice">消息文本不能为空</string>
-    <string name="InuForwardDownloading">先下载 %1$s，然后转发</string>
-    <string name="InuForwardDownloadFailed">文件下载失败，未能转发</string>
     <string name="InuForwardTooLarge">文件超过上传上限（%1$s），无法转发</string>
     <string name="InuIosButtonPlacement">按钮布局 (iOS)</string>
     <string name="InuIosInputAppearance">外观 (iOS)</string>

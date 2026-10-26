@@ -1686,8 +1686,6 @@
     <string name="InuForwardProUseStock">Обычный Telegram</string>
     <string name="InuForwardProPlaceholder">Текст сообщения</string>
     <string name="InuForwardProEmptyNotice">Текст сообщения не может быть пустым</string>
-    <string name="InuForwardDownloading">Сначала скачиваю %1$s, затем перешлю</string>
-    <string name="InuForwardDownloadFailed">Не удалось скачать файл, пересылка отменена</string>
     <string name="InuForwardTooLarge">Файл превышает лимит загрузки (%1$s), переслать нельзя</string>
     <string name="InuIosButtonPlacement">Расположение кнопок как в iOS</string>
     <string name="InuIosInputAppearance">Оформление как в iOS</string>
@@ -2117,4 +2115,10 @@
     <string name="InuPluginCrashTitle">Плагин упал</string>
     <string name="InuPluginCrashMessage">Плагины отключены на этот запуск. Плагин: %1$s</string>
     <string name="InuPluginCrashCopy">Скопировать лог</string>
+    <string name="InuForwardChannel">Пересылка защищённого</string>
+    <string name="InuForwardProgressTitle">Загрузка медиа для пересылки</string>
+    <string name="InuForwardProgressText">%1$d файлов · %2$s из %3$s</string>
+    <string name="InuForwardPartial">Переслано %1$d из %2$d файлов</string>
+    <string name="InuForwardLargeTitle">Большая загрузка</string>
+    <string name="InuForwardLargeText">Чтобы переслать это, приложению сначала нужно скачать %1$s. Продолжить?</string>
 </resources>

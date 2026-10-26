@@ -695,8 +695,6 @@ Sistema: %6$s
     <string name="InuTranslateLlmTemperatureInfo">Los valores bajos mantienen las traducciones literales y repetibles; los altos permiten una redacción más libre e idiomática.</string>
     <string name="InuTranslateProviderNotConfigured">El proveedor de traducción no está configurado. Se usará la traducción de Telegram.</string>
     <string name="InuTranslateProviderFailed">La traducción falló: %1$s. Inténtalo de nuevo en un momento.</string>
-    <string name="InuForwardDownloading">Descargando %1$s primero y luego reenviando</string>
-    <string name="InuForwardDownloadFailed">No se pudo descargar el archivo, por lo que no se reenvió.</string>
     <string name="InuForwardTooLarge">El archivo supera tu límite de subida (%1$s), no se puede reenviar.</string>
     <string name="InuTranslateGoogleBlocked">Google bloquea la traducción desde esta red (HTTP 429). Cambia de conexión o elige otro proveedor.</string>
     <string name="InuPoweredByProvider">Traducciones de %1$s.</string>

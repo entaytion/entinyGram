@@ -21,6 +21,9 @@ import org.telegram.messenger.UserObject
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ChatActivity
+import android.os.SystemClock
+import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.LaunchActivity
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.CountDownLatch
@@ -28,6 +31,8 @@ import java.util.concurrent.TimeUnit
 
 object RestrictedFeaturesHelper {
     private const val RESTRICTED_FORWARD_TIMEOUT_MS = 10 * 60 * 1000L
+    private const val LARGE_BATCH_BYTES = 500L * 1024 * 1024
+    private const val LARGE_BATCH_ASK_TIMEOUT_MS = 2 * 60 * 1000L
 
     internal val restrictedForwardQueue by lazy { DispatchQueue("inuRestrictedForward") }
 
@@ -120,11 +125,14 @@ object RestrictedFeaturesHelper {
         val batch = ArrayList(fits)
         if (batch.isEmpty()) return
         restrictedForwardQueue.postRunnable {
+            val sendable = batch
             val temporaryFiles = ArrayList<File>()
-            val files = awaitRestrictedMedia(account, batch, temporaryFiles)
-            val missingViewOnce = batch.any { isCloudViewOnce(it) && needsMediaReupload(it) && files[it] == null }
+            val files = awaitRestrictedMedia(account, sendable, temporaryFiles)
+            val delivered = sendable.count { !needsMediaReupload(it) || files[it] != null }
+            if (delivered < sendable.size) showForwardToast(LocaleController.formatString(R.string.InuForwardPartial, delivered, sendable.size))
+            val missingViewOnce = sendable.any { isCloudViewOnce(it) && needsMediaReupload(it) && files[it] == null }
             val actions = buildRestrictedForwardActions(
-                helper, account, batch, files, did, notify, scheduleDate, scheduleRepeatPeriod,
+                helper, account, sendable, files, did, notify, scheduleDate, scheduleRepeatPeriod,
                 threadMsg, mono, suggest, hideCaption, payStars,
             )
             if (missingViewOnce) {
@@ -214,7 +222,7 @@ object RestrictedFeaturesHelper {
     ): Map<MessageObject, File> {
         val loader = FileLoader.getInstance(account)
         val resolved = HashMap<MessageObject, File>()
-        val pending = LinkedHashMap<String, MessageObject>()
+        var pending = LinkedHashMap<String, MessageObject>()
 
         for (msg in messages) {
             if (!needsMediaReupload(msg)) continue
@@ -229,8 +237,36 @@ object RestrictedFeaturesHelper {
         if (pending.isEmpty()) return resolved
 
         val totalBytes = pending.values.sumOf { it.document?.size ?: 0L }
-        showForwardToast(LocaleController.formatString(R.string.InuForwardDownloading, AndroidUtilities.formatFileSize(totalBytes)))
-        val waiter = MediaDownloadWaiter(account, pending.keys)
+        if (totalBytes > LARGE_BATCH_BYTES && !confirmLargeBatch(totalBytes)) return resolved
+        val progress = RestrictedForwardProgress(totalBytes, pending.size)
+        progress.start()
+        try {
+            // entiny: one retry for files that failed, then the rest goes on without them
+            repeat(2) {
+                if (pending.isEmpty() || progress.canceled) return@repeat
+                val loadedNow = downloadPass(account, loader, pending, progress)
+                val failed = LinkedHashMap<String, MessageObject>()
+                for ((key, msg) in pending) {
+                    // entiny: path DB lags behind fileLoaded, so fall back to the file the notification delivered
+                    val file = localMediaFile(loader, msg) ?: loadedNow[key]
+                    val usable = file?.let { forwardableMediaFile(it, temporaryFiles) }
+                    if (usable != null) resolved[msg] = usable else failed[key] = msg
+                }
+                pending = failed
+            }
+        } finally {
+            progress.finish()
+        }
+        return resolved
+    }
+
+    private fun downloadPass(
+        account: Int,
+        loader: FileLoader,
+        pending: Map<String, MessageObject>,
+        progress: RestrictedForwardProgress,
+    ): Map<String, File> {
+        val waiter = MediaDownloadWaiter(account, pending.keys, progress)
         // entiny: subscribe NotificationCenter observer on main thread before starting downloads to close race
         AndroidUtilities.runOnUIThread {
             waiter.subscribe()
@@ -242,15 +278,32 @@ object RestrictedFeaturesHelper {
             waiter.settle()
         }
         waiter.await(RESTRICTED_FORWARD_TIMEOUT_MS)
+        if (progress.canceled) AndroidUtilities.runOnUIThread { pending.values.forEach { cancelMediaLoad(loader, it) } }
+        return pending.keys.mapNotNull { key -> waiter.loadedFile(key)?.let { key to it } }.toMap()
+    }
 
-        for (msg in messages) {
-            if (!needsMediaReupload(msg) || resolved.containsKey(msg)) continue
-            // entiny: path DB lags behind fileLoaded, so fall back to the file the notification delivered
-            val loaded = localMediaFile(loader, msg) ?: downloadKey(msg)?.let { waiter.loadedFile(it) }
-            loaded?.let { forwardableMediaFile(it, temporaryFiles) }?.let { resolved[msg] = it }
+    private fun confirmLargeBatch(totalBytes: Long): Boolean {
+        val activity = LaunchActivity.instance ?: return true
+        val latch = CountDownLatch(1)
+        var confirmed = false
+        AndroidUtilities.runOnUIThread {
+            AlertDialog.Builder(activity)
+                .setTitle(LocaleController.getString(R.string.InuForwardLargeTitle))
+                .setMessage(LocaleController.formatString(R.string.InuForwardLargeText, AndroidUtilities.formatFileSize(totalBytes)))
+                .setPositiveButton(LocaleController.getString(R.string.Continue)) { _, _ -> confirmed = true }
+                .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+                .create()
+                .also { it.setOnDismissListener { latch.countDown() } }
+                .show()
         }
-        if (pending.values.any { !resolved.containsKey(it) }) showForwardToast(LocaleController.getString(R.string.InuForwardDownloadFailed))
-        return resolved
+        latch.await(LARGE_BATCH_ASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+        return confirmed
+    }
+
+    private fun cancelMediaLoad(loader: FileLoader, message: MessageObject) {
+        val media = message.messageOwner?.media ?: return
+        (media.document as? TLRPC.TL_document)?.let { loader.cancelLoadFile(it); return }
+        fullPhotoSize(media)?.let { loader.cancelLoadFile(it) }
     }
 
     private fun showForwardToast(text: String) {
@@ -349,6 +402,7 @@ object RestrictedFeaturesHelper {
     private class MediaDownloadWaiter(
         private val account: Int,
         keys: Collection<String>,
+        private val progress: RestrictedForwardProgress? = null,
     ) : NotificationCenter.NotificationCenterDelegate {
         private val pending = HashSet(keys)
         private val latch = CountDownLatch(1)
@@ -360,6 +414,7 @@ object RestrictedFeaturesHelper {
             val center = NotificationCenter.getInstance(account)
             center.addObserver(this, NotificationCenter.fileLoaded)
             center.addObserver(this, NotificationCenter.fileLoadFailed)
+            center.addObserver(this, NotificationCenter.fileLoadProgressChanged)
         }
 
         fun complete(key: String) {
@@ -373,7 +428,10 @@ object RestrictedFeaturesHelper {
         }
 
         fun await(timeoutMs: Long) {
-            latch.await(timeoutMs, TimeUnit.MILLISECONDS)
+            val end = SystemClock.uptimeMillis() + timeoutMs
+            while (!latch.await(500, TimeUnit.MILLISECONDS)) {
+                if (progress?.canceled == true || SystemClock.uptimeMillis() > end) break
+            }
             AndroidUtilities.runOnUIThread { unsubscribe() }
         }
 
@@ -381,11 +439,16 @@ object RestrictedFeaturesHelper {
             val center = NotificationCenter.getInstance(account)
             center.removeObserver(this, NotificationCenter.fileLoaded)
             center.removeObserver(this, NotificationCenter.fileLoadFailed)
+            center.removeObserver(this, NotificationCenter.fileLoadProgressChanged)
         }
 
         // entiny: treat load failure like completion so caller falls back to by-reference send instead of stalling
         override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
             val key = args.getOrNull(0) as? String ?: return
+            if (id == NotificationCenter.fileLoadProgressChanged) {
+                (args.getOrNull(1) as? Long)?.let { progress?.update(key, it) }
+                return
+            }
             (args.getOrNull(1) as? File)?.let { loaded[key] = it }
             if (!pending.remove(key)) return
             settle()
