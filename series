@@ -603,3 +603,4 @@ entiny/media/animated-cache-retry-loop.patch
 entiny/chat/emoji-view-observer-leak.patch
 entiny/ui/rtl-gradient-ellipsize.patch
 entiny/ui/dialogs-menu-proxy.patch
+entiny/ui/safe-editable-spans.patch

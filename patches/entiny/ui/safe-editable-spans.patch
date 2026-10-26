@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 11:30:57 +0200
+Subject: Guard span queries against a framework crash in IME cursor updates
+
+---
+ .../main/java/org/telegram/ui/Components/EditTextBoldCursor.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBoldCursor.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBoldCursor.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBoldCursor.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBoldCursor.java
+@@ -221,6 +221,7 @@ public class EditTextBoldCursor extends EditTextEffects {
+         }
+         init();
+         desu.inugram.helpers.TextClassifierHelper.configure(this);
++        desu.inugram.helpers.SafeEditableHelper.install(this);
+     }
+ 
+     public void useAnimatedTextDrawable() {
