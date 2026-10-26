@@ -195,6 +195,19 @@ object BlockedMessagesHelper {
         if (manualHidden.remove("$account:$dialogId") != null) epoch++
     }
 
+    fun unhideManually(adapter: ChatActivity.ChatActivityAdapter, messages: Collection<MessageObject>) {
+        for (msg in messages) manualHidden[manualKey(msg)]?.remove(msg.id)
+        epoch++
+        adapter.notifyDataSetChanged()
+    }
+
+    fun manualHiddenCount(account: Int, dialogId: Long): Int = manualHidden["$account:$dialogId"]?.size ?: 0
+
+    fun restoreManual(adapter: ChatActivity.ChatActivityAdapter, account: Int, dialogId: Long) {
+        forgetManual(account, dialogId)
+        adapter.notifyDataSetChanged()
+    }
+
     fun hideManually(adapter: ChatActivity.ChatActivityAdapter, messages: Collection<MessageObject>) {
         for (msg in messages) manualHidden.getOrPut(manualKey(msg)) { HashSet() }.add(msg.id)
         epoch++

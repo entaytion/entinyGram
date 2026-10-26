@@ -93,6 +93,7 @@ object ChatActionsHelper {
     const val ACTION_CHAT_DELETE_MY_MESSAGES = 546
     const val ACTION_EDITED_MESSAGES = 547
     const val ACTION_CHAT_PROXY = 548
+    const val ACTION_SHOW_HIDDEN = 549
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -262,6 +263,10 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InuChatExport),
             )
         }
+        headerItem.lazilyAddSubItem(
+            ACTION_SHOW_HIDDEN, R.drawable.inu_tabler_eye,
+            LocaleController.getString(R.string.InuRestoreHiddenMessages),
+        )
         headerItem.lazilyAddSubItem(
             ACTION_CHAT_PROXY, R.drawable.outline_shield_check,
             LocaleController.getString(R.string.ProxySettings),
@@ -589,6 +594,13 @@ object ChatActionsHelper {
             ACTION_TYPING_SPOOF -> showTypingSpoofSelector(activity)
             // same handlers as the profile menu, keyed by its ids
             ACTION_CHAT_EXPORT -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EXPORT_CHAT, null, activity.currentAccount, activity.dialogId)
+            ACTION_SHOW_HIDDEN -> {
+                if (BlockedMessagesHelper.manualHiddenCount(activity.currentAccount, activity.dialogId) > 0) {
+                    BlockedMessagesHelper.restoreManual(activity.chatAdapter, activity.currentAccount, activity.dialogId)
+                } else {
+                    BulletinFactory.of(activity).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuNoHiddenMessages)).show()
+                }
+            }
             ACTION_CHAT_PROXY -> activity.presentFragment(org.telegram.ui.ProxyListActivity())
             ACTION_CHAT_LOCAL_NAME -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EDIT_LOCAL_NAME, null, activity.currentAccount, activity.dialogId)
             ACTION_CHAT_MARK_READ -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_MARK_AS_READ, null, activity.currentAccount, activity.dialogId)

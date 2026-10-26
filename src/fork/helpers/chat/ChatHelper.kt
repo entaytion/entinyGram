@@ -1112,6 +1112,11 @@ object ChatHelper {
             OPTION_HIDE_MESSAGE -> {
                 val messages = selectedObjectGroup?.messages ?: listOf(selectedObject)
                 BlockedMessagesHelper.hideManually(activity.chatAdapter, messages)
+                BulletinFactory.of(activity).createSimpleBulletin(
+                    R.raw.info,
+                    LocaleController.getString(R.string.InuMessageHidden),
+                    LocaleController.getString(R.string.Undo),
+                ) { BlockedMessagesHelper.unhideManually(activity.chatAdapter, messages) }.show()
             }
 
             OPTION_FORWARD_PRO -> {

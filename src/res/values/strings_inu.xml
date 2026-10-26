@@ -2152,4 +2152,7 @@
     <string name="InuBookmarksEmpty">No bookmarks</string>
     <string name="InuBookmarksClearAll">Clear all bookmarks</string>
     <string name="InuBookmarksSummary">Messages you saved, grouped by chat</string>
+    <string name="InuMessageHidden">Message hidden</string>
+    <string name="InuRestoreHiddenMessages">Show hidden messages</string>
+    <string name="InuNoHiddenMessages">No hidden messages here</string>
 </resources>

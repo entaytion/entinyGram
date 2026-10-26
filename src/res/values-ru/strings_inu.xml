@@ -2111,4 +2111,7 @@
     <string name="InuTimedMediaAfterView">После просмотра</string>
     <string name="InuTimedMediaAfterViewBurn">Сжечь</string>
     <string name="InuTimedMediaAfterViewKeep">Сохранить копию</string>
+    <string name="InuMessageHidden">Сообщение скрыто</string>
+    <string name="InuRestoreHiddenMessages">Показать скрытые сообщения</string>
+    <string name="InuNoHiddenMessages">Здесь нет скрытых сообщений</string>
 </resources>
