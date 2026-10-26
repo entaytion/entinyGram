@@ -162,10 +162,10 @@ entinyGram is made possible thanks to the work of the open-source Telegram commu
 - **[exteraGram / exteraLess](https://github.com/exteraless/exteraless)** — pill stack, wide channel posts, recent chats switcher, and instant reactions read.
 - **[Nekogram](https://github.com/Nekogram/Nekogram)** — in-app updater, passcode privacy/hidden accounts, sticker sizing, and blocked users filtering.
 - **[NagramX](https://github.com/risin42/NagramX)** by **[@risin42](https://github.com/risin42)** & **[NagramXF](https://github.com/Keeperorowner/NagramXF)** by **[@Keeperorowner](https://github.com/Keeperorowner)** — Monet theming, avatar corner radius controls, icon replacement, and Ultra HDR support.
-- **[NagramXTurbo](https://github.com/temporaryna/NagramXTurbo)** by **[@temporaryna](https://github.com/temporaryna)** — download byte budget boost for non-premium accounts, background download queue and by-reference sending for protected forwards.
+- **[NagramXTurbo](https://github.com/temporaryna/NagramXTurbo)** by **[@temporaryna](https://github.com/temporaryna)** — download byte budget boost for non-premium accounts, background download queue and by-reference sending for protected forwards, thicken-bold toggle.
 - **[Nagram](https://github.com/NextAlone/Nagram)** by **[@NextAlone](https://github.com/NextAlone)** — compact small GIFs in chat bubbles.
 - **[OwlGram](https://github.com/OwlGramDev/OwlGram)** — per-dialog auto-translation UX ideas.
-- **[NiagramX](https://github.com/HSSkyBoy/NiagramX)** by **[@HSSkyBoy](https://github.com/HSSkyBoy)** — login code countdown skip.
+- **[NiagramX](https://github.com/HSSkyBoy/NiagramX)** by **[@HSSkyBoy](https://github.com/HSSkyBoy)** — login code countdown skip, always-HD video sending.
 - **[Catogram](https://github.com/Catogram/Catogram)** — VKUI icon pack integration.
 - **[materialgram](https://github.com/kukuruzka165/materialgram)** by **[@kukuruzka165](https://github.com/kukuruzka165)** — Material You patterns and Android design inspiration.
 - **[Turbotel](https://github.com)** — Forward Pro inspiration.
