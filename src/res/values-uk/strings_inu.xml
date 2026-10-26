@@ -2166,4 +2166,7 @@
     <string name="InuForwardPartial">Переслано %1$d з %2$d файлів</string>
     <string name="InuForwardLargeTitle">Велике завантаження</string>
     <string name="InuForwardLargeText">Щоб переслати це, застосунок спершу має завантажити %1$s. Продовжити?</string>
+    <string name="InuPluginsReviewPermissions">Перевірити дозволи плагінів</string>
+    <string name="InuPluginsReviewTitle">Дозволити ці права?</string>
+    <string name="InuPluginsReviewAllow">Дозволити</string>
 </resources>

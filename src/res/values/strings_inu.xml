@@ -2162,4 +2162,7 @@
     <string name="InuForwardPartial">Forwarded %1$d of %2$d files</string>
     <string name="InuForwardLargeTitle">Large download</string>
     <string name="InuForwardLargeText">To forward this, the app first has to download %1$s. Continue?</string>
+    <string name="InuPluginsReviewPermissions">Review plugin permissions</string>
+    <string name="InuPluginsReviewTitle">Allow these permissions?</string>
+    <string name="InuPluginsReviewAllow">Allow</string>
 </resources>

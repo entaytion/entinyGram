@@ -57,10 +57,14 @@ class PluginsActivity : SettingsPageActivity() {
     private var reorderSectionId = -1
     private var compactItem: ActionBarMenuSubItem? = null
     private var removeAllItem: ActionBarMenuSubItem? = null
+    private var reviewItem: ActionBarMenuSubItem? = null
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuPlugins)
 
-    private val onPluginsChanged: () -> Unit = { listView?.adapter?.update(true) }
+    private val onPluginsChanged: () -> Unit = {
+        updateReviewItem()
+        listView?.adapter?.update(true)
+    }
 
     override fun onResume() {
         super.onResume()
@@ -88,6 +92,12 @@ class PluginsActivity : SettingsPageActivity() {
         otherItem.contentDescription = LocaleController.getString(R.string.AccDescrMoreOptions)
         compactItem = otherItem.addSubItem(MENU_COMPACT, 0, null)
         updateCompactItem()
+        reviewItem = otherItem.addSubItem(
+            MENU_REVIEW,
+            R.drawable.msg_permissions,
+            LocaleController.getString(R.string.InuPluginsReviewPermissions),
+        )
+        updateReviewItem()
         removeAllItem = otherItem.addSubItem(
             MENU_REMOVE_ALL,
             R.drawable.msg_delete,
@@ -102,6 +112,7 @@ class PluginsActivity : SettingsPageActivity() {
                 when (id) {
                     -1 -> finishFragment()
                     MENU_COMPACT -> toggleCompactList()
+                    MENU_REVIEW -> confirmReview()
                     MENU_REMOVE_ALL -> confirmRemoveAll()
                 }
             }
@@ -315,6 +326,24 @@ class PluginsActivity : SettingsPageActivity() {
         listView.adapter.update(true)
     }
 
+    private fun updateReviewItem() {
+        reviewItem?.visibility = if (PluginManager.pendingReviews().isEmpty()) View.GONE else View.VISIBLE
+    }
+
+    private fun confirmReview() {
+        val reviews = PluginManager.pendingReviews()
+        if (reviews.isEmpty()) return
+        val listed = reviews.joinToString("\n") { "• ${it.plugin.manifest.name}: ${it.grants}" }
+        AlertDialog.Builder(context)
+            .setTitle(LocaleController.getString(R.string.InuPluginsReviewTitle))
+            .setMessage(listed)
+            .setPositiveButton(LocaleController.getString(R.string.InuPluginsReviewAllow)) { _, _ ->
+                PluginManager.approveReviews(reviews)
+            }
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .show()
+    }
+
     private fun confirmRemoveAll() {
         val plugins = PluginManager.plugins()
         if (plugins.isEmpty()) return
@@ -373,6 +402,7 @@ class PluginsActivity : SettingsPageActivity() {
         private val DEV_TOGGLE = InuUtils.generateId()
         private const val MENU_COMPACT = 1
         private const val MENU_REMOVE_ALL = 2
+        private const val MENU_REVIEW = 3
         private const val ITEM_BASE = 20000
         private const val REQ_LOAD = 31010
     }

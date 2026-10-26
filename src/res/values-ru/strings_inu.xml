@@ -2121,4 +2121,7 @@
     <string name="InuForwardPartial">Переслано %1$d из %2$d файлов</string>
     <string name="InuForwardLargeTitle">Большая загрузка</string>
     <string name="InuForwardLargeText">Чтобы переслать это, приложению сначала нужно скачать %1$s. Продолжить?</string>
+    <string name="InuPluginsReviewPermissions">Проверить разрешения плагинов</string>
+    <string name="InuPluginsReviewTitle">Разрешить эти права?</string>
+    <string name="InuPluginsReviewAllow">Разрешить</string>
 </resources>

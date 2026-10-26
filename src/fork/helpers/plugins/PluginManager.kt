@@ -470,12 +470,31 @@ object PluginManager {
      * The source is the plugin's to rewrite (`unsafe.fs` reaches the store), so grants run from what
      * the user consented to, never from the file alone.
      */
-    private fun unconsentedGrants(plugin: Plugin): String? {
+    private fun unconsentedGrants(plugin: Plugin): String? =
+        unreviewedGrants(plugin)?.let { formatString(R.string.InuPluginsErrorUnconsentedGrants, it) }
+
+    private fun unreviewedGrants(plugin: Plugin): String? {
         val consented = plugin.grants
         val beyond = if (consented == null) sortedGrants(plugin.manifest.grants) else findGrantsBeyond(consented, plugin.manifest.grants)
         if (beyond.isEmpty()) return null
-        val listed = beyond.joinToString(", ") { (name, scopes) -> if (scopes == null) name else "$name(${scopes.joinToString(",")})" }
-        return formatString(R.string.InuPluginsErrorUnconsentedGrants, listed)
+        return beyond.joinToString(", ") { (name, scopes) -> if (scopes == null) name else "$name(${scopes.joinToString(",")})" }
+    }
+
+    class PendingReview(val plugin: Plugin, val grants: String)
+
+    /** ui thread; plugins whose file asks for more than the user consented to, for example after an update */
+    fun pendingReviews(): List<PendingReview> =
+        plugins().mapNotNull { plugin -> unreviewedGrants(plugin)?.let { PendingReview(plugin, it) } }
+
+    /** ui thread; the user confirmed the listed grants, so they run from what the file asks for now */
+    fun approveReviews(reviews: List<PendingReview>) {
+        for (review in reviews) {
+            val plugin = review.plugin
+            val manifest = runCatching { PluginManifestParser.parseOrNull(plugin.file.readText()) }.getOrNull() ?: plugin.manifest
+            plugin.grants = manifest.grants
+        }
+        PluginStore.persist(plugins)
+        for (review in reviews) reload(review.plugin)
     }
 
     /** an unknown scope is a typo that narrowing would hide. unknown grant names stay ignored */
