@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 11:31:53 +0200
+Subject: Delete single entries from the settings search history with a long tap
+
+---
+ .../java/org/telegram/ui/ProfileActivity.java | 23 +++++++++++++++++++
+ .../org/telegram/ui/SettingsActivity.java     |  4 ++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -15439,6 +15439,29 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             MessagesController.getGlobalMainSettings().edit().putStringSet("settingsSearchRecent2", toSave).commit();
+         }
+ 
++        public boolean inu_removeRecent(Object object) {
++            if (!recentSearches.remove(object)) {
++                return false;
++            }
++            LinkedHashSet<String> toSave = new LinkedHashSet<>();
++            for (int a = 0, N = recentSearches.size(); a < N; a++) {
++                Object o = recentSearches.get(a);
++                if (o instanceof SearchResult) {
++                    ((SearchResult) o).num = a;
++                } else if (o instanceof MessagesController.FaqSearchResult) {
++                    ((MessagesController.FaqSearchResult) o).num = a;
++                }
++                toSave.add(o.toString());
++            }
++            MessagesController.getGlobalMainSettings().edit().putStringSet("settingsSearchRecent2", toSave).commit();
++            notifyDataSetChanged();
++            return true;
++        }
++
++        public boolean inu_isRecent(Object object) {
++            return !searchWas && recentSearches.contains(object);
++        }
++
+         public void clearRecent() {
+             recentSearches.clear();
+             MessagesController.getGlobalMainSettings().edit().remove("settingsSearchRecent2").commit();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -959,6 +959,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+             return true;
+         }
+ 
++        if (item.instanceOf(SettingsSearchCell.Factory.class) && search.inu_isRecent(item.object)) {
++            desu.inugram.helpers.SettingsSearchHelper.showRecentOptions(this, view, search, item.object, listView);
++            return true;
++        }
+         if (item.instanceOf(SettingsSearchCell.Factory.class)) {
+             String link = null;
+             if (item.object instanceof ProfileActivity.SearchAdapter.SearchResult) {
