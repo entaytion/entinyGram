@@ -16,13 +16,18 @@ class PluginLog private constructor(val tag: String) {
 
     fun w(area: String, message: String, error: Throwable? = null) {
         Log.w(tag, "[$area] $message", error)
+        PluginCrashLog.record(tag, "W", "[$area] $message" + errorText(error))
     }
 
     fun e(area: String, message: String, error: Throwable? = null) {
         Log.e(tag, "[$area] $message", error)
+        PluginCrashLog.record(tag, "E", "[$area] $message" + errorText(error))
     }
 
+    private fun errorText(error: Throwable?): String = if (error == null) "" else "\n" + Log.getStackTraceString(error)
+
     fun console(level: Int, message: String) {
+        if (level >= 2) PluginCrashLog.record(tag, if (level == 2) "W" else "E", message)
         val priority = when (level) {
             2 -> Log.WARN
             3, QuickJs.LEVEL_FAULT -> Log.ERROR

@@ -2155,4 +2155,7 @@
     <string name="InuMessageHidden">Message hidden</string>
     <string name="InuRestoreHiddenMessages">Show hidden messages</string>
     <string name="InuNoHiddenMessages">No hidden messages here</string>
+    <string name="InuPluginCrashTitle">A plugin crashed</string>
+    <string name="InuPluginCrashMessage">Plugins are turned off for this run. Plugin: %1$s</string>
+    <string name="InuPluginCrashCopy">Copy log</string>
 </resources>

@@ -216,6 +216,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **next audio controls**: don't preload the next track, don't auto-play the next music or voice message - *voice auto-play inspired by [ForkGram](https://github.com/forkgram/TelegramAndroid)*
 - 📡 **bookmarks**: bookmark messages from the message menu (up to 500 per chat), see a star next to the time and browse them by chat in a separate screen with tabs - *inspired by NagramX*
 - 📡 **proxy in menus**: hide the proxy entry in the dialogs menu, optional proxy settings entry in the chat menu
+- 📡 **plugin crash report**: after a plugin crash a dialog shows which plugin failed and the log, with a copy button
 - 📡 **group entinyGram menu items**: toggle in message menu order to collapse entinyGram-specific items into a single "entinyGram" submenu
 - 📡 **plugin catalog**: the @entinyGramPlugins repository is built in and cannot be removed, a plugin that needs the SDK installs it automatically, plugins are split into the developer's and others' with sorting, and plugin pages show permissions, dependencies and version history
 

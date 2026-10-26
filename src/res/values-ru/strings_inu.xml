@@ -2114,4 +2114,7 @@
     <string name="InuMessageHidden">Сообщение скрыто</string>
     <string name="InuRestoreHiddenMessages">Показать скрытые сообщения</string>
     <string name="InuNoHiddenMessages">Здесь нет скрытых сообщений</string>
+    <string name="InuPluginCrashTitle">Плагин упал</string>
+    <string name="InuPluginCrashMessage">Плагины отключены на этот запуск. Плагин: %1$s</string>
+    <string name="InuPluginCrashCopy">Скопировать лог</string>
 </resources>

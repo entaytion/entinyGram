@@ -229,6 +229,7 @@ object InuHooks {
         desu.inugram.helpers.security.GhostHelper.syncPresence(org.telegram.messenger.UserConfig.selectedAccount)
         // #if PLUGINS
         PluginManager.onAppInteractive()
+        desu.inugram.helpers.plugins.PluginCrashDialog.maybeShow(launchActivity)
         // #endif
     }
 

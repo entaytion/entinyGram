@@ -202,13 +202,14 @@ object PluginManager {
     private fun runPass(wanted: (Plugin) -> Boolean) {
         if (!guard.startPass()) {
             PluginLog.HOST.w("manager", "safe mode (${guard.reason}); skipping plugins")
+            guard.reason?.let { if (it != BootGuard.Reason.FORCED) PluginCrashLog.markReport(it.name, guard.culprit) }
             return
         }
         for (plugin in plugins()) {
             // arming is a durable write
             if (!wanted(plugin) || plugin.running) continue
             watchCrashes()
-            guard.guardPlugin { start(plugin) }
+            guard.guardPlugin(plugin.manifest.name) { start(plugin) }
         }
     }
 
@@ -233,6 +234,7 @@ object PluginManager {
     fun onEngineThreadError(e: Throwable) {
         PluginLog.HOST.e("manager", "uncaught on the plugin thread, stopping every plugin", e)
         if (!guard.enterSafeMode(BootGuard.Reason.HOST_ERROR)) return
+        PluginCrashLog.markReport(BootGuard.Reason.HOST_ERROR.name, null)
         for (plugin in plugins()) stop(plugin)
         scratch?.let { stop(it) }
         notifyChanged()

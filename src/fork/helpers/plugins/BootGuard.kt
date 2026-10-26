@@ -34,6 +34,11 @@ class BootGuard(
 
     private var decided = false
 
+    /** the plugin that was starting when the previous process died */
+    @Volatile
+    var culprit: String? = null
+        private set
+
     /** 0 until this process first runs plugin code */
     @Volatile
     private var firstStartAt = 0L
@@ -48,6 +53,7 @@ class BootGuard(
         val windowStart = runCatching { File(dir, WINDOW).readText().trim().toLong() }.getOrNull()
         File(dir, WINDOW).delete()
         if (windowStart != null && diedOfNativeCrashSince(windowStart)) write(CRASHES, (readCrashes() + 1).toString())
+        culprit = runCatching { File(dir, STARTING).readText() }.getOrNull()?.takeIf { it.isNotBlank() }
         reason = when {
             File(dir, FORCED).exists() -> Reason.FORCED
             File(dir, STARTING).exists() -> Reason.CRASHED
@@ -67,12 +73,12 @@ class BootGuard(
         return true
     }
 
-    fun guardPlugin(body: () -> Unit) {
+    fun guardPlugin(name: String? = null, body: () -> Unit) {
         if (firstStartAt == 0L) {
             firstStartAt = uptimeMillis()
             write(WINDOW, wallMillis().toString())
         }
-        write(STARTING, "")
+        write(STARTING, name.orEmpty())
         try {
             body()
         } finally {

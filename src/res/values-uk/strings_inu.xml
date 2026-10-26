@@ -2159,4 +2159,7 @@
     <string name="InuMessageHidden">Повідомлення приховано</string>
     <string name="InuRestoreHiddenMessages">Показати приховані повідомлення</string>
     <string name="InuNoHiddenMessages">Тут немає прихованих повідомлень</string>
+    <string name="InuPluginCrashTitle">Плагін впав</string>
+    <string name="InuPluginCrashMessage">Плагіни вимкнено на цей запуск. Плагін: %1$s</string>
+    <string name="InuPluginCrashCopy">Копіювати лог</string>
 </resources>
