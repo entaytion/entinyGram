@@ -81,7 +81,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **content protection & forward bypass**:
   - save any story to gallery, or auto-save the ones you view
   - copy and forward from protected chats and channels
-    - background download with progress, cancel and a confirm for huge batches - *idea from [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
+  - background download with progress, cancel and a confirm for huge batches - *idea from [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
+  - copies are sent by server reference when possible, with no download or re-upload - *idea from [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
   - forward as your own message, without the "Forwarded from" header
   - forward, re-send or share saved view-once media
 - 📡 **whole-chat translation without Premium**

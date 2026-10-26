@@ -125,7 +125,12 @@ object RestrictedFeaturesHelper {
         val batch = ArrayList(fits)
         if (batch.isEmpty()) return
         restrictedForwardQueue.postRunnable {
-            val sendable = batch
+            val sendable = if (payStars == 0L && suggest == null) {
+                RestrictedReferenceSender.sendLeading(account, batch, did, notify, scheduleDate, scheduleRepeatPeriod, threadMsg, mono, hideCaption)
+            } else {
+                batch
+            }
+            if (sendable.isEmpty()) return@postRunnable
             val temporaryFiles = ArrayList<File>()
             val files = awaitRestrictedMedia(account, sendable, temporaryFiles)
             val delivered = sendable.count { !needsMediaReupload(it) || files[it] != null }
