@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 14:13:26 +0200
+Subject: Faster downloads also lift the byte budget and connections for non-premium accounts
+
+---
+ .../main/java/org/telegram/messenger/FileLoadOperation.java  | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+@@ -850,8 +850,9 @@ public class FileLoadOperation {
+                 totalBytesCount > 0 && key == null && !encryptFile && !isPreloadVideoOperation && preloadPrefixSize == 0;
+         if (useDownloadByteBudget) {
+             boolean premium = UserConfig.getInstance(currentAccount).isPremium();
+-            downloadConnectionsCount = premium ? ConnectionsManager.DownloadConnectionsCount : 2;
+-            int byteBudget = (premium ? 16 : 2) * 1024 * 1024;
++            boolean boosted = premium || desu.inugram.InuConfig.FASTER_DOWNLOADS.getValue();
++            downloadConnectionsCount = boosted ? ConnectionsManager.DownloadConnectionsCount : 2;
++            int byteBudget = (boosted ? 16 : 2) * 1024 * 1024;
+             currentMaxDownloadRequests = byteBudget / currentDownloadChunkSize;
+         }
+     }

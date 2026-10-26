@@ -605,3 +605,4 @@ entiny/ui/rtl-gradient-ellipsize.patch
 entiny/ui/dialogs-menu-proxy.patch
 entiny/ui/safe-editable-spans.patch
 entiny/settings/settings-search-history.patch
+entiny/media/faster-downloads-byte-budget.patch

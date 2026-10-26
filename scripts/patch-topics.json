@@ -190,6 +190,7 @@
   "simple-text-view-right-slot": "ui",
   "rtl-gradient-ellipsize": "ui",
   "dialogs-menu-proxy": "ui",
+  "faster-downloads-byte-budget": "media",
   "safe-editable-spans": "ui",
   "settings-search-history": "settings",
   "small-gifs": "media",
