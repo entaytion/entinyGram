@@ -89,7 +89,7 @@ object PluginIcons {
     private val svgMasks = LruCache<String, Bitmap>(SVG_CACHE_SIZE)
     private val boundSpecs = WeakHashMap<RLottieImageView, String>()
     private val emojiBindings = WeakHashMap<RLottieImageView, WeakReference<EmojiBinding>>()
-    private val avatarBindings = WeakHashMap<RLottieImageView, AvatarBinding>()
+    private val avatarBindings = WeakHashMap<RLottieImageView, WeakReference<AvatarBinding>>()
 
     /** `p<account>:<dialogId>`; account -1 is the selected one, the dialog id is the plugin's marked form */
     internal fun parseAvatarSpec(spec: String): Pair<Int, Long>? {
@@ -227,7 +227,7 @@ object PluginIcons {
         if (spec[0] == 'p') {
             val (accountId, dialogId) = parseAvatarSpec(spec) ?: return false
             val binding = AvatarBinding(view, AvatarIconDrawable(view, accountId, dialogId, AndroidUtilities.dp(sizeDp)))
-            avatarBindings[view] = binding
+            avatarBindings[view] = WeakReference(binding)
             view.setImageDrawable(binding.drawable)
             binding.attach()
             return true
@@ -280,7 +280,7 @@ object PluginIcons {
     fun clearIcon(view: RLottieImageView) {
         boundSpecs.remove(view)
         emojiBindings.remove(view)?.get()?.dispose()
-        avatarBindings.remove(view)?.dispose()
+        avatarBindings.remove(view)?.get()?.dispose()
         view.stopAnimation()
         view.clearAnimationDrawable()
     }

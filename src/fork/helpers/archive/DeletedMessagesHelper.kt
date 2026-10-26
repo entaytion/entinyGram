@@ -79,11 +79,7 @@ object DeletedMessagesHelper {
         if (purgeArchive) {
             synchronized(ArchiveCache.cacheLock) {
                 val ids = ArchiveCache.deletedMessageIds.get(account.toLong())?.get(dialogId)
-                val dates = ArchiveCache.deletedMessageDates.get(account.toLong())?.get(dialogId)
-                for (msgId in msgIds) {
-                    ids?.remove(msgId)
-                    dates?.remove(msgId.toLong())
-                }
+                for (msgId in msgIds) ids?.remove(msgId)
             }
         }
         storage.storageQueue.postRunnable {
@@ -99,11 +95,9 @@ object DeletedMessagesHelper {
                 if (purgeArchive) {
                     synchronized(ArchiveCache.cacheLock) {
                         val ids = ArchiveCache.deletedMessageIds.get(account.toLong())?.get(dialogId)
-                        val dates = ArchiveCache.deletedMessageDates.get(account.toLong())?.get(dialogId)
                         val edits = ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)
                         for (msgId in msgIds) {
                             ids?.remove(msgId)
-                            dates?.remove(msgId.toLong())
                             edits?.remove(msgId.toLong())
                             ArchiveCache.editHistoryIds.get(account.toLong())?.get(dialogId)?.remove(msgId)
                             ArchiveCache.deletedMessageMediaPaths.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
@@ -494,22 +488,10 @@ object DeletedMessagesHelper {
             }
             var set = dialogs.get(dialogId)
             if (set == null) {
-                set = HashSet()
+                set = ArchiveCache.DeletedIdSet()
                 dialogs.put(dialogId, set)
             }
-            set.add(msgId)
-
-            var dateAcc = ArchiveCache.deletedMessageDates.get(account.toLong())
-            if (dateAcc == null) {
-                dateAcc = LongSparseArray()
-                ArchiveCache.deletedMessageDates.put(account.toLong(), dateAcc)
-            }
-            var dateDialog = dateAcc.get(dialogId)
-            if (dateDialog == null) {
-                dateDialog = LongSparseArray()
-                dateAcc.put(dialogId, dateDialog)
-            }
-            if (dateDialog.get(msgId.toLong()) == null) dateDialog.put(msgId.toLong(), deletionTime)
+            set.add(msgId, deletionTime)
         }
 
         val storage = MessagesStorage.getInstance(account) ?: return
@@ -668,8 +650,8 @@ object DeletedMessagesHelper {
     fun getDeletedDate(account: Int, dialogId: Long, msgId: Int): Long {
         ArchiveCache.ensureAccountLoaded(account)
         return synchronized(ArchiveCache.cacheLock) {
-            val accMap = ArchiveCache.deletedMessageDates.get(account.toLong()) ?: return@synchronized 0L
-            accMap.get(dialogId)?.get(msgId.toLong()) ?: 0L
+            val accMap = ArchiveCache.deletedMessageIds.get(account.toLong()) ?: return@synchronized 0L
+            accMap.get(dialogId)?.dateOf(msgId) ?: 0L
         }
     }
 

@@ -22,8 +22,7 @@ object ArchiveCache {
         }
     }
 
-    internal val deletedMessageIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
-    internal val deletedMessageDates = LongSparseArray<LongSparseArray<LongSparseArray<Long>>>()
+    internal val deletedMessageIds = LongSparseArray<LongSparseArray<DeletedIdSet>>()
     // entiny: keep in-memory media paths for synchronous fallback in FileLoader without SQLite queries
     internal val deletedMessageMediaPaths = LongSparseArray<LongSparseArray<LongSparseArray<String>>>()
     private val loadedAccounts = HashSet<Int>()
@@ -34,7 +33,127 @@ object ArchiveCache {
     internal val editHistoryCache = LongSparseArray<LongSparseArray<LongSparseArray<ArrayList<EditHistoryHelper.EditEntry>>>>()
 
     // entiny: presence index avoids UI-thread SQLite queries during message layout
-    internal val editHistoryIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
+    internal val editHistoryIds = LongSparseArray<LongSparseArray<DeletedIdSet>>()
+
+    /** sorted ids with deletion dates: ~12 bytes per entry instead of a boxed HashSet plus two sparse maps */
+    internal class DeletedIdSet {
+        private var ids = IntArray(16)
+        private var dates = LongArray(16)
+        private var count = 0
+
+        fun size(): Int = count
+
+        private fun indexOf(id: Int): Int {
+            var lo = 0
+            var hi = count - 1
+            while (lo <= hi) {
+                val mid = (lo + hi) ushr 1
+                val v = ids[mid]
+                when {
+                    v < id -> lo = mid + 1
+                    v > id -> hi = mid - 1
+                    else -> return mid
+                }
+            }
+            return -(lo + 1)
+        }
+
+        fun contains(id: Int): Boolean = indexOf(id) >= 0
+
+        fun dateOf(id: Int): Long {
+            val pos = indexOf(id)
+            return if (pos >= 0) dates[pos] else 0L
+        }
+
+        fun add(id: Int, date: Long): Boolean {
+            val pos = indexOf(id)
+            if (pos >= 0) {
+                if (date > 0) dates[pos] = date
+                return false
+            }
+            val at = -(pos + 1)
+            ensure(count + 1)
+            if (at < count) {
+                System.arraycopy(ids, at, ids, at + 1, count - at)
+                System.arraycopy(dates, at, dates, at + 1, count - at)
+            }
+            ids[at] = id
+            dates[at] = date
+            count++
+            return true
+        }
+
+        fun remove(id: Int): Boolean {
+            val pos = indexOf(id)
+            if (pos < 0) return false
+            if (pos < count - 1) {
+                System.arraycopy(ids, pos + 1, ids, pos, count - pos - 1)
+                System.arraycopy(dates, pos + 1, dates, pos, count - pos - 1)
+            }
+            count--
+            return true
+        }
+
+        fun addAll(other: DeletedIdSet) {
+            if (other.count == 0) return
+            if (count == 0) {
+                ids = other.ids.copyOf(other.count)
+                dates = other.dates.copyOf(other.count)
+                count = other.count
+                return
+            }
+            val mergedIds = IntArray(count + other.count)
+            val mergedDates = LongArray(count + other.count)
+            var i = 0
+            var j = 0
+            var k = 0
+            while (i < count && j < other.count) {
+                val a = ids[i]
+                val b = other.ids[j]
+                when {
+                    a < b -> {
+                        mergedIds[k] = a
+                        mergedDates[k] = dates[i]
+                        i++
+                    }
+                    a > b -> {
+                        mergedIds[k] = b
+                        mergedDates[k] = other.dates[j]
+                        j++
+                    }
+                    else -> {
+                        mergedIds[k] = a
+                        mergedDates[k] = if (dates[i] > 0) dates[i] else other.dates[j]
+                        i++
+                        j++
+                    }
+                }
+                k++
+            }
+            while (i < count) {
+                mergedIds[k] = ids[i]
+                mergedDates[k] = dates[i]
+                i++
+                k++
+            }
+            while (j < other.count) {
+                mergedIds[k] = other.ids[j]
+                mergedDates[k] = other.dates[j]
+                j++
+                k++
+            }
+            ids = mergedIds
+            dates = mergedDates
+            count = k
+        }
+
+        private fun ensure(capacity: Int) {
+            if (capacity <= ids.size) return
+            val grown = maxOf(capacity, ids.size + (ids.size shr 1))
+            ids = ids.copyOf(grown)
+            dates = dates.copyOf(grown)
+        }
+    }
 
     private const val SHADOW_CACHE_MAX_PER_ACCOUNT = 500
 
@@ -58,10 +177,9 @@ object ArchiveCache {
     private val loadFailedAt = HashMap<Int, Long>()
 
     private class ArchiveIndex(val generation: Long) {
-        val deleted = LongSparseArray<HashSet<Int>>()
-        val dates = LongSparseArray<LongSparseArray<Long>>()
+        val deleted = LongSparseArray<DeletedIdSet>()
         val media = LongSparseArray<LongSparseArray<String>>()
-        val edits = LongSparseArray<HashSet<Int>>()
+        val edits = LongSparseArray<DeletedIdSet>()
         var lastDeletedRow = 0L
         var lastEditRow = 0L
         var deletedDone = false
@@ -97,8 +215,7 @@ object ArchiveCache {
             if (!index.deletedDone) {
                 val count = InuDatabaseHelper.readDeletedIndexPage(db, index.lastDeletedRow, LOAD_PAGE_ROWS) { rowId, dialogId, msgId, date, mediaPath ->
                     index.lastDeletedRow = rowId
-                    (index.deleted.get(dialogId) ?: HashSet<Int>().also { index.deleted.put(dialogId, it) }).add(msgId)
-                    if (date > 0) (index.dates.get(dialogId) ?: LongSparseArray<Long>().also { index.dates.put(dialogId, it) }).put(msgId.toLong(), date)
+                    (index.deleted.get(dialogId) ?: DeletedIdSet().also { index.deleted.put(dialogId, it) }).add(msgId, date)
                     if (mediaPath != null) (index.media.get(dialogId) ?: LongSparseArray<String>().also { index.media.put(dialogId, it) }).put(msgId.toLong(), mediaPath)
                 }
                 index.rows += count
@@ -107,7 +224,7 @@ object ArchiveCache {
             } else {
                 val count = InuDatabaseHelper.readEditIndexPage(db, index.lastEditRow, LOAD_PAGE_ROWS) { rowId, dialogId, msgId ->
                     index.lastEditRow = rowId
-                    (index.edits.get(dialogId) ?: HashSet<Int>().also { index.edits.put(dialogId, it) }).add(msgId)
+                    (index.edits.get(dialogId) ?: DeletedIdSet().also { index.edits.put(dialogId, it) }).add(msgId, 0L)
                 }
                 index.rows += count
                 finished = count < LOAD_PAGE_ROWS
@@ -126,7 +243,6 @@ object ArchiveCache {
     private fun finishIndex(account: Int, index: ArchiveIndex) {
         val generation = index.generation
         val deletedArray = index.deleted
-        val dateArray = index.dates
         val editArray = index.edits
         val mediaPathArray = index.media
         android.util.Log.d(TAG, "archive index: ${index.rows} rows, ${index.busyMs} ms on storage queue")
@@ -157,24 +273,6 @@ object ArchiveCache {
                             existingDialogs.put(k, v)
                         } else {
                             targetSet.addAll(v)
-                        }
-                    }
-                }
-
-                var existingDates = deletedMessageDates.get(account.toLong())
-                if (existingDates == null) {
-                    deletedMessageDates.put(account.toLong(), dateArray)
-                } else {
-                    for (i in 0 until dateArray.size()) {
-                        val k = dateArray.keyAt(i)
-                        val v = dateArray.valueAt(i)
-                        val targetDates = existingDates.get(k)
-                        if (targetDates == null) {
-                            existingDates.put(k, v)
-                        } else {
-                            for (j in 0 until v.size()) {
-                                targetDates.put(v.keyAt(j), v.valueAt(j))
-                            }
                         }
                     }
                 }
@@ -237,7 +335,6 @@ object ArchiveCache {
                     loadingAccounts.remove(account)
                     deletedMessageIds.remove(account.toLong())
                     deletedMessageMediaPaths.remove(account.toLong())
-                    deletedMessageDates.remove(account.toLong())
                     editHistoryCache.remove(account.toLong())
                     editHistoryIds.remove(account.toLong())
                     shadowMessageCache.remove(account.toLong())
@@ -336,7 +433,6 @@ object ArchiveCache {
                     loadingAccounts.remove(account)
                     deletedMessageIds.remove(account.toLong())
                     deletedMessageMediaPaths.remove(account.toLong())
-                    deletedMessageDates.remove(account.toLong())
                     editHistoryCache.remove(account.toLong())
                     editHistoryIds.remove(account.toLong())
                     shadowMessageCache.remove(account.toLong())

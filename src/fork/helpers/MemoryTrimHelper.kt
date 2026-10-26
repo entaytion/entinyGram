@@ -9,7 +9,6 @@ import android.os.SystemClock
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ImageLoader
-import org.telegram.messenger.Utilities
 
 object MemoryTrimHelper {
     private const val BACKGROUND_DELAY_MS = 45_000L
@@ -57,6 +56,5 @@ object MemoryTrimHelper {
         if (now - lastPurge < MIN_INTERVAL_MS) return
         lastPurge = now
         ImageLoader.getInstance().clearMemory()
-        Utilities.globalQueue.postRunnable { Runtime.getRuntime().gc() }
     }
 }

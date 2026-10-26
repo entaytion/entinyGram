@@ -64,7 +64,7 @@ object InuConfig {
             // entiny: legacy ghost_mode key resurfaced after migration -- drop it without affecting sub-toggles
             if (prefs.contains("ghost_mode")) {
                 logGhostMigration("skipped (already migrated), dropping resurfaced legacy ghost_mode key")
-                prefs.edit(commit = true) { remove("ghost_mode") }
+                prefs.edit(commit = false) { remove("ghost_mode") }
             }
             return
         }
@@ -79,9 +79,11 @@ object InuConfig {
         } else {
             logGhostMigration("skipped: no legacy ghost_mode=true (contains=${prefs.contains("ghost_mode")})")
         }
-        // entiny: record migration run first, then clear legacy key; prevents double-stomp if process dies
-        GHOST_MASTER_FLAG_MIGRATED.value = true
-        if (prefs.contains("ghost_mode")) prefs.edit(commit = true) { remove("ghost_mode") }
+        // entiny: record migration run and clear legacy key in one async batch; keeps start-up fsync-free
+        prefs.edit(commit = false) {
+            GHOST_MASTER_FLAG_MIGRATED.unsafeSet(true, this)
+            remove("ghost_mode")
+        }
     }
 
     // entiny: ghost mode enabled default depends on whether any sub-toggles were already active
@@ -114,7 +116,7 @@ object InuConfig {
             SAVE_VIEW_ONCE_MEDIA.value = true
             SAVE_TIMED_MESSAGES.value = true
         }
-        prefs.edit(commit = true) {
+        prefs.edit(commit = false) {
             remove("save_self_destruct")
             remove("save_secret_chat_content")
         }
@@ -332,7 +334,7 @@ object InuConfig {
             if (prefs.contains(key)) return prefs.getInt(key, default)
             if (!prefs.contains("disable_predictive_back")) return default
             val migrated = if (prefs.getBoolean("disable_predictive_back", true)) OFF else STOCK
-            prefs.edit(commit = true) {
+            prefs.edit(commit = false) {
                 putInt(key, migrated)
                 remove("disable_predictive_back")
             }
@@ -2064,7 +2066,7 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
             if (prefs.contains(key)) return prefs.getInt(key, default)
             if (!prefs.contains("ghost_hide_online")) return default
             val migrated = if (prefs.getBoolean("ghost_hide_online", true)) HIDDEN else NORMAL
-            prefs.edit(commit = true) {
+            prefs.edit(commit = false) {
                 putInt(key, migrated)
                 remove("ghost_hide_online")
             }

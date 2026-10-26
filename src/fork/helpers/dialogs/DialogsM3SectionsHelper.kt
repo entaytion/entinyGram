@@ -93,8 +93,11 @@ object DialogsM3SectionsHelper {
         val sec = sectionOf(adapter, position)
         val first = sectionOf(adapter, position - 1) != sec
         val last = sectionOf(adapter, position + 1) != sec
-        applied[view] = (if (first) 1 else 0) or (if (last) 2 else 0)
-        view.background = cardBackground(first, last)
+        val code = (if (first) 1 else 0) or (if (last) 2 else 0)
+        if (applied[view] != code || view.background !is InsetDrawable) {
+            applied[view] = code
+            view.background = cardBackground(first, last)
+        }
         view.useSeparator = false
         view.fullSeparator = false
         val start = if (sideMarginDp(view.collapsed) == 0f) 11 else 8

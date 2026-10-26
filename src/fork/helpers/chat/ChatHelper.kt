@@ -118,6 +118,7 @@ import org.telegram.ui.Components.URLSpanUserMention
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import java.util.UUID
+import java.util.WeakHashMap
 import kotlin.math.ceil
 
 object ChatHelper {
@@ -238,9 +239,15 @@ object ChatHelper {
         return width
     }
 
+    private class CachedTimePrefix(val key: Int, val text: CharSequence)
+
+    private val timePrefixCache = WeakHashMap<MessageObject, CachedTimePrefix>()
+
     @JvmStatic
     fun timePrefix(msg: MessageObject?, time: CharSequence?, edited: Boolean = false): CharSequence? {
         if (time == null || msg == null) return time
+        val key = 31 * (31 * time.hashCode() + timeAdditionsHash(msg)) + (if (edited) 1 else 0)
+        timePrefixCache[msg]?.let { if (it.key == key) return it.text }
         val sb = SpannableStringBuilder()
         TranslateHelper.appendTimePrefix(sb, msg)
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
@@ -269,7 +276,9 @@ object ChatHelper {
             sb.append(LocaleController.formatString(R.string.InuReadAt, LocaleController.formatDateTime(it.toLong(), true)))
             sb.append(" ")
         }
-        return if (sb.isEmpty()) time else sb.append(time)
+        val result = if (sb.isEmpty()) time else sb.append(time)
+        timePrefixCache[msg] = CachedTimePrefix(key, result)
+        return result
     }
 
     @JvmStatic

@@ -11,6 +11,7 @@ import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.BulletinFactory
+import java.lang.ref.WeakReference
 
 object SelfMessageWipeHelper {
 
@@ -34,16 +35,16 @@ object SelfMessageWipeHelper {
             .createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.InuDeleteMyMessagesStarted))
             .show()
         deletedSoFar.remove(dialogId)
-        searchNextPage(fragment, currentAccount, dialogId, 0)
+        searchNextPage(WeakReference(fragment), currentAccount, dialogId, 0)
     }
 
     private val deletedSoFar = HashMap<Long, Int>()
 
-    private fun searchNextPage(fragment: BaseFragment, currentAccount: Int, dialogId: Long, offsetId: Int) {
+    private fun searchNextPage(fragmentRef: WeakReference<BaseFragment>, currentAccount: Int, dialogId: Long, offsetId: Int) {
         val controller = MessagesController.getInstance(currentAccount)
         val peer = controller.getInputPeer(dialogId)
         if (peer == null) {
-            finish(fragment, dialogId)
+            finish(fragmentRef, dialogId)
             return
         }
         val req = TLRPC.TL_messages_search()
@@ -58,7 +59,7 @@ object SelfMessageWipeHelper {
             AndroidUtilities.runOnUIThread {
                 if (error != null || response !is TLRPC.messages_Messages) {
                     FileLog.e("SelfMessageWipeHelper: search failed for $dialogId: ${error?.text}")
-                    finish(fragment, dialogId)
+                    finish(fragmentRef, dialogId)
                     return@runOnUIThread
                 }
                 controller.putUsers(response.users, false)
@@ -73,7 +74,7 @@ object SelfMessageWipeHelper {
                 }
 
                 if (ids.isEmpty()) {
-                    finish(fragment, dialogId)
+                    finish(fragmentRef, dialogId)
                     return@runOnUIThread
                 }
 
@@ -81,16 +82,17 @@ object SelfMessageWipeHelper {
                 controller.deleteMessages(ids, null, null, dialogId, 0, true, ChatActivity.MODE_DEFAULT)
 
                 if (response.messages.size < PAGE_SIZE) {
-                    finish(fragment, dialogId)
+                    finish(fragmentRef, dialogId)
                 } else {
-                    searchNextPage(fragment, currentAccount, dialogId, minId)
+                    searchNextPage(fragmentRef, currentAccount, dialogId, minId)
                 }
             }
         }
     }
 
-    private fun finish(fragment: BaseFragment, dialogId: Long) {
+    private fun finish(fragmentRef: WeakReference<BaseFragment>, dialogId: Long) {
         val count = deletedSoFar.remove(dialogId) ?: 0
+        val fragment = fragmentRef.get() ?: return
         if (count > 0) {
             BulletinFactory.of(fragment)
                 .createSimpleBulletin(

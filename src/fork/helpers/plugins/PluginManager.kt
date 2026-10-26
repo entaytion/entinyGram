@@ -181,6 +181,8 @@ object PluginManager {
         if (booted || ApplicationLoader.applicationContext == null) return
         booted = true
         if (!isEngineEnabled()) return
+        // entiny: no installs means nothing to register, so skip the main-thread wait entirely
+        if (PluginStore.dir.list().isNullOrEmpty()) return
         val loaded = CountDownLatch(1)
         EngineDispatch.scheduler.postRunnable {
             try {

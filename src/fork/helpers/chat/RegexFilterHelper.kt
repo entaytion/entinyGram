@@ -24,7 +24,8 @@ object RegexFilterHelper {
         val reversed: Boolean,
     )
 
-    private const val MATCH_CACHE_PER_DIALOG = 20_000
+    private const val MATCH_CACHE_PER_DIALOG = 4_000
+    private const val MATCH_CACHE_DIALOGS = 8
     private const val OLD_DEFAULT_PATTERN = "(?i)(реклама|промокод|казино|знижка|ставк|підпишись|referral|crypto|binance|buy now)"
 
     private data class MatchCacheEntry(val textHash: Int, val matched: Boolean)
@@ -38,7 +39,9 @@ object RegexFilterHelper {
     @Volatile private var chatFilters: Map<Long, List<FilterEntry>>? = null
     @Volatile private var exclusions: Map<Long, Set<String>>? = null
     private val compiledPatterns = HashMap<String, Pattern?>()
-    private val matchCache = HashMap<Long, BoundedCache>()
+    private val matchCache = object : LinkedHashMap<Long, BoundedCache>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Long, BoundedCache>?): Boolean = size > MATCH_CACHE_DIALOGS
+    }
 
     @JvmStatic
     fun isEnabled(): Boolean = InuConfig.REGEX_FILTER_ENABLED.value

@@ -81,8 +81,8 @@ object EditHistoryHelper {
             if (list.any { it.timestamp == kept.timestamp }) return
             list.add(kept)
             val ids = ArchiveCache.editHistoryIds.get(account.toLong())
-                ?: LongSparseArray<HashSet<Int>>().also { ArchiveCache.editHistoryIds.put(account.toLong(), it) }
-            (ids.get(dialogId) ?: HashSet<Int>().also { ids.put(dialogId, it) }).add(msgId)
+                ?: LongSparseArray<ArchiveCache.DeletedIdSet>().also { ArchiveCache.editHistoryIds.put(account.toLong(), it) }
+            (ids.get(dialogId) ?: ArchiveCache.DeletedIdSet().also { ids.put(dialogId, it) }).add(msgId, 0L)
         }
         val mediaCopy = if (copyMedia) ArchiveMediaHelper.planMediaCopy(account, source) else null
         val storage = MessagesStorage.getInstance(account) ?: return

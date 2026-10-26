@@ -310,13 +310,11 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
-    fun loadReadTimes(db: SQLiteDatabase): List<Triple<Long, Int, Int>> {
-        val list = ArrayList<Triple<Long, Int, Int>>()
-        val cursor = db.queryFinalized("SELECT dialog_id, max_id, read_at FROM inu_read_times ORDER BY dialog_id, max_id")
+    fun loadReadTimesForDialog(db: SQLiteDatabase, dialogId: Long): List<Pair<Int, Int>> {
+        val list = ArrayList<Pair<Int, Int>>()
+        val cursor = db.queryFinalized("SELECT max_id, read_at FROM inu_read_times WHERE dialog_id = ? ORDER BY max_id", dialogId)
         try {
-            while (cursor.next()) {
-                list.add(Triple(cursor.longValue(0), cursor.intValue(1), cursor.intValue(2)))
-            }
+            while (cursor.next()) list.add(cursor.intValue(0) to cursor.intValue(1))
         } finally {
             cursor.dispose()
         }
