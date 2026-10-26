@@ -2165,4 +2165,6 @@
     <string name="InuPluginsReviewPermissions">Review plugin permissions</string>
     <string name="InuPluginsReviewTitle">Allow these permissions?</string>
     <string name="InuPluginsReviewAllow">Allow</string>
+    <string name="InuAlwaysSendVideosHd">Always send videos in HD</string>
+    <string name="InuAlwaysSendVideosHdInfo">Picks the highest compression quality when sending videos, no matter the data saver setting.</string>
 </resources>

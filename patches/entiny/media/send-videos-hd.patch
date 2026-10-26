@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 26 Oct 2026 15:43:20 +0200
+Subject: Option to always send videos in HD
+
+---
+ .../main/java/org/telegram/messenger/SendMessagesHelper.java   | 2 +-
+ TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java   | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -12130,7 +12130,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+ 
+         int selectedCompression = Math.round(DownloadController.getInstance(UserConfig.selectedAccount).getMaxVideoBitrate() / (100f / compressionsCount));
+ 
+-        if (selectedCompression > compressionsCount) {
++        if (desu.inugram.InuConfig.ALWAYS_SEND_VIDEOS_HD.getValue() || selectedCompression > compressionsCount) {
+             selectedCompression = compressionsCount;
+         }
+         boolean needCompress = false;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -22196,6 +22196,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+     }
+ 
+     private int selectCompression() {
++        if (desu.inugram.InuConfig.ALWAYS_SEND_VIDEOS_HD.getValue() && compressionsCount > 1) {
++            return compressionsCount - 1;
++        }
+         //1GB
+         if (originalSize > 1024L * 1024L * 1000L) {
+             return compressionsCount - 1;

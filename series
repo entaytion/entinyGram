@@ -606,3 +606,4 @@ entiny/ui/dialogs-menu-proxy.patch
 entiny/ui/safe-editable-spans.patch
 entiny/settings/settings-search-history.patch
 entiny/media/faster-downloads-byte-budget.patch
+entiny/media/send-videos-hd.patch

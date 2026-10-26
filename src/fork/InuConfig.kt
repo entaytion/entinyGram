@@ -2001,6 +2001,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val FASTER_DOWNLOADS = BoolItem("faster_downloads", true)
 
     @JvmField
+    val ALWAYS_SEND_VIDEOS_HD = BoolItem("always_send_videos_hd", false)
+
+    @JvmField
     val FASTER_UPLOADS = BoolItem("faster_uploads", true)
 
     @JvmField

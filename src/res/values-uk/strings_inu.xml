@@ -2169,4 +2169,6 @@
     <string name="InuPluginsReviewPermissions">Перевірити дозволи плагінів</string>
     <string name="InuPluginsReviewTitle">Дозволити ці права?</string>
     <string name="InuPluginsReviewAllow">Дозволити</string>
+    <string name="InuAlwaysSendVideosHd">Завжди надсилати відео в HD</string>
+    <string name="InuAlwaysSendVideosHdInfo">Вибирає найвищу якість стиснення відео при надсиланні, незалежно від налаштувань економії трафіку.</string>
 </resources>
