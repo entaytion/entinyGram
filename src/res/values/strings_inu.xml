@@ -2167,4 +2167,6 @@
     <string name="InuPluginsReviewAllow">Allow</string>
     <string name="InuAlwaysSendVideosHd">Always send videos in HD</string>
     <string name="InuAlwaysSendVideosHdInfo">Picks the highest compression quality when sending videos, no matter the data saver setting.</string>
+    <string name="InuFontSyntheticBold">Thicken bold text</string>
+    <string name="InuFontSyntheticBoldInfo">Fakes bold when the font has no bold weight. Turn off to draw bold text with the font\'s own weight. Needs a restart.</string>
 </resources>

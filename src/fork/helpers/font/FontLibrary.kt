@@ -88,7 +88,9 @@ object FontLibrary {
                 (!pick.variable && pick.weight != targetWeight)
             // entiny: Telegram's bold is 500; fake-bold via style API when emphasis weight cannot be satisfied
             val fakeBold = !pick.variable && targetWeight >= 500 && pick.weight < targetWeight
-            val finalTf = if (needSynth && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val finalTf = if (fakeBold && !FontConfig.FONT_SYNTHETIC_BOLD.value) {
+                base
+            } else if (needSynth && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 try {
                     if (fakeBold) Typeface.create(base, if (targetItalic) Typeface.BOLD_ITALIC else Typeface.BOLD)
                     else Typeface.create(base, targetWeight, targetItalic)

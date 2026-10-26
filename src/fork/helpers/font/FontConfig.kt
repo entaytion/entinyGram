@@ -82,6 +82,7 @@ object FontConfig {
 
     val FONT = FontModeItem()
     val FONT_INCLUDE_SYSTEM = BoolItem("font_include_system", false)
+    val FONT_SYNTHETIC_BOLD = BoolItem("font_synthetic_bold", true)
     val MONO_FONT = StringItem("mono_font", "")
 
     // entiny: forces class initialization for InuConfig.load to populate items

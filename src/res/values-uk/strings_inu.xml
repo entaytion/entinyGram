@@ -2171,4 +2171,6 @@
     <string name="InuPluginsReviewAllow">Дозволити</string>
     <string name="InuAlwaysSendVideosHd">Завжди надсилати відео в HD</string>
     <string name="InuAlwaysSendVideosHdInfo">Вибирає найвищу якість стиснення відео при надсиланні, незалежно від налаштувань економії трафіку.</string>
+    <string name="InuFontSyntheticBold">Потовщувати жирний текст</string>
+    <string name="InuFontSyntheticBoldInfo">Імітує жирний шрифт, якщо в шрифті немає жирного накреслення. Вимкніть, щоб жирний текст малювався власною товщиною шрифту. Потрібен перезапуск.</string>
 </resources>
