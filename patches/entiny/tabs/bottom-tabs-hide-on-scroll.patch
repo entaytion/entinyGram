@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 27 Oct 2026 13:37:01 +0200
+Subject: [+] bottom tabs hide on scroll
+
+---
+ .../java/org/telegram/ui/DialogsActivity.java | 29 +++++++++++++++++--
+ 1 file changed, 26 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -2887,6 +2887,23 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         mainTabsActivityController = controller;
+     }
+ 
++    public void inu_setMainTabsVisible(boolean visible) {
++        if (mainTabsActivityController != null) mainTabsActivityController.setTabsVisible(visible);
++    }
++
++    private float inu_tabsHideFactor;
++
++    public void inu_setTabsHideFactor(float factor) {
++        if (inu_tabsHideFactor == factor) return;
++        inu_tabsHideFactor = factor;
++        checkUi_chatListViewPaddingsBottom();
++        updateFloatingButtonOffset();
++    }
++
++    public float inu_getTabsHideFactor() {
++        return inu_tabsHideFactor;
++    }
++
+ 
+     private NotificationCenter.ObserversGroup observersGroup;
+ 
+@@ -4687,7 +4704,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                                 } else {
+                                     goingDown = firstVisiblePosition > prevPosition;
+                                 }
+-                                if (changed && scrollUpdated && (goingDown || scrollingManually) && DialogsFabHelper.hideOnScroll()) {
++                                if (changed && scrollUpdated) {
++                                    desu.inugram.helpers.dialogs.MainTabsHelper.onDialogsScrolled(DialogsActivity.this, goingDown, firstVisiblePosition == 0);
++                                }
++                                if (changed && scrollUpdated && desu.inugram.helpers.dialogs.MainTabsHelper.tabsFollowScroll(this)) {
++                                    if (floatingButtonHidden) hideFloatingButton(false);
++                                } else if (changed && scrollUpdated && (goingDown || scrollingManually) && DialogsFabHelper.hideOnScroll()) {
+                                     hideFloatingButton(goingDown);
+                                 }
+                                 prevPosition = firstVisiblePosition;
+@@ -9184,7 +9206,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     public void updateFloatingButtonOffset() {
+-        final float top = -navigationBarHeight - additionFloatingButtonOffset - Math.max(additionalFloatingTranslation, desu.inugram.helpers.player.Md3PlayerHelper.miniFabInset(this));
++        final float top = -navigationBarHeight - additionFloatingButtonOffset * (1f - inu_tabsHideFactor) - Math.max(additionalFloatingTranslation, desu.inugram.helpers.player.Md3PlayerHelper.miniFabInset(this));
+         final float baseTranslationY = top
+             - floatingButtonPanOffset;
+ 
+@@ -14503,6 +14525,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     private void checkUi_mainTabsVisible() {
+         final boolean mainTabsVisible = !searching && (blurredView == null || blurredView.getBackground() == null || blurredView.getAlpha() < 0.01f || blurredView.getVisibility() == View.GONE);
+         if (mainTabsActivityController != null) {
++            desu.inugram.helpers.dialogs.MainTabsHelper.onMainTabsVisibilityChecked(this, mainTabsVisible);
+             mainTabsActivityController.setTabsVisible(mainTabsVisible);
+         }
+     }
+@@ -14699,7 +14722,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         } else if (communityId != 0) {
+             return navigationBarHeight + dp(12 + 48 + 12);
+         } else {
+-            int bottom = navigationBarHeight + additionNavigationBarHeight + desu.inugram.helpers.player.Md3PlayerHelper.miniListPadding(this);
++            int bottom = navigationBarHeight + (int) (additionNavigationBarHeight * (1f - inu_tabsHideFactor)) + desu.inugram.helpers.player.Md3PlayerHelper.miniListPadding(this);
+             if (filterTabsView != null && FolderHelper.atBottom()) {
+                 bottom += dp(FolderHelper.bottomReservedHeightDp());
+             }

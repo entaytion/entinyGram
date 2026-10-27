@@ -610,3 +610,4 @@ entiny/media/send-videos-hd.patch
 entiny/restrictions/forward-pro-comment-order.patch
 entiny/restrictions/forward-pro-comment-format.patch
 entiny/privacy/ghost-hide-seen-mentions.patch
+entiny/tabs/bottom-tabs-hide-on-scroll.patch

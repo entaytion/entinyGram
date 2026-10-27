@@ -179,6 +179,8 @@
     <string name="InuBottomTabsHideTopSearchInfo">Скрыть поле поиска над списком чатов</string>
     <string name="InuBottomTabsSeparateSearch">Отдельная кнопка поиска</string>
     <string name="InuBottomTabsSeparateSearchInfo">Показывать поиск круглой кнопкой рядом с нижней панелью</string>
+    <string name="InuBottomTabsHideOnScroll">Скрывать панель при скролле</string>
+    <string name="InuBottomTabsHideOnScrollInfo">Скрывать нижнюю панель при прокрутке списка чатов вниз и показывать при прокрутке вверх</string>
     <string name="InuShowTabTitles">Показывать подписи вкладок</string>
     <string name="InuMainTabsCustomizeReset">Сбросить по умолчанию</string>
     <string name="InuCompactMode">Компактный режим</string>

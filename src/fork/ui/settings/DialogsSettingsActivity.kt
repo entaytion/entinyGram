@@ -267,6 +267,14 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 )
             }
             items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_BOTTOM_TABS_HIDE_ON_SCROLL,
+                    R.string.InuBottomTabsHideOnScroll,
+                    R.string.InuBottomTabsHideOnScrollInfo,
+                    InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL.value
+                )
+            )
+            items.add(
                 UItem.asButton(
                     BUTTON_START_TAB,
                     LocaleController.getString(R.string.InuStartTab),
@@ -500,6 +508,12 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
                 mainTabsPreview?.let { refreshMainTabsPreview(it) }
                 showRestartBulletin()
+            }
+
+            TOGGLE_BOTTOM_TABS_HIDE_ON_SCROLL -> {
+                val new = InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                (view as? TextCheckCell)?.isChecked = new
             }
 
             TOGGLE_HIDE_TOP_SEARCH -> {
@@ -782,6 +796,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_TAB_TITLES = InuUtils.generateId()
         private val TOGGLE_HIDE_TOP_SEARCH = InuUtils.generateId()
         private val TOGGLE_SEPARATE_SEARCH_TAB = InuUtils.generateId()
+        private val TOGGLE_BOTTOM_TABS_HIDE_ON_SCROLL = InuUtils.generateId()
         private val BUTTON_RESET_BOTTOM_TABS = InuUtils.generateId()
         private val BUTTON_FAB_MAIN_ACTION = InuUtils.generateId()
         private val BUTTON_FAB_SECONDARY_ACTION = InuUtils.generateId()
@@ -860,6 +875,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-tab-titles", R.string.InuShowTabTitles, TOGGLE_SHOW_TAB_TITLES),
                 // entiny: intentionally not registered here — the row is only rendered when bottom tabs are visible, so static search entry would be a phantom; auto-collect adds it when present
                 SearchRegistry.Entry("separate-search-tab", R.string.InuBottomTabsSeparateSearch, TOGGLE_SEPARATE_SEARCH_TAB),
+                SearchRegistry.Entry("bottom-tabs-hide-on-scroll", R.string.InuBottomTabsHideOnScroll, TOGGLE_BOTTOM_TABS_HIDE_ON_SCROLL),
                 SearchRegistry.Entry("customize-bottom-tabs", R.string.InuMainTabsCustomizeReset, BUTTON_RESET_BOTTOM_TABS),
                 SearchRegistry.Entry("dialogs-fab-main-action", R.string.InuDialogsFabMainAction, BUTTON_FAB_MAIN_ACTION),
                 SearchRegistry.Entry("dialogs-fab-secondary-action", R.string.InuDialogsFabSecondaryAction, BUTTON_FAB_SECONDARY_ACTION),

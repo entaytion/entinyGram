@@ -131,6 +131,7 @@
   "m3-tabs-full-width": "tabs",
   "main-tabs-customize": "tabs",
   "main-tabs-separate-search": "tabs",
+  "bottom-tabs-hide-on-scroll": "tabs",
   "many-accounts-warning": "accounts",
   "md3-player": "ui",
   "md3-sections-textcell-fix": "ui",

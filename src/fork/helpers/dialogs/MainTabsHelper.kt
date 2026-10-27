@@ -1,5 +1,6 @@
 package desu.inugram.helpers.dialogs
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
@@ -19,6 +20,7 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.Bulletin
+import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
@@ -197,6 +199,9 @@ object MainTabsHelper {
     val tabsViewWidth: Int
         get() = tabWidth * (fragmentsCount + if (hasSearchTab() && !isSearchTabSeparate()) 1 else 0) + (mainTabsMargin + TAB_PADDING) * 2
 
+    private const val TABS_HIDE_ANIMATION_MS = 380L
+    private var tabsInsetsAnimator: ValueAnimator? = null
+
     private const val MENU_ICON_SIZE_DP = 28
 
     @JvmStatic
@@ -277,6 +282,38 @@ object MainTabsHelper {
         if (target == current) return false
         LaunchActivity.instance?.switchToAccount(target, true) ?: return false
         return true
+    }
+
+    @JvmStatic
+    fun tabsFollowScroll(fragment: DialogsActivity): Boolean =
+        InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL.value && fragment.hasMainTabs && !fragment.searchIsShowed
+
+    @JvmStatic
+    fun onDialogsScrolled(fragment: DialogsActivity, goingDown: Boolean, atTop: Boolean) {
+        if (!fragment.hasMainTabs || fragment.searchIsShowed) return
+        val hide = InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL.value && goingDown && !atTop
+        fragment.inu_setMainTabsVisible(!hide)
+        animateTabsInsets(fragment, hide)
+    }
+
+    @JvmStatic
+    fun onMainTabsVisibilityChecked(fragment: DialogsActivity, visible: Boolean) {
+        if (visible) animateTabsInsets(fragment, false)
+    }
+
+    private fun animateTabsInsets(fragment: DialogsActivity, hidden: Boolean) {
+        val target = if (hidden) 1f else 0f
+        val from = fragment.inu_getTabsHideFactor()
+        tabsInsetsAnimator?.cancel()
+        if (from == target) return
+        tabsInsetsAnimator = ValueAnimator.ofFloat(from, target).apply {
+            duration = TABS_HIDE_ANIMATION_MS
+            interpolator = CubicBezierInterpolator.EASE_OUT_QUINT
+            addUpdateListener {
+                if (fragment.parentLayout != null) fragment.inu_setTabsHideFactor(it.animatedValue as Float)
+            }
+            start()
+        }
     }
 
     @JvmStatic
