@@ -823,7 +823,7 @@ object ForwardProHelper {
             if (msg.messageOwner == null) return null
             if (isAlbum && msg.groupIdForUse != groupId) return null
             if (!isTextCarrier(msg)) return null
-            if (captionCarrier == null && msg.caption != null) {
+            if (captionCarrier == null && (msg.caption != null || !msg.messageOwner.message.isNullOrEmpty())) {
                 captionCarrier = msg
             }
         }
@@ -853,6 +853,7 @@ object ForwardProHelper {
         if (text == null && isTextOnly(msg)) {
             text = ChatActivity.getMessageContent(msg, 0, false)
         }
+        if (text == null && !isTextOnly(msg)) text = msg.messageOwner?.message
         return text ?: ""
     }
 
