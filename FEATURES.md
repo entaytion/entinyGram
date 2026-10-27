@@ -19,6 +19,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - hide read receipts, story views, online status, typing, recording and upload indicators
   - **read on send**: mark messages read only when you reply
   - **mark as read locally**: clear unread badges while keeping them unread on the server
+  - **hide seen mentions**: drop the mention badge and jump button in chats you already opened - *ported from NagramXFC (@rhythmcache)*
   - **online status**: always hidden, or go offline right after you come online or act in chats - *offline-after-action ported from NagramX / AyuGram*
   - **per-chat overrides** for read receipts and typing - *inspired by Alexgram / XF*
   - **apply to**: private chats, groups and channels separately

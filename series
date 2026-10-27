@@ -609,3 +609,4 @@ entiny/media/faster-downloads-byte-budget.patch
 entiny/media/send-videos-hd.patch
 entiny/restrictions/forward-pro-comment-order.patch
 entiny/restrictions/forward-pro-comment-format.patch
+entiny/privacy/ghost-hide-seen-mentions.patch

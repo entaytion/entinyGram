@@ -462,6 +462,39 @@ object GhostHelper {
     }
 
     @JvmStatic
+    fun effectiveMentions(unread: Int, mentions: Int): Int {
+        if (mentions <= 0 || !InuConfig.GHOST_HIDE_SEEN_MENTIONS.value || !InuConfig.GHOST_MODE_ENABLED.value) return mentions
+        return if (unread <= 0) 0 else minOf(mentions, unread)
+    }
+
+    @JvmStatic
+    fun effectiveMentions(dialog: TLRPC.Dialog?): Int =
+        if (dialog == null) 0 else effectiveMentions(dialog.unread_count, dialog.unread_mentions_count)
+
+    @JvmStatic
+    fun effectiveMentions(topic: TLRPC.TL_forumTopic?): Int =
+        if (topic == null) 0 else effectiveMentions(topic.unread_count, topic.unread_mentions_count)
+
+    @JvmStatic
+    fun onLocalRead(account: Int, dialog: TLRPC.Dialog) {
+        if (dialog.unread_mentions_count > 0 && effectiveMentions(dialog) == 0) {
+            NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.updateMentionsCount, dialog.id, 0L, 0)
+        }
+    }
+
+    @JvmStatic
+    fun areMentionsSeen(account: Int, dialogId: Long, topicId: Long): Boolean {
+        if (!InuConfig.GHOST_HIDE_SEEN_MENTIONS.value || !InuConfig.GHOST_MODE_ENABLED.value) return false
+        val controller = MessagesController.getInstance(account)
+        val unread = if (topicId != 0L) {
+            controller.topicsController.findTopic(-dialogId, topicId)?.unread_count
+        } else {
+            controller.dialogs_dict.get(dialogId)?.unread_count
+        } ?: return false
+        return unread <= 0
+    }
+
+    @JvmStatic
     fun markDialogAsRead(account: Int, dialogId: Long, maxId: Int = 0) {
         val controller = MessagesController.getInstance(account) ?: return
         val effectiveMaxId = if (maxId > 0) maxId else {

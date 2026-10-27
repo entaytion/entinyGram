@@ -2057,6 +2057,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val GHOST_MARK_READ_LOCALLY = BoolItem("ghost_mark_read_locally", true)
 
     @JvmField
+    val GHOST_HIDE_SEEN_MENTIONS = BoolItem("ghost_hide_seen_mentions", false)
+
+    @JvmField
     val GHOST_HIDE_VOICE_READ = BoolItem("ghost_hide_voice_read", false)
 
     @JvmField

@@ -69,6 +69,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.GHOST_READ_ON_SEND.value)
         )
         items.add(mkTwoLineCheckItem(TOGGLE_MARK_READ_LOCALLY, R.string.InuGhostMarkReadLocally, R.string.InuGhostMarkReadLocallyInfo, InuConfig.GHOST_MARK_READ_LOCALLY.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_HIDE_SEEN_MENTIONS, R.string.InuGhostHideSeenMentions, R.string.InuGhostHideSeenMentionsInfo, InuConfig.GHOST_HIDE_SEEN_MENTIONS.value))
         items.add(UItem.asShadow(null))
     }
 
@@ -113,6 +114,11 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.GHOST_MARK_READ_LOCALLY.toggle()
                 setCellChecked(view, new)
             }
+            TOGGLE_HIDE_SEEN_MENTIONS -> {
+                val new = InuConfig.GHOST_HIDE_SEEN_MENTIONS.toggle()
+                setCellChecked(view, new)
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_ALL)
+            }
             TOGGLE_HIDE_APP_BAR_ICON -> {
                 val new = InuConfig.GHOST_HIDE_APP_BAR_ICON.toggle()
                 setCellChecked(view, new)
@@ -133,6 +139,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_READ = InuUtils.generateId()
         private val TOGGLE_READ_ON_SEND = InuUtils.generateId()
         private val TOGGLE_MARK_READ_LOCALLY = InuUtils.generateId()
+        private val TOGGLE_HIDE_SEEN_MENTIONS = InuUtils.generateId()
         private val TOGGLE_HIDE_VOICE_READ = InuUtils.generateId()
         private val TOGGLE_HIDE_STORY_READ = InuUtils.generateId()
         private val TOGGLE_HIDE_TYPING = InuUtils.generateId()
@@ -153,6 +160,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-hide-read", R.string.InuGhostHideRead, TOGGLE_HIDE_READ),
                 SearchRegistry.Entry("ghost-read-on-send", R.string.InuGhostReadOnSend, TOGGLE_READ_ON_SEND),
                 SearchRegistry.Entry("ghost-mark-read-locally", R.string.InuGhostMarkReadLocally, TOGGLE_MARK_READ_LOCALLY),
+                SearchRegistry.Entry("ghost-hide-seen-mentions", R.string.InuGhostHideSeenMentions, TOGGLE_HIDE_SEEN_MENTIONS),
                 SearchRegistry.Entry("ghost-hide-voice-read", R.string.InuGhostHideVoiceRead, TOGGLE_HIDE_VOICE_READ),
                 SearchRegistry.Entry("ghost-hide-story-read", R.string.InuGhostHideStoryRead, TOGGLE_HIDE_STORY_READ),
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),

@@ -1158,6 +1158,8 @@
     <string name="InuGhostReadOnSend">Читати при надсиланні</string>
     <string name="InuGhostMarkReadLocally">Позначати прочитаним локально</string>
     <string name="InuGhostMarkReadLocallyInfo">Скидати лічильник непрочитаних повідомлень при відкритті чату в режимі примари, залишаючи його непрочитаним на сервері.</string>
+    <string name="InuGhostHideSeenMentions">Ховати переглянуті згадки</string>
+    <string name="InuGhostHideSeenMentionsInfo">Ховати значок згадок і кнопку переходу в чатах, які ви вже відкрили локально в режимі примари.</string>
     <string name="InuGhostHideAppBarIcon">Сховати індикатор у заголовку</string>
     <string name="InuGhostHideAppBarIconInfo">Не показувати іконку привида в головному заголовку та заголовках чатів при активному режимі привида.</string>
     <string name="InuCacheTtlNever">Ніколи (зберігати назавжди)</string>

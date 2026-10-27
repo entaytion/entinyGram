@@ -1,0 +1,143 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 27 Oct 2026 13:27:32 +0200
+Subject: [+] ghost mode hide seen mentions
+
+---
+ .../java/org/telegram/messenger/MessagesController.java   | 8 +++++---
+ .../java/org/telegram/messenger/TopicsController.java     | 2 +-
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java   | 8 ++++----
+ .../src/main/java/org/telegram/ui/ChatActivity.java       | 6 ++++++
+ .../java/org/telegram/ui/Components/TopicsTabsView.java   | 2 +-
+ 5 files changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -1336,8 +1336,8 @@ public class MessagesController extends BaseController implements NotificationCe
+             ContactsController contactsController = accountInstance.getContactsController();
+             boolean skip = false;
+ 
+-            if ((flags & DIALOG_FILTER_FLAG_EXCLUDE_MUTED) != 0 && messagesController.isDialogMuted(d.id, 0) && d.unread_mentions_count == 0 ||
+-                    (flags & DIALOG_FILTER_FLAG_EXCLUDE_READ) != 0 && messagesController.getDialogUnreadCount(d) == 0 && !d.unread_mark && d.unread_mentions_count == 0) {
++            if ((flags & DIALOG_FILTER_FLAG_EXCLUDE_MUTED) != 0 && messagesController.isDialogMuted(d.id, 0) && desu.inugram.helpers.security.GhostHelper.effectiveMentions(d) == 0 ||
++                    (flags & DIALOG_FILTER_FLAG_EXCLUDE_READ) != 0 && messagesController.getDialogUnreadCount(d) == 0 && !d.unread_mark && desu.inugram.helpers.security.GhostHelper.effectiveMentions(d) == 0) {
+                 return false;
+             }
+             if (dialogId > 0) {
+@@ -9864,7 +9864,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             }
+ 
+             unreadCounts.unreadCount += dialog.unread_count;
+-            unreadCounts.mentionCount += dialog.unread_mentions_count;
++            unreadCounts.mentionCount += desu.inugram.helpers.security.GhostHelper.effectiveMentions(dialog);
+             unreadCounts.reactionMentionCount += dialog.unread_reactions_count;
+             unreadCounts.pollVotesMentionCount += dialog.unread_poll_votes_count;
+             if (!unreadCounts.hasUnmutedUnreadDialogs && dialog.unread_count > 0) {
+@@ -14989,6 +14989,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                             }
+                         }
+                         getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, UPDATE_MASK_READ_DIALOG_MESSAGE);
++                        desu.inugram.helpers.security.GhostHelper.onLocalRead(currentAccount, dialog);
+                     }
+                     if (!popup) {
+                         getNotificationsController().processReadMessages(null, dialogId, 0, maxPositiveId, false);
+@@ -15043,6 +15044,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                             }
+                         }
+                         getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, UPDATE_MASK_READ_DIALOG_MESSAGE);
++                        desu.inugram.helpers.security.GhostHelper.onLocalRead(currentAccount, dialog);
+                     }
+                     LongSparseIntArray dialogsToUpdate = new LongSparseIntArray(1);
+                     dialogsToUpdate.put(dialogId, 0);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java
+@@ -655,7 +655,7 @@ public class TopicsController extends BaseController {
+             for (int i = 0; i < topics.size(); i++) {
+                 TLRPC.TL_forumTopic topic = topics.get(i);
+                 countsTmp[0] += topic.unread_count > 0 ? 1 : 0;
+-                countsTmp[1] += topic.unread_mentions_count > 0 ? 1 : 0;
++                countsTmp[1] += desu.inugram.helpers.security.GhostHelper.effectiveMentions(topic) > 0 ? 1 : 0;
+                 countsTmp[2] += topic.unread_reactions_count > 0 ? 1 : 0;
+                 if (!getMessagesController().isDialogMuted(-chatId, topic.id)) {
+                     countsTmp[3] += topic.unread_count;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -3318,7 +3318,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                             hasUnmutedCommunityDialogs = unreadCounts.hasUnmutedUnreadDialogs;
+                         } else {
+                             unreadCount = dialog.unread_count;
+-                            mentionCount = dialog.unread_mentions_count;
++                            mentionCount = desu.inugram.helpers.security.GhostHelper.effectiveMentions(dialog);
+                             reactionMentionCount = dialog.unread_reactions_count;
+                             pollVotesMentionCount = dialog.unread_poll_votes_count;
+                         }
+@@ -3353,7 +3353,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+             }
+             if (forumTopic != null) {
+                 unreadCount = forumTopic.unread_count;
+-                mentionCount = forumTopic.unread_mentions_count;
++                mentionCount = desu.inugram.helpers.security.GhostHelper.effectiveMentions(forumTopic);
+                 reactionMentionCount = forumTopic.unread_reactions_count;
+                 pollVotesMentionCount = forumTopic.unread_poll_votes_count;
+             }
+@@ -3496,7 +3496,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                             hasUnmutedCommunityDialogs = unreadCounts.hasUnmutedUnreadDialogs;
+                         } else if (dialog != null) {
+                             newCount = dialog.unread_count;
+-                            newMentionCount = dialog.unread_mentions_count;
++                            newMentionCount = desu.inugram.helpers.security.GhostHelper.effectiveMentions(dialog);
+                             newReactionCout = dialog.unread_reactions_count;
+                             newPollVotesCount = dialog.unread_poll_votes_count;
+                         } else {
+@@ -6303,7 +6303,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+             Integer printingType = null;
+             long readHash = dialog.read_inbox_max_id + ((long) dialog.read_outbox_max_id << 8) + ((long) (dialog.unread_count + (dialog.unread_mark ? -1 : 0)) << 16) +
+                     (dialog.unread_reactions_count > 0 ? (1 << 18) : 0) +
+-                    (dialog.unread_mentions_count > 0 ? (1 << 19) : 0) +
++                    (desu.inugram.helpers.security.GhostHelper.effectiveMentions(dialog) > 0 ? (1 << 19) : 0) +
+                     (dialog.unread_poll_votes_count > 0 ? (1 << 21) : 0);
+ 
+             if (isForumCell()) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -17734,6 +17734,9 @@ public class ChatActivity extends BaseFragment implements
+         if (sideControlsButtonsLayout == null) {
+             return;
+         }
++        if (show && desu.inugram.helpers.security.GhostHelper.areMentionsSeen(currentAccount, dialog_id, getTopicId())) {
++            show = false;
++        }
+ 
+         sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_MENTION, show && !ChatObject.isMonoForum(currentChat), animated);
+         if (!show) {
+@@ -24989,6 +24992,9 @@ public class ChatActivity extends BaseFragment implements
+             long topicId = (Long) args[1];
+             if (dialog_id == dialogId && this.getTopicId() == topicId) {
+                 int count = (int) args[2];
++                if (desu.inugram.helpers.security.GhostHelper.areMentionsSeen(currentAccount, dialog_id, getTopicId())) {
++                    count = 0;
++                }
+                 if (newMentionsCount > count) {
+                     newMentionsCount = count;
+                     if (newMentionsCount <= 0) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java
+@@ -1419,7 +1419,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+             setCounter(
+                 MessagesController.getInstance(currentAccount).isDialogMuted(dialogId, topic.id),
+                 topic.unread_count,
+-                topic.unread_mentions_count > 0,
++                desu.inugram.helpers.security.GhostHelper.effectiveMentions(topic) > 0,
+                 topic.unread_reactions_count > 0,
+                 animated
+             );
