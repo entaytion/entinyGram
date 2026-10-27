@@ -116,15 +116,27 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             }
         }
 
-        items.add(UItem.asShadow(null))
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuSelfDestructMedia)).apply { id = SECTION_SELF_DESTRUCT_SAVE })
-        for (option in selfDestructOptions) {
-            items.add(UItem.asCheck(option.id, LocaleController.getString(option.labelRes)).setChecked(option.config.value))
+        val options = selfDestructOptions
+        fun row(option: ExpandableBoolGroup.Option, infoRes: Int) {
+            items.add(mkTwoLineCheckItem(option.id, option.labelRes, infoRes, option.config.value))
         }
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuViewOnceHeader)).apply { id = SECTION_SELF_DESTRUCT_SAVE })
+        row(options[0], R.string.InuSaveViewOnceMediaInfo)
+        row(options[6], R.string.InuAutoSaveOneTimeInfo)
+        row(options[4], R.string.InuViewOnceShowNormalInfo)
+
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuTimedHeader)))
+        row(options[1], R.string.InuSaveTimedMessagesInfo)
+        row(options[2], R.string.InuSaveSelfDestructMediaInfo)
+        row(options[3], R.string.InuSaveSelfDestructTextInfo)
+        row(options[5], R.string.InuBurnTimedMediaInfo)
         if (InuConfig.BURN_TIMED_MEDIA.value) {
             items.add(
-                UItem.asButton(
+                mkTwoLineEntry(
                     BUTTON_TIMED_MEDIA_AFTER_VIEW,
+                    R.drawable.msg_timer,
                     LocaleController.getString(R.string.InuTimedMediaAfterView),
                     LocaleController.getString(
                         if (InuConfig.TIMED_MEDIA_AFTER_VIEW.value == InuConfig.TimedMediaAfterViewItem.KEEP)
