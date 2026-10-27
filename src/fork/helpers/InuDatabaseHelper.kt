@@ -760,24 +760,6 @@ object InuDatabaseHelper {
         return list
     }
 
-    fun deletedByAuthorInDialog(db: SQLiteDatabase, fromId: Long, dialogId: Long, limit: Int = 300, offset: Int = 0): List<MessageSearchResult> {
-        val list = ArrayList<MessageSearchResult>()
-        val cursor = db.queryFinalized(
-            "SELECT dialog_id, msg_id, text, date, media_path, message FROM inu_deleted_messages WHERE from_id = ? AND dialog_id = ? ORDER BY date DESC, msg_id DESC LIMIT ? OFFSET ?",
-            fromId, dialogId, limit, offset,
-        )
-        try {
-            while (cursor.next()) {
-                val msgId = cursor.intValue(1)
-                val message = readMessageBlob(cursor, 5) ?: loadLiveMessage(db, dialogId, msgId)
-                list.add(MessageSearchResult(cursor.longValue(0), msgId, cursor.stringValue(2) ?: "", cursor.intValue(3), isEdit = false, mediaPath = cursor.stringValue(4), message = message))
-            }
-        } finally {
-            cursor.dispose()
-        }
-        return list
-    }
-
     fun searchDeletedMessages(db: SQLiteDatabase, query: String, limit: Int = 100): List<MessageSearchResult> {
         val list = ArrayList<MessageSearchResult>()
         val cursor = db.queryFinalized(
@@ -1274,14 +1256,6 @@ object InuDatabaseHelper {
             emptyList()
         }
         db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
-        deleteUnreferencedMediaFiles(db, mediaPaths)
-    }
-
-    fun deleteEditHistory(db: SQLiteDatabase, dialogId: Long, mids: List<Int>) {
-        if (mids.isEmpty()) return
-        val idsStr = mids.joinToString(",")
-        val mediaPaths = getMediaPaths(db, "inu_edit_history", "dialog_id = ? AND msg_id IN ($idsStr)", dialogId)
-        db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
         deleteUnreferencedMediaFiles(db, mediaPaths)
     }
 

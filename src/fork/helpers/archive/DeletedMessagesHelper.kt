@@ -106,9 +106,7 @@ object DeletedMessagesHelper {
     // entiny: storage decides on the deletion; the row survives unless it was already kept once
     @JvmStatic
     fun archiveMessage(db: SQLiteDatabase, account: Int, dialogId: Long, message: TLRPC.Message?): Boolean {
-        val archive = shouldArchive(account, dialogId, message)
-        android.util.Log.d("DeletedKeep", "archive dialog=$dialogId id=${message?.id} -> $archive")
-        if (!archive) return false
+        if (!shouldArchive(account, dialogId, message)) return false
         persist(db, account, dialogId, message!!.id, archiveText(message.message, message), message.date, message)
         return true
     }
@@ -116,7 +114,6 @@ object DeletedMessagesHelper {
     @JvmStatic
     fun restoreMissingMessages(storage: MessagesStorage, db: SQLiteDatabase, account: Int, dialogId: Long, ids: ArrayList<Int>, userInitiated: Boolean) {
         if (ids.isEmpty() || !isSaveDeletedEnabled()) return
-        android.util.Log.d("DeletedKeep", "restore check dialog=$dialogId ids=$ids userInitiated=$userInitiated")
         val existing = HashSet<Int>()
         val cursor = if (dialogId != 0L) {
             db.queryFinalized("SELECT mid FROM messages_v2 WHERE uid = ? AND mid IN (${ids.joinToString(",")})", dialogId)
@@ -131,9 +128,7 @@ object DeletedMessagesHelper {
         val restored = ArrayList<TLRPC.Message>()
         for (id in ids) {
             if (id in existing) continue
-            val message = ArchiveCache.messageSnapshot(account, dialogId, id)
-            android.util.Log.d("DeletedKeep", "missing in db id=$id snapshot=${message != null}")
-            if (message == null) continue
+            val message = ArchiveCache.messageSnapshot(account, dialogId, id) ?: continue
             val did = if (dialogId != 0L) dialogId else MessageObject.getDialogId(message)
             if (did == 0L) continue
             if (keepInChat(account, did, message, userInitiated)) {
