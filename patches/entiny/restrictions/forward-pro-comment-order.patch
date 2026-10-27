@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 27 Oct 2026 13:27:20 +0200
+Subject: [+] forward pro comment position toggle
+
+---
+ .../main/java/org/telegram/ui/Components/ShareAlert.java    | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+@@ -2566,7 +2566,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+                         replyTopMsg.isTopicMainMessage = true;
+                     }
+                     int result;
+-                    if (frameLayout2.getTag() != null && commentTextView.length() > 0) {
++                    boolean inu_commentAfter = desu.inugram.helpers.chat.ForwardProHelper.isCommentAfter(this);
++                    if (frameLayout2.getTag() != null && commentTextView.length() > 0 && !inu_commentAfter) {
+                         SendMessagesHelper.SendMessageParams params = SendMessagesHelper.SendMessageParams.of(text[0] == null ? null : text[0].toString(), key, replyTopMsg, replyTopMsg, null, true, entities, null, null, withSound, 0, 0, null, false);
+                         params.payStars = price == null ? 0 : price;
+                         params.monoForumPeer = monoForumPeerId;
+@@ -2574,6 +2575,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+                     }
+                     boolean inu_hideCaption = desu.inugram.helpers.chat.ForwardProHelper.shouldHideCaption(this);
+                     result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, !showSendersName, inu_hideCaption, withSound, desu.inugram.helpers.chat.ForwardProHelper.getScheduleDate(this), 0, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
++                    if (inu_commentAfter && frameLayout2.getTag() != null && commentTextView.length() > 0) {
++                        desu.inugram.helpers.chat.ForwardProHelper.sendCommentAfter(this, key, replyTopMsg, text[0], entities, withSound, price == null ? 0 : price, monoForumPeerId);
++                    }
+                     if (result != 0) {
+                         removeKeys.add(key);
+                     }

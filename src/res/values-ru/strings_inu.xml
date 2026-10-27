@@ -1682,6 +1682,7 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">Переключатели автора, подписи и беззвучной отправки, плюс редактирование перед пересылкой.</string>
     <string name="InuForwardProHideCaption">Скрыть подпись</string>
+    <string name="InuForwardProCommentAfter">Отправлять комментарий после сообщения</string>
     <string name="InuForwardProEditedNotice">Отправится копией — от вашего имени, без пометки «Переслано от»</string>
     <string name="InuForwardProUseStock">Обычный Telegram</string>
     <string name="InuForwardProPlaceholder">Текст сообщения</string>

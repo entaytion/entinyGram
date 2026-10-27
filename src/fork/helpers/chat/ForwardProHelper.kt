@@ -67,6 +67,8 @@ object ForwardProHelper {
         var silentSendIcon: ImageView? = null
         var scheduleIcon: ImageView? = null
         var captionIcon: ImageView? = null
+        var commentOrderIcon: ImageView? = null
+        var commentAfter: Boolean = false
         var toggleActiveColor: Int = 0
         var toggleInactiveColor: Int = 0
         var filterTabsView: FilterTabsView? = null
@@ -101,6 +103,7 @@ object ForwardProHelper {
                     // entiny: restore the quick toggles from the last forward
                     it.silentSend = InuConfig.FORWARD_PRO_SILENT.value
                     it.hideCaption = InuConfig.FORWARD_PRO_HIDE_CAPTION.value
+                    it.commentAfter = InuConfig.FORWARD_PRO_COMMENT_AFTER.value
                     alert.showSendersName = InuConfig.FORWARD_PRO_SHOW_SENDER.value
                 }
                 it.editedText = pendingInitialEditedText
@@ -167,6 +170,13 @@ object ForwardProHelper {
         state.silentSendIcon = silentIcon
         state.scheduleIcon = scheduleIcon
         state.captionIcon = captionIcon
+        val commentOrderIcon = makeToggle(R.drawable.msg_reorder, R.string.InuForwardProCommentAfter)
+        state.commentOrderIcon = commentOrderIcon
+        commentOrderIcon.setOnClickListener {
+            state.commentAfter = !state.commentAfter
+            InuConfig.FORWARD_PRO_COMMENT_AFTER.value = state.commentAfter
+            updateQuickToggleIcons(alert)
+        }
 
         authorIcon.setOnClickListener {
             alert.showSendersName = !alert.showSendersName
@@ -202,6 +212,7 @@ object ForwardProHelper {
         val toggleContainer = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
+            addView(commentOrderIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
             addView(captionIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
             addView(silentIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
             addView(scheduleIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
@@ -246,6 +257,28 @@ object ForwardProHelper {
         state.silentSendIcon?.paint(state.silentSend)
         state.scheduleIcon?.paint(state.scheduleDate != 0)
         state.captionIcon?.paint(state.hideCaption)
+        state.commentOrderIcon?.paint(state.commentAfter)
+    }
+
+    @JvmStatic
+    fun isCommentAfter(alert: ShareAlert): Boolean {
+        val state = getState(alert)
+        return state.active && state.commentAfter
+    }
+
+    @JvmStatic
+    fun sendCommentAfter(
+        alert: ShareAlert, dialogId: Long, replyTopMsg: MessageObject?, text: CharSequence?,
+        entities: ArrayList<TLRPC.MessageEntity>?, withSound: Boolean, payStars: Long, monoForumPeer: Long,
+    ) {
+        val params = SendMessagesHelper.SendMessageParams.of(
+            text?.toString(), dialogId, replyTopMsg, replyTopMsg, null, true,
+            entities, null, null, withSound, 0, 0, null, false,
+        )
+        params.payStars = payStars
+        params.monoForumPeer = monoForumPeer
+        params.scheduleDate = getScheduleDate(alert)
+        SendMessagesHelper.getInstance(alert.currentAccount).sendMessage(params)
     }
 
     @JvmStatic
@@ -477,7 +510,8 @@ object ForwardProHelper {
             val monoForumPeerId = if (topic != null && isMonoForum) DialogObject.getPeerDialogId(topic.from_id) else 0L
             val replyTopMsg = if (topic != null && !isMonoForum) MessageObject(account, topic.topicStartMessage, false, false).apply { isTopicMainMessage = true } else null
 
-            if (hasComment) {
+            fun sendComment() {
+                if (!hasComment) return
                 val params = SendMessagesHelper.SendMessageParams.of(
                     comment.toString(), did, null, replyTopMsg, null, true,
                     commentEntities, null, null, withSound, 0, 0, null, false
@@ -487,9 +521,11 @@ object ForwardProHelper {
                 SendMessagesHelper.getInstance(account).sendMessage(params)
             }
 
+            if (!state.commentAfter) sendComment()
             val sent = withEditedText(editable, plainText, entities) {
                 sendSingleOrBatchAsCopy(messages, did, replyTopMsg, withSound, account, monoForumPeerId, state.scheduleDate)
             }
+            if (state.commentAfter) sendComment()
             if (sent) {
                 hasSentAny = true
             }

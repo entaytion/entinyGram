@@ -1441,6 +1441,7 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val FORWARD_PRO_SILENT = BoolItem("forward_pro_silent", false)
     val FORWARD_PRO_HIDE_CAPTION = BoolItem("forward_pro_hide_caption", false)
     val FORWARD_PRO_SHOW_SENDER = BoolItem("forward_pro_show_sender", true)
+    val FORWARD_PRO_COMMENT_AFTER = BoolItem("forward_pro_comment_after", false)
 
     @JvmField
     val BUBBLE_TAILS = BoolItem("bubble_tails", true)

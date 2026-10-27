@@ -1756,6 +1756,7 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">Перемикачі автора, підпису та беззвучного надсилання плюс редагування перед пересиланням.</string>
     <string name="InuForwardProHideCaption">Приховати підпис</string>
+    <string name="InuForwardProCommentAfter">Надсилати коментар після повідомлення</string>
     <string name="InuForwardProEditedNotice">Надішлеться копією — від вашого імені, без мітки «Переслано від»</string>
     <string name="InuForwardProUseStock">Стоковий Telegram</string>
     <string name="InuForwardProPlaceholder">Текст повідомлення</string>

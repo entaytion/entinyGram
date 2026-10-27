@@ -1844,6 +1844,7 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">Author, caption and silent-send toggles plus editing before forwarding.</string>
     <string name="InuForwardProHideCaption">Hide captions</string>
+    <string name="InuForwardProCommentAfter">Send comment after the message</string>
     <string name="InuForwardProEditedNotice">Will be sent as a copy from you, without a forward label</string>
     <string name="InuForwardProUseStock">Stock Telegram</string>
     <string name="InuForwardProPlaceholder">Message text</string>
