@@ -142,7 +142,7 @@ object DeletedMessagesHelper {
 
     @JvmStatic
     fun wasArchived(db: SQLiteDatabase, dialogId: Long, msgId: Int): Boolean =
-        InuDatabaseHelper.isDeletedMessageArchived(db, dialogId, msgId)
+        ArchiveStore.isDeletedMessageArchived(db, dialogId, msgId)
 
     @JvmStatic
     fun markPurged(account: Int, dialogId: Long, msgId: Int) =
@@ -167,8 +167,8 @@ object DeletedMessagesHelper {
         if (!hasPreservableData(text, message)) return
         val fromId = message.from_id?.let { DialogObject.getPeerDialogId(it) } ?: 0L
         val deletedAt = (System.currentTimeMillis() / 1000L).toInt()
-        val savedPath = InuDatabaseHelper.deletedMessageMediaPath(db, dialogId, msgId)?.takeIf { File(it).isFile }
-        InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, text, date, deletedAt, savedPath, message)
+        val savedPath = ArchiveStore.deletedMessageMediaPath(db, dialogId, msgId)?.takeIf { File(it).isFile }
+        ArchiveStore.saveDeletedMessage(db, dialogId, msgId, fromId, text, date, deletedAt, savedPath, message)
         if (savedPath != null) {
             ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, savedPath)
             return
@@ -183,7 +183,7 @@ object DeletedMessagesHelper {
 
     @JvmStatic
     fun removeArchived(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
-        InuDatabaseHelper.deleteDeletedMessageEntries(db, dialogId, listOf(msgId))
+        ArchiveStore.deleteDeletedMessageEntries(db, dialogId, listOf(msgId))
     }
 
     @JvmStatic
@@ -203,8 +203,8 @@ object DeletedMessagesHelper {
     @JvmStatic
     fun purgeInStorage(account: Int, storage: MessagesStorage, db: SQLiteDatabase, dialogId: Long, msgIds: List<Int>) {
         if (msgIds.isEmpty()) return
-        InuDatabaseHelper.deleteDeletedMessageEntries(db, dialogId, msgIds)
-        InuDatabaseHelper.deleteSavedMessages(db, dialogId, msgIds)
+        ArchiveStore.deleteDeletedMessageEntries(db, dialogId, msgIds)
+        ArchiveStore.deleteSavedMessages(db, dialogId, msgIds)
         val channelId = ArchiveCache.getChannelId(account, dialogId)
         storage.updateDialogsWithDeletedMessages(dialogId, channelId, ArrayList(msgIds), null)
         AndroidUtilities.runOnUIThread {

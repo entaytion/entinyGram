@@ -1,5 +1,6 @@
 package desu.inugram.helpers
 
+import desu.inugram.helpers.archive.ArchiveStore
 import desu.inugram.InuConfig
 import desu.inugram.helpers.archive.ArchiveCache
 import desu.inugram.helpers.archive.ArchiveMediaHelper
@@ -51,9 +52,9 @@ object CacheStatsHelper {
         when (kind) {
             Kind.DELETED -> ArchiveCache.clearCache(account, null, true, onDone)
             Kind.EDITS -> ArchiveCache.clearEditHistory(account, onDone)
-            Kind.REACTIONS -> onStorage(account, onDone) { InuDatabaseHelper.clearDeletedReactions(it) }
+            Kind.REACTIONS -> onStorage(account, onDone) { ArchiveStore.clearDeletedReactions(it) }
             Kind.MEDIA -> onStorage(account, onDone) {
-                InuDatabaseHelper.detachSavedMedia(it)
+                ArchiveStore.detachSavedMedia(it)
                 ArchiveMediaHelper.getSavedMediaDir(account).listFiles()?.filter { f -> f.isFile && f.name != ".nomedia" }?.forEach { f -> f.delete() }
                 ArchiveCache.invalidateMediaCache(account)
             }

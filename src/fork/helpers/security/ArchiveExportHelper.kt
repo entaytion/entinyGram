@@ -1,5 +1,6 @@
 package desu.inugram.helpers.security
 
+import desu.inugram.helpers.archive.ArchiveStore
 import android.content.ClipData
 import android.content.Intent
 import androidx.core.content.FileProvider
@@ -38,7 +39,7 @@ object ArchiveExportHelper {
         if (!dir.exists()) dir.mkdirs()
         val stamp = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
         val target = File(dir, "entinygram-archive-$stamp.json")
-        val count = target.bufferedWriter().use { InuDatabaseHelper.writeArchiveJson(db, it) }
+        val count = target.bufferedWriter().use { ArchiveStore.writeArchiveJson(db, it) }
         return target to count
     }
 

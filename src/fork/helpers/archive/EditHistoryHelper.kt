@@ -75,7 +75,7 @@ object EditHistoryHelper {
         if (revision.text.isEmpty() && !hasMedia(revision.media)) return
         val kept = revision.copy(
             entities = if (revision.entities.isNullOrEmpty()) null else ArrayList(revision.entities),
-            media = InuDatabaseHelper.cloneMedia(revision.media),
+            media = ArchiveStore.cloneMedia(revision.media),
         )
         synchronized(ArchiveCache.cacheLock) {
             val list = cachedRevisions(account, dialogId, msgId)
@@ -91,7 +91,7 @@ object EditHistoryHelper {
             val db = storage.database ?: return@Runnable
             try {
                 val date = kept.timestamp.toInt()
-                val inserted = InuDatabaseHelper.saveEditHistory(db, dialogId, msgId, kept.text, date, null, kept.entities, kept.media)
+                val inserted = ArchiveStore.saveEditHistory(db, dialogId, msgId, kept.text, date, null, kept.entities, kept.media)
                 synchronized(ArchiveCache.cacheLock) {
                     ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
                 }
@@ -181,7 +181,7 @@ object EditHistoryHelper {
             val loaded: List<EditEntry> = if (db == null) {
                 emptyList()
             } else {
-                InuDatabaseHelper.loadEditHistory(db, dialogId, msgId)
+                ArchiveStore.loadEditHistory(db, dialogId, msgId)
                     .map { EditEntry(it.date, it.text, it.mediaPath, it.entities, it.media, rowId = it.rowId) }
             }
             AndroidUtilities.runOnUIThread {
@@ -208,7 +208,7 @@ object EditHistoryHelper {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            InuDatabaseHelper.deleteEditHistoryRevision(db, dialogId, msgId, rowId)
+            ArchiveStore.deleteEditHistoryRevision(db, dialogId, msgId, rowId)
             AndroidUtilities.runOnUIThread { onDone?.run() }
         }
     }

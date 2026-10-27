@@ -1,5 +1,6 @@
 package desu.inugram.ui
 
+import desu.inugram.helpers.archive.ArchiveStore
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -73,12 +74,12 @@ class EditHistoryActivity(
         val storage = MessagesStorage.getInstance(currentAccount) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            val stored = InuDatabaseHelper.loadEditHistoryInDialog(db, dialogId)
+            val stored = ArchiveStore.loadEditHistoryInDialog(db, dialogId)
             val loadedEntries = stored.map { (msgId, row) ->
                 EditEntry(row.date, row.text, row.mediaPath, row.entities, row.media, originalMessageId = msgId, rowId = row.rowId)
             }
             val live = try {
-                InuDatabaseHelper.loadMessagesForArchive(db, dialogId, stored.mapTo(HashSet()) { it.first })
+                ArchiveStore.loadMessagesForArchive(db, dialogId, stored.mapTo(HashSet()) { it.first })
             } catch (e: Throwable) {
                 android.util.Log.d(TAG, "live messages load failed", e)
                 emptyMap()

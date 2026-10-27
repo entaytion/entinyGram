@@ -246,7 +246,7 @@ object ArchiveCache {
             val db = storage.database ?: throw IllegalStateException("database closed")
             val finished: Boolean
             if (!index.deletedDone) {
-                val count = InuDatabaseHelper.readDeletedIndexPage(db, index.lastDeletedRow, LOAD_PAGE_ROWS) { rowId, dialogId, msgId, date, mediaPath ->
+                val count = ArchiveStore.readDeletedIndexPage(db, index.lastDeletedRow, LOAD_PAGE_ROWS) { rowId, dialogId, msgId, date, mediaPath ->
                     index.lastDeletedRow = rowId
                     (index.deleted.get(dialogId) ?: DeletedIdSet().also { index.deleted.put(dialogId, it) }).add(msgId, date)
                     if (mediaPath != null) (index.media.get(dialogId) ?: LongSparseArray<String>().also { index.media.put(dialogId, it) }).put(msgId.toLong(), mediaPath)
@@ -255,7 +255,7 @@ object ArchiveCache {
                 if (count < LOAD_PAGE_ROWS) index.deletedDone = true
                 finished = false
             } else {
-                val count = InuDatabaseHelper.readEditIndexPage(db, index.lastEditRow, LOAD_PAGE_ROWS) { rowId, dialogId, msgId ->
+                val count = ArchiveStore.readEditIndexPage(db, index.lastEditRow, LOAD_PAGE_ROWS) { rowId, dialogId, msgId ->
                     index.lastEditRow = rowId
                     (index.edits.get(dialogId) ?: DeletedIdSet().also { index.edits.put(dialogId, it) }).add(msgId, 0L)
                 }
@@ -350,13 +350,13 @@ object ArchiveCache {
             val db = storage.database ?: return@postRunnable
             val started = android.os.SystemClock.elapsedRealtime()
             val expired = try {
-                InuDatabaseHelper.expiredDeletedMessageIds(db, cutoff)
+                ArchiveStore.expiredDeletedMessageIds(db, cutoff)
             } catch (e: Throwable) {
                 android.util.Log.e(TAG, "archive prune failed", e)
                 return@postRunnable
             }
             val editsPruned = try {
-                InuDatabaseHelper.pruneEditHistory(db, cutoff)
+                ArchiveStore.pruneEditHistory(db, cutoff)
             } catch (e: Throwable) {
                 android.util.Log.d(TAG, "edit history prune failed", e)
                 0
@@ -400,7 +400,7 @@ object ArchiveCache {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             try {
-                storage.database?.let { InuDatabaseHelper.clearEditHistory(it, dialogIds) }
+                storage.database?.let { ArchiveStore.clearEditHistory(it, dialogIds) }
             } catch (e: Throwable) {
                 android.util.Log.d(TAG, "clear edit history failed", e)
             }
@@ -425,11 +425,11 @@ object ArchiveCache {
         storage.storageQueue.postRunnable {
             val db = storage.database
             if (db != null) {
-                val pairs = InuDatabaseHelper.getDeletedMessageIds(db, dialogIds)
+                val pairs = ArchiveStore.getDeletedMessageIds(db, dialogIds)
                 for ((dialogId, mids) in pairs) {
                     DeletedMessagesHelper.purgeInStorage(account, storage, db, dialogId, mids)
                 }
-                InuDatabaseHelper.clearDeletedMessages(db, dialogIds, !deletedOnly)
+                ArchiveStore.clearDeletedMessages(db, dialogIds, !deletedOnly)
             }
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
                 synchronized(cacheLock) {
@@ -476,7 +476,7 @@ object ArchiveCache {
             message.date,
             message.edit_date,
             if (message.entities.isNullOrEmpty()) null else ArrayList(message.entities),
-            InuDatabaseHelper.cloneMedia(message.media),
+            ArchiveStore.cloneMedia(message.media),
             if (DeletedMessagesHelper.isSaveDeletedEnabled()) InuUtils.cloneTLObject(message, TLRPC.Message::TLdeserialize) else null,
         )
         synchronized(cacheLock) {

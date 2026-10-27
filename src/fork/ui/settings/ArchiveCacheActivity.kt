@@ -1,5 +1,6 @@
 package desu.inugram.ui.settings
 
+import desu.inugram.helpers.archive.ArchiveStore
 import android.content.Context
 import android.text.TextUtils
 import android.text.format.DateFormat
@@ -134,7 +135,7 @@ class ArchiveCacheActivity(
         val storage = MessagesStorage.getInstance(currentAccount)
         storage.storageQueue.postRunnable {
             val result = runCatching {
-                InuDatabaseHelper.getDeletedMessagesStats(checkNotNull(storage.database), edited)
+                ArchiveStore.getDeletedMessagesStats(checkNotNull(storage.database), edited)
             }
             AndroidUtilities.runOnUIThread {
                 if (isFinished) return@runOnUIThread

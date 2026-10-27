@@ -1,5 +1,6 @@
 package desu.inugram.ui
 
+import desu.inugram.helpers.archive.ArchiveStore
 import android.view.Gravity
 import androidx.recyclerview.widget.LinearLayoutManager
 import desu.inugram.helpers.InuDatabaseHelper
@@ -75,7 +76,7 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
         val found = HashMap<Pair<Long, Int>, TLRPC.Message>()
         for ((did, ids) in byDialog) {
             try {
-                for ((id, m) in InuDatabaseHelper.loadMessagesForArchive(db, did, ids)) found[did to id] = m
+                for ((id, m) in ArchiveStore.loadMessagesForArchive(db, did, ids)) found[did to id] = m
             } catch (e: Throwable) {
                 android.util.Log.d(TAG, "archive reply load failed", e)
             }
@@ -93,7 +94,7 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
         val storage = MessagesStorage.getInstance(currentAccount)
         storage.storageQueue.postRunnable {
             val db = storage.database
-            val page = if (db == null) emptyList() else InuDatabaseHelper.deletedMessagesInDialog(db, dialogId, PAGE_SIZE, pageOffset).map {
+            val page = if (db == null) emptyList() else ArchiveStore.deletedMessagesInDialog(db, dialogId, PAGE_SIZE, pageOffset).map {
                 EditEntry(it.date.toLong(), it.text, it.mediaPath, originalMessageId = it.msgId, fromId = it.fromId, message = it.message)
             }
             val messages = page.mapNotNull { it.message }

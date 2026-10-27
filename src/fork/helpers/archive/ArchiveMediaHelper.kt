@@ -363,7 +363,7 @@ object ArchiveMediaHelper {
                 moved++
                 storage.storageQueue.postRunnable {
                     try {
-                        storage.database?.let { InuDatabaseHelper.replaceSavedMediaPath(it, path, copiedPath) }
+                        storage.database?.let { ArchiveStore.replaceSavedMediaPath(it, path, copiedPath) }
                         deleteLegacySource(source)
                     } catch (e: Throwable) {
                         File(copiedPath).delete()

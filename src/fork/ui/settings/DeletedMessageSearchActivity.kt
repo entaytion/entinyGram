@@ -1,5 +1,6 @@
 package desu.inugram.ui.settings
 
+import desu.inugram.helpers.archive.ArchiveStore
 import android.view.View
 import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.InuUtils
@@ -20,7 +21,7 @@ import java.util.Locale
 class DeletedMessageSearchActivity : SettingsPageActivity() {
 
     private var query: String = ""
-    private var results: List<InuDatabaseHelper.MessageSearchResult> = emptyList()
+    private var results: List<ArchiveStore.MessageSearchResult> = emptyList()
     private val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuDeletedMessageSearch)
@@ -80,8 +81,8 @@ class DeletedMessageSearchActivity : SettingsPageActivity() {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            val deleted = InuDatabaseHelper.searchDeletedMessages(db, requestedQuery)
-            val edited = InuDatabaseHelper.searchEditHistory(db, requestedQuery)
+            val deleted = ArchiveStore.searchDeletedMessages(db, requestedQuery)
+            val edited = ArchiveStore.searchEditHistory(db, requestedQuery)
             val merged = (deleted + edited).sortedByDescending { it.date }
             AndroidUtilities.runOnUIThread {
                 if (query != requestedQuery || currentAccount != account) return@runOnUIThread
@@ -91,14 +92,14 @@ class DeletedMessageSearchActivity : SettingsPageActivity() {
         }
     }
 
-    private fun resultSubtitle(result: InuDatabaseHelper.MessageSearchResult): String {
+    private fun resultSubtitle(result: ArchiveStore.MessageSearchResult): String {
         val date = dateFormat.format(Date(result.date * 1000L))
         val snippet = result.text.take(60).replace("\n", " ")
         val tag = if (result.isEdit) LocaleController.getString(R.string.InuEditHistory) else LocaleController.getString(R.string.InuSaveDeletedMessages)
         return "$tag • $date — $snippet"
     }
 
-    private fun showResult(result: InuDatabaseHelper.MessageSearchResult) {
+    private fun showResult(result: ArchiveStore.MessageSearchResult) {
         val context = context ?: return
         AlertDialog.Builder(context, resourceProvider)
             .setTitle(dialogName(result.dialogId))
