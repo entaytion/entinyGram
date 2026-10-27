@@ -157,7 +157,9 @@ entinyGram is made possible thanks to the work of the open-source Telegram commu
 
 - **[Inugram](https://github.com/teidesu/inugram)** by **[@teidesu](https://github.com/teidesu)** — the foundational project, build architecture, and StGit patchset methodology we build upon.
 - **[Telegram Android](https://github.com/DrKLO/Telegram)** — official client codebase.
-- **[AyuGram](https://github.com/AyuGram)** — inspiration for Ghost Mode architecture, quick-toggle locks, and anti-deletion concepts.
+- **[AyuGram](https://github.com/AyuGram)** — inspiration for Ghost Mode architecture and quick-toggle locks.
+- **[gettele/android (tele)](https://github.com/gettele/android)** by **[@nitreojs](https://github.com/nitreojs)** — the keep-deleted-messages model and chat-style archive we adapted for anti-deletion.
+- **[NagramX Turbo Classic](https://github.com/AlexeyLCP/NagramXTurboClassic)** by **[@AlexeyLCP](https://github.com/AlexeyLCP)** and **[NagramXFC](https://github.com/rhythmcache/NagramXFC)** by **[@rhythmcache](https://github.com/rhythmcache)** — Forward Pro comment position and formatting, ghost-mode seen mentions.
 - **[Cherrygram](https://github.com/arsLan4k1390/Cherrygram)** by **[@arsLan4k1390](https://github.com/arsLan4k1390)** — iOS design patterns, camera AE lock, and biometric safety guards.
 - **[exteraGram / exteraLess](https://github.com/exteraless/exteraless)** — pill stack, wide channel posts, recent chats switcher, and instant reactions read.
 - **[Nekogram](https://github.com/Nekogram/Nekogram)** — in-app updater, passcode privacy/hidden accounts, sticker sizing, and blocked users filtering.

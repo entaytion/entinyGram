@@ -452,7 +452,7 @@ object MessageDetailsHelper {
 
         val savedDeleted = DeletedMessagesHelper.getDeletedDate(activity.currentAccount, messageObject.dialogId, messageObject.id)
         val deleteTs = when {
-            savedDeleted > 0 -> (savedDeleted / 1000).toInt()
+            savedDeleted > 0 -> savedDeleted.toInt()
             owner.destroyTime != 0 -> owner.destroyTime
             else -> 0
         }

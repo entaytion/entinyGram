@@ -1,0 +1,106 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 27 Oct 2026 13:42:58 +0200
+Subject: [+] save deleted messages: chat and delete hooks
+
+---
+ .../org/telegram/messenger/SendMessagesHelper.java  |  2 +-
+ .../src/main/java/org/telegram/ui/ChatActivity.java | 13 +++++++++++++
+ .../org/telegram/ui/Components/AlertsCreator.java   |  8 ++++----
+ .../ui/Components/DeleteMessagesBottomSheet.java    |  4 ++--
+ 4 files changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -1708,7 +1708,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             } else if (scheduled) {
+                 mode = ChatActivity.MODE_SCHEDULED;
+             }
+-            getMessagesController().deleteMessages(messageIds, null, null, dialogId, topicId, false, mode);
++            getMessagesController().deleteMessagesFromUser(messageIds, null, null, dialogId, topicId, false, mode);
+         }
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -23135,6 +23135,19 @@ public class ChatActivity extends BaseFragment implements
+             ArrayList<Integer> sentMessages = null;
+             if (args.length > 6) sentMessages = (ArrayList<Integer>) args[6];
+             boolean movedToScheduled = args.length > 4 && (boolean) args[4] || sentMessages != null && !sentMessages.isEmpty();
++            if (chatMode == MODE_DEFAULT && !movedToScheduled) {
++                ArrayList<Integer> inuKeptIds = desu.inugram.helpers.archive.DeletedMessagesHelper.filterInChat(currentAccount, dialog_id, markAsDeletedMessages, args.length > 7 && (Boolean) args[7], mid -> {
++                    MessageObject object = messagesDict[0].get(mid);
++                    return object != null ? object : messagesDict[1].get(mid);
++                });
++                if (inuKeptIds != null) {
++                    markAsDeletedMessages = inuKeptIds;
++                    if (chatAdapter != null) {
++                        chatAdapter.notifyDataSetChanged(false);
++                    }
++                    updateVisibleRows();
++                }
++            }
+             final ArrayList<MessageObject> messages = new ArrayList<>();
+             MessageObject conversionMessage = null;
+             boolean conversion = false;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+@@ -7849,7 +7849,7 @@ public class AlertsCreator {
+                             if (mergeDialogId != 0 && selectedMessage.messageOwner.peer_id != null && selectedMessage.messageOwner.peer_id.chat_id == -mergeDialogId) {
+                                 thisDialogId = mergeDialogId;
+                             }
+-                            MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, thisDialogId, topicId, true, mode);
++                            MessagesController.getInstance(currentAccount).deleteMessagesFromUser(ids, random_ids, encryptedChat, thisDialogId, topicId, true, mode);
+                         } else {
+                             for (int a = 1; a >= 0; a--) {
+                                 ids = new ArrayList<>();
+@@ -7866,7 +7866,7 @@ public class AlertsCreator {
+                                         }
+                                     }
+                                 }
+-                                MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, topicId, true, mode);
++                                MessagesController.getInstance(currentAccount).deleteMessagesFromUser(ids, random_ids, encryptedChat, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, topicId, true, mode);
+                                 selectedMessages[a].clear();
+                             }
+                         }
+@@ -8184,7 +8184,7 @@ public class AlertsCreator {
+                     thisDialogId = mergeDialogId;
+                 }
+                 if (!ids.isEmpty()) {
+-                    MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, thisDialogId, topicId, deleteForAll[0], mode);
++                    MessagesController.getInstance(currentAccount).deleteMessagesFromUser(ids, random_ids, encryptedChat, thisDialogId, topicId, deleteForAll[0], mode);
+                 }
+                 for (MessageObject msg: ephemeralMessages) {
+                     MessagesController.getInstance(currentAccount).deleteEphemeralMessage(thisDialogId, topicId, msg);
+@@ -8205,7 +8205,7 @@ public class AlertsCreator {
+                             }
+                         }
+                     }
+-                    MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, topicId, deleteForAll[0], mode);
++                    MessagesController.getInstance(currentAccount).deleteMessagesFromUser(ids, random_ids, encryptedChat, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, topicId, deleteForAll[0], mode);
+                     selectedMessages[a].clear();
+                 }
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
+@@ -1118,10 +1118,10 @@ public class DeleteMessagesBottomSheet extends BottomSheetWithRecyclerListView {
+             }
+         } else {
+             if (!supergroupMessageIds.isEmpty()) {
+-                MessagesController.getInstance(currentAccount).deleteMessages(supergroupMessageIds, null, null, -inChat.id, topicId, false, mode);
++                MessagesController.getInstance(currentAccount).deleteMessagesFromUser(supergroupMessageIds, null, null, -inChat.id, topicId, false, mode);
+             }
+             if (!groupMessageIds.isEmpty()) {
+-                MessagesController.getInstance(currentAccount).deleteMessages(groupMessageIds, null, null, mergeDialogId, topicId, true, mode);
++                MessagesController.getInstance(currentAccount).deleteMessagesFromUser(groupMessageIds, null, null, mergeDialogId, topicId, true, mode);
+             }
+         }
+ 

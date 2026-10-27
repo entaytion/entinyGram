@@ -243,7 +243,7 @@ object EditHistoryHelper {
             bulletinFactory?.createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuNoEditHistory))?.show()
             return
         }
-        val frag = desu.inugram.ui.AyuMessageHistoryActivity(msgObj)
+        val frag = desu.inugram.ui.EditHistoryActivity.forMessage(msgObj)
         if (activity != null) {
             activity.presentFragment(frag)
         } else if (context is org.telegram.ui.LaunchActivity) {

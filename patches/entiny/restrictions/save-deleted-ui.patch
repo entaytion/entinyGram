@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 27 Oct 2026 13:42:59 +0200
+Subject: [+] save deleted messages: bubble marker and time tap
+
+---
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -4192,7 +4192,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+     }
+ 
+     private boolean checkDateMotionEvent(MotionEvent event) {
+-        if (!currentMessageObject.isImportedForward()) {
++        if (!currentMessageObject.isImportedForward() && !desu.inugram.helpers.chat.ChatHelper.canClickTime(currentMessageObject)) {
+             return false;
+         }
+         int x = (int) getEventX(event);
+@@ -4210,7 +4210,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 if (timePressed) {
+                     timePressed = false;
+                     playSoundEffect(SoundEffectConstants.CLICK);
+-                    delegate.didPressTime(this);
++                    if (!desu.inugram.helpers.chat.ChatHelper.onTimeClick(this) && delegate != null) {
++                        delegate.didPressTime(this);
++                    }
+                     invalidate();
+                     result = true;
+                 }
+@@ -6927,6 +6929,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 currentMessageObject.richLayout.detach(this);
+             }
+             currentMessageObject = messageObject;
++            setAlpha(desu.inugram.helpers.chat.ChatHelper.deletedAlpha(currentMessageObject));
+             currentMessagesGroup = groupedMessages;
+             wasAllChats = isAllChats;
+             lastTime = -2;
+@@ -28372,6 +28375,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+ 
+     @Override
+     public void setAlpha(float alpha) {
++        alpha = Math.min(alpha, desu.inugram.helpers.chat.ChatHelper.deletedAlpha(currentMessageObject));
+         if ((alpha == 1f) != (getAlpha() == 1)) {
+             invalidate();
+         }

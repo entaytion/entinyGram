@@ -3,11 +3,8 @@ package desu.inugram.helpers.archive
 import androidx.collection.LongSparseArray
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
-import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.FileLoader
-import org.telegram.messenger.NotificationCenter
+import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.MessageObject
-import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.tgnet.TLRPC
 
@@ -19,6 +16,41 @@ object ArchiveCache {
             val paths = deletedMessageMediaPaths.get(account.toLong()) ?: LongSparseArray<LongSparseArray<String>>().also { deletedMessageMediaPaths.put(account.toLong(), it) }
             val dialogPaths = paths.get(dialogId) ?: LongSparseArray<String>().also { paths.put(dialogId, it) }
             dialogPaths.put(msgId.toLong(), path)
+        }
+    }
+
+    internal fun rememberKept(account: Int, dialogId: Long, msgId: Int, date: Long) {
+        synchronized(cacheLock) {
+            val dialogs = deletedMessageIds.get(account.toLong())
+                ?: LongSparseArray<DeletedIdSet>().also { deletedMessageIds.put(account.toLong(), it) }
+            val set = dialogs.get(dialogId) ?: DeletedIdSet().also { dialogs.put(dialogId, it) }
+            set.add(msgId, date)
+        }
+    }
+
+    internal fun forgetKept(account: Int, dialogId: Long, msgId: Int) {
+        synchronized(cacheLock) {
+            deletedMessageIds.get(account.toLong())?.get(dialogId)?.remove(msgId)
+        }
+    }
+
+    // entiny: storage dropped the kept row, so a stale UI filter must not keep the message again
+    private val purgedIds = HashMap<Triple<Int, Long, Int>, Long>()
+    private const val PURGED_TTL_MS = 120_000L
+
+    internal fun markPurged(account: Int, dialogId: Long, msgId: Int) {
+        val now = android.os.SystemClock.elapsedRealtime()
+        synchronized(cacheLock) {
+            forgetKept(account, dialogId, msgId)
+            if (purgedIds.size > 512) purgedIds.entries.removeAll { now - it.value > PURGED_TTL_MS }
+            purgedIds[Triple(account, dialogId, msgId)] = now
+        }
+    }
+
+    internal fun consumePurged(account: Int, dialogId: Long, msgId: Int): Boolean {
+        synchronized(cacheLock) {
+            val ts = purgedIds.remove(Triple(account, dialogId, msgId)) ?: return false
+            return android.os.SystemClock.elapsedRealtime() - ts < PURGED_TTL_MS
         }
     }
 
@@ -168,6 +200,7 @@ object ArchiveCache {
         val editDate: Int,
         val entities: ArrayList<TLRPC.MessageEntity>?,
         val media: TLRPC.MessageMedia?,
+        val message: TLRPC.Message?,
     )
 
     private val shadowMessageCache = LongSparseArray<LinkedHashMap<Pair<Long, Int>, ShadowEntry>>()
@@ -316,19 +349,23 @@ object ArchiveCache {
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
             val started = android.os.SystemClock.elapsedRealtime()
-            val result = try {
-                val pruned = InuDatabaseHelper.pruneDeletedMessages(db, cutoff)
-                for ((dialogId, mids) in pruned) {
-                    storage.updateDialogsWithDeletedMessages(dialogId, getChannelId(account, dialogId), ArrayList(mids), null)
-                }
-                pruned to InuDatabaseHelper.pruneEditHistory(db, cutoff)
+            val expired = try {
+                InuDatabaseHelper.expiredDeletedMessageIds(db, cutoff)
             } catch (e: Throwable) {
                 android.util.Log.e(TAG, "archive prune failed", e)
-                null
-            } ?: return@postRunnable
-            val (expired, editsPruned) = result
-            android.util.Log.d(TAG, "archive prune: ${expired.values.sumOf { it.size }} deleted, $editsPruned edits in ${android.os.SystemClock.elapsedRealtime() - started} ms")
+                return@postRunnable
+            }
+            val editsPruned = try {
+                InuDatabaseHelper.pruneEditHistory(db, cutoff)
+            } catch (e: Throwable) {
+                android.util.Log.d(TAG, "edit history prune failed", e)
+                0
+            }
             if (expired.isEmpty() && editsPruned == 0) return@postRunnable
+            for ((dialogId, mids) in expired) {
+                DeletedMessagesHelper.purgeInStorage(account, storage, db, dialogId, mids)
+            }
+            android.util.Log.d(TAG, "archive prune: ${expired.values.sumOf { it.size }} deleted, $editsPruned edits in ${android.os.SystemClock.elapsedRealtime() - started} ms")
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
                 synchronized(cacheLock) {
                     cacheGeneration[account] = (cacheGeneration[account] ?: 0L) + 1L
@@ -339,18 +376,6 @@ object ArchiveCache {
                     editHistoryIds.remove(account.toLong())
                     shadowMessageCache.remove(account.toLong())
                     loadedAccounts.remove(account)
-                }
-                val controller = MessagesController.getInstance(account)
-                for ((dialogId, mids) in expired) {
-                    val idSet = mids.toHashSet()
-                    controller.dialogMessage.get(dialogId)?.removeAll { it != null && it.id in idSet }
-                    for (mid in mids) {
-                        if (controller.dialogMessagesByIds.get(mid)?.dialogId == dialogId) controller.dialogMessagesByIds.remove(mid)
-                    }
-                    org.telegram.messenger.NotificationCenter.getInstance(account).postNotificationName(
-                        org.telegram.messenger.NotificationCenter.messagesDeleted,
-                        ArrayList(mids), getChannelId(account, dialogId), false, false, false, 0
-                    )
                 }
                 ensureAccountLoaded(account)
             }
@@ -399,35 +424,14 @@ object ArchiveCache {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database
-            val pairs = if (db != null) InuDatabaseHelper.getDeletedMessageIds(db, dialogIds) else emptyMap()
             if (db != null) {
-                InuDatabaseHelper.clearDeletedMessages(db, dialogIds, !deletedOnly)
+                val pairs = InuDatabaseHelper.getDeletedMessageIds(db, dialogIds)
                 for ((dialogId, mids) in pairs) {
-                    InuDatabaseHelper.deleteSavedMessages(db, dialogId, mids)
-                    val channelId = getChannelId(account, dialogId)
-                    storage.updateDialogsWithDeletedMessages(dialogId, channelId, ArrayList(mids), null)
+                    DeletedMessagesHelper.purgeInStorage(account, storage, db, dialogId, mids)
                 }
+                InuDatabaseHelper.clearDeletedMessages(db, dialogIds, !deletedOnly)
             }
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
-                if (pairs.isNotEmpty()) {
-                    val controller = org.telegram.messenger.MessagesController.getInstance(account)
-                    for ((dialogId, mids) in pairs) {
-                        for (mid in mids) {
-                            if (controller.dialogMessagesByIds.get(mid)?.dialogId == dialogId) controller.dialogMessagesByIds.remove(mid)
-                        }
-                        val list = controller.dialogMessage.get(dialogId)
-                        if (list != null) {
-                            val midSet = mids.toHashSet()
-                            list.removeAll { it?.id != null && it.id in midSet }
-                        }
-                        val channelId = getChannelId(account, dialogId)
-                        org.telegram.messenger.NotificationCenter.getInstance(account)
-                            .postNotificationName(
-                                org.telegram.messenger.NotificationCenter.messagesDeleted,
-                                java.util.ArrayList(mids), channelId, false, false, false, 0
-                            )
-                    }
-                }
                 synchronized(cacheLock) {
                     cacheGeneration[account] = (cacheGeneration[account] ?: 0L) + 1L
                     loadingAccounts.remove(account)
@@ -443,10 +447,6 @@ object ArchiveCache {
         }
     }
 
-    internal fun findShadowDialog(account: Int, msgId: Int): Long? = synchronized(cacheLock) {
-        shadowMessageCache.get(account.toLong())?.keys?.lastOrNull { it.second == msgId && it.first > 0 }?.first
-    }
-
     @JvmStatic
     fun rememberMessage(account: Int, message: TLRPC.Message?) {
         if (message == null) return
@@ -456,6 +456,14 @@ object ArchiveCache {
 
     internal fun shadow(account: Int, dialogId: Long, msgId: Int): ShadowEntry? = synchronized(cacheLock) {
         shadowMessageCache.get(account.toLong())?.get(dialogId to msgId)
+    }
+
+    internal fun messageSnapshot(account: Int, dialogId: Long, msgId: Int): TLRPC.Message? {
+        val entry = synchronized(cacheLock) {
+            val messages = shadowMessageCache.get(account.toLong())
+            if (dialogId != 0L) messages?.get(dialogId to msgId) else messages?.entries?.firstOrNull { it.key.second == msgId }?.value
+        }
+        return entry?.message?.let { InuUtils.cloneTLObject(it, TLRPC.Message::TLdeserialize) }
     }
 
     internal fun updateShadow(account: Int, message: TLRPC.Message) {
@@ -469,6 +477,7 @@ object ArchiveCache {
             message.edit_date,
             if (message.entities.isNullOrEmpty()) null else ArrayList(message.entities),
             InuDatabaseHelper.cloneMedia(message.media),
+            if (DeletedMessagesHelper.isSaveDeletedEnabled()) InuUtils.cloneTLObject(message, TLRPC.Message::TLdeserialize) else null,
         )
         synchronized(cacheLock) {
             val map = shadowMessageCache.get(account.toLong())

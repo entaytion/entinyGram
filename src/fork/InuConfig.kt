@@ -1671,9 +1671,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val SAVE_DELETED_OWN = BoolItem("save_deleted_own", false)
 
     @JvmField
-    val PROMPT_KEEP_LOCAL_ON_DELETE = BoolItem("prompt_keep_local_on_delete", false)
-
-    @JvmField
     val ARCHIVE_MEDIA_PUBLIC = BoolItem("archive_media_public", false)
 
     @JvmField
@@ -2138,6 +2135,7 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
             const val CROSS = 2
             const val EYE_CROSSED = 3
             const val TRASH_BIN_OUTLINE = 4
+            const val TEXT = 5
         }
     }
 

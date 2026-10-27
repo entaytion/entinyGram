@@ -196,7 +196,7 @@ object ChatHelper {
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             hash = hash * 31 + 2
         }
-        if (DeletedMessagesHelper.isDeletedOrPreserved(msg)) {
+        if (DeletedMessagesHelper.isKept(msg)) {
             hash = hash * 31 + 3
             hash = hash * 31 + InuConfig.DELETED_MARK_COLOR.value
             hash = hash * 31 + InuConfig.DELETED_MARK_STYLE.value
@@ -223,10 +223,11 @@ object ChatHelper {
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             width += AndroidUtilities.dp(11f)
         }
-        val isDeleted = DeletedMessagesHelper.isDeletedOrPreserved(msg)
+        val isDeleted = DeletedMessagesHelper.isKept(msg)
         if (isDeleted) {
-            if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
-                width += AndroidUtilities.dp(deletedMarkSizeDp()) + ceil(Theme.chat_timePaint.measureText(" ")).toInt()
+            when (InuConfig.DELETED_MARK_STYLE.value) {
+                InuConfig.DeletedMarkStyleItem.NOTHING, InuConfig.DeletedMarkStyleItem.TEXT -> {}
+                else -> width += AndroidUtilities.dp(deletedMarkSizeDp()) + ceil(Theme.chat_timePaint.measureText(" ")).toInt()
             }
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             width += AndroidUtilities.dp(11f)
@@ -254,15 +255,18 @@ object ChatHelper {
             appendTimeIcon(sb, R.drawable.msg_block, sizeDp = 11f, translateYDp = 1f)
             sb.append(" ")
         }
-        val isDeleted = DeletedMessagesHelper.isDeletedOrPreserved(msg)
+        val isDeleted = DeletedMessagesHelper.isKept(msg)
         if (isDeleted) {
-            if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
-                val markColor = InuConfig.DELETED_MARK_COLOR.value
-                appendTimeIcon(sb, deletedMarkIconRes(), sizeDp = deletedMarkSizeDp(), overrideColor = markColor)
-                sb.append(" ")
-            } else {
-                appendDeletedMarkText(sb)
-                sb.append(" ")
+            when (InuConfig.DELETED_MARK_STYLE.value) {
+                InuConfig.DeletedMarkStyleItem.NOTHING -> {}
+                InuConfig.DeletedMarkStyleItem.TEXT -> {
+                    appendDeletedMarkText(sb)
+                    sb.append(" ")
+                }
+                else -> {
+                    appendTimeIcon(sb, deletedMarkIconRes(), sizeDp = deletedMarkSizeDp(), overrideColor = InuConfig.DELETED_MARK_COLOR.value)
+                    sb.append(" ")
+                }
             }
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             appendTimeIcon(sb, R.drawable.group_edit, sizeDp = 11f)
@@ -312,7 +316,7 @@ object ChatHelper {
     fun deletedAlpha(msg: MessageObject?): Float {
         if (msg == null) return 1f
         if (!InuConfig.DELETED_MESSAGES_TRANSPARENT.value) return 1f
-        return if (DeletedMessagesHelper.isDeletedOrPreserved(msg)) 0.65f else 1f
+        return if (DeletedMessagesHelper.isKept(msg)) 0.65f else 1f
     }
 
     @JvmStatic
@@ -321,7 +325,7 @@ object ChatHelper {
         if (EditHistoryHelper.isHistoryPreview(msg)) return false
         val dialogId = msg.getDialogId()
         val msgId = msg.id
-        val isDeleted = DeletedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
+        val isDeleted = DeletedMessagesHelper.isKept(msg.currentAccount, dialogId, msgId)
         if (isDeleted) return true
         if (!InuConfig.SAVE_EDITED_MESSAGES.value) return false
         return EditHistoryHelper.isEdited(msg) || EditHistoryHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)
@@ -335,7 +339,7 @@ object ChatHelper {
         val delegate = cell.delegate
         val parentFragment = if (delegate is ChatActivity) delegate else null
 
-        val isDeleted = DeletedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
+        val isDeleted = DeletedMessagesHelper.isKept(msg.currentAccount, dialogId, msgId)
         if (isDeleted) {
             DeletedMessagesHelper.showDeletionTimeBulletin(cell.context, parentFragment, msg)
             return true

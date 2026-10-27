@@ -2,7 +2,9 @@ package desu.inugram.ui.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
-import desu.inugram.InuConfig
+import android.graphics.Canvas
+import desu.inugram.helpers.archive.DeletedMessagesHelper
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
@@ -17,27 +19,38 @@ class DeletedMessagePreviewCell(context: Context?, fragment: BaseFragment) :
     MessagesPreviewCell(context, fragment, buildMessages()) {
 
     init {
+        refresh()
+    }
+
+    fun refresh() {
         val msgs = buildMessages()
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child is ChatMessageCell) {
                 child.isChat = true
                 child.setMessageObject(msgs[i], null, false, false, false)
-                if (InuConfig.DELETED_MESSAGES_TRANSPARENT.value) {
-                    child.alpha = 0.65f
-                }
+                if (child.isAvatarVisible) child.setAvatar(msgs[i])
             }
         }
+        invalidate()
     }
 
-    override fun invalidate() {
+    // entiny: the avatar of a cell is drawn by its host list, here the preview is the host
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
         for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            if (child is ChatMessageCell) {
-                child.alpha = if (InuConfig.DELETED_MESSAGES_TRANSPARENT.value) 0.65f else 1.0f
-            }
+            val child = getChildAt(i) as? ChatMessageCell ?: continue
+            if (!child.isAvatarVisible) continue
+            val receiver = child.avatarImage ?: continue
+            val top = child.top + child.paddingTop
+            var y = top + child.layoutHeight
+            if (y > child.bottom) y = child.bottom
+            if (y - AndroidUtilities.dp(48f) < top) y = top + AndroidUtilities.dp(48f)
+            receiver.setImageY((y - AndroidUtilities.dp(44f)).toFloat())
+            receiver.setAlpha(1f)
+            receiver.setVisible(true, false)
+            receiver.draw(canvas)
         }
-        super.invalidate()
     }
 
     companion object {
@@ -45,11 +58,12 @@ class DeletedMessagePreviewCell(context: Context?, fragment: BaseFragment) :
 
         private fun buildMessages(): Array<MessageObject> {
             val account = UserConfig.selectedAccount
-            val sender = TLRPC.TL_user().apply {
+            val controller = MessagesController.getInstance(account)
+            controller.putUser(TLRPC.TL_user().apply {
                 id = MOCK_USER_ID
                 first_name = getString(R.string.InuDeletedMarkPreviewSender)
-            }
-            MessagesController.getInstance(account).putUser(sender, true)
+                status = TLRPC.TL_userStatusRecently()
+            }, true)
 
             val now = (System.currentTimeMillis() / 1000).toInt()
             val deletedTlMessage = TLRPC.TL_message().apply {
@@ -68,7 +82,7 @@ class DeletedMessagePreviewCell(context: Context?, fragment: BaseFragment) :
                 deleted = true
                 forceAvatar = true
             }
-
+            DeletedMessagesHelper.markAsPreview(msgObj)
             return arrayOf(msgObj)
         }
     }

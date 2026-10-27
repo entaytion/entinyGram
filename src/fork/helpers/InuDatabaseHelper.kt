@@ -7,42 +7,26 @@ import org.telegram.tgnet.NativeByteBuffer
 import org.telegram.tgnet.TLRPC
 
 object InuDatabaseHelper {
-    private const val VERSION = 2
+    private const val TAG = "InuDatabaseHelper"
+    private const val START_MIGRATION_BELOW = 2
 
-    @JvmStatic
-    fun migrate(messagesStorage: MessagesStorage) {
-        val db = messagesStorage.database;
+    private class Migration(val to: Int, val atomic: Boolean = false, val run: (SQLiteDatabase) -> Unit)
 
-        db.executeFast("CREATE TABLE IF NOT EXISTS inu_kv(key TEXT PRIMARY KEY, value TEXT)")
-            .stepThis().dispose();
-        var version = readKv(db, "version")?.toInt() ?: 0;
-        Log.d("InuDatabaseHelper", "migrating from version $version")
-        if (version < VERSION) messagesStorage.inu_startDatabaseMigration()
-
-        if (version == 0) {
+    private val MIGRATIONS = listOf(
+        Migration(1) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_folder_meta(filter_id INTEGER PRIMARY KEY, emoticon TEXT)")
                 .stepThis().dispose();
-            writeKv(db, "version", "1")
-            version = 1
-        }
-
-        if (version == 1) {
+        },
+        Migration(2) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_deleted_messages(dialog_id INTEGER, msg_id INTEGER, from_id INTEGER, text TEXT, date INTEGER, PRIMARY KEY(dialog_id, msg_id))")
                 .stepThis().dispose();
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_edit_history(dialog_id INTEGER, msg_id INTEGER, text TEXT, date INTEGER)")
                 .stepThis().dispose();
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_edit_history ON inu_edit_history(dialog_id, msg_id)")
                 .stepThis().dispose();
-            writeKv(db, "version", "2")
-            version = 2
-        }
-
-        if (version == 2) {
-            writeKv(db, "version", "3")
-            version = 3
-        }
-
-        if (version == 3) {
+        },
+        Migration(3) {},
+        Migration(4) { db ->
             try {
                 db.executeFast("ALTER TABLE inu_deleted_messages ADD COLUMN media_path TEXT").stepThis().dispose()
             } catch (e: Throwable) { }
@@ -51,124 +35,75 @@ object InuDatabaseHelper {
             } catch (e: Throwable) { }
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_deleted_reactions(dialog_id INTEGER, msg_id INTEGER, emoji TEXT, count INTEGER, custom_id INTEGER, PRIMARY KEY(dialog_id, msg_id, emoji))")
                 .stepThis().dispose()
-            writeKv(db, "version", "4")
-            version = 4
-        }
-
-        if (version == 4) {
-            db.executeFast("CREATE TABLE IF NOT EXISTS inu_preserved_messages(dialog_id INTEGER, msg_id INTEGER, PRIMARY KEY(dialog_id, msg_id))")
-                .stepThis().dispose();
-            writeKv(db, "version", "5")
-            version = 5
-        }
-
-        if (version == 5) {
+        },
+        Migration(5) {},
+        Migration(6) { db ->
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_dialog ON inu_deleted_messages(dialog_id)")
                 .stepThis().dispose()
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_date ON inu_deleted_messages(date)")
                 .stepThis().dispose()
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_edit_history_date ON inu_edit_history(date)")
                 .stepThis().dispose()
-            writeKv(db, "version", "6")
-            version = 6
-        }
-
-        if (version == 6) {
+        },
+        Migration(7) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_local_pins(scope INTEGER NOT NULL, dialog_id INTEGER NOT NULL, pin_order INTEGER NOT NULL, PRIMARY KEY(scope, dialog_id))")
                 .stepThis().dispose()
-            writeKv(db, "version", "7")
-            version = 7
-        }
-
-        if (version == 7) {
+        },
+        Migration(8) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_presence_watch(user_id INTEGER PRIMARY KEY)")
                 .stepThis().dispose()
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_presence_logs(user_id INTEGER NOT NULL, status_type TEXT NOT NULL, timestamp INTEGER NOT NULL)")
                 .stepThis().dispose()
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_presence_logs_user ON inu_presence_logs(user_id)")
                 .stepThis().dispose()
-            writeKv(db, "version", "8")
-            version = 8
-        }
-
-        if (version == 8) {
+        },
+        Migration(9) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_local_folder_chats(filter_id INTEGER NOT NULL, dialog_id INTEGER NOT NULL, PRIMARY KEY(filter_id, dialog_id))")
                 .stepThis().dispose()
-            writeKv(db, "version", "9")
-            version = 9
-        }
-
-        if (version == 9) {
+        },
+        Migration(10) { db ->
             try {
                 db.executeFast("ALTER TABLE inu_edit_history ADD COLUMN entities BLOB").stepThis().dispose()
             } catch (e: Throwable) { }
             try {
                 db.executeFast("ALTER TABLE inu_edit_history ADD COLUMN media BLOB").stepThis().dispose()
             } catch (e: Throwable) { }
-            writeKv(db, "version", "10")
-            version = 10
-        }
-
-        if (version == 10) {
+        },
+        Migration(11) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_recent_dialogs(dialog_id INTEGER PRIMARY KEY, opened_at INTEGER NOT NULL)")
                 .stepThis().dispose()
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_recent_dialogs_opened ON inu_recent_dialogs(opened_at)")
                 .stepThis().dispose()
-            writeKv(db, "version", "11")
-            version = 11
-        }
-
-        if (version == 11) {
+        },
+        Migration(12) { db ->
             db.executeFast("DELETE FROM inu_deleted_messages WHERE (text IS NULL OR text = '') AND (media_path IS NULL OR media_path = '')")
                 .stepThis().dispose()
-            writeKv(db, "version", "12")
-            version = 12
-        }
-
-        if (version == 12) {
-            writeKv(db, "version", "13")
-            version = 13
-        }
-
-        if (version == 13) {
+        },
+        Migration(13) {},
+        Migration(14) { db ->
             try {
                 db.executeFast("ALTER TABLE inu_deleted_messages ADD COLUMN message BLOB").stepThis().dispose()
             } catch (e: Throwable) { }
-            writeKv(db, "version", "14")
-            version = 14
-        }
-
-        if (version == 14) {
+        },
+        Migration(15) { db ->
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_presence_logs_ts ON inu_presence_logs(timestamp)")
                 .stepThis().dispose()
-            writeKv(db, "version", "15")
-            version = 15
-        }
-
-        if (version == 15) {
+        },
+        Migration(16) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_read_times(dialog_id INTEGER NOT NULL, max_id INTEGER NOT NULL, read_at INTEGER NOT NULL, PRIMARY KEY(dialog_id, max_id))")
                 .stepThis().dispose()
-            writeKv(db, "version", "16")
-            version = 16
-        }
-
-        if (version == 16) {
+        },
+        Migration(17) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_last_seen(user_id INTEGER PRIMARY KEY, seen_at INTEGER NOT NULL)")
                 .stepThis().dispose()
-            writeKv(db, "version", "17")
-            version = 17
-        }
-
-        if (version == 17) {
+        },
+        Migration(18) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_contact_changes(user_id INTEGER NOT NULL, field TEXT NOT NULL, old_value TEXT, new_value TEXT, date INTEGER NOT NULL)")
                 .stepThis().dispose()
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_contact_changes_user ON inu_contact_changes(user_id)")
                 .stepThis().dispose()
-            writeKv(db, "version", "18")
-            version = 18
-        }
-
-        if (version == 18) {
+        },
+        Migration(19) { db ->
             val cursor = db.queryFinalized("PRAGMA table_info(inu_edit_history)")
             val hasArchivedAt = try {
                 var found = false
@@ -184,82 +119,89 @@ object InuDatabaseHelper {
             }
             db.executeFast("UPDATE inu_edit_history SET archived_at = date WHERE archived_at IS NULL").stepThis().dispose()
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_edit_history_archived_at ON inu_edit_history(archived_at)").stepThis().dispose()
-            writeKv(db, "version", "19")
-            version = 19
-        }
-
-        if (version == 19) {
-            val started = android.os.SystemClock.elapsedRealtime()
-            db.executeFast("SAVEPOINT inu_edit_history_v20").stepThis().dispose()
-            try {
-                db.executeFast("CREATE TABLE inu_edit_history_v20(id INTEGER PRIMARY KEY AUTOINCREMENT, dialog_id INTEGER, msg_id INTEGER, text TEXT, date INTEGER, media_path TEXT, entities BLOB, media BLOB, archived_at INTEGER)").stepThis().dispose()
-                db.executeFast("INSERT INTO inu_edit_history_v20(id, dialog_id, msg_id, text, date, media_path, entities, media, archived_at) SELECT rowid, dialog_id, msg_id, text, date, media_path, entities, media, archived_at FROM inu_edit_history").stepThis().dispose()
-                db.executeFast("DROP TABLE inu_edit_history").stepThis().dispose()
-                db.executeFast("ALTER TABLE inu_edit_history_v20 RENAME TO inu_edit_history").stepThis().dispose()
-                db.executeFast("CREATE INDEX idx_inu_edit_history ON inu_edit_history(dialog_id, msg_id)").stepThis().dispose()
-                db.executeFast("CREATE INDEX idx_inu_edit_history_date ON inu_edit_history(date)").stepThis().dispose()
-                db.executeFast("CREATE INDEX idx_inu_edit_history_archived_at ON inu_edit_history(archived_at)").stepThis().dispose()
-                writeKv(db, "version", "20")
-                db.executeFast("RELEASE SAVEPOINT inu_edit_history_v20").stepThis().dispose()
-                version = 20
-            } catch (e: Throwable) {
-                try {
-                    db.executeFast("ROLLBACK TO SAVEPOINT inu_edit_history_v20").stepThis().dispose()
-                    db.executeFast("RELEASE SAVEPOINT inu_edit_history_v20").stepThis().dispose()
-                } catch (rollbackError: Throwable) {
-                    e.addSuppressed(rollbackError)
-                }
-                Log.e("InuDatabaseHelper", "edit history v20 rebuild failed", e)
-            }
-            Log.d("InuDatabaseHelper", "edit history v20 rebuild took ${android.os.SystemClock.elapsedRealtime() - started} ms")
-        }
-
-        if (version == 20) {
+        },
+        Migration(20, atomic = true) { db ->
+            db.executeFast("CREATE TABLE inu_edit_history_v20(id INTEGER PRIMARY KEY AUTOINCREMENT, dialog_id INTEGER, msg_id INTEGER, text TEXT, date INTEGER, media_path TEXT, entities BLOB, media BLOB, archived_at INTEGER)").stepThis().dispose()
+            db.executeFast("INSERT INTO inu_edit_history_v20(id, dialog_id, msg_id, text, date, media_path, entities, media, archived_at) SELECT rowid, dialog_id, msg_id, text, date, media_path, entities, media, archived_at FROM inu_edit_history").stepThis().dispose()
+            db.executeFast("DROP TABLE inu_edit_history").stepThis().dispose()
+            db.executeFast("ALTER TABLE inu_edit_history_v20 RENAME TO inu_edit_history").stepThis().dispose()
+            db.executeFast("CREATE INDEX idx_inu_edit_history ON inu_edit_history(dialog_id, msg_id)").stepThis().dispose()
+            db.executeFast("CREATE INDEX idx_inu_edit_history_date ON inu_edit_history(date)").stepThis().dispose()
+            db.executeFast("CREATE INDEX idx_inu_edit_history_archived_at ON inu_edit_history(archived_at)").stepThis().dispose()
+        },
+        Migration(21) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_hidden_dialogs(dialog_id INTEGER PRIMARY KEY)")
                 .stepThis().dispose()
-            writeKv(db, "version", "21")
-            version = 21
-        }
-
-        if (version == 21) {
+        },
+        Migration(22) { db ->
             for (table in listOf("messages_v2", "messages_holes", "media_v4", "media_holes_v2", "media_counts_v2")) {
                 db.executeFast("DELETE FROM $table WHERE uid NOT IN (SELECT did FROM dialogs WHERE folder_id >= 0)")
                     .stepThis().dispose()
             }
-            writeKv(db, "version", "22")
-            version = 22
-        }
-
-        if (version == 22) {
+        },
+        Migration(23) { db ->
             db.executeFast("CREATE TABLE IF NOT EXISTS inu_bookmarks(dialog_id INTEGER NOT NULL, msg_id INTEGER NOT NULL, added_at INTEGER NOT NULL, PRIMARY KEY(dialog_id, msg_id))")
                 .stepThis().dispose()
-            writeKv(db, "version", "23")
-            version = 23
-        }
-
-        if (version == 23) {
-            db.executeFast("SAVEPOINT inu_edit_history_v24").stepThis().dispose()
+        },
+        Migration(24, atomic = true) { db ->
+            cleanEditHistory(db)
+            db.executeFast("CREATE UNIQUE INDEX IF NOT EXISTS idx_inu_edit_history_revision ON inu_edit_history(dialog_id, msg_id, date)").stepThis().dispose()
+        },
+        Migration(25) { db ->
             try {
-                cleanEditHistory(db)
-                db.executeFast("CREATE UNIQUE INDEX IF NOT EXISTS idx_inu_edit_history_revision ON inu_edit_history(dialog_id, msg_id, date)").stepThis().dispose()
-                writeKv(db, "version", "24")
-                db.executeFast("RELEASE SAVEPOINT inu_edit_history_v24").stepThis().dispose()
-                version = 24
-            } catch (e: Throwable) {
-                try {
-                    db.executeFast("ROLLBACK TO SAVEPOINT inu_edit_history_v24").stepThis().dispose()
-                    db.executeFast("RELEASE SAVEPOINT inu_edit_history_v24").stepThis().dispose()
-                } catch (rollbackError: Throwable) {
-                    e.addSuppressed(rollbackError)
-                }
-                Log.e("InuDatabaseHelper", "edit history v24 cleanup failed", e)
-            }
+                db.executeFast("ALTER TABLE inu_deleted_messages ADD COLUMN deleted_at INTEGER").stepThis().dispose()
+            } catch (e: Throwable) { }
+            db.executeFast("UPDATE inu_deleted_messages SET deleted_at = date WHERE deleted_at IS NULL").stepThis().dispose()
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_deleted_at ON inu_deleted_messages(deleted_at)").stepThis().dispose()
+            db.executeFast("DROP TABLE IF EXISTS inu_preserved_messages").stepThis().dispose()
+        },
+    )
+
+    @JvmStatic
+    fun migrate(messagesStorage: MessagesStorage) {
+        val db = messagesStorage.database
+
+        db.executeFast("CREATE TABLE IF NOT EXISTS inu_kv(key TEXT PRIMARY KEY, value TEXT)").stepThis().dispose()
+        var version = readKv(db, "version")?.toInt() ?: 0
+        Log.d(TAG, "migrating from version $version")
+        if (version < START_MIGRATION_BELOW) messagesStorage.inu_startDatabaseMigration()
+
+        for (migration in MIGRATIONS) {
+            if (migration.to <= version) continue
+            if (!apply(db, migration)) break
+            version = migration.to
         }
 
-        // entiny: the feed no longer keeps its own cache
         db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 
-        Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
+        Log.d(TAG, "migrating finished, new version = $version")
+    }
+
+    private fun apply(db: SQLiteDatabase, migration: Migration): Boolean {
+        val started = android.os.SystemClock.elapsedRealtime()
+        if (!migration.atomic) {
+            migration.run(db)
+            writeKv(db, "version", migration.to.toString())
+            return true
+        }
+        val savepoint = "inu_migration_${migration.to}"
+        db.executeFast("SAVEPOINT $savepoint").stepThis().dispose()
+        try {
+            migration.run(db)
+            writeKv(db, "version", migration.to.toString())
+            db.executeFast("RELEASE SAVEPOINT $savepoint").stepThis().dispose()
+            Log.d(TAG, "migration ${migration.to} took ${android.os.SystemClock.elapsedRealtime() - started} ms")
+            return true
+        } catch (e: Throwable) {
+            try {
+                db.executeFast("ROLLBACK TO SAVEPOINT $savepoint").stepThis().dispose()
+                db.executeFast("RELEASE SAVEPOINT $savepoint").stepThis().dispose()
+            } catch (rollbackError: Throwable) {
+                e.addSuppressed(rollbackError)
+            }
+            Log.e(TAG, "migration ${migration.to} failed", e)
+            return false
+        }
     }
 
     fun loadBookmarks(db: SQLiteDatabase): List<Pair<Long, Int>> {
@@ -626,13 +568,14 @@ object InuDatabaseHelper {
         return list
     }
 
-    fun saveDeletedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int, fromId: Long, text: String, date: Int, mediaPath: String? = null, message: TLRPC.Message? = null) {
+    fun saveDeletedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int, fromId: Long, text: String, date: Int, deletedAt: Int, mediaPath: String? = null, message: TLRPC.Message? = null) {
         val row = "FROM inu_deleted_messages WHERE dialog_id = ? AND msg_id = ?"
         val query = db.executeFast(
-            "INSERT OR REPLACE INTO inu_deleted_messages(dialog_id, msg_id, from_id, text, date, media_path, message) VALUES(?, ?, " +
+            "INSERT OR REPLACE INTO inu_deleted_messages(dialog_id, msg_id, from_id, text, date, deleted_at, media_path, message) VALUES(?, ?, " +
                 "CASE WHEN ? != 0 THEN ? ELSE COALESCE((SELECT from_id $row), 0) END, " +
                 "COALESCE(NULLIF(?, ''), (SELECT text $row), ''), " +
                 "COALESCE((SELECT date $row), ?), " +
+                "COALESCE((SELECT deleted_at $row), ?), " +
                 "COALESCE(?, (SELECT media_path $row)), " +
                 "COALESCE(?, (SELECT message $row)))"
         )
@@ -650,6 +593,8 @@ object InuDatabaseHelper {
             key()
             key()
             query.bindInteger(++index, if (date > 0) date else (System.currentTimeMillis() / 1000L).toInt())
+            key()
+            query.bindInteger(++index, if (deletedAt > 0) deletedAt else (System.currentTimeMillis() / 1000L).toInt())
             if (mediaPath != null) query.bindString(++index, mediaPath) else query.bindNull(++index)
             key()
             if (message != null) query.bindTlObject(++index, message) else query.bindNull(++index)
@@ -732,7 +677,7 @@ object InuDatabaseHelper {
 
     fun readDeletedIndexPage(db: SQLiteDatabase, afterRowId: Long, limit: Int, consumer: (rowId: Long, dialogId: Long, messageId: Int, date: Long, mediaPath: String?) -> Unit): Int {
         var count = 0
-        val cursor = db.queryFinalized("SELECT rowid, dialog_id, msg_id, date, media_path FROM inu_deleted_messages WHERE rowid > ? ORDER BY rowid LIMIT ?", afterRowId, limit)
+        val cursor = db.queryFinalized("SELECT rowid, dialog_id, msg_id, COALESCE(deleted_at, date), media_path FROM inu_deleted_messages WHERE rowid > ? ORDER BY rowid LIMIT ?", afterRowId, limit)
         try {
             while (cursor.next()) {
                 count++
@@ -1087,7 +1032,7 @@ object InuDatabaseHelper {
 
     fun expiredDeletedMessageIds(db: SQLiteDatabase, cutoffUnixSec: Long): Map<Long, List<Int>> {
         val ids = HashMap<Long, MutableList<Int>>()
-        val cursor = db.queryFinalized("SELECT dialog_id, msg_id FROM inu_deleted_messages WHERE date > 0 AND date < ?", cutoffUnixSec)
+        val cursor = db.queryFinalized("SELECT dialog_id, msg_id FROM inu_deleted_messages WHERE deleted_at > 0 AND deleted_at < ?", cutoffUnixSec)
         try {
             while (cursor.next()) {
                 ids.getOrPut(cursor.longValue(0)) { ArrayList() }.add(cursor.intValue(1))
@@ -1096,24 +1041,6 @@ object InuDatabaseHelper {
             cursor.dispose()
         }
         return ids
-    }
-
-    fun pruneDeletedMessages(db: SQLiteDatabase, cutoffUnixSec: Long): Map<Long, List<Int>> {
-        val expiredIds = expiredDeletedMessageIds(db, cutoffUnixSec)
-        if (expiredIds.isEmpty()) return expiredIds
-        val mediaPaths = getMediaPaths(db, "inu_deleted_messages", "date > 0 AND date < ?", cutoffUnixSec)
-        for ((dialogId, mids) in expiredIds) {
-            deleteSavedMessages(db, dialogId, mids)
-            db.executeFast("DELETE FROM inu_preserved_messages WHERE dialog_id = $dialogId AND msg_id IN (${mids.joinToString(",")})").stepThis().dispose()
-        }
-        db.executeFast("DELETE FROM inu_deleted_messages WHERE date > 0 AND date < ?")
-            .also {
-                it.bindLong(1, cutoffUnixSec)
-                it.step()
-                it.dispose()
-            }
-        deleteUnreferencedMediaFiles(db, mediaPaths)
-        return expiredIds
     }
 
     fun pruneEditHistory(db: SQLiteDatabase, cutoffUnixSec: Long): Int {
@@ -1135,31 +1062,59 @@ object InuDatabaseHelper {
         val dialogId: Long,
         val count: Int,
         val estimatedSize: Long,
-        val mediaSize: Long = 0L
+        val mediaSize: Long = 0L,
+        val lastDate: Long = 0L,
+        val preview: String = "",
+        val latestFromId: Long = 0L,
     )
+
+    private class LatestPreview(val text: String, val fromId: Long)
 
     fun getDeletedMessagesStats(db: SQLiteDatabase, edited: Boolean = false): List<DialogCacheStat> {
         val table = if (edited) "inu_edit_history" else "inu_deleted_messages"
         val rowSize = if (edited) 150L else 250L
-        val map = HashMap<Long, Pair<Int, Long>>()
-        val cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(text)) FROM $table GROUP BY dialog_id")
+        val timeColumn = if (edited) "COALESCE(archived_at, date)" else "COALESCE(deleted_at, date)"
+        val map = HashMap<Long, Triple<Int, Long, Long>>()
+        val cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(text)), MAX($timeColumn) FROM $table GROUP BY dialog_id")
         try {
             while (cursor.next()) {
                 val dialogId = cursor.longValue(0)
-                val count = cursor.intValue(1)
-                val textLen = cursor.longValue(2)
-                val estSize = (count * rowSize) + textLen
-                map[dialogId] = Pair(count, estSize)
+                map[dialogId] = Triple(cursor.intValue(1), cursor.longValue(2), cursor.longValue(3))
             }
         } finally {
             cursor.dispose()
         }
 
         val mediaByDialog = getMediaSizeByDialog(db, table)
-        return map.map { (id, pair) ->
+        return map.map { (id, row) ->
             val mediaSize = mediaByDialog[id] ?: 0L
-            DialogCacheStat(id, pair.first, pair.second + mediaSize, mediaSize)
-        }.sortedByDescending { it.estimatedSize }
+            val (count, textLen, lastDate) = row
+            val latest = latestPreview(db, id, edited)
+            DialogCacheStat(id, count, (count * rowSize) + textLen + mediaSize, mediaSize, lastDate, latest.text, latest.fromId)
+        }.sortedWith(compareByDescending<DialogCacheStat> { it.lastDate }.thenByDescending { it.estimatedSize })
+    }
+
+    private fun latestPreview(db: SQLiteDatabase, dialogId: Long, edited: Boolean): LatestPreview {
+        if (edited) {
+            val cursor = db.queryFinalized("SELECT text, media FROM inu_edit_history WHERE dialog_id = ? ORDER BY date DESC, id DESC LIMIT 1", dialogId)
+            try {
+                if (!cursor.next()) return LatestPreview("", 0L)
+                val text = cursor.stringValue(0) ?: ""
+                val media = readTl(cursor, 1) { data -> TLRPC.MessageMedia.TLdeserialize(data, data.readInt32(false), false) }
+                return LatestPreview(text.ifBlank { desu.inugram.helpers.archive.DeletedMessagesHelper.mediaLabel(media) }, 0L)
+            } finally {
+                cursor.dispose()
+            }
+        }
+        val cursor = db.queryFinalized("SELECT text, message, from_id FROM inu_deleted_messages WHERE dialog_id = ? ORDER BY date DESC, msg_id DESC LIMIT 1", dialogId)
+        try {
+            if (!cursor.next()) return LatestPreview("", 0L)
+            val text = cursor.stringValue(0) ?: ""
+            val message = readMessageBlob(cursor, 1)
+            return LatestPreview(desu.inugram.helpers.archive.DeletedMessagesHelper.archiveText(text, message), cursor.longValue(2))
+        } finally {
+            cursor.dispose()
+        }
     }
 
     private fun getMediaSizeByDialog(db: SQLiteDatabase, table: String): Map<Long, Long> {

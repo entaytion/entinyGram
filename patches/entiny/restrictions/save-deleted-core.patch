@@ -1,0 +1,214 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 27 Oct 2026 13:42:41 +0200
+Subject: [+] save deleted messages: core storage hooks
+
+---
+ .../messenger/MessagesController.java         | 15 +++-
+ .../telegram/messenger/MessagesStorage.java   | 73 +++++++++++++++----
+ 2 files changed, 71 insertions(+), 17 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -9359,13 +9359,21 @@ public class MessagesController extends BaseController implements NotificationCe
+         deleteMessages(messages, randoms, encryptedChat, dialogId, forAll, mode, cacheOnly, taskId, taskRequest, topicId, false, 0);
+     }
+ 
++    public void deleteMessagesFromUser(ArrayList<Integer> messages, ArrayList<Long> randoms, TLRPC.EncryptedChat encryptedChat, long dialogId, int topicId, boolean forAll, int mode) {
++        deleteMessages(messages, randoms, encryptedChat, dialogId, forAll, mode, false, 0, null, topicId, false, 0, true);
++    }
++
+     public void deleteMessages(ArrayList<Integer> messages, ArrayList<Long> randoms, TLRPC.EncryptedChat encryptedChat, long dialogId, boolean forAll, int mode, boolean cacheOnly, long taskId, TLObject taskRequest, int topicId, boolean movedToScheduled, int movedToScheduledMessageId) {
++        deleteMessages(messages, randoms, encryptedChat, dialogId, forAll, mode, cacheOnly, taskId, taskRequest, topicId, movedToScheduled, movedToScheduledMessageId, false);
++    }
++
++    public void deleteMessages(ArrayList<Integer> messages, ArrayList<Long> randoms, TLRPC.EncryptedChat encryptedChat, long dialogId, boolean forAll, int mode, boolean cacheOnly, long taskId, TLObject taskRequest, int topicId, boolean movedToScheduled, int movedToScheduledMessageId, boolean userInitiated) {
+         // inu_ chunk to dodge server 100-id limit on TL_*_deleteMessages; secret-chat randoms only travel with first chunk
+         if (taskId == 0 && taskRequest == null && !cacheOnly && messages != null && messages.size() > 100) {
+             int total = messages.size();
+             for (int i = 100; i < total; i += 100) {
+                 ArrayList<Integer> chunk = new ArrayList<>(messages.subList(i, Math.min(i + 100, total)));
+-                deleteMessages(chunk, null, null, dialogId, forAll, mode, false, 0, null, topicId, false, 0);
++                deleteMessages(chunk, null, null, dialogId, forAll, mode, false, 0, null, topicId, false, 0, userInitiated);
+             }
+             messages = new ArrayList<>(messages.subList(0, 100));
+         }
+@@ -9414,10 +9422,10 @@ public class MessagesController extends BaseController implements NotificationCe
+                 } else {
+                     markDialogMessageAsDeleted(dialogId, messages);
+                 }
+-                getMessagesStorage().markMessagesAsDeleted(dialogId, messages, true, forAll, 0, topicId);
++                getMessagesStorage().markMessagesAsDeleted(dialogId, messages, true, forAll, 0, topicId, userInitiated);
+                 getMessagesStorage().updateDialogsWithDeletedMessages(dialogId, channelId, messages, null);
+             }
+-            getNotificationCenter().postNotificationName(NotificationCenter.messagesDeleted, messages, channelId, scheduled, false, movedToScheduled, movedToScheduledMessageId);
++            getNotificationCenter().postNotificationName(NotificationCenter.messagesDeleted, messages, channelId, scheduled, false, movedToScheduled, movedToScheduledMessageId, null, userInitiated);
+         } else {
+             if (taskRequest instanceof TLRPC.TL_channels_deleteMessages) {
+                 channelId = ((TLRPC.TL_channels_deleteMessages) taskRequest).channel.channel_id;
+@@ -19008,6 +19016,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                         messagesArr = new ArrayList<>();
+                     }
+                     messagesArr.add(message);
++                    desu.inugram.helpers.archive.ArchiveCache.rememberMessage(currentAccount, message);
+ 
+                     ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
+                     Integer value = read_max.get(message.dialog_id);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -14705,6 +14705,10 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     private ArrayList<Long> markMessagesAsDeletedInternal(long dialogId, ArrayList<Integer> messages, boolean deleteFiles, int mode, int threadMessageId) {
++        return markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, threadMessageId, false);
++    }
++
++    private ArrayList<Long> markMessagesAsDeletedInternal(long dialogId, ArrayList<Integer> messages, boolean deleteFiles, int mode, int threadMessageId, boolean userInitiated) {
+         SQLiteCursor cursor = null;
+         SQLitePreparedStatement state = null;
+         try {
+@@ -14787,6 +14791,8 @@ public class MessagesStorage extends BaseController {
+                 ArrayList<Pair<Long, Integer>> idsToDelete = new ArrayList<>();
+                 ArrayList<TopicsController.TopicUpdate> topicUpdatesInUi = null;
+                 ArrayList<TLRPC.Message> deletedMessages = currentUser == dialogId || dialogId == 0 ? new ArrayList<>() : null;
++                LongSparseArray<ArrayList<Integer>> inuKeptMids = new LongSparseArray<>();
++                desu.inugram.helpers.archive.DeletedMessagesHelper.restoreMissingMessages(this, database, currentAccount, dialogId, messages, userInitiated);
+ 
+                 if (dialogId != 0) {
+                     cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, data, read_state, out, mention, mid FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, dialogId));
+@@ -14821,18 +14827,35 @@ public class MessagesStorage extends BaseController {
+                                 }
+                             }
+                         }
+-                        if (!DialogObject.isEncryptedDialog(did) && !deleteFiles && did != currentUser) {
++                        if (!DialogObject.isEncryptedDialog(did) && !deleteFiles && did != currentUser && !desu.inugram.helpers.archive.DeletedMessagesHelper.isSaveDeletedEnabled()) {
+                             continue;
+                         }
+                         NativeByteBuffer data = cursor.byteBufferValue(1);
+                         if (data != null) {
+                             TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                             message.readAttachPath(data, currentUser);
++                            message.id = mid;
++                            message.dialog_id = did;
++                            boolean inuArchived = false;
++                            boolean inuWas = desu.inugram.helpers.archive.DeletedMessagesHelper.wasArchived(database, did, mid);
++                            if (inuWas && userInitiated) {
++                                desu.inugram.helpers.archive.DeletedMessagesHelper.removeArchived(database, did, mid);
++                            } else {
++                                inuArchived = inuWas || desu.inugram.helpers.archive.DeletedMessagesHelper.archiveMessage(database, currentAccount, did, message);
++                                if (desu.inugram.helpers.archive.DeletedMessagesHelper.keepInChat(currentAccount, did, message, userInitiated)) {
++                                    ArrayList<Integer> inuKept = inuKeptMids.get(did);
++                                    if (inuKept == null) {
++                                        inuKept = new ArrayList<>();
++                                        inuKeptMids.put(did, inuKept);
++                                    }
++                                    inuKept.add(mid);
++                                }
++                            }
+                             if (deletedMessages != null) {
+                                 deletedMessages.add(message);
+                             }
+                             data.reuse();
+-                            if (DialogObject.isEncryptedDialog(did) || deleteFiles) {
++                            if ((DialogObject.isEncryptedDialog(did) || deleteFiles) && !inuArchived) {
+                                 addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
+                             }
+ 
+@@ -15076,11 +15099,18 @@ public class MessagesStorage extends BaseController {
+                         cursor.dispose();
+                         cursor = null;
+                     }
+-                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+-                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+-                    database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+-                    database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+-                    database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
++                    String inuDeleteIds = ids;
++                    ArrayList<Integer> inuKept = inuKeptMids.get(did, null);
++                    if (inuKept != null && !inuKept.isEmpty()) {
++                        ArrayList<Integer> rest = new ArrayList<>(messages);
++                        rest.removeAll(inuKept);
++                        inuDeleteIds = rest.isEmpty() ? "0" : TextUtils.join(",", rest);
++                    }
++                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE mid IN(%s) AND uid = %d", inuDeleteIds, did)).stepThis().dispose();
++                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE mid IN(%s) AND uid = %d", inuDeleteIds, did)).stepThis().dispose();
++                    database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", inuDeleteIds, did)).stepThis().dispose();
++                    database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", inuDeleteIds, did)).stepThis().dispose();
++                    database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", inuDeleteIds, did)).stepThis().dispose();
+                     if (unknownMessages.isEmpty()) {
+                         cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, type FROM media_v4 WHERE mid IN(%s) AND uid = %d", ids, did));
+                         SparseArray<LongSparseArray<Integer>> mediaCounts = null;
+@@ -15503,13 +15533,17 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public ArrayList<Long> markMessagesAsDeleted(long dialogId, ArrayList<Integer> messages, boolean useQueue, boolean deleteFiles, int mode, int topicId) {
++        return markMessagesAsDeleted(dialogId, messages, useQueue, deleteFiles, mode, topicId, false);
++    }
++
++    public ArrayList<Long> markMessagesAsDeleted(long dialogId, ArrayList<Integer> messages, boolean useQueue, boolean deleteFiles, int mode, int topicId, boolean userInitiated) {
+         if (messages.isEmpty()) {
+             return null;
+         }
+         if (useQueue) {
+-            storageQueue.postRunnable(() -> markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId));
++            storageQueue.postRunnable(() -> markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId, userInitiated));
+         } else {
+-            return markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId);
++            return markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId, userInitiated);
+         }
+         return null;
+     }
+@@ -15525,8 +15559,9 @@ public class MessagesStorage extends BaseController {
+             ArrayList<String> namesToDelete = new ArrayList<>();
+             ArrayList<Pair<Long, Integer>> idsToDelete = new ArrayList<>();
+             long currentUser = getUserConfig().getClientUserId();
++            ArrayList<Integer> inuKeptMids = new ArrayList<>();
+ 
+-            cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, data, read_state, out, mention FROM messages_v2 WHERE uid = %d AND mid <= %d", -channelId, mid));
++            cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, data, read_state, out, mention, mid, date FROM messages_v2 WHERE uid = %d AND mid <= %d", -channelId, mid));
+ 
+             try {
+                 while (cursor.next()) {
+@@ -15547,15 +15582,24 @@ public class MessagesStorage extends BaseController {
+                             }
+                         }
+                     }
+-                    if (!DialogObject.isEncryptedDialog(did) && !deleteFiles) {
++                    if (!DialogObject.isEncryptedDialog(did) && !deleteFiles && !desu.inugram.helpers.archive.DeletedMessagesHelper.isSaveDeletedEnabled()) {
+                         continue;
+                     }
+                     NativeByteBuffer data = cursor.byteBufferValue(1);
+                     if (data != null) {
+                         TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                         message.readAttachPath(data, getUserConfig().clientUserId);
++                        message.id = cursor.intValue(5);
++                        message.dialog_id = did;
++                        message.date = cursor.intValue(6);
++                        boolean inuArchived = desu.inugram.helpers.archive.DeletedMessagesHelper.archiveMessage(database, currentAccount, did, message);
++                        if (inuArchived && desu.inugram.helpers.archive.DeletedMessagesHelper.keepInChat(currentAccount, did, message, false)) {
++                            inuKeptMids.add(message.id);
++                        }
+                         data.reuse();
+-                        addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
++                        if (!inuArchived) {
++                            addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
++                        }
+                     }
+                 }
+             } catch (Exception e) {
+@@ -15619,8 +15663,9 @@ public class MessagesStorage extends BaseController {
+                 cursor = null;
+             }
+ 
+-            database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE uid = %d AND mid <= %d", -channelId, mid)).stepThis().dispose();
+-            database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE uid = %d AND mid <= %d", -channelId, mid)).stepThis().dispose();
++            String inuNotIn = inuKeptMids.isEmpty() ? "" : " AND mid NOT IN(" + TextUtils.join(",", inuKeptMids) + ")";
++            database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE uid = %d AND mid <= %d" + inuNotIn, -channelId, mid)).stepThis().dispose();
++            database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE uid = %d AND mid <= %d" + inuNotIn, -channelId, mid)).stepThis().dispose();
+             database.executeFast(String.format(Locale.US, "DELETE FROM media_v4 WHERE uid = %d AND mid <= %d", -channelId, mid)).stepThis().dispose();
+             database.executeFast(String.format(Locale.US, "UPDATE media_counts_v2 SET old = 1 WHERE uid = %d", -channelId)).stepThis().dispose();
+             database.executeFast(String.format(Locale.US, "UPDATE media_counts_topics SET old = 1 WHERE uid = %d", -channelId)).stepThis().dispose();

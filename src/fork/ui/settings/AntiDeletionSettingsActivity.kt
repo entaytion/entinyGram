@@ -18,7 +18,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAntiDeletion)
 
     private var deletedPreview: DeletedMessagePreviewCell? = null
-    private var deletedMarkColorCell: DeletedMarkColorCell? = null
+    private var deletedMarkCell: DeletedMarkCell? = null
 
     override fun onResume() {
         super.onResume()
@@ -49,6 +49,10 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
     )
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        if (InuConfig.SAVE_DELETED_MESSAGES.value) {
+            if (deletedPreview == null) deletedPreview = DeletedMessagePreviewCell(this.context, this)
+            items.add(UItem.asCustom(deletedPreview))
+        }
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSaveDeletedMessages)))
         items.add(
             mkTwoLineCheckItem(
@@ -58,25 +62,13 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_DELETED_MESSAGES.value,
             )
         )
-        if (!InuConfig.SAVE_DELETED_MESSAGES.value) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_PROMPT_KEEP_LOCAL_ON_DELETE,
-                    R.string.InuPromptKeepLocalOnDelete,
-                    R.string.InuPromptKeepLocalOnDeleteInfo,
-                    InuConfig.PROMPT_KEEP_LOCAL_ON_DELETE.value,
-                )
-            )
-        }
         if (InuConfig.SAVE_DELETED_MESSAGES.value) {
-            if (deletedPreview == null) deletedPreview = DeletedMessagePreviewCell(this.context, this)
-            if (deletedMarkColorCell == null) {
-                deletedMarkColorCell = DeletedMarkColorCell(this.context) {
-                    deletedPreview?.invalidate()
+            if (deletedMarkCell == null) {
+                deletedMarkCell = DeletedMarkCell(this.context) {
+                    deletedPreview?.refresh()
                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
                 }
             }
-            items.add(UItem.asCustom(deletedPreview))
             items.add(
                 mkTwoLineCheckItem(
                     TOGGLE_DELETED_MESSAGES_TRANSPARENT,
@@ -85,16 +77,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                     InuConfig.DELETED_MESSAGES_TRANSPARENT.value,
                 )
             )
-            items.add(
-                UItem.asButton(
-                    BUTTON_DELETED_MARK_STYLE,
-                    LocaleController.getString(R.string.InuDeletedMark),
-                    deletedMarkStyleLabel(InuConfig.DELETED_MARK_STYLE.value),
-                )
-            )
-            if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
-                items.add(UItem.asCustom(deletedMarkColorCell))
-            }
+            items.add(UItem.asCustom(deletedMarkCell).apply { id = CELL_DELETED_MARK })
             deletedCategoriesGroup.addTo(items) { listView?.adapter?.update(true) }
         }
 
@@ -108,6 +91,16 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_EDITED_MESSAGES.value,
             )
         )
+        if (InuConfig.SAVE_EDITED_MESSAGES.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_EDIT_HISTORY_DIFF,
+                    R.string.InuEditHistoryDiff,
+                    R.string.InuEditHistoryDiffInfo,
+                    InuConfig.SHOW_EDIT_HISTORY_DIFF.value,
+                )
+            )
+        }
 
         items.add(UItem.asShadow(null))
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSelfDestructMedia)).apply { id = SECTION_SELF_DESTRUCT_SAVE })
@@ -171,10 +164,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
                 listView?.adapter?.update(true)
             }
-            TOGGLE_PROMPT_KEEP_LOCAL_ON_DELETE -> {
-                val new = InuConfig.PROMPT_KEEP_LOCAL_ON_DELETE.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
             TOGGLE_ARCHIVE_MEDIA_PUBLIC -> {
                 val new = InuConfig.ARCHIVE_MEDIA_PUBLIC.toggle()
                 if (new) ArchiveMediaHelper.exportExistingArchive(currentAccount) else ArchiveMediaHelper.removeMirror()
@@ -185,66 +174,34 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
                 listView?.adapter?.update(true)
             }
+            TOGGLE_EDIT_HISTORY_DIFF -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_EDIT_HISTORY_DIFF.toggle()
+            }
             TOGGLE_DELETED_MESSAGES_TRANSPARENT -> {
                 val new = InuConfig.DELETED_MESSAGES_TRANSPARENT.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-                deletedPreview?.invalidate()
+                deletedPreview?.refresh()
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
-            BUTTON_DELETED_MARK_STYLE -> showDeletedMarkStyleSelector()
             BUTTON_SEARCH -> presentFragment(DeletedMessageSearchActivity())
             BUTTON_EXPORT -> ArchiveExportHelper.export(this)
         }
     }
 
-    private fun deletedMarkStyleLabel(style: Int): String = when (style) {
-        InuConfig.DeletedMarkStyleItem.NOTHING -> LocaleController.getString(R.string.InuDeletedMarkStyleNothing)
-        InuConfig.DeletedMarkStyleItem.TRASH_BIN -> LocaleController.getString(R.string.InuDeletedMarkStyleTrashBin)
-        InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE -> LocaleController.getString(R.string.InuDeletedMarkStyleTrashBinOutline)
-        InuConfig.DeletedMarkStyleItem.CROSS -> LocaleController.getString(R.string.InuDeletedMarkStyleCross)
-        InuConfig.DeletedMarkStyleItem.EYE_CROSSED -> LocaleController.getString(R.string.InuDeletedMarkStyleEyeCrossed)
-        else -> LocaleController.getString(R.string.InuDeletedMarkStyleTrashBin)
-    }
-
-    private fun showDeletedMarkStyleSelector() {
-        val context = context ?: return
-        val values = intArrayOf(
-            InuConfig.DeletedMarkStyleItem.NOTHING,
-            InuConfig.DeletedMarkStyleItem.TRASH_BIN,
-            InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE,
-            InuConfig.DeletedMarkStyleItem.CROSS,
-            InuConfig.DeletedMarkStyleItem.EYE_CROSSED,
-        )
-        val items = values.map { RadioDialogBuilder.Item(deletedMarkStyleLabel(it)) }
-        showDialog(
-            RadioDialogBuilder(context, getResourceProvider())
-                .setTitle(LocaleController.getString(R.string.InuDeletedMark))
-                .setItems(items, values.indexOf(InuConfig.DELETED_MARK_STYLE.value).coerceAtLeast(0)) { _, which ->
-                    val newValue = values[which]
-                    if (InuConfig.DELETED_MARK_STYLE.value == newValue) return@setItems
-                    InuConfig.DELETED_MARK_STYLE.value = newValue
-                    deletedMarkColorCell?.refreshIcon()
-                    deletedPreview?.invalidate()
-                    listView?.adapter?.update(true)
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
-                }.create()
-        )
-    }
-
     companion object {
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
-        private val TOGGLE_PROMPT_KEEP_LOCAL_ON_DELETE = InuUtils.generateId()
         private val TOGGLE_ARCHIVE_MEDIA_PUBLIC = InuUtils.generateId()
         private val TOGGLE_DELETED_MESSAGES_TRANSPARENT = InuUtils.generateId()
-        private val BUTTON_DELETED_MARK_STYLE = InuUtils.generateId()
+        private val CELL_DELETED_MARK = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_PRIVATE = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_GROUPS = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_CHANNELS = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_BOTS = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_SECRET = InuUtils.generateId()
+        private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_OWN = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
-        private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
+        private val TOGGLE_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val BUTTON_SEARCH = InuUtils.generateId()
         private val BUTTON_EXPORT = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT_MEDIA = InuUtils.generateId()
@@ -265,18 +222,18 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             factory = ::AntiDeletionSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("save-deleted-categories", R.string.InuSaveDeletedCategories, SECTION_DELETED_CATEGORIES),
-                SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),
-                SearchRegistry.Entry("prompt-keep-local-on-delete", R.string.InuPromptKeepLocalOnDelete, TOGGLE_PROMPT_KEEP_LOCAL_ON_DELETE),
-                SearchRegistry.Entry("archive-media-public", R.string.InuArchiveMediaPublic, TOGGLE_ARCHIVE_MEDIA_PUBLIC),
-                SearchRegistry.Entry("deleted-transparent", R.string.InuDeletedMessagesTransparent, TOGGLE_DELETED_MESSAGES_TRANSPARENT),
-                SearchRegistry.Entry("deleted-mark-style", R.string.InuDeletedMark, BUTTON_DELETED_MARK_STYLE),
                 SearchRegistry.Entry("save-deleted-private", R.string.InuSaveDeletedPrivate, TOGGLE_SAVE_DELETED_PRIVATE),
                 SearchRegistry.Entry("save-deleted-groups", R.string.InuSaveDeletedGroups, TOGGLE_SAVE_DELETED_GROUPS),
                 SearchRegistry.Entry("save-deleted-channels", R.string.InuSaveDeletedChannels, TOGGLE_SAVE_DELETED_CHANNELS),
                 SearchRegistry.Entry("save-deleted-bots", R.string.InuSaveDeletedBots, TOGGLE_SAVE_DELETED_BOTS),
                 SearchRegistry.Entry("save-deleted-secret", R.string.InuSaveDeletedSecret, TOGGLE_SAVE_DELETED_SECRET),
+                SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),
+                SearchRegistry.Entry("archive-media-public", R.string.InuArchiveMediaPublic, TOGGLE_ARCHIVE_MEDIA_PUBLIC),
+                SearchRegistry.Entry("deleted-transparent", R.string.InuDeletedMessagesTransparent, TOGGLE_DELETED_MESSAGES_TRANSPARENT),
+                SearchRegistry.Entry("deleted-mark", R.string.InuDeletedMark, CELL_DELETED_MARK),
                 SearchRegistry.Entry("save-deleted-own", R.string.InuSaveDeletedOwn, TOGGLE_SAVE_DELETED_OWN),
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
+                SearchRegistry.Entry("edit-history-diff", R.string.InuEditHistoryDiff, TOGGLE_EDIT_HISTORY_DIFF),
                 SearchRegistry.Entry("self-destruct-save", R.string.InuSelfDestructMedia, SECTION_SELF_DESTRUCT_SAVE),
                 SearchRegistry.Entry("save-view-once-media", R.string.InuSaveViewOnceMedia, TOGGLE_SAVE_VIEW_ONCE_MEDIA),
                 SearchRegistry.Entry("save-timed-messages", R.string.InuSaveTimedMessages, TOGGLE_SAVE_TIMED_MESSAGES),

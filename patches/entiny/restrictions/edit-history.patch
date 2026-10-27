@@ -1,0 +1,71 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 27 Oct 2026 13:43:00 +0200
+Subject: [+] edit history hooks
+
+---
+ .../main/java/org/telegram/messenger/DownloadController.java    | 2 ++
+ .../src/main/java/org/telegram/messenger/MessagesStorage.java   | 2 ++
+ .../main/java/org/telegram/messenger/SendMessagesHelper.java    | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java b/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
+@@ -618,6 +618,7 @@ public class DownloadController extends BaseController implements NotificationCe
+         }
+         if (messageObject.isHiddenSensitive())
+             return false;
++        if (desu.inugram.helpers.archive.EditHistoryHelper.isHistoryPreview(messageObject)) return false;
+         return canDownloadMediaInternal(messageObject) == 1;
+     }
+ 
+@@ -658,6 +659,7 @@ public class DownloadController extends BaseController implements NotificationCe
+         }
+         if (messageObject.isHiddenSensitive())
+             return 0;
++        if (desu.inugram.helpers.archive.EditHistoryHelper.isHistoryPreview(messageObject)) return 0;
+         return canDownloadMediaInternal(messageObject);
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -16515,6 +16515,7 @@ public class MessagesStorage extends BaseController {
+                                     TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                                     oldMessage.readAttachPath(data, getUserConfig().clientUserId);
+                                     data.reuse();
++                                    desu.inugram.helpers.archive.EditHistoryHelper.onStoredEdit(currentAccount, oldMessage, message);
+                                     if (reactionUpdates != null) {
+                                         reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
+                                     }
+@@ -16571,6 +16572,7 @@ public class MessagesStorage extends BaseController {
+                             cursor.dispose();
+                             cursor = null;
+                             if (!exist) {
++                                desu.inugram.helpers.archive.EditHistoryHelper.onStoredEdit(currentAccount, null, message);
+                                 continue;
+                             }
+                         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -3123,6 +3123,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 messageObject.editingMessageEntities = newMsg.entities;
+                 path = newMsg.attachPath;
+             } else {
++                desu.inugram.helpers.archive.EditHistoryHelper.recordOwnEdit(currentAccount, messageObject, newMsg.message, newMsg.entities, newMsg.media);
+                 messageObject.previousMedia = newMsg.media;
+                 messageObject.previousMessage = newMsg.message;
+                 messageObject.previousMessageEntities = newMsg.entities;
+@@ -3644,6 +3645,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 req.flags |= TLObject.FLAG_18;
+             }
+         }
++        desu.inugram.helpers.archive.EditHistoryHelper.recordOwnEdit(currentAccount, messageObject, message, entities, null);
+         return getConnectionsManager().sendRequest(req, (response, error) -> {
+             if (error == null) {
+                 getMessagesController().processUpdates((TLRPC.Updates) response, false);

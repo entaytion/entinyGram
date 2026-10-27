@@ -23,15 +23,16 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **online status**: always hidden, or go offline right after you come online or act in chats - *offline-after-action ported from NagramX / AyuGram*
   - **per-chat overrides** for read receipts and typing - *inspired by Alexgram / XF*
   - **apply to**: private chats, groups and channels separately
-- 📡 **anti-deletion & edit history**:
-  - save messages and media deleted by the other side (🗑️); your own deletions are never kept
+- 📡 **anti-deletion & edit history** - *keep-in-chat model ported from [gettele/android](https://github.com/gettele/android)*:
+  - messages deleted by the other side stay visible in the chat with a 🗑️ mark; deleting one again removes it for good
+  - save messages and media deleted by the other side; your own deletions go to the archive but are never kept in the chat
   - per-category controls for private chats, groups, channels, bots and secret chats
   - save edit history (✏️) with formatting, media and text diff
-  - separate deleted and edited archives with message and media previews, per-chat clearing and bulk chat selection
+  - deleted and edited archives use Telegram-style chat lists with previews, timestamps, counts and bulk clearing — *layout adapted from [gettele/android](https://github.com/gettele/android)*
   - edit history keeps only real changes, one entry per revision; old duplicates are cleaned up once
   - text and caption diffs between revisions of the same post in edited archives
-  - deleted and edited archives as cards with sender, day separators, deletion or edit time and full-size photo and video previews
-  - edit history cards show before → after with highlighted changes, formatting and custom emoji
+  - deleted archives open as native chats with sender groups, albums, day separators, deletion time and full-size media
+  - edit history shows each version as a chat bubble, with optional highlight of added and removed words
   - replies to saved deleted messages show the saved copy instead of "Deleted message"
   - download missing archived media on tap without background prefetching
   - optionally mirror deleted photos and videos to Download/entinyGram/Ghosts, hidden from the gallery, moved along when the download folder changes; the archive is capped at 3 GB

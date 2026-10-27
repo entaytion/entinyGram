@@ -43,7 +43,7 @@ index 0000000..0000000 100644
 +                                if (changed && scrollUpdated) {
 +                                    desu.inugram.helpers.dialogs.MainTabsHelper.onDialogsScrolled(DialogsActivity.this, goingDown, firstVisiblePosition == 0);
 +                                }
-+                                if (changed && scrollUpdated && desu.inugram.helpers.dialogs.MainTabsHelper.tabsFollowScroll(this)) {
++                                if (changed && scrollUpdated && desu.inugram.helpers.dialogs.MainTabsHelper.tabsFollowScroll(DialogsActivity.this)) {
 +                                    if (floatingButtonHidden) hideFloatingButton(false);
 +                                } else if (changed && scrollUpdated && (goingDown || scrollingManually) && DialogsFabHelper.hideOnScroll()) {
                                      hideFloatingButton(goingDown);
