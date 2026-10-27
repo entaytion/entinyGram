@@ -1412,12 +1412,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuChatTitleMarqueeInfo">Fa scorrere automaticamente titoli e sottotitoli dell\'intestazione chat, titoli delle schermate e nomi del profilo quando non entrano in orizzontale</string>
     <string name="InuSaveDeletedMessages">Salva i messaggi eliminati</string>
     <string name="InuSaveDeletedMessagesInfo">Conserva i messaggi eliminati nelle chat, con un contrassegno</string>
-    <string name="InuSaveDeletedCategories">Salva eliminati in</string>
-    <string name="InuSaveDeletedPrivate">Chat private</string>
-    <string name="InuSaveDeletedGroups">Gruppi</string>
-    <string name="InuSaveDeletedChannels">Canali</string>
-    <string name="InuSaveDeletedBots">Bot</string>
-    <string name="InuSaveDeletedSecret">Chat segrete</string>
     <string name="InuSaveEditedMessages">Salva la cronologia delle modifiche</string>
     <string name="InuSaveEditedMessagesInfo">Salva le versioni precedenti dei messaggi e permette di vedere la cronologia delle modifiche</string>
     <string name="InuEditHistoryDiff">Evidenzia le modifiche</string>

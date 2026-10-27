@@ -1020,12 +1020,6 @@
     <string name="InuAutoSaveStoriesInfo">Açtığınız her hikayeyi galeriye bir kez kaydeder. Kendi hikayeleriniz atlanır.</string>
     <string name="InuSaveDeletedMessages">Silinen mesajları kaydet</string>
     <string name="InuSaveDeletedMessagesInfo">Silinen mesajları sohbetlerde bir işaretle tutar</string>
-    <string name="InuSaveDeletedCategories">Silinenleri kaydetme konumu</string>
-    <string name="InuSaveDeletedPrivate">Özel sohbetler</string>
-    <string name="InuSaveDeletedGroups">Gruplar</string>
-    <string name="InuSaveDeletedChannels">Kanallar</string>
-    <string name="InuSaveDeletedBots">Botlar</string>
-    <string name="InuSaveDeletedSecret">Gizli sohbetler</string>
     <string name="InuSaveEditedMessages">Düzenleme geçmişini kaydet</string>
  <string name="InuSaveEditedMessagesInfo">Önceki mesaj sürümlerini kaydeder ve düzenleme geçmişini görüntülemeyi sağlar</string>
     <string name="InuEditHistoryDiff">Değişiklikleri vurgula</string>

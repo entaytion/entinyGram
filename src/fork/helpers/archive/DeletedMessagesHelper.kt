@@ -21,26 +21,11 @@ object DeletedMessagesHelper {
     fun isSaveDeletedEnabled(): Boolean = InuConfig.SAVE_DELETED_MESSAGES.value
 
     @JvmStatic
-    fun shouldSaveForDialog(account: Int, dialogId: Long): Boolean {
+    @JvmOverloads
+    fun shouldSaveForDialog(account: Int, dialogId: Long, message: TLRPC.Message? = null): Boolean {
         if (!isSaveDeletedEnabled()) return false
-        val controller = MessagesController.getInstance(account) ?: return true
-        if (DialogObject.isEncryptedDialog(dialogId)) {
-            return InuConfig.SAVE_SELF_DESTRUCT_TEXT.value || InuConfig.SAVE_DELETED_SECRET.value
-        }
-        if (DialogObject.isUserDialog(dialogId)) {
-            val user = controller.getUser(dialogId)
-            if (user != null && user.bot) {
-                return InuConfig.SAVE_DELETED_BOTS.value
-            }
-            return InuConfig.SAVE_DELETED_PRIVATE.value
-        } else if (DialogObject.isChatDialog(dialogId)) {
-            val chat = controller.getChat(-dialogId)
-            if (chat != null && org.telegram.messenger.ChatObject.isChannel(chat) && !chat.megagroup) {
-                return InuConfig.SAVE_DELETED_CHANNELS.value
-            }
-            return InuConfig.SAVE_DELETED_GROUPS.value
-        }
-        return true
+        if (DialogObject.isEncryptedDialog(dialogId) && InuConfig.SAVE_SELF_DESTRUCT_TEXT.value) return true
+        return ArchiveScope.allows(account, dialogId, message)
     }
 
     // entiny: secret chats number their messages with non-positive ids
@@ -52,7 +37,7 @@ object DeletedMessagesHelper {
         if (message == null || !hasValidId(dialogId, message.id)) return false
         if (!isSaveDeletedEnabled()) return false
         if (!hasPreservableData(message.message, message)) return false
-        if (!shouldSaveForDialog(account, dialogId)) return false
+        if (!shouldSaveForDialog(account, dialogId, message)) return false
         if (message.out && !InuConfig.SAVE_DELETED_OWN.value) return false
         return true
     }
@@ -60,7 +45,7 @@ object DeletedMessagesHelper {
     @JvmStatic
     fun keepInChat(account: Int, dialogId: Long, message: TLRPC.Message?, userInitiated: Boolean): Boolean {
         if (message == null || !hasValidId(dialogId, message.id) || userInitiated) return false
-        if (DialogObject.isEncryptedDialog(dialogId) && (!InuConfig.SAVE_DELETED_SECRET.value || message.ttl != 0)) return false
+        if (DialogObject.isEncryptedDialog(dialogId) && message.ttl != 0) return false
         if (message.action != null && message.action !is TLRPC.TL_messageActionEmpty) return false
         if (message.ttl_period != 0) return false
         if ((message.media?.ttl_seconds ?: 0) != 0) return false
@@ -193,7 +178,7 @@ object DeletedMessagesHelper {
             ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, savedPath)
             return
         }
-        val mediaCopy = ArchiveMediaHelper.planMediaCopy(account, message) ?: return
+        val mediaCopy = ArchiveMediaHelper.planNewMediaCopy(account, message) ?: return
         ArchiveMediaHelper.copyThenStore(account, "d:$account:$dialogId:$msgId", mediaCopy) { copyDb, copied ->
             val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id = $msgId", copied)
             if (stored) ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, copied)

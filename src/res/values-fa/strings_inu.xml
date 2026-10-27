@@ -1234,12 +1234,6 @@
     <string name="InuChatTitleMarqueeInfo">عنوان و زیرعنوان سرصفحه گفتگو، عنوان صفحه‌ها و نام نمایه‌ها را وقتی در عرض جا نمی‌شوند خودکار اسکرول می‌کند</string>
     <string name="InuSaveDeletedMessages">ذخیره پیام‌های حذف‌شده</string>
     <string name="InuSaveDeletedMessagesInfo">پیام‌های حذف‌شده را با یک نشان در گفتگوها نگه می‌دارد</string>
-    <string name="InuSaveDeletedCategories">ذخیره حذف‌شده‌ها در</string>
-    <string name="InuSaveDeletedPrivate">گفتگوهای خصوصی</string>
-    <string name="InuSaveDeletedGroups">گروه‌ها</string>
-    <string name="InuSaveDeletedChannels">کانال‌ها</string>
-    <string name="InuSaveDeletedBots">ربات‌ها</string>
-    <string name="InuSaveDeletedSecret">چت‌های مخفی</string>
     <string name="InuSaveEditedMessages">ذخیره تاریخچه ویرایش</string>
     <string name="InuSaveEditedMessagesInfo">نسخه‌های قبلی پیام‌ها را ذخیره می‌کند و مشاهده تاریخچه ویرایش را ممکن می‌سازد</string>
     <string name="InuEditHistoryDiff">برجسته کردن تغییرات</string>

@@ -1411,12 +1411,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuChatTitleMarqueeInfo">Desplaza automáticamente títulos, subtítulos y nombres cuando no caben horizontalmente.</string>
     <string name="InuSaveDeletedMessages">Guardar mensajes eliminados</string>
     <string name="InuSaveDeletedMessagesInfo">Conserva los mensajes eliminados en los chats, con una marca</string>
-    <string name="InuSaveDeletedCategories">Guardar eliminados en</string>
-    <string name="InuSaveDeletedPrivate">Chats privados</string>
-    <string name="InuSaveDeletedGroups">Grupos</string>
-    <string name="InuSaveDeletedChannels">Canales</string>
-    <string name="InuSaveDeletedBots">Bots</string>
-    <string name="InuSaveDeletedSecret">Chats secretos</string>
     <string name="InuSaveEditedMessages">Guardar historial de ediciones</string>
     <string name="InuSaveEditedMessagesInfo">Guarda las versiones anteriores de los mensajes y permite ver el historial de ediciones</string>
     <string name="InuEditHistoryDiff">Resaltar cambios</string>

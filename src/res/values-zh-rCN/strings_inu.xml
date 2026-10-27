@@ -1019,12 +1019,6 @@
     <string name="InuAutoSaveStoriesInfo">将您打开的每个故事保存到相册一次，自己的故事除外。</string>
     <string name="InuSaveDeletedMessages">保存已删除的消息</string>
     <string name="InuSaveDeletedMessagesInfo">在聊天中保留已删除的消息并加上标记</string>
-    <string name="InuSaveDeletedCategories">保存已删除消息范围</string>
-    <string name="InuSaveDeletedPrivate">私聊</string>
-    <string name="InuSaveDeletedGroups">群组</string>
-    <string name="InuSaveDeletedChannels">频道</string>
-    <string name="InuSaveDeletedBots">机器人</string>
-    <string name="InuSaveDeletedSecret">私密聊天</string>
     <string name="InuSaveEditedMessages">保存编辑历史</string>
     <string name="InuSaveEditedMessagesInfo">保存以前的消息版本并允许查看编辑历史</string>
     <string name="InuEditHistoryDiff">高亮显示更改</string>

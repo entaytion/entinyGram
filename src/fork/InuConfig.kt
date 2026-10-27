@@ -1688,6 +1688,42 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val SAVE_EDITED_MESSAGES = BoolItem("save_edited_messages", false)
 
+    @JvmField
+    val ARCHIVE_SCOPE_MODE = IntItem("archive_scope_mode", 0)
+
+    @JvmField
+    val ARCHIVE_SCOPE_NEVER = StringItem("archive_scope_never", "")
+
+    @JvmField
+    val ARCHIVE_SCOPE_ONLY = StringItem("archive_scope_only", "")
+
+    @JvmField
+    val ARCHIVE_SCOPE_MIGRATED = BoolItem("archive_scope_migrated", false)
+
+    @JvmField
+    val ARCHIVE_SCOPE_KINDS_MIGRATED = BoolItem("archive_scope_kinds_migrated", false)
+
+    @JvmField
+    val ARCHIVE_SCOPE_DELETED = StringItem("archive_scope_deleted", "")
+
+    @JvmField
+    val ARCHIVE_SCOPE_EDITED = StringItem("archive_scope_edited", "")
+
+    @JvmField
+    val ARCHIVE_SCOPE_MEDIA = StringItem("archive_scope_media", "")
+
+    @JvmField
+    val ARCHIVE_MEDIA_ENABLED = BoolItem("archive_media_enabled", true)
+
+    @JvmField
+    val ARCHIVE_MEDIA_LIMIT_WIFI = IntItem("archive_media_limit_wifi", 0)
+
+    @JvmField
+    val ARCHIVE_MEDIA_LIMIT_MOBILE = IntItem("archive_media_limit_mobile", 0)
+
+    @JvmField
+    val SHOW_EDIT_HISTORY_DIFF = BoolItem("show_edit_history_diff", true)
+
     // #if PLUGINS
     @JvmField
     val MESSAGE_PLUGIN_ACTIONS = PluginActionSettingsConfig("message_plugin_actions")

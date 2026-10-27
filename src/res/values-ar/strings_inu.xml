@@ -1246,12 +1246,6 @@
     <string name="InuChatTitleMarqueeInfo">تمرير تلقائي لعناوين وعناوين فرعية ترويسة المحادثة وعناوين الشاشات وأسماء الملفات الشخصية عندما لا تتسع أفقياً</string>
     <string name="InuSaveDeletedMessages">حفظ الرسائل المحذوفة</string>
     <string name="InuSaveDeletedMessagesInfo">يُبقي الرسائل المحذوفة في المحادثات مع علامة</string>
-    <string name="InuSaveDeletedCategories">حفظ المحذوف في</string>
-    <string name="InuSaveDeletedPrivate">المحادثات الخاصة</string>
-    <string name="InuSaveDeletedGroups">المجموعات</string>
-    <string name="InuSaveDeletedChannels">القنوات</string>
-    <string name="InuSaveDeletedBots">البوتات</string>
-    <string name="InuSaveDeletedSecret">المحادثات السرية</string>
     <string name="InuSaveEditedMessages">حفظ سجل التعديلات</string>
     <string name="InuSaveEditedMessagesInfo">يحفظ النسخ السابقة للرسائل ويتيح عرض سجل التعديلات</string>
     <string name="InuEditHistoryDiff">تمييز التغييرات</string>

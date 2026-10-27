@@ -26,7 +26,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **anti-deletion & edit history** - *keep-in-chat model ported from [gettele/android](https://github.com/gettele/android)*:
   - messages deleted by the other side stay visible in the chat with a 🗑️ mark; deleting one again removes it for good
   - save messages and media deleted by the other side; your own deletions go to the archive but are never kept in the chat
-  - per-category controls for private chats, groups, channels, bots and secret chats
+  - separate "where to save" for deleted messages, edit history and attachments: all chats except exclusions, or only selected chats, with the chat-folder picker (types, bots in groups, secret chats, single chats) — *idea from AyuGram*
+  - attachment size limits for Wi-Fi and mobile data
   - save edit history (✏️) with formatting, media and text diff
   - deleted and edited archives use Telegram-style chat lists with previews, timestamps, counts and bulk clearing — *layout adapted from [gettele/android](https://github.com/gettele/android)*
   - edit history keeps only real changes, one entry per revision; old duplicates are cleaned up once

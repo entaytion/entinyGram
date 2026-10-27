@@ -5,6 +5,7 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.archive.ArchiveMediaHelper
+import desu.inugram.helpers.archive.ArchiveScope
 import desu.inugram.helpers.security.ArchiveExportHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
@@ -24,19 +25,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         super.onResume()
         listView?.adapter?.update(true)
     }
-
-    private val deletedCategoriesGroup = ExpandableBoolGroup(
-        LocaleController.getString(R.string.InuSaveDeletedCategories),
-        listOf(
-            ExpandableBoolGroup.Option(R.string.InuSaveDeletedPrivate, InuConfig.SAVE_DELETED_PRIVATE, TOGGLE_SAVE_DELETED_PRIVATE),
-            ExpandableBoolGroup.Option(R.string.InuSaveDeletedGroups, InuConfig.SAVE_DELETED_GROUPS, TOGGLE_SAVE_DELETED_GROUPS),
-            ExpandableBoolGroup.Option(R.string.InuSaveDeletedChannels, InuConfig.SAVE_DELETED_CHANNELS, TOGGLE_SAVE_DELETED_CHANNELS),
-            ExpandableBoolGroup.Option(R.string.InuSaveDeletedBots, InuConfig.SAVE_DELETED_BOTS, TOGGLE_SAVE_DELETED_BOTS),
-            ExpandableBoolGroup.Option(R.string.InuSaveDeletedSecret, InuConfig.SAVE_DELETED_SECRET, TOGGLE_SAVE_DELETED_SECRET),
-            ExpandableBoolGroup.Option(R.string.InuSaveDeletedOwn, InuConfig.SAVE_DELETED_OWN, TOGGLE_SAVE_DELETED_OWN),
-        ),
-        sectionId = SECTION_DELETED_CATEGORIES,
-    ).apply { expanded = true }
 
     private val selfDestructOptions = listOf(
             ExpandableBoolGroup.Option(R.string.InuSaveViewOnceMedia, InuConfig.SAVE_VIEW_ONCE_MEDIA, TOGGLE_SAVE_VIEW_ONCE_MEDIA),
@@ -78,7 +66,8 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 )
             )
             items.add(UItem.asCustom(deletedMarkCell).apply { id = CELL_DELETED_MARK })
-            deletedCategoriesGroup.addTo(items) { listView?.adapter?.update(true) }
+            items.add(UItem.asButton(BUTTON_ARCHIVE_SCOPE, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuArchiveScope), ArchiveScopeActivity.summary(ArchiveScope.Kind.DELETED)))
+            items.add(UItem.asCheck(TOGGLE_SAVE_DELETED_OWN, LocaleController.getString(R.string.InuSaveDeletedOwn)).setChecked(InuConfig.SAVE_DELETED_OWN.value))
         }
 
         items.add(UItem.asShadow(null))
@@ -92,6 +81,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             )
         )
         if (InuConfig.SAVE_EDITED_MESSAGES.value) {
+            items.add(UItem.asButton(BUTTON_SCOPE_EDITED, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuArchiveScope), ArchiveScopeActivity.summary(ArchiveScope.Kind.EDITED)))
             items.add(
                 mkTwoLineCheckItem(
                     TOGGLE_EDIT_HISTORY_DIFF,
@@ -100,6 +90,30 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                     InuConfig.SHOW_EDIT_HISTORY_DIFF.value,
                 )
             )
+        }
+
+        if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
+            items.add(UItem.asShadow(null))
+            items.add(UItem.asHeader(LocaleController.getString(R.string.InuArchiveAttachments)))
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_ARCHIVE_MEDIA_ENABLED,
+                    R.string.InuArchiveAttachmentsSave,
+                    R.string.InuArchiveAttachmentsInfo,
+                    InuConfig.ARCHIVE_MEDIA_ENABLED.value,
+                )
+            )
+            if (InuConfig.ARCHIVE_MEDIA_ENABLED.value) {
+                items.add(UItem.asButton(BUTTON_SCOPE_MEDIA, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuArchiveScope), ArchiveScopeActivity.summary(ArchiveScope.Kind.MEDIA)))
+                items.add(
+                    mkTwoLineCheckItem(
+                        TOGGLE_ARCHIVE_MEDIA_PUBLIC,
+                        R.string.InuArchiveMediaPublic,
+                        R.string.InuArchiveMediaPublicInfo,
+                        InuConfig.ARCHIVE_MEDIA_PUBLIC.value,
+                    )
+                )
+            }
         }
 
         items.add(UItem.asShadow(null))
@@ -123,16 +137,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         }
 
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_ARCHIVE_MEDIA_PUBLIC,
-                    R.string.InuArchiveMediaPublic,
-                    R.string.InuArchiveMediaPublicInfo,
-                    InuConfig.ARCHIVE_MEDIA_PUBLIC.value,
-                )
-            )
-        }
-        if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
             items.add(UItem.asShadow(null))
             items.add(mkSubPageButton(BUTTON_SEARCH, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuDeletedMessageSearch)))
             items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuExportArchive)))
@@ -140,7 +144,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (deletedCategoriesGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
         val mediaOption = selfDestructOptions.firstOrNull { it.id == item.id }
         if (mediaOption != null) {
             mediaOption.config.toggle()
@@ -183,6 +186,18 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 deletedPreview?.refresh()
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
+            BUTTON_ARCHIVE_SCOPE -> presentFragment(ArchiveScopeActivity(ArchiveScope.Kind.DELETED))
+            BUTTON_SCOPE_EDITED -> presentFragment(ArchiveScopeActivity(ArchiveScope.Kind.EDITED))
+            BUTTON_SCOPE_MEDIA -> presentFragment(ArchiveScopeActivity(ArchiveScope.Kind.MEDIA))
+            TOGGLE_ARCHIVE_MEDIA_ENABLED -> {
+                val new = InuConfig.ARCHIVE_MEDIA_ENABLED.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                listView?.adapter?.update(true)
+            }
+            TOGGLE_SAVE_DELETED_OWN -> {
+                InuConfig.SAVE_DELETED_OWN.toggle()
+                listView?.adapter?.update(true)
+            }
             BUTTON_SEARCH -> presentFragment(DeletedMessageSearchActivity())
             BUTTON_EXPORT -> ArchiveExportHelper.export(this)
         }
@@ -193,12 +208,10 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ARCHIVE_MEDIA_PUBLIC = InuUtils.generateId()
         private val TOGGLE_DELETED_MESSAGES_TRANSPARENT = InuUtils.generateId()
         private val CELL_DELETED_MARK = InuUtils.generateId()
-        private val TOGGLE_SAVE_DELETED_PRIVATE = InuUtils.generateId()
-        private val TOGGLE_SAVE_DELETED_GROUPS = InuUtils.generateId()
-        private val TOGGLE_SAVE_DELETED_CHANNELS = InuUtils.generateId()
-        private val TOGGLE_SAVE_DELETED_BOTS = InuUtils.generateId()
-        private val TOGGLE_SAVE_DELETED_SECRET = InuUtils.generateId()
-        private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
+        private val BUTTON_ARCHIVE_SCOPE = InuUtils.generateId()
+        private val BUTTON_SCOPE_EDITED = InuUtils.generateId()
+        private val BUTTON_SCOPE_MEDIA = InuUtils.generateId()
+        private val TOGGLE_ARCHIVE_MEDIA_ENABLED = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_OWN = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_EDIT_HISTORY_DIFF = InuUtils.generateId()
@@ -221,12 +234,10 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.inu_tabler_trash_off,
             factory = ::AntiDeletionSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("save-deleted-categories", R.string.InuSaveDeletedCategories, SECTION_DELETED_CATEGORIES),
-                SearchRegistry.Entry("save-deleted-private", R.string.InuSaveDeletedPrivate, TOGGLE_SAVE_DELETED_PRIVATE),
-                SearchRegistry.Entry("save-deleted-groups", R.string.InuSaveDeletedGroups, TOGGLE_SAVE_DELETED_GROUPS),
-                SearchRegistry.Entry("save-deleted-channels", R.string.InuSaveDeletedChannels, TOGGLE_SAVE_DELETED_CHANNELS),
-                SearchRegistry.Entry("save-deleted-bots", R.string.InuSaveDeletedBots, TOGGLE_SAVE_DELETED_BOTS),
-                SearchRegistry.Entry("save-deleted-secret", R.string.InuSaveDeletedSecret, TOGGLE_SAVE_DELETED_SECRET),
+                SearchRegistry.Entry("archive-scope", R.string.InuArchiveScope, BUTTON_ARCHIVE_SCOPE),
+                SearchRegistry.Entry("archive-scope-edited", R.string.InuArchiveScope, BUTTON_SCOPE_EDITED),
+                SearchRegistry.Entry("archive-scope-media", R.string.InuArchiveScope, BUTTON_SCOPE_MEDIA),
+                SearchRegistry.Entry("archive-media-enabled", R.string.InuArchiveAttachmentsSave, TOGGLE_ARCHIVE_MEDIA_ENABLED),
                 SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),
                 SearchRegistry.Entry("archive-media-public", R.string.InuArchiveMediaPublic, TOGGLE_ARCHIVE_MEDIA_PUBLIC),
                 SearchRegistry.Entry("deleted-transparent", R.string.InuDeletedMessagesTransparent, TOGGLE_DELETED_MESSAGES_TRANSPARENT),

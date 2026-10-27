@@ -71,6 +71,7 @@ object EditHistoryHelper {
     }
 
     private fun record(account: Int, dialogId: Long, msgId: Int, revision: EditEntry, source: TLRPC.Message?, copyMedia: Boolean) {
+        if (!ArchiveScope.allows(account, dialogId, source, ArchiveScope.Kind.EDITED)) return
         if (revision.text.isEmpty() && !hasMedia(revision.media)) return
         val kept = revision.copy(
             entities = if (revision.entities.isNullOrEmpty()) null else ArrayList(revision.entities),
@@ -84,7 +85,7 @@ object EditHistoryHelper {
                 ?: LongSparseArray<ArchiveCache.DeletedIdSet>().also { ArchiveCache.editHistoryIds.put(account.toLong(), it) }
             (ids.get(dialogId) ?: ArchiveCache.DeletedIdSet().also { ids.put(dialogId, it) }).add(msgId, 0L)
         }
-        val mediaCopy = if (copyMedia) ArchiveMediaHelper.planMediaCopy(account, source) else null
+        val mediaCopy = if (copyMedia) ArchiveMediaHelper.planNewMediaCopy(account, source) else null
         val storage = MessagesStorage.getInstance(account) ?: return
         val persist = Runnable {
             val db = storage.database ?: return@Runnable

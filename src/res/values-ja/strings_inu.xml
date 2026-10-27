@@ -1023,12 +1023,6 @@
     <string name="InuAutoSaveStoriesInfo">開いたストーリーを1回だけギャラリーに保存します。自分のストーリーは対象外です。</string>
     <string name="InuSaveDeletedMessages">削除されたメッセージを保存</string>
     <string name="InuSaveDeletedMessagesInfo">削除されたメッセージを印付きでチャットに保持します</string>
-    <string name="InuSaveDeletedCategories">削除保存の対象</string>
-    <string name="InuSaveDeletedPrivate">個別チャット</string>
-    <string name="InuSaveDeletedGroups">グループ</string>
-    <string name="InuSaveDeletedChannels">チャンネル</string>
-    <string name="InuSaveDeletedBots">Bot</string>
-    <string name="InuSaveDeletedSecret">シークレットチャット</string>
     <string name="InuSaveEditedMessages">編集履歴を保存</string>
     <string name="InuSaveEditedMessagesInfo">メッセージの過去のバージョンを保存し、編集履歴を表示できるようにします</string>
     <string name="InuEditHistoryDiff">変更をハイライト</string>

@@ -395,6 +395,14 @@ object ArchiveMediaHelper {
 
     internal data class PendingMediaCopy(val source: File, val target: File, val expectedSize: Long = 0L)
 
+    // entiny: a copy made while the message is being deleted or edited follows the attachment settings
+    internal fun planNewMediaCopy(account: Int, message: TLRPC.Message?): PendingMediaCopy? {
+        if (message == null || !desu.inugram.InuConfig.ARCHIVE_MEDIA_ENABLED.value) return null
+        if (!ArchiveScope.allows(account, MessageObject.getDialogId(message), message, ArchiveScope.Kind.MEDIA)) return null
+        val limit = ArchiveScope.mediaLimitBytes()
+        return planMediaCopy(account, message, if (limit > 0) limit else AUTO_COPY_MAX_BYTES)
+    }
+
     internal fun planMediaCopy(account: Int, message: TLRPC.Message?, maxBytes: Long = AUTO_COPY_MAX_BYTES): PendingMediaCopy? {
         if (message?.media == null || message.media is TLRPC.TL_messageMediaWebPage) return null
         return try {
