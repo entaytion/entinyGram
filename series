@@ -410,7 +410,7 @@ entiny/media/round-recorder-60fps-and-exposure-lock.patch
 entiny/ui/hide-channel-share-button.patch
 entiny/ui/non-island-shared-media-scroll.patch
 entiny/misc/redundant-lang-code-native-calls.patch
-entiny/restrictions/wide-channel-posts.patch
+entiny/ui/wide-channel-posts.patch
 entiny/ui/local-custom-emoji.patch
 entiny/ui/simple-text-view-left-slot.patch
 entiny/settings/settings-search-uppercase.patch
@@ -425,7 +425,7 @@ entiny/feed/feed-menu-entry.patch
 entiny/tabs/dialogs-menu-customization.patch
 entiny/media/small-gifs.patch
 entiny/misc/startup-optimizations.patch
-entiny/restrictions/forward-pro.patch
+entiny/chat/forward-pro.patch
 entiny/media/expired-media-refresh.patch
 entiny/chat/instant-mark-reactions-read.patch
 entiny/tabs/recent-chats.patch
@@ -437,7 +437,7 @@ entiny/translator/input-translate.patch
 entiny/tabs/local-folders.patch
 entiny/tabs/folder-icons.patch
 entiny/media/burn-keep-copy.patch
-entiny/restrictions/no-forward-selection-cap.patch
+entiny/chat/no-forward-selection-cap.patch
 entiny/chat/ios-input-bar.patch
 entiny/media/burn-voice-round.patch
 entiny/chat/mention-separator.patch
@@ -606,8 +606,8 @@ entiny/ui/safe-editable-spans.patch
 entiny/settings/settings-search-history.patch
 entiny/media/faster-downloads-byte-budget.patch
 entiny/media/send-videos-hd.patch
-entiny/restrictions/forward-pro-comment-order.patch
-entiny/restrictions/forward-pro-comment-format.patch
+entiny/chat/forward-pro-comment-order.patch
+entiny/chat/forward-pro-comment-format.patch
 entiny/privacy/ghost-hide-seen-mentions.patch
 entiny/tabs/bottom-tabs-hide-on-scroll.patch
 entiny/restrictions/save-deleted-core.patch
