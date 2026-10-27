@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 27 Oct 2026 13:27:26 +0200
+Subject: [+] forward pro comment formatting menu
+
+---
+ .../main/java/org/telegram/ui/Components/ShareAlert.java  | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+@@ -1631,6 +1631,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+ 
+         commentTextView = new EditTextEmoji(context, sizeNotifierFrameLayout, null, EditTextEmoji.STYLE_DIALOG, true, resourcesProvider) {
+ 
++            @Override
++            protected boolean allowEntities() {
++                return desu.inugram.helpers.chat.ForwardProHelper.isActive(ShareAlert.this);
++            }
++
+             @Override
+             protected void bottomPanelTranslationY(float translation) {
+                 super.bottomPanelTranslationY(translation);
+@@ -1729,6 +1734,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+ //        commentTextView.setBackgroundColor(backgroundColor);
+         commentTextView.setHint(LocaleController.getString(R.string.ShareComment));
+         commentTextView.onResume();
++        if (desu.inugram.helpers.chat.ForwardProHelper.isActive(this)) {
++            commentTextView.getEditText().setWindowView(containerView);
++        }
+         commentTextView.setPadding(0, 0, dp(84) + desu.inugram.helpers.chat.ForwardProHelper.getExtraCommentPadding(this), 0);
+         frameLayout2.addView(commentTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT));
+         frameLayout2.setClipChildren(false);

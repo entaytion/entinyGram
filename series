@@ -608,3 +608,4 @@ entiny/settings/settings-search-history.patch
 entiny/media/faster-downloads-byte-budget.patch
 entiny/media/send-videos-hd.patch
 entiny/restrictions/forward-pro-comment-order.patch
+entiny/restrictions/forward-pro-comment-format.patch
