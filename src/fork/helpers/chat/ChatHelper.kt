@@ -296,7 +296,7 @@ object ChatHelper {
     // entiny: the trash/cross/eye marks are 14dp vectors (ported from NagramXF) whose glyph fills most of the box; the 24dp tabler outline needs a larger box to look as big
     @JvmStatic
     fun deletedMarkSizeDp(): Float =
-        if (InuConfig.DELETED_MARK_STYLE.value == InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE) 18f else 14f
+        if (InuConfig.DELETED_MARK_STYLE.value == InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE) 13f else 14f
 
     @JvmStatic
     fun appendDeletedMarkText(sb: SpannableStringBuilder) {
