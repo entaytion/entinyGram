@@ -5,13 +5,13 @@ Subject: allow saving self-destructing media
 
 - consolidates the legacy self-destruct file-cache flag into SAVE_SELF_DESTRUCT_MEDIA
 ---
- .../org/telegram/messenger/FileLoader.java    | 24 ++++++++-
- .../telegram/messenger/MediaController.java   |  9 +++-
- .../org/telegram/messenger/MessageObject.java |  4 +-
- .../messenger/MessagesController.java         |  4 +-
- .../telegram/messenger/MessagesStorage.java   |  2 +
- .../java/org/telegram/ui/ChatActivity.java    | 50 +++++++++++++++++--
- 6 files changed, 83 insertions(+), 10 deletions(-)
+ .../org/telegram/messenger/FileLoader.java    | 24 ++++++++++++++++--
+ .../telegram/messenger/MediaController.java   |  9 ++++++-
+ .../org/telegram/messenger/MessageObject.java |  4 ++-
+ .../messenger/MessagesController.java         |  4 ++-
+ .../telegram/messenger/MessagesStorage.java   |  2 ++
+ .../java/org/telegram/ui/ChatActivity.java    | 25 +++++++++++++++----
+ 6 files changed, 58 insertions(+), 10 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -123,7 +123,7 @@ index 0000000..0000000 100644
                              final int id = viewerObject.getId();
                              mids.remove((Integer) id);
                              viewerObject.forceExpired = true;
-@@ -21366,6 +21367,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21363,6 +21364,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -135,15 +135,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -4360,6 +4360,7 @@ public class MessagesStorage extends BaseController {
+@@ -4358,6 +4358,7 @@ public class MessagesStorage extends BaseController {
+         if (message == null) {
              return false;
          }
-         if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue()) return false;
 +        if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(MessageObject.getDialogId(message))) return false;
          int type = 0;
          long id = 0;
          TLRPC.Document document = MessageObject.getDocument(message);
-@@ -4771,6 +4772,7 @@ public class MessagesStorage extends BaseController {
+@@ -4769,6 +4770,7 @@ public class MessagesStorage extends BaseController {
      }
  
      public void emptyMessagesMedia(long dialogId, ArrayList<Integer> mids) {
@@ -179,39 +179,7 @@ index 0000000..0000000 100644
          final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
          messageObject.forceExpired = true;
          if (messageObject.isOutOwner() || !messageObject.isRoundOnce() && !messageObject.isVoiceOnce()) {
-@@ -16092,6 +16095,31 @@ public class ChatActivity extends BaseFragment implements
-         return () -> getMessagesController().doDeleteShowOnceTask(taskId, dialog_id, messageObject.getId());
-     }
- 
-+    public void inu_openSecretMediaViewer(MessageObject messageObject) {
-+        // Voice notes and round videos are consumed through SecretVoicePlayer, never through the
-+        // photo/video viewer: SecretMediaViewer has no audio UI and getPlaceForPhoto finds no
-+        // laid-out image to anchor to, so routing them there opened an empty viewer. Same call
-+        // shape needPlayMessage uses for the ordinary tap.
-+        if (messageObject != null && (messageObject.isVoiceOnce() || messageObject.isRoundOnce())) {
-+            BaseCell baseCell = findMessageCell(messageObject.getId(), false);
-+            if (!(baseCell instanceof ChatMessageCell) || secretVoicePlayer != null && secretVoicePlayer.isShown()) {
-+                return;
-+            }
-+            secretVoicePlayer = new SecretVoicePlayer(getContext());
-+            secretVoicePlayer.setCell(
-+                (ChatMessageCell) baseCell,
-+                !messageObject.isOutOwner() ? sendSecretMessageRead(messageObject, true) : null,
-+                !messageObject.isOutOwner() ? sendSecretMediaDelete(messageObject) : null
-+            );
-+            showDialog(secretVoicePlayer);
-+            return;
-+        }
-+        Runnable openAction = sendSecretMessageRead(messageObject, false);
-+        Runnable closeAction = sendSecretMediaDelete(messageObject);
-+        SecretMediaViewer.getInstance().setParentActivity(getParentActivity());
-+        SecretMediaViewer.getInstance().openMedia(messageObject, photoViewerProvider, openAction, closeAction);
-+    }
-+
-     private void clearChatData(boolean full) {
-         messages.clear();
-         messagesByDays.clear();
-@@ -19577,6 +19605,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -19577,6 +19580,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -224,7 +192,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19584,7 +19618,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19584,7 +19593,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -233,7 +201,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33969,6 +34003,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33954,6 +33963,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -246,7 +214,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -40146,7 +40186,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40131,7 +40146,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -255,7 +223,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -46614,7 +46654,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46599,7 +46614,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

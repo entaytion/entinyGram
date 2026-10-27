@@ -1542,11 +1542,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuAiRoleDefaultConcise">Conciso</string>
     <string name="InuAiSummarizing">Riassunto in corso…</string>
     <string name="InuAiSummaryFailed">Riassunto non riuscito: %1$s</string>
-    <string name="InuBurnTimedMedia">Distruggi i media a tempo</string>
-    <string name="InuOpenTimedMedia">Apri</string>
-    <string name="InuTimedMediaAfterView">Dopo la visione</string>
-    <string name="InuTimedMediaAfterViewBurn">Distruggi</string>
-    <string name="InuTimedMediaAfterViewKeep">Conserva una copia</string>
     <string name="InuAiSectionTemperature">Temperatura</string>
     <string name="InuAiTemperatureInfo">Valori bassi danno risposte più precise e prevedibili, valori alti più creative. 1.0 è il valore predefinito e non viene inviato al fornitore.</string>
     <string name="InuAiFeatures">Funzioni</string>

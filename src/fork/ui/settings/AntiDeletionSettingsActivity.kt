@@ -26,14 +26,20 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         listView?.adapter?.update(true)
     }
 
-    private val selfDestructOptions = listOf(
+    private val keepGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuSelfDestructKeep),
+        listOf(
             ExpandableBoolGroup.Option(R.string.InuSaveViewOnceMedia, InuConfig.SAVE_VIEW_ONCE_MEDIA, TOGGLE_SAVE_VIEW_ONCE_MEDIA),
             ExpandableBoolGroup.Option(R.string.InuSaveTimedMessages, InuConfig.SAVE_TIMED_MESSAGES, TOGGLE_SAVE_TIMED_MESSAGES),
             ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructMedia, InuConfig.SAVE_SELF_DESTRUCT_MEDIA, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
             ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructText, InuConfig.SAVE_SELF_DESTRUCT_TEXT, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
-            ExpandableBoolGroup.Option(R.string.InuViewOnceShowNormal, InuConfig.VIEW_ONCE_SHOW_NORMAL, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
-            ExpandableBoolGroup.Option(R.string.InuBurnTimedMedia, InuConfig.BURN_TIMED_MEDIA, TOGGLE_BURN_TIMED_MEDIA),
-            ExpandableBoolGroup.Option(R.string.InuAutoSaveOneTime, InuConfig.AUTO_SAVE_ONE_TIME, TOGGLE_AUTO_SAVE_ONE_TIME),
+        ),
+        sectionId = SECTION_SELF_DESTRUCT_SAVE,
+    ).apply { expanded = true }
+
+    private val oneTimeToggles = listOf(
+        ExpandableBoolGroup.Option(R.string.InuAutoSaveOneTime, InuConfig.AUTO_SAVE_ONE_TIME, TOGGLE_AUTO_SAVE_ONE_TIME),
+        ExpandableBoolGroup.Option(R.string.InuViewOnceShowNormal, InuConfig.VIEW_ONCE_SHOW_NORMAL, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
     )
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
@@ -116,36 +122,19 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             }
         }
 
-        val options = selfDestructOptions
-        fun row(option: ExpandableBoolGroup.Option, infoRes: Int) {
-            items.add(mkTwoLineCheckItem(option.id, option.labelRes, infoRes, option.config.value))
-        }
         items.add(UItem.asShadow(null))
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuViewOnceHeader)).apply { id = SECTION_SELF_DESTRUCT_SAVE })
-        row(options[0], R.string.InuSaveViewOnceMediaInfo)
-        row(options[6], R.string.InuAutoSaveOneTimeInfo)
-        row(options[4], R.string.InuViewOnceShowNormalInfo)
-
-        items.add(UItem.asShadow(null))
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuTimedHeader)))
-        row(options[1], R.string.InuSaveTimedMessagesInfo)
-        row(options[2], R.string.InuSaveSelfDestructMediaInfo)
-        row(options[3], R.string.InuSaveSelfDestructTextInfo)
-        row(options[5], R.string.InuBurnTimedMediaInfo)
-        if (InuConfig.BURN_TIMED_MEDIA.value) {
-            items.add(
-                mkTwoLineEntry(
-                    BUTTON_TIMED_MEDIA_AFTER_VIEW,
-                    R.drawable.msg_timer,
-                    LocaleController.getString(R.string.InuTimedMediaAfterView),
-                    LocaleController.getString(
-                        if (InuConfig.TIMED_MEDIA_AFTER_VIEW.value == InuConfig.TimedMediaAfterViewItem.KEEP)
-                            R.string.InuTimedMediaAfterViewKeep
-                        else
-                            R.string.InuTimedMediaAfterViewBurn
-                    ),
-                )
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuOneTimeHeader)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ONE_TIME_PEEK,
+                R.string.InuOneTimePeek,
+                R.string.InuOneTimePeekInfo,
+                InuConfig.ONE_TIME_PEEK.value,
             )
+        )
+        keepGroup.addTo(items) { listView?.adapter?.update(true) }
+        for (option in oneTimeToggles) {
+            items.add(UItem.asCheck(option.id, LocaleController.getString(option.labelRes)).setChecked(option.config.value))
         }
 
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
@@ -156,24 +145,15 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        val mediaOption = selfDestructOptions.firstOrNull { it.id == item.id }
-        if (mediaOption != null) {
-            mediaOption.config.toggle()
+        if (keepGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
+        val toggle = oneTimeToggles.firstOrNull { it.id == item.id }
+        if (toggle != null) {
+            toggle.config.toggle()
             listView?.adapter?.update(true)
             return
         }
         when (item.id) {
-            BUTTON_TIMED_MEDIA_AFTER_VIEW -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuTimedMediaAfterViewBurn),
-                    LocaleController.getString(R.string.InuTimedMediaAfterViewKeep),
-                ),
-                InuConfig.TIMED_MEDIA_AFTER_VIEW.value,
-            ) { which ->
-                InuConfig.TIMED_MEDIA_AFTER_VIEW.value = which
-                listView?.adapter?.update(true)
-            }
+            TOGGLE_ONE_TIME_PEEK -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ONE_TIME_PEEK.toggle()
             TOGGLE_SAVE_DELETED_MESSAGES -> {
                 val new = InuConfig.SAVE_DELETED_MESSAGES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -234,8 +214,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_VIEW_ONCE_MEDIA = InuUtils.generateId()
         private val TOGGLE_SAVE_TIMED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_VIEW_ONCE_SHOW_NORMAL = InuUtils.generateId()
-        private val TOGGLE_BURN_TIMED_MEDIA = InuUtils.generateId()
-        private val BUTTON_TIMED_MEDIA_AFTER_VIEW = InuUtils.generateId()
+        private val TOGGLE_ONE_TIME_PEEK = InuUtils.generateId()
         private val TOGGLE_AUTO_SAVE_ONE_TIME = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
 
@@ -263,7 +242,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-self-destruct-media", R.string.InuSaveSelfDestructMedia, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
                 SearchRegistry.Entry("save-self-destruct-text", R.string.InuSaveSelfDestructText, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
                 SearchRegistry.Entry("view-once-show-normal", R.string.InuViewOnceShowNormal, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
-                SearchRegistry.Entry("burn-timed-media", R.string.InuBurnTimedMedia, TOGGLE_BURN_TIMED_MEDIA),
+                SearchRegistry.Entry("one-time-peek", R.string.InuOneTimePeek, TOGGLE_ONE_TIME_PEEK),
                 SearchRegistry.Entry("auto-save-one-time", R.string.InuAutoSaveOneTime, TOGGLE_AUTO_SAVE_ONE_TIME),
             ),
         )

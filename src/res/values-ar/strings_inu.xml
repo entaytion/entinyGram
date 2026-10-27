@@ -2067,7 +2067,6 @@
     <string name="InuBookmarksEmpty">لا توجد إشارات مرجعية</string>
     <string name="InuBookmarksLimit">تم بلوغ حد الإشارات المرجعية (%1$d لكل محادثة)</string>
     <string name="InuBookmarksSummary">الرسائل التي حفظتها، مجمعة حسب المحادثة</string>
-    <string name="InuBurnTimedMedia">حرق الوسائط المؤقتة</string>
     <string name="InuChatOnlineDots">نقاط الاتصال في المحادثات</string>
     <string name="InuChatOnlineDotsInfo">إظهار نقطة الاتصال على صور المرسلين داخل المجموعات.</string>
     <string name="InuOnlineDotsSection">نقاط الاتصال</string>
@@ -2104,13 +2103,9 @@
     <string name="InuHideReactionsSet">تعطيل وضع التفاعلات</string>
     <string name="InuHideReactionsSetInfo">لا شريط تفاعلات في قائمة الرسالة ولا تفاعل بالنقر المزدوج</string>
     <string name="InuMaterial3SettingsInfo">المفاتيح والمنزلقات والأقسام والصور الرمزية وبطاقات قائمة المحادثات والمزيد.</string>
-    <string name="InuOpenTimedMedia">فتح</string>
     <string name="InuPluginsEngineDisabled">الإضافات معطلة حالياً\n\nفعّلها من الإعدادات لتثبيت هذه الإضافة</string>
     <string name="InuPluginsOpenSettings">فتح الإعدادات</string>
     <string name="InuPluginsPluginlessBuild">هذا الإصدار لا يدعم الإضافات\n\nانتقل إلى «حول» للتبديل إلى الإصدار الكامل</string>
     <string name="InuSendAsSticker">إرسال كملصق</string>
     <string name="InuStickerPackZipFailed">تعذّر تنزيل الحزمة</string>
-    <string name="InuTimedMediaAfterView">بعد المشاهدة</string>
-    <string name="InuTimedMediaAfterViewBurn">حرق</string>
-    <string name="InuTimedMediaAfterViewKeep">الاحتفاظ بنسخة</string>
 </resources>

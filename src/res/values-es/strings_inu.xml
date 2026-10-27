@@ -1541,11 +1541,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuAiRoleDefaultConcise">Conciso</string>
     <string name="InuAiSummarizing">Resumiendo…</string>
     <string name="InuAiSummaryFailed">El resumen falló: %1$s</string>
-    <string name="InuBurnTimedMedia">Destruir multimedia temporizada</string>
-    <string name="InuOpenTimedMedia">Abrir</string>
-    <string name="InuTimedMediaAfterView">Después de verlo</string>
-    <string name="InuTimedMediaAfterViewBurn">Destruir</string>
-    <string name="InuTimedMediaAfterViewKeep">Conservar una copia</string>
     <string name="InuAiSectionTemperature">Temperatura</string>
     <string name="InuAiTemperatureInfo">Los valores bajos dan respuestas más precisas y predecibles, los altos más creativas. 1.0 es el valor predeterminado y no se envía al proveedor.</string>
     <string name="InuAiFeatures">Funciones</string>

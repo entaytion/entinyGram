@@ -436,7 +436,7 @@ entiny/chat/confirm-before-sending.patch
 entiny/translator/input-translate.patch
 entiny/tabs/local-folders.patch
 entiny/tabs/folder-icons.patch
-entiny/media/burn-keep-copy.patch
+entiny/media/one-time-peek.patch
 entiny/chat/no-forward-selection-cap.patch
 entiny/chat/ios-input-bar.patch
 entiny/media/burn-voice-round.patch
@@ -463,7 +463,6 @@ entiny/feed/feed-chatactivity.patch
 entiny/proxy/proxy-link-alert.patch
 entiny/notifications/push-service-foreground.patch
 entiny/ui/liquid-glass-live-update.patch
-entiny/media/auto-save-one-time.patch
 entiny/chat/input-menu-reserve.patch
 entiny/calls/call-rotation.patch
 entiny/tabs/m3-tabs-full-width.patch

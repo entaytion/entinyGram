@@ -2033,7 +2033,6 @@
     <string name="InuBookmarksEmpty">没有书签</string>
     <string name="InuBookmarksLimit">已达到书签上限（每个聊天 %1$d 个）</string>
     <string name="InuBookmarksSummary">你保存的消息，按聊天分组</string>
-    <string name="InuBurnTimedMedia">焚毁限时媒体</string>
     <string name="InuChatOnlineDots">聊天中的在线圆点</string>
     <string name="InuChatOnlineDotsInfo">在群组中的发送者头像上显示在线圆点。</string>
     <string name="InuOnlineDotsSection">在线圆点</string>
@@ -2070,10 +2069,6 @@
     <string name="InuHideReactionsSet">禁用设置回应</string>
     <string name="InuHideReactionsSetInfo">消息菜单中没有回应栏，也没有双击回应</string>
     <string name="InuMaterial3SettingsInfo">开关、滑块、分区、头像、聊天列表卡片等。</string>
-    <string name="InuOpenTimedMedia">打开</string>
     <string name="InuSendAsSticker">作为贴纸发送</string>
     <string name="InuStickerPackZipFailed">下载贴纸包失败</string>
-    <string name="InuTimedMediaAfterView">查看后</string>
-    <string name="InuTimedMediaAfterViewBurn">焚毁</string>
-    <string name="InuTimedMediaAfterViewKeep">保留副本</string>
 </resources>

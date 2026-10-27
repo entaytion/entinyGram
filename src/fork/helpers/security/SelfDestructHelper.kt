@@ -3,9 +3,30 @@ package desu.inugram.helpers.security
 import desu.inugram.InuConfig
 import desu.inugram.helpers.archive.DeletedMessagesHelper
 import org.telegram.messenger.DialogObject
+import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 
 object SelfDestructHelper {
+    private var forceViewed = false
+
+    // entiny: opening one-time media does not tell the sender unless the user marks it as viewed
+    @JvmStatic
+    fun shouldSkipViewed(dialogId: Long): Boolean =
+        !forceViewed && InuConfig.ONE_TIME_PEEK.value && shouldPreserveMedia(dialogId)
+
+    @JvmStatic
+    fun shouldSkipViewed(message: MessageObject?): Boolean =
+        message != null && !message.isOutOwner && (message.messageOwner?.media?.ttl_seconds ?: 0) != 0 && shouldSkipViewed(message.dialogId)
+
+    @JvmStatic
+    fun markViewed(message: MessageObject) {
+        forceViewed = true
+        try {
+            MessagesController.getInstance(message.currentAccount).markMessageContentAsRead(message)
+        } finally {
+            forceViewed = false
+        }
+    }
 
     @JvmStatic
     fun shouldPreserveMedia(dialogId: Long): Boolean {

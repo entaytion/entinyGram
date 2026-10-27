@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 21 Sep 2026 12:52:34 +0300
+Subject: burn once-view media after saving a copy
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java | 3 +++
+ .../src/main/java/org/telegram/ui/ChatActivity.java          | 5 ++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -14463,6 +14463,9 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (messageObject.scheduled) {
+             return;
+         }
++        if (desu.inugram.helpers.security.SelfDestructHelper.shouldSkipViewed(messageObject)) {
++            return;
++        }
+         ArrayList<Integer> arrayList = new ArrayList<>();
+         if (messageObject.messageOwner.mentioned) {
+             getMessagesStorage().markMentionMessageAsRead(-messageObject.messageOwner.peer_id.channel_id, messageObject.getId(), messageObject.getDialogId());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -16074,6 +16074,9 @@ public class ChatActivity extends BaseFragment implements
+         if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() || messageObject.messageOwner.destroyTime != 0 || messageObject.messageOwner.ttl <= 0) {
+             return null;
+         }
++        if (desu.inugram.helpers.security.SelfDestructHelper.shouldSkipViewed(dialog_id)) {
++            return null;
++        }
+         if (readNow) {
+             final boolean delete = messageObject.messageOwner.ttl != 0x7FFFFFFF;
+             final int ttl = messageObject.messageOwner.ttl == 0x7FFFFFFF ? 0 : messageObject.messageOwner.ttl;
+@@ -16104,7 +16107,7 @@ public class ChatActivity extends BaseFragment implements
+             return null;
+         }
+         if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialog_id)) {
+-            return null;
++            return desu.inugram.InuConfig.AUTO_SAVE_ONE_TIME.getValue() ? () -> desu.inugram.helpers.chat.ChatHelper.autoSaveOneTime(this, messageObject) : null;
+         }
+         final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
+         messageObject.forceExpired = true;

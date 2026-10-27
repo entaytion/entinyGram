@@ -2036,7 +2036,6 @@
     <string name="InuBookmarksEmpty">Yer imi yok</string>
     <string name="InuBookmarksLimit">Yer imi sınırına ulaşıldı (sohbet başına %1$d)</string>
     <string name="InuBookmarksSummary">Kaydettiğiniz mesajlar, sohbete göre gruplanmış</string>
-    <string name="InuBurnTimedMedia">Süreli medyayı yak</string>
     <string name="InuChatOnlineDots">Sohbetlerde çevrimiçi noktaları</string>
     <string name="InuChatOnlineDotsInfo">Gruplarda gönderen avatarlarında çevrimiçi noktasını göster.</string>
     <string name="InuOnlineDotsSection">Çevrimiçi noktalar</string>
@@ -2073,10 +2072,6 @@
     <string name="InuHideReactionsSet">Tepki vermeyi devre dışı bırak</string>
     <string name="InuHideReactionsSetInfo">Mesaj menüsünde tepki çubuğu ve çift dokunuşla tepki yok</string>
     <string name="InuMaterial3SettingsInfo">Anahtarlar, kaydırıcılar, bölümler, avatarlar, sohbet listesi kartları ve daha fazlası.</string>
-    <string name="InuOpenTimedMedia">Aç</string>
     <string name="InuSendAsSticker">Çıkartma olarak gönder</string>
     <string name="InuStickerPackZipFailed">Paket indirilemedi</string>
-    <string name="InuTimedMediaAfterView">Görüntüledikten sonra</string>
-    <string name="InuTimedMediaAfterViewBurn">Yak</string>
-    <string name="InuTimedMediaAfterViewKeep">Kopyasını sakla</string>
 </resources>

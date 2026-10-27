@@ -2033,7 +2033,6 @@
     <string name="InuBookmarksEmpty">ブックマークはありません</string>
     <string name="InuBookmarksLimit">ブックマークの上限に達しました（チャットごとに %1$d 件）</string>
     <string name="InuBookmarksSummary">保存したメッセージをチャットごとに表示</string>
-    <string name="InuBurnTimedMedia">時限メディアを焼却</string>
     <string name="InuChatOnlineDots">チャットのオンライン表示</string>
     <string name="InuChatOnlineDotsInfo">グループ内の送信者アバターにオンライン表示を出します。</string>
     <string name="InuOnlineDotsSection">オンラインドット</string>
@@ -2070,10 +2069,6 @@
     <string name="InuHideReactionsSet">リアクションの送信を無効にする</string>
     <string name="InuHideReactionsSetInfo">メッセージメニューのリアクションバーとダブルタップのリアクションを無効にします</string>
     <string name="InuMaterial3SettingsInfo">スイッチ、スライダー、セクション、アバター、チャットリストのカードなど。</string>
-    <string name="InuOpenTimedMedia">開く</string>
     <string name="InuSendAsSticker">ステッカーとして送信</string>
     <string name="InuStickerPackZipFailed">パックのダウンロードに失敗しました</string>
-    <string name="InuTimedMediaAfterView">閲覧後</string>
-    <string name="InuTimedMediaAfterViewBurn">焼却</string>
-    <string name="InuTimedMediaAfterViewKeep">コピーを残す</string>
 </resources>

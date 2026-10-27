@@ -154,7 +154,7 @@ object ChatHelper {
     const val OPTION_MARK_AS_READ = 522
     const val OPTION_AI_SUMMARIZE = 523
     const val OPTION_ADD_FILTER = 524
-    const val OPTION_BURN_ONE_TIME = 526
+    const val OPTION_MARK_VIEWED = 526
     const val OPTION_SAVE_ONE_TIME = 527
     const val OPTION_FORWARD_PRO = 528
     const val OPTION_SHARE_ONE_TIME = 529
@@ -668,15 +668,14 @@ object ChatHelper {
             icons.add(R.drawable.msg_share)
         }
 
-        // entiny: burn opens the secret viewer, so it cannot coexist with show-as-regular-photo
-        if (InuConfig.BURN_TIMED_MEDIA.value &&
+        if (InuConfig.ONE_TIME_PEEK.value &&
             selectedObject.isSecretMedia() &&
             !selectedObject.isOut() &&
-            !InuConfig.VIEW_ONCE_SHOW_NORMAL.value
+            SelfDestructHelper.shouldPreserveMedia(dialogId)
         ) {
-            items.add(LocaleController.getString(R.string.InuOpenTimedMedia))
-            options.add(OPTION_BURN_ONE_TIME)
-            icons.add(R.drawable.filled_fire)
+            items.add(LocaleController.getString(R.string.InuOneTimeMark))
+            options.add(OPTION_MARK_VIEWED)
+            icons.add(R.drawable.msg_seen)
         }
 
         if (GhostHelper.shouldSuppressRead(activity.dialogId)) {
@@ -1293,13 +1292,7 @@ object ChatHelper {
                 shareOneTimeMedia(activity, selectedObject)
             }
 
-            OPTION_BURN_ONE_TIME -> {
-                // entiny: keep mode copies first, the stock viewer empties the local file when it closes
-                if (InuConfig.TIMED_MEDIA_AFTER_VIEW.value == InuConfig.TimedMediaAfterViewItem.KEEP) {
-                    saveOneTimeMedia(activity, selectedObject, copyFirst = true)
-                }
-                openSecretViewer(activity, selectedObject)
-            }
+            OPTION_MARK_VIEWED -> SelfDestructHelper.markViewed(selectedObject)
 
             OPTION_SAVE_VOICE_TO_DOWNLOADS -> {
                 val parent = activity.parentActivity ?: return true
@@ -1328,20 +1321,10 @@ object ChatHelper {
     @JvmStatic
     fun autoSaveOneTime(activity: ChatActivity, message: MessageObject) {
         if (!InuConfig.AUTO_SAVE_ONE_TIME.value) return
-        saveOneTimeMedia(activity, message, copyFirst = true)
+        saveOneTimeMedia(activity, message, copyFirst = true, silent = true)
     }
 
-    private fun openSecretViewer(activity: ChatActivity, message: MessageObject) {
-        // entiny: populate messageOwner.ttl from media.ttl_seconds so stock secret viewer does not return null
-        val media = message.messageOwner.media
-        if (message.messageOwner.ttl <= 0 && media != null && media.ttl_seconds != 0) {
-            message.messageOwner.ttl = media.ttl_seconds
-        }
-        // entiny: open secret media viewer to follow normal view-once playback flow before expiring
-        activity.inu_openSecretMediaViewer(message)
-    }
-
-    private fun saveOneTimeMedia(activity: ChatActivity, message: MessageObject, copyFirst: Boolean = false) {
+    private fun saveOneTimeMedia(activity: ChatActivity, message: MessageObject, copyFirst: Boolean = false, silent: Boolean = false) {
         val parent = activity.parentActivity ?: return
         if (!StickerDownloadHelper.ensureStoragePermission(parent)) return
 
@@ -1404,7 +1387,7 @@ object ChatHelper {
 
         MediaController.saveFile((scratch ?: source).absolutePath, parent, type, name, document?.mime_type) {
             scratch?.delete()
-            BulletinFactory.of(activity).createDownloadBulletin(bulletinType, 1, activity.themeDelegate).show()
+            if (!silent) BulletinFactory.of(activity).createDownloadBulletin(bulletinType, 1, activity.themeDelegate).show()
         }
     }
 
