@@ -406,6 +406,7 @@ Sistema: %6$s
     <string name="InuMaterial3BottomTabs">Schede in basso</string>
     <string name="InuIosBottomBar">Barra inferiore stile iOS</string>
     <string name="InuIosChatList">Elenco chat in stile iOS</string>
+    <string name="InuIosMessageMenu">Menu messaggi in stile iOS</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Stile di design</string>
     <string name="InuMaterial3SettingsInfo">Interruttori, cursori, sezioni, avatar, schede dell\'elenco chat e altro.</string>

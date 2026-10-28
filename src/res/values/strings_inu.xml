@@ -399,6 +399,7 @@
     <string name="InuMaterial3BottomTabs">Bottom tabs</string>
     <string name="InuIosBottomBar">iOS-style bottom bar</string>
     <string name="InuIosChatList">iOS-style chat list</string>
+    <string name="InuIosMessageMenu">iOS-style message menu</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Design style</string>
     <string name="InuMaterial3SettingsInfo">Switches, sliders, sections, avatars, chat list cards and more.</string>

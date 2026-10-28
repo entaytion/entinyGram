@@ -29,6 +29,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             ExpandableBoolGroup.Option(R.string.InuChatHeaderSettings, InuConfig.IOS_CHAT_HEADER, TOGGLE_IOS_CHAT_HEADER),
             ExpandableBoolGroup.Option(R.string.InuIosBottomBar, InuConfig.IOS_BOTTOM_NAVIGATION_BAR, TOGGLE_IOS_BOTTOM_BAR),
             ExpandableBoolGroup.Option(R.string.InuIosChatList, InuConfig.IOS_CHAT_LIST, TOGGLE_IOS_CHAT_LIST),
+            ExpandableBoolGroup.Option(R.string.InuIosMessageMenu, InuConfig.IOS_MESSAGE_MENU, TOGGLE_IOS_MESSAGE_MENU),
             ExpandableBoolGroup.Option(R.string.InuIosButtonPlacement, InuConfig.IOS_INPUT_BUTTON_PLACEMENT, TOGGLE_IOS_BUTTON_PLACEMENT),
             ExpandableBoolGroup.Option(R.string.InuIosInputAppearance, InuConfig.IOS_INPUT_APPEARANCE, TOGGLE_IOS_INPUT_APPEARANCE),
         ),
@@ -230,6 +231,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_LIST = InuUtils.generateId()
+        private val TOGGLE_IOS_MESSAGE_MENU = InuUtils.generateId()
         private val TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER = InuUtils.generateId()
         private val TOGGLE_IOS_BUTTON_PLACEMENT = InuUtils.generateId()
         private val TOGGLE_IOS_INPUT_APPEARANCE = InuUtils.generateId()
@@ -247,6 +249,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("ios-bottom-bar", R.string.InuIosBottomBar, TOGGLE_IOS_BOTTOM_BAR),
                 SearchRegistry.Entry("ios-chat-list", R.string.InuIosChatList, TOGGLE_IOS_CHAT_LIST),
+                SearchRegistry.Entry("ios-message-menu", R.string.InuIosMessageMenu, TOGGLE_IOS_MESSAGE_MENU),
                 SearchRegistry.Entry("ios-chats-tab-first-folder", R.string.InuIosChatsTabFirstFolder, TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER),
                 SearchRegistry.Entry("ios-button-placement", R.string.InuIosButtonPlacement, TOGGLE_IOS_BUTTON_PLACEMENT),
                 SearchRegistry.Entry("ios-input-appearance", R.string.InuIosInputAppearance, TOGGLE_IOS_INPUT_APPEARANCE),

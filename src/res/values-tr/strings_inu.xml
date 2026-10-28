@@ -1403,6 +1403,7 @@
     <string name="InuMaterial3BottomTabs">Alt sekmeler</string>
     <string name="InuIosBottomBar">iOS tarzı alt çubuk</string>
     <string name="InuIosChatList">iOS tarzı sohbet listesi</string>
+    <string name="InuIosMessageMenu">iOS tarzı mesaj menüsü</string>
     <string name="InuIosChatHeader">Kompakt hap</string>
     <string name="InuIosChatHeaderInfo">Ortada yüzen, iOS tarzı kompakt sohbet başlığı hapı.</string>
     <string name="InuChatHeaderNoPill">Hap arka planını gizle</string>

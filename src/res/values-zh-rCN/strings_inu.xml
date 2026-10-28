@@ -1402,6 +1402,7 @@
     <string name="InuMaterial3BottomTabs">底部标签</string>
     <string name="InuIosBottomBar">iOS 风格底部栏</string>
     <string name="InuIosChatList">iOS 风格聊天列表</string>
+    <string name="InuIosMessageMenu">iOS 风格消息菜单</string>
     <string name="InuIosChatHeader">紧凑胶囊</string>
     <string name="InuIosChatHeaderInfo">iOS 风格的紧凑聊天标题胶囊，悬浮居中。</string>
     <string name="InuChatHeaderNoPill">隐藏胶囊背景</string>

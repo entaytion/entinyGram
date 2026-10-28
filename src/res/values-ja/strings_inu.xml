@@ -1389,6 +1389,7 @@
     <string name="InuMaterial3BottomTabs">下部タブ</string>
     <string name="InuIosBottomBar">iOS風のボトムバー</string>
     <string name="InuIosChatList">iOSスタイルのチャットリスト</string>
+    <string name="InuIosMessageMenu">iOSスタイルのメッセージメニュー</string>
     <string name="InuIosChatHeader">コンパクトなピル</string>
     <string name="InuIosChatHeaderInfo">iOS風のコンパクトなチャットヘッダーピルを中央に浮かせます。</string>
     <string name="InuChatHeaderNoPill">ピルの背景を非表示</string>

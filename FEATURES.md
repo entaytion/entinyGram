@@ -121,6 +121,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - option to hide the chat avatar and keep the three-dot menu
   - iOS-style input bar with optional compact mode
   - iOS-style chat list with larger avatars and roomier rows - *inspired by [Finegram](https://github.com/Th3Nekit/Finegram) (@Th3Nekit)*
+  - iOS-style message menu: chat blurred behind, menu as a card under the message - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram) and [Finegram](https://github.com/Th3Nekit/Finegram) (@Th3Nekit)*
 - 📡 **action button style**: Accent, Neutral or White - *ported from [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
 - 📡 **header centering** and customizable chat headers
 - 📡 **compact pill & profile transition fixes**

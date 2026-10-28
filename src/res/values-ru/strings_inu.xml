@@ -1606,6 +1606,7 @@
     <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
     <string name="InuIosBottomBar">Нижняя панель в стиле iOS</string>
     <string name="InuIosChatList">Список чатов в стиле iOS</string>
+    <string name="InuIosMessageMenu">Меню сообщений в стиле iOS</string>
     <string name="InuIosChatHeader">Компактная таблетка</string>
     <string name="InuIosChatHeaderInfo">Компактная таблетка шапки чата, плавающая посередине, как в iOS.</string>
     <string name="InuChatHeaderNoPill">Скрыть фон таблетки</string>

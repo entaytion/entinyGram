@@ -110,6 +110,7 @@
   "ios-chat-list": "ui",
   "ios-chats-tab-first-folder": "tabs",
   "ios-input-bar": "chat",
+  "ios-message-menu": "chat",
   "attach-preview-caption-reorder": "chat",
   "reply-quote-command-color": "chat",
   "keep-downloads-in-background": "media",
