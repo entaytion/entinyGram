@@ -1605,6 +1605,7 @@
     <string name="InuKeepDownloadsInBackgroundInfo">Загрузки продолжаются, когда вы прокручиваете сообщение или выходите из чата.</string>
     <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
     <string name="InuIosBottomBar">Нижняя панель в стиле iOS</string>
+    <string name="InuIosChatList">Список чатов в стиле iOS</string>
     <string name="InuIosChatHeader">Компактная таблетка</string>
     <string name="InuIosChatHeaderInfo">Компактная таблетка шапки чата, плавающая посередине, как в iOS.</string>
     <string name="InuChatHeaderNoPill">Скрыть фон таблетки</string>

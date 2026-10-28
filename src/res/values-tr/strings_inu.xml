@@ -1402,6 +1402,7 @@
     <string name="InuKeepDownloadsInBackgroundInfo">Kaydırdığınızda veya sohbetten çıktığınızda indirmeler devam eder.</string>
     <string name="InuMaterial3BottomTabs">Alt sekmeler</string>
     <string name="InuIosBottomBar">iOS tarzı alt çubuk</string>
+    <string name="InuIosChatList">iOS tarzı sohbet listesi</string>
     <string name="InuIosChatHeader">Kompakt hap</string>
     <string name="InuIosChatHeaderInfo">Ortada yüzen, iOS tarzı kompakt sohbet başlığı hapı.</string>
     <string name="InuChatHeaderNoPill">Hap arka planını gizle</string>

@@ -7,6 +7,7 @@ import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.ActionButtonStyle
+import desu.inugram.helpers.dialogs.DialogsM3SectionsHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -27,6 +28,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
         listOf(
             ExpandableBoolGroup.Option(R.string.InuChatHeaderSettings, InuConfig.IOS_CHAT_HEADER, TOGGLE_IOS_CHAT_HEADER),
             ExpandableBoolGroup.Option(R.string.InuIosBottomBar, InuConfig.IOS_BOTTOM_NAVIGATION_BAR, TOGGLE_IOS_BOTTOM_BAR),
+            ExpandableBoolGroup.Option(R.string.InuIosChatList, InuConfig.IOS_CHAT_LIST, TOGGLE_IOS_CHAT_LIST),
             ExpandableBoolGroup.Option(R.string.InuIosButtonPlacement, InuConfig.IOS_INPUT_BUTTON_PLACEMENT, TOGGLE_IOS_BUTTON_PLACEMENT),
             ExpandableBoolGroup.Option(R.string.InuIosInputAppearance, InuConfig.IOS_INPUT_APPEARANCE, TOGGLE_IOS_INPUT_APPEARANCE),
         ),
@@ -156,6 +158,9 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             softRebuild()
             showRestartBulletin()
         }
+        if (changed.any { it.id == TOGGLE_IOS_CHAT_LIST }) {
+            DialogsM3SectionsHelper.refresh()
+        }
         if (changed.any { it.id == TOGGLE_IOS_INPUT_APPEARANCE }) {
             InuHooks.syncChatInputRowHeight()
         }
@@ -224,6 +229,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_GLASS_GLARE = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
+        private val TOGGLE_IOS_CHAT_LIST = InuUtils.generateId()
         private val TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER = InuUtils.generateId()
         private val TOGGLE_IOS_BUTTON_PLACEMENT = InuUtils.generateId()
         private val TOGGLE_IOS_INPUT_APPEARANCE = InuUtils.generateId()
@@ -240,6 +246,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-glass-glare", R.string.InuDisableGlassGlare, TOGGLE_DISABLE_GLASS_GLARE),
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("ios-bottom-bar", R.string.InuIosBottomBar, TOGGLE_IOS_BOTTOM_BAR),
+                SearchRegistry.Entry("ios-chat-list", R.string.InuIosChatList, TOGGLE_IOS_CHAT_LIST),
                 SearchRegistry.Entry("ios-chats-tab-first-folder", R.string.InuIosChatsTabFirstFolder, TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER),
                 SearchRegistry.Entry("ios-button-placement", R.string.InuIosButtonPlacement, TOGGLE_IOS_BUTTON_PLACEMENT),
                 SearchRegistry.Entry("ios-input-appearance", R.string.InuIosInputAppearance, TOGGLE_IOS_INPUT_APPEARANCE),

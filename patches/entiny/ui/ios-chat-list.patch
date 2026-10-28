@@ -1,0 +1,153 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 28 Oct 2026 22:35:58 +0200
+Subject: [+] iOS-style chat list
+
+---
+ .../org/telegram/ui/Cells/DialogCell.java     | 52 ++++++++++++++-----
+ 1 file changed, 40 insertions(+), 12 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -1035,8 +1035,19 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+         return height;
+     }
+ 
++    public boolean inu_isIos() {
++        return parentFragment != null && desu.inugram.helpers.dialogs.DialogCellIosHelper.isEnabled() && !isTopic && !isForumCell() && !isTransitionSupport;
++    }
++
++    private int inu_iosDp() {
++        return inu_isIos() ? dp(5) : 0;
++    }
++
+     private int getCollapsedHeight() {
+         int height = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? heightThreeLines : heightDefault);
++        if (inu_isIos()) {
++            height += dp(14);
++        }
+         if (useSeparator || true) {
+             height += 1;
+         }
+@@ -2465,6 +2476,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+             }
+         } else {
+             avatarTop = dp(9);
++            int avatarSize = inu_isIos() ? 60 : 52;
+             messageNameTop = dp(31);
+             timeTop = dp(16);
+             errorTop = dp(38);
+@@ -2475,14 +2487,14 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+ 
+             if (LocaleController.isRTL) {
+                 buttonLeft = typingLeft = messageLeft = messageNameLeft = dp(22);
+-                avatarLeft = getMeasuredWidth() - dp(52 + avatarStart);
++                avatarLeft = getMeasuredWidth() - dp(avatarSize + avatarStart);
+                 thumbLeft = avatarLeft - dp(11 + (thumbsCount * (thumbSize + 2) - 2));
+             } else {
+                 buttonLeft = typingLeft = messageLeft = messageNameLeft = dp(messagePaddingStart + 4);
+                 avatarLeft = dp(avatarStart);
+-                thumbLeft = avatarLeft + dp(56 + 11);
++                thumbLeft = avatarLeft + dp(avatarSize + 15);
+             }
+-            storyParams.originalAvatarRect.set(avatarLeft, avatarTop, avatarLeft + dp(52), avatarTop + dp(52));
++            storyParams.originalAvatarRect.set(avatarLeft, avatarTop, avatarLeft + dp(avatarSize), avatarTop + dp(avatarSize));
+             for (int i = 0; i < thumbImage.length; ++i) {
+                 thumbImage[i].setImageCoords(thumbLeft + (thumbSize + 2) * i, avatarTop + dp(30) + (twoLinesForName ? dp(20) : 0) - (!(useForceThreeLines || SharedConfig.useThreeLinesLayout) && tags != null && !tags.isEmpty() ? dp(9) : 0), dp(thumbSize), dp(thumbSize));
+             }
+@@ -2997,6 +3009,22 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 statusDrawableLeft = (int) (typingLeft + x2 + dp(3));
+             }
+         }
++        if (inu_isIos()) {
++            final int o = inu_iosDp();
++            nameLockTop += o;
++            timeTop += o;
++            checkDrawTop += o;
++            errorTop += o;
++            pinTop += o;
++            countTop += o;
++            messageNameTop += o;
++            messageTop += o;
++            buttonTop += o;
++            storyParams.originalAvatarRect.offset(0, o);
++            for (ImageReceiver receiver : thumbImage) {
++                receiver.setImageY(receiver.getImageY() + o);
++            }
++        }
+         updateThumbsPosition();
+     }
+ 
+@@ -3166,9 +3194,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+ 
+     public boolean isPointInsideAvatar(float x, float y) {
+         if (!LocaleController.isRTL) {
+-            return x >= 0 && x < dp(60);
++            return x >= 0 && x < dp(inu_isIos() ? 78 : 60);
+         } else {
+-            return x >= getMeasuredWidth() - dp(60) && x < getMeasuredWidth();
++            return x >= getMeasuredWidth() - dp(inu_isIos() ? 78 : 60) && x < getMeasuredWidth();
+         }
+     }
+ 
+@@ -4136,7 +4164,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 Theme.dialogs_lockDrawable.draw(canvas);
+             }
+ 
+-            int nameTop = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 10 : 14);
++            int nameTop = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 10 : 14) + inu_iosDp();
+             if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
+                 nameTop -= dp(isForumCell() ? 8 : 9);
+             }
+@@ -4450,7 +4478,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+             }
+ 
+             if (drawBotVerified) {
+-                int y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f);
++                int y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f) + inu_iosDp();
+                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
+                     y -= dp(9);
+                 }
+@@ -4484,7 +4512,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 }
+                 int muteAnchor = drawPremium ? nameMutedIconLeft : nameMuteLeft;
+                 float muteX = muteAnchor - dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 0 : 1);
+-                float muteY = dp(SharedConfig.useThreeLinesLayout ? 13.5f : 17.5f);
++                float muteY = dp(SharedConfig.useThreeLinesLayout ? 13.5f : 17.5f) + inu_iosDp();
+                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
+                     muteY -= dp(isForumCell() ? 8 : 9);
+                 }
+@@ -4523,7 +4551,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+ 
+             }
+             if (drawVerified) {
+-                float y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 13.5f : 16.5f);
++                float y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 13.5f : 16.5f) + inu_iosDp();
+                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
+                     y -= dp(9);
+                 }
+@@ -4532,7 +4560,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 Theme.dialogs_verifiedDrawable.draw(canvas);
+                 Theme.dialogs_verifiedCheckDrawable.draw(canvas);
+             } else if (drawPremium) {
+-                int y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f);
++                int y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f) + inu_iosDp();
+                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
+                     y -= dp(9);
+                 }
+@@ -4553,11 +4581,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                     emojiStatus.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
+                 } else {
+                     Drawable premiumDrawable = PremiumGradient.getInstance().premiumStarDrawableMini;
+-                    setDrawableBounds(premiumDrawable, nameMuteLeft - dp(1), dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f));
++                    setDrawableBounds(premiumDrawable, nameMuteLeft - dp(1), dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f) + inu_iosDp());
+                     premiumDrawable.draw(canvas);
+                 }
+             } else if (drawScam != 0) {
+-                int y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12 : 15);
++                int y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12 : 15) + inu_iosDp();
+                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
+                     y -= dp(9);
+                 }

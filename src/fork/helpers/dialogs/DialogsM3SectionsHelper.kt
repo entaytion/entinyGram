@@ -101,19 +101,19 @@ object DialogsM3SectionsHelper {
         view.useSeparator = false
         view.fullSeparator = false
         val start = if (sideMarginDp(view.collapsed) == 0f) 11 else 8
-        if (view.avatarStart != start) {
-            view.avatarStart = start
-            view.messagePaddingStart = start + 61
+        if (DialogCellIosHelper.apply(view, start)) {
             view.buildLayout()
+            view.requestLayout()
         }
     }
 
     private fun restore(view: DialogCell) {
-        if (view.avatarStart == 11 && view.background !is InsetDrawable) return
-        view.background = null
-        view.avatarStart = 11
-        view.messagePaddingStart = 72
-        view.buildLayout()
+        val hadCard = view.background is InsetDrawable
+        if (hadCard) view.background = null
+        if (DialogCellIosHelper.apply(view, 11) || hadCard) {
+            view.buildLayout()
+            view.requestLayout()
+        }
     }
 
     @JvmStatic

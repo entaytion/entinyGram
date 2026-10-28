@@ -1725,6 +1725,7 @@
     <string name="InuKeepDownloadsInBackgroundInfo">Завантаження тривають, коли ви прокручуєте повідомлення або виходите з чату.</string>
     <string name="InuMaterial3BottomTabs">Нижні вкладки</string>
     <string name="InuIosBottomBar">Нижня панель у стилі iOS</string>
+    <string name="InuIosChatList">Список чатів у стилі iOS</string>
     <string name="InuIosChatHeader">Компактна пілюля</string>
     <string name="InuIosChatHeaderInfo">Компактна пілюля шапки чату в стилі iOS, що плаває посередині.</string>
     <string name="InuChatHeaderNoPill">Сховати фон пілюлі</string>

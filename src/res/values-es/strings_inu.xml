@@ -405,6 +405,7 @@ Sistema: %6$s
     <string name="InuMainTabsCustomizeReset">Restablecer valores predeterminados</string>
     <string name="InuMaterial3BottomTabs">Pestañas inferiores</string>
     <string name="InuIosBottomBar">Barra inferior estilo iOS</string>
+    <string name="InuIosChatList">Lista de chats estilo iOS</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Estilo de diseño</string>
     <string name="InuMaterial3SettingsInfo">Interruptores, deslizadores, secciones, avatares, tarjetas de la lista de chats y más.</string>

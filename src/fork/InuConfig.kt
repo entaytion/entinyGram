@@ -1573,6 +1573,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val IOS_CHAT_HEADER = BoolItem("ios_chat_header", false)
 
     @JvmField
+    val IOS_CHAT_LIST = BoolItem("ios_chat_list", false)
+
+    @JvmField
     val HIDE_CHAT_AVATAR = BoolItem("hide_chat_avatar", false)
 
     @JvmField

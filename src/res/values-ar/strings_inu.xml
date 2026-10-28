@@ -296,6 +296,7 @@
     <string name="InuMainTabsCustomizeReset">إعادة إلى الافتراضي</string>
     <string name="InuMaterial3BottomTabs">علامات التبويب السفلية</string>
     <string name="InuIosBottomBar">شريط سفلي بنمط iOS</string>
+    <string name="InuIosChatList">قائمة الدردشات بنمط iOS</string>
     <string name="InuDialogsFab">زر الإجراء العائم</string>
     <string name="InuDialogsFabMainAction">الإجراء الأساسي</string>
     <string name="InuDialogsFabSecondaryAction">الإجراء الثانوي</string>

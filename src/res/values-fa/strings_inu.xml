@@ -296,6 +296,7 @@
     <string name="InuMainTabsCustomizeReset">بازنشانی به پیش‌فرض</string>
     <string name="InuMaterial3BottomTabs">زبانه‌های پایین</string>
     <string name="InuIosBottomBar">نوار پایین به سبک iOS</string>
+    <string name="InuIosChatList">فهرست گفتگوها به سبک iOS</string>
     <string name="InuDialogsFab">دکمه کنش شناور</string>
     <string name="InuDialogsFabMainAction">کنش اصلی</string>
     <string name="InuDialogsFabSecondaryAction">کنش ثانویه</string>
