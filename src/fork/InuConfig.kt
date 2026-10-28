@@ -1376,6 +1376,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val COMPACT_INPUT_SIZE = BoolItem("compact_input_size", false)
 
     @JvmField
+    val IOS_INPUT_COMMANDS_NEAR_STICKERS = BoolItem("ios_input_commands_near_stickers", false)
+
+    @JvmField
     val ACTION_BUTTON_STYLE = IntItem("action_button_style", 0)
 
     @JvmField

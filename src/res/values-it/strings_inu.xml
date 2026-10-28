@@ -1826,6 +1826,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuIosInputAppearance">Aspetto (iOS)</string>
     <string name="InuCompactInputSize">Modalità compatta</string>
     <string name="InuCompactInputSizeInfo">Riduce margini e spaziature attorno al campo di input.</string>
+    <string name="InuCommandsNearStickers">Comandi vicino agli sticker</string>
+    <string name="InuCommandsNearStickersInfo">Sposta il pulsante dei comandi del bot accanto a quello degli sticker.</string>
     <string name="InuActionButtonStyle">Stile dei pulsanti di azione</string>
     <string name="InuActionButtonStyleInfo">Stile di colore per i pulsanti di invio, vocale e applica in tutte le schermate.</string>
     <string name="InuActionButtonStyleAccent">Accento</string>

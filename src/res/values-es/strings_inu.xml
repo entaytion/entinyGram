@@ -1825,6 +1825,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuIosInputAppearance">Apariencia (iOS)</string>
     <string name="InuCompactInputSize">Modo compacto</string>
     <string name="InuCompactInputSizeInfo">Reduce los márgenes y rellenos alrededor del campo de entrada de texto.</string>
+    <string name="InuCommandsNearStickers">Comandos junto a los stickers</string>
+    <string name="InuCommandsNearStickersInfo">Mueve el botón de comandos del bot junto al botón de stickers.</string>
     <string name="InuActionButtonStyle">Estilo del botón de acción</string>
     <string name="InuActionButtonStyleInfo">Estilo de color para botones de enviar, nota de voz y aplicar en todas las pantallas.</string>
     <string name="InuActionButtonStyleAccent">Acento</string>

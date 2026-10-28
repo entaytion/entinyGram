@@ -1583,6 +1583,8 @@
     <string name="InuChatHeaderSettingsInfo">下の設定を変更すると、上のプレビューがすぐに更新されます。</string>
     <string name="InuCompactInputSize">コンパクトモード</string>
     <string name="InuCompactInputSizeInfo">入力欄の周りの余白を小さくします。</string>
+    <string name="InuCommandsNearStickers">コマンドをスタンプの隣に</string>
+    <string name="InuCommandsNearStickersInfo">ボットのコマンドボタンをスタンプボタンの隣に移動します。</string>
     <string name="InuConfirmBeforeSending">送信前に確認</string>
     <string name="InuConfirmSendGif">GIF</string>
     <string name="InuConfirmSendSticker">ステッカー</string>

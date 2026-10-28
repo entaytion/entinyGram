@@ -1781,6 +1781,8 @@
     <string name="InuIosInputAppearance">Оформлення як в iOS</string>
     <string name="InuCompactInputSize">Компактний режим</string>
     <string name="InuCompactInputSizeInfo">Зменшує відступи навколо поля вводу.</string>
+    <string name="InuCommandsNearStickers">Команди біля стікерів</string>
+    <string name="InuCommandsNearStickersInfo">Переносить кнопку команд бота ближче до кнопки стікерів.</string>
     <string name="InuActionButtonStyle">Стиль кнопки дії</string>
     <string name="InuActionButtonStyleInfo">Колірний стиль кнопок надсилання, голосу та застосування на всіх екранах.</string>
     <string name="InuActionButtonStyleAccent">Акцентна</string>

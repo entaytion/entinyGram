@@ -25,6 +25,9 @@ object IosInputHelper {
     fun isAppearance(): Boolean = InuConfig.IOS_INPUT_APPEARANCE.value
 
     @JvmStatic
+    fun isCommandsNearStickers(): Boolean = InuConfig.IOS_INPUT_COMMANDS_NEAR_STICKERS.value && isButtonPlacement() && isAppearance()
+
+    @JvmStatic
     fun isCompact(): Boolean = InuConfig.COMPACT_INPUT_SIZE.value && isAppearance()
 
     @JvmStatic

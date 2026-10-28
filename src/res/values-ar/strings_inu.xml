@@ -1634,6 +1634,8 @@
     <string name="InuIosInputAppearance">المظهر (iOS)</string>
     <string name="InuCompactInputSize">الوضع المضغوط</string>
     <string name="InuCompactInputSizeInfo">يقلل الهوامش والحشوات حول حقل الإدخال.</string>
+    <string name="InuCommandsNearStickers">الأوامر بجانب الملصقات</string>
+    <string name="InuCommandsNearStickersInfo">ينقل زر أوامر البوت بجانب زر الملصقات.</string>
     <string name="InuActionButtonStyle">نمط أزرار الإجراء</string>
     <string name="InuActionButtonStyleInfo">نمط اللون لأزرار الإرسال والصوت والتطبيق في جميع الشاشات.</string>
     <string name="InuActionButtonStyleAccent">اللون المميز</string>

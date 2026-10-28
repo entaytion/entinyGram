@@ -1622,6 +1622,8 @@
     <string name="InuIosInputAppearance">ظاهر (iOS)</string>
     <string name="InuCompactInputSize">حالت فشرده</string>
     <string name="InuCompactInputSizeInfo">حاشیه‌ها و فاصله‌های دور کادر ورودی را کم می‌کند.</string>
+    <string name="InuCommandsNearStickers">فرمان‌ها کنار استیکرها</string>
+    <string name="InuCommandsNearStickersInfo">دکمه فرمان‌های ربات را کنار دکمه استیکر می‌برد.</string>
     <string name="InuActionButtonStyle">سبک دکمه‌های کنش</string>
     <string name="InuActionButtonStyleInfo">سبک رنگ دکمه‌های ارسال، صدا و اعمال در همه صفحه‌ها.</string>
     <string name="InuActionButtonStyleAccent">رنگ تاکیدی</string>

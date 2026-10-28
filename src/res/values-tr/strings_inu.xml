@@ -1557,6 +1557,8 @@
     <string name="InuIosInputAppearance">Görünüm (iOS)</string>
     <string name="InuCompactInputSize">Kompakt mod</string>
     <string name="InuCompactInputSizeInfo">Giriş alanı etrafındaki kenar boşluklarını azaltır.</string>
+    <string name="InuCommandsNearStickers">Komutlar çıkartmaların yanında</string>
+    <string name="InuCommandsNearStickersInfo">Bot komutları düğmesini çıkartma düğmesinin yanına taşır.</string>
     <string name="InuActionButtonStyle">İşlem düğmesi stili</string>
     <string name="InuActionButtonStyleInfo">Tüm ekranlardaki gönderme, ses ve onay düğmelerinin renk stili.</string>
     <string name="InuActionButtonStyleAccent">Vurgu</string>

@@ -1713,6 +1713,8 @@
     <string name="InuIosInputAppearance">Оформление как в iOS</string>
     <string name="InuCompactInputSize">Компактный размер</string>
     <string name="InuCompactInputSizeInfo">Уменьшает отступы вокруг поля ввода.</string>
+    <string name="InuCommandsNearStickers">Команды рядом со стикерами</string>
+    <string name="InuCommandsNearStickersInfo">Переносит кнопку команд бота ближе к кнопке стикеров.</string>
     <string name="InuActionButtonStyle">Стиль кнопки действия</string>
     <string name="InuActionButtonStyleInfo">Цветовой стиль кнопок отправки, голоса и применения во всех экранах.</string>
     <string name="InuActionButtonStyleAccent">Акцентная</string>

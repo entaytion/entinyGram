@@ -1863,6 +1863,8 @@
     <string name="InuIosInputAppearance">Appearance (iOS)</string>
     <string name="InuCompactInputSize">Compact mode</string>
     <string name="InuCompactInputSizeInfo">Reduces margins and paddings around the input field.</string>
+    <string name="InuCommandsNearStickers">Commands next to stickers</string>
+    <string name="InuCommandsNearStickersInfo">Moves the bot commands button next to the sticker button.</string>
     <string name="InuActionButtonStyle">Action button style</string>
     <string name="InuActionButtonStyleInfo">Color style for send, voice, and apply buttons across all screens.</string>
     <string name="InuActionButtonStyleAccent">Accent</string>

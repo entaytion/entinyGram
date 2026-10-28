@@ -86,6 +86,16 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                     InuConfig.COMPACT_INPUT_SIZE.value,
                 )
             )
+            if (InuConfig.IOS_INPUT_BUTTON_PLACEMENT.value) {
+                items.add(
+                    mkTwoLineCheckItem(
+                        TOGGLE_COMMANDS_NEAR_STICKERS,
+                        R.string.InuCommandsNearStickers,
+                        R.string.InuCommandsNearStickersInfo,
+                        InuConfig.IOS_INPUT_COMMANDS_NEAR_STICKERS.value,
+                    )
+                )
+            }
         }
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuActionButtonStyleInfo)))
 
@@ -194,6 +204,12 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                 inputBarPreviewCell?.updateInputBarState()
             }
 
+            TOGGLE_COMMANDS_NEAR_STICKERS -> {
+                val new = InuConfig.IOS_INPUT_COMMANDS_NEAR_STICKERS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                inputBarPreviewCell?.updateInputBarState()
+            }
+
             BUTTON_CHAT_HEADER -> presentFragment(ChatHeaderSettingsActivity())
 
             TOGGLE_DISABLE_GLASS_GLARE -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_GLASS_GLARE.toggle()
@@ -236,6 +252,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_IOS_BUTTON_PLACEMENT = InuUtils.generateId()
         private val TOGGLE_IOS_INPUT_APPEARANCE = InuUtils.generateId()
         private val TOGGLE_COMPACT_INPUT_SIZE = InuUtils.generateId()
+        private val TOGGLE_COMMANDS_NEAR_STICKERS = InuUtils.generateId()
         private val BUTTON_ACTION_BUTTON_STYLE = InuUtils.generateId()
 
         @JvmField
@@ -254,6 +271,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ios-button-placement", R.string.InuIosButtonPlacement, TOGGLE_IOS_BUTTON_PLACEMENT),
                 SearchRegistry.Entry("ios-input-appearance", R.string.InuIosInputAppearance, TOGGLE_IOS_INPUT_APPEARANCE),
                 SearchRegistry.Entry("compact-input-size", R.string.InuCompactInputSize, TOGGLE_COMPACT_INPUT_SIZE),
+                SearchRegistry.Entry("commands-near-stickers", R.string.InuCommandsNearStickers, TOGGLE_COMMANDS_NEAR_STICKERS),
                 SearchRegistry.Entry("action-button-style", R.string.InuActionButtonStyle, BUTTON_ACTION_BUTTON_STYLE),
                 SearchRegistry.Entry("chat-header-settings", R.string.InuChatHeaderSettings, BUTTON_CHAT_HEADER),
             ),
