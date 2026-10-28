@@ -195,6 +195,8 @@ object GhostHelper {
 
     @JvmStatic
     fun isGhostActiveForDialog(dialogId: Long): Boolean {
+        // entiny: Saved Messages is your own dialog -- there is no one to hide from, so no badge
+        if (dialogId != 0L && dialogId == UserConfig.getInstance(UserConfig.selectedAccount).clientUserId) return false
         val o = getChatOverride(dialogId)
         if (o.read == OVERRIDE_ALWAYS || o.typing == OVERRIDE_ALWAYS) return true
         if (!isGhostActive() || !isInGlobalScope(dialogId)) return false
