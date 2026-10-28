@@ -60,11 +60,6 @@ object SystemFoldersHelper {
             if (list.isEmpty()) EMPTY_MARK else list.joinToString(",") { "${it.type.name}:${if (it.enabled) 1 else 0}:${it.pos}" }
     }
 
-    fun missingTypes(): List<Type> {
-        val present = entries().map { it.type }
-        return Type.entries.filter { it !in present }
-    }
-
     fun setEnabled(type: Type, enabled: Boolean) {
         val list = entries()
         val entry = list.firstOrNull { it.type == type } ?: return
@@ -76,14 +71,6 @@ object SystemFoldersHelper {
     fun delete(type: Type) {
         val list = entries()
         if (!list.removeAll { it.type == type }) return
-        save(list)
-        syncAll()
-    }
-
-    fun addRecommended() {
-        val list = entries()
-        for (type in missingTypes()) list.add(Entry(type, false, -1))
-        list.sortBy { it.type.ordinal }
         save(list)
         syncAll()
     }

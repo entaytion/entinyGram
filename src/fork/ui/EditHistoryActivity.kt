@@ -6,7 +6,6 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import desu.inugram.InuConfig
-import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.archive.ArchiveCache
 import desu.inugram.helpers.archive.EditHistoryHelper
 import desu.inugram.helpers.archive.EditHistoryHelper.EditEntry

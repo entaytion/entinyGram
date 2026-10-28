@@ -16,7 +16,6 @@ import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
-import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.PullForegroundDrawable
 import org.telegram.ui.DialogsActivity
@@ -25,39 +24,7 @@ object PullActionHelper {
     private fun mode(): Int = InuConfig.PULL_DOWN_ACTION.value
 
     @JvmStatic
-    fun hideArchiveRow(): Boolean = when (mode()) {
-        InuConfig.PullDownActionItem.DISABLED,
-        InuConfig.PullDownActionItem.SAVED_MESSAGES,
-        InuConfig.PullDownActionItem.SEARCH -> true
-        else -> false
-    }
-
-    @JvmStatic
     fun openArchiveOnPull(): Boolean = mode() == InuConfig.PullDownActionItem.OPEN_ARCHIVE
-
-    @JvmStatic
-    fun isStandalonePull(): Boolean = when (mode()) {
-        InuConfig.PullDownActionItem.SAVED_MESSAGES,
-        InuConfig.PullDownActionItem.SEARCH -> true
-        else -> false
-    }
-
-    @JvmStatic
-    fun filterArchiveRow(dialogs: ArrayList<TLRPC.Dialog>): ArrayList<TLRPC.Dialog> {
-        var hasFolder = false
-        for (i in dialogs.indices) {
-            if (dialogs[i] is TLRPC.TL_dialogFolder) {
-                hasFolder = true
-                break
-            }
-        }
-        if (!hasFolder) return dialogs
-        val filtered = ArrayList<TLRPC.Dialog>(dialogs.size - 1)
-        for (dialog in dialogs) {
-            if (dialog !is TLRPC.TL_dialogFolder) filtered.add(dialog)
-        }
-        return filtered
-    }
 
     @JvmStatic
     fun shouldShowArchiveEntry(currentAccount: Int): Boolean =

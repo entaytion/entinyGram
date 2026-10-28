@@ -106,18 +106,6 @@ object FeedMessageUtils {
     }
 
     @JvmStatic
-    fun createReplacements(currentAccount: Int, dialogId: Long, originals: ArrayList<MessageObject>): ArrayList<MessageObject> {
-        val result = ArrayList<MessageObject>()
-        for (i in originals.indices) {
-            val replacement = createReplacement(currentAccount, dialogId, originals[i])
-            if (replacement != null) {
-                result.add(replacement)
-            }
-        }
-        return result
-    }
-
-    @JvmStatic
     fun createUnreadDivider(currentAccount: Int, stableId: Int): MessageObject {
         val divider = TLRPC.TL_message()
         divider.message = ""

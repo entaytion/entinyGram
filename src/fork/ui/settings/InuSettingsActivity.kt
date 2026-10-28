@@ -3,7 +3,6 @@ package desu.inugram.ui.settings
 import android.content.Context
 import android.view.View
 import android.widget.EditText
-import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.ApplicationLoader

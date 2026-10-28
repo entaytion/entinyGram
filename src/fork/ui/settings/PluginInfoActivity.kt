@@ -11,7 +11,6 @@ import android.graphics.PorterDuffColorFilter
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextPaint
-import android.text.style.URLSpan
 import android.text.style.ClickableSpan
 import android.view.Gravity
 import android.view.View

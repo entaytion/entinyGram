@@ -111,15 +111,6 @@ object DrawerHelper {
     }
 
     @JvmStatic
-    fun addMainFragmentToStack(layout: INavigationLayout, searchQuery: String?) {
-        val main = createMainFragment()
-        val dialogs = if (main is MainTabsActivity) main.prepareDialogsActivity(null) else main as DialogsActivity
-        if (searchQuery != null) dialogs.setInitialSearchString(searchQuery)
-        layout.addFragmentToStack(main, INavigationLayout.FORCE_NOT_ATTACH_VIEW)
-        ensureSetup(layout)
-    }
-
-    @JvmStatic
     fun ensureSetup(layout: INavigationLayout?) {
         if (!InuConfig.NAVIGATION_DRAWER.value || layout == null) return
         val dlc = layout.drawerLayoutContainer ?: return

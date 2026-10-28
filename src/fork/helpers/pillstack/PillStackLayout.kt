@@ -105,15 +105,6 @@ object PillStackLayout {
         }
     }
 
-    fun removePill(id: Int) {
-        ensureLoaded()
-        synchronized(sync) {
-            activePills.remove(id)
-            hiddenPills.remove(id)
-            persist()
-        }
-    }
-
     fun resetLayout() {
         ensureLoaded()
         synchronized(sync) {

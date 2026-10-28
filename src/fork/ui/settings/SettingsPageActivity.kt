@@ -20,7 +20,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.core.graphics.withTranslation
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils

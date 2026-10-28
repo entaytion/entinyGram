@@ -2,7 +2,6 @@ package desu.inugram.ui.settings
 
 import desu.inugram.helpers.archive.ArchiveStore
 import android.view.View
-import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.InuUtils
 import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.AndroidUtilities

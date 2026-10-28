@@ -38,7 +38,6 @@ class FeedController private constructor(
     private var heldGuid = 0
     private var heldLoadIndex = 0
     private var uiActiveClients = 0
-    private var resumedUiClients = 0
 
     private var hasChannels = false
     private var hasIncludedChannels = false
@@ -783,14 +782,6 @@ class FeedController private constructor(
         }
         if (loadingNewer) {
             cancelLoads()
-        }
-    }
-
-    fun setUiResumed(resumed: Boolean) {
-        if (resumed) {
-            resumedUiClients++
-        } else if (resumedUiClients > 0) {
-            resumedUiClients--
         }
     }
 

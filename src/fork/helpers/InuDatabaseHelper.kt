@@ -4,8 +4,6 @@ import android.util.Log
 import desu.inugram.helpers.archive.ArchiveStore
 import org.telegram.SQLite.SQLiteDatabase
 import org.telegram.messenger.MessagesStorage
-import org.telegram.tgnet.NativeByteBuffer
-import org.telegram.tgnet.TLRPC
 
 object InuDatabaseHelper {
     private const val TAG = "InuDatabaseHelper"

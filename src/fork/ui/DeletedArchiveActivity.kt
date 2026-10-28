@@ -3,7 +3,6 @@ package desu.inugram.ui
 import desu.inugram.helpers.archive.ArchiveStore
 import android.view.Gravity
 import androidx.recyclerview.widget.LinearLayoutManager
-import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.archive.ArchiveCache
 import desu.inugram.helpers.archive.DeletedMessagesHelper
 import desu.inugram.helpers.archive.EditHistoryHelper.EditEntry
