@@ -60,31 +60,31 @@ index 0000000..0000000 100644
                      if (i == 0) {
                          if (dialogId != 0) {
 -                            state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_v2 SET replydata = ? WHERE reply_to_message_id IN(?) AND uid = ?");
-+                            state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_v2 INDEXED BY idx_to_reply_messages_v2 SET replydata = ? WHERE reply_to_message_id IN(" + inu_replyIds + ") AND uid = ?");
++                            state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_v2 INDEXED BY idx_to_reply_messages_v2 SET replydata = ? WHERE reply_to_message_id IN(" + ids + ") AND uid = ?");
                          } else {
 -                            state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_v2 SET replydata = ? WHERE reply_to_message_id IN(?) AND is_channel = 0");
-+                            state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_v2 SET replydata = ? WHERE reply_to_message_id IN(" + inu_replyIds + ") AND is_channel = 0");
++                            state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_v2 SET replydata = ? WHERE reply_to_message_id IN(" + ids + ") AND is_channel = 0");
                          }
                      } else if (i == 1) {
                          if (dialogId != 0) {
 -                            state = getMessagesStorage().getDatabase().executeFast("UPDATE scheduled_messages_v2 SET replydata = ? WHERE reply_to_message_id IN(?) AND uid = ?");
-+                            state = getMessagesStorage().getDatabase().executeFast("UPDATE scheduled_messages_v2 SET replydata = ? WHERE reply_to_message_id IN(" + inu_replyIds + ") AND uid = ?");
++                            state = getMessagesStorage().getDatabase().executeFast("UPDATE scheduled_messages_v2 SET replydata = ? WHERE reply_to_message_id IN(" + ids + ") AND uid = ?");
                          } else {
 -                            state = getMessagesStorage().getDatabase().executeFast("UPDATE scheduled_messages_v2 SET replydata = ? WHERE reply_to_message_id IN(?)");
-+                            state = getMessagesStorage().getDatabase().executeFast("UPDATE scheduled_messages_v2 SET replydata = ? WHERE reply_to_message_id IN(" + inu_replyIds + ")");
++                            state = getMessagesStorage().getDatabase().executeFast("UPDATE scheduled_messages_v2 SET replydata = ? WHERE reply_to_message_id IN(" + ids + ")");
                          }
                      } else if (i == 2) {
 -                        state = getMessagesStorage().getDatabase().executeFast("UPDATE quick_replies_messages SET replydata = ? WHERE reply_to_message_id IN(?)");
-+                        state = getMessagesStorage().getDatabase().executeFast("UPDATE quick_replies_messages SET replydata = ? WHERE reply_to_message_id IN(" + inu_replyIds + ")");
++                        state = getMessagesStorage().getDatabase().executeFast("UPDATE quick_replies_messages SET replydata = ? WHERE reply_to_message_id IN(" + ids + ")");
                      } else if (i == 3) {
 -                        state = getMessagesStorage().getDatabase().executeFast("UPDATE welcome_messages SET replydata = ? WHERE reply_to_message_id IN(?) AND dialog_id = ?");
-+                        state = getMessagesStorage().getDatabase().executeFast("UPDATE welcome_messages SET replydata = ? WHERE reply_to_message_id IN(" + inu_replyIds + ") AND dialog_id = ?");
++                        state = getMessagesStorage().getDatabase().executeFast("UPDATE welcome_messages SET replydata = ? WHERE reply_to_message_id IN(" + ids + ") AND dialog_id = ?");
                      } else {
                          if (dialogId == 0) {
                              continue;
                          }
 -                        state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_topics SET replydata = ? WHERE reply_to_message_id IN(?) AND uid = ?");
-+                        state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_topics INDEXED BY idx_to_reply_messages_topics SET replydata = ? WHERE reply_to_message_id IN(" + inu_replyIds + ") AND uid = ?");
++                        state = getMessagesStorage().getDatabase().executeFast("UPDATE messages_topics INDEXED BY idx_to_reply_messages_topics SET replydata = ? WHERE reply_to_message_id IN(" + ids + ") AND uid = ?");
                      }
                      TLRPC.TL_messageEmpty emptyMessage = new TLRPC.TL_messageEmpty();
                      NativeByteBuffer data = new NativeByteBuffer(emptyMessage.getObjectSize());
