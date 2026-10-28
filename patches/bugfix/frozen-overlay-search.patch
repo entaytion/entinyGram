@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -28932,9 +28932,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -28903,9 +28903,6 @@ public class ChatActivity extends BaseFragment implements
              chatActivityEnterView.setFieldFocused(false);
              chatActivityEnterView.setVisibility(View.GONE);
              invalidateChatListViewTopPadding();
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          } else if (searchItem != null && searchItemVisible) {
              createSearchContainer();
              if (searchContainer == null) {
-@@ -29026,7 +29023,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -28997,7 +28994,10 @@ public class ChatActivity extends BaseFragment implements
                      muteItemGap.setVisibility(View.VISIBLE);
                  }
              }

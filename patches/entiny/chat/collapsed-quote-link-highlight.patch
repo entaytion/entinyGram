@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -17165,9 +17165,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -17162,9 +17162,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  final float blockRtl = (block.isRtl() ? rtlOffset - (block.quote ? dp(10) : 0) : 0);
                  canvas.translate(textX - blockRtl, textY + block.textYOffset(textLayoutBlocks, transitionParams) + transitionYOffsetForDrawables + block.padTop);
                  if (a == linkBlockNum && !explanation || a == linkExplanationBlockNum && explanation) {
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
                      drawProgressLoadingLink(canvas, a);
                  }
                  float collapsed = 1f;
-@@ -23968,9 +23976,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -23965,9 +23973,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              float blockRtl = block.isRtl() ? captionLayout.textXOffset - (block.quote ? dp(10) : 0) : 0;
              canvas.save();
              canvas.translate(captionX - blockRtl, captionY + block.textYOffset(captionLayout.textLayoutBlocks, transitionParams) + transitionYOffsetForDrawables + block.padTop);

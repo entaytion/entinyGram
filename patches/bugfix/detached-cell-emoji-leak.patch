@@ -30,7 +30,7 @@ index 0000000..0000000 100644
          }
  
          public void destroy() {
-@@ -6678,6 +6682,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6676,6 +6680,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  }
                  animatedEmojiReplyStack = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, false, animatedEmojiReplyStack, replyTextLayout);
                  animatedEmojiDescriptionStack = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, false, animatedEmojiDescriptionStack, descriptionLayout);
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                  updateAnimatedEmojis();
              } else {
                  radialProgress.onDetachedFromWindow();
-@@ -6711,6 +6721,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6709,6 +6719,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  AnimatedEmojiSpan.release(this, animatedEmojiDescriptionStack);
                  AnimatedEmojiSpan.release(this, animatedEmojiReplyStack);
                  AnimatedEmojiSpan.release(this, animatedEmojiStack);
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -7134,6 +7146,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -7131,6 +7143,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              captionOffsetX = 0;
              currentCaption = null;
              explanationLayout = null;
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
              explanationTitleLayout = null;
              currentExplanation = null;
              explanationHeight = 0;
-@@ -8223,7 +8237,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -8220,7 +8234,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                  restLines = restLinesCount;
                                  descriptionLayout = generateStaticLayout(text, Theme.chat_replyTextPaint, linkPreviewMaxWidth - (isRTL ? smallImageSide + 2 * smallSideMargin : 0), linkPreviewMaxWidth - smallImageSide - 2 * smallSideMargin, restLinesCount, maxLines);
                              }
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
  
                              int height = descriptionLayout.getLineBottom(descriptionLayout.getLineCount() - 1);
                              linkPreviewHeight += height;
-@@ -11493,7 +11509,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11490,7 +11506,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          Theme.chat_replyNamePaint, maxWidth - dp(30), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
                  explanationLayout = new MessageObject.TextLayoutBlocks(messageObject, currentExplanation, Theme.chat_quoteTextPaint, explanationWidth - dp(11));
                  explanationHeight = explanationLayout.textHeight() + dp(26 + 8 + 3) + (explanationContentHeight > 0 ? explanationContentHeight + dp(8 + 6) : 0);
@@ -83,7 +83,7 @@ index 0000000..0000000 100644
              }
          } else {
              TLRPC.TL_messageMediaToDo media = (TLRPC.TL_messageMediaToDo) m;
-@@ -11532,7 +11550,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11529,7 +11547,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              MessageObject.addEntitiesToText(questionText, title.entities, currentMessageObject.isOutOwner(), false, false, false);
          }
          titleLayout = new StaticLayout(questionText, Theme.chat_audioTitlePaint, maxWidth + dp(2) - getExtraTextX() * 2, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
          boolean titleRtl = false;
          if (titleLayout != null) {
              for (int a = 0, N = titleLayout.getLineCount(); a < N; a++) {
-@@ -11766,13 +11786,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11763,13 +11783,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  final int titleMaxWidth = maxWidth - dp(48 + (pollWithMediaInAnswers ? 48 : 0));
                  button.title = new StaticLayout(answerText, Theme.chat_audioPerformerPaint, titleMaxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
                  button.moveTitleByCounter = false;
@@ -114,7 +114,7 @@ index 0000000..0000000 100644
                      button.animateY = prevButton.y;
                      button.animateHeight = prevButton.height;
                  }
-@@ -11972,13 +11996,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11969,13 +11993,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  }
                  button.task = task;
                  button.title = new StaticLayout(answerText, Theme.chat_audioPerformerPaint, maxWidth - dp(48 - 2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
@@ -134,7 +134,7 @@ index 0000000..0000000 100644
                      button.animateY = prevButton.y;
                      button.animateHeight = prevButton.height;
                  }
-@@ -19943,7 +19971,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19940,7 +19968,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          if (hasReplyQuote || getMessageObject().replyMessageObject != null && !getMessageObject().replyMessageObject.isSpoilersRevealed) {
                              SpoilerEffect.addSpoilers(this, replyTextLayout, replyTextOffset, replyTextOffset + (inu_isCustomSpoiler ? replySpoilerTextWidth : replyTextWidth), replySpoilersPool, replySpoilers);
                          }

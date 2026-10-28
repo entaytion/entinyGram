@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -8464,7 +8464,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -8461,7 +8461,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              if (MessageObject.isVoiceDocument(document)) {
                                  createDocumentLayout(backgroundWidth - dp(10), messageObject);
                                  mediaOffsetY = (linkPreviewAbove ? 0 : currentMessageObject.textHeight(transitionParams)) + dp(8) + linkPreviewHeight;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                                  linkPreviewHeight += dp(44 + (hasLinkPreview ? 4 : 0));
  
                                  maxWidth = maxWidth - dp(86);
-@@ -8477,7 +8477,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -8474,7 +8474,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              } else if (MessageObject.isMusicDocument(document)) {
                                  int durationWidth = createDocumentLayout(backgroundWidth - dp(10), messageObject);
                                  mediaOffsetY = (linkPreviewAbove ? 0 : currentMessageObject.textHeight(transitionParams)) + dp(8) + linkPreviewHeight;

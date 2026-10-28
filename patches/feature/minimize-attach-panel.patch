@@ -27,7 +27,7 @@ index 0000000..0000000 100644
          chatAttachAlert.parentThemeDelegate = themeDelegate;
          showDialog(chatAttachAlert);
      }
-@@ -30429,6 +30432,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30414,6 +30417,7 @@ public class ChatActivity extends BaseFragment implements
      public void onResume() {
          super.onResume();
          checkShowBlur(false);

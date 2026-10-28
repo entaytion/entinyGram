@@ -33,7 +33,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -16515,6 +16515,7 @@ public class MessagesStorage extends BaseController {
+@@ -16517,6 +16517,7 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
                                      if (reactionUpdates != null) {
                                          reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
                                      }
-@@ -16571,6 +16572,7 @@ public class MessagesStorage extends BaseController {
+@@ -16573,6 +16574,7 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {

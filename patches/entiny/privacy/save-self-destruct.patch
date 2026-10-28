@@ -3,15 +3,14 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 26 Jul 2026 01:24:46 +0300
 Subject: allow saving self-destructing media
 
-- consolidates the legacy self-destruct file-cache flag into SAVE_SELF_DESTRUCT_MEDIA
 ---
- .../org/telegram/messenger/FileLoader.java    | 24 ++++++++++++++++--
- .../telegram/messenger/MediaController.java   |  9 ++++++-
- .../org/telegram/messenger/MessageObject.java |  4 ++-
- .../messenger/MessagesController.java         |  4 ++-
- .../telegram/messenger/MessagesStorage.java   |  2 ++
- .../java/org/telegram/ui/ChatActivity.java    | 25 +++++++++++++++----
- 6 files changed, 58 insertions(+), 10 deletions(-)
+ .../org/telegram/messenger/FileLoader.java    | 24 ++++++++++-
+ .../telegram/messenger/MediaController.java   |  9 +++-
+ .../org/telegram/messenger/MessageObject.java |  4 +-
+ .../messenger/MessagesController.java         |  4 +-
+ .../telegram/messenger/MessagesStorage.java   |  2 +
+ .../java/org/telegram/ui/ChatActivity.java    | 41 ++++++++++++++++---
+ 6 files changed, 74 insertions(+), 10 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -155,7 +154,30 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -16049,7 +16049,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -1570,6 +1570,7 @@ public class ChatActivity extends BaseFragment implements
+ 
+     MessagePreviewView forwardingPreviewView;
+ 
++    private MessageObject inu_oneTimeSaveObject;
+     private PhotoViewer.PhotoViewerProvider photoViewerProvider = new PhotoViewer.EmptyPhotoViewerProvider() {
+ 
+         @Override
+@@ -1582,6 +1583,14 @@ public class ChatActivity extends BaseFragment implements
+             MessageObject.GroupedMessages groupedMessages = groupedMessagesMap.get(groupId);
+             return groupedMessages != null && groupedMessages.messages.size() > 1;
+         }
++
++        @Override
++        public void onClose() {
++            if (inu_oneTimeSaveObject != null) {
++                desu.inugram.helpers.chat.ChatHelper.autoSaveOneTime(ChatActivity.this, inu_oneTimeSaveObject);
++                inu_oneTimeSaveObject = null;
++            }
++        }
+     };
+     private PhotoViewer.PhotoViewerProvider photoViewerPaidMediaProvider = new PhotoViewer.EmptyPhotoViewerProvider() {
+ 
+@@ -16049,10 +16058,13 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -164,7 +186,13 @@ index 0000000..0000000 100644
          if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() || messageObject.messageOwner.destroyTime != 0 || messageObject.messageOwner.ttl <= 0) {
              return null;
          }
-@@ -16078,10 +16078,13 @@ public class ChatActivity extends BaseFragment implements
++        if (desu.inugram.helpers.security.SelfDestructHelper.shouldAllowMediaViewRead(dialog_id, messageObject)) {
++            desu.inugram.helpers.security.GhostHelper.allowReadContents(messageObject.getId());
++        }
+         if (readNow) {
+             final boolean delete = messageObject.messageOwner.ttl != 0x7FFFFFFF;
+             final int ttl = messageObject.messageOwner.ttl == 0x7FFFFFFF ? 0 : messageObject.messageOwner.ttl;
+@@ -16078,10 +16090,13 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -179,7 +207,7 @@ index 0000000..0000000 100644
          final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
          messageObject.forceExpired = true;
          if (messageObject.isOutOwner() || !messageObject.isRoundOnce() && !messageObject.isVoiceOnce()) {
-@@ -19577,6 +19580,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -19577,6 +19592,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -192,7 +220,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19584,7 +19593,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19584,7 +19605,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -201,7 +229,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33954,6 +33963,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33954,6 +33975,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -214,7 +242,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -40131,7 +40146,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40131,7 +40158,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -223,7 +251,18 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -46599,7 +46614,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -42305,6 +42332,10 @@ public class ChatActivity extends BaseFragment implements
+                     final int timestamp = message.getVideoStartsTimestamp();
+                     message.forceSeekTo = (float) (timestamp / message.getDuration());
+                 }
++                if (desu.inugram.helpers.security.SelfDestructHelper.shouldReportOneTimeRead(message.getDialogId(), message)) {
++                    sendSecretMessageRead(message, true);
++                }
++                inu_oneTimeSaveObject = desu.inugram.helpers.security.SelfDestructHelper.shouldAutoSaveOneTime(message.getDialogId(), message) ? message : null;
+                 openPhotoViewerForMessage(cell, message);
+             } else if (message.type == MessageObject.TYPE_VIDEO) {
+                 sendSecretMessageRead(message, true);
+@@ -46599,7 +46630,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

@@ -84,7 +84,7 @@ index 0000000..0000000 100644
                      int finalMessageId = messageId;
                      AndroidUtilities.runOnUIThread(() -> callback.accept(finalMessageId));
                  });
-@@ -14261,7 +14265,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14259,7 +14263,7 @@ public class MessagesController extends BaseController implements NotificationCe
                                  getNotificationCenter().postNotificationName(NotificationCenter.updateMentionsCount, currentDialog.id, 0L, currentDialog.unread_mentions_count);
                              }
                          }
@@ -93,7 +93,7 @@ index 0000000..0000000 100644
                              currentDialog.unread_reactions_count = value.unread_reactions_count;
                              getNotificationCenter().postNotificationName(NotificationCenter.dialogsUnreadReactionsCounterChanged, currentDialog.id, 0L, currentDialog.unread_reactions_count, null);
                          }
-@@ -14516,6 +14520,103 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14514,6 +14518,103 @@ public class MessagesController extends BaseController implements NotificationCe
          }
      }
  
@@ -197,7 +197,7 @@ index 0000000..0000000 100644
      public long createDeleteShowOnceTask(long dialogId, int mid) {
          NativeByteBuffer data = null;
          try {
-@@ -19651,6 +19752,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19648,6 +19749,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      }
                  });
  
@@ -205,7 +205,7 @@ index 0000000..0000000 100644
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -19719,7 +19821,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19716,7 +19818,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  TL_update.TL_updateMessageReactions update = (TL_update.TL_updateMessageReactions) baseUpdate;
                  long dialogId = MessageObject.getPeerId(update.peer);
  
@@ -214,7 +214,7 @@ index 0000000..0000000 100644
  
                  if (update.updateUnreadState) {
                      SparseBooleanArray sparseBooleanArray = new SparseBooleanArray();
-@@ -19730,6 +19832,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19727,6 +19829,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      }
                      checkUnreadReactions(dialogId, topicId, sparseBooleanArray);
                  }
@@ -222,7 +222,7 @@ index 0000000..0000000 100644
                  if (updatesOnMainThread == null) {
                      updatesOnMainThread = new ArrayList<>();
                  }
-@@ -21430,15 +21533,19 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21426,15 +21529,19 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void checkUnreadReactions(long dialogId, long topicId, SparseBooleanArray unreadReactions) {
@@ -245,7 +245,7 @@ index 0000000..0000000 100644
          final String tableMentionsForDialogs = isReactions ? "reaction_mentions" : "poll_votes_mentions";
          final String tableMentionsForTopics = isReactions ? "reaction_mentions_topics" : "poll_votes_mentions_topics";
          final boolean isVotes = !isReactions;
-@@ -21477,13 +21584,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21473,13 +21580,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int i = 0; i < unreadReactions.size(); i++) {
                  int messageId = unreadReactions.keyAt(i);
                  boolean hasUnreadReaction = unreadReactions.valueAt(i);
@@ -267,7 +267,7 @@ index 0000000..0000000 100644
                  }
                  if (hasUnreadReaction) {
                      newUnreadMessages.add(messageId);
-@@ -21522,6 +21636,17 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21518,6 +21632,17 @@ public class MessagesController extends BaseController implements NotificationCe
          });
      }
  
@@ -285,7 +285,7 @@ index 0000000..0000000 100644
      private void checkUnreadReactionsInternal2(long dialogId, long topicId, boolean needReload, boolean changed, int newUnreadCount, ArrayList<Integer> newUnreadMessages) {
          if (needReload) {
              if (topicId == 0) {
-@@ -21589,17 +21714,13 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21585,17 +21710,13 @@ public class MessagesController extends BaseController implements NotificationCe
                      if (dialog.unread_reactions_count < 0) {
                          dialog.unread_reactions_count = 0;
                      }
@@ -311,7 +311,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -18708,7 +18708,11 @@ public class MessagesStorage extends BaseController {
+@@ -18696,7 +18696,11 @@ public class MessagesStorage extends BaseController {
      }
  
      public void updateUnreadReactionsCount(long dialogId, long topicId, int count, boolean increment) {
@@ -324,7 +324,7 @@ index 0000000..0000000 100644
      }
  
      public void updateUnreadPollVotesCount(long dialogId, long topicId, int count) {
-@@ -18716,10 +18720,10 @@ public class MessagesStorage extends BaseController {
+@@ -18704,10 +18708,10 @@ public class MessagesStorage extends BaseController {
      }
  
      public void updateUnreadPollVotesCount(long dialogId, long topicId, int count, boolean increment) {
@@ -337,7 +337,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLitePreparedStatement state = null;
              if (topicId != 0) {
-@@ -18740,7 +18744,7 @@ public class MessagesStorage extends BaseController {
+@@ -18728,7 +18732,7 @@ public class MessagesStorage extends BaseController {
                      state.dispose();
                      state = null;
  
@@ -346,7 +346,7 @@ index 0000000..0000000 100644
                          state = database.executeFast(String.format(Locale.ENGLISH, "UPDATE %s SET state = 0 WHERE dialog_id = ? AND topic_id = ? ", tableMentionsForTopics));
                          state.bindLong(1, dialogId);
                          state.bindLong(2, topicId);
-@@ -18764,7 +18768,7 @@ public class MessagesStorage extends BaseController {
+@@ -18752,7 +18756,7 @@ public class MessagesStorage extends BaseController {
                      state.dispose();
                      state = null;
  
@@ -355,7 +355,7 @@ index 0000000..0000000 100644
                          state = database.executeFast(String.format(Locale.ENGLISH, "UPDATE %s SET state = 0 WHERE dialog_id = ?", tableMentionsForDialogs));
                          state.bindLong(1, dialogId);
                          state.step();
-@@ -18790,6 +18794,78 @@ public class MessagesStorage extends BaseController {
+@@ -18778,6 +18782,78 @@ public class MessagesStorage extends BaseController {
          executeInStorageQueue(() -> markMessageReactionsAsReadInternal("poll_votes_mentions", "poll_votes_mentions_topics", dialogId, topicId, messageId, false));
      }
  
@@ -606,7 +606,7 @@ index 0000000..0000000 100644
                  }
                  updateReactionsMentionButton(true);
              }
-@@ -47652,10 +47650,22 @@ public class ChatActivity extends BaseFragment implements
+@@ -47637,10 +47635,22 @@ public class ChatActivity extends BaseFragment implements
              wasManualScroll = true;
              getMessagesController().getNextReactionMention(dialog_id, getTopicId(), reactionsMentionCount, (messageId) -> {
                  if (messageId == 0) {

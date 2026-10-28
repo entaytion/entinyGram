@@ -48,6 +48,16 @@ object GhostHelper {
     private val temporarilyAllowedDialogs: MutableSet<Long> = Collections.newSetFromMap(ConcurrentHashMap())
     private val allowedRequests: MutableSet<TLObject> = Collections.synchronizedSet(Collections.newSetFromMap(IdentityHashMap()))
     private val pendingOffline: MutableSet<Int> = ConcurrentHashMap.newKeySet()
+    private val allowedReadContents = ConcurrentHashMap<Int, Long>()
+
+    // entiny: one-time photo/video view reports are read receipts, not "played" voice markers
+    @JvmStatic
+    fun allowReadContents(mid: Int) {
+        if (mid == 0) return
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (allowedReadContents.size > 32) allowedReadContents.entries.removeAll { now - it.value > 60_000L }
+        allowedReadContents[mid] = now
+    }
 
     @JvmStatic
     fun isGhostActive(): Boolean = InuConfig.GHOST_MODE_ENABLED.value
@@ -354,7 +364,20 @@ object GhostHelper {
             }
             is TLRPC.TL_messages_readMessageContents,
             is TLRPC.TL_channels_readMessageContents -> {
-                shouldSuppress(dialogId, SuppressKind.VOICE_READ)
+                val ids = when (request) {
+                    is TLRPC.TL_messages_readMessageContents -> request.id
+                    else -> (request as TLRPC.TL_channels_readMessageContents).id
+                }
+                val now = android.os.SystemClock.elapsedRealtime()
+                val mediaView = ids.isNotEmpty() && ids.all { id ->
+                    val allowedAt = allowedReadContents.remove(id)
+                    allowedAt != null && now - allowedAt < 60_000L
+                }
+                if (mediaView) {
+                    false
+                } else {
+                    shouldSuppress(dialogId, SuppressKind.VOICE_READ)
+                }
             }
             is TL_stories.TL_stories_readStories,
             is TL_stories.TL_stories_incrementStoryViews -> {

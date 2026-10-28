@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -16121,7 +16121,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16136,7 +16136,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      public Runnable sendSecretMediaDelete(MessageObject messageObject) {
@@ -19,4 +19,4 @@ index 0000000..0000000 100644
 +        if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() && (messageObject.messageOwner.media == null || messageObject.messageOwner.media.ttl_seconds == 0) || messageObject.messageOwner.ttl != 0x7FFFFFFF) {
              return null;
          }
-         // entiny: keep-once-view saves a local copy and lets the real burn proceed, instead of skipping deletion
+         if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialog_id)) {

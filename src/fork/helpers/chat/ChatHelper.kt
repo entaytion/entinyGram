@@ -1385,7 +1385,8 @@ object ChatHelper {
             null
         }
 
-        MediaController.saveFile((scratch ?: source).absolutePath, parent, type, name, document?.mime_type) {
+        MediaController.saveFile((scratch ?: source).absolutePath, parent, type, name, document?.mime_type) { uri ->
+            android.util.Log.d("InuViewed", "one-time mid=" + message.id + " saved uri=" + uri)
             scratch?.delete()
             if (!silent) BulletinFactory.of(activity).createDownloadBulletin(bulletinType, 1, activity.themeDelegate).show()
         }

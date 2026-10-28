@@ -222,7 +222,7 @@ index 0000000..0000000 100644
      private String searchingHashtag;
      private int hashtagSearchSelectedIndex;
      private int searchLastCount;
-@@ -3455,6 +3457,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -3464,6 +3466,7 @@ public class ChatActivity extends BaseFragment implements
              getNotificationCenter().removeObserver(commentsMessagesObserver, NotificationCenter.messagesDidLoad);
              commentsMessagesObserver = null;
          }
@@ -230,7 +230,7 @@ index 0000000..0000000 100644
          ReactionsEffectOverlay.dismissByFragment(this);
          AndroidUtilities.cancelRunOnUIThread(loadNextNewerFeedPage);
          if (feedIntegration != null) {
-@@ -7873,7 +7876,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -7882,7 +7885,7 @@ public class ChatActivity extends BaseFragment implements
                              waitingForLoad.add(lastLoadIndex);
                              loadMoreSearchResults();
                          }
@@ -239,7 +239,7 @@ index 0000000..0000000 100644
                          getMediaDataController().loadMoreSearchMessages(true);
                      }
                  }
-@@ -9454,10 +9457,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -9463,10 +9466,10 @@ public class ChatActivity extends BaseFragment implements
  
      }
  
@@ -252,7 +252,7 @@ index 0000000..0000000 100644
          if (chatAdapter == null || chatAdapter.isFiltered == filter) return;
          chatAdapter.isFiltered = filter;
          createEmptyView(true);
-@@ -9676,7 +9679,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9685,7 +9688,7 @@ public class ChatActivity extends BaseFragment implements
          hint3MessageObject.contentType = 1;
      }
  
@@ -261,7 +261,7 @@ index 0000000..0000000 100644
          ArrayList<MessageObject> results = new ArrayList<>(MediaDataController.getInstance(currentAccount).getFoundMessageObjects());
          if (filteredMessagesDict == null) {
              filteredMessagesDict = new LongSparseArray<>();
-@@ -9721,7 +9724,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9730,7 +9733,7 @@ public class ChatActivity extends BaseFragment implements
                  msg.stableId = lastStableId++;
              }
              msg.isOutOwnerCached = null;
@@ -270,7 +270,7 @@ index 0000000..0000000 100644
                  msg.messageOwner.out = true;
              }
              msg.isOutOwner();
-@@ -10784,6 +10787,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -10793,6 +10796,9 @@ public class ChatActivity extends BaseFragment implements
                      if (searchUserButton != null && searchUserButton.getVisibility() != GONE) {
                          leftMargin += 48;
                      }
@@ -280,7 +280,7 @@ index 0000000..0000000 100644
                      ((MarginLayoutParams) child.getLayoutParams()).leftMargin = AndroidUtilities.dp(leftMargin);
                  }
                  super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
-@@ -10850,7 +10856,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -10859,7 +10865,9 @@ public class ChatActivity extends BaseFragment implements
                  }
                  searchCalendarButton.setVisibility(View.GONE);
                  searchUserButton.setVisibility(View.GONE);
@@ -290,7 +290,7 @@ index 0000000..0000000 100644
                  searchingUserMessages = null;
                  searchingChatMessages = null;
                  searchItem.setSearchFieldHint(LocaleController.getString(R.string.SearchMembers));
-@@ -10884,6 +10892,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -10893,6 +10901,8 @@ public class ChatActivity extends BaseFragment implements
              });
              searchCalendarButton.setContentDescription(LocaleController.getString(R.string.JumpToDate));
          }
@@ -299,7 +299,7 @@ index 0000000..0000000 100644
      }
  
      private void showSearchShowOther(boolean show) {
-@@ -12194,6 +12204,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -12203,6 +12213,11 @@ public class ChatActivity extends BaseFragment implements
          }
          if (DISABLE_PROGRESS_VIEW && !AndroidUtilities.isTablet() && !isComments && currentUser == null && getLiteModeChat()) {
              animateProgressViewTo = show;
@@ -311,7 +311,7 @@ index 0000000..0000000 100644
              return;
          }
          if (fragmentOpened && SharedConfig.animationsEnabled()) {
-@@ -14169,6 +14184,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -14178,6 +14193,12 @@ public class ChatActivity extends BaseFragment implements
              }
          }
          if (chatAdapter.isFiltered) {
@@ -324,7 +324,7 @@ index 0000000..0000000 100644
              if (chatAdapter.loadingUpRow >= 0 && firstVisibleItem >= 0 && chatAdapter.loadingUpRow >= firstVisibleItem && chatAdapter.loadingUpRow <= lastVisibleItem) {
                  getMediaDataController().loadMoreSearchMessages(false);
              }
-@@ -17683,7 +17704,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -17669,7 +17690,7 @@ public class ChatActivity extends BaseFragment implements
          if (sideControlsButtonsLayout == null) {
              return;
          }
@@ -333,7 +333,7 @@ index 0000000..0000000 100644
  
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_SEARCH_UP, show, animated);
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_SEARCH_DOWN, show, animated);
-@@ -21175,6 +21196,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -21161,6 +21182,12 @@ public class ChatActivity extends BaseFragment implements
          }
  
          boolean visible = (!endReached[0] || mergeDialogId != 0 && !endReached[1] || messages.isEmpty()) && loading && maxTop > chatListViewPaddingTop && (messages.isEmpty() ? animateProgressViewTo : childHeight != 0);
@@ -346,7 +346,7 @@ index 0000000..0000000 100644
          if (visible && inTransitionAnimation && emptyViewContainer != null && emptyViewContainer.getVisibility() == View.VISIBLE && emptyViewContainer.getChildCount() > 0) {
              return false;
          }
-@@ -23072,6 +23099,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -23058,6 +23085,7 @@ public class ChatActivity extends BaseFragment implements
              }
              ArrayList<Integer> markAsDeletedMessages = (ArrayList<Integer>) args[0];
              long channelId = (Long) args[1];
@@ -354,7 +354,7 @@ index 0000000..0000000 100644
              if (isFeedSearch()) {
                  if (channelId == 0) {
                      return;
-@@ -24188,6 +24216,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24174,6 +24202,7 @@ public class ChatActivity extends BaseFragment implements
              if (did != dialog_id && did != mergeDialogId) {
                  return;
              }
@@ -362,7 +362,7 @@ index 0000000..0000000 100644
              int loadIndex = did == dialog_id ? 0 : 1;
              doOnIdle(() -> {
                  replaceMessageObjects(messageObjects, loadIndex, false);
-@@ -24499,11 +24528,30 @@ public class ChatActivity extends BaseFragment implements
+@@ -24485,11 +24514,30 @@ public class ChatActivity extends BaseFragment implements
              if (classGuid == (Integer) args[0]) {
                  updateSearchUpDownButtonVisibility(true);
                  boolean jumpToMessage = (Boolean) args[6];
@@ -394,7 +394,7 @@ index 0000000..0000000 100644
                          if (chatAdapter.isFiltered) {
                              updateFilteredMessages(true);
                          } else {
-@@ -24522,7 +24570,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24508,7 +24556,7 @@ public class ChatActivity extends BaseFragment implements
                          updateVisibleRows();
                      }
                      onSearchLoadingUpdate(false);
@@ -403,7 +403,7 @@ index 0000000..0000000 100644
                      if (chatAdapter.isFiltered) {
                          updateFilteredMessages(true);
                      } else {
-@@ -27900,14 +27948,21 @@ public class ChatActivity extends BaseFragment implements
+@@ -27871,14 +27919,21 @@ public class ChatActivity extends BaseFragment implements
          searchLastIndex = num;
          updateSearchCountText();
          if (searchExpandList != null) {
@@ -427,7 +427,7 @@ index 0000000..0000000 100644
              if (searchLastCount < 0) {
                  searchCountText.setText("", animated);
              } else if (searchLastCount == 0) {
-@@ -36221,6 +36276,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -36192,6 +36247,7 @@ public class ChatActivity extends BaseFragment implements
              if (searchUserButton != null) {
                  searchUserButton.setVisibility(View.GONE);
              }
@@ -435,7 +435,7 @@ index 0000000..0000000 100644
          }
          if (searchItem != null) {
              preventReopenSearchWithText = true;
-@@ -36280,6 +36336,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -36251,6 +36307,7 @@ public class ChatActivity extends BaseFragment implements
              if (searchUserButton != null) {
                  searchUserButton.setVisibility(View.GONE);
              }
@@ -443,7 +443,7 @@ index 0000000..0000000 100644
          }
          if (searchItem != null) {
              preventReopenSearchWithText = true;
-@@ -39044,7 +39101,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39015,7 +39072,7 @@ public class ChatActivity extends BaseFragment implements
                  infoView.set(dialogId, getMessagesController().getPeerSettings(dialogId));
              } else if (position == loadingDownRow || position == loadingUpRow) {
                  ChatLoadingCell loadingCell = (ChatLoadingCell) holder.itemView;
@@ -452,7 +452,7 @@ index 0000000..0000000 100644
              } else if (position == userNameTimeRow) {
                  final TLRPC.PeerSettings settings = getMessagesController().getPeerSettings(getDialogId());
                  if (settings == null) return;
-@@ -40096,6 +40153,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40067,6 +40124,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public void onSearchFilterCleared(FiltersView.MediaFilterData filterData) {
@@ -460,7 +460,7 @@ index 0000000..0000000 100644
              super.onSearchFilterCleared(filterData);
              if (actionBarSearchTags != null) {
                  actionBarSearchTags.clear();
-@@ -40117,6 +40175,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -40088,6 +40146,11 @@ public class ChatActivity extends BaseFragment implements
              if (searchUserButton != null) {
                  searchUserButton.setVisibility(View.VISIBLE);
              }
@@ -472,7 +472,7 @@ index 0000000..0000000 100644
              if (searchingForUser) {
                  mentionContainer.getAdapter().searchUsernameOrHashtag(null, 0, null, false, true);
                  searchingForUser = false;
-@@ -40356,6 +40419,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40327,6 +40390,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public void onTextChanged(EditText editText) {
@@ -480,7 +480,7 @@ index 0000000..0000000 100644
              if (searchingHashtag == null) {
                  showMessagesSearchListView(false);
              }
-@@ -40390,6 +40454,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40361,6 +40425,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public void onCaptionCleared() {
@@ -488,7 +488,7 @@ index 0000000..0000000 100644
              createSearchContainer();
              if (searchingUserMessages != null || searchingChatMessages != null) {
                  if (searchUserButton != null) {
-@@ -40406,6 +40471,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40377,6 +40442,7 @@ public class ChatActivity extends BaseFragment implements
                  if (searchUserButton != null) {
                      searchUserButton.setVisibility(View.VISIBLE);
                  }
@@ -496,7 +496,7 @@ index 0000000..0000000 100644
                  searchingUserMessages = null;
                  searchingChatMessages = null;
              }
-@@ -42641,6 +42707,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -42612,6 +42678,8 @@ public class ChatActivity extends BaseFragment implements
                  } else if (chatMode == MODE_PINNED || chatMode == MODE_SCHEDULED) {
                      chatActivityDelegate.openReplyMessage(id);
                      finishFragment();
@@ -505,7 +505,7 @@ index 0000000..0000000 100644
                  } else {
                      if (option_id != null) {
                          highlightPollOptionId = option_id;
-@@ -45957,7 +46025,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -45932,7 +46000,7 @@ public class ChatActivity extends BaseFragment implements
          int lastBottom;
      }
  
@@ -514,7 +514,7 @@ index 0000000..0000000 100644
          public RecyclerListViewInternal(Context context, ThemeDelegate themeDelegate) {
              super(context, themeDelegate);
          }
-@@ -49096,7 +49164,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -49071,7 +49139,7 @@ public class ChatActivity extends BaseFragment implements
          );
      }
  

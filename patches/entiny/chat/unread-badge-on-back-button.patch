@@ -572,7 +572,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3000,6 +3000,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -3009,6 +3009,7 @@ public class ChatActivity extends BaseFragment implements
              observersGroup.add(NotificationCenter.didLoadSponsoredMessages);
          }
          observersGroup
@@ -580,7 +580,7 @@ index 0000000..0000000 100644
              .add(NotificationCenter.updatedChatRanks)
              .add(NotificationCenter.premiumFloodWaitReceived)
              .add(NotificationCenter.messagesDidLoad)
-@@ -3806,7 +3807,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -3815,7 +3816,13 @@ public class ChatActivity extends BaseFragment implements
          if (inPreviewMode) {
              actionBar.setBackButtonDrawable(null);
          } else {
@@ -595,7 +595,7 @@ index 0000000..0000000 100644
          }
  
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-@@ -21263,6 +21270,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -21249,6 +21256,8 @@ public class ChatActivity extends BaseFragment implements
      public void didReceivedNotification(int id, int account, final Object... args) {
          if (id == NotificationCenter.messagesDidLoad) {
              didReceivedNotification_messagesDidLoad(id, account, args);
@@ -604,7 +604,7 @@ index 0000000..0000000 100644
          } else {
              didReceivedNotification2(id, account, args);
              didReceivedNotification3(id, account, args);
-@@ -48446,6 +48455,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48421,6 +48430,7 @@ public class ChatActivity extends BaseFragment implements
              avatarContainer.setScaleY(scale);
              avatarContainer.setAlpha(factor);
              avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);

@@ -78,7 +78,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4458,19 +4458,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -4467,19 +4467,9 @@ public class ChatActivity extends BaseFragment implements
                          }
                          return;
                      }
@@ -100,7 +100,7 @@ index 0000000..0000000 100644
                  inu_updateMenuSlotAvatar();
              }
  
-@@ -17844,6 +17834,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17835,6 +17825,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44325,22 +44318,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -44305,22 +44298,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }

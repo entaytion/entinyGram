@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -1967,7 +1967,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -1976,7 +1976,7 @@ public class ChatActivity extends BaseFragment implements
              if (hasDoubleTap != null) {
                  return hasDoubleTap;
              }
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
              String reactionStringSetting = getMediaDataController().getDoubleTapReaction();
              TLRPC.TL_availableReaction reaction = getMediaDataController().getReactionsMap().get(reactionStringSetting);
              if (reaction == null && (reactionStringSetting == null || !reactionStringSetting.startsWith("animated_"))) {
-@@ -1994,7 +1994,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -2003,7 +2003,7 @@ public class ChatActivity extends BaseFragment implements
          @Override
          public void onDoubleTap(View view, int position, float x, float y) {
              if (desu.inugram.helpers.chat.DoubleTapActionHelper.onDoubleTap(ChatActivity.this, view, x, y)) return;
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
                  return;
              }
              MessageObject messageObject;
-@@ -32064,7 +32064,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32035,7 +32035,7 @@ public class ChatActivity extends BaseFragment implements
              final boolean isEphemeral = message != null && message.isEphemeral();
              final boolean isReactionsViewAvailable = !isEphemeral && !suggestEdit && !isSecretChat() && !isInScheduleMode() && currentUser == null && primaryMessage.hasReactions() && (!ChatObject.isChannel(currentChat) || currentChat.megagroup) && !ChatObject.isMonoForum(currentChat) && !availableReacts.isEmpty() && primaryMessage.messageOwner.reactions.can_see_list && !primaryMessage.isSecretMedia();
              final boolean isReactionsAvailable;

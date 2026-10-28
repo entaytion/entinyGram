@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          if (BuildVars.LOGS_ENABLED) {
              FileLog.d("processNewChannelDifferenceParams pts = " + pts + " pts_count = " + pts_count + " channeldId = " + channelId);
          }
-@@ -16791,7 +16791,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -16789,7 +16789,10 @@ public class MessagesController extends BaseController implements NotificationCe
                          }
                      }
  
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                          boolean notifyAbountDifference = true;
                          if (res instanceof TLRPC.TL_updates_channelDifference || res instanceof TLRPC.TL_updates_channelDifferenceEmpty) {
                              if (!res.new_messages.isEmpty()) {
-@@ -16902,7 +16905,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -16900,7 +16903,7 @@ public class MessagesController extends BaseController implements NotificationCe
                                  NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.onReceivedChannelDifference, channelId);
                              });
                          }
@@ -75,7 +75,7 @@ index 0000000..0000000 100644
                  });
              } else if (error != null) {
                  AndroidUtilities.runOnUIThread(() -> {
-@@ -17049,7 +17052,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17047,7 +17050,10 @@ public class MessagesController extends BaseController implements NotificationCe
                              }
                          }
  
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
                              if (!res.new_messages.isEmpty() || !res.new_encrypted_messages.isEmpty()) {
                                  LongSparseArray<ArrayList<MessageObject>> messages = new LongSparseArray<>();
                                  for (int b = 0; b < res.new_encrypted_messages.size(); b++) {
-@@ -17167,7 +17173,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17165,7 +17171,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              if (BuildVars.LOGS_ENABLED) {
                                  FileLog.d("received difference with date = " + getMessagesStorage().getLastDateValue() + " pts = " + getMessagesStorage().getLastPtsValue() + " seq = " + getMessagesStorage().getLastSeqValue() + " messages = " + res.new_messages.size() + " users = " + res.users.size() + " chats = " + res.chats.size() + " other updates = " + res.other_updates.size());
                              }
@@ -96,7 +96,7 @@ index 0000000..0000000 100644
                      });
                  }
              } else {
-@@ -17958,13 +17964,69 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17956,13 +17962,69 @@ public class MessagesController extends BaseController implements NotificationCe
          });
      }
  
@@ -167,7 +167,7 @@ index 0000000..0000000 100644
                      processMessageIDUpdate((TL_update.TL_updateMessageID) update);
                      updates.updates.remove(i--);
                      hasMessageIdUpdates = true;
-@@ -18079,54 +18141,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18077,54 +18139,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  needGetDiff = true;
              } else {
                  if (getMessagesStorage().getLastPtsValue() + updates.pts_count == updates.pts) {
@@ -223,7 +223,7 @@ index 0000000..0000000 100644
  
                      getMessagesStorage().setLastPtsValue(updates.pts);
                      boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
-@@ -18607,6 +18622,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18605,6 +18620,9 @@ public class MessagesController extends BaseController implements NotificationCe
                  FileLog.d("process update " + baseUpdate.getClass().getSimpleName());
              }
              desu.inugram.InuHooks.onUpdate(baseUpdate, currentAccount);
@@ -273,7 +273,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -1780,7 +1780,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -1779,7 +1779,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          return true;
      }
  
@@ -282,7 +282,7 @@ index 0000000..0000000 100644
          int prevSize = unsentMessages.size();
          unsentMessages.remove(id);
          if (prevSize != 0 && unsentMessages.size() == 0) {
-@@ -2254,6 +2254,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2253,6 +2253,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (messages == null || messages.isEmpty()) {
              return 0;
          }
@@ -292,7 +292,7 @@ index 0000000..0000000 100644
          int sendResult = 0;
          long myId = getUserConfig().getClientUserId();
          boolean isChannel = false;
-@@ -4025,7 +4028,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4022,7 +4025,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              req.msg_id = messageObject.messageOwner.fwd_from.saved_from_msg_id;
          } else {
              req.peer = getMessagesController().getInputPeer(messageObject.getDialogId());
@@ -301,7 +301,7 @@ index 0000000..0000000 100644
          }
          req.add_to_recent = addToRecent;
          if (addToRecent && addedReaction != null) {
-@@ -4456,6 +4459,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4453,6 +4456,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      public void sendMessage(SendMessageParams sendMessageParams) {
@@ -309,7 +309,7 @@ index 0000000..0000000 100644
          final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
                  sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
          String message = sendMessageParams.message;
-@@ -5001,7 +5005,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4998,7 +5002,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  if (newMsg.attachPath == null) {
                      newMsg.attachPath = "";
                  }
@@ -319,7 +319,7 @@ index 0000000..0000000 100644
                  newMsg.out = true;
                  TLRPC.Chat chat = sendToPeer != null ? getMessagesController().getChat(sendToPeer.channel_id) : null;
                  if (isChannel && sendToPeer != null && (chat == null || !chat.signatures)) {
-@@ -7618,7 +7623,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -7615,7 +7620,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          }
      }
  
@@ -328,7 +328,7 @@ index 0000000..0000000 100644
          TLRPC.Message message;
          if (mid > 0) {
              message = editingMessages.get(mid);
-@@ -7749,6 +7754,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -7746,6 +7751,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return;
          }
  
@@ -336,7 +336,7 @@ index 0000000..0000000 100644
          int reqId = getConnectionsManager().sendRequest(request, (response, error) -> {
              if (error != null && FileRefController.isFileRefError(error.text)) {
                  final int fileRefIndex = FileRefController.getFileRefErrorIndex(error.text);
-@@ -8019,6 +8025,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8016,6 +8022,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                      }
                      Utilities.stageQueue.postRunnable(() -> getMessagesController().processUpdates(updates, false));
                  } else {
@@ -346,7 +346,7 @@ index 0000000..0000000 100644
                      AlertsCreator.processError(currentAccount, error, null, request);
                      isSentError = true;
                  }
-@@ -8133,6 +8142,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8130,6 +8139,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          }
          final TLRPC.Message newMsgObj = msgObj.messageOwner;
          putToSendingMessages(newMsgObj, scheduled);
@@ -356,7 +356,7 @@ index 0000000..0000000 100644
          if (!StarsController.getInstance(currentAccount).beforeSendingFinalRequest(req, msgObj, () -> performSendMessageRequest(req, msgObj, originalPath, parentMessage, check, delayedMessage, parentObject, params, scheduled))) {
              return;
          }
-@@ -8143,6 +8155,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8140,6 +8152,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return;
          }
  
@@ -364,7 +364,7 @@ index 0000000..0000000 100644
          newMsgObj.reqId = getConnectionsManager().sendRequest(req, (response, error) -> {
              if (error != null && (req instanceof TLRPC.TL_messages_sendMedia || req instanceof TL_ephemeral.TL_sendMessage || req instanceof TLRPC.TL_messages_editMessage || req instanceof TLRPC.TL_messages_addPollAnswer) && FileRefController.isFileRefError(error.text)) {
                  if (FileRefController.isFileRefErrorCover(error.text)) {
-@@ -8564,6 +8577,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8561,6 +8574,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                              }
                          }
                      } else {
@@ -374,7 +374,7 @@ index 0000000..0000000 100644
                          AlertsCreator.processError(currentAccount, error, null, req);
                          isSentError = true;
                      }
-@@ -8672,7 +8688,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8669,7 +8685,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          return false;
      }
  
@@ -383,7 +383,7 @@ index 0000000..0000000 100644
          updateMediaPaths(newMsgObj, sentMessage, newMsgId, Collections.singletonList(originalPath), post, -1, params);
      }
  
-@@ -10146,6 +10162,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10143,6 +10159,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (paths == null && originalPaths == null && uris == null || paths != null && originalPaths != null && paths.size() != originalPaths.size()) {
              return;
          }
@@ -395,7 +395,7 @@ index 0000000..0000000 100644
          Utilities.globalQueue.postRunnable(() -> {
              int error = 0;
              long[] groupId = new long[1];
-@@ -10886,6 +10907,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10883,6 +10904,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (media.isEmpty()) {
              return;
          }
@@ -408,7 +408,7 @@ index 0000000..0000000 100644
          if (media.size() == 1 && media.get(0).videoEditedInfo != null && media.get(0).videoEditedInfo.roundVideo) {
              // The grouped/document dispatch below (and prepareSendingPhoto's video branch) never
              // preserve VideoEditedInfo.roundVideo, so a video sent this way always lands as a
-@@ -12328,6 +12355,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -12325,6 +12352,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      public static class SendMessageParams {
@@ -710,7 +710,7 @@ index 0000000..0000000 100644
                      createUnreadMessageAfterId = unreadAfterId;
                      startLoadFromMessageId = startLoadFrom;
                      needSelectFromMessageId = needSelect;
-@@ -25918,7 +25977,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25915,7 +25974,7 @@ public class ChatActivity extends BaseFragment implements
      private Runnable updateStreamingTopic;
  
      private ArrayList<MessageObject> notPushedSponsoredMessages;
@@ -719,7 +719,7 @@ index 0000000..0000000 100644
          processNewMessages(arr, true);
      }
      private void processNewMessages(ArrayList<MessageObject> arr, final boolean animatedFromBottom) {
-@@ -26871,7 +26930,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26868,7 +26927,7 @@ public class ChatActivity extends BaseFragment implements
          return sponsoredMessagesCount;
      }
  
@@ -728,7 +728,7 @@ index 0000000..0000000 100644
          processDeletedMessages(markAsDeletedMessages, channelId, sent, true);
      }
      private void processDeletedMessages(ArrayList<Integer> markAsDeletedMessages, long channelId, boolean sent, boolean thanos) {
-@@ -27245,7 +27304,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -27230,7 +27289,7 @@ public class ChatActivity extends BaseFragment implements
      private final BotForumHelper.BotDraftAnimationsPool botDraftAnimationsPool = new BotForumHelper.BotDraftAnimationsPool();
      private final ChatActivityDraftMessageMeasureController botDraftHeightController = new ChatActivityDraftMessageMeasureController();
  
@@ -737,7 +737,7 @@ index 0000000..0000000 100644
          replaceMessageObjects(messageObjects, loadIndex, remove, false);
      }
  
-@@ -28383,6 +28442,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -28368,6 +28427,10 @@ public class ChatActivity extends BaseFragment implements
              }
          } else if (isReport()) {
              updateActionModeTitle();
@@ -748,7 +748,7 @@ index 0000000..0000000 100644
          } else if (chatMode == MODE_PINNED) {
              boolean allowPin;
              if (currentChat != null) {
-@@ -28640,7 +28703,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28625,7 +28688,7 @@ public class ChatActivity extends BaseFragment implements
              } else if (isReport()) {
                  bottomChannelButtonsLayout.setVisibility(View.VISIBLE);
                  chatActivityEnterView.setVisibility(View.INVISIBLE);
@@ -757,7 +757,7 @@ index 0000000..0000000 100644
                      currentChat != null && (!ChatObject.isMonoForum(currentChat) || !isSubscriberSuggestions) && ((!ChatHelper.isEffectivelyInChat(currentChat) && !UserObject.isBotForum(currentUser) || !ChatObject.canWriteToChat(currentChat)) && (currentChat.join_to_send || !isThreadChat() || ChatObject.isForum(currentChat)) || forumTopic != null && forumTopic.closed && !ChatObject.canManageTopic(currentAccount, currentChat, forumTopic) || shouldDisplaySwipeToLeftToReplyInForum()) ||
                      currentUser != null && (UserObject.isDeleted(currentUser) || userBlocked || UserObject.isReplyUser(currentUser))) {
                  if (chatActivityEnterView.isEditingMessage()) {
-@@ -32584,6 +32647,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32569,6 +32632,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      scrimPopupWindowItems[a] = cell;
@@ -765,7 +765,7 @@ index 0000000..0000000 100644
                      if (option == OPTION_REMOVE_ADS) {
                          popupLayout.addView(new ActionBarPopupWindow.GapView(contentView.getContext(), themeDelegate), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
                      }
-@@ -33027,10 +33091,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -33012,10 +33076,11 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }, 420);
              };
@@ -779,7 +779,7 @@ index 0000000..0000000 100644
              }
              chatListView.stopScroll();
              chatLayoutManager.setCanScrollVertically(false);
-@@ -33415,7 +33480,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33400,7 +33465,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      public void selectReaction(View cell, MessageObject primaryMessage, ReactionsContainerLayout reactionsLayout, View fromView, float x, float y, ReactionsLayoutInBubble.VisibleReaction visibleReaction, boolean fromDoubleTap, boolean bigEmoji, boolean addToRecent, boolean withoutAnimation) {
@@ -788,7 +788,7 @@ index 0000000..0000000 100644
              return;
          }
          if (getMessagesController().isFrozen()) {
-@@ -34581,6 +34646,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -34566,6 +34631,9 @@ public class ChatActivity extends BaseFragment implements
                  if (selectedObject == replyingMessageObject && isComments) {
                      req.id = replyOriginalMessageId;
                      req.channel = MessagesController.getInputChannel(replyOriginalChat);
@@ -798,7 +798,7 @@ index 0000000..0000000 100644
                  } else {
                      req.id = selectedObject.getId();
                      req.channel = MessagesController.getInputChannel(currentChat);
-@@ -34784,7 +34852,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -34769,7 +34837,9 @@ public class ChatActivity extends BaseFragment implements
              }
              case OPTION_VIEW_REPLIES_OR_THREAD: {
                  MessageObject message = selectedObjectGroup != null ? selectedObjectGroup.findPrimaryMessageObject() : selectedObject;
@@ -809,7 +809,7 @@ index 0000000..0000000 100644
                      openDiscussionMessageChat(currentChat.id, null, message.getId(), 0, -1, 0, null);
                  }
                  break;
-@@ -35025,6 +35095,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -35010,6 +35080,9 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
          }
@@ -819,7 +819,7 @@ index 0000000..0000000 100644
          for (int j = 0; j < dids.size(); j++) {
              TLRPC.Chat chat = getMessagesController().getChat(-dids.get(j).dialogId);
              if (chat != null) {
-@@ -36031,6 +36104,22 @@ public class ChatActivity extends BaseFragment implements
+@@ -36016,6 +36089,22 @@ public class ChatActivity extends BaseFragment implements
          return chatMode;
      }
  
@@ -842,7 +842,7 @@ index 0000000..0000000 100644
      public boolean isInBotForumMode() {
          return UserObject.isBotForum(currentUser);
      }
-@@ -36900,7 +36989,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -36885,7 +36974,7 @@ public class ChatActivity extends BaseFragment implements
                      if (chatMode != MODE_SEARCH) {
                          finishFragment();
                      }
@@ -851,7 +851,7 @@ index 0000000..0000000 100644
                      presentFragment(new HashtagActivity(str, resourceProvider));
                  } else {
                      openHashtagSearch(str);
-@@ -37966,6 +38055,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -37951,6 +38040,9 @@ public class ChatActivity extends BaseFragment implements
  
                      @Override
                      public void didPressReplyMessage(ChatActionCell cell, int id) {
@@ -861,7 +861,7 @@ index 0000000..0000000 100644
                          Runnable scroll = () -> {
                              MessageObject messageObject = cell.getMessageObject();
                              scrollToMessageId(id, messageObject.getId(), true, messageObject.getDialogId() == mergeDialogId ? 1 : 0, true, 0);
-@@ -38131,7 +38223,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38116,7 +38208,7 @@ public class ChatActivity extends BaseFragment implements
                  if (view instanceof ChatMessageCell) {
                      final ChatMessageCell messageCell = (ChatMessageCell) view;
                      MessageObject.GroupedMessages groupedMessages = desu.inugram.helpers.chat.BlockedMessagesHelper.filterGroup(getValidGroupedMessage(message));
@@ -870,7 +870,7 @@ index 0000000..0000000 100644
                      messageCell.setSponsoredMessageVisible(true, false);
                      messageCell.isBotForum = UserObject.isBotForum(currentUser);
                      messageCell.isReportChat = isReport();
-@@ -41482,7 +41574,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -41467,7 +41559,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean shouldShowDialogButton(ChatMessageCell cell) {
@@ -879,7 +879,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -41572,6 +41664,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -41557,6 +41649,9 @@ public class ChatActivity extends BaseFragment implements
                      getOrCreateStoryViewer().open(getContext(), storyItem, StoriesListPlaceProvider.of(chatListView));
                  }
              } else {

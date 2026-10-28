@@ -18,8 +18,24 @@ object SelfDestructHelper {
     fun shouldSkipViewed(message: MessageObject?): Boolean =
         message != null && !message.isOutOwner && (message.messageOwner?.media?.ttl_seconds ?: 0) != 0 && shouldSkipViewed(message.dialogId)
 
+    // entiny: stock reports the read from SecretMediaViewer only; normal-viewer mode opens PhotoViewer and must report on open
+    @JvmStatic
+    fun shouldReportOneTimeRead(dialogId: Long, message: MessageObject?): Boolean {
+        if (message == null || message.isOutOwner || !message.isSecretMedia) return false
+        return shouldBypassOneTimeGate(dialogId) && !shouldSkipViewed(dialogId) && !message.isVideo
+    }
+
+    // entiny: photo/video one-time views are read receipts, so only "hide read receipts" may swallow them; voice notes keep the "played" gate
+    @JvmStatic
+    fun shouldAllowMediaViewRead(dialogId: Long, message: MessageObject?): Boolean {
+        if (message == null || message.isOutOwner) return false
+        if (message.isVoiceOnce || message.isRoundOnce) return false
+        return !GhostHelper.shouldSuppress(dialogId, SuppressKind.READ)
+    }
+
     @JvmStatic
     fun markViewed(message: MessageObject) {
+        if (shouldAllowMediaViewRead(message.dialogId, message)) GhostHelper.allowReadContents(message.id)
         forceViewed = true
         try {
             MessagesController.getInstance(message.currentAccount).markMessageContentAsRead(message)
@@ -40,6 +56,13 @@ object SelfDestructHelper {
     @JvmStatic
     fun shouldBypassOneTimeGate(dialogId: Long): Boolean {
         return shouldPreserveMedia(dialogId) && InuConfig.VIEW_ONCE_SHOW_NORMAL.value
+    }
+
+    // entiny: normal-viewer mode bypasses SecretMediaViewer, so the photo viewer close is the only save trigger
+    @JvmStatic
+    fun shouldAutoSaveOneTime(dialogId: Long, message: MessageObject?): Boolean {
+        return message != null && !message.isOutOwner && message.isSecretMedia &&
+            InuConfig.AUTO_SAVE_ONE_TIME.value && shouldPreserveMedia(dialogId)
     }
 
     @JvmStatic

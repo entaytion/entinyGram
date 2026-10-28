@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -10923,6 +10923,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10920,6 +10920,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              prepareSendingVideo(accountInstance, info.path, info.videoEditedInfo, info.coverPath, info.coverPhoto, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, info.entities, info.ttl, editingMessageObject, notify, scheduleDate, scheduleRepeatPeriod, forceDocument, info.hasMediaSpoilers, info.caption, sendMessageChatArguments, effectId, info.stars, monoForumPeerId, suggestionParams, invertMedia);
              return;
          }

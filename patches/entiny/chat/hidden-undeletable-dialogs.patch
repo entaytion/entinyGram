@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -10340,6 +10340,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10338,6 +10338,9 @@ public class MessagesController extends BaseController implements NotificationCe
                      if (newTaskId != 0) {
                          getMessagesStorage().removePendingTask(newTaskId);
                      }
