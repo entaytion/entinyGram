@@ -530,6 +530,7 @@
     <string name="InuMsgDetailStickerPackCreator">Çıkartma Paketi Oluşturucusu</string>
     <string name="InuMsgDetailEmojiPackCreators">Emoji Paketi Oluşturucuları</string>
     <string name="InuShowJson">JSON Göster</string>
+    <string name="InuRegDate">Kayıt Tarihi: %s</string>
     <string name="InuJoinDate">Katılma tarihi: %s</string>
     <string name="InuCreatedDate">Oluşturulma tarihi: %s</string>
     <string name="InuChatVoiceInAttach">Eklerde kaydedici</string>

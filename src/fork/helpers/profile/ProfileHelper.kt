@@ -28,6 +28,7 @@ import desu.inugram.helpers.chat.ForumDisplayHelper
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import java.util.WeakHashMap
+import org.json.JSONArray
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
@@ -544,6 +545,13 @@ object ProfileHelper {
     }
 
     @JvmStatic
+    fun getIdSubtitle(user: TLRPC.User?, chat: TLRPC.Chat?): String {
+        val base = LocaleController.getString(R.string.InuProfileId)
+        val dc = getDc(user, chat)
+        return if (dc != 0) "$base • DC: $dc" else base
+    }
+
+    @JvmStatic
     fun onIdRowClick(
         fragment: BaseFragment,
         clipBackground: Drawable?,
@@ -583,7 +591,13 @@ object ProfileHelper {
                 }
                 WebAppHelper.openTlViewer(fragment, items)
             }.let { opts ->
-                if (userId == 0L && chat != null && chat.date != 0) {
+                if (userId != 0L) {
+                    val regDate = getRegDate(userId)
+                    if (regDate != null) {
+                        opts.addGap()
+                            .addText(LocaleController.formatString(R.string.InuRegDate, regDate), 13)
+                    }
+                } else if (chat != null && chat.date != 0) {
                     val created = creationDate(chat)
                     opts.addGap()
                     if (created != null) {
@@ -622,14 +636,54 @@ object ProfileHelper {
             ?.setTextColor(fragment.getThemedColor(Theme.key_text_RedBold))
     }
 
+    private data class RegDateEntry(val id: Long, val date: Long)
+
+    private val regDateEntries: List<RegDateEntry> by lazy { loadRegDateData() }
+
+    private fun loadRegDateData(): List<RegDateEntry> {
+        return try {
+            val json = ApplicationLoader.applicationContext.assets.open("id_date.json")
+                .bufferedReader().use { it.readText() }
+            val data = JSONArray(json)
+            List(data.length()) { i ->
+                val pair = data.getJSONArray(i)
+                RegDateEntry(pair.getLong(0), pair.getLong(1))
+            }
+        } catch (e: Exception) {
+            FileLog.e(e)
+            emptyList()
+        }
+    }
+
+    private fun formatShortDate(dateMs: Long): String {
+        return LocaleController.getInstance().formatterYear.format(Date(dateMs))
+    }
+
     private fun formatDateTime(dateMs: Long): String {
         return LocaleController.getInstance().formatterStats.format(Date(dateMs))
+    }
+
+    private fun getRegDate(userId: Long): String? {
+        val list = regDateEntries
+        if (list.isEmpty()) return null
+        for (i in 1 until list.size) {
+            val a = list[i - 1]
+            val b = list[i]
+            if (userId in a.id..b.id) {
+                val t = (userId - a.id).toDouble() / (b.id - a.id)
+                val date = (a.date + t * (b.date - a.date)) * 1000.0
+                return "~" + formatShortDate(Math.round(date))
+            }
+        }
+        if (userId <= list.first().id) return formatShortDate(list.first().date * 1000L)
+        return ">" + formatShortDate(list.last().date * 1000L)
     }
 
     @JvmStatic
     fun shouldShowRegDateRow(userId: Long, chat: TLRPC.Chat?): Boolean {
         if (!InuConfig.SHOW_PROFILE_REG_DATE.value) return false
-        return userId == 0L && chat != null && chat.date != 0
+        if (userId != 0L) return true
+        return chat != null && chat.date != 0
     }
 
     @JvmStatic
@@ -693,6 +747,9 @@ object ProfileHelper {
 
     @JvmStatic
     fun getRegDateValue(userId: Long, chat: TLRPC.Chat?): String {
+        if (userId != 0L) {
+            return getRegDate(userId) ?: ""
+        }
         if (chat != null && chat.date != 0) {
             val date = creationDate(chat) ?: chat.date
             return formatDateTime(date * 1000L)

@@ -93,7 +93,7 @@ index 0000000..0000000 100644
                          isFragmentPhoneNumber = phoneNumber != null && phoneNumber.matches("888\\d{8}");
                          detailCell.setTextAndValue(text, LocaleController.getString(isFragmentPhoneNumber ? R.string.AnonymousNumber : R.string.PhoneMobile), false);
 +                    } else if (position == inu_idRow) {
-+                        detailCell.setTextAndValue(ProfileHelper.formatId(userId, chatId != 0 ? getMessagesController().getChat(chatId) : null), LocaleController.getString(R.string.InuProfileId), false);
++                        detailCell.setTextAndValue(ProfileHelper.formatId(userId, chatId != 0 ? getMessagesController().getChat(chatId) : null), ProfileHelper.getIdSubtitle(userId != 0 ? getMessagesController().getUser(userId) : null, chatId != 0 ? getMessagesController().getChat(chatId) : null), false);
 +                    } else if (position == inu_regDateRow) {
 +                        TLRPC.User u = userId != 0 ? getMessagesController().getUser(userId) : null;
 +                        TLRPC.Chat c = chatId != 0 ? getMessagesController().getChat(chatId) : null;

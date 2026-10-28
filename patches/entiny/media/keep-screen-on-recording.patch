@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -9447,6 +9447,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -9472,6 +9472,7 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private int lastRecordState;
      protected void updateRecordInterface(int recordState, boolean animated) {

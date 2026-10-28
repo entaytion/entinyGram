@@ -676,6 +676,7 @@
     <string name="InuYes">Так</string>
     <string name="InuNo">Ні</string>
     <string name="InuShowJson">Показати JSON</string>
+    <string name="InuRegDate">Зареєстровано: %s</string>
     <string name="InuJoinDate">Приєднався: %s</string>
     <string name="InuCreatedDate">Створено: %s</string>
 
