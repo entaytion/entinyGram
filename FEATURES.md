@@ -421,7 +421,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 ### photo viewer
 
-- Ultra HDR and PQ/HLG photos with HDR-capable displays - *based on [NagramX](https://github.com/risin42/NagramX)*
+- Ultra HDR and PQ/HLG photos with HDR-capable displays, can be turned off in settings - *based on [NagramX](https://github.com/risin42/NagramX)*
 - "hide with spoiler" toggle
 - "copy photo" / "copy frame" menu actions
 - show dc + platform of the photo in menu

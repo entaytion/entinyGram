@@ -179,6 +179,8 @@
     <string name="InuDisableQuickShareInfo">با نگه داشتن دکمه اشتراک‌گذاری (کنار پیام‌های کانال)، مخاطبان پرتکرار نمایش داده نشوند؛ چون بدون تأیید ارسال می‌کند</string>
     <string name="InuSaveSelectedFiles">ذخیره فایل‌های انتخاب‌شده</string>
     <string name="InuSaveSelectedFilesInfo">هنگام انتخاب فایل‌ها در رسانه‌های پروفایل و جستجو دکمه دانلود اضافه می‌کند؛ فایل‌های دانلودنشده خودکار دریافت می‌شوند</string>
+    <string name="InuHdrImages">تصاویر HDR</string>
+    <string name="InuHdrImagesInfo">برای عکس‌های HDR در نمایشگر، صفحه را در حالت HDR قرار می‌دهد. اگر عکس‌ها خیلی تیره به نظر می‌رسند خاموشش کنید</string>
     <string name="InuLocalName">نام محلی</string>
     <string name="InuLocalNames">نام‌های محلی</string>
     <string name="InuLocalNamesInfo">نام، عکس و توضیحات افراد، ربات‌ها، گروه‌ها و کانال‌ها را فقط روی این دستگاه تغییر دهید. اصل‌ها نگه داشته می‌شوند و با بازنشانی یا خاموش کردن برمی‌گردند</string>

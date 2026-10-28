@@ -853,6 +853,8 @@
     <string name="InuDisableQuickShareInfo">共有ボタン（チャンネルメッセージの横）を長押ししたときに頻繁な連絡先を表示しない；確認なしで送信されます</string>
     <string name="InuSaveSelectedFiles">選択したファイルを保存</string>
     <string name="InuSaveSelectedFilesInfo">プロフィールのメディアと検索でファイルを選択したときにダウンロードボタンを追加します。未ダウンロードのファイルは自動的に取得されます</string>
+    <string name="InuHdrImages">HDR画像</string>
+    <string name="InuHdrImagesInfo">ビューアでHDR写真を表示するとき、画面をHDRモードに切り替えます。写真が暗すぎる場合はオフにしてください</string>
     <string name="InuLocalName">ローカル名</string>
     <string name="InuLocalNames">ローカル名</string>
     <string name="InuLocalNamesInfo">ユーザー、ボット、グループ、チャンネルの名前・写真・自己紹介をこの端末だけで変更します。元の情報は保持され、リセットまたはオフにすると元に戻ります</string>

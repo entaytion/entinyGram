@@ -984,6 +984,8 @@
     <string name="InuDisableQuickShareInfo">Не показывать частые контакты при долгом нажатии кнопки «Поделиться» (рядом с сообщениями каналов); отправка без подтверждения</string>
     <string name="InuSaveSelectedFiles">Сохранение выделенных файлов</string>
     <string name="InuSaveSelectedFilesInfo">Добавляет кнопку загрузки при выделении файлов в медиа профиля и поиске; незагруженные файлы докачиваются автоматически</string>
+    <string name="InuHdrImages">HDR-изображения</string>
+    <string name="InuHdrImagesInfo">Включает HDR-режим экрана для HDR-фото в просмотрщике. Выключи, если фото кажутся слишком тёмными</string>
     <string name="InuLocalName">Локальное имя</string>
     <string name="InuLocalNames">Локальные имена</string>
     <string name="InuLocalNamesInfo">Меняйте имя, фото и описание людей, ботов, групп и каналов только на этом устройстве. Оригиналы сохраняются и возвращаются при сбросе или отключении</string>

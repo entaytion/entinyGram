@@ -272,6 +272,8 @@ Sistema: %6$s
     <string name="InuDisableQuickShareInfo">No mostrar contactos frecuentes al mantener presionado el botón compartir</string>
     <string name="InuSaveSelectedFiles">Guardar archivos seleccionados</string>
     <string name="InuSaveSelectedFilesInfo">Añade botón de descarga al seleccionar archivos en multimedia de perfil y búsqueda</string>
+    <string name="InuHdrImages">Imágenes HDR</string>
+    <string name="InuHdrImagesInfo">Activa el modo HDR de la pantalla para las fotos HDR en el visor. Desactívalo si las fotos se ven demasiado oscuras</string>
     <string name="InuLocalName">Nombre local</string>
     <string name="InuLocalNames">Nombres locales</string>
     <string name="InuLocalNamesInfo">Cambia el nombre, la foto y la biografía de personas, bots, grupos y canales solo en este dispositivo. Los originales se conservan y se restauran al restablecer o desactivar esto</string>

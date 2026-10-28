@@ -169,6 +169,8 @@
     <string name="InuDisableQuickShareInfo">Paylaş düğmesine (kanal mesajlarının yanında) uzun basıldığında sık görüşülen kişileri göstermez; onay almadan gönderir</string>
     <string name="InuSaveSelectedFiles">Seçilen dosyaları kaydet</string>
     <string name="InuSaveSelectedFilesInfo">Profil medyasında ve aramada dosyalar seçildiğinde indirme düğmesi ekler; indirilmemiş dosyalar otomatik alınır</string>
+    <string name="InuHdrImages">HDR görseller</string>
+    <string name="InuHdrImagesInfo">Görüntüleyicide HDR fotoğraflar için ekranı HDR moduna geçirir. Fotoğraflar çok karanlık görünüyorsa kapat</string>
     <string name="InuLocalName">Yerel ad</string>
     <string name="InuLocalNames">Yerel adlar</string>
     <string name="InuLocalNamesInfo">Kişilerin, botların, grupların ve kanalların adını, fotoğrafını ve açıklamasını yalnızca bu cihazda değiştirin. Orijinaller saklanır ve sıfırlayınca veya kapatınca geri gelir</string>

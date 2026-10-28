@@ -272,6 +272,8 @@ Sistema: %6$s
     <string name="InuDisableQuickShareInfo">Non mostra i contatti frequenti tenendo premuto il pulsante condividi (accanto ai messaggi dei canali); invia senza conferma</string>
     <string name="InuSaveSelectedFiles">Salva i file selezionati</string>
     <string name="InuSaveSelectedFilesInfo">Aggiunge un pulsante di download selezionando file nei media del profilo e nella ricerca; i file non scaricati vengono recuperati automaticamente</string>
+    <string name="InuHdrImages">Immagini HDR</string>
+    <string name="InuHdrImagesInfo">Attiva la modalità HDR dello schermo per le foto HDR nel visualizzatore. Disattiva se le foto sembrano troppo scure</string>
     <string name="InuLocalName">Nome locale</string>
     <string name="InuLocalNames">Nomi locali</string>
     <string name="InuLocalNamesInfo">Rinomina persone, bot, gruppi e canali e cambia la loro foto e bio solo su questo dispositivo. Gli originali vengono conservati e ripristinati quando reimposti o disattivi questa opzione</string>

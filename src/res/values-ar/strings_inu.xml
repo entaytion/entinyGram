@@ -179,6 +179,8 @@
     <string name="InuDisableQuickShareInfo">عدم إظهار جهات الاتصال المتكررة عند الضغط المطوّل على زر المشاركة (بجانب رسائل القناة)؛ فهو يرسل دون تأكيد</string>
     <string name="InuSaveSelectedFiles">حفظ الملفات المحددة</string>
     <string name="InuSaveSelectedFilesInfo">يضيف زر تنزيل عند تحديد الملفات في وسائط الملف الشخصي والبحث؛ تُنزَّل الملفات غير المحمّلة تلقائيًا</string>
+    <string name="InuHdrImages">صور HDR</string>
+    <string name="InuHdrImagesInfo">يبدّل الشاشة إلى وضع HDR لصور HDR في العارض. أوقفه إذا بدت الصور داكنة جدًا</string>
     <string name="InuLocalName">الاسم المحلي</string>
     <string name="InuLocalNames">الأسماء المحلية</string>
     <string name="InuLocalNamesInfo">غيّر اسم الأشخاص والبوتات والمجموعات والقنوات وصورهم ونبذتهم على هذا الجهاز فقط. تُحفظ الأصول وتُستعاد عند إعادة التعيين أو الإيقاف</string>

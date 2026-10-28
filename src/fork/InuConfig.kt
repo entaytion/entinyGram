@@ -366,7 +366,7 @@ object InuConfig {
     val SHOW_SPOILERS_DIRECTLY = BoolItem("show_spoilers_directly", false)
 
     @JvmField
-    val HDR_IMAGES = BoolItem("hdr_images", true, exportable = false)
+    val HDR_IMAGES = BoolItem("hdr_images", false, exportable = false)
 
     class TextSpoilerModeItem : IntItem("text_spoiler_mode", SIMPLE) {
         companion object {

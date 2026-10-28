@@ -171,6 +171,8 @@
     <string name="InuDisableQuickShareInfo">Не показувати часті контакти при довгому натисканні кнопки поширення</string>
     <string name="InuSaveSelectedFiles">Збереження виділених файлів</string>
     <string name="InuSaveSelectedFilesInfo">Додає кнопку завантаження при виділенні файлів у медіа профілю та пошуку; незавантажені файли докачуються автоматично</string>
+    <string name="InuHdrImages">HDR-зображення</string>
+    <string name="InuHdrImagesInfo">Вмикає HDR-режим екрана для HDR-фото в переглядачі. Вимкни, якщо фото здаються занадто темними</string>
     <string name="InuLocalName">Локальне ім\'я</string>
     <string name="InuLocalNames">Локальні імена</string>
     <string name="InuLocalNamesInfo">Змінюйте ім\'я, фото та опис людей, ботів, груп і каналів лише на цьому пристрої. Оригінали зберігаються і повертаються при скиданні чи вимкненні</string>

@@ -218,6 +218,9 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_QUICK_SHARE, R.string.InuDisableQuickShare, R.string.InuDisableQuickShareInfo, InuConfig.DISABLE_QUICK_SHARE.value))
         items.add(mkTwoLineCheckItem(TOGGLE_MEMORY_TRIM, R.string.InuMemoryTrim, R.string.InuMemoryTrimInfo, InuConfig.MEMORY_TRIM.value))
         items.add(mkTwoLineCheckItem(TOGGLE_SAVE_SELECTED_FILES, R.string.InuSaveSelectedFiles, R.string.InuSaveSelectedFilesInfo, InuConfig.SAVE_SELECTED_FILES.value))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            items.add(mkTwoLineCheckItem(TOGGLE_HDR_IMAGES, R.string.InuHdrImages, R.string.InuHdrImagesInfo, InuConfig.HDR_IMAGES.value))
+        }
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLinksAndBrowser)))
@@ -533,6 +536,8 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_MEMORY_TRIM -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.MEMORY_TRIM.toggle()
             TOGGLE_SAVE_SELECTED_FILES -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SAVE_SELECTED_FILES.toggle()
 
+            TOGGLE_HDR_IMAGES -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HDR_IMAGES.toggle()
+
             TOGGLE_SHOW_SECONDS -> {
                 val new = InuConfig.SHOW_SECONDS.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -685,6 +690,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_QUICK_SHARE = InuUtils.generateId()
         private val TOGGLE_MEMORY_TRIM = InuUtils.generateId()
         private val TOGGLE_SAVE_SELECTED_FILES = InuUtils.generateId()
+        private val TOGGLE_HDR_IMAGES = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
         private val BUTTON_CLOCK_FORMAT = InuUtils.generateId()
         private val TOGGLE_ACCOUNT_SWITCH_SHORTCUT = InuUtils.generateId()
@@ -759,6 +765,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
                 SearchRegistry.Entry("memory-trim", R.string.InuMemoryTrim, TOGGLE_MEMORY_TRIM),
                 SearchRegistry.Entry("save-selected-files", R.string.InuSaveSelectedFiles, TOGGLE_SAVE_SELECTED_FILES),
+                SearchRegistry.Entry("hdr-images", R.string.InuHdrImages, TOGGLE_HDR_IMAGES),
                 SearchRegistry.Entry("clock-format", R.string.InuClockFormat, BUTTON_CLOCK_FORMAT),
                 SearchRegistry.Entry("account-switch-shortcut", R.string.InuAccountSwitchShortcut, TOGGLE_ACCOUNT_SWITCH_SHORTCUT),
             ),

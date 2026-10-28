@@ -852,6 +852,8 @@
     <string name="InuDisableQuickShareInfo">长按分享按钮（频道消息旁边）时不显示常用联系人；会直接发送，无需确认</string>
     <string name="InuSaveSelectedFiles">保存所选文件</string>
     <string name="InuSaveSelectedFilesInfo">在个人资料媒体和搜索中选择文件时添加下载按钮；未下载的文件会自动获取</string>
+    <string name="InuHdrImages">HDR 图片</string>
+    <string name="InuHdrImagesInfo">在查看器中为 HDR 照片切换屏幕的 HDR 模式。如果照片看起来太暗，请关闭</string>
     <string name="InuLocalName">本地名称</string>
     <string name="InuLocalNames">本地名称</string>
     <string name="InuLocalNamesInfo">仅在此设备上修改用户、机器人、群组和频道的名称、照片和简介。原内容会被保留，重置或关闭后恢复</string>
