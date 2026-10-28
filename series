@@ -613,3 +613,4 @@ entiny/restrictions/save-deleted-chat.patch
 entiny/restrictions/save-deleted-ui.patch
 entiny/restrictions/edit-history.patch
 bugfix/storage-query-plans.patch
+entiny/chat/suggest-emoji-crash.patch

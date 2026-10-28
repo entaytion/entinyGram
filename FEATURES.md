@@ -687,3 +687,4 @@ the sections below contain the broader feature set: inugram functionality, featu
 - a sent message moves into its server order once confirmed (e.g. a photo that finished uploading after a later text moves below that text), so the local order matches what the recipient sees
 - hashtag search in another channel (`#tag@channel`): no more huge empty gap above the results, last message in "show as chat" no longer hidden under the bottom bar, long-tapping a reaction on a channel post shows the reaction instead of failing to load reactors
 - search result previews with a media thumbnail no longer drift to the right while scrolling
+- emoji suggestion bar no longer crashes when a typed query finds nothing (the list data was cleared without notifying it, then scrolled while being drawn)
