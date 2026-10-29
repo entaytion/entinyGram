@@ -1631,6 +1631,7 @@
     <string name="InuForwardProInfo">مفاتيح المرسل والتعليق والإرسال الصامت مع التعديل قبل إعادة التوجيه.</string>
     <string name="InuForwardProHideCaption">إخفاء التعليقات</string>
     <string name="InuForwardProEditedNotice">ستُرسل كنسخة منك، دون علامة إعادة توجيه</string>
+    <string name="InuForwardProRemoveLinks">إزالة الروابط</string>
     <string name="InuForwardProUseStock">Telegram الأساسي</string>
     <string name="InuForwardProPlaceholder">نص الرسالة</string>
     <string name="InuForwardProEmptyNotice">لا يمكن أن يكون نص الرسالة فارغاً</string>

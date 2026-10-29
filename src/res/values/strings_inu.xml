@@ -1860,6 +1860,7 @@
     <string name="InuForwardProHideCaption">Hide captions</string>
     <string name="InuForwardProCommentAfter">Send comment after the message</string>
     <string name="InuForwardProEditedNotice">Will be sent as a copy from you, without a forward label</string>
+    <string name="InuForwardProRemoveLinks">Remove links</string>
     <string name="InuForwardProUseStock">Stock Telegram</string>
     <string name="InuForwardProPlaceholder">Message text</string>
     <string name="InuForwardProEmptyNotice">Message text can\'t be empty</string>

@@ -1777,6 +1777,7 @@
     <string name="InuForwardProHideCaption">Приховати підпис</string>
     <string name="InuForwardProCommentAfter">Надсилати коментар після повідомлення</string>
     <string name="InuForwardProEditedNotice">Надішлеться копією — від вашого імені, без мітки «Переслано від»</string>
+    <string name="InuForwardProRemoveLinks">Прибрати посилання</string>
     <string name="InuForwardProUseStock">Стоковий Telegram</string>
     <string name="InuForwardProPlaceholder">Текст повідомлення</string>
     <string name="InuForwardProEmptyNotice">Текст повідомлення не може бути порожнім</string>

@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import desu.inugram.InuConfig
+import desu.inugram.ui.settings.ForwardEditorActivity
 import desu.inugram.helpers.dialogs.FolderHelper
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
@@ -35,6 +36,7 @@ import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
+import org.telegram.ui.LaunchActivity
 import org.telegram.ui.Components.AlertsCreator
 import org.telegram.ui.Components.ChatActivityEnterView
 import org.telegram.ui.Components.FilterTabsView
@@ -380,7 +382,7 @@ object ForwardProHelper {
             contentDescription = LocaleController.getString(R.string.Edit)
             ViewCompat.setTooltipText(this, LocaleController.getString(R.string.Edit))
             setOnClickListener {
-                toggleEditMode(alert)
+                openEditor(alert)
             }
         }
         state.editButton = editButton
@@ -412,13 +414,29 @@ object ForwardProHelper {
         }
     }
 
-    private fun toggleEditMode(alert: ShareAlert) {
+    private fun openEditor(alert: ShareAlert) {
         val state = getState(alert)
-        if (state.isEditMode) {
-            exitEditMode(alert)
-        } else {
-            enterEditMode(alert, null)
-        }
+        val messages = alert.sendingMessageObjects ?: return
+        val editable = getEditableMessage(messages) ?: return
+        val chat = LaunchActivity.getSafeLastFragment() as? ChatActivity ?: return
+        val commentView = alert.commentTextView
+        val original = editableText(editable, (commentView?.getEditText()?.paint ?: Paint()).fontMetricsInt)
+        val initial = if (state.isEditMode) commentView?.text?.let { SpannableStringBuilder(it) } ?: original else state.editedText ?: original
+
+        InuConfig.FORWARD_PRO_SILENT.value = state.silentSend
+        InuConfig.FORWARD_PRO_HIDE_CAPTION.value = state.hideCaption
+        InuConfig.FORWARD_PRO_COMMENT_AFTER.value = state.commentAfter
+        InuConfig.FORWARD_PRO_SHOW_SENDER.value = alert.showSendersName
+
+        val copy = ArrayList(messages)
+        val isMedia = !isTextOnly(editable)
+        alert.dismiss()
+        chat.presentFragment(ForwardEditorActivity(original, initial, isMedia) { result ->
+            AndroidUtilities.runOnUIThread({
+                if (result != null) requestForwardProWithEditedText(result)
+                openSheet(chat, copy, forcePro = true)
+            }, 250)
+        })
     }
 
     private fun enterEditMode(alert: ShareAlert, prefillText: CharSequence?, openKeyboard: Boolean = true) {
@@ -779,10 +797,7 @@ object ForwardProHelper {
     @JvmOverloads
     fun openSheet(activity: ChatActivity, messages: List<MessageObject>, forcePro: Boolean = false, noQuote: Boolean = false) {
         val context = activity.parentActivity ?: return
-        if (forcePro) {
-            pendingOverride = true
-            pendingInitialEditedText = null
-        }
+        if (forcePro) pendingOverride = true
         val alert = ShareAlert(
             context, activity, ArrayList(messages), null, null,
             ChatObject.isChannel(activity.currentChat), null, null,

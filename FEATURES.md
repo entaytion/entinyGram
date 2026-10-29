@@ -192,7 +192,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **confirm before sending** voice/video messages, stickers and GIFs
 - 📡 **faster cold start** and locale caching
 - 📡 **smaller APK**
-- 📡 **Forward Pro**: replaces the stock Forward; edit text or captions before forwarding, keep albums grouped, send the comment before or after the forwarded message, format the comment text - *inspired by Telegraph*
+- 📡 **Forward Pro**: replaces the stock Forward; edit text or captions in a full-screen editor with live preview before forwarding, keep albums grouped, send the comment before or after the forwarded message, format the comment text - *inspired by Telegraph*
 - 📡 **instant mark reactions as read** - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **local folders** once the server limit is reached
 - 📡 **remember last folder**: the chat list opens on the folder you used last, not on All Chats

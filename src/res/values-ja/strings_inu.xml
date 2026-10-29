@@ -1541,6 +1541,7 @@
     <string name="InuForwardProInfo">転送時の投稿者、キャプション、静音送信のトグルと転送前の編集。</string>
     <string name="InuForwardProHideCaption">キャプションを非表示</string>
     <string name="InuForwardProEditedNotice">転送ラベルなしで、あなたのコピーとして送信されます</string>
+    <string name="InuForwardProRemoveLinks">リンクを削除</string>
     <string name="InuForwardProUseStock">公式Telegram</string>
     <string name="InuForwardProPlaceholder">メッセージのテキスト</string>
     <string name="InuForwardProEmptyNotice">メッセージのテキストを空にすることはできません</string>

@@ -1553,6 +1553,7 @@
     <string name="InuForwardProInfo">转发时提供作者、说明和静默发送开关，以及转发前编辑。</string>
     <string name="InuForwardProHideCaption">隐藏文字说明</string>
     <string name="InuForwardProEditedNotice">将作为您的副本发送，不带转发标签</string>
+    <string name="InuForwardProRemoveLinks">移除链接</string>
     <string name="InuForwardProUseStock">官方 Telegram</string>
     <string name="InuForwardProPlaceholder">消息文本</string>
     <string name="InuForwardProEmptyNotice">消息文本不能为空</string>

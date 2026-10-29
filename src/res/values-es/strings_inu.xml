@@ -1823,6 +1823,7 @@ Esta acción no se puede deshacer.</string>
     <string name="InuForwardProInfo">Interruptores de autor, leyenda y envío silencioso, además de edición antes de reenviar.</string>
     <string name="InuForwardProHideCaption">Ocultar leyendas</string>
     <string name="InuForwardProEditedNotice">Se enviará como una copia tuya, sin etiqueta de reenvío</string>
+    <string name="InuForwardProRemoveLinks">Quitar enlaces</string>
     <string name="InuForwardProUseStock">Telegram estándar</string>
     <string name="InuForwardProPlaceholder">Texto del mensaje</string>
     <string name="InuForwardProEmptyNotice">El texto del mensaje no puede estar vacío</string>

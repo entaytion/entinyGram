@@ -1554,6 +1554,7 @@
     <string name="InuForwardProInfo">İletmeden önce yazar, altyazı ve sessiz gönderme anahtarları ile düzenleme.</string>
     <string name="InuForwardProHideCaption">Başlıkları gizle</string>
     <string name="InuForwardProEditedNotice">Sizden bir kopya olarak, iletildi etiketi olmadan gönderilecektir</string>
+    <string name="InuForwardProRemoveLinks">Bağlantıları kaldır</string>
     <string name="InuForwardProUseStock">Standart Telegram</string>
     <string name="InuForwardProPlaceholder">Mesaj metni</string>
     <string name="InuForwardProEmptyNotice">Mesaj metni boş olamaz</string>
