@@ -260,6 +260,13 @@ class PluginRepoRow(context: Context) : LinearLayout(context) {
         )
         val rtl = LocaleController.isRTL
         val text = textColumn
+        // entiny: the row is mirrored by hand, so pin text to the same side or each line follows its own script
+        val side = if (rtl) Gravity.RIGHT else Gravity.LEFT
+        titleLine.gravity = side or Gravity.CENTER_VERTICAL
+        for (line in listOf(subtitle, description)) {
+            line.gravity = side
+            line.textAlignment = View.TEXT_ALIGNMENT_GRAVITY
+        }
         val pillParams = LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, if (rtl) 6f else 0f, 0f, if (rtl) 0f else 6f, 0f)
         val titleViews = listOf<Pair<View, LayoutParams>>(
             pill to pillParams,
