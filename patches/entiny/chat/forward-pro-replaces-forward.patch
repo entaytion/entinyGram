@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 30 Oct 2026 00:05:14 +0200
+Subject: [*] forward pro replaces forward
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -34430,6 +34430,12 @@ public class ChatActivity extends BaseFragment implements
+                     selectedObjectGroup = null;
+                     return;
+                 }
++                if (desu.inugram.helpers.chat.ForwardProHelper.takeOver(this, selectedObject, selectedObjectGroup)) {
++                    selectedObject = null;
++                    selectedObjectToEditCaption = null;
++                    selectedObjectGroup = null;
++                    return;
++                }
+                 forwardingMessage = selectedObject;
+                 forwardingMessageGroup = selectedObjectGroup;
+                 Bundle args = new Bundle();

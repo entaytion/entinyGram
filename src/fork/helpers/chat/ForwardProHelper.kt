@@ -1,10 +1,8 @@
 package desu.inugram.helpers.chat
 
-import android.content.res.ColorStateList
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.util.TypedValue
 import android.view.Gravity
@@ -15,7 +13,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.ViewCompat
-import androidx.core.widget.NestedScrollView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.FolderHelper
 import org.telegram.messenger.AccountInstance
@@ -36,12 +33,10 @@ import org.telegram.messenger.VideoEditedInfo
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
-import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.AlertsCreator
 import org.telegram.ui.Components.ChatActivityEnterView
-import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.FilterTabsView
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.ShareAlert
@@ -771,78 +766,30 @@ object ForwardProHelper {
         return false
     }
 
+    // entiny: with Forward Pro on, the stock Forward entry opens this sheet instead of a second, separate one
     @JvmStatic
-    fun openEditorDialog(activity: ChatActivity, message: MessageObject, group: MessageObject.GroupedMessages?) {
-        val messages = group?.messages ?: listOf(message)
-        val editable = getEditableMessage(messages)
+    @JvmOverloads
+    fun takeOver(activity: ChatActivity, message: MessageObject?, group: MessageObject.GroupedMessages?, noQuote: Boolean = false): Boolean {
+        if (message == null || !InuConfig.FORWARD_PRO.value) return false
+        openSheet(activity, group?.messages ?: listOf(message), noQuote = noQuote)
+        return true
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun openSheet(activity: ChatActivity, messages: List<MessageObject>, forcePro: Boolean = false, noQuote: Boolean = false) {
         val context = activity.parentActivity ?: return
-        val theme = activity.resourceProvider
-
-        val originalFontMetrics = Paint().apply { textSize = dp(16f).toFloat() }.fontMetricsInt
-        val originalText: CharSequence = if (editable != null) editableText(editable, originalFontMetrics) else ""
-        val isMedia = editable != null && !isTextOnly(editable)
-
-        val editText = EditTextBoldCursor(context).apply {
-            background = null
-            setLineColors(
-                Theme.getColor(Theme.key_dialogInputField, theme),
-                Theme.getColor(Theme.key_dialogInputFieldActivated, theme),
-                Theme.getColor(Theme.key_text_RedBold, theme),
-            )
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
-            val textColor = Theme.getColor(Theme.key_dialogTextBlack, theme)
-            setTextColor(textColor)
-            setHintTextColor(Theme.getColor(Theme.key_dialogTextHint, theme))
-            try {
-                backgroundTintList = ColorStateList.valueOf(textColor)
-            } catch (_: Throwable) {}
-            hint = LocaleController.getString(if (isMedia) R.string.InuForwardProPlaceholder else R.string.Message)
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-            maxLines = 10
-            minLines = 3
-            isSingleLine = false
-            gravity = Gravity.LEFT or Gravity.TOP
-            setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, theme))
-            setCursorSize(dp(20f))
-            setCursorWidth(1.5f)
-            setPadding(0, dp(8f), 0, dp(8f))
-            setText(originalText)
-            setSelection(text?.length ?: 0)
+        if (forcePro) {
+            pendingOverride = true
+            pendingInitialEditedText = null
         }
-
-        val scrollView = NestedScrollView(context).apply {
-            val pad = dp(24f)
-            setPadding(pad, dp(8f), pad, 0)
-            addView(editText, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT))
-        }
-
-        val dialog = AlertDialog.Builder(context, theme)
-            .setTitle(LocaleController.getString(R.string.InuForwardPro))
-            .setView(scrollView)
-            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
-            .setPositiveButton(LocaleController.getString(R.string.Forward)) { _, _ ->
-                val newText: CharSequence = editText.text?.let { SpannableStringBuilder(it) } ?: ""
-                if (!isMedia && newText.trim().isEmpty()) {
-                    Toast.makeText(context, LocaleController.getString(R.string.InuForwardProEmptyNotice), Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
-                }
-                requestForwardProWithEditedText(newText)
-                val alert = ShareAlert(
-                    context, activity, ArrayList(messages), null, null,
-                    ChatObject.isChannel(activity.currentChat), null, null,
-                    false, false, false, null, activity.themeDelegate
-                )
-                activity.showDialog(alert)
-            }
-            .create()
-
-        dialog.setOnShowListener {
-            AndroidUtilities.runOnUIThread {
-                editText.requestFocus()
-                AndroidUtilities.showKeyboard(editText)
-            }
-        }
-        dialog.show()
+        val alert = ShareAlert(
+            context, activity, ArrayList(messages), null, null,
+            ChatObject.isChannel(activity.currentChat), null, null,
+            false, false, false, null, activity.themeDelegate
+        )
+        if (noQuote) alert.showSendersName = false
+        activity.showDialog(alert)
     }
 
     @JvmStatic

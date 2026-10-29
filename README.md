@@ -170,7 +170,7 @@ entinyGram is made possible thanks to the work of the open-source Telegram commu
 - **[NiagramX](https://github.com/HSSkyBoy/NiagramX)** by **[@HSSkyBoy](https://github.com/HSSkyBoy)** — login code countdown skip, always-HD video sending.
 - **[Catogram](https://github.com/Catogram/Catogram)** — VKUI icon pack integration.
 - **[materialgram](https://github.com/kukuruzka165/materialgram)** by **[@kukuruzka165](https://github.com/kukuruzka165)** — Material You patterns and Android design inspiration.
-- **[Turbotel](https://github.com)** — Forward Pro inspiration.
+- **Telegraph** — Forward Pro inspiration.
 - **[MaxExteraPlugins](https://github.com/MaxExteraPlugins)** — background download resilience.
 - **[480 Design](https://t.me/Design480)** — Solar icon pack.
 

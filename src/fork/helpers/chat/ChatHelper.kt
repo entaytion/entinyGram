@@ -542,12 +542,13 @@ object ChatHelper {
             icons.add(R.drawable.inu_tabler_eye_off)
         }
 
-        if (options.contains(ChatActivity.OPTION_FORWARD)) {
+        // entiny: with Forward Pro on, plain Forward already opens its sheet, whose toggles cover both extra entries
+        if (options.contains(ChatActivity.OPTION_FORWARD) && !InuConfig.FORWARD_PRO.value) {
             items.add(LocaleController.getString(R.string.InuForwardNoQuote))
             options.add(OPTION_FORWARD_NO_QUOTE)
             icons.add(R.drawable.msg_forward_noquote)
 
-            // entiny: always offered — forces Forward Pro for this one share regardless of the global setting.
+            // entiny: offered while the global setting is off — opens Forward Pro for this one share.
             items.add(LocaleController.getString(R.string.InuForwardPro))
             options.add(OPTION_FORWARD_PRO)
             icons.add(R.drawable.msg_forward)
@@ -1132,7 +1133,10 @@ object ChatHelper {
             }
 
             OPTION_FORWARD_PRO -> {
-                ForwardProHelper.openEditorDialog(activity, selectedObject, selectedObjectGroup)
+                ForwardProHelper.openSheet(activity, selectedObjectGroup?.messages ?: listOf(selectedObject), forcePro = true)
+                activity.selectedObject = null
+                activity.selectedObjectToEditCaption = null
+                activity.selectedObjectGroup = null
             }
 
             OPTION_REPLY_IN -> {
@@ -1198,8 +1202,14 @@ object ChatHelper {
             }
 
             OPTION_FORWARD_NO_QUOTE -> {
-                activity.processSelectedOption(ChatActivity.OPTION_FORWARD)
-                pendingHideAuthor = true
+                if (ForwardProHelper.takeOver(activity, selectedObject, selectedObjectGroup, noQuote = true)) {
+                    activity.selectedObject = null
+                    activity.selectedObjectToEditCaption = null
+                    activity.selectedObjectGroup = null
+                } else {
+                    activity.processSelectedOption(ChatActivity.OPTION_FORWARD)
+                    pendingHideAuthor = true
+                }
             }
 
             OPTION_REPLY_IN_DMS -> {
