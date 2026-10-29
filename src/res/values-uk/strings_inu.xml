@@ -1156,7 +1156,6 @@
     <string name="InuArchiveLimitMobile">Ліміт розміру на мобільних даних</string>
     <string name="InuArchiveLimitDefault">За замовчуванням</string>
     <string name="InuArchiveLimitInfo">Більші файли не копіюються в архів. За замовчуванням 50 МБ.</string>
-    <string name="InuArchiveScopeSpecial">Особливі чати</string>
     <string name="InuArchiveScopeSecret">Секретні чати</string>
     <string name="InuArchiveScopeBotsInGroups">Боти в групах</string>
     <string name="InuArchiveScopeAll">Усі чати</string>

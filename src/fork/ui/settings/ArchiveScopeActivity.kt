@@ -33,9 +33,6 @@ class ArchiveScopeActivity(private val kind: ArchiveScope.Kind) : SettingsPageAc
             if (entry.flags and flag != 0) items.add(UItem.asFilterChat(true, label, type, flag))
         }
         for (id in entry.ids) items.add(UItem.asFilterChat(true, id))
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuArchiveScopeSpecial)))
         items.add(UItem.asCheck(CHECK_SECRET, LocaleController.getString(R.string.InuArchiveScopeSecret)).setChecked(entry.flags and ArchiveScope.FLAG_SECRET != 0))
         items.add(UItem.asCheck(CHECK_BOTS_IN_GROUPS, LocaleController.getString(R.string.InuArchiveScopeBotsInGroups)).setChecked(entry.flags and ArchiveScope.FLAG_BOT_IN_GROUP != 0))
         items.add(UItem.asShadow(null))

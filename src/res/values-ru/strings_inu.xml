@@ -1183,7 +1183,6 @@
     <string name="InuArchiveLimitMobile">Лимит размера на мобильных данных</string>
     <string name="InuArchiveLimitDefault">По умолчанию</string>
     <string name="InuArchiveLimitInfo">Более крупные файлы не копируются в архив. По умолчанию 50 МБ.</string>
-    <string name="InuArchiveScopeSpecial">Особые чаты</string>
     <string name="InuArchiveScopeSecret">Секретные чаты</string>
     <string name="InuArchiveScopeBotsInGroups">Боты в группах</string>
     <string name="InuArchiveScopeAll">Все чаты</string>

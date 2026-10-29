@@ -1445,7 +1445,6 @@
     <string name="InuArchiveLimitMobile">Size limit on mobile data</string>
     <string name="InuArchiveLimitDefault">Default</string>
     <string name="InuArchiveLimitInfo">Larger files are not copied to the archive. Default is 50 MB.</string>
-    <string name="InuArchiveScopeSpecial">Special chats</string>
     <string name="InuArchiveScopeSecret">Secret chats</string>
     <string name="InuArchiveScopeBotsInGroups">Bots in groups</string>
     <string name="InuArchiveScopeAll">All chats</string>
