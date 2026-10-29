@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 29 Oct 2026 23:39:28 +0200
+Subject: [*] profile crash on row add animation
+
+---
+ .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -4355,6 +4355,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 return 0;
+             }
+ 
++            @Override
++            public boolean animateAdd(RecyclerView.ViewHolder holder) {
++                dispatchAddFinished(holder); // inu: finishing a row's add animation after it was removed recycles a tmp detached view and crashes
++                return false;
++            }
++
+             @Override
+             protected void onMoveAnimationUpdate(RecyclerView.ViewHolder holder) {
+                 super.onMoveAnimationUpdate(holder);

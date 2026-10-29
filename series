@@ -618,3 +618,4 @@ entiny/chat/ios-message-menu.patch
 entiny/chat/suggest-emoji-crash.patch
 entiny/chat/rich-editor-media-caption.patch
 entiny/chat/slowmode-forward-album.patch
+entiny/ui/profile-add-animation-crash.patch

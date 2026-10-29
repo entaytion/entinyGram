@@ -101,6 +101,7 @@
   "suggest-emoji-crash": "chat",
   "rich-editor-media-caption": "chat",
   "slowmode-forward-album": "chat",
+  "profile-add-animation-crash": "ui",
   "two-finger-select": "chat",
   "hide-reactions-overlay": "chat",
   "id-in-profile": "ui",
