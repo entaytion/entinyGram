@@ -99,6 +99,7 @@
   "send-as-sticker": "media",
   "sticker-pack-zip": "media",
   "suggest-emoji-crash": "chat",
+  "rich-editor-media-caption": "chat",
   "two-finger-select": "chat",
   "hide-reactions-overlay": "chat",
   "id-in-profile": "ui",

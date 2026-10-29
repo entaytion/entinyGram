@@ -616,3 +616,4 @@ bugfix/storage-query-plans.patch
 entiny/ui/ios-chat-list.patch
 entiny/chat/ios-message-menu.patch
 entiny/chat/suggest-emoji-crash.patch
+entiny/chat/rich-editor-media-caption.patch
