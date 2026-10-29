@@ -216,6 +216,7 @@
     <string name="InuFoldersInfiniteSwipeInfo">在文件夹标签之间滑动时首尾相连。</string>
     <string name="InuFoldersAtBottom">将文件夹移到底部</string>
     <string name="InuHideArchive">从聊天列表中移除「已归档聊天」</string>
+    <string name="InuUnreadChatsFirst">未读聊天优先显示</string>
     <string name="InuHideCallActionButton">隐藏标题中的通话按钮</string>
     <string name="InuDisableProfileScrollSnap">禁用资料滚动吸附</string>
     <string name="InuReduceProfileMotion">减少资料动画</string>

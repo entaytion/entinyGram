@@ -440,6 +440,7 @@
     <string name="InuSystemFolderGroups">Групи</string>
     <string name="InuSystemFolderChannels">Канали</string>
     <string name="InuHideArchive">Прибрати «Архів» зі списку чатів</string>
+    <string name="InuUnreadChatsFirst">Непрочитані чати першими</string>
     <string name="InuCommunityDisplayMode">Спільноти</string>
     <string name="InuCommunityDisplayModeRegular">Звичайний</string>
     <string name="InuCommunityDisplayModeLongTap">Відкривати за довгим тапом</string>

@@ -468,6 +468,7 @@
     <string name="InuFoldersInfiniteSwipeInfo">هنگام ورق زدن بین زبانه‌های پوشه، از ابتدا ادامه می‌یابد.</string>
     <string name="InuFoldersAtBottom">انتقال پوشه‌ها به پایین</string>
     <string name="InuHideArchive">حذف «گفتگوهای بایگانی‌شده» از فهرست گفتگوها</string>
+    <string name="InuUnreadChatsFirst">گفتگوهای نخوانده در ابتدا</string>
     <string name="InuCommunityDisplayMode">انجمن‌ها</string>
     <string name="InuCommunityDisplayModeRegular">عادی</string>
     <string name="InuCommunityDisplayModeLongTap">باز شدن با نگه داشتن</string>

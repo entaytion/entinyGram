@@ -468,6 +468,7 @@
     <string name="InuFoldersInfiniteSwipeInfo">العودة إلى البداية عند التمرير بين علامات تبويب المجلدات.</string>
     <string name="InuFoldersAtBottom">نقل المجلدات إلى الأسفل</string>
     <string name="InuHideArchive">إزالة \"المحادثات المؤرشفة\" من قائمة المحادثات</string>
+    <string name="InuUnreadChatsFirst">المحادثات غير المقروءة أولاً</string>
     <string name="InuCommunityDisplayMode">المجتمعات</string>
     <string name="InuCommunityDisplayModeRegular">عادي</string>
     <string name="InuCommunityDisplayModeLongTap">فتح بالضغط المطوّل</string>

@@ -1087,6 +1087,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val HIDE_ARCHIVE_FROM_CHAT_LIST = BoolItem("hide_archive_from_chat_list", false)
 
     @JvmField
+    val UNREAD_CHATS_FIRST = BoolItem("unread_chats_first", false)
+
+    @JvmField
     val PRESENCE_COLOR_DOTS = BoolItem("presence_color_dots", false)
 
     @JvmField

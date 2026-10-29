@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 30 Oct 2026 00:06:42 +0200
+Subject: [+] unread chats first
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java  | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -1436,6 +1436,8 @@ public class MessagesController extends BaseController implements NotificationCe
+                 return 0;
+             }
+         }
++        int inu_unread = desu.inugram.helpers.dialogs.UnreadFirstHelper.compare(this, dialog1, dialog2);
++        if (inu_unread != 0) return inu_unread;
+         MediaDataController mediaDataController = getMediaDataController();
+         long date1 = DialogObject.getLastMessageOrDraftDate(dialog1, mediaDataController.getDraft(dialog1.id, 0));
+         long date2 = DialogObject.getLastMessageOrDraftDate(dialog2, mediaDataController.getDraft(dialog2.id, 0));
+@@ -1472,6 +1474,8 @@ public class MessagesController extends BaseController implements NotificationCe
+                 return 0;
+             }
+         }
++        int inu_unread = desu.inugram.helpers.dialogs.UnreadFirstHelper.compare(this, dialog1, dialog2);
++        if (inu_unread != 0) return inu_unread;
+         MediaDataController mediaDataController = getMediaDataController();
+         long date1 = DialogObject.getLastMessageOrDraftDate(dialog1, mediaDataController.getDraft(dialog1.id, 0));
+         long date2 = DialogObject.getLastMessageOrDraftDate(dialog2, mediaDataController.getDraft(dialog2.id, 0));

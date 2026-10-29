@@ -255,6 +255,7 @@
     <string name="InuSystemFolderGroups">Группы</string>
     <string name="InuSystemFolderChannels">Каналы</string>
     <string name="InuHideArchive">Убрать «Архив» из списка чатов</string>
+    <string name="InuUnreadChatsFirst">Непрочитанные чаты первыми</string>
     <string name="InuHideCallActionButton">Скрыть кнопку звонка в заголовке</string>
     <string name="InuDisableProfileScrollSnap">Отключить прилипание прокрутки профиля</string>
     <string name="InuReduceProfileMotion">Уменьшить анимацию профиля</string>

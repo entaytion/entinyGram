@@ -596,6 +596,7 @@ Sistema: %6$s
     <string name="InuSystemFolderGroups">Gruppi</string>
     <string name="InuSystemFolderChannels">Canali</string>
     <string name="InuHideArchive">Rimuovi «Chat archiviate» dall\'elenco chat</string>
+    <string name="InuUnreadChatsFirst">Chat non lette per prime</string>
     <string name="InuCommunityDisplayMode">Community</string>
     <string name="InuCommunityDisplayModeRegular">Normale</string>
     <string name="InuCommunityDisplayModeLongTap">Apri con tocco prolungato</string>

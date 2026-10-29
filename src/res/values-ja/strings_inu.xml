@@ -216,6 +216,7 @@
     <string name="InuFoldersInfiniteSwipeInfo">フォルダータブ間をスワイプすると端で反対側に戻ります。</string>
     <string name="InuFoldersAtBottom">フォルダーを下部に移動</string>
     <string name="InuHideArchive">チャットリストから「アーカイブ」を削除</string>
+    <string name="InuUnreadChatsFirst">未読チャットを先頭に表示</string>
     <string name="InuHideCallActionButton">タイトルの通話ボタンを非表示</string>
     <string name="InuDisableProfileScrollSnap">プロフィールのスクロールスナップを無効化</string>
     <string name="InuReduceProfileMotion">プロフィールのアニメーションを軽減</string>

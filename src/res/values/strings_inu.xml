@@ -591,6 +591,7 @@
     <string name="InuSystemFolderGroups">Groups</string>
     <string name="InuSystemFolderChannels">Channels</string>
     <string name="InuHideArchive">Remove \"Archived Chats\" from Chat List</string>
+    <string name="InuUnreadChatsFirst">Unread chats first</string>
     <string name="InuCommunityDisplayMode">Communities</string>
     <string name="InuCommunityDisplayModeRegular">Regular</string>
     <string name="InuCommunityDisplayModeLongTap">Open on long tap</string>

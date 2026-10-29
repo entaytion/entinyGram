@@ -116,6 +116,13 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.HIDE_ARCHIVE_FROM_CHAT_LIST.value)
         )
 
+        items.add(
+            UItem.asCheck(
+                TOGGLE_UNREAD_CHATS_FIRST,
+                LocaleController.getString(R.string.InuUnreadChatsFirst),
+            ).setChecked(InuConfig.UNREAD_CHATS_FIRST.value)
+        )
+
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatList)))
@@ -438,6 +445,12 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.HIDE_ARCHIVE_FROM_CHAT_LIST.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 softRebuild()
+            }
+
+            TOGGLE_UNREAD_CHATS_FIRST -> {
+                val new = InuConfig.UNREAD_CHATS_FIRST.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                desu.inugram.helpers.dialogs.UnreadFirstHelper.refresh()
             }
 
             TOGGLE_BOT_WEBVIEW_BUTTON -> {
@@ -785,6 +798,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val BUTTON_FOLDERS_UNREAD_COUNTER_MODE = InuUtils.generateId()
         private val TOGGLE_FOLDERS_AT_BOTTOM = InuUtils.generateId()
         private val TOGGLE_HIDE_ARCHIVE = InuUtils.generateId()
+        private val TOGGLE_UNREAD_CHATS_FIRST = InuUtils.generateId()
         private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
         private val TOGGLE_OLD_MENTION_INDICATOR = InuUtils.generateId()
         private val BUTTON_PULL_DOWN_ACTION = InuUtils.generateId()
@@ -857,6 +871,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("folders-infinite-swipe", R.string.InuFoldersInfiniteSwipe, TOGGLE_FOLDERS_INFINITE_SWIPE),
                 SearchRegistry.Entry("folders-at-bottom", R.string.InuFoldersAtBottom, TOGGLE_FOLDERS_AT_BOTTOM),
                 SearchRegistry.Entry("hide-archive", R.string.InuHideArchive, TOGGLE_HIDE_ARCHIVE),
+                SearchRegistry.Entry("unread-chats-first", R.string.InuUnreadChatsFirst, TOGGLE_UNREAD_CHATS_FIRST),
                 SearchRegistry.Entry("title-text", R.string.InuTitleText, BUTTON_TITLE_TEXT),
                 SearchRegistry.Entry("title-text-override-archive", R.string.InuTitleTextOverrideArchive, TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE),
                 SearchRegistry.Entry("old-mention-indicator", R.string.InuOldMentionIndicator, TOGGLE_OLD_MENTION_INDICATOR),
