@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 29 Oct 2026 23:05:20 +0200
+Subject: [*] slow mode counts a forwarded album once
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 1 +
+ .../src/main/java/org/telegram/ui/DialogsActivity.java        | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -12690,6 +12690,7 @@ public class ChatActivity extends BaseFragment implements
+         args.putBoolean("onlySelect", true);
+         args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
+         args.putInt("messagesCount", canForwardMessagesCount);
++        args.putInt("inu_slowmodeCount", desu.inugram.helpers.chat.ForwardSlowmodeHelper.sendCount(selectedMessagesIds));
+         args.putInt("hasPoll", hasPoll);
+         args.putBoolean("hasInvoice", hasInvoice);
+         args.putBoolean("canSelectTopics", true);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -555,6 +555,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     private boolean checkingImportDialog;
+ 
+     private int messagesCount;
++    private int inu_slowmodeCount;
+     private int hasPoll;
+     private boolean hasInvoice;
+ 
+@@ -2934,6 +2935,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             }
+             resetDelegate = arguments.getBoolean("resetDelegate", true);
+             messagesCount = arguments.getInt("messagesCount", 0);
++            inu_slowmodeCount = arguments.getInt("inu_slowmodeCount", messagesCount);
+             hasPoll = arguments.getInt("hasPoll", 0);
+             hasInvoice = arguments.getBoolean("hasInvoice", false);
+             showSetPasswordConfirm = arguments.getBoolean("showSetPasswordConfirm", showSetPasswordConfirm);
+@@ -10385,7 +10387,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     private boolean validateSlowModeDialog(long dialogId) {
+-        if (messagesCount <= 1 && (commentView == null || commentView.getVisibility() != View.VISIBLE || TextUtils.isEmpty(commentView.getFieldText()))) {
++        if (inu_slowmodeCount <= 1 && (commentView == null || commentView.getVisibility() != View.VISIBLE || TextUtils.isEmpty(commentView.getFieldText()))) {
+             return true;
+         }
+         if (!DialogObject.isChatDialog(dialogId)) {
