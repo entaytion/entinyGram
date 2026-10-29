@@ -113,6 +113,7 @@ object TwoFingerSelectHelper {
             if (justEntered) {
                 activity.createActionMode()
                 bar.showActionMode(true, null, null, null, null, null, 0)
+                activity.inu_showSelectionBars()
             }
             unselect = !justEntered && isSelected(firstMsgId)
             active = true

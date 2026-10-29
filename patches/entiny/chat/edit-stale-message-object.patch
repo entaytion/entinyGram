@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -27462,6 +27462,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -27470,6 +27470,14 @@ public class ChatActivity extends BaseFragment implements
                      messageObject.reactionsChanged |= old.isBotPendingDraft && !messageObject.isBotPendingDraft;
                      messageObject.copyStableParams(old);
                      messages.set(index, messageObject);

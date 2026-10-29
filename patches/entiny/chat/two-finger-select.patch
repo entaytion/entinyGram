@@ -4,8 +4,8 @@ Date: Tue, 19 May 2026 00:23:40 +0400
 Subject: swipe with two fingers to select messages
 
 ---
- .../src/main/java/org/telegram/ui/ChatActivity.java       | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../main/java/org/telegram/ui/ChatActivity.java  | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -26,3 +26,18 @@ index 0000000..0000000 100644
              @Override
              public boolean onTouchEvent(MotionEvent e) {
                  textSelectionHelper.checkSelectionCancel(e);
+@@ -10396,6 +10404,14 @@ public class ChatActivity extends BaseFragment implements
+         return INavigationLayout.BackButtonState.BACK;
+     }
+ 
++    public void inu_showSelectionBars() {
++        actionBar.createActionMode().setItemVisibility(delete, View.VISIBLE);
++        actionsButtonsLayout.bringToFront();
++        bottomViewsVisibilityController.setViewVisible(MESSAGE_ACTION_CONTAINER, true, true);
++        chatActivityEnterView.preventInput = true;
++        chatActivityEnterView.hideBotCommands();
++    }
++
+     public void createActionMode() {
+         if (selectedMessagesCountTextView != null || getContext() == null) {
+             return;

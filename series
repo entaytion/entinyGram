@@ -131,7 +131,7 @@ feature/long-tap-mention-name.patch
 bugfix/search-emoji-size.patch
 bugfix/motion-photo-with-caption.patch
 feature/strip-tracking.patch
-feature/two-finger-select.patch
+entiny/chat/two-finger-select.patch
 debloat/reduce-menu-motion.patch
 feature/md3-components.patch
 bugfix/universal-fragment-theme-change.patch

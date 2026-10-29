@@ -44,7 +44,7 @@ index 0000000..0000000 100644
                  if (clipTop > 0) {
                      if (clipTop < getMeasuredHeight()) {
                          canvas.save();
-@@ -12139,7 +12138,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12147,7 +12146,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          if (floatingDateView != null) {
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
          }
          updateFloatingTopicView();
  
-@@ -16910,7 +16909,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16918,7 +16917,7 @@ public class ChatActivity extends BaseFragment implements
          }
          if (floatingDateView != null) {
              floatingDateView.setTranslationX(getSideMenuWidth() / 2f);

@@ -595,7 +595,7 @@ index 0000000..0000000 100644
          }
  
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-@@ -21249,6 +21256,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -21257,6 +21264,8 @@ public class ChatActivity extends BaseFragment implements
      public void didReceivedNotification(int id, int account, final Object... args) {
          if (id == NotificationCenter.messagesDidLoad) {
              didReceivedNotification_messagesDidLoad(id, account, args);
@@ -604,7 +604,7 @@ index 0000000..0000000 100644
          } else {
              didReceivedNotification2(id, account, args);
              didReceivedNotification3(id, account, args);
-@@ -48421,6 +48430,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48429,6 +48438,7 @@ public class ChatActivity extends BaseFragment implements
              avatarContainer.setScaleY(scale);
              avatarContainer.setAlpha(factor);
              avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);

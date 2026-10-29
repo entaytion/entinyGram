@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -23121,6 +23121,19 @@ public class ChatActivity extends BaseFragment implements
+@@ -23129,6 +23129,19 @@ public class ChatActivity extends BaseFragment implements
              ArrayList<Integer> sentMessages = null;
              if (args.length > 6) sentMessages = (ArrayList<Integer>) args[6];
              boolean movedToScheduled = args.length > 4 && (boolean) args[4] || sentMessages != null && !sentMessages.isEmpty();
