@@ -203,7 +203,7 @@ object PluginManager {
 
     private fun runPass(wanted: (Plugin) -> Boolean) {
         if (!guard.startPass()) {
-            PluginLog.HOST.w("manager", "safe mode (${guard.reason}); skipping plugins")
+            PluginLog.HOST.w("manager", "safe mode (${guard.reason}, plugin=${guard.culprit}, exit=${guard.previousExit}); skipping plugins")
             guard.reason?.let { if (it != BootGuard.Reason.FORCED) PluginCrashLog.markReport(it.name, guard.culprit) }
             return
         }

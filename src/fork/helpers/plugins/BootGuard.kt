@@ -25,6 +25,7 @@ class BootGuard(
     private val uptimeMillis: () -> Long = SystemClock::uptimeMillis,
     private val wallMillis: () -> Long = System::currentTimeMillis,
     private val diedOfNativeCrashSince: (Long) -> Boolean = ::readDiedOfNativeCrashSince,
+    private val lastExit: () -> ApplicationExitInfo? = ::readLastExit,
 ) {
     enum class Reason { FORCED, CRASHED, CRASH_LOOP, HOST_ERROR }
 
@@ -37,6 +38,11 @@ class BootGuard(
     /** the plugin that was starting when the previous process died */
     @Volatile
     var culprit: String? = null
+        private set
+
+    /** how the previous process ended, when it died with a plugin starting; for the log only */
+    @Volatile
+    var previousExit: String? = null
         private set
 
     /** 0 until this process first runs plugin code */
@@ -54,11 +60,17 @@ class BootGuard(
         File(dir, WINDOW).delete()
         if (windowStart != null && diedOfNativeCrashSince(windowStart)) write(CRASHES, (readCrashes() + 1).toString())
         culprit = runCatching { File(dir, STARTING).readText() }.getOrNull()?.takeIf { it.isNotBlank() }
+        val started = File(dir, STARTING).exists()
+        val exit = if (started) lastExit() else null
+        if (exit != null) previousExit = "${exit.reason}/${exit.status} ${exit.description.orEmpty()}".trim()
         reason = when {
             File(dir, FORCED).exists() -> Reason.FORCED
-            File(dir, STARTING).exists() -> Reason.CRASHED
+            started && !isQuietExit(exit) -> Reason.CRASHED
             readCrashes() >= CRASH_LIMIT -> Reason.CRASH_LOOP
-            else -> return true
+            else -> {
+                File(dir, STARTING).delete()
+                return true
+            }
         }
         for (name in arrayOf(FORCED, STARTING, CRASHES)) File(dir, name).delete()
         return false
@@ -125,6 +137,23 @@ class BootGuard(
         const val FORCED = "forced"
         const val CRASHES = "crashes"
         const val WINDOW = "window"
+
+        // entiny: an install or a swipe from recents kills the process mid-start without the plugin being at fault
+        private fun isQuietExit(exit: ApplicationExitInfo?): Boolean = exit != null && exit.reason in QUIET_EXITS
+
+        private val QUIET_EXITS = intArrayOf(
+            ApplicationExitInfo.REASON_PACKAGE_UPDATED,
+            ApplicationExitInfo.REASON_USER_REQUESTED,
+            ApplicationExitInfo.REASON_USER_STOPPED,
+        )
+
+        private fun readLastExit(): ApplicationExitInfo? {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return null
+            val context = ApplicationLoader.applicationContext
+            return context.getSystemService(ActivityManager::class.java)
+                ?.getHistoricalProcessExitReasons(null, 0, 1)
+                ?.firstOrNull { it.processName == context.packageName }
+        }
 
         private fun readDiedOfNativeCrashSince(since: Long): Boolean {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return false
