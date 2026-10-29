@@ -16,6 +16,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.FileProvider
 import desu.inugram.InuConfig
+import desu.inugram.helpers.archive.ArchiveStore
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
@@ -25,6 +26,7 @@ import org.telegram.messenger.FileLog
 import org.telegram.messenger.ImageLocation
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserObject
@@ -46,6 +48,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 object ChatExportHelper {
 
@@ -91,6 +95,7 @@ object ChatExportHelper {
         var failed = false
         var requested = false
         var attachName: String? = null
+        var localPath: String? = null
         val done: Boolean get() = file != null || overLimit || failed
     }
 
@@ -341,6 +346,7 @@ object ChatExportHelper {
         val controller = MessagesController.getInstance(session.account)
         Utilities.globalQueue.postRunnable {
             val items = buildItems(session, controller)
+            attachLocalPaths(session, items)
             AndroidUtilities.runOnUIThread {
                 if (session.aborted) return@runOnUIThread
                 session.items = items
@@ -414,6 +420,28 @@ object ChatExportHelper {
             items.add(item)
         }
         return items
+    }
+
+    // entiny: own sent media never lands in the download dirs, its original path lives only in the local db row
+    private fun attachLocalPaths(session: Session, items: List<Item>) {
+        val own = items.filter { it.message.out && it.message.id > 0 }
+        if (own.isEmpty()) return
+        val storage = MessagesStorage.getInstance(session.account)
+        val latch = CountDownLatch(1)
+        storage.storageQueue.postRunnable {
+            try {
+                val db = storage.database ?: return@postRunnable
+                for (chunk in own.chunked(500)) {
+                    val found = ArchiveStore.loadMessagesForArchive(db, session.dialogId, chunk.map { it.message.id })
+                    for (item in chunk) item.localPath = found[item.message.id]?.attachPath?.takeIf { it.isNotEmpty() }
+                }
+            } catch (e: Throwable) {
+                android.util.Log.d("ChatExport", "local attach paths failed", e)
+            } finally {
+                latch.countDown()
+            }
+        }
+        latch.await(10, TimeUnit.SECONDS)
     }
 
     private fun kindOf(m: TLRPC.Message): MediaKind? {
@@ -493,6 +521,11 @@ object ChatExportHelper {
         for (item in session.items ?: return) {
             if (item.done) continue
             val media = item.message.media ?: continue
+            val local = item.localPath?.let(::File)?.takeIf { it.exists() && it.length() > 0 }
+            if (local != null) {
+                item.file = local
+                continue
+            }
             val file = if (media.photo != null) {
                 val sizes = media.photo.sizes
                 var found: File? = null
