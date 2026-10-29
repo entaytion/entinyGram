@@ -118,9 +118,11 @@ class WideChannelPostsPreviewCell(context: Context, fragment: BaseFragment) : Fr
         val messageObject = PreviewMessageObject(account, message, wide)
         val channelName = getString(R.string.InuWideChannelPostsPreviewReplyLabel)
         messageObject.customReplyName = channelName
-        // entiny: preview channel id is fake, so give the wide header a real name and avatar instead of "Deleted"
-        messageObject.customName = channelName
-        messageObject.customAvatarDrawable = AvatarDrawable().apply { setInfo(1L, channelName, null) }
+        // entiny: preview channel id is fake, so give the wide header a real name and avatar instead of "Deleted"; the regular post must not get one, it would reserve an avatar slot and push the time out of the bubble
+        if (wide) {
+            messageObject.customName = channelName
+            messageObject.customAvatarDrawable = AvatarDrawable().apply { setInfo(1L, channelName, null) }
+        }
         messageObject.replyMessageObject = createReplyMessage(account, date)
         messageObject.viewsReloaded = true
         messageObject.resetLayout()
@@ -197,19 +199,6 @@ class WideChannelPostsPreviewCell(context: Context, fragment: BaseFragment) : Fr
         val width = right - left
         layoutCell(regularCell, width)
         layoutCell(wideCell, width)
-        logMeta("regular", regularCell)
-        logMeta("wide", wideCell)
-    }
-
-    private fun logMeta(name: String, cell: ChatMessageCell) {
-        val message = cell.messageObject ?: return
-        android.util.Log.d(
-            "InuWidePreview",
-            "$name content=$previewContentWidth measured=${cell.measuredWidth} bg=${cell.backgroundWidth} " +
-                "timeWidth=${cell.timeWidth} timeX=${cell.getTimeX()}text=${message.textWidth} " +
-                "views=${message.messageOwner?.views} fwd=${message.messageOwner?.forwards} " +
-                "density=${AndroidUtilities.density} radius=${SharedConfig.bubbleRadius}",
-        )
     }
 
     private fun layoutCell(cell: ChatMessageCell, width: Int) {
@@ -287,5 +276,7 @@ class WideChannelPostsPreviewCell(context: Context, fragment: BaseFragment) : Fr
     private class PreviewMessageObject(account: Int, message: TLRPC.Message, private val wide: Boolean) :
         MessageObject(account, message, true, false) {
         override fun isWideChannelPost(): Boolean = wide
+
+        override fun hasWideChannelPostHeader(): Boolean = wide
     }
 }
