@@ -40,6 +40,11 @@ object ArchiveScope {
         Kind.MEDIA -> InuConfig.ARCHIVE_SCOPE_MEDIA
     }
 
+    // entiny: must run at startup, a lazy migration reads the legacy defaults as exclusions once the master toggle is on
+    @JvmStatic
+    @Synchronized
+    fun init() = migrateIfNeeded()
+
     @Synchronized
     private fun config(kind: Kind): Config {
         migrateIfNeeded()

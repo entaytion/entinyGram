@@ -62,6 +62,7 @@ object InuHooks {
         syncDoubleTapDelay()
         syncAnimationSpeed()
         syncChatInputRowHeight()
+        desu.inugram.helpers.archive.ArchiveScope.init()
         desu.inugram.helpers.media.DownloadKeepAliveHelper.startPolling()
         (context.applicationContext as? android.app.Application)?.let { desu.inugram.helpers.MemoryTrimHelper.init(it) }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
