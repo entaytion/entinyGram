@@ -5,9 +5,9 @@ Subject: Fix compact pill clipping, avatar dots, and profile transition jitter
 
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  |  4 +-
- .../ui/Components/ChatAvatarContainer.java    | 34 +++++++++----
+ .../ui/Components/ChatAvatarContainer.java    | 41 ++++++++++-----
  .../java/org/telegram/ui/ProfileActivity.java | 51 ++++++++++++++++---
- 3 files changed, 70 insertions(+), 19 deletions(-)
+ 3 files changed, 76 insertions(+), 20 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -91,17 +91,32 @@ index 0000000..0000000 100644
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables()
-@@ -1024,6 +1030,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1023,7 +1029,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             textRightBound = Math.max(textLeftBound, inu_bandRight());
  
              final int avatarLeft;
++            int avatarTop = 1 + viewTop;
              if (inu_isIosMenuSlotAvatar()) {
 +                if (parentFragment != null) {
 +                    parentFragment.inu_updateMenuSlotAvatar();
 +                }
++                if (actionBar.inu_glassBottom > actionBar.inu_glassTop) {
++                    // entiny: center on the slot ring itself, int division in viewTop and the ring bounds disagree by 1px on some densities
++                    avatarTop = Math.round(actionBar.inu_glassTop + dp(6) + dp(46) / 2f - avatarH / 2f) - getTop();
++                }
                  // The slot sits a good 40dp past this container's own right edge (the container is
                  // inset by the back-button and menu margins), so it is only ever drawn because
                  // nothing clips it. Assert that here instead of relying on fadeOutToLessWidth
-@@ -1068,7 +1077,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1047,7 +1061,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             } else {
+                 avatarLeft = actionBar.inu_titlePillLeft - inu_containerLeft() + dp(9);
+             }
+-            avatarImageView.layout(avatarLeft, 1 + viewTop, avatarLeft + avatarW, 1 + viewTop + avatarH);
++            avatarImageView.layout(avatarLeft, avatarTop, avatarLeft + avatarW, avatarTop + avatarH);
+         } else {
+             avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarW, 1 + viewTop + avatarH);
+             int inset = avatarImageView.getVisibility() == VISIBLE ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 20 : 16);
+@@ -1068,7 +1082,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                  ? Math.min(titleTextView.getCenteringDrawableBias(), titleBiasSlack)
                  : 0;
          final int titleL = l + titleDrawableBias;
@@ -110,7 +125,7 @@ index 0000000..0000000 100644
          SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
          if (getSubtitleTextView().getVisibility() != GONE) {
              titleTextView.layout(titleL, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), titleR, viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
-@@ -2049,6 +2058,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2049,6 +2063,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          inu_invalidateCenteredTextWidth();
          if (actionBar != null) {
              actionBar.checkAvatarContainerWidth(animated);

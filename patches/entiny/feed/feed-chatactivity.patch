@@ -1584,7 +1584,7 @@ index 0000000..0000000 100644
      public void setTitleColors(int title, int subtitle) {
          titleTextView.setTextColor(title);
          subtitleTextView.setTextColor(subtitle);
-@@ -1427,6 +1439,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1432,6 +1444,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      private boolean showingSavedMessagesHint;
  
      public void updateSubtitle(boolean animated) {

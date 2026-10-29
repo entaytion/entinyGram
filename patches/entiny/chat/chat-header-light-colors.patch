@@ -235,7 +235,7 @@ index 0000000..0000000 100644
      // entiny: avatar stays at its non-centered (post-back-button) position while title/subtitle center; action bar reserves its room instead.
      public boolean inu_isStaticAvatar() {
          return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarStatic() && hasVisibleAvatar();
-@@ -1145,7 +1153,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1150,7 +1158,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      public void setRightAvatarPadding(int value) {
          rightAvatarPadding = value;
@@ -243,7 +243,7 @@ index 0000000..0000000 100644
      }
  
      public void setCommunityItemVisible(boolean visible) {
-@@ -2023,10 +2030,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2028,10 +2035,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private int getThemedColor(int key) {
@@ -269,7 +269,7 @@ index 0000000..0000000 100644
          if (currentTypingDrawable != null) {
              currentTypingDrawable.setColor(getThemedColor(Theme.key_chat_status));
          }
-@@ -2055,7 +2076,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2060,7 +2081,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private void checkActionBar(boolean animated) {
