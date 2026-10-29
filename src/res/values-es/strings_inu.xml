@@ -1667,6 +1667,7 @@ Esta acción no se puede deshacer.</string>
     <string name="InuChatExportPacking">Guardando archivos…</string>
     <string name="InuChatExportExported">exportados</string>
     <string name="InuChatExportSaved">Guardado en %1$s</string>
+    <string name="InuChatExportSkipped">Archivos omitidos: %1$d</string>
     <string name="InuChatExportView">Ver</string>
     <string name="InuChatExportShowFolder">Mostrar carpeta</string>
     <string name="InuDeleteAllProfilePhotos">Eliminar todas las fotos</string>

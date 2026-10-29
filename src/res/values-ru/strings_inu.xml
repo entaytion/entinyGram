@@ -1355,6 +1355,7 @@
     <string name="InuChatExportPacking">Сохранение файлов…</string>
     <string name="InuChatExportExported">экспортировано</string>
     <string name="InuChatExportSaved">Сохранено в %1$s</string>
+    <string name="InuChatExportSkipped">Пропущено файлов: %1$d</string>
     <string name="InuChatExportView">Просмотр</string>
     <string name="InuChatExportShowFolder">Показать папку</string>
     <string name="InuDeleteAllProfilePhotos">Удалить все фото</string>

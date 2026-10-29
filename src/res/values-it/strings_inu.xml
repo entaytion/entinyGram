@@ -1668,6 +1668,7 @@ Questa azione non può essere annullata.</string>
     <string name="InuChatExportPacking">Salvataggio dei file…</string>
     <string name="InuChatExportExported">esportati</string>
     <string name="InuChatExportSaved">Salvato in %1$s</string>
+    <string name="InuChatExportSkipped">File saltati: %1$d</string>
     <string name="InuChatExportView">Visualizza</string>
     <string name="InuChatExportShowFolder">Mostra cartella</string>
     <string name="InuDeleteAllProfilePhotos">Elimina tutte le foto</string>

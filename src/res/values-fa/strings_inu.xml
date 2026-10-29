@@ -1464,6 +1464,7 @@
     <string name="InuChatExportPacking">در حال ذخیره فایل‌ها…</string>
     <string name="InuChatExportExported">صادر شد</string>
     <string name="InuChatExportSaved">در %1$s ذخیره شد</string>
+    <string name="InuChatExportSkipped">فایل‌های ردشده: %1$d</string>
     <string name="InuChatExportView">مشاهده</string>
     <string name="InuChatExportShowFolder">نمایش پوشه</string>
     <string name="InuDeleteAllProfilePhotos">حذف همه عکس‌ها</string>

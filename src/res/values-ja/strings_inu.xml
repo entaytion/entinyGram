@@ -1576,6 +1576,7 @@
     <string name="InuChatExportPacking">ファイルを保存中…</string>
     <string name="InuChatExportPhotos">写真</string>
     <string name="InuChatExportSaved">保存先: %1$s</string>
+    <string name="InuChatExportSkipped">スキップしたファイル: %1$d</string>
     <string name="InuChatExportShowFolder">フォルダを表示</string>
     <string name="InuChatExportSizeLimit">サイズ上限: %1$d MB</string>
     <string name="InuChatExportStickers">ステッカー</string>

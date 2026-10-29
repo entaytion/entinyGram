@@ -1594,6 +1594,7 @@
     <string name="InuChatExportPacking">正在保存文件…</string>
     <string name="InuChatExportPhotos">照片</string>
     <string name="InuChatExportSaved">已保存到 %1$s</string>
+    <string name="InuChatExportSkipped">已跳过的文件：%1$d</string>
     <string name="InuChatExportShowFolder">显示文件夹</string>
     <string name="InuChatExportSizeLimit">大小上限：%1$d MB</string>
     <string name="InuChatExportStickers">贴纸</string>

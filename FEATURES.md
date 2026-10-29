@@ -198,7 +198,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **remember last folder**: the chat list opens on the folder you used last, not on All Chats
 - 📡 **folder icon picker**
 - 📡 **separator after mention** - *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
-- 📡 **export chat** as JSON or HTML
+- 📡 **export chat** as JSON or HTML with media, including your own voice and video messages
 - 📡 **UnifiedPush** notifications without Google Play - *ported from [Forkgram](https://github.com/forkgram/TelegramAndroid) & [Mercurygram](https://github.com/mercurygram/mercurygram)*
 - 📡 **background service**: optional always-on connection so notifications arrive on time, at the cost of battery - *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
 - 📡 **fix notifications dying everywhere**: muting one topic or system notification channel no longer mutes the whole chat list, no server-side mute either

@@ -1476,6 +1476,7 @@
     <string name="InuChatExportPacking">جارٍ حفظ الملفات…</string>
     <string name="InuChatExportExported">تم التصدير</string>
     <string name="InuChatExportSaved">تم الحفظ في %1$s</string>
+    <string name="InuChatExportSkipped">الملفات المتخطاة: %1$d</string>
     <string name="InuChatExportView">عرض</string>
     <string name="InuChatExportShowFolder">إظهار المجلد</string>
     <string name="InuDeleteAllProfilePhotos">حذف كل الصور</string>

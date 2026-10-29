@@ -1595,6 +1595,7 @@
     <string name="InuChatExportPacking">Dosyalar kaydediliyor…</string>
     <string name="InuChatExportPhotos">Fotoğraflar</string>
     <string name="InuChatExportSaved">Kaydedildi: %1$s</string>
+    <string name="InuChatExportSkipped">Atlanan dosya: %1$d</string>
     <string name="InuChatExportShowFolder">Klasörü göster</string>
     <string name="InuChatExportSizeLimit">Boyut sınırı: %1$d MB</string>
     <string name="InuChatExportStickers">Çıkartmalar</string>
