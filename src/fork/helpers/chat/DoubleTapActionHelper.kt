@@ -27,6 +27,7 @@ enum class DoubleTapAction(
     QUICK_REACTION(1, R.string.InuQuickReaction),
     SHOW_REACTIONS(2, R.string.InuShowReactions),
     TRANSLATE(3, R.string.TranslateMessage, setOf(DoubleTapContext.INCOMING, DoubleTapContext.OUTGOING, DoubleTapContext.CHANNEL)),
+    REPLY(4, R.string.Reply),
     SAVE(5, R.string.Save),
     EDIT(6, R.string.Edit, setOf(DoubleTapContext.OUTGOING, DoubleTapContext.CHANNEL)),
     DELETE(7, R.string.Delete),
@@ -93,6 +94,7 @@ object DoubleTapActionHelper {
 
     private fun menuOptionForAction(action: DoubleTapAction, message: MessageObject): Int? {
         return when (action) {
+            DoubleTapAction.REPLY -> ChatActivity.OPTION_REPLY
             DoubleTapAction.EDIT -> ChatActivity.OPTION_EDIT
             DoubleTapAction.DELETE -> ChatActivity.OPTION_DELETE
             DoubleTapAction.TRANSLATE -> if (TranslateHelper.isManualTranslated(message)) ChatHelper.OPTION_TRANSLATE_REVERT else ChatActivity.OPTION_TRANSLATE
@@ -108,6 +110,7 @@ object DoubleTapActionHelper {
         }
 
         return when (action) {
+            DoubleTapAction.REPLY -> activity.chatMode != ChatActivity.MODE_WELCOME_MESSAGES && message.id > 0
             DoubleTapAction.EDIT -> message.canEditMessage(activity.currentChat)
             DoubleTapAction.DELETE -> message.canDeleteMessage(activity.isInScheduleMode, activity.currentChat)
             DoubleTapAction.SAVE -> !message.messageOwner.noforwards &&
