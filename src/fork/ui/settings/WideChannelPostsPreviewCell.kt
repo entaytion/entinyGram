@@ -197,6 +197,19 @@ class WideChannelPostsPreviewCell(context: Context, fragment: BaseFragment) : Fr
         val width = right - left
         layoutCell(regularCell, width)
         layoutCell(wideCell, width)
+        logMeta("regular", regularCell)
+        logMeta("wide", wideCell)
+    }
+
+    private fun logMeta(name: String, cell: ChatMessageCell) {
+        val message = cell.messageObject ?: return
+        android.util.Log.d(
+            "InuWidePreview",
+            "$name content=$previewContentWidth measured=${cell.measuredWidth} bg=${cell.backgroundWidth} " +
+                "timeWidth=${cell.timeWidth} timeX=${cell.getTimeX()}text=${message.textWidth} " +
+                "views=${message.messageOwner?.views} fwd=${message.messageOwner?.forwards} " +
+                "density=${AndroidUtilities.density} radius=${SharedConfig.bubbleRadius}",
+        )
     }
 
     private fun layoutCell(cell: ChatMessageCell, width: Int) {
