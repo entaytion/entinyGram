@@ -4,8 +4,8 @@ Date: Thu, 20 Aug 2026 00:27:43 +0300
 Subject: Remove the local storage cap on favorite stickers and GIFs
 
 ---
- .../org/telegram/messenger/MediaDataController.java   | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ .../org/telegram/messenger/MediaDataController.java | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 index 0000000..0000000 100644
@@ -29,6 +29,15 @@ index 0000000..0000000 100644
              TLRPC.Document old = recentGifs.remove(recentGifs.size() - 1);
              getMessagesStorage().getStorageQueue().postRunnable(() -> {
                  try {
+@@ -2020,7 +2020,7 @@ public class MediaDataController extends BaseController {
+                     ArrayList<TLRPC.Document> arrayList = null;
+                     if (response instanceof TLRPC.TL_messages_savedGifs) {
+                         TLRPC.TL_messages_savedGifs res = (TLRPC.TL_messages_savedGifs) response;
+-                        arrayList = res.gifs;
++                        arrayList = desu.inugram.helpers.FaveStickersHelper.mergeWithLocal(res.gifs, recentGifs);
+                     }
+                     processLoadedRecentDocuments(type, arrayList, true, 0, true);
+                 });
 @@ -2064,6 +2064,9 @@ public class MediaDataController extends BaseController {
                              arrayList = res.stickers;
                          }

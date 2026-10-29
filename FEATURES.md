@@ -100,7 +100,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - AI provider selection shows missing credentials and opens setup instead of hiding incomplete providers
 - 📡 **official-app emulation**: purchases and premium checkout without official app blocks
 - 📡 **wallet for everyone**: the Gram wallet entry is always available - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
-- 📡 **raised limits**: pins, favorites and folders
+- 📡 **raised limits**: pins, favorite stickers and GIFs kept locally past the server cap, and folders
 - 📡 **skip login code countdown** - *inspired by [NiagramX](https://github.com/HSSkyBoy/NiagramX)*
 
 ### appearance & customization
