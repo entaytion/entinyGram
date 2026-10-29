@@ -18,7 +18,11 @@ import java.util.Locale
 private fun newTimeFormat() = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
 object PresenceHelper {
+    private const val POLL_MS = 45_000L
+
     private val watched = SparseArray<MutableSet<Long>>()
+    private val lastType = HashMap<Pair<Int, Long>, String>()
+    private val polling = HashSet<Int>()
 
     @JvmStatic
     fun load(account: Int) {
@@ -29,7 +33,36 @@ object PresenceHelper {
             synchronized(watched) {
                 watched.put(account, HashSet(loaded))
             }
+            startPolling(account)
         }
+    }
+
+    // entiny: the server only pushes status updates for contacts and open chats, so everyone else has to be asked
+    private fun startPolling(account: Int) {
+        synchronized(polling) { if (!polling.add(account)) return }
+        AndroidUtilities.runOnUIThread({ poll(account) }, POLL_MS)
+    }
+
+    private fun poll(account: Int) {
+        val users = getWatchedUsers(account)
+        if (users.isEmpty()) {
+            synchronized(polling) { polling.remove(account) }
+            return
+        }
+        if (!ApplicationLoader.mainInterfacePaused) {
+            val controller = MessagesController.getInstance(account)
+            for (id in users) {
+                val user = controller.getUser(id) ?: continue
+                controller.loadFullUser(user, 0, true) { _ -> noteStatus(account, id) }
+            }
+        }
+        AndroidUtilities.runOnUIThread({ poll(account) }, POLL_MS)
+    }
+
+    private fun noteStatus(account: Int, userId: Long) {
+        val type = statusTypeOf(MessagesController.getInstance(account).getUser(userId)?.status)
+        val previous = synchronized(lastType) { lastType.put(account to userId, type) }
+        if (previous != null && previous != type) record(account, userId, type)
     }
 
     @JvmStatic
@@ -58,6 +91,7 @@ object PresenceHelper {
             val db = storage.database ?: return@postRunnable
             if (nowWatched) InuDatabaseHelper.saveWatch(db, userId) else InuDatabaseHelper.removeWatch(db, userId)
         }
+        if (nowWatched) startPolling(account)
         return nowWatched
     }
 
@@ -65,14 +99,19 @@ object PresenceHelper {
     fun onStatusUpdate(update: TL_update.TL_updateUserStatus, account: Int) {
         if (!isWatched(account, update.user_id)) return
         val statusType = statusTypeOf(update.status)
+        synchronized(lastType) { lastType[account to update.user_id] = statusType }
+        record(account, update.user_id, statusType)
+    }
+
+    private fun record(account: Int, userId: Long, statusType: String) {
         val nowSeconds = (System.currentTimeMillis() / 1000L).toInt()
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            InuDatabaseHelper.appendPresenceLog(db, update.user_id, statusType, nowSeconds)
+            InuDatabaseHelper.appendPresenceLog(db, userId, statusType, nowSeconds)
         }
         if (!InuConfig.PRESENCE_LOGGER_NOTIFY.value) return
-        val user = MessagesController.getInstance(account).getUser(update.user_id) ?: return
+        val user = MessagesController.getInstance(account).getUser(userId) ?: return
         val name = UserObject.getFirstName(user)
         AndroidUtilities.runOnUIThread {
             val time = newTimeFormat().format(Date(nowSeconds * 1000L))
