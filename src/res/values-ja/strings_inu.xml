@@ -724,6 +724,9 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">自動</string>
     <string name="InuMonetThemeAutoAmoled">自動 (AMOLED)</string>
+    <string name="InuMonetStyle">Monet スタイル</string>
+    <string name="InuMonetStyleClassic">クラシック</string>
+    <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuRoundRecorderKeepZoom">ピンチ解除後もズームを保持</string>
     <string name="InuRoundRecorderZoomSlider">ズームスライダー</string>
     <string name="InuRoundRecorderZoomButtons">ズームレベルボタン</string>

@@ -136,6 +136,9 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">Автоматично</string>
     <string name="InuMonetThemeAutoAmoled">Автоматично (AMOLED)</string>
+    <string name="InuMonetStyle">Стиль Monet</string>
+    <string name="InuMonetStyleClassic">Класичний</string>
+    <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuAttachCamera">Камера</string>
     <string name="InuAttachCameraMode">Камера</string>
     <string name="InuAttachCameraModeInstant">Швидка</string>

@@ -723,6 +723,9 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">自动</string>
     <string name="InuMonetThemeAutoAmoled">自动 (AMOLED)</string>
+    <string name="InuMonetStyle">Monet 样式</string>
+    <string name="InuMonetStyleClassic">经典</string>
+    <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuRoundRecorderKeepZoom">松开捏合后保留缩放</string>
     <string name="InuRoundRecorderZoomSlider">缩放滑块</string>
     <string name="InuRoundRecorderZoomButtons">缩放级别按钮</string>

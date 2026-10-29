@@ -235,6 +235,9 @@ Sistema: %6$s
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">Automático</string>
     <string name="InuMonetThemeAutoAmoled">Automático (AMOLED)</string>
+    <string name="InuMonetStyle">Estilo de Monet</string>
+    <string name="InuMonetStyleClassic">Clásico</string>
+    <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuAttachCamera">Cámara</string>
     <string name="InuAttachCameraMode">Cámara</string>
     <string name="InuAttachCameraModeInstant">Instantánea</string>

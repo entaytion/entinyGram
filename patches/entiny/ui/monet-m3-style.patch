@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 29 Oct 2026 23:49:32 +0200
+Subject: [+] monet material 3 theme set
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -7302,6 +7302,7 @@ public class Theme {
+     }
+ 
+     public static File getAssetFile(String assetName) {
++        assetName = desu.inugram.helpers.theme.MonetStyle.asset(assetName);
+         File file = new File(ApplicationLoader.getFilesDirFixed(), assetName);
+         long size;
+         try {

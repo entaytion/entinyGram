@@ -142,6 +142,9 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">خودکار</string>
     <string name="InuMonetThemeAutoAmoled">خودکار (AMOLED)</string>
+    <string name="InuMonetStyle">سبک Monet</string>
+    <string name="InuMonetStyleClassic">کلاسیک</string>
+    <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuAttachCamera">دوربین</string>
     <string name="InuAttachCameraMode">دوربین</string>
     <string name="InuAttachCameraModeInstant">فوری</string>

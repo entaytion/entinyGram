@@ -850,6 +850,9 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">Авто</string>
     <string name="InuMonetThemeAutoAmoled">Авто (AMOLED)</string>
+    <string name="InuMonetStyle">Стиль Monet</string>
+    <string name="InuMonetStyleClassic">Классический</string>
+    <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuRoundRecorderKeepZoom">Сохранять зум после щипка</string>
     <string name="InuRoundRecorderZoomSlider">Ползунок зума</string>
     <string name="InuRoundRecorderZoomButtons">Кнопки уровня зума</string>

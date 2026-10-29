@@ -328,6 +328,9 @@ object InuConfig {
     @JvmField
     val MONET_PREV = StringItem("monet_prev", "", exportable = false)
 
+    @JvmField
+    val MONET_STYLE = IntItem("monet_style", 0)
+
     class PredictiveBackModeItem : IntItem("predictive_back_mode", OFF) {
         // entiny: predictive back mode migrated from boolean to 3-way; old disable flag maps to OFF
         override fun read(prefs: SharedPreferences): Int {

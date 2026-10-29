@@ -619,3 +619,4 @@ entiny/chat/suggest-emoji-crash.patch
 entiny/chat/rich-editor-media-caption.patch
 entiny/chat/slowmode-forward-album.patch
 entiny/ui/profile-add-animation-crash.patch
+entiny/ui/monet-m3-style.patch

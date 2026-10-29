@@ -401,7 +401,71 @@ object MonetHelper {
             }
         }
 
-        throw IllegalArgumentException("Unknown Monet color token: $color")
+        return resolveMaterialToken(color) ?: throw IllegalArgumentException("Unknown Monet color token: $color")
+    }
+
+    // entiny: tokens of the Material 3 theme set, ported from exteraless: roles without the monet_ prefix, tonal palettes (primary_50, neutral_20) and hue palettes (blue_30)
+    private val MATERIAL_SEEDS = mapOf(
+        "blue" to 0xFF0000FF.toInt(),
+        "red" to 0xFFFF0000.toInt(),
+        "green" to 0xFF00FF00.toInt(),
+        "orange" to 0xFFFFAA00.toInt(),
+        "violet" to 0xFFEB00FF.toInt(),
+        "pink" to 0xFFFF32AC.toInt(),
+        "cyan" to 0xFF14AAAC.toInt(),
+    )
+
+    private val TONAL_PALETTES = mapOf(
+        "primary" to "a1",
+        "secondary" to "a2",
+        "tertiary" to "a3",
+        "neutral" to "n1",
+        "neutral_variant" to "n2",
+    )
+
+    private val TONE_TO_SHADE = mapOf(100 to 0, 99 to 10, 95 to 50, 90 to 100, 80 to 200, 70 to 300)
+
+    private val MATERIAL_COLORS = mapOf(
+        "mRed200" to 0xFFEF9A9A.toInt(),
+        "mRed800" to 0xFFC62828.toInt(),
+        "mGreen200" to 0xFFA5D6A7.toInt(),
+        "mGreen800" to 0xFF2E7D32.toInt(),
+    )
+
+    private fun resolveMaterialToken(token: String): Int? {
+        if (semantic.containsKey("monet_$token")) return resolveColor("monet_$token")
+        when (token) {
+            "white" -> return Color.WHITE
+            "black" -> return Color.BLACK
+            "transparent" -> return Color.TRANSPARENT
+        }
+        MATERIAL_COLORS[token]?.let { return harmonize(it) }
+
+        val cut = token.lastIndexOf('_')
+        if (cut <= 0 || cut == token.length - 1) return null
+        val prefix = token.substring(0, cut)
+        val number = token.substring(cut + 1).toIntOrNull() ?: return null
+
+        TONAL_PALETTES[prefix]?.let { palette ->
+            TONE_TO_SHADE[number]?.let { return resolveColor("${palette}_$it") }
+            val base = Hct.fromInt(resolveColor("${palette}_600"))
+            return Hct.from(base.hue, base.chroma, number.coerceIn(0, 100).toDouble()).toInt()
+        }
+        MATERIAL_SEEDS[prefix]?.let { if (number in 0..100) return huePaletteColor(it, number) }
+        return null
+    }
+
+    private fun huePaletteColor(seed: Int, tone: Int): Int {
+        val accent = ApplicationLoader.applicationContext.getColor(android.R.color.system_accent1_500)
+        val source = Hct.fromInt(Blend.harmonize(seed, accent))
+        val matched = Hct.fromInt(Hct.from(source.hue, Hct.fromInt(accent).chroma * 0.9, source.tone).toInt())
+        return Hct.from(matched.hue, matched.chroma, tone.toDouble()).toInt()
+    }
+
+    @JvmStatic
+    fun onStyleChanged() {
+        clearThemeColorCaches()
+        if (Theme.getActiveTheme()?.inu_isMonet() == true) reapplyActiveTheme()
     }
 
     @JvmStatic

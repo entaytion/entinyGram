@@ -134,6 +134,9 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">Otomatik</string>
     <string name="InuMonetThemeAutoAmoled">Otomatik (AMOLED)</string>
+    <string name="InuMonetStyle">Monet stili</string>
+    <string name="InuMonetStyleClassic">Klasik</string>
+    <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuAttachCamera">Kamera</string>
     <string name="InuAttachCameraMode">Kamera</string>
     <string name="InuAttachCameraModeInstant">Anlık</string>

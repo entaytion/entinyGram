@@ -226,6 +226,9 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">Auto</string>
     <string name="InuMonetThemeAutoAmoled">Auto (AMOLED)</string>
+    <string name="InuMonetStyle">Monet style</string>
+    <string name="InuMonetStyleClassic">Classic</string>
+    <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuAttachCamera">Camera</string>
     <string name="InuAttachCameraMode">Camera</string>
     <string name="InuAttachCameraModeInstant">Instant</string>
