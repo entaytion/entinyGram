@@ -670,6 +670,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu
 - chat drifting a few px off the input when hiding the keyboard while a message animation runs (aosp recyclerview bug: end-anchored padding delta applied twice across pre+post layout)
 - crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)
+- crash opening a new-bot link when the chat was closed before the link resolved
 - crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
 - expanded story reactions no longer remain above the app after dismissing the reply keyboard with the system back gesture
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
