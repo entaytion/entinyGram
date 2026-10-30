@@ -45,7 +45,7 @@ object VoiceRecorderHelper {
     // entiny: shift attach layout right into sendButton slot when voice button is moved to attach
     @JvmStatic
     fun attachTranslationXOffset(): Float =
-        if (isMovedToAttach()) AndroidUtilities.dp(48f).toFloat() else 0f
+        if (isMovedToAttach() && !IosInputHelper.isAppearance()) AndroidUtilities.dp(48f).toFloat() else 0f
 
     @JvmStatic
     fun initialRoundFacing(): RoundVideoSession.CameraFacing =
