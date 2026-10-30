@@ -1619,9 +1619,9 @@
     <string name="InuForwardProInfo">کلیدهای فرستنده، توضیح و ارسال بی‌صدا به‌علاوه ویرایش پیش از بازارسال.</string>
     <string name="InuForwardProHideCaption">پنهان کردن توضیح‌ها</string>
     <string name="InuForwardProEditedNotice">به‌صورت کپی از طرف شما و بدون برچسب بازارسال ارسال می‌شود</string>
-    <string name="InuForwardProRemoveLinks">حذف پیوندها</string>
     <string name="InuForwardProUseStock">Telegram پایه</string>
     <string name="InuForwardProPlaceholder">متن پیام</string>
+    <string name="InuForwardProTapToEdit">برای ویرایش روی پیام ضربه بزنید</string>
     <string name="InuForwardProEmptyNotice">متن پیام نمی‌تواند خالی باشد</string>
     <string name="InuForwardTooLarge">فایل از حد آپلود (%1$s) بیشتر است، فوروارد نمی‌شود</string>
 

@@ -1710,9 +1710,9 @@
     <string name="InuForwardProHideCaption">Скрыть подпись</string>
     <string name="InuForwardProCommentAfter">Отправлять комментарий после сообщения</string>
     <string name="InuForwardProEditedNotice">Отправится копией — от вашего имени, без пометки «Переслано от»</string>
-    <string name="InuForwardProRemoveLinks">Убрать ссылки</string>
     <string name="InuForwardProUseStock">Обычный Telegram</string>
     <string name="InuForwardProPlaceholder">Текст сообщения</string>
+    <string name="InuForwardProTapToEdit">Нажмите на сообщение, чтобы изменить его</string>
     <string name="InuForwardProEmptyNotice">Текст сообщения не может быть пустым</string>
     <string name="InuForwardTooLarge">Файл превышает лимит загрузки (%1$s), переслать нельзя</string>
     <string name="InuIosButtonPlacement">Расположение кнопок как в iOS</string>

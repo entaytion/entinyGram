@@ -4,14 +4,25 @@ Date: Fri, 30 Oct 2026 00:05:14 +0200
 Subject: [*] forward pro replaces forward
 
 ---
- .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../src/main/java/org/telegram/ui/ChatActivity.java    | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -34430,6 +34430,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -12686,6 +12686,10 @@ public class ChatActivity extends BaseFragment implements
+         if (selectionReactionsOverlay != null && selectionReactionsOverlay.isVisible()) {
+             selectionReactionsOverlay.setHiddenByScroll(true);
+         }
++        if (desu.inugram.helpers.chat.ForwardProHelper.takeOverSelection(this, selectedMessagesIds)) {
++            clearSelectionMode();
++            return;
++        }
+         Bundle args = new Bundle();
+         args.putBoolean("onlySelect", true);
+         args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
+@@ -34430,6 +34434,12 @@ public class ChatActivity extends BaseFragment implements
                      selectedObjectGroup = null;
                      return;
                  }

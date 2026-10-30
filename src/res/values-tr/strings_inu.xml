@@ -1554,9 +1554,9 @@
     <string name="InuForwardProInfo">İletmeden önce yazar, altyazı ve sessiz gönderme anahtarları ile düzenleme.</string>
     <string name="InuForwardProHideCaption">Başlıkları gizle</string>
     <string name="InuForwardProEditedNotice">Sizden bir kopya olarak, iletildi etiketi olmadan gönderilecektir</string>
-    <string name="InuForwardProRemoveLinks">Bağlantıları kaldır</string>
     <string name="InuForwardProUseStock">Standart Telegram</string>
     <string name="InuForwardProPlaceholder">Mesaj metni</string>
+    <string name="InuForwardProTapToEdit">Düzenlemek için mesaja dokun</string>
     <string name="InuForwardProEmptyNotice">Mesaj metni boş olamaz</string>
     <string name="InuForwardTooLarge">Dosya yükleme sınırını aşıyor (%1$s), iletilemez</string>
     <string name="InuIosButtonPlacement">Düğme yerleşimi (iOS)</string>

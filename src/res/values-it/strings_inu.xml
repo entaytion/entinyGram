@@ -1824,9 +1824,9 @@ Questa azione non può essere annullata.</string>
     <string name="InuForwardProInfo">Interruttori per autore, didascalia e invio silenzioso, più modifica prima dell\'inoltro.</string>
     <string name="InuForwardProHideCaption">Nascondi le didascalie</string>
     <string name="InuForwardProEditedNotice">Verrà inviato come una copia da te, senza etichetta di inoltro</string>
-    <string name="InuForwardProRemoveLinks">Rimuovi link</string>
     <string name="InuForwardProUseStock">Telegram standard</string>
     <string name="InuForwardProPlaceholder">Testo del messaggio</string>
+    <string name="InuForwardProTapToEdit">Tocca il messaggio per modificarlo</string>
     <string name="InuForwardProEmptyNotice">Il testo del messaggio non può essere vuoto</string>
 
     <string name="InuIosButtonPlacement">Posizione dei pulsanti (iOS)</string>

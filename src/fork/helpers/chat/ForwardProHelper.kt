@@ -14,7 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import desu.inugram.InuConfig
-import desu.inugram.ui.settings.ForwardEditorActivity
+import desu.inugram.ui.ForwardProFragment
 import desu.inugram.helpers.dialogs.FolderHelper
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
@@ -58,6 +58,7 @@ object ForwardProHelper {
         var isEditMode: Boolean = false
         var savedComment: CharSequence? = null
         var editedText: CharSequence? = null
+        var multiEdits: Map<Int, CharSequence> = emptyMap()
         var editButton: ImageView? = null
         var copyNotice: TextView? = null
         var authorIcon: ImageView? = null
@@ -76,11 +77,18 @@ object ForwardProHelper {
     private val states = WeakHashMap<ShareAlert, AlertState>()
     private var pendingOverride: Boolean? = null
     private var pendingInitialEditedText: CharSequence? = null
+    private var pendingEdits: Map<Int, CharSequence>? = null
 
     @JvmStatic
     fun requestStockShareOnce() {
         pendingOverride = false
         pendingInitialEditedText = null
+        pendingEdits = null
+    }
+
+    fun requestForwardProWithEdits(edits: Map<Int, CharSequence>) {
+        pendingOverride = true
+        pendingEdits = edits
     }
 
     @JvmStatic
@@ -104,8 +112,10 @@ object ForwardProHelper {
                     alert.showSendersName = InuConfig.FORWARD_PRO_SHOW_SENDER.value
                 }
                 it.editedText = pendingInitialEditedText
+                it.multiEdits = pendingEdits ?: emptyMap()
                 pendingOverride = null
                 pendingInitialEditedText = null
+                pendingEdits = null
             }
         }
     }
@@ -126,7 +136,7 @@ object ForwardProHelper {
     fun getExtraCommentPadding(alert: ShareAlert): Int {
         if (!getState(alert).active) return 0
         val msgs = alert.sendingMessageObjects
-        return if (getEditableMessage(msgs) != null) dp(44f) else 0
+        return if (canEdit(msgs)) dp(44f) else 0
     }
 
     @JvmStatic
@@ -372,7 +382,8 @@ object ForwardProHelper {
         val theme = alert.resourcesProvider
         val frame2 = alert.frameLayout2 ?: return
         val msgs = alert.sendingMessageObjects
-        val editable = getEditableMessage(msgs) ?: return
+        if (!canEdit(msgs)) return
+        val multi = unitsOf(msgs).size > 1
 
         val editButton = ImageView(context).apply {
             scaleType = ImageView.ScaleType.CENTER
@@ -400,9 +411,31 @@ object ForwardProHelper {
         frame2.addView(copyNotice, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, -2f, Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0f, -34f, 0f, 0f))
         frame2.addView(editButton, LayoutHelper.createFrame(40, 40f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 68f, 5f))
 
-        if (state.editedText != null) {
+        if (multi) {
+            if (state.multiEdits.isNotEmpty()) copyNotice.visibility = View.VISIBLE
+        } else if (state.editedText != null) {
             enterEditMode(alert, state.editedText, false)
         }
+    }
+
+    private fun unitsOf(messages: List<MessageObject>?): List<ArrayList<MessageObject>> {
+        val out = ArrayList<ArrayList<MessageObject>>()
+        val groups = HashMap<Long, ArrayList<MessageObject>>()
+        for (msg in messages ?: return out) {
+            val groupId = msg.groupIdForUse
+            if (groupId == 0L) {
+                out.add(arrayListOf(msg))
+            } else {
+                groups.getOrPut(groupId) { ArrayList<MessageObject>().also { out.add(it) } }.add(msg)
+            }
+        }
+        return out
+    }
+
+    private fun canEdit(messages: List<MessageObject>?): Boolean {
+        val units = unitsOf(messages)
+        if (units.size > 1) return units.any { getEditableMessage(it) != null }
+        return getEditableMessage(messages) != null
     }
 
     @JvmStatic
@@ -417,11 +450,26 @@ object ForwardProHelper {
     private fun openEditor(alert: ShareAlert) {
         val state = getState(alert)
         val messages = alert.sendingMessageObjects ?: return
-        val editable = getEditableMessage(messages) ?: return
         val chat = LaunchActivity.getSafeLastFragment() as? ChatActivity ?: return
         val commentView = alert.commentTextView
-        val original = editableText(editable, (commentView?.getEditText()?.paint ?: Paint()).fontMetricsInt)
-        val initial = if (state.isEditMode) commentView?.text?.let { SpannableStringBuilder(it) } ?: original else state.editedText ?: original
+        val metrics = (commentView?.getEditText()?.paint ?: Paint()).fontMetricsInt
+        val units = unitsOf(messages)
+        val multi = units.size > 1
+
+        val items = units.map { unit ->
+            val carrier = getEditableMessage(unit)
+            if (carrier == null) {
+                ForwardProFragment.Item(unit[0], false, "", "", false)
+            } else {
+                val original = editableText(carrier, metrics)
+                val initial = when {
+                    multi -> state.multiEdits[carrier.id] ?: original
+                    state.isEditMode -> commentView?.text?.let { SpannableStringBuilder(it) } ?: original
+                    else -> state.editedText ?: original
+                }
+                ForwardProFragment.Item(carrier, true, original, initial, !isTextOnly(carrier))
+            }
+        }
 
         InuConfig.FORWARD_PRO_SILENT.value = state.silentSend
         InuConfig.FORWARD_PRO_HIDE_CAPTION.value = state.hideCaption
@@ -429,11 +477,17 @@ object ForwardProHelper {
         InuConfig.FORWARD_PRO_SHOW_SENDER.value = alert.showSendersName
 
         val copy = ArrayList(messages)
-        val isMedia = !isTextOnly(editable)
         alert.dismiss()
-        chat.presentFragment(ForwardEditorActivity(original, initial, isMedia) { result ->
+        chat.presentFragment(ForwardProFragment(items) { result ->
             AndroidUtilities.runOnUIThread({
-                if (result != null) requestForwardProWithEditedText(result)
+                if (result != null) {
+                    if (multi) {
+                        requestForwardProWithEdits(result)
+                    } else {
+                        val item = items[0]
+                        requestForwardProWithEditedText(result[item.carrier.id] ?: item.original)
+                    }
+                }
                 openSheet(chat, copy, forcePro = true)
             }, 250)
         })
@@ -477,6 +531,9 @@ object ForwardProHelper {
         val state = getState(alert)
         if (!state.active) return false
         val msgs = alert.sendingMessageObjects ?: return false
+        if (unitsOf(msgs).size > 1) {
+            return state.multiEdits.isNotEmpty() && sendEditedAsCopy(alert, state.multiEdits, withSound)
+        }
         val editable = getEditableMessage(msgs) ?: return false
 
         val commentView = alert.commentTextView
@@ -496,18 +553,22 @@ object ForwardProHelper {
             return true
         }
 
-        return sendEditedAsCopy(alert, editable, textToSend, withSound)
+        return sendEditedAsCopy(alert, mapOf(editable.id to textToSend), withSound)
     }
 
-    private fun sendEditedAsCopy(alert: ShareAlert, editable: MessageObject, editedText: CharSequence, withSound: Boolean): Boolean {
+    private fun sendEditedAsCopy(alert: ShareAlert, edits: Map<Int, CharSequence>, withSound: Boolean): Boolean {
         val messages = alert.sendingMessageObjects ?: return false
         val state = getState(alert)
         val account = alert.currentAccount
+        val units = unitsOf(messages)
 
         // entiny: keep the spans so text links and formatting survive; getEntities also strips markdown from the text
-        val textHolder = arrayOf<CharSequence>(editedText)
-        val entities = MediaDataController.getInstance(account).getEntities(textHolder, true) ?: ArrayList()
-        val plainText = textHolder[0].toString()
+        val prepared = HashMap<Int, Pair<String, ArrayList<TLRPC.MessageEntity>>>()
+        for ((id, text) in edits) {
+            val holder = arrayOf<CharSequence>(text)
+            val entities = MediaDataController.getInstance(account).getEntities(holder, true) ?: ArrayList()
+            prepared[id] = holder[0].toString() to entities
+        }
         val comment = state.savedComment
         val hasComment = !comment.isNullOrEmpty()
         val commentEntities = if (hasComment) MediaDataController.getInstance(account).getEntities(arrayOf(comment), true) ?: ArrayList() else ArrayList()
@@ -535,8 +596,18 @@ object ForwardProHelper {
             }
 
             if (!state.commentAfter) sendComment()
-            val sent = withEditedText(editable, plainText, entities) {
-                sendSingleOrBatchAsCopy(messages, did, replyTopMsg, withSound, account, monoForumPeerId, state.scheduleDate)
+            var sent = false
+            for (unit in units) {
+                val carrier = unit.firstOrNull { prepared.containsKey(it.id) }
+                val edit = carrier?.let { prepared[it.id] }
+                val ok = if (carrier != null && edit != null) {
+                    withEditedText(carrier, edit.first, edit.second) {
+                        sendSingleOrBatchAsCopy(unit, did, replyTopMsg, withSound, account, monoForumPeerId, state.scheduleDate)
+                    }
+                } else {
+                    sendSingleOrBatchAsCopy(unit, did, replyTopMsg, withSound, account, monoForumPeerId, state.scheduleDate)
+                }
+                if (ok) sent = true
             }
             if (state.commentAfter) sendComment()
             if (sent) {
@@ -790,6 +861,17 @@ object ForwardProHelper {
     fun takeOver(activity: ChatActivity, message: MessageObject?, group: MessageObject.GroupedMessages?, noQuote: Boolean = false): Boolean {
         if (message == null || !InuConfig.FORWARD_PRO.value) return false
         openSheet(activity, group?.messages ?: listOf(message), noQuote = noQuote)
+        return true
+    }
+
+    @JvmStatic
+    fun takeOverSelection(activity: ChatActivity, selected: Array<android.util.SparseArray<MessageObject>>): Boolean {
+        if (!InuConfig.FORWARD_PRO.value) return false
+        val messages = ArrayList<MessageObject>()
+        for (side in selected) for (i in 0 until side.size()) messages.add(side.valueAt(i))
+        if (messages.isEmpty()) return false
+        messages.sortBy { it.id }
+        openSheet(activity, messages)
         return true
     }
 
