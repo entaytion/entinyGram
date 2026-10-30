@@ -13,7 +13,8 @@ import java.util.ArrayList
 
 object DownloadKeepAliveHelper {
 
-    private const val POLL_INTERVAL_MS = 7_000L
+    private const val POLL_INTERVAL_MS = 15_000L
+    private const val WAKE_LOCK_TIMEOUT_MS = 10 * 60 * 1000L
 
     private val handler = Handler(Looper.getMainLooper())
     private var wakeLock: PowerManager.WakeLock? = null
@@ -46,12 +47,14 @@ object DownloadKeepAliveHelper {
         acquireWakeLock()
     }
 
+    private val loadingFiles = ArrayList<MessageObject>()
+
     private fun hasActiveDownloads(): Boolean {
         try {
             for (account in 0 until UserConfig.getActivatedAccountsCount()) {
-                val files = ArrayList<MessageObject>()
-                FileLoader.getInstance(account).getCurrentLoadingFiles(files)
-                if (files.isNotEmpty()) return true
+                loadingFiles.clear()
+                FileLoader.getInstance(account).getCurrentLoadingFiles(loadingFiles)
+                if (loadingFiles.isNotEmpty()) return true
             }
         } catch (_: Throwable) {
         }
@@ -59,12 +62,13 @@ object DownloadKeepAliveHelper {
     }
 
     private fun acquireWakeLock() {
-        if (wakeLock != null) return
+        if (wakeLock?.isHeld == true) return
         try {
             val pm = ApplicationLoader.applicationContext.getSystemService(Context.POWER_SERVICE) as? PowerManager ?: return
-            val wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "entinyGram:keepDownloadsAwake")
+            // re-acquire after the safety timeout expires: the poll loop renews the lock while downloads are active
+            val wl = wakeLock ?: pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "entinyGram:keepDownloadsAwake")
             wl.setReferenceCounted(false)
-            wl.acquire()
+            wl.acquire(WAKE_LOCK_TIMEOUT_MS)
             wakeLock = wl
         } catch (_: Throwable) {
         }

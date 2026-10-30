@@ -474,7 +474,8 @@ class Md3RingPlayButton(context: Context, radiusDp: Float, strokeDp: Float, icon
         removeCallbacks(waveFrame)
         if (animating || targetAmp != amplitude) {
             postInvalidateOnAnimation()
-        } else if (amplitude > 0f) {
+        } else if (amplitude > 0f && isShown) {
+            // entiny: no frames while scrolled off-screen; onDraw resumes the loop when visible again
             postDelayed(waveFrame, 33)
         } else {
             lastFrame = 0L
