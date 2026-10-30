@@ -84,6 +84,11 @@ public class HeapProbeApp implements IApplication {
                 case "owners":    ownerSignatures(rest[0]); break;
                 case "fields":    dumpFields(rest[0], rest.length > 1 ? Integer.parseInt(rest[1]) : 5,
                                       rest.length > 2 && rest[2].equals("inbound")); break;
+                case "map":       dumpMap(rest[0], rest.length > 1 ? Integer.parseInt(rest[1]) : 40); break;
+                case "at":        printFields("OBJECT", snapshot.mapAddressToId(Long.parseLong(rest[0].replace("0x", ""), 16))); break;
+                case "str":       for (String a : rest) System.out.println(a + " = " + classSpecific(snapshot.getObject(snapshot.mapAddressToId(Long.parseLong(a.replace("0x", ""), 16))))); break;
+                case "raw":       for (String a : rest) System.out.println(a + " = " + rawString(snapshot.getObject(snapshot.mapAddressToId(Long.parseLong(a.replace("0x", ""), 16))))); break;
+                case "arr":       for (String a : rest) dumpArray(Long.parseLong(a.replace("0x", ""), 16)); break;
                 default: System.out.println("unknown command: " + cmd);
             }
         } finally {
@@ -336,6 +341,130 @@ public class HeapProbeApp implements IApplication {
             printFields("OBJECT", ids[i]);
             if (withInbound)
                 for (int from : snapshot.getInboundRefererIds(ids[i])) printFields("  <- " + refsTo(from, ids[i]), from);
+        }
+    }
+
+    private String classSpecific(IObject o) {
+        try {
+            String s = o.getClassSpecificName();
+            return s != null ? fixUtf(unescape(s)) : o.getTechnicalName();
+        } catch (Exception e) {
+            return o.getTechnicalName();
+        }
+    }
+
+    private void dumpArray(long addr) throws Exception {
+        IObject o = snapshot.getObject(snapshot.mapAddressToId(addr));
+        System.out.println("ARRAY " + o.getTechnicalName());
+        if (!(o instanceof org.eclipse.mat.snapshot.model.IObjectArray)) return;
+        for (long ref : ((org.eclipse.mat.snapshot.model.IObjectArray) o).getReferenceArray()) {
+            if (ref == 0) continue;
+            IObject el = snapshot.getObject(snapshot.mapAddressToId(ref));
+            String label = "java.lang.String".equals(el.getClazz().getName()) ? rawString(el) : classSpecific(el);
+            System.out.println("  " + label + "  [" + el.getClazz().getName() + "]");
+        }
+    }
+
+    /** read java.lang.String straight from its value array, bypassing MAT's corrupt-string resolver */
+    private String rawString(IObject o) throws Exception {
+        if (!(o instanceof org.eclipse.mat.snapshot.model.IInstance)) return "<not a string>";
+        Object val = ((org.eclipse.mat.snapshot.model.IInstance) o).resolveValue("value");
+        if (!(val instanceof org.eclipse.mat.snapshot.model.IPrimitiveArray)) return "<no value array>";
+        org.eclipse.mat.snapshot.model.IPrimitiveArray arr = (org.eclipse.mat.snapshot.model.IPrimitiveArray) val;
+        boolean chars = arr.getType() == 5;
+        StringBuilder sb = new StringBuilder(arr.getLength());
+        for (int i = 0; i < arr.getLength(); i++) {
+            Number n = (Number) (arr.getValueAt(i) instanceof Character
+                ? (int) ((Character) arr.getValueAt(i)).charValue()
+                : arr.getValueAt(i));
+            int b = n.intValue();
+            if (chars) {
+                sb.append((char) (b & 0xff)).append((char) (b >> 8));
+            } else {
+                sb.append((char) (b & 0xff));
+            }
+        }
+        return sb.toString();
+    }
+
+    /** MAT escapes unprintable code units as literal backslash-u hex sequences */
+    private static String unescape(String s) {
+        if (s.indexOf('\\') < 0) return s;
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '\\' && i + 5 < s.length() && s.charAt(i + 1) == 'u') {
+                try {
+                    sb.append((char) Integer.parseInt(s.substring(i + 2, i + 6), 16));
+                    i += 5;
+                    continue;
+                } catch (NumberFormatException ignored) { }
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    /** android hprof-conv dumps ascii packed as byte-swapped UTF-16 (lo,hi per code unit) */
+    private static String fixUtf(String s) {
+        StringBuilder sb = new StringBuilder(s.length() * 2);
+        int printable = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            char lo = (char) (c & 0xff);
+            char hi = (char) (c >> 8);
+            sb.append(lo).append(hi);
+            if (lo >= 32 && lo < 127) printable++;
+            if (hi >= 32 && hi < 127) printable++;
+        }
+        return s.length() > 0 && printable >= s.length() * 2 - 2 ? sb.toString() : s;
+    }
+
+    /** SharedPreferencesImpl (or any class with an mMap HashMap) -> per-key retained sizes */
+    private void dumpMap(String className, int limit) throws Exception {
+        int[] ids = sortedByRetained(idsFor(className));
+        for (int i = 0; i < Math.min(ids.length, limit); i++) {
+            IObject o = snapshot.getObject(ids[i]);
+            if (!(o instanceof org.eclipse.mat.snapshot.model.IInstance)) continue;
+            System.out.println("\n==== " + o.getTechnicalName() + " retained=" + retained(ids[i]) + " ====");
+            Object file = ((org.eclipse.mat.snapshot.model.IInstance) o).resolveValue("mFile");
+            if (file instanceof org.eclipse.mat.snapshot.model.IInstance) {
+                Object path = ((org.eclipse.mat.snapshot.model.IInstance) file).resolveValue("path");
+                if (path instanceof IObject) System.out.println("  file: " + classSpecific((IObject) path));
+            }
+            Object map = ((org.eclipse.mat.snapshot.model.IInstance) o).resolveValue("mMap");
+            if (!(map instanceof org.eclipse.mat.snapshot.model.IInstance)) { System.out.println("  (no mMap)"); continue; }
+            Object table = ((org.eclipse.mat.snapshot.model.IInstance) map).resolveValue("table");
+            if (!(table instanceof org.eclipse.mat.snapshot.model.IObjectArray)) { System.out.println("  (empty map)"); continue; }
+            java.util.List<String> rows = new ArrayList<>();
+            for (long refAddr : ((org.eclipse.mat.snapshot.model.IObjectArray) table).getReferenceArray()) {
+                if (refAddr == 0) continue;
+                int nodeId = snapshot.mapAddressToId(refAddr);
+                while (nodeId >= 0) {
+                    IObject node = snapshot.getObject(nodeId);
+                    if (!(node instanceof org.eclipse.mat.snapshot.model.IInstance)) break;
+                    org.eclipse.mat.snapshot.model.IInstance ni = (org.eclipse.mat.snapshot.model.IInstance) node;
+                    Object k = ni.resolveValue("key");
+                    Object v = ni.resolveValue("value");
+                    String key = k instanceof IObject ? classSpecific((IObject) k) : String.valueOf(k);
+                    long size = v instanceof IObject ? retained(((IObject) v).getObjectId()) : 0;
+                    String vc = v instanceof IObject ? ((IObject) v).getClazz().getName() : "null";
+                    String text = v instanceof IObject ? classSpecific((IObject) v) : "";
+                    if (text.length() > 160) text = text.substring(0, 160) + "...";
+                    rows.add(size + "\t" + vc + "\t" + key + "\t" + text.replace('\n', ' '));
+                    Object next = ni.resolveValue("next");
+                    nodeId = next instanceof IObject ? ((IObject) next).getObjectId() : -1;
+                }
+            }
+            rows.sort((a, b) -> Long.compare(Long.parseLong(b.split("\t")[0]), Long.parseLong(a.split("\t")[0])));
+            for (int r = 0; r < Math.min(rows.size(), 30); r++) System.out.println("  " + rows.get(r));
+            Map<String, Integer> pref = new HashMap<>();
+            for (String row : rows) {
+                String k = row.split("\t")[2];
+                pref.merge(k.length() >= 3 ? k.substring(0, 3) : k, 1, Integer::sum);
+            }
+            System.out.println("  key-prefixes: " + pref);
+            System.out.println("  entries=" + rows.size());
         }
     }
 
