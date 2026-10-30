@@ -169,7 +169,8 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
 
     private fun scheduleNextUpdate() {
         removeCallbacks(autoRefreshRunnable)
-        if (!stackVisible) return
+        // entiny: only the selected pill is visible in the stack, hidden pills must not tick
+        if (!stackVisible || !isShown) return
         val interval = getRefreshInterval()
         if (interval > 0) postDelayed(autoRefreshRunnable, interval)
     }
@@ -179,9 +180,22 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
         stackVisible = visible
         if (!visible) {
             removeCallbacks(autoRefreshRunnable)
-        } else if (getRefreshInterval() > 0) {
+        } else if (visibility == VISIBLE && getRefreshInterval() > 0) {
             if (isRefreshDue()) onUpdateData(false)
             scheduleNextUpdate()
+        }
+    }
+
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        if (changedView !== this) return
+        if (visibility == VISIBLE) {
+            if (stackVisible && getRefreshInterval() > 0) {
+                if (isRefreshDue()) onUpdateData(false)
+                scheduleNextUpdate()
+            }
+        } else {
+            removeCallbacks(autoRefreshRunnable)
         }
     }
 
@@ -255,6 +269,7 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        if (visibility != VISIBLE) return
         if (!stackVisible) return
         val interval = getRefreshInterval()
         if (interval <= 0) return
