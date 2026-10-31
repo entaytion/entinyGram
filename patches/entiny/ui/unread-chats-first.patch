@@ -4,8 +4,8 @@ Date: Fri, 30 Oct 2026 00:06:42 +0200
 Subject: [+] unread chats first
 
 ---
- .../main/java/org/telegram/messenger/MessagesController.java  | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../main/java/org/telegram/messenger/MessagesController.java | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -29,3 +29,11 @@ index 0000000..0000000 100644
          MediaDataController mediaDataController = getMediaDataController();
          long date1 = DialogObject.getLastMessageOrDraftDate(dialog1, mediaDataController.getDraft(dialog1.id, 0));
          long date2 = DialogObject.getLastMessageOrDraftDate(dialog2, mediaDataController.getDraft(dialog2.id, 0));
+@@ -14103,6 +14107,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     }
+                 }
+             }
++            filterDialogsChanged |= desu.inugram.helpers.dialogs.UnreadFirstHelper.resortOnRead();
+             if (filterDialogsChanged) {
+                 sortDialogs(null);
+                 getNotificationCenter().postNotificationName(NotificationCenter.dialogsNeedReload);

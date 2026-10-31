@@ -196,7 +196,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **instant mark reactions as read** - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **local folders** once the server limit is reached
 - 📡 **remember last folder**: the chat list opens on the folder you used last, not on All Chats
-- 📡 **unread chats first**: unread chats go above read ones, pinned chats stay on top
+- 📡 **unread chats first**: unread chats, muted ones too, go above read ones in every folder and drop down once read, pinned chats stay on top
 - 📡 **folder icon picker**
 - 📡 **separator after mention** - *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
 - 📡 **export chat** as JSON or HTML with media, including your own voice and video messages; the options sheet remembers your defaults

@@ -16,11 +16,11 @@ object UnreadFirstHelper {
         return if (unreadA == unreadB) 0 else if (unreadA) -1 else 1
     }
 
-    // entiny: muted chats keep their place, only their mentions count
-    private fun isUnread(controller: MessagesController, d: TLRPC.Dialog): Boolean {
-        if (d.unread_mark || GhostHelper.effectiveMentions(d) > 0) return true
-        return controller.getDialogUnreadCount(d) > 0 && !controller.isDialogMuted(d.id, 0)
-    }
+    @JvmStatic
+    fun resortOnRead(): Boolean = InuConfig.UNREAD_CHATS_FIRST.value
+
+    private fun isUnread(controller: MessagesController, d: TLRPC.Dialog): Boolean =
+        d.unread_mark || GhostHelper.effectiveMentions(d) > 0 || controller.getDialogUnreadCount(d) > 0
 
     @JvmStatic
     fun refresh() {
