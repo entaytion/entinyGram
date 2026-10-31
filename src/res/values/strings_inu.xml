@@ -1498,6 +1498,11 @@
     <string name="InuHideSponsoredMessagesInfo">Disables channel sponsored ads and prevents loading promotional messages</string>
     <string name="InuHideProxySponsorChat">Hide proxy sponsor chat</string>
     <string name="InuHideProxySponsorChatInfo">Blocks the promoted chat/channel some MTProto proxies pin to the top of your chat list while connected</string>
+    <string name="InuHideBusinessBotBanner">Hide business bot banner</string>
+    <string name="InuHideBusinessBotBannerInfo">Hides the business bot panel above the chat. Start or stop the bot from the chat menu</string>
+    <string name="InuBusinessBot">Business bot</string>
+    <string name="InuBusinessBotStopped">Business bot stopped</string>
+    <string name="InuBusinessBotStarted">Business bot started</string>
     <string name="InuRegexFilter">AdBlock &amp; Regex Filter</string>
     <string name="InuRegexFilterEnabled">Enable content filter</string>
     <string name="InuRegexFilterEnabledInfo">Filters out posts and messages matching specified keywords or regular expressions</string>

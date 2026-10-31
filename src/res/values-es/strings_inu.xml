@@ -1464,6 +1464,11 @@ Esta acción no se puede deshacer.</string>
     <string name="InuHideSponsoredMessagesInfo">Desactiva los anuncios patrocinados en canales.</string>
     <string name="InuHideProxySponsorChat">Ocultar chat patrocinador del proxy</string>
     <string name="InuHideProxySponsorChatInfo">Bloquea el chat promocionado que algunos proxies fijan arriba.</string>
+    <string name="InuHideBusinessBotBanner">Ocultar banner del bot de empresa</string>
+    <string name="InuHideBusinessBotBannerInfo">Oculta el panel del bot de empresa sobre el chat. Inicia o detén el bot desde el menú del chat</string>
+    <string name="InuBusinessBot">Bot de empresa</string>
+    <string name="InuBusinessBotStopped">Bot de empresa detenido</string>
+    <string name="InuBusinessBotStarted">Bot de empresa iniciado</string>
     <string name="InuRegexFilter">AdBlock y Filtro Regex</string>
     <string name="InuRegexFilterEnabled">Habilitar filtro de contenido</string>
     <string name="InuRegexFilterEnabledInfo">Filtra publicaciones y mensajes que coincidan con palabras clave o expresiones regulares.</string>

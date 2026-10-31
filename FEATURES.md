@@ -61,6 +61,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **adblock & content filtering**:
   - hide sponsored messages
   - hide the proxy sponsor chat
+  - hide the business bot banner and start or stop the bot from the chat menu - *inspired by Hide Business Bot Banner plugin (@anivPlugins)*
   - hide or spoiler-cover messages matching regex rules
   - optionally hide replies to filtered messages
 

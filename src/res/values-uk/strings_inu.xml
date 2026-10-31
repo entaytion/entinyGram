@@ -1211,6 +1211,11 @@
     <string name="InuHideSponsoredMessagesInfo">Вимикає рекламні дописи в каналах та повністю блокує їх завантаження</string>
     <string name="InuHideProxySponsorChat">Приховати спонсорський чат проксі</string>
     <string name="InuHideProxySponsorChatInfo">Блокує рекламний чат/канал, який деякі MTProto-проксі закріплюють вгорі списку чатів під час підключення</string>
+    <string name="InuHideBusinessBotBanner">Сховати банер бізнес-бота</string>
+    <string name="InuHideBusinessBotBannerInfo">Ховає панель бізнес-бота над чатом. Запускати або зупиняти бота можна з меню чату</string>
+    <string name="InuBusinessBot">Бізнес-бот</string>
+    <string name="InuBusinessBotStopped">Бізнес-бота зупинено</string>
+    <string name="InuBusinessBotStarted">Бізнес-бота запущено</string>
 
     <string name="InuMaterialProfileActions">Кнопки дій у профілі</string>
     <string name="InuEntinyMenu">entinyGram</string>

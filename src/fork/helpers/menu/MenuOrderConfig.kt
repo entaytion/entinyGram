@@ -177,6 +177,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         CHAT_EXPORT("chat_export", listOf(ChatActionsHelper.ACTION_CHAT_EXPORT), R.string.InuChatExport, R.drawable.msg_share_solar),
         SHOW_HIDDEN("show_hidden", listOf(ChatActionsHelper.ACTION_SHOW_HIDDEN), R.string.InuRestoreHiddenMessages, R.drawable.inu_tabler_eye),
         CHAT_PROXY("chat_proxy", listOf(ChatActionsHelper.ACTION_CHAT_PROXY), R.string.ProxySettings, R.drawable.outline_shield_check),
+        BUSINESS_BOT("business_bot", listOf(ChatActionsHelper.ACTION_BUSINESS_BOT), R.string.InuBusinessBot, R.drawable.msg_bot),
         CHAT_LOCAL_NAME("chat_local_name", listOf(ChatActionsHelper.ACTION_CHAT_LOCAL_NAME), R.string.InuLocalName, R.drawable.msg_edit),
         CHAT_MARK_READ("chat_mark_read", listOf(ChatActionsHelper.ACTION_CHAT_MARK_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
         CHAT_DELETE_MY_MESSAGES("chat_delete_my_messages", listOf(ChatActionsHelper.ACTION_CHAT_DELETE_MY_MESSAGES), R.string.InuDeleteMyMessages, R.drawable.msg_delete),

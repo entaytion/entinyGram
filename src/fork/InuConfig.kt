@@ -1007,6 +1007,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val HIDE_PROXY_SPONSOR_CHAT = BoolItem("hide_proxy_sponsor_chat", true)
 
     @JvmField
+    val HIDE_BUSINESS_BOT_BANNER = BoolItem("hide_business_bot_banner", false)
+
+    @JvmField
     val HIDE_PSA_PROMO_CHAT = BoolItem("hide_psa_promo_chat", false)
 
     @JvmField

@@ -1390,6 +1390,11 @@
     <string name="InuBlockSleepWhileDownloadingInfo">ダウンロード中に部分的なウェイクロックを保持し、Androidがバックグラウンドで停止しないようにします。</string>
     <string name="InuHideProxySponsorChat">プロキシのスポンサーチャットを非表示</string>
     <string name="InuHideProxySponsorChatInfo">接続時に一部のMTProtoプロキシがチャット一覧の一番上に固定するプロモーションチャット/チャンネルをブロックします</string>
+    <string name="InuHideBusinessBotBanner">ビジネスボットのバナーを非表示</string>
+    <string name="InuHideBusinessBotBannerInfo">チャット上部のビジネスボットのパネルを非表示にします。ボットの開始・停止はチャットメニューから行えます</string>
+    <string name="InuBusinessBot">ビジネスボット</string>
+    <string name="InuBusinessBotStopped">ビジネスボットを停止しました</string>
+    <string name="InuBusinessBotStarted">ビジネスボットを開始しました</string>
     <string name="InuHideRichEditorButton">リッチテキストエディターボタンを非表示</string>
     <string name="InuKeepDownloadsInBackground">スクロールや終了時にダウンロードを中断しない</string>
     <string name="InuKeepDownloadsInBackgroundInfo">スクロールで見えなくなったりチャットを離れても、ダウンロードを続けます。</string>

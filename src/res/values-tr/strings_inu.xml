@@ -1404,6 +1404,11 @@
     <string name="InuBlockSleepWhileDownloadingInfo">İndirme etkin olduğunda Android\'in arka planda duraklatmasını önlemek için kısmi bir wake lock tutar.</string>
     <string name="InuHideProxySponsorChat">Vekil sunucu sponsor sohbetini gizle</string>
     <string name="InuHideProxySponsorChatInfo">Bağlıyken bazı MTProto vekil sunucularının sohbet listenizin en üstüne sabitlediği tanıtım sohbetini/kanalını engeller</string>
+    <string name="InuHideBusinessBotBanner">İş botu bannerını gizle</string>
+    <string name="InuHideBusinessBotBannerInfo">Sohbetin üstündeki iş botu panelini gizler. Botu sohbet menüsünden başlatın veya durdurun</string>
+    <string name="InuBusinessBot">İş botu</string>
+    <string name="InuBusinessBotStopped">İş botu durduruldu</string>
+    <string name="InuBusinessBotStarted">İş botu başlatıldı</string>
     <string name="InuHideRichEditorButton">Zengin metin düzenleyici düğmesini gizle</string>
     <string name="InuKeepDownloadsInBackground">Kaydırma veya çıkışta indirmeleri sonlandırma</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Kaydırdığınızda veya sohbetten çıktığınızda indirmeler devam eder.</string>

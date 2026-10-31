@@ -1621,6 +1621,11 @@
     <string name="InuBlockSleepWhileDownloadingInfo">Удерживает wake lock во время активной загрузки, чтобы Android не приостанавливал её в фоне.</string>
     <string name="InuHideProxySponsorChat">Скрыть спонсорский чат прокси</string>
     <string name="InuHideProxySponsorChatInfo">Блокирует рекламный чат или канал, который некоторые MTProto-прокси закрепляют вверху списка чатов</string>
+    <string name="InuHideBusinessBotBanner">Скрыть баннер бизнес-бота</string>
+    <string name="InuHideBusinessBotBannerInfo">Скрывает панель бизнес-бота над чатом. Запускать или останавливать бота можно из меню чата</string>
+    <string name="InuBusinessBot">Бизнес-бот</string>
+    <string name="InuBusinessBotStopped">Бизнес-бот остановлен</string>
+    <string name="InuBusinessBotStarted">Бизнес-бот запущен</string>
     <string name="InuHideRichEditorButton">Скрыть кнопку редактора форматирования</string>
     <string name="InuKeepDownloadsInBackground">Не прерывать загрузки при скролле и выходе</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Загрузки продолжаются, когда вы прокручиваете сообщение или выходите из чата.</string>

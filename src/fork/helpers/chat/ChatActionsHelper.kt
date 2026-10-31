@@ -95,6 +95,7 @@ object ChatActionsHelper {
     const val ACTION_EDITED_MESSAGES = 547
     const val ACTION_CHAT_PROXY = 548
     const val ACTION_SHOW_HIDDEN = 549
+    const val ACTION_BUSINESS_BOT = 550
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -262,6 +263,12 @@ object ChatActionsHelper {
             headerItem.lazilyAddSubItem(
                 ACTION_CHAT_EXPORT, R.drawable.msg_share_solar,
                 LocaleController.getString(R.string.InuChatExport),
+            )
+        }
+        if (BusinessBotHelper.menuAvailable(activity)) {
+            headerItem.lazilyAddSubItem(
+                ACTION_BUSINESS_BOT, R.drawable.msg_bot,
+                LocaleController.getString(R.string.InuBusinessBot),
             )
         }
         headerItem.lazilyAddSubItem(
@@ -603,6 +610,7 @@ object ChatActionsHelper {
                 }
             }
             ACTION_CHAT_PROXY -> activity.presentFragment(org.telegram.ui.ProxyListActivity())
+            ACTION_BUSINESS_BOT -> BusinessBotHelper.toggle(activity)
             ACTION_CHAT_LOCAL_NAME -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EDIT_LOCAL_NAME, null, activity.currentAccount, activity.dialogId)
             ACTION_CHAT_MARK_READ -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_MARK_AS_READ, null, activity.currentAccount, activity.dialogId)
             ACTION_CHAT_DELETE_MY_MESSAGES -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_DELETE_MY_MESSAGES, null, activity.currentAccount, activity.dialogId)

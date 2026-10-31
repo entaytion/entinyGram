@@ -1274,6 +1274,11 @@
     <string name="InuHideSponsoredMessagesInfo">تبلیغات حمایت‌شده کانال‌ها را غیرفعال می‌کند و از بارگیری پیام‌های تبلیغاتی جلوگیری می‌کند</string>
     <string name="InuHideProxySponsorChat">پنهان کردن گفتگوی حامی پروکسی</string>
     <string name="InuHideProxySponsorChatInfo">گفتگو/کانال تبلیغاتی را که برخی پروکسی‌های MTProto هنگام اتصال بالای فهرست گفتگوی شما سنجاق می‌کنند مسدود می‌کند</string>
+    <string name="InuHideBusinessBotBanner">پنهان کردن بنر ربات کسب‌وکار</string>
+    <string name="InuHideBusinessBotBannerInfo">پنل ربات کسب‌وکار را بالای گفتگو پنهان می‌کند. ربات را از منوی گفتگو شروع یا متوقف کنید</string>
+    <string name="InuBusinessBot">ربات کسب‌وکار</string>
+    <string name="InuBusinessBotStopped">ربات کسب‌وکار متوقف شد</string>
+    <string name="InuBusinessBotStarted">ربات کسب‌وکار شروع شد</string>
     <string name="InuRegexFilter">AdBlock و فیلتر Regex</string>
     <string name="InuRegexFilterEnabled">فعال‌سازی فیلتر محتوا</string>
     <string name="InuRegexFilterEnabledInfo">پست‌ها و پیام‌های منطبق با کلمات کلیدی یا عبارت‌های منظم مشخص را فیلتر می‌کند</string>

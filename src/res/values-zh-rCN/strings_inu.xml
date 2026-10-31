@@ -1403,6 +1403,11 @@
     <string name="InuBlockSleepWhileDownloadingInfo">在下载进行时保持部分唤醒锁（wake lock），防止 Android 在后台暂停下载。</string>
     <string name="InuHideProxySponsorChat">隐藏代理赞助商聊天</string>
     <string name="InuHideProxySponsorChatInfo">屏蔽某些 MTProto 代理在连接时置顶在聊天列表顶部的推广聊天/频道</string>
+    <string name="InuHideBusinessBotBanner">隐藏商务机器人横幅</string>
+    <string name="InuHideBusinessBotBannerInfo">隐藏聊天上方的商务机器人面板。可在聊天菜单中启动或停止机器人</string>
+    <string name="InuBusinessBot">商务机器人</string>
+    <string name="InuBusinessBotStopped">商务机器人已停止</string>
+    <string name="InuBusinessBotStarted">商务机器人已启动</string>
     <string name="InuHideRichEditorButton">隐藏富文本编辑器按钮</string>
     <string name="InuKeepDownloadsInBackground">滑动或退出时不中断下载</string>
     <string name="InuKeepDownloadsInBackgroundInfo">滚出屏幕或离开聊天时，下载会继续进行。</string>

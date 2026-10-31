@@ -1286,6 +1286,11 @@
     <string name="InuHideSponsoredMessagesInfo">يعطّل إعلانات القنوات الممولة ويمنع تحميل الرسائل الترويجية</string>
     <string name="InuHideProxySponsorChat">إخفاء محادثة راعي البروكسي</string>
     <string name="InuHideProxySponsorChatInfo">يحظر المحادثة/القناة الترويجية التي تثبّتها بعض بروكسيات MTProto أعلى قائمة محادثاتك أثناء الاتصال</string>
+    <string name="InuHideBusinessBotBanner">إخفاء شريط بوت الأعمال</string>
+    <string name="InuHideBusinessBotBannerInfo">يخفي لوحة بوت الأعمال أعلى الدردشة. يمكنك تشغيل البوت أو إيقافه من قائمة الدردشة</string>
+    <string name="InuBusinessBot">بوت الأعمال</string>
+    <string name="InuBusinessBotStopped">تم إيقاف بوت الأعمال</string>
+    <string name="InuBusinessBotStarted">تم تشغيل بوت الأعمال</string>
     <string name="InuRegexFilter">AdBlock &amp; مرشّح Regex</string>
     <string name="InuRegexFilterEnabled">تفعيل مرشّح المحتوى</string>
     <string name="InuRegexFilterEnabledInfo">يصفّي المنشورات والرسائل المطابقة لكلمات مفتاحية أو تعابير نمطية محددة</string>
