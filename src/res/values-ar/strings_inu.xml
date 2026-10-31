@@ -127,6 +127,7 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">المفاتيح</string>
     <string name="InuMaterial3Sliders">أشرطة التمرير</string>
+    <string name="InuMaterial3Dialogs">مربعات الحوار والأوراق السفلية</string>
     <string name="InuMaterial3Fabs">الأزرار العائمة</string>
     <string name="InuMaterial3Sections">عناصر القائمة</string>
     <string name="InuMaterial3Avatars">الصور الرمزية</string>

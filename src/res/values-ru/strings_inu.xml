@@ -809,6 +809,7 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Переключатели</string>
     <string name="InuMaterial3Sliders">Ползунки</string>
+    <string name="InuMaterial3Dialogs">Диалоги и шторки</string>
     <string name="InuMaterial3Avatars">Аватары</string>
     <string name="InuAvatarCorners">Скругление аватарок</string>
     <string name="InuAvatarCornersLeft">Прямые</string>

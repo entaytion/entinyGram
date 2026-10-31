@@ -26,6 +26,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
             listOf(
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Switches, InuConfig.MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_SWITCHES),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sliders, InuConfig.MATERIAL3_SLIDERS, TOGGLE_MATERIAL3_SLIDERS),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3Dialogs, InuConfig.MATERIAL3_DIALOGS, TOGGLE_MATERIAL3_DIALOGS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sections, InuConfig.M3_SECTIONS_STYLE, TOGGLE_M3_SECTIONS_STYLE),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3AccentIcons, InuConfig.M3_ACCENT_ICONS, TOGGLE_M3_ACCENT_ICONS),
@@ -211,6 +212,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
         private val TOGGLE_MD3_PLAYER = InuUtils.generateId()
+        private val TOGGLE_MATERIAL3_DIALOGS = InuUtils.generateId()
         private val TOGGLE_DIALOGS_SECTIONS = InuUtils.generateId()
         private val BUTTON_DIALOGS_MARGIN = InuUtils.generateId()
         private val TOGGLE_DIALOGS_SEPARATE_PINNED = InuUtils.generateId()

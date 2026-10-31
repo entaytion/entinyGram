@@ -113,6 +113,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **clown avatar for blocked users**: blocked users show 🤡 (or 💩 / 💀) instead of their photo - *ported from [NiagramX](https://github.com/HSSkyBoy/NiagramX)*
 - 📡 **clown avatar for users who blocked me**: guessed from a missing photo and last seen, so it can be wrong - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **standalone AMOLED theme** - *ported from NagramX Turbo*
+- 📡 **Material 3 dialogs and sheets**: rounder dialogs and bottom sheets
 - 📡 **Monet style**: Material 3 colors for the Monet themes next to the classic ones - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **theme switch recovery**: fixes interrupted theme transitions and stale Monet palettes
 - 📡 **liquid glass controls**: adjustable refraction angle and intensity - *ported from [Nagram](https://github.com/NextAlone/Nagram)*

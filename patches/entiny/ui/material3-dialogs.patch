@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 1 Nov 2026 00:17:17 +0200
+Subject: [+] material 3 dialogs and sheets
+
+---
+ .../src/main/java/org/telegram/ui/ActionBar/AlertDialog.java  | 4 ++--
+ .../src/main/java/org/telegram/ui/ActionBar/BottomSheet.java  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
+@@ -311,7 +311,7 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
+ 
+         backgroundPaddings = new Rect();
+         if (progressStyle != ALERT_TYPE_SPINNER || blurredBackground) {
+-            shadowDrawable = context.getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate();
++            shadowDrawable = desu.inugram.helpers.theme.M3ShapeHelper.dialog(context.getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate());
+             blurOpacity = progressStyle == ALERT_TYPE_SPINNER ? 0.55f : (isDark ? 0.80f : 0.985f);
+             shadowDrawable.setColorFilter(new PorterDuffColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY));
+             shadowDrawable.getPadding(backgroundPaddings);
+@@ -1345,7 +1345,7 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
+                 if (progressViewStyle == ALERT_TYPE_MESSAGE) {
+                     blurredNativeBackground = true;
+                     window.setBackgroundBlurRadius(50);
+-                    float rad = dp(12);
++                    float rad = desu.inugram.helpers.theme.M3ShapeHelper.dialogRadius(dp(12));
+                     ShapeDrawable shapeDrawable = new ShapeDrawable(new RoundRectShape(new float[]{rad, rad, rad, rad, rad, rad, rad, rad}, null, null));
+                     shapeDrawable.getPaint().setColor(ColorUtils.setAlphaComponent(backgroundColor, (int) (blurAlpha * 255)));
+                     window.setBackgroundDrawable(shapeDrawable);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheet.java
+@@ -1220,7 +1220,7 @@ public class BottomSheet extends Dialog implements BaseFragment.AttachedSheet {
+         touchSlop = vc.getScaledTouchSlop();
+ 
+         Rect padding = new Rect();
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = desu.inugram.helpers.theme.M3ShapeHelper.sheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(internalBackgroundColor = getThemedColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
+         shadowDrawable.getPadding(padding);
+         backgroundPaddingLeft = padding.left;

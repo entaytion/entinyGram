@@ -121,6 +121,7 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Перемикачі</string>
     <string name="InuMaterial3Sliders">Повзунки</string>
+    <string name="InuMaterial3Dialogs">Діалоги та шторки</string>
     <string name="InuMaterial3Fabs">Плаваючі кнопки (FAB)</string>
     <string name="InuMaterial3Sections">Елементи списків</string>
     <string name="InuMaterial3Avatars">Аватари</string>

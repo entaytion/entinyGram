@@ -720,6 +720,7 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">开关</string>
     <string name="InuMaterial3Sliders">滑块</string>
+    <string name="InuMaterial3Dialogs">对话框和底部面板</string>
     <string name="InuMonetTheme">Monet 主题</string>
     <string name="InuMonetThemeDisabled">禁用</string>
     <string name="InuMonetThemeLight">浅色</string>

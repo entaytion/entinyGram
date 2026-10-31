@@ -189,6 +189,7 @@ Sistema: %6$s
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Interruttori</string>
     <string name="InuMaterial3Sliders">Cursori</string>
+    <string name="InuMaterial3Dialogs">Dialoghi e schede</string>
     <string name="InuMaterial3Fabs">Pulsanti flottanti</string>
     <string name="InuMaterial3Sections">Elementi dell\'elenco</string>
     <string name="InuMaterial3AccentIcons">Icone con colore d\'accento</string>

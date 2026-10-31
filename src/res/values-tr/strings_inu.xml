@@ -117,6 +117,7 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Anahtarlar</string>
     <string name="InuMaterial3Sliders">Kaydırıcılar</string>
+    <string name="InuMaterial3Dialogs">Diyaloglar ve alt sayfalar</string>
     <string name="InuMaterial3Fabs">Yüzen düğmeler</string>
     <string name="InuMaterial3Sections">Liste ögeleri</string>
     <string name="InuMaterial3Avatars">Profil resimleri</string>
