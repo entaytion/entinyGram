@@ -217,6 +217,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **silent broadcast bell in the chat menu**: optionally move the bell out of the channel input field
 - 📡 **copy photo** in the message menu as its own item, also on photos with a caption, and it can go into the quick actions row
 - 📡 **PhotoViewer close crash fix** when the selected-media strip is not initialized
+- 📡 **crash fix** when deleting all messages of a user while their media messages are selected
 - 📡 **square camera tile**: the attach gallery camera takes one cell instead of two
 - 📡 **save selected files**: download button when selecting files in profile media and search - *ported from the Save Selected Files plugin by @akresik*
 - 📡 **free memory in background**: clears image caches shortly after the app is minimized

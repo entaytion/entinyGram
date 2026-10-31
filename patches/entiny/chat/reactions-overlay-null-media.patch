@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 1 Nov 2026 00:06:08 +0200
+Subject: [*] crash selecting deleted media messages
+
+---
+ .../Components/Reactions/ChatSelectionReactionMenuOverlay.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ChatSelectionReactionMenuOverlay.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ChatSelectionReactionMenuOverlay.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ChatSelectionReactionMenuOverlay.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ChatSelectionReactionMenuOverlay.java
+@@ -301,7 +301,7 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
+     private boolean isMessageTypeAllowed(MessageObject obj) {
+         if (obj != null && obj.messageOwner != null && obj.messageOwner.rich_message != null) return true;
+         return obj != null && !obj.needDrawBluredPreview() && (
+-            MessageObject.isPhoto(obj.messageOwner) && MessageObject.getMedia(obj.messageOwner).webpage == null ||
++            MessageObject.isPhoto(obj.messageOwner) && MessageObject.getMedia(obj.messageOwner) != null && MessageObject.getMedia(obj.messageOwner).webpage == null ||
+             obj.getDocument() != null && (
+                 MessageObject.isVideoDocument(obj.getDocument()) ||
+                 MessageObject.isGifDocument(obj.getDocument())

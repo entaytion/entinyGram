@@ -627,3 +627,4 @@ entiny/media/hd-photo-q87.patch
 entiny/calls/call-proximity-sensor.patch
 entiny/chat/hide-business-bot-banner.patch
 entiny/chat/notify-bell-in-menu.patch
+entiny/chat/reactions-overlay-null-media.patch
