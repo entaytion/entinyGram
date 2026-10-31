@@ -134,16 +134,16 @@ internal object ExportHtml {
             val why = if (item.failed) "download failed" else "not found"
             return "<div class=\"media\"><span class=\"missing\">$label · $why</span></div>"
         }
-        val href = item.entryName.split('/').joinToString("/") { esc(it) }
-        // entiny: viewers opened via content:// can't resolve sibling files, so images carry an inline fallback
-        val fallback = if (item.kind == ExportMediaKind.PHOTO || item.kind == ExportMediaKind.STICKER) inlinePreview(item.file) else null
-        val onError = fallback?.let { " data-fb=\"$it\" onerror=\"if(this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb=''}\"" } ?: ""
-        if (item.kind == ExportMediaKind.STICKER && fallback != null) {
-            return "<div class=\"media\"><img class=\"sticker\" loading=\"lazy\" src=\"$href\" alt=\"$label\"$onError></div>"
+        val href = item.entryName.split('/').joinToString("/") { esc(Uri.encode(it)) }
+        // entiny: viewers opened via content:// can't resolve sibling files and may run no scripts, so images show the inline preview and link to the full file
+        val preview = if (item.kind == ExportMediaKind.PHOTO || item.kind == ExportMediaKind.STICKER) inlinePreview(item.file) else null
+        val shown = preview ?: href
+        if (item.kind == ExportMediaKind.STICKER) {
+            return "<div class=\"media\"><img class=\"sticker\" loading=\"lazy\" src=\"$shown\" alt=\"$label\"></div>"
         }
         return when (item.kind) {
             ExportMediaKind.PHOTO ->
-                "<div class=\"media\"><a href=\"$href\"><img loading=\"lazy\" src=\"$href\" alt=\"$label\"$onError></a></div>"
+                "<div class=\"media\"><a href=\"$href\"><img loading=\"lazy\" src=\"$shown\" alt=\"$label\"></a></div>"
             ExportMediaKind.VIDEO, ExportMediaKind.ROUND ->
                 "<div class=\"media\"><video controls preload=\"none\" src=\"$href\"></video></div>"
             ExportMediaKind.VOICE ->
