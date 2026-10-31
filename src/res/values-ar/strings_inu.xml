@@ -1467,6 +1467,9 @@
 
     <string name="InuChatExport">تصدير المحادثة</string>
     <string name="InuChatExportInfo">تصدير المحادثة إلى JSON أو أرشيف HTML من قائمة الملف الشخصي.</string>
+    <string name="InuNotifyBellInMenu">نقل الجرس إلى قائمة الدردشة</string>
+    <string name="InuNotifyBellInMenuInfo">يزيل جرس الإرسال الصامت من حقل الإدخال في القنوات التي تنشر فيها. بدلاً من ذلك بدّله من قائمة الدردشة</string>
+    <string name="InuSilentBroadcast">إرسال صامت</string>
     <string name="InuChatExportCollected">تم جمع %1$d رسالة</string>
     <string name="InuChatExportFailed">فشل التصدير</string>
     <string name="InuChatExportOptions">خيارات التصدير</string>

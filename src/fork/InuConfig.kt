@@ -2044,6 +2044,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val CHAT_EXPORT = BoolItem("chat_export", false)
 
     @JvmField
+    val NOTIFY_BELL_IN_MENU = BoolItem("notify_bell_in_menu", false)
+
+    @JvmField
     val CHAT_EXPORT_HTML = BoolItem("chat_export_html", true)
 
     @JvmField

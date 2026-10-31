@@ -1117,6 +1117,9 @@
     <string name="InuDeleteMyMessagesDone">%1$d件のメッセージを削除しました</string>
     <string name="InuChatExport">チャットをエクスポート</string>
     <string name="InuChatExportInfo">プロフィールメニューでチャットをJSONまたはHTMLアーカイブにエクスポートします。</string>
+    <string name="InuNotifyBellInMenu">ベルをチャットメニューに移動</string>
+    <string name="InuNotifyBellInMenuInfo">投稿できるチャンネルの入力欄から、サイレント配信のベルを取り除きます。代わりにチャットメニューから切り替えられます</string>
+    <string name="InuSilentBroadcast">サイレント配信</string>
     <string name="InuChatExportCollected">%1$d件のメッセージを収集しました</string>
     <string name="InuChatExportFailed">エクスポートに失敗しました</string>
     <string name="InuDeleteSelectedProfilePhotos">選択した写真を削除 (%1$d)</string>

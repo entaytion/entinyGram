@@ -1484,6 +1484,9 @@
 
     <string name="InuChatExport">Експорт чату</string>
     <string name="InuChatExportInfo">Експорт чату в JSON або HTML-архів у меню профілю.</string>
+    <string name="InuNotifyBellInMenu">Перенести дзвіночок у меню чату</string>
+    <string name="InuNotifyBellInMenuInfo">Прибирає дзвіночок тихої розсилки з поля вводу каналів, де ви публікуєте. Натомість його можна перемикати з меню чату</string>
+    <string name="InuSilentBroadcast">Тиха розсилка</string>
     <string name="InuChatExportCollected">Зібрано %1$d повідомлень</string>
     <string name="InuChatExportFailed">Не вдалося виконати експорт</string>
     <string name="InuChatExportOptions">Параметри експорту</string>

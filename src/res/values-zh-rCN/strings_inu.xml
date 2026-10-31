@@ -1113,6 +1113,9 @@
     <string name="InuDeleteMyMessagesDone">已删除 %1$d 条你的消息</string>
     <string name="InuChatExport">导出聊天</string>
     <string name="InuChatExportInfo">在个人资料菜单中将聊天导出为 JSON 或 HTML 存档。</string>
+    <string name="InuNotifyBellInMenu">将铃铛移到聊天菜单</string>
+    <string name="InuNotifyBellInMenuInfo">从你可发布内容的频道输入框中移除静音发送铃铛，改为在聊天菜单中切换</string>
+    <string name="InuSilentBroadcast">静音发送</string>
     <string name="InuChatExportCollected">已收集 %1$d 条消息</string>
     <string name="InuChatExportFailed">导出失败</string>
     <string name="InuDeleteSelectedProfilePhotos">删除选中的头像 (%1$d)</string>

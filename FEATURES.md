@@ -214,6 +214,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **cache management**: per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once
 - 📡 **media size badge**: optional file size label on photos
 - 📡 **HD photos at q87**: smaller uploads and no double compression - *ported from [NagramXF](https://github.com/rlauuzo/NagramXF)*
+- 📡 **silent broadcast bell in the chat menu**: optionally move the bell out of the channel input field
 - 📡 **copy photo** in the message menu as its own item, also on photos with a caption, and it can go into the quick actions row
 - 📡 **PhotoViewer close crash fix** when the selected-media strip is not initialized
 - 📡 **square camera tile**: the attach gallery camera takes one cell instead of two

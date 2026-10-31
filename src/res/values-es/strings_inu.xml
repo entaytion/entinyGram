@@ -1658,6 +1658,9 @@ Esta acción no se puede deshacer.</string>
 
     <string name="InuChatExport">Exportar chat</string>
     <string name="InuChatExportInfo">Exporta el chat a JSON o a un archivo HTML desde el menú del perfil.</string>
+    <string name="InuNotifyBellInMenu">Mover la campana al menú del chat</string>
+    <string name="InuNotifyBellInMenuInfo">Quita la campana de envío silencioso del campo de entrada en los canales donde publicas. Cámbiala desde el menú del chat</string>
+    <string name="InuSilentBroadcast">Envío silencioso</string>
     <string name="InuChatExportCollected">Se recopilaron %1$d mensajes</string>
     <string name="InuChatExportFailed">La exportación falló</string>
     <string name="InuChatExportOptions">Opciones de exportación</string>

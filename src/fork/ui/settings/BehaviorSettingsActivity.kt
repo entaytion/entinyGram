@@ -193,6 +193,14 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 experimental = true,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_NOTIFY_BELL_IN_MENU,
+                R.string.InuNotifyBellInMenu,
+                R.string.InuNotifyBellInMenuInfo,
+                InuConfig.NOTIFY_BELL_IN_MENU.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMediaSection)))
@@ -504,6 +512,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
+            TOGGLE_NOTIFY_BELL_IN_MENU -> {
+                val new = InuConfig.NOTIFY_BELL_IN_MENU.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_AUTO_DISABLE_PROXY_ON_VPN -> {
                 val new = InuConfig.AUTO_DISABLE_PROXY_ON_VPN.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -680,6 +693,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CALL_CONFIRMATION = InuUtils.generateId()
         private val TOGGLE_HD_BLUETOOTH_CALL_AUDIO = InuUtils.generateId()
         private val TOGGLE_CALL_ROTATION = InuUtils.generateId()
+        private val TOGGLE_NOTIFY_BELL_IN_MENU = InuUtils.generateId()
         private val TOGGLE_DISABLE_CALL_PROXIMITY = InuUtils.generateId()
         private val TOGGLE_CONFIRM_INTERNAL_LINKS = InuUtils.generateId()
         private val TOGGLE_DISABLE_BROWSER_SWIPE_COLLAPSE = InuUtils.generateId()
@@ -760,6 +774,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("keep-chats-in-stack", R.string.InuKeepChatsInStack, TOGGLE_KEEP_CHATS_IN_STACK),
                 SearchRegistry.Entry("send-mp4-document-as-video", R.string.InuSendMp4DocumentAsVideo, TOGGLE_SEND_MP4_DOCUMENT_AS_VIDEO),
                 SearchRegistry.Entry("chat-export", R.string.InuChatExport, TOGGLE_CHAT_EXPORT),
+                SearchRegistry.Entry("notify-bell-in-menu", R.string.InuNotifyBellInMenu, TOGGLE_NOTIFY_BELL_IN_MENU),
                 SearchRegistry.Entry("download-directory", R.string.InuDownloadDirectory, BUTTON_DOWNLOAD_DIRECTORY),
                 SearchRegistry.Entry("save-filename-date", R.string.InuSaveFilenameDate, TOGGLE_SAVE_FILENAME_DATE),
                 SearchRegistry.Entry("web-preview-replacements", R.string.InuWebPreviewReplacements, BUTTON_WEB_PREVIEW_REPLACEMENTS),

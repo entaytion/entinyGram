@@ -1694,6 +1694,9 @@
 
     <string name="InuChatExport">Export chat</string>
     <string name="InuChatExportInfo">Export chat to JSON or an HTML archive in the profile menu.</string>
+    <string name="InuNotifyBellInMenu">Move the bell to the chat menu</string>
+    <string name="InuNotifyBellInMenuInfo">Removes the silent broadcast bell from the input field of channels you post in. Toggle it from the chat menu instead</string>
+    <string name="InuSilentBroadcast">Silent broadcast</string>
     <string name="InuChatExportCollected">Collected %1$d messages</string>
     <string name="InuChatExportFailed">Export failed</string>
     <string name="InuChatExportOptions">Export options</string>

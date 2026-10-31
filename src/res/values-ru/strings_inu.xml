@@ -1341,6 +1341,9 @@
     <string name="InuDeleteMyMessagesDone">Удалено %1$d твоих сообщений</string>
     <string name="InuChatExport">Экспорт чата</string>
     <string name="InuChatExportInfo">Экспорт чата в JSON или HTML-архив из меню профиля.</string>
+    <string name="InuNotifyBellInMenu">Перенести колокольчик в меню чата</string>
+    <string name="InuNotifyBellInMenuInfo">Убирает колокольчик тихой рассылки из поля ввода каналов, где вы публикуете. Вместо этого его можно переключать из меню чата</string>
+    <string name="InuSilentBroadcast">Тихая рассылка</string>
     <string name="InuChatExportCollected">Собрано %1$d сообщений</string>
     <string name="InuChatExportFailed">Не удалось выполнить экспорт</string>
     <string name="InuChatExportOptions">Параметры экспорта</string>

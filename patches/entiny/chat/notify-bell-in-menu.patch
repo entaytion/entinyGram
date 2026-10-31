@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 31 Oct 2026 23:26:24 +0200
+Subject: [+] move the silent broadcast bell to the chat menu
+
+---
+ .../ui/Components/ChatActivityEnterView.java        | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -716,6 +716,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+     protected View topView;
+     private BotKeyboardView botKeyboardView;
+     private ImageView notifyButton;
++
++    public void inu_toggleSilent() {
++        if (notifyButton != null) {
++            notifyButton.performClick();
++        }
++    }
+     @Nullable
+     private ImageView scheduledButton;
+     @Nullable
+@@ -2893,7 +2899,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+             attachLayout.setTranslationX(VoiceRecorderHelper.attachTranslationXOffset());
+ 
+             if (chatMode != ChatActivity.MODE_WELCOME_MESSAGES) {
+-                notifyButton = new ImageView(context);
++                notifyButton = new ImageView(context) {
++                    @Override
++                    public void setVisibility(int visibility) {
++                        super.setVisibility(desu.inugram.helpers.chat.ChatActionsHelper.hideNotifyBell() ? GONE : visibility);
++                    }
++                };
+                 notifySilentDrawable = new CrossOutDrawable(context, R.drawable.input_notify_on, Theme.key_glass_defaultIcon);
+                 notifyButton.setImageDrawable(notifySilentDrawable);
+                 notifySilentDrawable.setCrossOut(silent, false);

@@ -96,6 +96,7 @@ object ChatActionsHelper {
     const val ACTION_CHAT_PROXY = 548
     const val ACTION_SHOW_HIDDEN = 549
     const val ACTION_BUSINESS_BOT = 550
+    const val ACTION_SILENT_BROADCAST = 551
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -175,6 +176,13 @@ object ChatActionsHelper {
             menu.inu_rematerializeLazyItems()
         }
     }
+
+    @JvmStatic
+    fun hideNotifyBell(): Boolean = InuConfig.NOTIFY_BELL_IN_MENU.value
+
+    private fun canPostToChannel(chat: TLRPC.Chat?): Boolean =
+        chat != null && ChatObject.isChannel(chat) && !chat.megagroup &&
+            (chat.creator || chat.admin_rights?.post_messages == true)
 
     @JvmStatic
     fun addItems(activity: ChatActivity, headerItem: ActionBarMenuItem) {
@@ -263,6 +271,12 @@ object ChatActionsHelper {
             headerItem.lazilyAddSubItem(
                 ACTION_CHAT_EXPORT, R.drawable.msg_share_solar,
                 LocaleController.getString(R.string.InuChatExport),
+            )
+        }
+        if (InuConfig.NOTIFY_BELL_IN_MENU.value && canPostToChannel(activity.currentChat)) {
+            headerItem.lazilyAddSubItem(
+                ACTION_SILENT_BROADCAST, R.drawable.input_notify_on,
+                LocaleController.getString(R.string.InuSilentBroadcast),
             )
         }
         if (BusinessBotHelper.menuAvailable(activity)) {
@@ -611,6 +625,7 @@ object ChatActionsHelper {
             }
             ACTION_CHAT_PROXY -> activity.presentFragment(org.telegram.ui.ProxyListActivity())
             ACTION_BUSINESS_BOT -> BusinessBotHelper.toggle(activity)
+            ACTION_SILENT_BROADCAST -> activity.chatActivityEnterView?.inu_toggleSilent()
             ACTION_CHAT_LOCAL_NAME -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EDIT_LOCAL_NAME, null, activity.currentAccount, activity.dialogId)
             ACTION_CHAT_MARK_READ -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_MARK_AS_READ, null, activity.currentAccount, activity.dialogId)
             ACTION_CHAT_DELETE_MY_MESSAGES -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_DELETE_MY_MESSAGES, null, activity.currentAccount, activity.dialogId)

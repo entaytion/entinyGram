@@ -1455,6 +1455,9 @@
 
     <string name="InuChatExport">صادر کردن گفتگو</string>
     <string name="InuChatExportInfo">گفتگو را از منوی نمایه به JSON یا آرشیو HTML صادر کنید.</string>
+    <string name="InuNotifyBellInMenu">انتقال زنگ به منوی گفتگو</string>
+    <string name="InuNotifyBellInMenuInfo">زنگ ارسال بی‌صدا را از کادر ورودی کانال‌هایی که در آن‌ها پست می‌گذارید برمی‌دارد. به جای آن از منوی گفتگو تغییرش دهید</string>
+    <string name="InuSilentBroadcast">ارسال بی‌صدا</string>
     <string name="InuChatExportCollected">%1$d پیام جمع‌آوری شد</string>
     <string name="InuChatExportFailed">صادر کردن ناموفق بود</string>
     <string name="InuChatExportOptions">گزینه‌های صادرات</string>

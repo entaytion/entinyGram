@@ -1114,6 +1114,9 @@
     <string name="InuDeleteMyMessagesDone">%1$d mesajın silindi</string>
     <string name="InuChatExport">Sohbeti dışa aktar</string>
     <string name="InuChatExportInfo">Sohbeti profil menüsünden JSON veya HTML arşivi olarak dışa aktarın.</string>
+    <string name="InuNotifyBellInMenu">Zili sohbet menüsüne taşı</string>
+    <string name="InuNotifyBellInMenuInfo">Yayın yaptığınız kanallarda yazı alanındaki sessiz yayın zilini kaldırır. Bunun yerine sohbet menüsünden değiştirin</string>
+    <string name="InuSilentBroadcast">Sessiz yayın</string>
     <string name="InuChatExportCollected">%1$d mesaj toplandı</string>
     <string name="InuChatExportFailed">Dışa aktarma başarısız</string>
     <string name="InuDeleteSelectedProfilePhotos">Seçilenleri sil (%1$d)</string>
