@@ -54,7 +54,7 @@ index 0000000..0000000 100644
              boolean secretLimitReached = containsFilter && filter != null ? false : newPinnedSecretCount + pinnedSecretCount > maxPinnedCount;
              boolean dialogsLimitReached = containsFilter && filter != null ? newFilterAlwaysShowCount > 0 && filter.alwaysShow.size() + newFilterAlwaysShowCount > maxPinnedCount : newPinnedCount + pinnedCount - alreadyAdded > maxPinnedCount;
 -            hasPinAction[0] = !(secretLimitReached || dialogsLimitReached);
-+            if ((secretLimitReached || dialogsLimitReached) && desu.inugram.InuConfig.UNLIMITED_PINNED_CHATS.getValue() && !DialogObject.isEncryptedDialog(dialogId)) {
++            if ((secretLimitReached || dialogsLimitReached) && desu.inugram.InuConfig.UNLIMITED_PINNED_CHATS.getValue()) {
 +                useLocalPin[0] = true;
 +                hasPinAction[0] = true;
 +            } else {
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
              if (secretLimitReached || dialogsLimitReached) {
 -                if (folderId != 0 || filter != null) {
 +                boolean anySecret = newPinnedSecretCount > 0;
-+                if (desu.inugram.InuConfig.UNLIMITED_PINNED_CHATS.getValue() && !anySecret) {
++                if (desu.inugram.InuConfig.UNLIMITED_PINNED_CHATS.getValue()) {
 +                    bulkUseLocalPin = true;
 +                } else if (folderId != 0 || filter != null) {
                      AlertsCreator.showSimpleAlert(DialogsActivity.this, LocaleController.formatString("PinFolderLimitReached", R.string.PinFolderLimitReached, LocaleController.formatPluralString("Chats", maxPinnedCount)));

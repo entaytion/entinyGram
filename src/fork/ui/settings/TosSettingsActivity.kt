@@ -132,7 +132,7 @@ class TosSettingsActivity : SettingsPageActivity() {
             } else {
                 unlimitedPinsSlider?.updateColors()
             }
-            items.add(UItem.asCustom(unlimitedPinsSlider))
+            items.add(UItem.asCustom(ID_UNLIMITED_PINS_SLIDER, unlimitedPinsSlider))
         }
         items.add(
             mkTwoLineCheckItem(
@@ -245,6 +245,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SUPPRESS_SCREENSHOT_NOTIFICATION = InuUtils.generateId()
 
         private val TOGGLE_UNLIMITED_PINNED_CHATS = InuUtils.generateId()
+        private val ID_UNLIMITED_PINS_SLIDER = InuUtils.generateId()
         private val TOGGLE_UNLIMITED_FAVORITE_STICKERS = InuUtils.generateId()
         private val TOGGLE_UNLIMITED_FOLDER_CHATS = InuUtils.generateId()
         private val TOGGLE_LOCAL_FOLDERS = InuUtils.generateId()
