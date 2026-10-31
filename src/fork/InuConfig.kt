@@ -2038,6 +2038,15 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val CHAT_EXPORT = BoolItem("chat_export", false)
 
     @JvmField
+    val CHAT_EXPORT_HTML = BoolItem("chat_export_html", true)
+
+    @JvmField
+    val CHAT_EXPORT_MEDIA = IntItem("chat_export_media", 0x7F)
+
+    @JvmField
+    val CHAT_EXPORT_SIZE_LIMIT = IntItem("chat_export_size_limit", 100)
+
+    @JvmField
     val FASTER_DOWNLOADS = BoolItem("faster_downloads", true)
 
     @JvmField
