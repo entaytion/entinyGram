@@ -657,7 +657,7 @@ object ForwardProHelper {
         if (messages.isEmpty()) return false
         val accountInstance = AccountInstance.getInstance(account)
 
-        if (isAlbumGroup(messages)) {
+        if (isAlbumGroup(messages) || isSingleUpload(messages)) {
             val mediaList = ArrayList<SendMessagesHelper.SendingMediaInfo>()
             val pending = ArrayList<Int>()
             for (i in messages.indices) {
@@ -709,6 +709,14 @@ object ForwardProHelper {
             it.isPhoto || (it.isVideo && !it.isRoundVideo) ||
                 (it.document != null && !it.isSticker && !it.isAnimatedSticker && !it.isVoice())
         }
+    }
+
+    // entiny: a lone photo/video is re-uploaded from disk; resending by id gets rejected for protected sources
+    private fun isSingleUpload(messages: ArrayList<MessageObject>): Boolean {
+        val msg = messages.singleOrNull() ?: return false
+        val owner = msg.messageOwner ?: return false
+        if (owner.ttl != 0 || msg.hasMediaSpoilers()) return false
+        return msg.isPhoto || (msg.isVideo && !msg.isRoundVideo)
     }
 
     private fun prepareAlbumCopy(
