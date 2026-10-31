@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 31 Oct 2026 22:47:39 +0200
+Subject: [+] disable proximity sensor in calls
+
+---
+ .../main/java/org/telegram/messenger/voip/VoIPService.java    | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+index 0000000..0000000 100755
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+@@ -4971,6 +4971,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 	@Override
+ 	public void onSensorChanged(SensorEvent event) {
+ 		lastSensorEvent = event;
++		if (desu.inugram.InuConfig.DISABLE_CALL_PROXIMITY.getValue()) {
++			checkIsNear(false);
++			return;
++		}
+ 		if (unmutedByHold || remoteVideoState == Instance.VIDEO_STATE_ACTIVE || videoState[CAPTURE_DEVICE_CAMERA] == Instance.VIDEO_STATE_ACTIVE) {
+ 			return;
+ 		}

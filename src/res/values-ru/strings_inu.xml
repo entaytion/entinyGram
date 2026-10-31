@@ -317,6 +317,8 @@
     <string name="InuHdBluetoothCallAudioInfo">Воспроизводить звук звонка как медиа через микрофон телефона для лучшего качества Bluetooth-аудио.</string>
     <string name="InuCallRotation">Поворот экрана звонка</string>
     <string name="InuCallRotationInfo">Позволяет экрану звонка поворачиваться вместе с устройством вместо фиксации в портрете. Раскладка рассчитана на портрет и в ландшафте может выглядеть тесно</string>
+    <string name="InuDisableCallProximity">Отключить датчик приближения в звонках</string>
+    <string name="InuDisableCallProximityInfo">Экран не гаснет, когда вы подносите телефон к уху во время звонка</string>
     <string name="InuDisableChatBubbles">Отключить пузыри уведомлений Android</string>
     <string name="InuKeepChatsInStack">Оставлять предыдущие чаты открытыми</string>
     <string name="InuKeepChatsInStackInfo">Открытие другого чата не закроет чаты за ним</string>

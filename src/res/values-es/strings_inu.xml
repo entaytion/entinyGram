@@ -617,6 +617,8 @@ Sistema: %6$s
     <string name="InuHdBluetoothCallAudioInfo">Reproduce el audio de la llamada como multimedia para mejor calidad por Bluetooth.</string>
     <string name="InuCallRotation">Rotar la pantalla de llamada</string>
     <string name="InuCallRotationInfo">Permite que la pantalla de llamada siga la rotación del dispositivo.</string>
+    <string name="InuDisableCallProximity">Desactivar el sensor de proximidad en llamadas</string>
+    <string name="InuDisableCallProximityInfo">La pantalla permanece encendida cuando acercas el teléfono al oído durante una llamada</string>
     <string name="InuConfirmInternalLinks">Confirmar apertura de enlaces internos</string>
     <string name="InuConfirmInternalLinksInfo">tg:// y t.me/</string>
     <string name="InuDisableBrowserSwipeCollapse">Desactivar deslizar hacia abajo para minimizar el navegador</string>

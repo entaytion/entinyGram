@@ -489,6 +489,8 @@
     <string name="InuHdBluetoothCallAudioInfo">صدای تماس را به‌صورت رسانه پخش می‌کند تا کیفیت بلوتوث بهتر شود، با میکروفون گوشی.</string>
     <string name="InuCallRotation">چرخش صفحه تماس</string>
     <string name="InuCallRotationInfo">به صفحه تماس اجازه می‌دهد به‌جای ماندن در حالت عمودی، از چرخش دستگاه پیروی کند. چیدمان برای حالت عمودی طراحی شده و در حالت افقی ممکن است فشرده به نظر برسد</string>
+    <string name="InuDisableCallProximity">غیرفعال کردن حسگر نزدیکی در تماس‌ها</string>
+    <string name="InuDisableCallProximityInfo">هنگام نزدیک کردن گوشی به گوش در تماس، صفحه روشن می‌ماند</string>
     <string name="InuConfirmInternalLinks">تأیید باز کردن پیوندهای داخلی</string>
     <string name="InuConfirmInternalLinksInfo">tg:// و t.me/</string>
     <string name="InuDisableBrowserSwipeCollapse">غیرفعال کردن کشیدن به پایین برای کوچک کردن مرورگر</string>

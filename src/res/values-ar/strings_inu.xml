@@ -489,6 +489,8 @@
     <string name="InuHdBluetoothCallAudioInfo">يشغّل صوت المكالمة كوسائط لجودة أفضل عبر البلوتوث، مع استخدام ميكروفون الهاتف.</string>
     <string name="InuCallRotation">تدوير شاشة المكالمة</string>
     <string name="InuCallRotationInfo">يتيح لشاشة المكالمة اتباع دوران الجهاز بدلاً من البقاء عمودية. التصميم مخصص للوضع العمودي وقد يبدو ضيقاً في الوضع الأفقي</string>
+    <string name="InuDisableCallProximity">تعطيل حساس القرب أثناء المكالمات</string>
+    <string name="InuDisableCallProximityInfo">تبقى الشاشة مضاءة عند تقريب الهاتف من أذنك أثناء المكالمة</string>
     <string name="InuConfirmInternalLinks">تأكيد فتح الروابط الداخلية</string>
     <string name="InuConfirmInternalLinksInfo">tg:// و t.me/</string>
     <string name="InuDisableBrowserSwipeCollapse">تعطيل السحب للأسفل لتصغير المتصفح</string>

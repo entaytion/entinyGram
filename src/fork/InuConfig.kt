@@ -1152,6 +1152,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val CALL_ROTATION = BoolItem("call_rotation", false)
 
     @JvmField
+    val DISABLE_CALL_PROXIMITY = BoolItem("disable_call_proximity", false)
+
+    @JvmField
     val FORCE_RELAY_CALLS = BoolItem("force_relay_calls", false)
 
     @JvmField

@@ -278,6 +278,8 @@
     <string name="InuHdBluetoothCallAudioInfo">将通话音频作为媒体播放，而不是把耳机切换到低音质的耳麦模式，并使用手机麦克风。在通话开始时已连接蓝牙设备时生效</string>
     <string name="InuCallRotation">旋转通话屏幕</string>
     <string name="InuCallRotationInfo">让通话屏幕跟随设备旋转，而不是固定为竖屏。布局针对竖屏设计，横屏下可能显得拥挤</string>
+    <string name="InuDisableCallProximity">通话时禁用距离传感器</string>
+    <string name="InuDisableCallProximityInfo">通话时将手机贴近耳朵，屏幕不会熄灭</string>
     <string name="InuDisableChatBubbles">禁用 Android 通知气泡</string>
     <string name="InuKeepChatsInStack">保留之前打开的聊天</string>
     <string name="InuKeepChatsInStackInfo">打开其他聊天时不会关闭后面的聊天</string>

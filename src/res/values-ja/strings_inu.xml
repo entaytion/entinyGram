@@ -278,6 +278,8 @@
     <string name="InuHdBluetoothCallAudioInfo">ヘッドホンを低音質のヘッドセットプロファイルに切り替える代わりに、通話音声をメディアとして再生し、マイクは端末のものを使用します。通話開始時に Bluetooth デバイスが接続されている場合に適用されます</string>
     <string name="InuCallRotation">通話画面の回転</string>
     <string name="InuCallRotationInfo">通話画面を縦向きに固定せず、端末の回転に追従させます。レイアウトは縦向き用のため、横向きでは窮屈に見える場合があります</string>
+    <string name="InuDisableCallProximity">通話中の近接センサーを無効にする</string>
+    <string name="InuDisableCallProximityInfo">通話中に端末を耳に当てても画面が消えません</string>
     <string name="InuDisableChatBubbles">Android の通知バブルを無効化</string>
     <string name="InuKeepChatsInStack">前のチャットを開いたままにする</string>
     <string name="InuKeepChatsInStackInfo">別のチャットを開いても背後のチャットを閉じません</string>

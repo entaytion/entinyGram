@@ -148,6 +148,14 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.CALL_ROTATION.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_DISABLE_CALL_PROXIMITY,
+                R.string.InuDisableCallProximity,
+                R.string.InuDisableCallProximityInfo,
+                InuConfig.DISABLE_CALL_PROXIMITY.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuFormatting)))
@@ -456,6 +464,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
+            TOGGLE_DISABLE_CALL_PROXIMITY -> {
+                val new = InuConfig.DISABLE_CALL_PROXIMITY.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_SAVE_FILENAME_DATE -> {
                 val new = InuConfig.SAVE_FILENAME_DATE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -667,6 +680,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CALL_CONFIRMATION = InuUtils.generateId()
         private val TOGGLE_HD_BLUETOOTH_CALL_AUDIO = InuUtils.generateId()
         private val TOGGLE_CALL_ROTATION = InuUtils.generateId()
+        private val TOGGLE_DISABLE_CALL_PROXIMITY = InuUtils.generateId()
         private val TOGGLE_CONFIRM_INTERNAL_LINKS = InuUtils.generateId()
         private val TOGGLE_DISABLE_BROWSER_SWIPE_COLLAPSE = InuUtils.generateId()
         private val TOGGLE_GIF_SEEKBAR = InuUtils.generateId()
@@ -739,6 +753,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("call-confirmation", R.string.InuCallConfirmation, TOGGLE_CALL_CONFIRMATION),
                 SearchRegistry.Entry("hd-bluetooth-call-audio", R.string.InuHdBluetoothCallAudio, TOGGLE_HD_BLUETOOTH_CALL_AUDIO),
                 SearchRegistry.Entry("call-rotation", R.string.InuCallRotation, TOGGLE_CALL_ROTATION),
+                SearchRegistry.Entry("call-proximity", R.string.InuDisableCallProximity, TOGGLE_DISABLE_CALL_PROXIMITY),
                 SearchRegistry.Entry("confirm-internal-links", R.string.InuConfirmInternalLinks, TOGGLE_CONFIRM_INTERNAL_LINKS),
                 SearchRegistry.Entry("disable-browser-swipe-collapse", R.string.InuDisableBrowserSwipeCollapse, TOGGLE_DISABLE_BROWSER_SWIPE_COLLAPSE),
                 SearchRegistry.Entry("gif-seekbar", R.string.InuGifSeekbar, TOGGLE_GIF_SEEKBAR),
