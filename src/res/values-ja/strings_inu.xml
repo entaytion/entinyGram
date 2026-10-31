@@ -1355,6 +1355,8 @@
     <string name="InuSelectAll">すべて選択</string>
     <string name="InuShowDrawerAccounts">ドロワーにアカウント一覧を表示</string>
     <string name="InuShowDrawerAccountsInfo">サイドメニューのプロフィール下に展開可能なアカウント切り替えを表示します。</string>
+    <string name="InuDrawerShowBadge">サイドメニューにバッジを表示</string>
+    <string name="InuDrawerShowBadgeInfo">サイドメニューのヘッダーで名前の横にあなたのバッジを表示します</string>
     <string name="InuShowMutualContactIcon">相互連絡先アイコン</string>
     <string name="InuShowMutualContactIconInfo">連絡先一覧に相互連絡先を示すアイコンを表示します</string>
     <string name="InuShowMutualContactInChats">グループ・チャンネルのメンバー一覧に相互連絡先アイコンを表示</string>

@@ -1558,6 +1558,8 @@
     <string name="InuNotificationIconOldEntinygram">Старый entinyGram</string>
     <string name="InuShowDrawerAccounts">Аккаунты в боковом меню</string>
     <string name="InuShowDrawerAccountsInfo">Показывать переключатель аккаунтов под профилем в боковой панели.</string>
+    <string name="InuDrawerShowBadge">Показывать значок в боковом меню</string>
+    <string name="InuDrawerShowBadgeInfo">Показывает ваш значок рядом с именем в шапке бокового меню</string>
     <string name="InuYes">Да</string>
     <string name="InuNo">Нет</string>
     <string name="InuMsgDetailAdaptiveTextColor">Адаптивный цвет текста</string>

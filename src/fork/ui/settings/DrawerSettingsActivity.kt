@@ -6,6 +6,7 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
@@ -62,6 +63,14 @@ class DrawerSettingsActivity : SettingsPageActivity() {
             )
             items.add(
                 mkTwoLineCheckItem(
+                    TOGGLE_DRAWER_SHOW_BADGE,
+                    R.string.InuDrawerShowBadge,
+                    R.string.InuDrawerShowBadgeInfo,
+                    InuConfig.DRAWER_SHOW_BADGE.value,
+                )
+            )
+            items.add(
+                mkTwoLineCheckItem(
                     TOGGLE_HIDE_BOTTOM_TABS,
                     R.string.InuBottomTabsHide,
                     R.string.InuBottomTabsHideInfo,
@@ -106,6 +115,12 @@ class DrawerSettingsActivity : SettingsPageActivity() {
                 desu.inugram.helpers.dialogs.DrawerHelper.reloadItems()
             }
 
+            TOGGLE_DRAWER_SHOW_BADGE -> {
+                val new = InuConfig.DRAWER_SHOW_BADGE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
+            }
+
             TOGGLE_HIDE_BOTTOM_TABS -> {
                 val new = InuConfig.BOTTOM_TABS_HIDE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -123,6 +138,7 @@ class DrawerSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DRAWER_KEEP_OPTIONS_MENU = InuUtils.generateId()
         private val TOGGLE_DRAWER_M3_SECTIONS = InuUtils.generateId()
         private val TOGGLE_SHOW_DRAWER_ACCOUNTS = InuUtils.generateId()
+        private val TOGGLE_DRAWER_SHOW_BADGE = InuUtils.generateId()
         private val TOGGLE_HIDE_BOTTOM_TABS = InuUtils.generateId()
         private val BUTTON_DRAWER_MENU_ORDER = InuUtils.generateId()
 
@@ -140,6 +156,7 @@ class DrawerSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("drawer-keep-options-menu", R.string.InuDrawerKeepOptionsMenu, TOGGLE_DRAWER_KEEP_OPTIONS_MENU),
                 SearchRegistry.Entry("drawer-m3-sections", R.string.InuDrawerM3Sections, TOGGLE_DRAWER_M3_SECTIONS),
                 SearchRegistry.Entry("show-drawer-accounts", R.string.InuShowDrawerAccounts, TOGGLE_SHOW_DRAWER_ACCOUNTS),
+                SearchRegistry.Entry("drawer-show-badge", R.string.InuDrawerShowBadge, TOGGLE_DRAWER_SHOW_BADGE),
             ),
         )
     }

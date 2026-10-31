@@ -1721,6 +1721,8 @@
     <string name="InuPoweredByProvider">Переклад виконано через %1$s.</string>
     <string name="InuShowDrawerAccounts">Показувати акаунти в меню</string>
     <string name="InuShowDrawerAccountsInfo">Показувати перемикач акаунтів під профілем.</string>
+    <string name="InuDrawerShowBadge">Показувати значок у бічному меню</string>
+    <string name="InuDrawerShowBadgeInfo">Показує ваш значок поруч з іменем у шапці бічного меню</string>
     <string name="InuTranslateDeepLApiKey">API-ключ DeepL</string>
     <string name="InuTranslateLlmApiKey">API-ключ (необов’язково)</string>
     <string name="InuTranslateLlmEndpointUrl">URL API-ендпойнта</string>

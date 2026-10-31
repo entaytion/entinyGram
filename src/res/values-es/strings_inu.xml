@@ -68,6 +68,8 @@
     <string name="InuDrawerKeepOptionsMenuInfo">Muestra el botón de menú de la lista de chats junto al menú lateral</string>
     <string name="InuShowDrawerAccounts">Mostrar cuentas en el menú</string>
     <string name="InuShowDrawerAccountsInfo">Muestra el selector de cuentas desplegable bajo tu perfil.</string>
+    <string name="InuDrawerShowBadge">Mostrar insignia en el menú lateral</string>
+    <string name="InuDrawerShowBadgeInfo">Muestra tu insignia junto a tu nombre en la cabecera del menú lateral</string>
     <string name="InuSettings">Ajustes de entinyGram</string>
     <string name="InuSettingsInfo">A través de la tierra y el viento te sigo</string>
     <string name="InuGeneral">General</string>

@@ -20,6 +20,8 @@
     <string name="InuDrawerKeepOptionsMenuInfo">إظهار زر قائمة قائمة الدردشات بجانب القائمة الجانبية</string>
     <string name="InuShowDrawerAccounts">إظهار الحسابات في القائمة</string>
     <string name="InuShowDrawerAccountsInfo">إظهار مبدّل الحسابات القابل للتوسيع أسفل ملفك الشخصي.</string>
+    <string name="InuDrawerShowBadge">إظهار الشارة في القائمة الجانبية</string>
+    <string name="InuDrawerShowBadgeInfo">يعرض شارتك بجانب اسمك في ترويسة القائمة الجانبية</string>
     <string name="InuSettings">إعدادات entinyGram</string>
     <string name="InuSettingsInfo">عبر الأرض والرياح أتبعك</string>
     <string name="InuGeneral">عام</string>

@@ -1357,6 +1357,8 @@
     <string name="InuSelectAll">Tümünü seç</string>
     <string name="InuShowDrawerAccounts">Çekmecede hesapları göster</string>
     <string name="InuShowDrawerAccountsInfo">Profilinizin altında genişletilebilir hesap değiştiriciyi gösterin.</string>
+    <string name="InuDrawerShowBadge">Yan menüde rozeti göster</string>
+    <string name="InuDrawerShowBadgeInfo">Rozetinizi yan menü başlığında adınızın yanında gösterir</string>
     <string name="InuShowMutualContactIcon">Karşılıklı Kişi Simgesi</string>
     <string name="InuShowMutualContactIconInfo">Kişiler listesinde karşılıklı kişi göstergesi simgesini gösterir</string>
     <string name="InuShowMutualContactInChats">Grup ve Kanal Üye Listelerinde Karşılıklı Kişi Simgesini Göster</string>

@@ -1356,6 +1356,8 @@
     <string name="InuSelectAll">全选</string>
     <string name="InuShowDrawerAccounts">在侧边栏显示账号列表</string>
     <string name="InuShowDrawerAccountsInfo">在侧边栏您的个人资料下方显示可展开的账号切换器。</string>
+    <string name="InuDrawerShowBadge">在侧边菜单中显示徽章</string>
+    <string name="InuDrawerShowBadgeInfo">在侧边菜单顶部的名字旁显示你的徽章</string>
     <string name="InuShowMutualContactIcon">双向联系人图标</string>
     <string name="InuShowMutualContactIconInfo">在联系人列表中显示双向联系人指示图标</string>
     <string name="InuShowMutualContactInChats">在群组和频道成员列表中显示双向联系人图标</string>

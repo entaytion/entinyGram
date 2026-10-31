@@ -20,6 +20,8 @@
     <string name="InuDrawerKeepOptionsMenuInfo">نمایش دکمهٔ منوی فهرست گفتگوها در کنار منوی کناری</string>
     <string name="InuShowDrawerAccounts">نمایش حساب‌ها در منو</string>
     <string name="InuShowDrawerAccountsInfo">نمایش تعویض‌گر حساب قابل‌گسترش زیر نمایه شما.</string>
+    <string name="InuDrawerShowBadge">نمایش نشان در منوی کناری</string>
+    <string name="InuDrawerShowBadgeInfo">نشان شما را کنار نامتان در سربرگ منوی کناری نشان می‌دهد</string>
     <string name="InuSettings">تنظیمات entinyGram</string>
     <string name="InuSettingsInfo">از میان خاک و باد، دنبال تو می‌آیم</string>
     <string name="InuGeneral">عمومی</string>

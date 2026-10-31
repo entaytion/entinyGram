@@ -163,7 +163,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 
 ### profile & identity tools
 
-- 📡 **developer badges** in chat headers and profiles
+- 📡 **developer badges** in chat headers and profiles, optionally in the side menu header
 - 📡 **mutual contact icon**: optionally shown to the left of the avatar
 - 📡 **estimated registration date & DC** in profiles
 - 📡 **delete profile photos**: all or selected

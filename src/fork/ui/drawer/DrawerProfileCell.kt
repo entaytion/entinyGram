@@ -28,6 +28,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
+import desu.inugram.helpers.badges.BadgeRegistry
 import desu.inugram.helpers.dialogs.DrawerHelper
 import desu.inugram.helpers.theme.MonetHelper
 import org.telegram.PhoneFormat.PhoneFormat
@@ -84,6 +85,7 @@ class DrawerProfileCell(
     private var accountsShown = false
 
     val status: AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable
+    private val badge: AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable
 
     private var lastAccount = -1
     private var lastUser: TLRPC.User? = null
@@ -293,6 +295,7 @@ class DrawerProfileCell(
 
         status = AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(this, AndroidUtilities.dp(20f))
         nameTextView.setRightDrawable(status)
+        badge = AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(this, AndroidUtilities.dp(17f))
         nameTextView.setRightDrawableOnClick {
             val user = lastUser ?: return@setRightDrawableOnClick
             if (MessagesController.getInstance(lastAccount).isPremiumUser(user) || UserObject.getEmojiStatusDocumentId(user) != null) {
@@ -344,6 +347,7 @@ class DrawerProfileCell(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         status.attach()
+        badge.attach()
         updateColors()
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded)
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.needSetDayNightTheme)
@@ -356,6 +360,7 @@ class DrawerProfileCell(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         status.detach()
+        badge.detach()
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded)
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.needSetDayNightTheme)
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.mainUserInfoChanged)
@@ -514,6 +519,7 @@ class DrawerProfileCell(
             status.setParticles(false, true)
         }
         status.setColor(Theme.getColor(if (Theme.isCurrentThemeDark()) Theme.key_chats_verifiedBackground else Theme.key_chats_menuPhoneCats))
+        updateBadge(user)
         phoneTextView.text = if (InuConfig.HIDE_MY_PHONE_NUMBER.value) {
             LocaleController.getString(R.string.MobileHidden)
         } else {
@@ -523,6 +529,20 @@ class DrawerProfileCell(
         avatarDrawable.setColor(Theme.getColor(Theme.key_avatar_backgroundInProfileBlue))
         avatarImageView.setForUserOrChat(user, avatarDrawable)
         applyBackground(true)
+    }
+
+    private fun updateBadge(user: TLRPC.User) {
+        BadgeRegistry.applyTo(user)
+        val icon = if (InuConfig.DRAWER_SHOW_BADGE.value) user.bot_verification_icon else 0L
+        if (icon != 0L) {
+            badge.set(icon, true)
+            badge.setColor(Theme.getColor(Theme.key_profile_verifiedBackground))
+            nameTextView.setLeftDrawable(badge)
+            nameTextView.setDrawablePadding(AndroidUtilities.dp(4f))
+        } else {
+            badge.set(null as Drawable?, true)
+            nameTextView.setLeftDrawable(null as Drawable?)
+        }
     }
 
     // entiny: fallback to dark icon color when both header and chats_menuName are light

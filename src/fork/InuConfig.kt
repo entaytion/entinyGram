@@ -529,6 +529,9 @@ object InuConfig {
     val SHOW_DRAWER_ACCOUNTS = BoolItem("show_drawer_accounts", true)
 
     @JvmField
+    val DRAWER_SHOW_BADGE = BoolItem("drawer_show_badge", false)
+
+    @JvmField
     val DRAWER_MENU_ITEMS = DrawerMenuConfig("drawer_menu_items")
 
     @JvmField

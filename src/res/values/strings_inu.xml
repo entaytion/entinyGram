@@ -68,6 +68,8 @@
     <string name="InuDrawerKeepOptionsMenuInfo">Show the chats list menu button next to the side menu</string>
     <string name="InuShowDrawerAccounts">Show accounts in drawer</string>
     <string name="InuShowDrawerAccountsInfo">Show the expandable account switcher below your profile.</string>
+    <string name="InuDrawerShowBadge">Show badge in the side menu</string>
+    <string name="InuDrawerShowBadgeInfo">Shows your badge next to your name in the side menu header</string>
     <string name="InuSettings">entinyGram Settings</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuGeneral">General</string>
