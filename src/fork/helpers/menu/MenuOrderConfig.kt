@@ -394,7 +394,8 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
             R.string.InuAddToStickersGifs,
             R.drawable.msg_sticker
         ),
-        COPY("copy", listOf(ChatActivity.OPTION_COPY, ChatHelper.OPTION_COPY_MEDIA), R.string.Copy, R.drawable.msg_copy),
+        COPY("copy", listOf(ChatActivity.OPTION_COPY), R.string.Copy, R.drawable.msg_copy),
+        COPY_PHOTO("copy_photo", listOf(ChatHelper.OPTION_COPY_MEDIA), R.string.InuCopyPhoto, R.drawable.msg_copy),
         COPY_LINK("copy_link", listOf(ChatActivity.OPTION_COPY_LINK), R.string.CopyLink, R.drawable.msg_link),
         SAVE_TO_GALLERY(
             "save_to_gallery",

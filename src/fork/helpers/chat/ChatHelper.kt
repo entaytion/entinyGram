@@ -611,11 +611,14 @@ object ChatHelper {
             icons.add(R.drawable.msg_download)
         }
 
-        // entiny: OPTION_COPY fallback copies media URI since stock only covers text/caption
-        if (!noforwards && !options.contains(ChatActivity.OPTION_COPY) &&
-            mediaFileForCopy(activity.currentAccount, selectedObject) != null
-        ) {
-            items.add(LocaleController.getString(R.string.Copy))
+        // entiny: stock copies only text/caption; add the media copy next to it, or in place of it when there is no text
+        if (!noforwards && mediaFileForCopy(activity.currentAccount, selectedObject) != null) {
+            val label = when {
+                !options.contains(ChatActivity.OPTION_COPY) -> R.string.Copy
+                selectedObject.isPhoto -> R.string.InuCopyPhoto
+                else -> R.string.InuCopyFrame
+            }
+            items.add(LocaleController.getString(label))
             options.add(OPTION_COPY_MEDIA)
             icons.add(R.drawable.msg_copy)
         }
