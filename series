@@ -623,3 +623,4 @@ entiny/ui/monet-m3-style.patch
 entiny/chat/forward-pro-replaces-forward.patch
 entiny/ui/unread-chats-first.patch
 entiny/chat/new-bot-link-crash.patch
+entiny/media/hd-photo-q87.patch
