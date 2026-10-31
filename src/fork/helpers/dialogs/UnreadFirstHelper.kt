@@ -19,7 +19,8 @@ object UnreadFirstHelper {
     @JvmStatic
     fun resortOnRead(): Boolean = InuConfig.UNREAD_CHATS_FIRST.value
 
-    private fun isUnread(controller: MessagesController, d: TLRPC.Dialog): Boolean =
+    @JvmStatic
+    fun isUnread(controller: MessagesController, d: TLRPC.Dialog): Boolean =
         d.unread_mark || GhostHelper.effectiveMentions(d) > 0 || controller.getDialogUnreadCount(d) > 0
 
     @JvmStatic

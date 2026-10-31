@@ -469,6 +469,7 @@
     <string name="InuFoldersAtBottom">نقل المجلدات إلى الأسفل</string>
     <string name="InuHideArchive">إزالة \"المحادثات المؤرشفة\" من قائمة المحادثات</string>
     <string name="InuUnreadChatsFirst">المحادثات غير المقروءة أولاً</string>
+    <string name="InuUnreadChatsFirstPinned">غير المقروءة أولاً بين المثبتة</string>
     <string name="InuCommunityDisplayMode">المجتمعات</string>
     <string name="InuCommunityDisplayModeRegular">عادي</string>
     <string name="InuCommunityDisplayModeLongTap">فتح بالضغط المطوّل</string>

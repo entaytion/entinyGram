@@ -93,16 +93,31 @@ object PinHelper {
     @JvmStatic
     fun reorderLocalPins(controller: MessagesController, account: Int) {
         HiddenDialogsHelper.filter(controller, account)
-        if (!InuConfig.UNLIMITED_PINNED_CHATS.value) return
+        val unlimited = InuConfig.UNLIMITED_PINNED_CHATS.value
         for (i in 0 until controller.dialogsByFolder.size()) {
             val folderId = controller.dialogsByFolder.keyAt(i)
             val list = controller.dialogsByFolder.valueAt(i) ?: continue
-            reorder(scopeMap(account, folderId), list) { it.pinned }
+            val pins = if (unlimited) scopeMap(account, folderId) else null
+            if (pins != null) reorder(pins, list) { it.pinned }
+            unreadFirstInPinned(controller, list) { it.pinned || pins?.containsKey(it.id) == true }
         }
         for (filter in controller.selectedDialogFilter) {
             if (filter == null) continue
-            reorder(scopeMap(account, filter.id), filter.dialogs) { d -> filter.pinnedDialogs.indexOfKey(d.id) >= 0 }
+            val pins = if (unlimited) scopeMap(account, filter.id) else null
+            if (pins != null) reorder(pins, filter.dialogs) { d -> filter.pinnedDialogs.indexOfKey(d.id) >= 0 }
+            unreadFirstInPinned(controller, filter.dialogs) { d -> filter.pinnedDialogs.indexOfKey(d.id) >= 0 || pins?.containsKey(d.id) == true }
         }
+    }
+
+    private fun unreadFirstInPinned(controller: MessagesController, list: ArrayList<TLRPC.Dialog>, isPinned: (TLRPC.Dialog) -> Boolean) {
+        if (!InuConfig.UNREAD_CHATS_FIRST.value || !InuConfig.UNREAD_CHATS_FIRST_PINNED.value) return
+        var start = 0
+        while (start < list.size && list[start] is TLRPC.TL_dialogFolder) start++
+        var end = start
+        while (end < list.size && isPinned(list[end])) end++
+        if (end - start < 2) return
+        val sorted = list.subList(start, end).sortedBy { if (UnreadFirstHelper.isUnread(controller, it)) 0 else 1 }
+        for (i in sorted.indices) list[start + i] = sorted[i]
     }
 
     private fun reorder(pins: LinkedHashMap<Long, Int>?, list: ArrayList<TLRPC.Dialog>, isReallyPinned: (TLRPC.Dialog) -> Boolean) {

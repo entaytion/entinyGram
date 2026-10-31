@@ -370,6 +370,7 @@
     <string name="InuFoldersAtBottom">Klasörleri alta taşı</string>
     <string name="InuHideArchive">\"Arşivlenmiş Sohbetler\"i sohbet listesinden kaldır</string>
     <string name="InuUnreadChatsFirst">Okunmamış sohbetler önce</string>
+    <string name="InuUnreadChatsFirstPinned">Sabitlenenler arasında okunmamışlar önce</string>
     <string name="InuCommunityDisplayMode">Topluluklar</string>
     <string name="InuCommunityDisplayModeRegular">Normal</string>
     <string name="InuCommunityDisplayModeLongTap">Uzun basınca aç</string>
