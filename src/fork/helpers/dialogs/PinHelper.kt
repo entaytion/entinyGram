@@ -26,7 +26,20 @@ object PinHelper {
                 cache.put(account, HashMap(loadedMap))
             }
             // entiny: pins are read off the storage queue, so the list sorted at startup has none of them yet
-            if (loadedMap.isNotEmpty()) AndroidUtilities.runOnUIThread { refresh(account) }
+            if (loadedMap.isNotEmpty()) AndroidUtilities.runOnUIThread {
+                loadMissingPinned(account, storage, loadedMap)
+                refresh(account)
+            }
+        }
+    }
+
+    // entiny: local pins aren't pinned in the stock dialogs table, so old pinned chats fall outside the paged startup load
+    private fun loadMissingPinned(account: Int, storage: MessagesStorage, pins: Map<Int, LinkedHashMap<Long, Int>>) {
+        if (!InuConfig.UNLIMITED_PINNED_CHATS.value) return
+        val controller = MessagesController.getInstance(account) ?: return
+        val ids = pins.values.flatMap { it.keys }.toSet()
+        for (id in ids) {
+            if (controller.dialogs_dict.indexOfKey(id) < 0) storage.inu_loadDialogFromCache(id)
         }
     }
 
