@@ -399,7 +399,7 @@ Sistema: %6$s
     <string name="InuIosMessageMenu">Menú de mensajes estilo iOS</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Estilo de diseño</string>
-    <string name="InuMaterial3SettingsInfo">Interruptores, deslizadores, secciones, avatares, tarjetas de la lista de chats y más.</string>
+    <string name="InuMaterial3SettingsInfo">Interruptores, deslizadores, secciones, avatares y más.</string>
     <string name="InuDialogsFabMainAction">Acción principal</string>
     <string name="InuDialogsFabSecondaryAction">Acción secundaria</string>
     <string name="InuDialogsFabHideOnScroll">Ocultar al desplazarse</string>

@@ -2083,7 +2083,7 @@
     <string name="InuHideReactionsDisplayInfo">چیپ‌های واکنش زیر حباب‌ها نمایش داده نمی‌شوند</string>
     <string name="InuHideReactionsSet">غیرفعال‌کردن ثبت واکنش</string>
     <string name="InuHideReactionsSetInfo">بدون نوار واکنش در منوی پیام و بدون واکنش با دوبار لمس</string>
-    <string name="InuMaterial3SettingsInfo">کلیدها، اسلایدرها، بخش‌ها، آواتارها، کارت‌های فهرست گفتگو و بیشتر.</string>
+    <string name="InuMaterial3SettingsInfo">کلیدها، اسلایدرها، بخش‌ها، آواتارها و بیشتر.</string>
     <string name="InuPluginsEngineDisabled">افزونه‌ها در حال حاضر غیرفعال‌اند\n\nبرای نصب این افزونه آن‌ها را در تنظیمات فعال کنید</string>
     <string name="InuPluginsOpenSettings">باز کردن تنظیمات</string>
     <string name="InuPluginsPluginlessBuild">این نسخه از افزونه‌ها پشتیبانی نمی‌کند\n\nبرای رفتن به نسخه کامل به بخش درباره بروید</string>

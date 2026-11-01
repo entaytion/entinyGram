@@ -2064,7 +2064,7 @@
     <string name="InuHideReactionsDisplayInfo">不显示气泡下方的回应</string>
     <string name="InuHideReactionsSet">禁用设置回应</string>
     <string name="InuHideReactionsSetInfo">消息菜单中没有回应栏，也没有双击回应</string>
-    <string name="InuMaterial3SettingsInfo">开关、滑块、分区、头像、聊天列表卡片等。</string>
+    <string name="InuMaterial3SettingsInfo">开关、滑块、分区、头像等。</string>
     <string name="InuSendAsSticker">作为贴纸发送</string>
     <string name="InuStickerPackZipFailed">下载贴纸包失败</string>
     <string name="InuForumSectionsCards">论坛话题使用卡片分区</string>

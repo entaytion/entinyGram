@@ -2064,7 +2064,7 @@
     <string name="InuHideReactionsDisplayInfo">吹き出しの下のリアクションを表示しません</string>
     <string name="InuHideReactionsSet">リアクションの送信を無効にする</string>
     <string name="InuHideReactionsSetInfo">メッセージメニューのリアクションバーとダブルタップのリアクションを無効にします</string>
-    <string name="InuMaterial3SettingsInfo">スイッチ、スライダー、セクション、アバター、チャットリストのカードなど。</string>
+    <string name="InuMaterial3SettingsInfo">スイッチ、スライダー、セクション、アバターなど。</string>
     <string name="InuSendAsSticker">ステッカーとして送信</string>
     <string name="InuStickerPackZipFailed">パックのダウンロードに失敗しました</string>
     <string name="InuForumSectionsCards">フォーラムのトピックをカード表示</string>

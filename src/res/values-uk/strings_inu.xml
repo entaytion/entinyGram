@@ -263,7 +263,7 @@
     <string name="InuCompactModeInfo">Приховує заголовки та зменшує розмір вкладок</string>
     <string name="InuDialogsFab">Плаваюча кнопка (FAB)</string>
     <string name="InuDesignStyle">Стиль оформлення</string>
-    <string name="InuMaterial3SettingsInfo">Перемикачі, повзунки, секції, аватари, картки списку чатів та інше.</string>
+    <string name="InuMaterial3SettingsInfo">Перемикачі, повзунки, секції, аватари та інше.</string>
     <string name="InuDialogsFabMainAction">Основна дія</string>
     <string name="InuDialogsFabSecondaryAction">Вторинна дія</string>
     <string name="InuDialogsFabHideOnScroll">Приховувати при скролінгу</string>

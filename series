@@ -628,3 +628,4 @@ entiny/chat/reactions-overlay-null-media.patch
 entiny/ui/settings-headers-dividers.patch
 entiny/ui/forum-m3-sections.patch
 entiny/chat/confirm-links.patch
+entiny/ui/expandable-switch-theme.patch

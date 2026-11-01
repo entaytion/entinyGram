@@ -2098,7 +2098,7 @@
     <string name="InuHideReactionsDisplayInfo">لا تُعرض رقائق التفاعلات تحت الفقاعات</string>
     <string name="InuHideReactionsSet">تعطيل وضع التفاعلات</string>
     <string name="InuHideReactionsSetInfo">لا شريط تفاعلات في قائمة الرسالة ولا تفاعل بالنقر المزدوج</string>
-    <string name="InuMaterial3SettingsInfo">المفاتيح والمنزلقات والأقسام والصور الرمزية وبطاقات قائمة المحادثات والمزيد.</string>
+    <string name="InuMaterial3SettingsInfo">المفاتيح والمنزلقات والأقسام والصور الرمزية والمزيد.</string>
     <string name="InuPluginsEngineDisabled">الإضافات معطلة حالياً\n\nفعّلها من الإعدادات لتثبيت هذه الإضافة</string>
     <string name="InuPluginsOpenSettings">فتح الإعدادات</string>
     <string name="InuPluginsPluginlessBuild">هذا الإصدار لا يدعم الإضافات\n\nانتقل إلى «حول» للتبديل إلى الإصدار الكامل</string>

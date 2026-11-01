@@ -184,7 +184,7 @@
     <string name="InuCompactModeInfo">Скрывает названия и уменьшает вкладки</string>
     <string name="InuDialogsFab">Кнопка действия</string>
     <string name="InuDesignStyle">Стиль оформления</string>
-    <string name="InuMaterial3SettingsInfo">Переключатели, ползунки, секции, аватары, карточки списка чатов и другое.</string>
+    <string name="InuMaterial3SettingsInfo">Переключатели, ползунки, секции, аватары и другое.</string>
     <string name="InuDialogsFabMainAction">Основное действие</string>
     <string name="InuDialogsFabSecondaryAction">Дополнительное действие</string>
     <string name="InuDialogsFabHideOnScroll">Скрывать при прокрутке</string>

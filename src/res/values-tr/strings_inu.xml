@@ -2067,7 +2067,7 @@
     <string name="InuHideReactionsDisplayInfo">Balonların altındaki tepki çipleri gösterilmez</string>
     <string name="InuHideReactionsSet">Tepki vermeyi devre dışı bırak</string>
     <string name="InuHideReactionsSetInfo">Mesaj menüsünde tepki çubuğu ve çift dokunuşla tepki yok</string>
-    <string name="InuMaterial3SettingsInfo">Anahtarlar, kaydırıcılar, bölümler, avatarlar, sohbet listesi kartları ve daha fazlası.</string>
+    <string name="InuMaterial3SettingsInfo">Anahtarlar, kaydırıcılar, bölümler, avatarlar ve daha fazlası.</string>
     <string name="InuSendAsSticker">Çıkartma olarak gönder</string>
     <string name="InuStickerPackZipFailed">Paket indirilemedi</string>
     <string name="InuForumSectionsCards">Forum konularında kart bölümleri</string>

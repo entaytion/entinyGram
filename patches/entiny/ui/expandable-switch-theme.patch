@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 01:15:44 +0200
+Subject: [*] expandable switch colors after theme change
+
+---
+ .../src/main/java/org/telegram/ui/Cells/TextCheckCell2.java    | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.java
+@@ -78,6 +78,9 @@ public class TextCheckCell2 extends FrameLayout {
+             checkBoxClickArea.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
+             addView(checkBoxClickArea, LayoutHelper.createFrame(76, LayoutHelper.MATCH_PARENT, LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT));
+         }
++        animatedTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
++        collapsedArrow.getBackground().setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.MULTIPLY));
++        checkBoxClickArea.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
+         animatedTextView.setText(text);
+         collapsedArrow.animate().cancel();
+         collapsedArrow.animate().rotation(collapsed ? 0 : 180).setDuration(340).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).start();
