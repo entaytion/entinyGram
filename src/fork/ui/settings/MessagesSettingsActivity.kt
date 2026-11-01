@@ -207,6 +207,14 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 experimental = true,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_FORWARD_PRO_REPLACE,
+                R.string.InuForwardProReplace,
+                R.string.InuForwardProReplaceInfo,
+                InuConfig.FORWARD_PRO_REPLACE.value,
+            )
+        )
         items.add(UItem.asShadow(null))
         items.add(UItem.asShadow(null))
 
@@ -305,6 +313,11 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_FORWARD_PRO -> {
                 val new = InuConfig.FORWARD_PRO.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_FORWARD_PRO_REPLACE -> {
+                val new = InuConfig.FORWARD_PRO_REPLACE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
@@ -460,6 +473,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CLOWN_AVATAR_BLOCKED_ME = InuUtils.generateId()
         private val TOGGLE_CHAT_REMEMBER_ALL_REPLIES = InuUtils.generateId()
         private val TOGGLE_FORWARD_PRO = InuUtils.generateId()
+        private val TOGGLE_FORWARD_PRO_REPLACE = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_STICKER = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_GIF = InuUtils.generateId()
         private val SECTION_CONFIRM_SEND = InuUtils.generateId()
@@ -518,6 +532,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("chat-remember-all-replies", R.string.InuChatRememberAllReplies, TOGGLE_CHAT_REMEMBER_ALL_REPLIES),
                 SearchRegistry.Entry("instant-mark-reactions-read", R.string.InuInstantMarkReactionsRead, TOGGLE_INSTANT_MARK_REACTIONS_READ),
                 SearchRegistry.Entry("forward-pro", R.string.InuForwardPro, TOGGLE_FORWARD_PRO),
+                SearchRegistry.Entry("forward-pro-replace", R.string.InuForwardProReplace, TOGGLE_FORWARD_PRO_REPLACE),
                 SearchRegistry.Entry("confirm-send-sticker", R.string.InuConfirmSendSticker, TOGGLE_CONFIRM_SEND_STICKER),
                 SearchRegistry.Entry("confirm-send-gif", R.string.InuConfirmSendGif, TOGGLE_CONFIRM_SEND_GIF),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),

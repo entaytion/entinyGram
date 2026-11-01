@@ -1462,6 +1462,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val FORWARD_PRO = BoolItem("forward_pro", false)
 
+    @JvmField
+    val FORWARD_PRO_REPLACE = BoolItem("forward_pro_replace", false)
+
     // Forward Pro quick toggles remembered between forwards
     val FORWARD_PRO_SILENT = BoolItem("forward_pro_silent", false)
     val FORWARD_PRO_HIDE_CAPTION = BoolItem("forward_pro_hide_caption", false)

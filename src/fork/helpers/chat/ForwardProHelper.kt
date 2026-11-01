@@ -863,18 +863,18 @@ object ForwardProHelper {
         return false
     }
 
-    // entiny: with Forward Pro on, the stock Forward entry opens this sheet instead of a second, separate one
+    // entiny: with "replace Forward" on, the stock Forward entry opens this sheet
     @JvmStatic
     @JvmOverloads
     fun takeOver(activity: ChatActivity, message: MessageObject?, group: MessageObject.GroupedMessages?, noQuote: Boolean = false): Boolean {
-        if (message == null || !InuConfig.FORWARD_PRO.value) return false
+        if (message == null || !InuConfig.FORWARD_PRO_REPLACE.value) return false
         openSheet(activity, group?.messages ?: listOf(message), noQuote = noQuote)
         return true
     }
 
     @JvmStatic
     fun takeOverSelection(activity: ChatActivity, selected: Array<android.util.SparseArray<MessageObject>>): Boolean {
-        if (!InuConfig.FORWARD_PRO.value) return false
+        if (!InuConfig.FORWARD_PRO_REPLACE.value) return false
         val messages = ArrayList<MessageObject>()
         for (side in selected) for (i in 0 until side.size()) messages.add(side.valueAt(i))
         if (messages.isEmpty()) return false

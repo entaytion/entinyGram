@@ -542,8 +542,8 @@ object ChatHelper {
             icons.add(R.drawable.inu_tabler_eye_off)
         }
 
-        // entiny: with Forward Pro on, plain Forward already opens its sheet, whose toggles cover both extra entries
-        if (options.contains(ChatActivity.OPTION_FORWARD) && !InuConfig.FORWARD_PRO.value) {
+        // entiny: with Forward Pro replacing Forward, its sheet toggles cover both extra entries
+        if (options.contains(ChatActivity.OPTION_FORWARD) && !InuConfig.FORWARD_PRO_REPLACE.value) {
             items.add(LocaleController.getString(R.string.InuForwardNoQuote))
             options.add(OPTION_FORWARD_NO_QUOTE)
             icons.add(R.drawable.msg_forward_noquote)
