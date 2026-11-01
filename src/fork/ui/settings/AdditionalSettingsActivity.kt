@@ -30,6 +30,7 @@ import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
+import org.telegram.messenger.browser.Browser
 import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
@@ -47,7 +48,7 @@ import org.telegram.ui.LaunchActivity
 import org.telegram.ui.UpdateLayoutWrapper
 
 class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.NotificationCenterDelegate {
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCategoryBackup)
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAbout)
 
     private var updateLayout: IUpdateLayout? = null
     private var updateWrapper: UpdateLayoutWrapper? = null
@@ -73,6 +74,25 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
     ).also { donateCard = it }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(UItem.asCustomShadow(InuSettingsHeader(context)))
+        items.add(UItem.asShadow(null))
+        items.add(
+            UItem.asButton(
+                BUTTON_CHANNEL_LINK,
+                R.drawable.inu_tabler_brand_telegram,
+                LocaleController.getString(R.string.InuAboutChannel),
+                "@entinyGram"
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_GITHUB,
+                R.drawable.inu_tabler_brand_github,
+                LocaleController.getString(R.string.InuAboutGitHub),
+                "Entaytion/entinyGram"
+            )
+        )
+        items.add(UItem.asShadow(null))
         if (InuConfig.HIDE_DONATE_CARD.value) {
             items.add(mkSubPageButton(BUTTON_DONATE, R.drawable.inu_tabler_heart, LocaleController.getString(R.string.InuDonateRow)))
         } else {
@@ -131,77 +151,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuPushHeader)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_UNIFIED_PUSH,
-                R.string.InuUnifiedPush,
-                R.string.InuUnifiedPushInfo,
-                UnifiedPushHelper.isEnabled(),
-                experimental = true,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_BACKGROUND_SERVICE,
-                R.string.InuBackgroundService,
-                R.string.InuBackgroundServiceInfo,
-                InuConfig.FOREGROUND_PUSH_SERVICE.value,
-            )
-        )
-        if (InuConfig.FOREGROUND_PUSH_SERVICE.value && android.os.Build.VERSION.SDK_INT >= 26) {
-            items.add(UItem.asButton(BUTTON_BACKGROUND_SERVICE_CHANNEL, LocaleController.getString(R.string.InuBackgroundServiceHideNotification), LocaleController.getString(R.string.InuBackgroundServiceHideNotificationInfo)))
-        }
-        if (UnifiedPushHelper.isEnabled()) {
-            items.add(
-                UItem.asButton(
-                    BUTTON_UNIFIED_PUSH_DISTRIBUTOR,
-                    LocaleController.getString(R.string.InuUnifiedPushDistributor),
-                    UnifiedPushHelper.currentDistributor()?.let(::appLabel) ?: LocaleController.getString(R.string.InuUnifiedPushNoDistributor),
-                )
-            )
-            val gw = UnifiedPushHelper.getGateway()
-            val gwSubtitle = if (gw.isNotEmpty()) {
-                if (gw == UnifiedPushHelper.DEFAULT_GATEWAY) {
-                    "${LocaleController.getString(R.string.InuUnifiedPushGatewayDefault)} ($gw)"
-                } else {
-                    gw
-                }
-            } else {
-                LocaleController.getString(R.string.InuUnifiedPushGatewayDirect)
-            }
-            items.add(
-                UItem.asButton(
-                    BUTTON_UNIFIED_PUSH_GATEWAY,
-                    LocaleController.getString(R.string.InuUnifiedPushGateway),
-                    gwSubtitle,
-                )
-            )
-        }
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_NOTIF_CHANNEL_SYNC,
-                R.string.InuNotifChannelSync,
-                R.string.InuNotifChannelSyncInfo,
-                InuConfig.NOTIF_CHANNEL_SYNC.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_PER_CHAT_NOTIF_CHANNELS,
-                R.string.InuPerChatNotifChannels,
-                R.string.InuPerChatNotifChannelsInfo,
-                InuConfig.PER_CHAT_NOTIF_CHANNELS.value,
-            )
-        )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
-        items.add(mkSubPageButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
-        items.add(mkSubPageButton(BUTTON_CACHE_MANAGEMENT, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuCacheManagement)))
-        items.add(mkSubPageButton(BUTTON_DATACENTER_STATUS, R.drawable.inu_tabler_server, LocaleController.getString(R.string.InuDatacenterStatus)))
-        items.add(UItem.asShadow(null))
-
         items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.inu_tabler_terminal_2, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
         items.add(UItem.asShadow(null))
     }
@@ -233,126 +182,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         applyListPadding()
     }
 
-    private fun toggleBackgroundService(view: View) {
-        if (InuConfig.FOREGROUND_PUSH_SERVICE.value) {
-            InuConfig.FOREGROUND_PUSH_SERVICE.value = false
-            (view as? NotificationsCheckCell)?.isChecked = false
-            restartPushService()
-            return
-        }
-        val ctx = parentActivity ?: return
-        AlertDialog.Builder(ctx, resourceProvider)
-            .setTitle(LocaleController.getString(R.string.InuBackgroundService))
-            .setMessage(LocaleController.getString(R.string.InuBackgroundServiceAlert))
-            .setPositiveButton(LocaleController.getString(R.string.InuBackgroundServiceEnable)) { _, _ ->
-                InuConfig.FOREGROUND_PUSH_SERVICE.value = true
-                (view as? NotificationsCheckCell)?.isChecked = true
-                restartPushService()
-            }
-            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
-            .show()
-    }
-
-    private fun openServiceChannelSettings() {
-        val ctx = parentActivity ?: return
-        val intent = android.content.Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
-            .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, ctx.packageName)
-            .putExtra(android.provider.Settings.EXTRA_CHANNEL_ID, "push_service_channel")
-        runCatching { ctx.startActivity(intent) }
-    }
-
-    private fun restartPushService() {
-        val app = ApplicationLoader.applicationContext
-        app.stopService(android.content.Intent(app, org.telegram.messenger.NotificationsService::class.java))
-        ApplicationLoader.startPushService()
-    }
-
-    private fun toggleUnifiedPush() {
-        val enable = !UnifiedPushHelper.isEnabled()
-        if (enable && UnifiedPushHelper.distributors().isEmpty()) {
-            BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.InuUnifiedPushNoDistributorInfo)).show()
-            return
-        }
-        UnifiedPushHelper.setEnabled(enable)
-        listView?.adapter?.update(true)
-    }
-
-    private fun pickDistributor(anchor: View) {
-        val all = UnifiedPushHelper.distributors()
-        if (all.isEmpty()) {
-            BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.InuUnifiedPushNoDistributorInfo)).show()
-            return
-        }
-        val current = UnifiedPushHelper.currentDistributor()
-        RadioItemOptions.show(this, anchor, all.map { appLabel(it) }, all.indexOf(current).coerceAtLeast(0)) { which ->
-            val picked = all.getOrNull(which) ?: return@show
-            if (picked != current) {
-                UnifiedPushHelper.setEnabled(true, picked)
-                listView?.adapter?.update(true)
-            }
-        }
-    }
-
-    private fun editGateway() {
-        val ctx = context ?: return
-        val current = UnifiedPushHelper.getGateway()
-        val container = LinearLayout(ctx).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(dp(24f), dp(8f), dp(24f), 0)
-        }
-        val input = EditTextBoldCursor(ctx).apply {
-            setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
-            setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
-            setCursorColor(Theme.getColor(Theme.key_dialogTextBlack))
-            setCursorSize(dp(20f))
-            setCursorWidth(1.5f)
-            hint = "https://p2p.belloworld.it/"
-            setText(current)
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
-            isSingleLine = true
-            textSize = 16f
-        }
-        container.addView(input, LinearLayout.LayoutParams(-1, -2).apply {
-            bottomMargin = dp(8f)
-        })
-        val infoText = TextView(ctx).apply {
-            setTextColor(Theme.getColor(Theme.key_dialogTextGray2))
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
-            text = LocaleController.getString(R.string.InuUnifiedPushGatewayInfo)
-        }
-        container.addView(infoText, LinearLayout.LayoutParams(-1, -2))
-
-        val builder = AlertDialog.Builder(ctx, resourceProvider)
-            .setTitle(LocaleController.getString(R.string.InuUnifiedPushGateway))
-            .setView(container)
-            .setPositiveButton(LocaleController.getString(R.string.OK)) { _, _ ->
-                val entered = input.text.toString().trim()
-                UnifiedPushHelper.setGateway(entered)
-                listView?.adapter?.update(true)
-            }
-            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
-
-        if (current.isNotEmpty()) {
-            builder.setNeutralButton(LocaleController.getString(R.string.Reset)) { _, _ ->
-                UnifiedPushHelper.setGateway("")
-                listView?.adapter?.update(true)
-            }
-        } else {
-            builder.setNeutralButton(LocaleController.getString(R.string.InuUnifiedPushGatewayDefault)) { _, _ ->
-                UnifiedPushHelper.setGateway("https://p2p.belloworld.it/")
-                listView?.adapter?.update(true)
-            }
-        }
-        showDialog(builder.create())
-    }
-
-    private fun appLabel(packageName: String): CharSequence = try {
-        val pm = ApplicationLoader.applicationContext.packageManager
-        pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0))
-    } catch (_: Exception) {
-        packageName
-    }
-
     private fun applyListPadding() {
         val lv = listView ?: return
         val barHeight = if (SharedConfig.isAppUpdateAvailable()) dp(44f) else 0
@@ -361,26 +190,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            TOGGLE_UNIFIED_PUSH -> toggleUnifiedPush()
-
-            TOGGLE_BACKGROUND_SERVICE -> toggleBackgroundService(view)
-
-            BUTTON_BACKGROUND_SERVICE_CHANNEL -> openServiceChannelSettings()
-
-            BUTTON_UNIFIED_PUSH_DISTRIBUTOR -> pickDistributor(view)
-
-            BUTTON_UNIFIED_PUSH_GATEWAY -> editGateway()
-
-            TOGGLE_NOTIF_CHANNEL_SYNC -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.NOTIF_CHANNEL_SYNC.toggle()
-            }
-
-            TOGGLE_PER_CHAT_NOTIF_CHANNELS -> {
-                val new = InuConfig.PER_CHAT_NOTIF_CHANNELS.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                NotificationsHelper.resetDefaultNotificationChannels()
-            }
-
             TOGGLE_AUTO_UPDATE_CHECK -> {
                 val new = InuConfig.UPDATES_ENABLED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -422,9 +231,10 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
             BUTTON_DONATE -> showDialog(DonateBottomSheet(this))
 
-            BUTTON_CLOUD_SYNC -> presentFragment(BackupSettingsActivity())
-            BUTTON_CACHE_MANAGEMENT -> presentFragment(CacheManagementSettingsActivity())
-            BUTTON_DATACENTER_STATUS -> presentFragment(DatacenterStatusActivity())
+            BUTTON_CHANNEL_LINK -> Browser.openUrl(context ?: return, "https://t.me/entinyGram")
+
+            BUTTON_GITHUB -> Browser.openUrl(context ?: return, "https://github.com/Entaytion/EntinyGram")
+
         }
     }
 
@@ -680,39 +490,26 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
         private val TOGGLE_LOGS_REDACT = InuUtils.generateId()
         private val BUTTON_DONATE = InuUtils.generateId()
+        private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
+        private val BUTTON_GITHUB = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
-        private val BUTTON_CLOUD_SYNC = InuUtils.generateId()
-        private val BUTTON_CACHE_MANAGEMENT = InuUtils.generateId()
-        private val BUTTON_DATACENTER_STATUS = InuUtils.generateId()
-        private val TOGGLE_UNIFIED_PUSH = InuUtils.generateId()
-        private val TOGGLE_BACKGROUND_SERVICE = InuUtils.generateId()
-        private val BUTTON_BACKGROUND_SERVICE_CHANNEL = InuUtils.generateId()
-        private val BUTTON_UNIFIED_PUSH_DISTRIBUTOR = InuUtils.generateId()
-        private val BUTTON_UNIFIED_PUSH_GATEWAY = InuUtils.generateId()
-        private val TOGGLE_NOTIF_CHANNEL_SYNC = InuUtils.generateId()
-        private val TOGGLE_PER_CHAT_NOTIF_CHANNELS = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
-            slug = "additional",
-            titleRes = R.string.InuAdditional,
+            slug = "about",
+            aliases = listOf("additional"),
+            titleRes = R.string.InuAbout,
             iconRes = R.drawable.inu_tabler_device_floppy,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("channel", R.string.InuAboutChannel, BUTTON_CHANNEL_LINK),
+                SearchRegistry.Entry("github", R.string.InuAboutGitHub, BUTTON_GITHUB),
                 SearchRegistry.Entry("logs-enabled", R.string.InuLogsEnabled, TOGGLE_LOGS_ENABLED),
                 SearchRegistry.Entry("logs-redact", R.string.InuLogsRedact, TOGGLE_LOGS_REDACT),
                 SearchRegistry.Entry("additional-donate", R.string.InuDonateRow, BUTTON_DONATE),
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("auto-update-check", R.string.InuAutoUpdateCheck, TOGGLE_AUTO_UPDATE_CHECK),
                 SearchRegistry.Entry("updates-include-beta", R.string.InuUpdatesIncludeBeta, TOGGLE_UPDATES_INCLUDE_BETA),
-                SearchRegistry.Entry("additional-cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
-                SearchRegistry.Entry("additional-cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
-                SearchRegistry.Entry("additional-datacenter-status", R.string.InuDatacenterStatus, BUTTON_DATACENTER_STATUS),
-                SearchRegistry.Entry("additional-unified-push", R.string.InuUnifiedPush, TOGGLE_UNIFIED_PUSH),
-                SearchRegistry.Entry("additional-background-service", R.string.InuBackgroundService, TOGGLE_BACKGROUND_SERVICE),
-                SearchRegistry.Entry("additional-unified-push-gateway", R.string.InuUnifiedPushGateway, BUTTON_UNIFIED_PUSH_GATEWAY),
-                SearchRegistry.Entry("notif-channel-sync", R.string.InuNotifChannelSync, TOGGLE_NOTIF_CHANNEL_SYNC),
-                SearchRegistry.Entry("per-chat-notif-channels", R.string.InuPerChatNotifChannels, TOGGLE_PER_CHAT_NOTIF_CHANNELS),
             ),
         )
     }

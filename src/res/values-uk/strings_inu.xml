@@ -29,7 +29,6 @@
     <string name="InuDrawerKeepOptionsMenuInfo">Показувати кнопку меню списку чатів разом із бічним меню</string>
     <string name="InuSettings">Налаштування entinyGram</string>
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
-    <string name="InuGeneral">Загальні</string>
     <string name="InuWideChannelPosts">Широкі пости</string>
     <string name="InuWideChannelPostsFooter">Пости каналів та переслані повідомлення займають усю доступну ширину.</string>
     <string name="InuWideChannelPostsPreviewText">Новини, фото та відео</string>
@@ -100,9 +99,7 @@
     <string name="InuPerformanceClassLow">Низький</string>
     <string name="InuPerformanceClassAverage">Середній</string>
     <string name="InuPerformanceClassHigh">Високий</string>
-    <string name="InuMessages">Повідомлення</string>
     <string name="InuChats">Чати</string>
-    <string name="InuMainPage">Список чатів</string>
     <string name="InuUserProfile">Профіль користувача</string>
     <string name="InuChatList">Список чатів</string>
     <string name="InuDoubleTapActions">Дії подвійного тапу</string>
@@ -121,14 +118,17 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Перемикачі</string>
     <string name="InuMaterial3Sliders">Повзунки</string>
-    <string name="InuMaterial3Dialogs">Діалоги та шторки</string>
     <string name="InuMaterial3Fabs">Плаваючі кнопки (FAB)</string>
     <string name="InuMaterial3Sections">Елементи списків</string>
+    <string name="InuMaterial3HeadersInCard">Назви секцій у картці</string>
+    <string name="InuForumSectionsCards">Секції-картки в темах форуму</string>
     <string name="InuMaterial3Avatars">Аватари</string>
     <string name="InuAvatarCorners">Скруглення аватарок</string>
     <string name="InuAvatarCornersLeft">Прямі</string>
     <string name="InuAvatarCornersRight">Круглі</string>
     <string name="InuUnifiedCornerRadius">Єдиний радіус скруглення</string>
+    <string name="InuHideDividers">Вимкнути роздільники</string>
+    <string name="InuHideDividersInfo">Прибирає лінії й проміжки між рядками в списках налаштувань.</string>
     <string name="InuUnifiedCornerRadiusInfo">Застосовувати однаковий радіус скруглення до всіх аватарок, включно з темами форумів</string>
     <string name="InuMonetTheme">Тема Monet</string>
     <string name="InuMonetThemeDisabled">Вимкнено</string>
@@ -264,14 +264,6 @@
     <string name="InuDialogsFab">Плаваюча кнопка (FAB)</string>
     <string name="InuDesignStyle">Стиль оформлення</string>
     <string name="InuMaterial3SettingsInfo">Перемикачі, повзунки, секції, аватари, картки списку чатів та інше.</string>
-    <string name="InuDialogsSections">Секції списку чатів</string>
-    <string name="InuDialogsSectionsCards">Секції-картки</string>
-    <string name="InuDialogsSectionsMargin">Бічні відступи</string>
-    <string name="InuDialogsSectionsMarginNone">Немає</string>
-    <string name="InuDialogsSectionsMarginMedium">Середні</string>
-    <string name="InuDialogsSectionsMarginLarge">Великі</string>
-    <string name="InuDialogsSectionsSeparatePinned">Закріплені окремо</string>
-    <string name="InuDialogsSectionsSeparatePinnedInfo">Показувати закріплені чати й архів окремою карткою</string>
     <string name="InuDialogsFabMainAction">Основна дія</string>
     <string name="InuDialogsFabSecondaryAction">Вторинна дія</string>
     <string name="InuDialogsFabHideOnScroll">Приховувати при скролінгу</string>
@@ -575,7 +567,6 @@
     <string name="InuProfileRegDate">Дата реєстрації</string>
     <string name="InuProfileRegDateCopied">Дату реєстрації та DC скопійовано</string>
     <string name="InuMessageInput">Введення повідомлення</string>
-    <string name="InuAttachmentSheet">Панель вкладень</string>
     <string name="InuIconReplacement">Пакет іконок</string>
 
     <string name="InuIconPackLoadFromFile">Завантажити з файлу</string>
@@ -738,7 +729,6 @@
     <string name="InuSendAsSticker">Надіслати як стікер</string>
     <string name="InuDownloadStickerPackZip">Завантажити пак як ZIP</string>
     <string name="InuStickerPackZipFailed">Не вдалося завантажити пак</string>
-    <string name="InuHideReactionsSection">Приховати реакції</string>
     <string name="InuHideReactionsDisplay">Приховати реакції на повідомленнях</string>
     <string name="InuHideReactionsDisplayInfo">Реакції під повідомленнями не показуються</string>
     <string name="InuHideReactionsSet">Вимкнути постановку реакцій</string>
@@ -841,7 +831,6 @@
     <string name="InuCut">Вирізати</string>
     <string name="InuCodeLanguage">Мова коду</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
-    <string name="InuDataBackup">Резервне копіювання</string>
 
     <string name="InuSearchFilter">Фільтр за типом медіа</string>
     <string name="InuSearchFilterPhotos">Фото</string>
@@ -996,7 +985,10 @@
     <string name="InuProxyImported_other">Імпортовано проксі: %1$d</string>
     <string name="InuFasterDownloads">Пришвидшене завантаження</string>
     <string name="InuFasterUploads">Пришвидшена відправка</string>
-    <string name="InuFasterTransfersInfo">Більші чанки й більше паралельних запитів. Може пришвидшити — або сповільнити — передачу.</string>
+    <string name="InuFasterDownloadsSection">Швидкість завантаження</string>
+    <string name="InuFasterDownloadsFast">Швидко</string>
+    <string name="InuFasterDownloadsUltra">Ультра</string>
+    <string name="InuFasterDownloadsUltraWarning">Швидко: більші чанки. Ультра: ще й знімає преміум-ліміти на обсяг даних і з\'єднання, на слабкому інтернеті це може заважати стрімінгу.</string>
     <string name="InuSendMp4DocumentAsVideo">Надсилати MP4 документи як відео</string>
     <string name="InuSendMp4DocumentAsVideoInfo">Файли MP4, надіслані як документ, відображатимуться як програвальні відео</string>
     <string name="InuMentionInsertTitle">Вставити згадку</string>
@@ -1049,7 +1041,6 @@
     <string name="InuDrawerMenuReset">Скинути за замовчуванням</string>
     <string name="InuGoToMessage">Перейти до повідомлення</string>
     <string name="InuGoToMessagePrompt">ID повідомлення</string>
-    <string name="InuPrivacySecurity">Конфіденційність і безпека</string>
     <string name="InuPerAccountPasscode">Код-пароль для кожного акаунта</string>
     <string name="InuHideInugramSettings">Приховати налаштування entinyGram</string>
     <string name="InuParanoiaDisableNotifications">Вимкнути сповіщення</string>
@@ -1102,7 +1093,6 @@
     <string name="InuLogsClear">Очистити логи</string>
     <string name="InuLogsCleared">Логи очищено</string>
 
-    <string name="InuTOS">Заборонені функції</string>
     <string name="InuTranslateOutgoing">Перекладати мої повідомлення</string>
     <string name="InuTranslateOutgoingInfo">Додавати надіслані вами повідомлення до автоматичного перекладу чату.</string>
     <string name="InuInputTranslate">Переклад перед відправкою</string>
@@ -1430,11 +1420,6 @@
     <string name="InuShowMutualContactInChats">У списках учасників</string>
     <string name="InuShowMutualContactInChatsInfo">Групи та канали.</string>
     <string name="InuCategoryAppearance">Дизайн</string>
-    <string name="InuCategoryBackup">Додатково</string>
-    <string name="InuCategoryBehavior">Поведінка та інструменти</string>
-    <string name="InuCategoryChats">Чати</string>
-    <string name="InuCategoryPrivacy">Конфіденційність і безпека</string>
-    <string name="InuAdditional">Додатково</string>
 
     <string name="InuGhostMode">Режим примари</string>
     <string name="InuGhostModeMaster">Режим примари</string>
@@ -1652,7 +1637,6 @@
     <string name="InuLocalFoldersInfo">Створюйте папки понад ліміт Telegram. Зайві папки залишаються на цьому пристрої.</string>
     <string name="InuFolderIcon">Іконка папки</string>
     <string name="InuFolderIconDefault">Типова</string>
-    <string name="InuStalkerPack">Сталкер-пак</string>
     <string name="InuStalkerSaved">Збережені дані</string>
     <string name="InuStalkerPresence">Присутність</string>
     <string name="InuStalkerTools">Інструменти</string>
@@ -1824,7 +1808,6 @@
     <string name="InuActionButtonStyleAccent">Акцентна</string>
     <string name="InuActionButtonStyleNeutral">Нейтральна</string>
     <string name="InuActionButtonStyleWhite">Біла</string>
-    <string name="InuAntiCensorship">Обхід блокувань</string>
     <string name="InuAntiCensorshipTransport">Підключення</string>
     <string name="InuAntiCensorshipPrivacy">Захист від витоків</string>
     <string name="InuWsTunnel">WebSocket-тунель</string>
@@ -1850,11 +1833,8 @@
     <string name="InuIosSettings">Налаштування iOS</string>
     <string name="InuIosSettingsInfo">Центрування заголовків, нижня панель, поле вводу, заголовок чату та liquid glass.</string>
     <string name="InuMessageDesign">Вигляд повідомлень</string>
-    <string name="InuMessageDesignInfo">Бульбашки, стікери, реакції, пости каналів і розмір тексту в полі вводу.</string>
     <string name="InuBubbles">Бульбашки</string>
     <string name="InuSideMenu">Бічне меню</string>
-    <string name="InuSideMenuInfo">Висувне меню, його секції, акаунти та пункти.</string>
-    <string name="InuInterfaceElements">Елементи інтерфейсу</string>
     <string name="InuMenus">Меню</string>
     <string name="InuChatBackgroundSection">Фон чату</string>
     <string name="InuMediaSection">Медіа</string>
@@ -1868,16 +1848,16 @@
     <string name="InuDownloadsAndNetwork">Завантаження і мережа</string>
     <string name="InuConfirmationsSection">Підтвердження</string>
     <string name="InuBlockedMessagesSection">Заблоковані</string>
-    <string name="InuRootInterface">Інтерфейс</string>
-    <string name="InuRootPrivacy">Функції та приватність</string>
     <string name="InuRootSystem">Система</string>
-    <string name="InuMenusInfo">Бічне меню, меню ⋮, меню чату, повідомлень і рядки профілю.</string>
-    <string name="InuMenuSideDesc">Пункти, порядок і роздільники бічної панелі.</string>
-    <string name="InuMenuDialogsDesc">Пункти меню ⋮ на екрані чатів. Показується, коли бічне меню вимкнене.</string>
-    <string name="InuMenuChatDesc">Пункти меню всередині чату.</string>
-    <string name="InuMenuMessageDesc">Порядок і видимість дій з повідомленням.</string>
-    <string name="InuMenuProfileSettingsDesc">Рядки на екрані налаштувань.</string>
-    <string name="InuMenuProfileInfoDesc">Телефон, про себе, юзернейм та інші рядки в профілях.</string>
+    <string name="InuHomeAndChatList">Чат-лист і головний екран</string>
+    <string name="InuChatNavigation">Навігація та виділення</string>
+    <string name="InuMentionsAndSearch">Згадки та пошук</string>
+    <string name="InuChatDecor">Декор</string>
+    <string name="InuForwardAndReplies">Відповіді та пересилання</string>
+    <string name="InuChatsAndMessages">Чати та повідомлення</string>
+    <string name="InuPrivacyAndFreedom">Приватність і свобода</string>
+    <string name="InuAbout">Про програму</string>
+    <string name="InuProfileAndAccounts">Профіль і акаунти</string>
     <string name="InuDrawerMenuOrderInfo">Змінюйте порядок або приховуйте пункти бічного меню. Перетягніть, щоб рухати, перемикач — щоб приховати. Роздільники ділять меню на групи.</string>
     <string name="InuDrawerBots">Міні-застосунки</string>
     <string name="InuMenuDivider">Роздільник</string>
@@ -2155,15 +2135,9 @@
     <string name="InuUnreadBadgeOnBackButton">Показати лічильник непрочитаних чатів</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">Показує кількість непрочитаних чатів на кнопці «назад» у чаті.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">Лічильник у стилі iOS</string>
-    <string name="InuMainScreen">Головний екран</string>
-    <string name="InuMessagesSummary">Подвійний тап, реакції та підтвердження</string>
-    <string name="InuPillStackSummary">Інтерактивні віджети в рядку пошуку</string>
-    <string name="InuRecentChatsSummary">Швидке перемикання між чатами</string>
-    <string name="InuFeedSummary">Агрегатор дописів із каналів</string>
     <string name="InuEditedArchive">Архів відредагованих</string>
     <string name="InuGroupChatArchives">Згрупувати архіви в папку entinyGram</string>
     <string name="InuCameraSound">Камера і звук</string>
-    <string name="InuCameraSoundSummary">Відеоповідомлення, камера та запис голосу</string>
     <string name="InuRoundAudioBitrate">Бітрейт звуку відеоповідомлень</string>
     <string name="InuRoundAudioSource">Джерело звуку відеоповідомлень</string>
     <string name="InuRoundAudioSourceCamcorder">Відеокамера</string>
@@ -2190,7 +2164,6 @@
     <string name="InuStartTab">Стартова вкладка</string>
     <string name="InuMutualContactIconLeft">Перед аватаркою</string>
     <string name="InuMutualContactIconLeftInfo">Ставити значок ліворуч від аватарки.</string>
-    <string name="InuForumSectionsCards">Секції-картки в темах форуму</string>
     <string name="InuHideDialogPreview">Ховати прев’ю останнього повідомлення</string>
     <string name="InuHideDialogPreviewInfo">Показувати останнє повідомлення в списку чатів під спойлером</string>
     <string name="InuBookmarkAdd">Додати до закладок</string>
@@ -2201,7 +2174,6 @@
     <string name="InuBookmarks">Закладки</string>
     <string name="InuBookmarksEmpty">Закладок немає</string>
     <string name="InuBookmarksClearAll">Очистити всі закладки</string>
-    <string name="InuBookmarksSummary">Збережені повідомлення за чатами</string>
     <string name="InuMessageHidden">Повідомлення приховано</string>
     <string name="InuRestoreHiddenMessages">Показати приховані повідомлення</string>
     <string name="InuNoHiddenMessages">Тут немає прихованих повідомлень</string>

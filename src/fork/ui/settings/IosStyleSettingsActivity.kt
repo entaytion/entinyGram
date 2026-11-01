@@ -7,7 +7,6 @@ import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.ActionButtonStyle
-import desu.inugram.helpers.dialogs.DialogsM3SectionsHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -168,9 +167,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             }
             softRebuild()
             showRestartBulletin()
-        }
-        if (changed.any { it.id == TOGGLE_IOS_CHAT_LIST }) {
-            DialogsM3SectionsHelper.refresh()
         }
         if (changed.any { it.id == TOGGLE_IOS_INPUT_APPEARANCE }) {
             InuHooks.syncChatInputRowHeight()

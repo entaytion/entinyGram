@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 1 Nov 2026 22:29:32 +0200
+Subject: [*] settings headers in card and hide dividers
+
+---
+ .../java/org/telegram/ui/Components/UniversalAdapter.java    | 5 +++--
+ .../org/telegram/ui/Components/UniversalRecyclerView.java    | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
+@@ -590,6 +590,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
+     }
+ 
+     private boolean hasDivider(int position) {
++        if (desu.inugram.InuConfig.HIDE_DIVIDERS.getValue()) return false;
+         if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && listView != null && listView.hasSections()) return false;
+         UItem item = getItem(position);
+         UItem nextItem = getItem(position + 1);
+@@ -597,7 +598,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
+     }
+ 
+     public static boolean isShadow(int viewType) {
+-        if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && desu.inugram.helpers.theme.M3SectionsHelper.isHeaderViewType(viewType)) return true;
++        if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && desu.inugram.helpers.theme.M3SectionsHelper.isHeaderViewType(viewType)) return !desu.inugram.helpers.theme.M3SectionsHelper.isHeaderInCard();
+         if (viewType >= UItem.factoryViewTypeStartsWith) {
+             UItem.UItemFactory<?> factory = UItem.findFactory(viewType);
+             return factory != null && factory.isShadow();
+@@ -627,7 +628,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
+             desu.inugram.helpers.theme.M3SectionsHelper.markMerged(
+                 holder.itemView,
+                 item.pad > 0,
+-                nextItem != null && nextItem.pad > 0
++                (nextItem != null && nextItem.pad > 0) || (nextItem != null && desu.inugram.helpers.theme.M3SectionsHelper.isHeaderInCard() && desu.inugram.helpers.theme.M3SectionsHelper.isHeaderViewType(viewType) && !isShadow(nextItem.viewType))
+             );
+         }
+         if (viewType >= UItem.factoryViewTypeStartsWith) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalRecyclerView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalRecyclerView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalRecyclerView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalRecyclerView.java
+@@ -438,7 +438,7 @@ public class UniversalRecyclerView extends RecyclerListView {
+             view -> {
+                 if (view.getParent() != this) return false;
+                 final ViewHolder viewHolder = getChildViewHolder(view);
+-                return !UniversalAdapter.isShadow(viewHolder.getItemViewType());
++                return !UniversalAdapter.isShadow(viewHolder.getItemViewType()) && !desu.inugram.helpers.theme.M3SectionsHelper.isOrphanHeader(getAdapter(), viewHolder.getAdapterPosition(), viewHolder.getItemViewType());
+             },
+             UniversalAdapter::isShadow,
+             padding, roundRadius,

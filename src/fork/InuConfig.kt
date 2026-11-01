@@ -264,14 +264,18 @@ object InuConfig {
     val MATERIAL3_SLIDERS = BoolItem("material3_sliders", false)
 
     @JvmField
-    val MATERIAL3_DIALOGS = BoolItem("material3_dialogs", false)
-
-    @JvmField
     val MATERIAL3_FABS = BoolItem("material3_fabs", true)
 
     @JvmField
     val M3_SECTIONS_STYLE = BoolItem("m3_sections_style", false)
+    @JvmField
+    val HIDE_DIVIDERS = BoolItem("hide_dividers", false)
+
+    @JvmField
+    val M3_HEADERS_IN_CARD = BoolItem("m3_headers_in_card", true)
     val M3_ACCENT_ICONS = BoolItem("m3_accent_icons", false)
+
+    @JvmField val FORUM_M3_SECTIONS = BoolItem("forum_m3_sections", false)
 
     @JvmField
     val MATERIAL3_AVATARS = BoolItem("material3_avatars", false)
@@ -577,10 +581,6 @@ object InuConfig {
 
     @JvmField
     val DIALOGS_FAB_LEFT_SIDE = BoolItem("dialogs_fab_left_side", false)
-    @JvmField val DIALOGS_M3_SECTIONS = BoolItem("dialogs_m3_sections", false)
-    @JvmField val DIALOGS_M3_MARGIN = IntItem("dialogs_m3_margin", 1)
-    @JvmField val DIALOGS_M3_SEPARATE_PINNED = BoolItem("dialogs_m3_separate_pinned", true)
-    @JvmField val FORUM_M3_SECTIONS = BoolItem("forum_m3_sections", false)
 
     @JvmField
     val HIDE_KEYBOARD_ON_SCROLL = BoolItem("hide_keyboard_on_scroll", true)
@@ -2069,6 +2069,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val FASTER_DOWNLOADS = BoolItem("faster_downloads", true)
+
+    @JvmField
+    val FASTER_DOWNLOADS_ULTRA = BoolItem("faster_downloads_ultra", true)
 
     @JvmField
     val ALWAYS_SEND_VIDEOS_HD = BoolItem("always_send_videos_hd", false)

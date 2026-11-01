@@ -19,11 +19,8 @@
     <string name="InuIosSettings">Ajustes estilo iOS</string>
     <string name="InuIosSettingsInfo">Centrado del título, barra inferior, campo de entrada, encabezado del chat y liquid glass.</string>
     <string name="InuMessageDesign">Apariencia de los mensajes</string>
-    <string name="InuMessageDesignInfo">Burbujas, stickers, reacciones, publicaciones de canal y tamaño del texto de entrada.</string>
     <string name="InuBubbles">Burbujas</string>
     <string name="InuSideMenu">Menú lateral</string>
-    <string name="InuSideMenuInfo">Menú lateral tipo hamburguesa, sus secciones, cuentas y elementos.</string>
-    <string name="InuInterfaceElements">Elementos de la interfaz</string>
     <string name="InuMenus">Menús</string>
     <string name="InuChatBackgroundSection">Fondo de chat</string>
     <string name="InuMediaSection">Multimedia</string>
@@ -37,16 +34,7 @@
     <string name="InuDownloadsAndNetwork">Descargas y red</string>
     <string name="InuConfirmationsSection">Confirmaciones</string>
     <string name="InuBlockedMessagesSection">Usuarios bloqueados</string>
-    <string name="InuRootInterface">Interfaz</string>
-    <string name="InuRootPrivacy">Funciones y privacidad</string>
     <string name="InuRootSystem">Sistema</string>
-    <string name="InuMenusInfo">Menú lateral, menú de opciones, filas de chat, mensajes y perfil.</string>
-    <string name="InuMenuSideDesc">Elementos, orden y separadores del panel lateral.</string>
-    <string name="InuMenuDialogsDesc">Elementos del menú ⋮ en la pantalla de chats. Se muestra cuando el menú lateral está desactivado.</string>
-    <string name="InuMenuChatDesc">Elementos del menú dentro de un chat.</string>
-    <string name="InuMenuMessageDesc">Orden y visibilidad de acciones de mensaje.</string>
-    <string name="InuMenuProfileSettingsDesc">Filas en la pantalla de ajustes.</string>
-    <string name="InuMenuProfileInfoDesc">Teléfono, bio, nombre de usuario y otras filas en perfiles.</string>
     <string name="InuDrawerMenuOrder">Elementos del menú</string>
     <string name="InuDrawerMenuItems">Elementos</string>
     <string name="InuDrawerMenuOrderInfo">Reordena u oculta los elementos del menú lateral. Arrastra para mover, activa el interruptor para ocultar. Los separadores dividen el menú en grupos.</string>
@@ -72,7 +60,6 @@
     <string name="InuDrawerShowBadgeInfo">Muestra tu insignia junto a tu nombre en la cabecera del menú lateral</string>
     <string name="InuSettings">Ajustes de entinyGram</string>
     <string name="InuSettingsInfo">A través de la tierra y el viento te sigo</string>
-    <string name="InuGeneral">General</string>
     <string name="InuWideChannelPosts">Publicaciones anchas</string>
     <string name="InuWideChannelPostsFooter">Las publicaciones de canales usan todo el ancho disponible.</string>
     <string name="InuWideChannelPostsPreviewText">Noticias, fotos y vídeos</string>
@@ -152,9 +139,7 @@ Sistema: %6$s
     <string name="InuAnnoyancesChannels">Canales y recomendaciones</string>
     <string name="InuAnnoyancesAi">Inteligencia artificial</string>
     <string name="InuAnnoyancesHints">Avisos y sugerencias</string>
-    <string name="InuMessages">Mensajes</string>
     <string name="InuChats">Chats</string>
-    <string name="InuMainPage">Lista de diálogos</string>
     <string name="InuUserProfile">Perfil de usuario</string>
     <string name="InuChatList">Lista de chats</string>
     <string name="InuTitleText">Texto del título</string>
@@ -189,7 +174,6 @@ Sistema: %6$s
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Interruptores</string>
     <string name="InuMaterial3Sliders">Deslizadores</string>
-    <string name="InuMaterial3Dialogs">Diálogos y hojas</string>
     <string name="InuMaterial3Fabs">Botones flotantes (FAB)</string>
     <string name="InuMaterial3Sections">Elementos de lista</string>
     <string name="InuMaterial3AccentIcons">Iconos con color de acento</string>
@@ -416,15 +400,6 @@ Sistema: %6$s
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Estilo de diseño</string>
     <string name="InuMaterial3SettingsInfo">Interruptores, deslizadores, secciones, avatares, tarjetas de la lista de chats y más.</string>
-    <string name="InuDialogsSections">Secciones de la lista de chats</string>
-    <string name="InuDialogsSectionsCards">Secciones en tarjetas</string>
-    <string name="InuForumSectionsCards">Secciones en tarjetas en los temas del foro</string>
-    <string name="InuDialogsSectionsMargin">Márgenes laterales</string>
-    <string name="InuDialogsSectionsMarginNone">Ninguno</string>
-    <string name="InuDialogsSectionsMarginMedium">Medio</string>
-    <string name="InuDialogsSectionsMarginLarge">Grande</string>
-    <string name="InuDialogsSectionsSeparatePinned">Fijados por separado</string>
-    <string name="InuDialogsSectionsSeparatePinnedInfo">Muestra los chats fijados y el archivo como una tarjeta propia</string>
     <string name="InuDialogsFabMainAction">Acción principal</string>
     <string name="InuDialogsFabSecondaryAction">Acción secundaria</string>
     <string name="InuDialogsFabHideOnScroll">Ocultar al desplazarse</string>
@@ -788,7 +763,6 @@ Sistema: %6$s
     <string name="InuProfileRegDate">Fecha de registro</string>
     <string name="InuProfileRegDateCopied">Fecha de registro y DC copiados</string>
     <string name="InuMessageInput">Entrada de mensaje</string>
-    <string name="InuAttachmentSheet">Hoja de adjuntos</string>
     <string name="InuIconReplacement">Paquete de iconos</string>
 
     <string name="InuMapsHeader">Mapas</string>
@@ -904,7 +878,6 @@ Sistema: %6$s
     <string name="InuRoundAudioSourceCamcorder">Videocámara</string>
     <string name="InuRoundAudioSourceUnprocessed">Sin procesar</string>
     <string name="InuCameraSound">Cámara y sonido</string>
-    <string name="InuCameraSoundSummary">Videos circulares, cámara y grabación de voz</string>
     <string name="InuRoundVideos">Vídeos redondos</string>
     <string name="InuVoiceMessages">Mensajes de voz</string>
 
@@ -946,7 +919,6 @@ Sistema: %6$s
     <string name="InuSendAsSticker">Enviar como sticker</string>
     <string name="InuDownloadStickerPackZip">Descargar paquete como ZIP</string>
     <string name="InuStickerPackZipFailed">No se pudo descargar el paquete</string>
-    <string name="InuHideReactionsSection">Ocultar reacciones</string>
     <string name="InuHideReactionsDisplay">Ocultar reacciones en los mensajes</string>
     <string name="InuHideReactionsDisplayInfo">No se muestran las reacciones bajo las burbujas</string>
     <string name="InuHideReactionsSet">Desactivar poner reacciones</string>
@@ -1063,7 +1035,6 @@ Toca para personalizar…</string>
     <string name="InuCut">Cortar</string>
     <string name="InuCodeLanguage">Lenguaje del código</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
-    <string name="InuDataBackup">Copia de seguridad y Sincronización</string>
 
     <string name="InuSearchFilter">Filtrar por archivos</string>
     <string name="InuSearchFilterPhotos">Fotos</string>
@@ -1122,7 +1093,6 @@ Toca para personalizar…</string>
     <string name="InuRecentChatsUsers">Usuarios</string>
     <string name="InuRecentChatsEmpty">Aún no hay nada</string>
 
-    <string name="InuAdditional">Adicional</string>
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Canal de actualizaciones</string>
     <string name="InuUpdates">Actualizaciones</string>
@@ -1224,7 +1194,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuProxyImported_other">%1$d proxies importados</string>
     <string name="InuFasterDownloads">Descargas más rápidas</string>
     <string name="InuFasterUploads">Subidas más rápidas</string>
-    <string name="InuFasterTransfersInfo">Fragmentos más grandes y peticiones paralelas. Puede mejorar el rendimiento.</string>
     <string name="InuKeepDownloadsInBackground">No cancelar descargas al desplazarse/salir</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Las descargas continúan ejecutándose cuando te desplazas o sales del chat.</string>
     <string name="InuBlockSleepWhileDownloading">Bloquear la suspensión durante la descarga</string>
@@ -1301,7 +1270,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuProfileInfoRowsReset">Restablecer valores predeterminados</string>
     <string name="InuGoToMessage">Ir al mensaje</string>
     <string name="InuGoToMessagePrompt">ID del mensaje</string>
-    <string name="InuPrivacySecurity">Privacidad y seguridad</string>
     <string name="InuPerAccountPasscode">Código de acceso por cuenta</string>
     <string name="InuHideInugramSettings">Ocultar ajustes de entinyGram</string>
     <string name="InuParanoiaDisableNotifications">Desactivar notificaciones</string>
@@ -1385,7 +1353,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuBiometricLockArchiveEveryTime">Preguntar cada vez</string>
     <string name="InuBiometricLockArchiveEveryTimeInfo">Desactivado pregunta una vez por sesión de la app; activado pregunta cada vez que abres el archivo.</string>
 
-    <string name="InuTOS">Funciones restringidas</string>
     <string name="InuSelfDestructMedia">Multimedia autodestructiva</string>
     <string name="InuAntiDeletion">Conservación de mensajes</string>
     <string name="InuSaveSelfDestructMedia">Conservar multimedia secreta</string>
@@ -1601,10 +1568,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuMutualContactIconLeft">Icono de mutuo antes del avatar</string>
     <string name="InuMutualContactIconLeftInfo">Muestra el icono de contacto mutuo a la izquierda del avatar</string>
     <string name="InuCategoryAppearance">Diseño</string>
-    <string name="InuCategoryChats">Chats</string>
-    <string name="InuCategoryBehavior">Comportamiento y herramientas</string>
-    <string name="InuCategoryPrivacy">Privacidad y seguridad</string>
-    <string name="InuCategoryBackup">Adicional</string>
 
     <string name="InuGhostMode">Modo Fantasma</string>
     <string name="InuGhostModeMaster">Modo Fantasma</string>
@@ -1765,7 +1728,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuLocalFoldersInfo">Crea carpetas más allá del límite de Telegram.</string>
     <string name="InuFolderIcon">Icono de carpeta</string>
     <string name="InuFolderIconDefault">Predeterminado</string>
-    <string name="InuStalkerPack">Stalker Pack</string>
     <string name="InuStalkerSaved">Datos guardados</string>
     <string name="InuStalkerPresence">Presencia</string>
     <string name="InuStalkerTools">Herramientas</string>
@@ -1867,7 +1829,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuActionButtonStyleAccent">Acento</string>
     <string name="InuActionButtonStyleNeutral">Neutro</string>
     <string name="InuActionButtonStyleWhite">Blanco</string>
-    <string name="InuAntiCensorship">Evasión de la censura</string>
     <string name="InuAntiCensorshipTransport">Conexión</string>
     <string name="InuAntiCensorshipPrivacy">Protección contra fugas</string>
     <string name="InuWsTunnel">Túnel WebSocket</string>
@@ -2142,11 +2103,6 @@ Mientras esté activado:</string>
     <string name="InuUnreadBadgeOnBackButton">Mostrar contador de chats no leídos</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">Muestra el número de chats no leídos en el botón de volver dentro de un chat.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">Contador estilo iOS</string>
-    <string name="InuMainScreen">Pantalla principal</string>
-    <string name="InuMessagesSummary">Acciones de doble toque, reacciones y confirmaciones</string>
-    <string name="InuPillStackSummary">Widgets interactivos en la barra de búsqueda</string>
-    <string name="InuRecentChatsSummary">Barra rápida para cambiar de chat</string>
-    <string name="InuFeedSummary">Publicaciones agregadas de tus canales</string>
     <string name="InuEditedArchive">Archivo de editados</string>
     <string name="InuGroupChatArchives">Agrupar archivos en carpeta de entinyGram</string>
     <string name="InuLogsRedact">Ocultar datos sensibles</string>
@@ -2164,5 +2120,5 @@ Mientras esté activado:</string>
     <string name="InuBookmarks">Marcadores</string>
     <string name="InuBookmarksEmpty">No hay marcadores</string>
     <string name="InuBookmarksClearAll">Borrar todos los marcadores</string>
-    <string name="InuBookmarksSummary">Mensajes que guardaste, agrupados por chat</string>
+    <string name="InuForumSectionsCards">Secciones en tarjetas en los temas del foro</string>
 </resources>

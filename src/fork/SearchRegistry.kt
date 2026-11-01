@@ -7,15 +7,12 @@ import desu.inugram.ui.settings.AiEditorSettingsActivity
 import desu.inugram.ui.settings.AiSettingsActivity
 import desu.inugram.ui.settings.AiSummarySettingsActivity
 import desu.inugram.ui.settings.AiVoiceSettingsActivity
-import desu.inugram.ui.settings.AnnoyancesSettingsActivity
-import desu.inugram.ui.settings.AntiCensorshipSettingsActivity
 import desu.inugram.ui.settings.AntiDeletionSettingsActivity
 import desu.inugram.ui.settings.AppearanceSettingsActivity
 import desu.inugram.ui.settings.BackupSettingsActivity
-import desu.inugram.ui.settings.BehaviorSettingsActivity
 import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CameraSoundSettingsActivity
-import desu.inugram.ui.settings.CategoryChatsSettingsActivity
+import desu.inugram.ui.settings.Schemas
 import desu.inugram.ui.settings.ChatHeaderSettingsActivity
 import desu.inugram.ui.settings.DatacenterStatusActivity
 import desu.inugram.helpers.feed.FeedHelper
@@ -25,19 +22,11 @@ import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.IosStyleSettingsActivity
 import desu.inugram.ui.settings.Material3SettingsActivity
 import desu.inugram.ui.settings.MessageDesignSettingsActivity
-import desu.inugram.ui.settings.DrawerSettingsActivity
 import desu.inugram.ui.settings.DrawerMenuOrderActivity
-import desu.inugram.ui.settings.MainScreenSettingsActivity
-import desu.inugram.ui.settings.MenusSettingsActivity
-import desu.inugram.ui.settings.MessagesSettingsActivity
 import desu.inugram.ui.settings.PillStackSettingsActivity
-import desu.inugram.ui.settings.RecentChatsSettingsActivity
 import desu.inugram.ui.settings.ParanoiaActivity
-import desu.inugram.ui.settings.PrivacySecurityActivity
 import desu.inugram.ui.settings.RegexFilterSettingsActivity
 import desu.inugram.ui.settings.SettingsPageActivity
-import desu.inugram.ui.settings.StalkerPackSettingsActivity
-import desu.inugram.ui.settings.TosSettingsActivity
 import desu.inugram.ui.settings.TranslatorSettingsActivity
 import desu.inugram.ui.settings.WeatherLocationActivity
 import desu.inugram.ui.settings.fonts.FontStackActivity
@@ -74,33 +63,28 @@ object SearchRegistry {
             IosStyleSettingsActivity.PAGE,
             Material3SettingsActivity.PAGE,
             MessageDesignSettingsActivity.PAGE,
-            DrawerSettingsActivity.PAGE,
             DrawerMenuOrderActivity.PAGE,
-            MenusSettingsActivity.PAGE,
             FontsSettingsActivity.PAGE,
             FontStackActivity.PAGE,
-            CategoryChatsSettingsActivity.PAGE,
+            Schemas.DIALOGS.page,
+            Schemas.CHATS.page,
+            Schemas.PRIVACY.page,
+            Schemas.PROFILE.page,
+            Schemas.HOME.page,
+            Schemas.SYSTEM.page,
             CameraSoundSettingsActivity.PAGE,
-            MessagesSettingsActivity.PAGE,
             AiSettingsActivity.PAGE,
             AiVoiceSettingsActivity.PAGE,
             AiEditorSettingsActivity.PAGE,
             AiSummarySettingsActivity.PAGE,
-            AnnoyancesSettingsActivity.PAGE,
-            MainScreenSettingsActivity.PAGE,
-            BehaviorSettingsActivity.PAGE,
-            TosSettingsActivity.PAGE,
+            Schemas.ANNOYANCES.page,
             GhostModeSettingsActivity.PAGE,
             PillStackSettingsActivity.PAGE,
-            RecentChatsSettingsActivity.PAGE,
             WeatherLocationActivity.PAGE,
             AntiDeletionSettingsActivity.PAGE,
-            StalkerPackSettingsActivity.PAGE,
             RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,
-            PrivacySecurityActivity.PAGE,
             ParanoiaActivity.PAGE,
-            AntiCensorshipSettingsActivity.PAGE,
             DatacenterStatusActivity.PAGE,
             BackupSettingsActivity.PAGE,
             FeedExcludedChannelsSettingsActivity.PAGE,

@@ -17,7 +17,7 @@ import android.widget.Toast
 import androidx.core.graphics.ColorUtils
 import androidx.core.widget.NestedScrollView
 import desu.inugram.InuConfig
-import desu.inugram.ui.settings.CategoryChatsSettingsActivity
+import desu.inugram.ui.settings.AiSettingsActivity
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
@@ -93,7 +93,7 @@ object AiComposeHelper {
                 .setMessage(LocaleController.getString(R.string.InuAiPremiumRequired))
                 .setPositiveButton(LocaleController.getString(R.string.InuAiOpenSettings)) { _, _ ->
                     org.telegram.ui.LaunchActivity.instance?.presentFragment(
-                        CategoryChatsSettingsActivity()
+                        AiSettingsActivity()
                     )
                 }
                 .setNegativeButton(LocaleController.getString(R.string.Cancel),
@@ -837,7 +837,7 @@ private class AiComposeSheet(
         )
         val settingsBtn = roundedButton(LocaleController.getString(R.string.InuAiOpenSettings)) {
             dismiss()
-            LaunchActivity.instance?.presentFragment(CategoryChatsSettingsActivity())
+            LaunchActivity.instance?.presentFragment(AiSettingsActivity())
         }
         box.addView(settingsBtn, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 44, 0, 20, 0, 20, 10))
         return box

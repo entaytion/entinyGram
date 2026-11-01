@@ -67,6 +67,17 @@ object M3SectionsHelper {
     }
 
     @JvmStatic
+    fun isHeaderInCard(): Boolean = isEnabled() && InuConfig.M3_HEADERS_IN_CARD.value
+
+    /** a header with no card rows under it keeps the detached look instead of becoming an empty card */
+    @JvmStatic
+    fun isOrphanHeader(adapter: RecyclerView.Adapter<*>?, position: Int, viewType: Int): Boolean {
+        if (position < 0 || !isHeaderInCard() || !isHeaderViewType(viewType)) return false
+        val next = (adapter as? UniversalAdapter)?.getItem(position + 1) ?: return true
+        return UniversalAdapter.isShadow(next.viewType)
+    }
+
+    @JvmStatic
     fun markMerged(view: View, withPrev: Boolean, withNext: Boolean) {
         if (!isEnabled()) return
         view.setTag(R.id.inu_merge_with_prev, if (withPrev) TRUE else null)
@@ -87,8 +98,8 @@ object M3SectionsHelper {
     }
 
     private val outerR get() = AndroidUtilities.dp(20f).toFloat()
-    private val innerR get() = AndroidUtilities.dp(4f).toFloat()
-    private val gap get() = AndroidUtilities.dp(2f)
+    private val innerR get() = if (InuConfig.HIDE_DIVIDERS.value) 0f else AndroidUtilities.dp(4f).toFloat()
+    private val gap get() = if (InuConfig.HIDE_DIVIDERS.value) 0 else AndroidUtilities.dp(2f)
 
     private fun outerRForChild(child: View): Float {
         if (child is TextCheckCell && child.drawCheckRipple) return child.height / 2f

@@ -58,7 +58,7 @@ index 0000000..0000000 100644
  
          avatarContainer = new ChatAvatarContainer(context, this, false, resourceProvider);
          avatarContainer.getAvatarImageView().setRoundRadius(AndroidUtilities.dp(16));
-@@ -1303,39 +1305,8 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -1302,39 +1304,8 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
          floatingButton.setContentDescription(getString(R.string.CreateTopic));
  
  
@@ -98,7 +98,7 @@ index 0000000..0000000 100644
          contentView.addView(emptyViewContainer);
  
          recyclerListView.setEmptyView(emptyViewContainer);
-@@ -1412,12 +1383,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -1411,12 +1382,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
          if (parentDialogsActivity == null) {
              contentView.addView(fullscreenView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
          }
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
          actionBar.setDrawBlurBackground(contentView);
  
          getMessagesStorage().loadChatInfo(chatId, true, null, true, false, 0);
-@@ -1515,6 +1480,54 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -1514,6 +1479,54 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
          return fragmentView;
      }
  
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
      private void updateTopicsEmptyViewText() {
          if (topicsEmptyView == null || topicsEmptyView.subtitle == null) {
              return;
-@@ -1550,7 +1563,9 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -1549,7 +1562,9 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
          if (!inPreviewMode) {
              actionBar.setBackgroundColor(getThemedColor(Theme.key_actionBarDefault));
          }
@@ -177,7 +177,7 @@ index 0000000..0000000 100644
      }
  
      private void openProfile(boolean byAvatar) {
-@@ -2120,6 +2135,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -2119,6 +2134,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
  
      private void animateToSearchView(boolean showSearch) {
          searching = showSearch;
@@ -185,7 +185,7 @@ index 0000000..0000000 100644
          if (searchAnimator != null) {
              searchAnimator.removeAllListeners();
              searchAnimator.cancel();
-@@ -2196,8 +2212,10 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -2195,8 +2211,10 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
              searchTabsView.setTranslationY(-AndroidUtilities.dp(16) * (1f - value));
              searchTabsView.setAlpha(value);
          }
@@ -198,7 +198,7 @@ index 0000000..0000000 100644
  
          if (isInPreviewMode()) {
              fullscreenView.invalidate();
-@@ -3319,6 +3337,14 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -3317,6 +3335,14 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
  
          TextView textView;
  

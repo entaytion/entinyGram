@@ -113,7 +113,6 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **clown avatar for blocked users**: blocked users show 🤡 (or 💩 / 💀) instead of their photo - *ported from [NiagramX](https://github.com/HSSkyBoy/NiagramX)*
 - 📡 **clown avatar for users who blocked me**: guessed from a missing photo and last seen, so it can be wrong - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **standalone AMOLED theme** - *ported from NagramX Turbo*
-- 📡 **Material 3 dialogs and sheets**: rounder dialogs and bottom sheets
 - 📡 **Monet style**: Material 3 colors for the Monet themes next to the classic ones - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **theme switch recovery**: fixes interrupted theme transitions and stale Monet palettes
 - 📡 **liquid glass controls**: adjustable refraction angle and intensity - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
@@ -151,6 +150,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **clock format**: system, 12-hour or 24-hour
 - 📡 **branded first-run intro**
 - 📡 **pill stack**: interactive pills in chats search bar - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
+- 📡 **forum topic cards**: topics of a forum as rounded Material 3 cards with pinned topics as their own card
+- 📡 **disable dividers**: remove the lines and gaps between rows in settings lists, section titles sit inside the card
 - 📡 **support card**: optional way to support the developer, can be hidden
 - 📡 **downloads button**: always show the downloads list button in the chats header
 - 📡 **hide downloads button**: never show the downloads button in the chats header
@@ -158,8 +159,6 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **messages appearance**: hide reply background, custom reply colors and pattern emoji - *inspired by [Finegram](https://github.com/Th3Nekit/Finegram)*
 - 📡 **snowflakes in chats**: falling snow over the chat background any time of year
 - 📡 **snowflakes in header**: falling snow over the title bar any time of year - *ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
-- 📡 **chat list sections**: chats as rounded Material 3 cards with adjustable side margins and pinned chats and archive as their own card - *inspired by Modular Sections (@RnPlugins)*
-- 📡 **forum topic cards**: topics of a forum as rounded Material 3 cards with pinned topics as their own card
 - rtl text truncated in the chat header keeps its beginning visible
 
 ### profile & identity tools
@@ -495,7 +494,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - "Send a gift" in profile menu (stock hides it without billing), optional "Gift" header action button
 - 🐶 recyclerlistview instant-tap
 - open bottom-tab menus early by swiping up; flat highlight (not ripple) on menu hover
-- faster downloads/uploads, also lifts the byte budget and connections for non-premium accounts - *inspired by [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
+- faster downloads/uploads: off / fast / ultra slider, ultra also lifts the byte budget and connections for non-premium accounts - *inspired by [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
 - always send videos in HD, no matter the data saver setting - *inspired by [Niagram](https://github.com/HSSkyBoy/Niagram) (@HSSkyBoy)*
 - thicken bold text toggle: turn off to draw bold text with the font's own weight instead of faking it - *inspired by [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
 - auto-disable the configured proxy while a VPN is active

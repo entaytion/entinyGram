@@ -15,7 +15,6 @@
     <string name="InuDrawerKeepOptionsMenuInfo">Yan menüyle birlikte sohbet listesi menü düğmesini göster</string>
     <string name="InuSettings">entinyGram Ayarları</string>
     <string name="InuSettingsInfo">ne yapıyor bu köpek?</string>
-    <string name="InuGeneral">Genel</string>
     <string name="InuWideChannelPosts">Geniş gönderiler</string>
     <string name="InuWideChannelPostsFooter">Kanal gönderileri ve iletilen mesajlar kullanılabilir tüm genişliği kaplar.</string>
     <string name="InuWideChannelPostsPreviewText">Haberler, fotoğraflar ve videolar</string>
@@ -81,8 +80,6 @@
     <string name="InuAnnoyancesChannels">Kanallar ve Öneriler</string>
     <string name="InuAnnoyancesAi">Yapay Zeka</string>
     <string name="InuAnnoyancesHints">İpuçları ve Hatırlatıcılar</string>
-    <string name="InuMessages">Mesajlar</string>
-    <string name="InuMainPage">Sohbet listesi</string>
     <string name="InuUserProfile">Kullanıcı profili</string>
     <string name="InuChatList">Sohbet listesi</string>
     <string name="InuTitleText">Başlık metni</string>
@@ -117,7 +114,6 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Anahtarlar</string>
     <string name="InuMaterial3Sliders">Kaydırıcılar</string>
-    <string name="InuMaterial3Dialogs">Diyaloglar ve alt sayfalar</string>
     <string name="InuMaterial3Fabs">Yüzen düğmeler</string>
     <string name="InuMaterial3Sections">Liste ögeleri</string>
     <string name="InuMaterial3Avatars">Profil resimleri</string>
@@ -496,7 +492,6 @@
     <string name="InuProfileId">Kimlik (ID)</string>
     <string name="InuProfileIdCopied">Kimlik panoya kopyalandı</string>
     <string name="InuMessageInput">Mesaj girişi</string>
-    <string name="InuAttachmentSheet">Ek paneli</string>
     <string name="InuIconReplacement">Simge paketi</string>
     <string name="InuIconPackLoadFromFile">Dosyadan yükle</string>
     <string name="InuIconPacksInstalled">Yüklü paketler</string>
@@ -802,7 +797,6 @@
     <string name="InuProxyImported_other">%1$d proxy içe aktarıldı</string>
     <string name="InuFasterDownloads">Daha hızlı indirmeler</string>
     <string name="InuFasterUploads">Daha hızlı yüklemeler</string>
-    <string name="InuFasterTransfersInfo">Parça boyutunu ve eşzamanlı istek sayısını artırır. Aktarım hızını artırabilir ancak olumsuz bir etkiye de yol açabilir (özellikle Premium olmayan kullanıcılar için)</string>
     <string name="InuSendMp4DocumentAsVideo">MP4 belgelerini video olarak gönder</string>
     <string name="InuSendMp4DocumentAsVideoInfo">Dosyalar aracılığıyla eklenen MP4 dosyaları dönüştürülmeden oynatılabilir video olarak gönderilir</string>
     <string name="InuMentionInsertTitle">Bahsetme ekle</string>
@@ -862,7 +856,6 @@
     <string name="InuDrawerMenuReset">Varsayılana sıfırla</string>
     <string name="InuGoToMessage">Mesaja git</string>
     <string name="InuGoToMessagePrompt">Mesaj Kimliği (ID)</string>
-    <string name="InuPrivacySecurity">Gizlilik &amp; Güvenlik</string>
     <string name="InuPerAccountPasscode">Hesap başına parola</string>
     <string name="InuHideInugramSettings">entinyGram ayarlarını gizle</string>
     <string name="InuParanoiaDisableNotifications">Bildirimleri devre dışı bırak</string>
@@ -987,7 +980,6 @@
     <string name="InuClearDeletedCacheDone">Silinen mesaj önbelleği temizlendi</string>
     <string name="InuClearDeletedCacheEmpty">Silinen mesaj önbelleği boş</string>
     <string name="InuClearDeletedCacheHint">Kayıtlı mesajları ve medyayı tek tek görüp silmek için bir sohbete uzun basın</string>
-    <string name="InuDataBackup">Yedekleme ve Senkronizasyon</string>
     <string name="InuDownloadingStory">Hikaye indiriliyor…</string>
     <string name="InuEditHistory">Düzenleme geçmişi</string>
     <string name="InuSuppressScreenshotNotification">Ekran görüntüsü bildirimlerini gizle</string>
@@ -1040,8 +1032,6 @@
     <string name="InuSelfDestructMedia">Süreli medya</string>
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
-    <string name="InuTOS">Hizmet Şartları</string>
-    <string name="InuAdditional">Ek</string>
     <string name="InuAiApiKeyHint">API Anahtarı</string>
     <string name="InuAiChatTitle">AI Sohbet</string>
     <string name="InuAiEditorButtonInfo">Mesaj yazma alanının yanında metni yeniden yazma, devam ettirme, özetleme ve düzeltme AI eylemlerini gösterir.</string>
@@ -1093,10 +1083,6 @@
     <string name="InuAntiDeletion">Mesajları saklama</string>
     <string name="InuAppIconOldEntinygram">Eski entinyGram</string>
     <string name="InuCategoryAppearance">Tasarım</string>
-    <string name="InuCategoryBackup">Ek ayarlar</string>
-    <string name="InuCategoryBehavior">Davranış ve Araçlar</string>
-    <string name="InuCategoryChats">Sohbetler</string>
-    <string name="InuCategoryPrivacy">Gizlilik ve Güvenlik</string>
     <string name="InuCenterTitleRightAvatar">Profil resmini sağda göster</string>
     <string name="InuCenterTitleMain">Ekran başlıklarını ortala</string>
     <string name="InuCenterTitleMainInfo">Sohbetler dışında başlık çubuğu başlıklarını ortalar. Sohbetlerin aşağıda kendi anahtarı vardır.</string>
@@ -1221,7 +1207,6 @@
     <string name="InuWeatherLocationInfo">Seçilen noktadaki hava durumunu gösterir. En fazla 15 dakikada bir güncellenir.</string>
     <string name="InuFolderIcon">Klasör simgesi</string>
     <string name="InuFolderIconDefault">Varsayılan</string>
-    <string name="InuStalkerPack">Takipçi Paketi</string>
     <string name="InuStalkerSaved">Kaydedilen veriler</string>
     <string name="InuStalkerPresence">Çevrimiçi durumu</string>
     <string name="InuStalkerTools">Araçlar</string>
@@ -1584,7 +1569,6 @@
     <string name="InuActionButtonStyleAccent">Vurgu</string>
     <string name="InuActionButtonStyleNeutral">Nötr</string>
     <string name="InuActionButtonStyleWhite">Beyaz</string>
-    <string name="InuAntiCensorship">Sansürü aşma</string>
     <string name="InuAntiCensorshipTransport">Bağlantı</string>
     <string name="InuAntiCensorshipPrivacy">Sızıntı koruması</string>
     <string name="InuWsTunnel">WebSocket tüneli</string>
@@ -1886,7 +1870,6 @@
     <string name="InuDrawerBots">Mini uygulamalar</string>
     <string name="InuDrawerMenuOrderInfo">Öğeleri gizlemek veya göstermek için dokunun, sıralamak için basılı tutun. Ayırıcılar menüyü gruplara böler.</string>
     <string name="InuHideTitle">Başlığı gizle</string>
-    <string name="InuInterfaceElements">Arayüz öğeleri</string>
     <string name="InuIosSettings">iOS ayarları</string>
     <string name="InuIosSettingsInfo">Başlıkları ortalama, alt çubuk, giriş alanı, sohbet başlığı ve liquid glass.</string>
     <string name="InuLinkedChannel">Bağlı kanal</string>
@@ -1897,24 +1880,13 @@
     <string name="InuLogsPrivacyText">Uygulama cihaza teknik günlükler yazacak. Bunlar hesap ve sohbet kimliklerini içerebilir, bu yüzden yalnızca güvendiğiniz kişilerle paylaşın. Günlükler en fazla 25 MB tutulur ve istediğiniz zaman temizlenebilir.</string>
     <string name="InuLogsPrivacyTitle">Hata ayıklama modu etkinleştirilsin mi?</string>
     <string name="InuMediaSection">Medya</string>
-    <string name="InuMenuChatDesc">Sohbet içi menünün öğeleri.</string>
-    <string name="InuMenuDialogsDesc">Sohbet ekranındaki ⋮ menüsünün öğeleri. Yan menü kapalıyken gösterilir.</string>
     <string name="InuMenuDivider">Ayırıcı</string>
-    <string name="InuMenuMessageDesc">Mesaj eylemlerinin sırası ve görünürlüğü.</string>
-    <string name="InuMenuProfileInfoDesc">Telefon, hakkında, kullanıcı adı ve profillerdeki diğer satırlar.</string>
-    <string name="InuMenuProfileSettingsDesc">Ayarlar ekranındaki satırlar.</string>
-    <string name="InuMenuSideDesc">Yan panelin öğeleri, sırası ve ayırıcıları.</string>
     <string name="InuMenus">Menüler</string>
-    <string name="InuMenusInfo">Yan menü, seçenekler menüsü, sohbet ve mesaj menüleri ile profil satırları.</string>
     <string name="InuMessageDesign">Mesaj görünümü</string>
-    <string name="InuMessageDesignInfo">Balonlar, çıkartmalar, tepkiler, kanal gönderileri ve giriş alanı yazı boyutu.</string>
-    <string name="InuRootInterface">Arayüz</string>
-    <string name="InuRootPrivacy">Özellikler ve gizlilik</string>
     <string name="InuRootSystem">Sistem</string>
     <string name="InuSetReminder">Hatırlatıcı ayarla</string>
     <string name="InuHideMessage">Gizle</string>
     <string name="InuSideMenu">Yan menü</string>
-    <string name="InuSideMenuInfo">Hamburger çekmece, bölümleri, hesaplar ve menü öğeleri.</string>
     <string name="InuUnreadBadgeOnBackButton">Okunmamış sohbet sayacını göster</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">Sohbette geri düğmesinde okunmamış sohbet sayısını gösterir.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">iOS tarzı sayaç</string>
@@ -1930,11 +1902,6 @@
     <string name="InuBiometricRequireConfirmationPasscode">Uygulamanın kilidini açarken</string>
     <string name="InuBiometricRequireConfirmationBots">Mini uygulamalarda</string>
     <string name="InuBiometricRequireConfirmationActions">Sohbetleri silerken veya çıkış yaparken</string>
-    <string name="InuMainScreen">Ana ekran</string>
-    <string name="InuMessagesSummary">Çift dokunma eylemleri, tepkiler ve onaylar</string>
-    <string name="InuPillStackSummary">Arama çubuğunda etkileşimli widget\'lar</string>
-    <string name="InuRecentChatsSummary">Sohbetler arasında hızlı geçiş</string>
-    <string name="InuFeedSummary">Kanallarınızdan toplanan gönderiler</string>
     <string name="InuEditedArchive">Düzenlenen mesaj arşivi</string>
     <string name="InuGroupChatArchives">Arşivleri entinyGram klasöründe grupla</string>
     <string name="InuAllowForwardRestrictedWarning">Bu açık olsa bile Telegram bazı iletmeleri yine de engelleyebilir. “Plain forwarding is not allowed.” hatasını görürseniz bunun yerine metni kopyalayın veya medyayı kaydedin.</string>
@@ -1973,7 +1940,6 @@
     <string name="InuAppIconsSelect">Simgeyi uygula</string>
     <string name="InuBackupImportSheetReplace">Tüm ayarları değiştir</string>
     <string name="InuCameraSound">Kamera ve ses</string>
-    <string name="InuCameraSoundSummary">Yuvarlak videolar, kamera ve ses kaydı</string>
     <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
     <string name="InuContactChangePhoto">Profil fotoğrafı değişti</string>
     <string name="InuContactChanges">Kişi değişiklikleri</string>
@@ -2066,7 +2032,6 @@
     <string name="InuStartTab">Başlangıç sekmesi</string>
     <string name="InuMutualContactIconLeft">Karşılıklı kişi simgesi unvandan önce</string>
     <string name="InuMutualContactIconLeftInfo">Karşılıklı kişi simgesini üye unvanından sonra değil, solunda göster</string>
-    <string name="InuForumSectionsCards">Forum konularında kart bölümleri</string>
     <string name="InuActionBarSnowflakes">Üst çubukta kar taneleri</string>
     <string name="InuBookmarkAdd">Yer imlerine ekle</string>
     <string name="InuBookmarkAdded">Yer imlerine eklendi</string>
@@ -2076,21 +2041,12 @@
     <string name="InuBookmarksClearAll">Tüm yer imlerini temizle</string>
     <string name="InuBookmarksEmpty">Yer imi yok</string>
     <string name="InuBookmarksLimit">Yer imi sınırına ulaşıldı (sohbet başına %1$d)</string>
-    <string name="InuBookmarksSummary">Kaydettiğiniz mesajlar, sohbete göre gruplanmış</string>
     <string name="InuChatOnlineDots">Sohbetlerde çevrimiçi noktaları</string>
     <string name="InuChatOnlineDotsInfo">Gruplarda gönderen avatarlarında çevrimiçi noktasını göster.</string>
     <string name="InuOnlineDotsSection">Çevrimiçi noktalar</string>
     <string name="InuMutualContactSection">Karşılıklı kişiler</string>
     <string name="InuDesignStyle">Tasarım stili</string>
     <string name="InuDialogsFabRaise">FAB düğmelerini biraz yükselt</string>
-    <string name="InuDialogsSections">Sohbet listesi bölümleri</string>
-    <string name="InuDialogsSectionsCards">Kart bölümleri</string>
-    <string name="InuDialogsSectionsMargin">Yan boşluklar</string>
-    <string name="InuDialogsSectionsMarginLarge">Büyük</string>
-    <string name="InuDialogsSectionsMarginMedium">Orta</string>
-    <string name="InuDialogsSectionsMarginNone">Yok</string>
-    <string name="InuDialogsSectionsSeparatePinned">Sabitlenenler ayrı</string>
-    <string name="InuDialogsSectionsSeparatePinnedInfo">Sabitlenmiş sohbetleri ve arşivi ayrı bir kartta göster</string>
     <string name="InuDownloadStickerPackZip">Paketi ZIP olarak indir</string>
     <string name="InuEditFieldCaption">açıklama</string>
     <string name="InuEditFieldEmoji">özel emoji</string>
@@ -2109,10 +2065,10 @@
     <string name="InuHideReactionsBadgesInfo">Sohbet listesinde tepki bahsi rozeti yok</string>
     <string name="InuHideReactionsDisplay">Mesajlardaki tepkileri gizle</string>
     <string name="InuHideReactionsDisplayInfo">Balonların altındaki tepki çipleri gösterilmez</string>
-    <string name="InuHideReactionsSection">Tepkileri gizle</string>
     <string name="InuHideReactionsSet">Tepki vermeyi devre dışı bırak</string>
     <string name="InuHideReactionsSetInfo">Mesaj menüsünde tepki çubuğu ve çift dokunuşla tepki yok</string>
     <string name="InuMaterial3SettingsInfo">Anahtarlar, kaydırıcılar, bölümler, avatarlar, sohbet listesi kartları ve daha fazlası.</string>
     <string name="InuSendAsSticker">Çıkartma olarak gönder</string>
     <string name="InuStickerPackZipFailed">Paket indirilemedi</string>
+    <string name="InuForumSectionsCards">Forum konularında kart bölümleri</string>
 </resources>

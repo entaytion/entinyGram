@@ -24,7 +24,6 @@
     <string name="InuDrawerShowBadgeInfo">يعرض شارتك بجانب اسمك في ترويسة القائمة الجانبية</string>
     <string name="InuSettings">إعدادات entinyGram</string>
     <string name="InuSettingsInfo">عبر الأرض والرياح أتبعك</string>
-    <string name="InuGeneral">عام</string>
     <string name="InuWideChannelPosts">منشورات عريضة</string>
     <string name="InuWideChannelPostsFooter">منشورات القنوات والرسائل المعاد توجيهها تستخدم العرض المتاح كاملاً.</string>
     <string name="InuWideChannelPostsPreviewText">أخبار وصور وفيديوهات</string>
@@ -90,9 +89,7 @@
     <string name="InuAnnoyancesChannels">القنوات &amp; التوصيات</string>
     <string name="InuAnnoyancesAi">الذكاء الاصطناعي</string>
     <string name="InuAnnoyancesHints">التلميحات &amp; الاقتراحات</string>
-    <string name="InuMessages">الرسائل</string>
     <string name="InuChats">المحادثات</string>
-    <string name="InuMainPage">قائمة المحادثات</string>
     <string name="InuUserProfile">ملف المستخدم</string>
     <string name="InuChatList">قائمة المحادثات</string>
     <string name="InuTitleText">نص العنوان</string>
@@ -127,7 +124,6 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">المفاتيح</string>
     <string name="InuMaterial3Sliders">أشرطة التمرير</string>
-    <string name="InuMaterial3Dialogs">مربعات الحوار والأوراق السفلية</string>
     <string name="InuMaterial3Fabs">الأزرار العائمة</string>
     <string name="InuMaterial3Sections">عناصر القائمة</string>
     <string name="InuMaterial3Avatars">الصور الرمزية</string>
@@ -659,7 +655,6 @@
     <string name="InuProfileRegDate">تاريخ التسجيل</string>
     <string name="InuProfileRegDateCopied">تم نسخ تاريخ التسجيل &amp; مركز البيانات</string>
     <string name="InuMessageInput">إدخال الرسالة</string>
-    <string name="InuAttachmentSheet">ورقة المرفقات</string>
     <string name="InuIconReplacement">حزمة الأيقونات</string>
 
     <string name="InuMapsHeader">الخرائط</string>
@@ -905,7 +900,6 @@
     <string name="InuCut">قص</string>
     <string name="InuCodeLanguage">لغة الشيفرة</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
-    <string name="InuDataBackup">النسخ الاحتياطي &amp; المزامنة</string>
 
     <string name="InuSearchFilter">التصفية حسب الوسائط</string>
     <string name="InuSearchFilterPhotos">الصور</string>
@@ -964,7 +958,6 @@
     <string name="InuRecentChatsUsers">المستخدمون</string>
     <string name="InuRecentChatsEmpty">لا شيء هنا بعد</string>
 
-    <string name="InuAdditional">إضافي</string>
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">قناة التحديثات</string>
     <string name="InuUpdates">التحديثات</string>
@@ -1065,7 +1058,6 @@
     <string name="InuProxyImported_other">تم استيراد %1$d وكيل</string>
     <string name="InuFasterDownloads">تنزيلات أسرع</string>
     <string name="InuFasterUploads">رفع أسرع</string>
-    <string name="InuFasterTransfersInfo">أجزاء أكبر وطلبات متوازية أكثر. قد يفيد أو يضر بالإنتاجية.</string>
     <string name="InuKeepDownloadsInBackground">عدم إيقاف التنزيلات عند التمرير/الخروج</string>
     <string name="InuKeepDownloadsInBackgroundInfo">تستمر التنزيلات بالعمل عند التمرير بعيداً أو مغادرة المحادثة.</string>
     <string name="InuBlockSleepWhileDownloading">منع السكون أثناء التنزيل</string>
@@ -1142,7 +1134,6 @@
     <string name="InuProfileInfoRowsReset">إعادة إلى الافتراضي</string>
     <string name="InuGoToMessage">الانتقال إلى رسالة</string>
     <string name="InuGoToMessagePrompt">معرّف الرسالة</string>
-    <string name="InuPrivacySecurity">الخصوصية &amp; الأمان</string>
     <string name="InuPerAccountPasscode">رمز مرور لكل حساب</string>
     <string name="InuHideInugramSettings">إخفاء إعدادات entinyGram</string>
     <string name="InuParanoiaDisableNotifications">تعطيل الإشعارات</string>
@@ -1221,7 +1212,6 @@
     <string name="InuBiometricLockArchiveEveryTime">السؤال في كل مرة</string>
     <string name="InuBiometricLockArchiveEveryTimeInfo">الإيقاف يسأل مرة واحدة لكل جلسة؛ والتفعيل يسأل في كل مرة تفتح فيها الأرشيف.</string>
 
-    <string name="InuTOS">الميزات المقيّدة</string>
     <string name="InuSelfDestructMedia">الوسائط ذاتية الحذف</string>
     <string name="InuAntiDeletion">حفظ الرسائل</string>
     <string name="InuSaveSelfDestructMedia">الاحتفاظ بالوسائط السرية</string>
@@ -1410,10 +1400,6 @@
     <string name="InuShowMutualContactInChats">إظهار أيقونة جهة الاتصال المتبادلة في قوائم أعضاء المجموعات &amp; القنوات</string>
     <string name="InuShowMutualContactInChatsInfo">عرض أيقونة جهة الاتصال المتبادلة في قوائم أعضاء المجموعات والقنوات</string>
     <string name="InuCategoryAppearance">تصميم</string>
-    <string name="InuCategoryChats">المحادثات</string>
-    <string name="InuCategoryBehavior">السلوك &amp; الأدوات</string>
-    <string name="InuCategoryPrivacy">الخصوصية &amp; الأمان</string>
-    <string name="InuCategoryBackup">إضافي</string>
 
     <string name="InuGhostMode">وضع الشبح</string>
     <string name="InuGhostModeMaster">وضع الشبح</string>
@@ -1573,7 +1559,6 @@
     <string name="InuLocalFoldersInfo">أنشئ مجلدات تتجاوز حد Telegram. تبقى المجلدات الإضافية على هذا الجهاز.</string>
     <string name="InuFolderIcon">أيقونة المجلد</string>
     <string name="InuFolderIconDefault">الافتراضية</string>
-    <string name="InuStalkerPack">حزمة المتتبّع</string>
     <string name="InuStalkerSaved">البيانات المحفوظة</string>
     <string name="InuStalkerPresence">الحضور</string>
     <string name="InuStalkerTools">الأدوات</string>
@@ -1676,7 +1661,6 @@
     <string name="InuActionButtonStyleAccent">اللون المميز</string>
     <string name="InuActionButtonStyleNeutral">محايد</string>
     <string name="InuActionButtonStyleWhite">أبيض</string>
-    <string name="InuAntiCensorship">تجاوز الرقابة</string>
     <string name="InuAntiCensorshipTransport">الاتصال</string>
     <string name="InuAntiCensorshipPrivacy">الحماية من التسريب</string>
     <string name="InuWsTunnel">نفق WebSocket</string>
@@ -1916,7 +1900,6 @@
     <string name="InuDrawerMenuOrderInfo">اضغط لإخفاء العنصر أو إظهاره، واضغط مطولًا لإعادة الترتيب. تقسّم الفواصل القائمة إلى مجموعات.</string>
     <string name="InuDrawerMenuReset">إعادة ضبط القائمة</string>
     <string name="InuHideTitle">إخفاء العنوان</string>
-    <string name="InuInterfaceElements">عناصر الواجهة</string>
     <string name="InuIosSettings">إعدادات iOS</string>
     <string name="InuIosSettingsInfo">توسيط العناوين، الشريط السفلي، حقل الإدخال، ترويسة المحادثة وliquid glass.</string>
     <string name="InuLinkedChannel">القناة المرتبطة</string>
@@ -1927,32 +1910,16 @@
     <string name="InuLogsPrivacyText">سيكتب التطبيق سجلات تقنية على الجهاز. قد تحتوي على معرّفات الحساب والمحادثات، لذا شاركها فقط مع من تثق بهم. تُحفظ السجلات حتى 25 ميغابايت ويمكن مسحها في أي وقت.</string>
     <string name="InuLogsPrivacyTitle">تفعيل وضع التصحيح؟</string>
     <string name="InuMediaSection">الوسائط</string>
-    <string name="InuMenuChatDesc">عناصر القائمة داخل المحادثة.</string>
-    <string name="InuMenuDialogsDesc">عناصر قائمة ⋮ في شاشة المحادثات. تظهر عندما تكون القائمة الجانبية متوقفة.</string>
     <string name="InuMenuDivider">فاصل</string>
-    <string name="InuMenuMessageDesc">ترتيب إجراءات الرسالة وظهورها.</string>
-    <string name="InuMenuProfileInfoDesc">الهاتف والنبذة واسم المستخدم وصفوف أخرى في الملفات الشخصية.</string>
-    <string name="InuMenuProfileSettingsDesc">صفوف شاشة الإعدادات.</string>
-    <string name="InuMenuSideDesc">عناصر القائمة الجانبية وترتيبها وفواصلها.</string>
     <string name="InuMenus">القوائم</string>
-    <string name="InuMenusInfo">القائمة الجانبية، قائمة الخيارات، قوائم المحادثة والرسالة وصفوف الملف الشخصي.</string>
     <string name="InuMessageDesign">مظهر الرسائل</string>
-    <string name="InuMessageDesignInfo">الفقاعات والملصقات والتفاعلات ومنشورات القنوات وحجم نص الإدخال.</string>
-    <string name="InuRootInterface">الواجهة</string>
-    <string name="InuRootPrivacy">الميزات والخصوصية</string>
     <string name="InuRootSystem">النظام</string>
     <string name="InuSetReminder">ضبط تذكير</string>
     <string name="InuHideMessage">إخفاء</string>
     <string name="InuSideMenu">القائمة الجانبية</string>
-    <string name="InuSideMenuInfo">القائمة المنسدلة وأقسامها والحسابات وعناصر القائمة.</string>
     <string name="InuUnreadBadgeOnBackButton">إظهار عدّاد المحادثات غير المقروءة</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">يعرض عدد المحادثات غير المقروءة على زر الرجوع داخل المحادثة.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">عدّاد بأسلوب iOS</string>
-    <string name="InuMainScreen">الشاشة الرئيسية</string>
-    <string name="InuMessagesSummary">إجراءات النقر المزدوج والتفاعلات والتأكيدات</string>
-    <string name="InuPillStackSummary">أدوات تفاعلية في شريط البحث</string>
-    <string name="InuRecentChatsSummary">التبديل السريع بين المحادثات</string>
-    <string name="InuFeedSummary">منشورات مجمعة من قنواتك</string>
     <string name="InuEditedArchive">أرشيف الرسائل المعدلة</string>
     <string name="InuGroupChatArchives">تجميع الأرشيفات في مجلد entinyGram</string>
     <string name="InuAllowForwardRestrictedWarning">قد يظل Telegram يحظر بعض عمليات إعادة التوجيه حتى مع تفعيل هذا الخيار. إذا ظهرت لك رسالة «Plain forwarding is not allowed.»، فانسخ النص أو احفظ الوسائط بدلاً من ذلك.</string>
@@ -1996,7 +1963,6 @@
     <string name="InuBiometricRequireConfirmationBots">في التطبيقات المصغرة</string>
     <string name="InuBiometricRequireConfirmationPasscode">عند فتح قفل التطبيق</string>
     <string name="InuCameraSound">الكاميرا والصوت</string>
-    <string name="InuCameraSoundSummary">الفيديوهات الدائرية والكاميرا وتسجيل الصوت</string>
     <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
     <string name="InuContactChangePhoto">تم تغيير صورة الملف الشخصي</string>
     <string name="InuContactChanges">تغييرات جهة الاتصال</string>
@@ -2097,7 +2063,6 @@
     <string name="InuStartTab">علامة التبويب الافتتاحية</string>
     <string name="InuMutualContactIconLeft">أيقونة الاتصال المتبادل قبل اللقب</string>
     <string name="InuMutualContactIconLeftInfo">عرض أيقونة الاتصال المتبادل على يسار لقب العضو بدلًا من بعده</string>
-    <string name="InuForumSectionsCards">أقسام بطاقات في مواضيع المنتدى</string>
     <string name="InuActionBarSnowflakes">ندف الثلج في الرأس</string>
     <string name="InuBookmarkAdd">إضافة إلى الإشارات المرجعية</string>
     <string name="InuBookmarkAdded">تمت الإضافة إلى الإشارات المرجعية</string>
@@ -2107,21 +2072,12 @@
     <string name="InuBookmarksClearAll">مسح كل الإشارات المرجعية</string>
     <string name="InuBookmarksEmpty">لا توجد إشارات مرجعية</string>
     <string name="InuBookmarksLimit">تم بلوغ حد الإشارات المرجعية (%1$d لكل محادثة)</string>
-    <string name="InuBookmarksSummary">الرسائل التي حفظتها، مجمعة حسب المحادثة</string>
     <string name="InuChatOnlineDots">نقاط الاتصال في المحادثات</string>
     <string name="InuChatOnlineDotsInfo">إظهار نقطة الاتصال على صور المرسلين داخل المجموعات.</string>
     <string name="InuOnlineDotsSection">نقاط الاتصال</string>
     <string name="InuMutualContactSection">جهات الاتصال المتبادلة</string>
     <string name="InuDesignStyle">نمط التصميم</string>
     <string name="InuDialogsFabRaise">رفع أزرار FAB قليلاً</string>
-    <string name="InuDialogsSections">أقسام قائمة المحادثات</string>
-    <string name="InuDialogsSectionsCards">أقسام البطاقات</string>
-    <string name="InuDialogsSectionsMargin">الهوامش الجانبية</string>
-    <string name="InuDialogsSectionsMarginLarge">كبيرة</string>
-    <string name="InuDialogsSectionsMarginMedium">متوسطة</string>
-    <string name="InuDialogsSectionsMarginNone">بلا</string>
-    <string name="InuDialogsSectionsSeparatePinned">المثبتة بشكل منفصل</string>
-    <string name="InuDialogsSectionsSeparatePinnedInfo">عرض المحادثات المثبتة والأرشيف في بطاقة مستقلة</string>
     <string name="InuDownloadStickerPackZip">تنزيل الحزمة بصيغة ZIP</string>
     <string name="InuEditFieldCaption">التعليق</string>
     <string name="InuEditFieldEmoji">إيموجي مخصص</string>
@@ -2140,7 +2096,6 @@
     <string name="InuHideReactionsBadgesInfo">لا توجد شارة ذكر التفاعل في قائمة المحادثات</string>
     <string name="InuHideReactionsDisplay">إخفاء التفاعلات على الرسائل</string>
     <string name="InuHideReactionsDisplayInfo">لا تُعرض رقائق التفاعلات تحت الفقاعات</string>
-    <string name="InuHideReactionsSection">إخفاء التفاعلات</string>
     <string name="InuHideReactionsSet">تعطيل وضع التفاعلات</string>
     <string name="InuHideReactionsSetInfo">لا شريط تفاعلات في قائمة الرسالة ولا تفاعل بالنقر المزدوج</string>
     <string name="InuMaterial3SettingsInfo">المفاتيح والمنزلقات والأقسام والصور الرمزية وبطاقات قائمة المحادثات والمزيد.</string>
@@ -2149,4 +2104,5 @@
     <string name="InuPluginsPluginlessBuild">هذا الإصدار لا يدعم الإضافات\n\nانتقل إلى «حول» للتبديل إلى الإصدار الكامل</string>
     <string name="InuSendAsSticker">إرسال كملصق</string>
     <string name="InuStickerPackZipFailed">تعذّر تنزيل الحزمة</string>
+    <string name="InuForumSectionsCards">أقسام بطاقات في مواضيع المنتدى</string>
 </resources>

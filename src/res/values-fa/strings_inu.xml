@@ -24,7 +24,6 @@
     <string name="InuDrawerShowBadgeInfo">نشان شما را کنار نامتان در سربرگ منوی کناری نشان می‌دهد</string>
     <string name="InuSettings">تنظیمات entinyGram</string>
     <string name="InuSettingsInfo">از میان خاک و باد، دنبال تو می‌آیم</string>
-    <string name="InuGeneral">عمومی</string>
     <string name="InuWideChannelPosts">پست‌های عریض</string>
     <string name="InuWideChannelPostsFooter">پست‌ها و بازارسال‌های کانال از تمام عرض موجود استفاده می‌کنند.</string>
     <string name="InuWideChannelPostsPreviewText">اخبار، عکس‌ها و ویدیوها</string>
@@ -90,9 +89,7 @@
     <string name="InuAnnoyancesChannels">کانال‌ها و پیشنهادها</string>
     <string name="InuAnnoyancesAi">هوش مصنوعی</string>
     <string name="InuAnnoyancesHints">راهنماها و پیشنهادها</string>
-    <string name="InuMessages">پیام‌ها</string>
     <string name="InuChats">گفتگوها</string>
-    <string name="InuMainPage">فهرست گفتگوها</string>
     <string name="InuUserProfile">نمایه کاربر</string>
     <string name="InuChatList">فهرست گفتگو</string>
     <string name="InuTitleText">متن عنوان</string>
@@ -127,7 +124,6 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">کلیدها</string>
     <string name="InuMaterial3Sliders">لغزنده‌ها</string>
-    <string name="InuMaterial3Dialogs">دیالوگ‌ها و شیت‌ها</string>
     <string name="InuMaterial3Fabs">دکمه‌های شناور</string>
     <string name="InuMaterial3Sections">موارد فهرست</string>
     <string name="InuMaterial3Avatars">آواتارها</string>
@@ -659,7 +655,6 @@
     <string name="InuProfileRegDate">تاریخ ثبت‌نام</string>
     <string name="InuProfileRegDateCopied">تاریخ ثبت‌نام و مرکز داده کپی شد</string>
     <string name="InuMessageInput">ورودی پیام</string>
-    <string name="InuAttachmentSheet">برگه پیوست</string>
     <string name="InuIconReplacement">بسته نمادها</string>
 
     <string name="InuMapsHeader">نقشه‌ها</string>
@@ -905,7 +900,6 @@
     <string name="InuCut">برش</string>
     <string name="InuCodeLanguage">زبان کد</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
-    <string name="InuDataBackup">پشتیبان‌گیری و همگام‌سازی</string>
 
     <string name="InuSearchFilter">فیلتر بر اساس رسانه</string>
     <string name="InuSearchFilterPhotos">عکس‌ها</string>
@@ -964,7 +958,6 @@
     <string name="InuRecentChatsUsers">کاربران</string>
     <string name="InuRecentChatsEmpty">هنوز چیزی اینجا نیست</string>
 
-    <string name="InuAdditional">اضافی</string>
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">کانال به‌روزرسانی‌ها</string>
     <string name="InuUpdates">به‌روزرسانی‌ها</string>
@@ -1057,7 +1050,6 @@
     <string name="InuProxyImported_other">%1$d پروکسی درون‌ریزی شد</string>
     <string name="InuFasterDownloads">دانلود سریع‌تر</string>
     <string name="InuFasterUploads">بارگذاری سریع‌تر</string>
-    <string name="InuFasterTransfersInfo">تکه‌های بزرگ‌تر و درخواست‌های موازی بیشتر. ممکن است توان عملیاتی را بهتر یا بدتر کند.</string>
     <string name="InuKeepDownloadsInBackground">دانلودها با اسکرول/خروج متوقف نشوند</string>
     <string name="InuKeepDownloadsInBackgroundInfo">وقتی اسکرول می‌کنید یا از گفتگو خارج می‌شوید دانلودها ادامه می‌یابند.</string>
     <string name="InuBlockSleepWhileDownloading">جلوگیری از خواب هنگام دانلود</string>
@@ -1134,7 +1126,6 @@
     <string name="InuProfileInfoRowsReset">بازنشانی به پیش‌فرض</string>
     <string name="InuGoToMessage">رفتن به پیام</string>
     <string name="InuGoToMessagePrompt">شناسه پیام</string>
-    <string name="InuPrivacySecurity">حریم خصوصی و امنیت</string>
     <string name="InuPerAccountPasscode">رمز قفل برای هر حساب</string>
     <string name="InuHideInugramSettings">پنهان کردن تنظیمات entinyGram</string>
     <string name="InuParanoiaDisableNotifications">غیرفعال کردن اعلان‌ها</string>
@@ -1209,7 +1200,6 @@
     <string name="InuBiometricLockArchiveEveryTime">هر بار بپرس</string>
     <string name="InuBiometricLockArchiveEveryTimeInfo">خاموش: یک‌بار در هر نشست برنامه می‌پرسد؛ روشن: هر بار که آرشیو را باز می‌کنید.</string>
 
-    <string name="InuTOS">قابلیت‌های محدودشده</string>
     <string name="InuSelfDestructMedia">رسانه خودمخرب</string>
     <string name="InuAntiDeletion">نگهداری پیام‌ها</string>
     <string name="InuSaveSelfDestructMedia">نگه داشتن رسانه مخفی</string>
@@ -1398,10 +1388,6 @@
     <string name="InuShowMutualContactInChats">نمایش نماد مخاطب دوطرفه در فهرست اعضای گروه و کانال</string>
     <string name="InuShowMutualContactInChatsInfo">نماد مخاطب دوطرفه در فهرست اعضای گروه‌ها و کانال‌ها نمایش داده شود</string>
     <string name="InuCategoryAppearance">طراحی</string>
-    <string name="InuCategoryChats">گفتگوها</string>
-    <string name="InuCategoryBehavior">رفتار و ابزارها</string>
-    <string name="InuCategoryPrivacy">حریم خصوصی و امنیت</string>
-    <string name="InuCategoryBackup">اضافی</string>
 
     <string name="InuGhostMode">حالت روح</string>
     <string name="InuGhostModeMaster">حالت روح</string>
@@ -1561,7 +1547,6 @@
     <string name="InuLocalFoldersInfo">فراتر از محدودیت تلگرام پوشه بسازید. پوشه‌های اضافه روی همین دستگاه می‌مانند.</string>
     <string name="InuFolderIcon">نماد پوشه</string>
     <string name="InuFolderIconDefault">پیش‌فرض</string>
-    <string name="InuStalkerPack">بسته ردیاب</string>
     <string name="InuStalkerSaved">داده‌های ذخیره‌شده</string>
     <string name="InuStalkerPresence">حضور</string>
     <string name="InuStalkerTools">ابزارها</string>
@@ -1664,7 +1649,6 @@
     <string name="InuActionButtonStyleAccent">رنگ تاکیدی</string>
     <string name="InuActionButtonStyleNeutral">خنثی</string>
     <string name="InuActionButtonStyleWhite">سفید</string>
-    <string name="InuAntiCensorship">دور زدن سانسور</string>
     <string name="InuAntiCensorshipTransport">اتصال</string>
     <string name="InuAntiCensorshipPrivacy">محافظت از نشت</string>
     <string name="InuWsTunnel">تونل WebSocket</string>
@@ -1901,7 +1885,6 @@
     <string name="InuDrawerMenuOrderInfo">برای پنهان یا نمایان کردن موارد ضربه بزنید و برای تغییر ترتیب نگه دارید. جداکننده‌ها منو را به گروه‌ها تقسیم می‌کنند.</string>
     <string name="InuDrawerMenuReset">بازنشانی منو</string>
     <string name="InuHideTitle">پنهان کردن عنوان</string>
-    <string name="InuInterfaceElements">عناصر رابط</string>
     <string name="InuIosSettings">تنظیمات iOS</string>
     <string name="InuIosSettingsInfo">وسط‌چین کردن عنوان‌ها، نوار پایین، فیلد ورودی، سربرگ گفتگو و liquid glass.</string>
     <string name="InuLinkedChannel">کانال پیوندشده</string>
@@ -1912,32 +1895,16 @@
     <string name="InuLogsPrivacyText">برنامه گزارش‌های فنی را روی دستگاه می‌نویسد. ممکن است شامل شناسهٔ حساب و گفتگوها باشند، پس فقط با افراد مورد اعتماد به اشتراک بگذارید. گزارش‌ها تا ۲۵ مگابایت نگه داشته می‌شوند و هر زمان قابل پاک‌سازی‌اند.</string>
     <string name="InuLogsPrivacyTitle">حالت اشکال‌زدایی فعال شود؟</string>
     <string name="InuMediaSection">رسانه</string>
-    <string name="InuMenuChatDesc">موارد منوی داخل گفتگو.</string>
-    <string name="InuMenuDialogsDesc">موارد منوی ⋮ در صفحهٔ گفتگوها. وقتی منوی کناری خاموش است نمایش داده می‌شود.</string>
     <string name="InuMenuDivider">جداکننده</string>
-    <string name="InuMenuMessageDesc">ترتیب و نمایش اقدام‌های پیام.</string>
-    <string name="InuMenuProfileInfoDesc">تلفن، دربارهٔ من، نام کاربری و ردیف‌های دیگر در نمایه‌ها.</string>
-    <string name="InuMenuProfileSettingsDesc">ردیف‌های صفحهٔ تنظیمات.</string>
-    <string name="InuMenuSideDesc">موارد، ترتیب و جداکننده‌های پنل کناری.</string>
     <string name="InuMenus">منوها</string>
-    <string name="InuMenusInfo">منوی کناری، منوی گزینه‌ها، منوی گفتگو و پیام و ردیف‌های نمایه.</string>
     <string name="InuMessageDesign">ظاهر پیام‌ها</string>
-    <string name="InuMessageDesignInfo">حباب‌ها، استیکرها، واکنش‌ها، پست‌های کانال و اندازهٔ متن فیلد ورودی.</string>
-    <string name="InuRootInterface">رابط</string>
-    <string name="InuRootPrivacy">قابلیت‌ها و حریم خصوصی</string>
     <string name="InuRootSystem">سیستم</string>
     <string name="InuSetReminder">تنظیم یادآور</string>
     <string name="InuHideMessage">پنهان کردن</string>
     <string name="InuSideMenu">منوی کناری</string>
-    <string name="InuSideMenuInfo">منوی کشویی، بخش‌ها، حساب‌ها و موارد منو.</string>
     <string name="InuUnreadBadgeOnBackButton">نمایش شمارنده چت‌های خوانده‌نشده</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">تعداد چت‌های خوانده‌نشده را روی دکمه بازگشت در چت نمایش می‌دهد</string>
     <string name="InuUnreadBadgeOnBackButtonIos">شمارنده به سبک iOS</string>
-    <string name="InuMainScreen">صفحه اصلی</string>
-    <string name="InuMessagesSummary">اقدامات دوبار ضربه، واکنش‌ها و تاییدیه‌ها</string>
-    <string name="InuPillStackSummary">ابزارک‌های تعاملی در نوار جستجو</string>
-    <string name="InuRecentChatsSummary">جابجایی سریع بین گفتگوها</string>
-    <string name="InuFeedSummary">پست‌های تجمیع‌شده از کانال‌های شما</string>
     <string name="InuEditedArchive">بایگانی پیام‌های ویرایش‌شده</string>
     <string name="InuGroupChatArchives">گروه‌بندی بایگانی‌ها در پوشه entinyGram</string>
     <string name="InuAllowForwardRestrictedWarning">ممکن است Telegram حتی با فعال بودن این گزینه برخی ارسال‌ها را مسدود کند. اگر پیام «Plain forwarding is not allowed.» را دیدید، به‌جای آن متن را کپی کنید یا رسانه را ذخیره کنید.</string>
@@ -1981,7 +1948,6 @@
     <string name="InuBiometricRequireConfirmationBots">در مینی‌اپ‌ها</string>
     <string name="InuBiometricRequireConfirmationPasscode">هنگام باز کردن قفل برنامه</string>
     <string name="InuCameraSound">دوربین و صدا</string>
-    <string name="InuCameraSoundSummary">ویدیوهای گرد، دوربین و ضبط صدا</string>
     <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
     <string name="InuContactChangePhoto">عکس پروفایل تغییر کرد</string>
     <string name="InuContactChanges">تغییرات مخاطب</string>
@@ -2082,7 +2048,6 @@
     <string name="InuStartTab">تب شروع</string>
     <string name="InuMutualContactIconLeft">نماد مخاطب دوطرفه پیش از عنوان</string>
     <string name="InuMutualContactIconLeftInfo">نمایش نماد مخاطب دوطرفه در سمت چپ عنوان عضو، به جای بعد از آن</string>
-    <string name="InuForumSectionsCards">بخش‌های کارتی در موضوعات انجمن</string>
     <string name="InuActionBarSnowflakes">برف‌دانه در هدر</string>
     <string name="InuBookmarkAdd">افزودن به نشانه‌ها</string>
     <string name="InuBookmarkAdded">به نشانه‌ها اضافه شد</string>
@@ -2092,21 +2057,12 @@
     <string name="InuBookmarksClearAll">پاک‌کردن همه نشانه‌ها</string>
     <string name="InuBookmarksEmpty">نشانه‌ای نیست</string>
     <string name="InuBookmarksLimit">به سقف نشانه‌ها رسیدید (%1$d در هر گفتگو)</string>
-    <string name="InuBookmarksSummary">پیام‌هایی که ذخیره کرده‌اید، به تفکیک گفتگو</string>
     <string name="InuChatOnlineDots">نقطه‌های آنلاین در گفتگوها</string>
     <string name="InuChatOnlineDotsInfo">نمایش نقطه آنلاین روی آواتار فرستنده‌ها در گروه‌ها.</string>
     <string name="InuOnlineDotsSection">نقطه‌های آنلاین</string>
     <string name="InuMutualContactSection">مخاطبین متقابل</string>
     <string name="InuDesignStyle">سبک طراحی</string>
     <string name="InuDialogsFabRaise">کمی بالا بردن دکمه‌های FAB</string>
-    <string name="InuDialogsSections">بخش‌های فهرست گفتگو</string>
-    <string name="InuDialogsSectionsCards">بخش‌های کارتی</string>
-    <string name="InuDialogsSectionsMargin">حاشیه‌های کناری</string>
-    <string name="InuDialogsSectionsMarginLarge">بزرگ</string>
-    <string name="InuDialogsSectionsMarginMedium">متوسط</string>
-    <string name="InuDialogsSectionsMarginNone">هیچ</string>
-    <string name="InuDialogsSectionsSeparatePinned">سنجاق‌شده‌ها جدا</string>
-    <string name="InuDialogsSectionsSeparatePinnedInfo">نمایش گفتگوهای سنجاق‌شده و آرشیو در کارتی جدا</string>
     <string name="InuDownloadStickerPackZip">دانلود بسته به‌صورت ZIP</string>
     <string name="InuEditFieldCaption">کپشن</string>
     <string name="InuEditFieldEmoji">ایموجی سفارشی</string>
@@ -2125,7 +2081,6 @@
     <string name="InuHideReactionsBadgesInfo">بدون نشان اشاره واکنش در فهرست گفتگو</string>
     <string name="InuHideReactionsDisplay">پنهان‌کردن واکنش‌ها روی پیام‌ها</string>
     <string name="InuHideReactionsDisplayInfo">چیپ‌های واکنش زیر حباب‌ها نمایش داده نمی‌شوند</string>
-    <string name="InuHideReactionsSection">پنهان‌کردن واکنش‌ها</string>
     <string name="InuHideReactionsSet">غیرفعال‌کردن ثبت واکنش</string>
     <string name="InuHideReactionsSetInfo">بدون نوار واکنش در منوی پیام و بدون واکنش با دوبار لمس</string>
     <string name="InuMaterial3SettingsInfo">کلیدها، اسلایدرها، بخش‌ها، آواتارها، کارت‌های فهرست گفتگو و بیشتر.</string>
@@ -2134,4 +2089,5 @@
     <string name="InuPluginsPluginlessBuild">این نسخه از افزونه‌ها پشتیبانی نمی‌کند\n\nبرای رفتن به نسخه کامل به بخش درباره بروید</string>
     <string name="InuSendAsSticker">ارسال به‌عنوان استیکر</string>
     <string name="InuStickerPackZipFailed">دانلود بسته ناموفق بود</string>
+    <string name="InuForumSectionsCards">بخش‌های کارتی در موضوعات انجمن</string>
 </resources>

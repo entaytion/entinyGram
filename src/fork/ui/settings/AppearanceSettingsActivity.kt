@@ -93,12 +93,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         nonIslandGroup.addTo(items, nonIslandInfoItem(ctx)) { changed -> applyNonIslandChanges(changed.map { it.id }) }
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuInterfaceElements)))
-        items.add(mkTwoLineEntry(BUTTON_MESSAGE_DESIGN, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessageDesign), LocaleController.getString(R.string.InuMessageDesignInfo)))
-        items.add(mkTwoLineEntry(BUTTON_SIDE_MENU, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuSideMenu), LocaleController.getString(R.string.InuSideMenuInfo)))
-        items.add(mkTwoLineEntry(BUTTON_MENUS, R.drawable.inu_tabler_list, LocaleController.getString(R.string.InuMenus), LocaleController.getString(R.string.InuMenusInfo)))
-        items.add(UItem.asShadow(null))
-
         if (avatarCornerPreview == null) {
             avatarCornerPreview = AvatarCornerPreviewCell(this.context)
         } else {
@@ -111,6 +105,14 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 R.string.InuUnifiedCornerRadius,
                 R.string.InuUnifiedCornerRadiusInfo,
                 InuConfig.UNIFIED_AVATAR_RADIUS.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_DIVIDERS,
+                R.string.InuHideDividers,
+                R.string.InuHideDividersInfo,
+                InuConfig.HIDE_DIVIDERS.value
             )
         )
         items.add(UItem.asShadow(null))
@@ -196,6 +198,13 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 avatarCornerPreview?.updatePreview()
             }
 
+            TOGGLE_HIDE_DIVIDERS -> {
+                val new = InuConfig.HIDE_DIVIDERS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                inu_rebuildSelf()
+                softRebuild()
+            }
+
             BUTTON_ICON_REPLACEMENT -> presentFragment(IconPacksActivity())
             BUTTON_NOTIFICATION_ICON -> RadioItemOptions.show(
                 this, view,
@@ -245,9 +254,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
             BUTTON_IOS_STYLE -> presentFragment(IosStyleSettingsActivity())
             BUTTON_MATERIAL3 -> presentFragment(Material3SettingsActivity())
-            BUTTON_MESSAGE_DESIGN -> presentFragment(MessageDesignSettingsActivity())
-            BUTTON_SIDE_MENU -> presentFragment(DrawerSettingsActivity())
-            BUTTON_MENUS -> presentFragment(MenusSettingsActivity())
 
         }
     }
@@ -265,6 +271,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_PROFILE_AVATAR_BLUR = InuUtils.generateId()
         private val TOGGLE_REDUCE_MENU_MOTION = InuUtils.generateId()
         private val TOGGLE_UNIFIED_CORNER_RADIUS = InuUtils.generateId()
+        private val TOGGLE_HIDE_DIVIDERS = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
@@ -275,9 +282,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_CHAT_BACKGROUNDS = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_THEMES = InuUtils.generateId()
         private val TOGGLE_DISABLE_BG_PARALLAX = InuUtils.generateId()
-        private val BUTTON_MESSAGE_DESIGN = InuUtils.generateId()
-        private val BUTTON_SIDE_MENU = InuUtils.generateId()
-        private val BUTTON_MENUS = InuUtils.generateId()
 
         private fun predictiveBackModeLabel(value: Int): String = when (value) {
             InuConfig.PredictiveBackModeItem.OFF -> LocaleController.getString(R.string.InuPredictiveBackOff)
@@ -296,6 +300,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-profile-avatar-blur", R.string.InuDisableProfileAvatarBlur, TOGGLE_DISABLE_PROFILE_AVATAR_BLUR),
                 SearchRegistry.Entry("reduce-menu-motion", R.string.InuReduceMenuMotion, TOGGLE_REDUCE_MENU_MOTION),
                 SearchRegistry.Entry("unified-corner-radius", R.string.InuUnifiedCornerRadius, TOGGLE_UNIFIED_CORNER_RADIUS),
+                SearchRegistry.Entry("hide-dividers", R.string.InuHideDividers, TOGGLE_HIDE_DIVIDERS),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
                 SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),

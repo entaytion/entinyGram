@@ -73,44 +73,20 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asCustomShadow(createHeaderView()))
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuRootInterface)))
         items.add(mkSubPageButton(CAT_APPEARANCE, R.drawable.msg_palette, LocaleController.getString(R.string.InuCategoryAppearance)))
-        items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_viewchats, LocaleController.getString(R.string.InuCategoryChats)))
+        items.add(mkSubPageButton(CAT_HOME, R.drawable.msg_home_solar, LocaleController.getString(R.string.InuHomeAndChatList)))
+        items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_discussion, LocaleController.getString(R.string.InuChatsAndMessages)))
+        items.add(mkSubPageButton(CAT_PROFILE_ACCOUNTS, R.drawable.msg_contacts, LocaleController.getString(R.string.InuProfileAndAccounts)))
+        items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.inu_tabler_shield_check, LocaleController.getString(R.string.InuPrivacyAndFreedom)))
         items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_shield_cancel, LocaleController.getString(R.string.InuAnnoyances)))
-        items.add(mkSubPageButton(CAT_MAIN_SCREEN, R.drawable.msg_home_solar, LocaleController.getString(R.string.InuMainScreen)))
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuRootPrivacy)))
-        items.add(mkSubPageButton(CAT_AI, R.drawable.inu_tabler_sparkles, LocaleController.getString(R.string.InuAiCompose)))
-        items.add(mkSubPageButton(CAT_TRANSLATOR, R.drawable.msg_translate, LocaleController.getString(R.string.InuTranslator)))
-        items.add(mkSubPageButton(CAT_BEHAVIOR, R.drawable.inu_tabler_adjustments_horizontal, LocaleController.getString(R.string.InuCategoryBehavior)))
-        items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.inu_tabler_shield_check, LocaleController.getString(R.string.InuCategoryPrivacy)))
-        items.add(mkSubPageButton(BUTTON_TOS, R.drawable.inu_tabler_lock_open, LocaleController.getString(R.string.InuTOS)))
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuRootSystem)))
+        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_floppy, LocaleController.getString(R.string.InuRootSystem)))
         // #if PLUGINS
         items.add(mkSubPageButton(BUTTON_PLUGINS, R.drawable.inu_tabler_code, addExperimentalSpan(LocaleController.getString(R.string.InuPlugins))))
         // #endif
-        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_floppy, LocaleController.getString(R.string.InuCategoryBackup)))
         items.add(UItem.asShadow(null))
 
-        items.add(
-            UItem.asButton(
-                BUTTON_CHANNEL_LINK,
-                R.drawable.inu_tabler_brand_telegram,
-                LocaleController.getString(R.string.InuAboutChannel),
-                "@entinyGram"
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_GITHUB,
-                R.drawable.inu_tabler_brand_github,
-                LocaleController.getString(R.string.InuAboutGitHub),
-                "Entaytion/entinyGram"
-            )
-        )
+        items.add(mkSubPageButton(CAT_ABOUT, R.drawable.msg_info, LocaleController.getString(R.string.InuAbout)))
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -125,37 +101,29 @@ class InuSettingsActivity : SettingsPageActivity() {
         val ctx = context ?: return
         when (item.id) {
             CAT_APPEARANCE -> presentFragment(AppearanceSettingsActivity())
-            CAT_CHATS -> presentFragment(CategoryChatsSettingsActivity())
-            CAT_AI -> presentFragment(AiSettingsActivity())
-            CAT_TRANSLATOR -> presentFragment(TranslatorSettingsActivity())
-            CAT_BEHAVIOR -> presentFragment(BehaviorSettingsActivity())
-            CAT_PRIVACY -> presentFragment(PrivacySecurityActivity())
-            CAT_ANNOYANCES -> presentFragment(AnnoyancesSettingsActivity())
-            CAT_MAIN_SCREEN -> presentFragment(MainScreenSettingsActivity())
-            BUTTON_TOS -> presentFragment(TosSettingsActivity())
+            CAT_HOME -> presentFragment(SchemaPageActivity(Schemas.HOME))
+            CAT_CHATS -> presentFragment(SchemaPageActivity(Schemas.CHATS))
+            CAT_PROFILE_ACCOUNTS -> presentFragment(SchemaPageActivity(Schemas.PROFILE))
+            CAT_PRIVACY -> presentFragment(SchemaPageActivity(Schemas.PRIVACY))
+            CAT_ANNOYANCES -> presentFragment(SchemaPageActivity(Schemas.ANNOYANCES))
+            CAT_SYSTEM -> presentFragment(SchemaPageActivity(Schemas.SYSTEM))
+            CAT_ABOUT -> presentFragment(AdditionalSettingsActivity())
             // #if PLUGINS
             BUTTON_PLUGINS -> presentFragment(PluginsActivity())
             // #endif
-            CAT_SYSTEM -> presentFragment(AdditionalSettingsActivity())
-            BUTTON_CHANNEL_LINK -> Browser.openUrl(ctx, "https://t.me/entinyGram")
-            BUTTON_GITHUB -> Browser.openUrl(ctx, "https://github.com/Entaytion/EntinyGram")
         }
     }
 
     companion object {
         private val CAT_APPEARANCE = InuUtils.generateId()
         private val CAT_CHATS = InuUtils.generateId()
-        private val CAT_MAIN_SCREEN = InuUtils.generateId()
-        private val CAT_AI = InuUtils.generateId()
-        private val CAT_TRANSLATOR = InuUtils.generateId()
-        private val CAT_BEHAVIOR = InuUtils.generateId()
+        private val CAT_PROFILE_ACCOUNTS = InuUtils.generateId()
         private val CAT_PRIVACY = InuUtils.generateId()
         private val CAT_ANNOYANCES = InuUtils.generateId()
-        private val BUTTON_TOS = InuUtils.generateId()
-        private val BUTTON_PLUGINS = InuUtils.generateId()
+        private val CAT_HOME = InuUtils.generateId()
         private val CAT_SYSTEM = InuUtils.generateId()
-        private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
-        private val BUTTON_GITHUB = InuUtils.generateId()
+        private val BUTTON_PLUGINS = InuUtils.generateId()
+        private val CAT_ABOUT = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -164,9 +132,6 @@ class InuSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.icon_settings_inu,
             factory = ::InuSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("channel", R.string.InuAboutChannel, BUTTON_CHANNEL_LINK),
-                SearchRegistry.Entry("github", R.string.InuAboutGitHub, BUTTON_GITHUB),
-                SearchRegistry.Entry("open-translator", R.string.InuTranslator, CAT_TRANSLATOR),
             ),
         )
     }

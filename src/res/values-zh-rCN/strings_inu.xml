@@ -4,7 +4,6 @@
     <string name="InuBanUserConfirm">将 %1$s 从本群封禁？</string>
     <string name="InuSettings">entinyGram 设置</string>
     <string name="InuSettingsInfo">汪汪在干啥？</string>
-    <string name="InuGeneral">通用</string>
     <string name="InuWideChannelPosts">宽屏帖子</string>
     <string name="InuWideChannelPostsFooter">频道帖子和转发将使用全部可用宽度。</string>
     <string name="InuWideChannelPostsPreviewText">新闻、照片和视频</string>
@@ -70,8 +69,6 @@
     <string name="InuAnnoyancesChannels">频道与推荐</string>
     <string name="InuAnnoyancesAi">人工智能</string>
     <string name="InuAnnoyancesHints">提示与提醒</string>
-    <string name="InuMessages">消息</string>
-    <string name="InuMainPage">对话列表</string>
     <string name="InuUserProfile">用户资料</string>
     <string name="InuChatList">聊天列表</string>
     <string name="InuTitleText">标题文本</string>
@@ -367,7 +364,6 @@
     <string name="InuProfileId">ID</string>
     <string name="InuProfileIdCopied">ID 已复制到剪贴板</string>
     <string name="InuMessageInput">消息输入框</string>
-    <string name="InuAttachmentSheet">附件面板</string>
     <string name="InuIconReplacement">图标包</string>
     <string name="InuIconPackLoadFromFile">从文件加载</string>
     <string name="InuIconPacksInstalled">已安装的图标包</string>
@@ -636,7 +632,6 @@
     <string name="InuProxyImported_other">已导入 %1$d 个代理</string>
     <string name="InuFasterDownloads">加速下载</string>
     <string name="InuFasterUploads">加速上传</string>
-    <string name="InuFasterTransfersInfo">提高分块大小和并行请求数。可能提升吞吐，也可能产生反效果 (尤其对非 Premium 用户)</string>
     <string name="InuSendMp4DocumentAsVideo">将 MP4 文档作为视频发送</string>
     <string name="InuSendMp4DocumentAsVideoInfo">通过「文件」附加的 MP4 会作为可播放视频发送，无需转换</string>
     <string name="InuMentionInsertTitle">插入提及</string>
@@ -681,7 +676,6 @@
     <string name="InuMenuMoveToBottomRow">移到快捷操作栏</string>
     <string name="InuMenuMoveFromBottomRow">移回菜单</string>
     <string name="InuMenuBottomRowFull">快捷操作栏已满 (最多 4 个)</string>
-    <string name="InuPrivacySecurity">隐私与安全</string>
     <string name="InuPerAccountPasscode">每个账号独立密码</string>
     <string name="InuHideInugramSettings">隐藏 entinyGram 设置</string>
     <string name="InuParanoiaDisableNotifications">禁用通知</string>
@@ -720,7 +714,6 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">开关</string>
     <string name="InuMaterial3Sliders">滑块</string>
-    <string name="InuMaterial3Dialogs">对话框和底部面板</string>
     <string name="InuMonetTheme">Monet 主题</string>
     <string name="InuMonetThemeDisabled">禁用</string>
     <string name="InuMonetThemeLight">浅色</string>
@@ -986,7 +979,6 @@
     <string name="InuClearDeletedCacheDone">已删除消息缓存已清除</string>
     <string name="InuClearDeletedCacheEmpty">已删除消息缓存为空</string>
     <string name="InuClearDeletedCacheHint">长按聊天可逐条查看已保存的消息和媒体并单独删除</string>
-    <string name="InuDataBackup">备份与同步</string>
     <string name="InuDownloadingStory">正在下载故事…</string>
     <string name="InuEditHistory">编辑历史</string>
     <string name="InuSuppressScreenshotNotification">隐藏截图通知</string>
@@ -1039,8 +1031,6 @@
     <string name="InuSelfDestructMedia">阅后即焚媒体</string>
     <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
-    <string name="InuTOS">服务条款</string>
-    <string name="InuAdditional">其他</string>
     <string name="InuAiApiKeyHint">API 密钥</string>
     <string name="InuAiChatTitle">AI 聊天</string>
     <string name="InuAiEditorButtonInfo">在消息输入框旁显示 AI 操作按钮，用于重写、续写、总结和修复文本。</string>
@@ -1092,10 +1082,6 @@
     <string name="InuAntiDeletion">消息保存</string>
     <string name="InuAppIconOldEntinygram">旧版 entinyGram</string>
     <string name="InuCategoryAppearance">设计</string>
-    <string name="InuCategoryBackup">其他设置</string>
-    <string name="InuCategoryBehavior">行为与工具</string>
-    <string name="InuCategoryChats">聊天</string>
-    <string name="InuCategoryPrivacy">隐私与安全</string>
     <string name="InuCenterTitleRightAvatar">将头像显示在右侧</string>
     <string name="InuCenterTitleMain">居中屏幕标题</string>
     <string name="InuCenterTitleMainInfo">在聊天之外的界面居中标题。聊天有下方单独的开关。</string>
@@ -1220,7 +1206,6 @@
     <string name="InuWeatherLocationInfo">显示所选位置的天气，最多每 15 分钟更新一次。</string>
     <string name="InuFolderIcon">文件夹图标</string>
     <string name="InuFolderIconDefault">默认</string>
-    <string name="InuStalkerPack">监视包</string>
     <string name="InuStalkerSaved">已保存数据</string>
     <string name="InuStalkerPresence">在线状态</string>
     <string name="InuStalkerTools">工具</string>
@@ -1583,7 +1568,6 @@
     <string name="InuActionButtonStyleAccent">强调色</string>
     <string name="InuActionButtonStyleNeutral">中性色</string>
     <string name="InuActionButtonStyleWhite">白色</string>
-    <string name="InuAntiCensorship">绕过审查</string>
     <string name="InuAntiCensorshipTransport">连接</string>
     <string name="InuAntiCensorshipPrivacy">防泄漏</string>
     <string name="InuWsTunnel">WebSocket 隧道</string>
@@ -1883,7 +1867,6 @@
     <string name="InuDrawerBots">小程序</string>
     <string name="InuDrawerMenuOrderInfo">点按隐藏或显示项目，长按调整顺序。分隔线会把菜单分成若干组。</string>
     <string name="InuHideTitle">隐藏标题</string>
-    <string name="InuInterfaceElements">界面元素</string>
     <string name="InuIosSettings">iOS 设置</string>
     <string name="InuIosSettingsInfo">标题居中、底部栏、输入框、聊天标题栏和 liquid glass。</string>
     <string name="InuLinkedChannel">关联频道</string>
@@ -1894,24 +1877,13 @@
     <string name="InuLogsPrivacyText">应用会在设备上写入技术日志。日志可能包含账号和聊天标识符，请仅与信任的人分享。日志最多保留 25 MB，可随时清除。</string>
     <string name="InuLogsPrivacyTitle">启用调试模式？</string>
     <string name="InuMediaSection">媒体</string>
-    <string name="InuMenuChatDesc">聊天内菜单的项目。</string>
-    <string name="InuMenuDialogsDesc">聊天界面 ⋮ 菜单的项目。侧边菜单关闭时显示。</string>
     <string name="InuMenuDivider">分隔线</string>
-    <string name="InuMenuMessageDesc">消息操作的顺序和可见性。</string>
-    <string name="InuMenuProfileInfoDesc">手机、简介、用户名及资料中的其他行。</string>
-    <string name="InuMenuProfileSettingsDesc">设置界面的行。</string>
-    <string name="InuMenuSideDesc">侧边栏的项目、顺序和分隔线。</string>
     <string name="InuMenus">菜单</string>
-    <string name="InuMenusInfo">侧边菜单、选项菜单、聊天和消息菜单以及资料行。</string>
     <string name="InuMessageDesign">消息外观</string>
-    <string name="InuMessageDesignInfo">气泡、贴纸、回应、频道帖子和输入框文字大小。</string>
-    <string name="InuRootInterface">界面</string>
-    <string name="InuRootPrivacy">功能与隐私</string>
     <string name="InuRootSystem">系统</string>
     <string name="InuSetReminder">设置提醒</string>
     <string name="InuHideMessage">隐藏</string>
     <string name="InuSideMenu">侧边菜单</string>
-    <string name="InuSideMenuInfo">汉堡抽屉、其分区、账号和菜单项。</string>
     <string name="InuUnreadBadgeOnBackButton">显示未读会话计数</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">在会话内的返回按钮上显示未读会话数量。</string>
     <string name="InuUnreadBadgeOnBackButtonIos">iOS 风格计数器</string>
@@ -1926,11 +1898,6 @@
     <string name="InuBiometricRequireConfirmationPasscode">解锁应用时</string>
     <string name="InuBiometricRequireConfirmationBots">在小程序中</string>
     <string name="InuBiometricRequireConfirmationActions">删除聊天或登出时</string>
-    <string name="InuMainScreen">主屏幕</string>
-    <string name="InuMessagesSummary">双击操作、回应与发送确认</string>
-    <string name="InuPillStackSummary">搜索栏中的交互式小部件</string>
-    <string name="InuRecentChatsSummary">在聊天之间快速切换</string>
-    <string name="InuFeedSummary">频道聚合动态</string>
     <string name="InuEditedArchive">已编辑消息存档</string>
     <string name="InuGroupChatArchives">将存档分组到 entinyGram 文件夹</string>
     <string name="InuAllowForwardRestrictedWarning">即使开启此选项，Telegram 仍可能拦截部分转发。如果看到“Plain forwarding is not allowed.”，请改为复制文本或保存媒体。</string>
@@ -1969,7 +1936,6 @@
     <string name="InuAppIconsSelect">应用图标</string>
     <string name="InuBackupImportSheetReplace">替换所有设置</string>
     <string name="InuCameraSound">相机与声音</string>
-    <string name="InuCameraSoundSummary">圆形视频、相机和语音录制</string>
     <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
     <string name="InuContactChangePhoto">头像已更改</string>
     <string name="InuContactChanges">联系人变更</string>
@@ -2063,7 +2029,6 @@
     <string name="InuStartTab">启动标签页</string>
     <string name="InuMutualContactIconLeft">互为联系人图标显示在头衔前</string>
     <string name="InuMutualContactIconLeftInfo">将互为联系人图标显示在成员头衔左侧，而不是右侧</string>
-    <string name="InuForumSectionsCards">论坛话题使用卡片分区</string>
     <string name="InuActionBarSnowflakes">顶栏雪花</string>
     <string name="InuBookmarkAdd">添加到书签</string>
     <string name="InuBookmarkAdded">已添加到书签</string>
@@ -2073,21 +2038,12 @@
     <string name="InuBookmarksClearAll">清除所有书签</string>
     <string name="InuBookmarksEmpty">没有书签</string>
     <string name="InuBookmarksLimit">已达到书签上限（每个聊天 %1$d 个）</string>
-    <string name="InuBookmarksSummary">你保存的消息，按聊天分组</string>
     <string name="InuChatOnlineDots">聊天中的在线圆点</string>
     <string name="InuChatOnlineDotsInfo">在群组中的发送者头像上显示在线圆点。</string>
     <string name="InuOnlineDotsSection">在线圆点</string>
     <string name="InuMutualContactSection">互为联系人</string>
     <string name="InuDesignStyle">设计风格</string>
     <string name="InuDialogsFabRaise">略微抬高 FAB 按钮</string>
-    <string name="InuDialogsSections">聊天列表分区</string>
-    <string name="InuDialogsSectionsCards">卡片分区</string>
-    <string name="InuDialogsSectionsMargin">侧边距</string>
-    <string name="InuDialogsSectionsMarginLarge">大</string>
-    <string name="InuDialogsSectionsMarginMedium">中</string>
-    <string name="InuDialogsSectionsMarginNone">无</string>
-    <string name="InuDialogsSectionsSeparatePinned">置顶单独显示</string>
-    <string name="InuDialogsSectionsSeparatePinnedInfo">将置顶聊天和归档显示为单独的卡片</string>
     <string name="InuDownloadStickerPackZip">以 ZIP 下载贴纸包</string>
     <string name="InuEditFieldCaption">说明文字</string>
     <string name="InuEditFieldEmoji">自定义表情</string>
@@ -2106,10 +2062,10 @@
     <string name="InuHideReactionsBadgesInfo">聊天列表中不显示回应提及徽章</string>
     <string name="InuHideReactionsDisplay">隐藏消息上的回应</string>
     <string name="InuHideReactionsDisplayInfo">不显示气泡下方的回应</string>
-    <string name="InuHideReactionsSection">隐藏回应</string>
     <string name="InuHideReactionsSet">禁用设置回应</string>
     <string name="InuHideReactionsSetInfo">消息菜单中没有回应栏，也没有双击回应</string>
     <string name="InuMaterial3SettingsInfo">开关、滑块、分区、头像、聊天列表卡片等。</string>
     <string name="InuSendAsSticker">作为贴纸发送</string>
     <string name="InuStickerPackZipFailed">下载贴纸包失败</string>
+    <string name="InuForumSectionsCards">论坛话题使用卡片分区</string>
 </resources>

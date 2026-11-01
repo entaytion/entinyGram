@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.dialogs.DialogsM3SectionsHelper
 import desu.inugram.helpers.theme.MonetHelper
 import desu.inugram.helpers.theme.MonetStyle
 import org.telegram.messenger.LocaleController
@@ -26,7 +25,6 @@ class Material3SettingsActivity : SettingsPageActivity() {
             listOf(
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Switches, InuConfig.MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_SWITCHES),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sliders, InuConfig.MATERIAL3_SLIDERS, TOGGLE_MATERIAL3_SLIDERS),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3Dialogs, InuConfig.MATERIAL3_DIALOGS, TOGGLE_MATERIAL3_DIALOGS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sections, InuConfig.M3_SECTIONS_STYLE, TOGGLE_M3_SECTIONS_STYLE),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3AccentIcons, InuConfig.M3_ACCENT_ICONS, TOGGLE_M3_ACCENT_ICONS),
@@ -69,36 +67,12 @@ class Material3SettingsActivity : SettingsPageActivity() {
             softRebuild()
             listView.adapter.update(true)
         }
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDialogsSections)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_DIALOGS_SECTIONS,
-                LocaleController.getString(R.string.InuDialogsSectionsCards),
-            ).setChecked(InuConfig.DIALOGS_M3_SECTIONS.value)
-        )
-        if (InuConfig.DIALOGS_M3_SECTIONS.value) {
+        if (InuConfig.M3_SECTIONS_STYLE.value) {
             items.add(
-                UItem.asButton(
-                    BUTTON_DIALOGS_MARGIN,
-                    LocaleController.getString(R.string.InuDialogsSectionsMargin),
-                    LocaleController.getString(
-                        when (InuConfig.DIALOGS_M3_MARGIN.value) {
-                            0 -> R.string.InuDialogsSectionsMarginNone
-                            2 -> R.string.InuDialogsSectionsMarginLarge
-                            else -> R.string.InuDialogsSectionsMarginMedium
-                        }
-                    ),
-                )
-            )
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_DIALOGS_SEPARATE_PINNED,
-                    R.string.InuDialogsSectionsSeparatePinned,
-                    R.string.InuDialogsSectionsSeparatePinnedInfo,
-                    InuConfig.DIALOGS_M3_SEPARATE_PINNED.value
-                )
+                UItem.asCheck(
+                    TOGGLE_M3_HEADERS_IN_CARD,
+                    LocaleController.getString(R.string.InuMaterial3HeadersInCard),
+                ).setChecked(InuConfig.M3_HEADERS_IN_CARD.value)
             )
         }
         items.add(
@@ -130,6 +104,16 @@ class Material3SettingsActivity : SettingsPageActivity() {
         }) return
 
         when (item.id) {
+            TOGGLE_FORUM_SECTIONS -> (view as? TextCheckCell)?.isChecked = InuConfig.FORUM_M3_SECTIONS.toggle()
+
+            TOGGLE_M3_HEADERS_IN_CARD -> {
+                val new = InuConfig.M3_HEADERS_IN_CARD.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                invalidateVisibleRows()
+                softRebuild()
+                listView.adapter.update(true)
+            }
+
             BUTTON_MONET_THEME -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val context = context ?: return
                 showDialog(
@@ -166,35 +150,6 @@ class Material3SettingsActivity : SettingsPageActivity() {
                     listView.adapter.update(true)
                 }
             }
-
-            TOGGLE_DIALOGS_SECTIONS -> {
-                val new = InuConfig.DIALOGS_M3_SECTIONS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                DialogsM3SectionsHelper.refresh()
-                softRebuild()
-            }
-
-            BUTTON_DIALOGS_MARGIN -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuDialogsSectionsMarginNone),
-                    LocaleController.getString(R.string.InuDialogsSectionsMarginMedium),
-                    LocaleController.getString(R.string.InuDialogsSectionsMarginLarge),
-                ),
-                InuConfig.DIALOGS_M3_MARGIN.value,
-            ) { which ->
-                InuConfig.DIALOGS_M3_MARGIN.value = which
-                DialogsM3SectionsHelper.refresh()
-                softRebuild()
-            }
-
-            TOGGLE_FORUM_SECTIONS -> (view as? TextCheckCell)?.isChecked = InuConfig.FORUM_M3_SECTIONS.toggle()
-
-            TOGGLE_DIALOGS_SEPARATE_PINNED -> {
-                val new = InuConfig.DIALOGS_M3_SEPARATE_PINNED.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                DialogsM3SectionsHelper.refresh()
-            }
         }
     }
 
@@ -206,17 +161,14 @@ class Material3SettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MATERIAL3_SLIDERS = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_FABS = InuUtils.generateId()
         private val TOGGLE_M3_SECTIONS_STYLE = InuUtils.generateId()
+        private val TOGGLE_M3_HEADERS_IN_CARD = InuUtils.generateId()
+        private val TOGGLE_FORUM_SECTIONS = InuUtils.generateId()
         private val TOGGLE_M3_ACCENT_ICONS = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
         private val TOGGLE_M3_BOTTOM_TABS = InuUtils.generateId()
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
         private val TOGGLE_MD3_PLAYER = InuUtils.generateId()
-        private val TOGGLE_MATERIAL3_DIALOGS = InuUtils.generateId()
-        private val TOGGLE_DIALOGS_SECTIONS = InuUtils.generateId()
-        private val BUTTON_DIALOGS_MARGIN = InuUtils.generateId()
-        private val TOGGLE_DIALOGS_SEPARATE_PINNED = InuUtils.generateId()
-        private val TOGGLE_FORUM_SECTIONS = InuUtils.generateId()
 
         @RequiresApi(Build.VERSION_CODES.S)
         private fun monetThemeModeLabel(mode: MonetHelper.ThemeMode): String = when (mode) {
@@ -246,12 +198,12 @@ class Material3SettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material3-sliders", R.string.InuMaterial3Sliders, TOGGLE_MATERIAL3_SLIDERS),
                 SearchRegistry.Entry("material3-fabs", R.string.InuMaterial3Fabs, TOGGLE_MATERIAL3_FABS),
                 SearchRegistry.Entry("material3-sections", R.string.InuMaterial3Sections, TOGGLE_M3_SECTIONS_STYLE),
+                SearchRegistry.Entry("material3-headers-in-card", R.string.InuMaterial3HeadersInCard, TOGGLE_M3_HEADERS_IN_CARD),
+                SearchRegistry.Entry("forum-m3-sections", R.string.InuForumSectionsCards, TOGGLE_FORUM_SECTIONS),
                 SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),
                 SearchRegistry.Entry("m3-bottom-tabs", R.string.InuMaterial3BottomTabs, TOGGLE_M3_BOTTOM_TABS),
                 SearchRegistry.Entry("material-profile-actions", R.string.InuMaterialProfileActions, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
-                SearchRegistry.Entry("dialogs-m3-sections", R.string.InuDialogsSectionsCards, TOGGLE_DIALOGS_SECTIONS),
-                SearchRegistry.Entry("forum-m3-sections", R.string.InuForumSectionsCards, TOGGLE_FORUM_SECTIONS),
             ),
         )
     }
