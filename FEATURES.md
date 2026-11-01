@@ -363,6 +363,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - always show go-to-bottom button (don't hide on scroll-down)
 - web preview replacements (e.g. twitter→fixupx), optionally applied when pasting links
 - 🐶 strip tracking params (utm_*, fbclid, si, erid, …) from links before opening and/or when pasting — *rules from AdGuard URL Tracking filter*
+- 📡 **don't confirm opening links**: external links open without the "Open link" dialog
 - 🐶 resolve trackable share redirects (TikTok, SoundCloud and more) when pasting/opening
 - 🐶 web preview refetch from menu
 - 🐶 disable web preview limit on twitter-like websites

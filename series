@@ -150,7 +150,6 @@ feature/paranoia.patch
 bugfix/expand-emoji-tabs.patch
 bugfix/spoiler-reveal-keep.patch
 feature/reaction-confirm-non-member.patch
-feature/confirm-internal-links.patch
 feature/no-selection-cap.patch
 feature/seekable-gifs.patch
 feature/disable-browser-collapse.patch
@@ -628,3 +627,4 @@ entiny/chat/notify-bell-in-menu.patch
 entiny/chat/reactions-overlay-null-media.patch
 entiny/ui/settings-headers-dividers.patch
 entiny/ui/forum-m3-sections.patch
+entiny/chat/confirm-links.patch

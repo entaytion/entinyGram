@@ -176,6 +176,7 @@ object Schemas {
         }
         section(R.string.InuLinksAndBrowser) {
             toggle(InuConfig.CONFIRM_INTERNAL_LINKS, R.string.InuConfirmInternalLinks, R.string.InuConfirmInternalLinksInfo)
+            toggle(InuConfig.SKIP_LINK_CONFIRM, R.string.InuSkipLinkConfirm, R.string.InuSkipLinkConfirmInfo)
             toggle(InuConfig.DISABLE_BROWSER_SWIPE_COLLAPSE, R.string.InuDisableBrowserSwipeCollapse)
             link(
                 R.string.InuWebPreviewReplacements,

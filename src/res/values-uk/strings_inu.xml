@@ -453,6 +453,8 @@
     <string name="InuCallConfirmationText">Зателефонувати **%1$s**?</string>
     <string name="InuConfirmInternalLinks">Підтверджувати відкриття внутрішніх посилань</string>
     <string name="InuConfirmInternalLinksInfo">tg:// та t.me/</string>
+    <string name="InuSkipLinkConfirm">Не підтверджувати відкриття посилань</string>
+    <string name="InuSkipLinkConfirmInfo">Відкривати зовнішні посилання одразу, без діалогу «Відкрити посилання»</string>
     <string name="InuDisableBrowserSwipeCollapse">Вимкнути свайп вниз для згортання браузера</string>
     <string name="InuGifSeekbar">Слайдер прокручування GIF</string>
     <string name="InuGifSeekbarInfo">Працює для нових GIF (беззвучних MP4)</string>

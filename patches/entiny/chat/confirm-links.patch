@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -5522,6 +5522,7 @@ public class AndroidUtilities {
+@@ -5401,6 +5401,7 @@ public class AndroidUtilities {
  
      public static boolean shouldShowUrlInAlert(String url) {
          try {
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
          if (!AndroidUtilities.isContextSafe(context)) return;
          final String scheme = url == null ? null : Uri.parse(url).getScheme();
 -        if (Browser.isInternalUrl(url, null) || !ask || "mailto".equalsIgnoreCase(scheme)) {
-+        if ((Browser.isInternalUrl(url, null) && !desu.inugram.InuConfig.CONFIRM_INTERNAL_LINKS.getValue()) || !ask || "mailto".equalsIgnoreCase(scheme)) {
++        if ((Browser.isInternalUrl(url, null) && !desu.inugram.InuConfig.CONFIRM_INTERNAL_LINKS.getValue()) || (!Browser.isInternalUrl(url, null) && desu.inugram.InuConfig.SKIP_LINK_CONFIRM.getValue()) || !ask || "mailto".equalsIgnoreCase(scheme)) {
              Browser.openUrl(context, Uri.parse(url), inlineReturn == 0, tryTelegraph, forceNotInternalForApps && checkInternalBotApp(url), progress, null, false, true, false);
              return;
          }

@@ -608,6 +608,8 @@
     <string name="InuDisableCallProximityInfo">The screen stays on when you hold the phone to your ear during a call</string>
     <string name="InuConfirmInternalLinks">Confirm opening internal links</string>
     <string name="InuConfirmInternalLinksInfo">tg:// and t.me/</string>
+    <string name="InuSkipLinkConfirm">Don\'t confirm opening links</string>
+    <string name="InuSkipLinkConfirmInfo">Open external links right away, without the “Open link” dialog</string>
     <string name="InuDisableBrowserSwipeCollapse">Disable swipe-down to minimize browser</string>
     <string name="InuGifSeekbar">Seek bar for GIFs</string>
     <string name="InuGifSeekbarInfo">Note: only works for \"new\" GIFs (i.e. silent MP4)</string>

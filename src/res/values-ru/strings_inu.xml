@@ -894,6 +894,8 @@
     <string name="InuDisableVolumePlayVideoInfo">Не запускать видимое видео со звуком при нажатии клавиш громкости в чате</string>
     <string name="InuConfirmInternalLinks">Подтверждать открытие внутренних ссылок</string>
     <string name="InuConfirmInternalLinksInfo">tg:// и t.me/</string>
+    <string name="InuSkipLinkConfirm">Не подтверждать открытие ссылок</string>
+    <string name="InuSkipLinkConfirmInfo">Открывать внешние ссылки сразу, без диалога «Открыть ссылку»</string>
     <string name="InuConfirmReactionNonMember">Подтверждать реакции в чатах без членства</string>
     <string name="InuConfirmReactionNonMemberInfo">Спрашивать перед отправкой реакции в чате, в котором вы не состоите</string>
     <string name="InuConfirmReactionTitle">Подтверждение реакции</string>

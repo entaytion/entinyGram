@@ -1188,6 +1188,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val CONFIRM_INTERNAL_LINKS = BoolItem("confirm_internal_links", false)
 
     @JvmField
+    val SKIP_LINK_CONFIRM = BoolItem("skip_link_confirm", false)
+
+    @JvmField
     val DISABLE_BROWSER_SWIPE_COLLAPSE = BoolItem("disable_browser_swipe_collapse", true)
 
     @JvmField
