@@ -1870,6 +1870,8 @@
     <string name="InuChatOnlineDots">У чатах</string>
     <string name="InuChatOnlineDotsInfo">Крапки на аватарках відправників у групах.</string>
     <string name="InuOnlineDotsSection">Онлайн-крапки</string>
+    <string name="InuShowOnlineIndicator">Показувати індикатор онлайну</string>
+    <string name="InuShowOnlineIndicatorInfo">Якщо вимкнено, крапка онлайну ніде не показується, а пункти нижче зникають.</string>
     <string name="InuMutualContactSection">Взаємні контакти</string>
     <string name="InuOnlineDotsInfo">Синя в мережі, жовта протягом 20 хв, червона протягом години.</string>
     <string name="InuGhostModeLauncherShortcut">Ярлик на іконці додатка</string>

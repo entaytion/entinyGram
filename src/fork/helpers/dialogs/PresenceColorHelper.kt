@@ -1,5 +1,6 @@
 package desu.inugram.helpers.dialogs
 
+import desu.inugram.InuConfig
 import org.telegram.tgnet.TLRPC
 
 // entiny: color-codes dots from exact last-seen freshness without exposing hidden activity
@@ -13,6 +14,7 @@ object PresenceColorHelper {
 
     @JvmStatic
     fun colorFor(status: TLRPC.UserStatus?, isOnlineOverride: Boolean): Int {
+        if (!InuConfig.SHOW_ONLINE_INDICATOR.value) return 0
         if (isOnlineOverride || status is TLRPC.TL_userStatusOnline) return COLOR_ONLINE
         when (status) {
             is TLRPC.TL_userStatusRecently,

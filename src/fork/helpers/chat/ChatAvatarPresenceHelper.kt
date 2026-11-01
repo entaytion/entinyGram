@@ -14,7 +14,7 @@ import org.telegram.ui.Cells.IMessageCell
 object ChatAvatarPresenceHelper {
     @JvmStatic
     fun draw(canvas: Canvas, avatar: ImageReceiver, cell: IMessageCell) {
-        if (!InuConfig.CHAT_PRESENCE_DOTS.value || !avatar.visible) return
+        if (!InuConfig.SHOW_ONLINE_INDICATOR.value || !InuConfig.CHAT_PRESENCE_DOTS.value || !avatar.visible) return
         val message = cell.messageObject ?: return
         val userId = message.fromChatId.takeIf { it > 0 } ?: return
         val account = message.currentAccount

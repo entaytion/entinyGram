@@ -145,6 +145,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **wide channel posts** with adjustable side padding
 - 📡 **feed**: all subscribed channels in one native chat-style timeline with channel management, folder filter and an option to show the newest posts on top, off by default - *ported from [exteraless](https://github.com/exteraless/exteraless)*
   - new posts preserve your reading position; the jump button counts unread messages toward the newest post, and media posts show the channel name
+- 📡 **show online indicator**: toggle the online dot everywhere; when off, the dot options are hidden
 - 📡 **color-coded online dot** - *inspired by [NagramX](https://github.com/NextAlone/NagramX)*
 - 📡 **online dots in chats**: online dot on sender avatars inside groups - *inspired by [NagramX](https://github.com/NextAlone/NagramX)*
 - 📡 **clock format**: system, 12-hour or 24-hour

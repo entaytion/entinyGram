@@ -1102,6 +1102,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val UNREAD_CHATS_FIRST_PINNED = BoolItem("unread_chats_first_pinned", false)
 
     @JvmField
+    val SHOW_ONLINE_INDICATOR = BoolItem("show_online_indicator", true)
+
+    @JvmField
     val PRESENCE_COLOR_DOTS = BoolItem("presence_color_dots", false)
 
     @JvmField

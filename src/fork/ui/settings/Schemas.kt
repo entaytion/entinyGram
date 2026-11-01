@@ -816,10 +816,14 @@ object Schemas {
             )
         }
         section(R.string.InuOnlineDotsSection) {
-            toggle(InuConfig.PRESENCE_COLOR_DOTS, R.string.InuOnlineDots, R.string.InuOnlineDotsInfo)
+            toggle(InuConfig.SHOW_ONLINE_INDICATOR, R.string.InuShowOnlineIndicator, R.string.InuShowOnlineIndicatorInfo)
+            toggle(
+                InuConfig.PRESENCE_COLOR_DOTS, R.string.InuOnlineDots, R.string.InuOnlineDotsInfo,
+                visible = { InuConfig.SHOW_ONLINE_INDICATOR.value },
+            )
             toggle(
                 InuConfig.CHAT_PRESENCE_DOTS, R.string.InuChatOnlineDots, R.string.InuChatOnlineDotsInfo,
-                visible = { InuConfig.PRESENCE_COLOR_DOTS.value },
+                visible = { InuConfig.SHOW_ONLINE_INDICATOR.value && InuConfig.PRESENCE_COLOR_DOTS.value },
             )
         }
         section(R.string.InuMutualContactSection) {

@@ -2108,6 +2108,8 @@
     <string name="InuChatOnlineDots">В чатах</string>
     <string name="InuChatOnlineDotsInfo">Точки на аватарках отправителей в группах.</string>
     <string name="InuOnlineDotsSection">Онлайн-точки</string>
+    <string name="InuShowOnlineIndicator">Показывать индикатор онлайна</string>
+    <string name="InuShowOnlineIndicatorInfo">Если выключено, точка онлайна нигде не показывается, а пункты ниже скрываются.</string>
     <string name="InuMutualContactSection">Взаимные контакты</string>
     <string name="InuDownloadStickerPackZip">Скачать набор в ZIP</string>
     <string name="InuEditFieldCaption">подпись</string>

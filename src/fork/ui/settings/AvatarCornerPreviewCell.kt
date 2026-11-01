@@ -135,13 +135,16 @@ class AvatarCornerPreviewCell(
         val onlineCy = avatarBottom - getOnlineDotOffset(AndroidUtilities.dpf2(7.5f), outerRadius)
 
         canvas.save()
-        onlineCutoutPath.reset()
-        onlineCutoutPath.addCircle(onlineCx, onlineCy, outerRadius, Path.Direction.CCW)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            canvas.clipOutPath(onlineCutoutPath)
-        } else {
-            @Suppress("DEPRECATION")
-            canvas.clipPath(onlineCutoutPath, Region.Op.DIFFERENCE)
+        val showOnline = InuConfig.SHOW_ONLINE_INDICATOR.value
+        if (showOnline) {
+            onlineCutoutPath.reset()
+            onlineCutoutPath.addCircle(onlineCx, onlineCy, outerRadius, Path.Direction.CCW)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas.clipOutPath(onlineCutoutPath)
+            } else {
+                @Suppress("DEPRECATION")
+                canvas.clipPath(onlineCutoutPath, Region.Op.DIFFERENCE)
+            }
         }
         rect.set(left, avatarTop, avatarRight, avatarBottom)
         val avatarCornerRadius = AvatarShapeHelper.getAvatarRoundRadius(
@@ -154,8 +157,10 @@ class AvatarCornerPreviewCell(
         canvas.drawRoundRect(rect, avatarCornerRadius, avatarCornerRadius, brightMockPaint)
         canvas.restore()
 
-        Theme.dialogs_onlineCirclePaint.color = Theme.getColor(Theme.key_chats_onlineCircle)
-        canvas.drawCircle(onlineCx, onlineCy, innerRadius, Theme.dialogs_onlineCirclePaint)
+        if (showOnline) {
+            Theme.dialogs_onlineCirclePaint.color = Theme.getColor(Theme.key_chats_onlineCircle)
+            canvas.drawCircle(onlineCx, onlineCy, innerRadius, Theme.dialogs_onlineCirclePaint)
+        }
 
         val rowRadius = AndroidUtilities.dp(4f).toFloat()
         rect.set(
