@@ -7,7 +7,6 @@ import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.browser.Browser
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.Components.UItem

@@ -16,9 +16,7 @@ import desu.inugram.helpers.badges.BadgeRegistry
 import desu.inugram.helpers.CrashReporter
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LogsHelper
-import desu.inugram.helpers.NotificationsHelper
 import desu.inugram.helpers.SystemInfo
-import desu.inugram.helpers.push.UnifiedPushHelper
 import desu.inugram.ui.DonateBottomSheet
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
@@ -41,8 +39,6 @@ import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
-import android.text.InputType
-import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.IUpdateLayout
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.UpdateLayoutWrapper

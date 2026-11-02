@@ -38,7 +38,7 @@ abstract class TelemetryPill(context: Context, resourcesProvider: Theme.Resource
                 stopLoading()
                 val old = textView.text
                 if (textView.visibility != VISIBLE || old == null || old.toString() != text) {
-                    animateSizeChange()
+                    if (textView.visibility != VISIBLE || old == null || old.length != text.length) animateSizeChange()
                     textView.setText(text, textView.visibility == VISIBLE)
                     textView.visibility = VISIBLE
                 }

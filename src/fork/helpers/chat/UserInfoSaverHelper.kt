@@ -42,6 +42,7 @@ object UserInfoSaverHelper {
 
     private val cache = LongSparseArray<LongSparseArray<StoredInfo>>()
     private val loadedAccounts = HashSet<Int>()
+    private val loadingAccounts = HashSet<Int>()
 
     private fun kvKey(account: Int, dialogId: Long): String = "user_info:$account:$dialogId"
 
@@ -50,21 +51,23 @@ object UserInfoSaverHelper {
 
     @JvmStatic
     fun ensureAccountLoaded(account: Int) {
-        if (loadedAccounts.contains(account)) return
-        val storage = MessagesStorage.getInstance(account) ?: return
-        val db = storage.database
-        if (db != null) {
-            loadFromDb(account, db)
-        } else {
-            storage.storageQueue.postRunnable {
-                val asyncDb = storage.database ?: return@postRunnable
-                loadFromDb(account, asyncDb)
+        if (loadedAccounts.contains(account) || !loadingAccounts.add(account)) return
+        val storage = MessagesStorage.getInstance(account)
+        if (storage == null) {
+            loadingAccounts.remove(account)
+            return
+        }
+        storage.storageQueue.postRunnable {
+            val db = storage.database
+            if (db == null) {
+                AndroidUtilities.runOnUIThread { loadingAccounts.remove(account) }
+                return@postRunnable
             }
+            loadFromDb(account, db)
         }
     }
 
     private fun loadFromDb(account: Int, db: org.telegram.SQLite.SQLiteDatabase) {
-        if (loadedAccounts.contains(account)) return
         val rows = InuDatabaseHelper.readKvByPrefix(db, "user_info:$account:")
         val dialogArray = LongSparseArray<StoredInfo>()
         for ((key, value) in rows) {
@@ -78,6 +81,7 @@ object UserInfoSaverHelper {
             if (loadedAccounts.contains(account)) return@runOnUIThread
             cache.put(account.toLong(), dialogArray)
             loadedAccounts.add(account)
+            loadingAccounts.remove(account)
             for (i in 0 until dialogArray.size()) {
                 NotificationCenter.getInstance(account)
                     .postNotificationName(NotificationCenter.peerSettingsDidLoad, dialogArray.keyAt(i))

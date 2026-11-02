@@ -54,7 +54,6 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_stars
 import org.telegram.ui.AccountFrozenAlert
 import org.telegram.ui.ActionBar.AlertDialog
-import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.DrawerLayoutContainer
 import org.telegram.ui.ActionBar.INavigationLayout
 import org.telegram.ui.ActionBar.MenuDrawable
