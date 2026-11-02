@@ -2246,4 +2246,8 @@
     <string name="InuAlwaysSendVideosHdInfo">Picks the highest compression quality when sending videos, no matter the data saver setting.</string>
     <string name="InuFontSyntheticBold">Thicken bold text</string>
     <string name="InuFontSyntheticBoldInfo">Fakes bold when the font has no bold weight. Turn off to draw bold text with the font\'s own weight. Needs a restart.</string>
+    <string name="InuPlayOriginalVideo">Play videos in original quality</string>
+    <string name="InuPlayOriginalVideoInfo">Start from the original file instead of the stream compressed by the server. Uses more traffic.</string>
+    <string name="InuPlayOriginalVideoInline">Also in chat autoplay</string>
+    <string name="InuPlayOriginalVideoInlineInfo">Use the original file for videos that autoplay inline as well.</string>
 </resources>

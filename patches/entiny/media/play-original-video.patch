@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:19:44 +0200
+Subject: play videos in original quality behind a toggle
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java    | 1 +
+ TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java    | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -10447,6 +10447,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         if (messageObject.hasVideoQualities() && messageObject.thumbQuality != null) {
+                             document = messageObject.thumbQuality.document;
+                         }
++                        document = desu.inugram.helpers.media.VideoPlaybackHelper.inu_inlineDocument(messageObject, document);
+ 
+                         final String filter = currentMessageObject.isLivePhoto() ? ImageLoader.AUTOPLAY_FILTER_NONLOOP : ImageLoader.AUTOPLAY_FILTER;
+                         if (currentMessageObject.videoEditedInfo != null && currentMessageObject.videoEditedInfo.canAutoPlaySourceVideo() && document != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -10918,7 +10918,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+ 
+             videoPlayer.inu_setMediaDurationMs(currentMessageObject != null ? (long) (currentMessageObject.getDuration() * 1000) : 0);
+             if (videoUrises != null) {
+-                videoPlayer.preparePlayer(videoUrises, VideoPlayer.getSavedQuality(videoUrises, currentMessageObject));
++                videoPlayer.preparePlayer(videoUrises, desu.inugram.helpers.media.VideoPlaybackHelper.inu_initialQuality(videoUrises, currentMessageObject));
+             } else {
+                 videoPlayer.preparePlayer(uri, "other", FileLoader.PRIORITY_HIGH, videoByteOffset);
+             }

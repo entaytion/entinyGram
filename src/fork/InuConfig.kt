@@ -462,6 +462,12 @@ object InuConfig {
     val GIF_SEEKBAR = BoolItem("gif_seekbar", true)
 
     @JvmField
+    val PLAY_ORIGINAL_VIDEO = BoolItem("play_original_video", false)
+
+    @JvmField
+    val PLAY_ORIGINAL_VIDEO_INLINE = BoolItem("play_original_video_inline", false)
+
+    @JvmField
     val SEND_MP4_DOCUMENT_AS_VIDEO = BoolItem("send_mp4_document_as_video", true)
 
     @JvmField

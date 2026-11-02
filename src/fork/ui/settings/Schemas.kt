@@ -374,6 +374,12 @@ object Schemas {
         section(R.string.InuMediaSection) {
             toggle(InuConfig.KEEP_CHATS_IN_STACK, R.string.InuKeepChatsInStack, R.string.InuKeepChatsInStackInfo)
             toggle(InuConfig.GIF_SEEKBAR, R.string.InuGifSeekbar, R.string.InuGifSeekbarInfo)
+            toggle(InuConfig.PLAY_ORIGINAL_VIDEO, R.string.InuPlayOriginalVideo, R.string.InuPlayOriginalVideoInfo)
+            toggle(
+                InuConfig.PLAY_ORIGINAL_VIDEO_INLINE,
+                R.string.InuPlayOriginalVideoInline, R.string.InuPlayOriginalVideoInlineInfo,
+                visible = { InuConfig.PLAY_ORIGINAL_VIDEO.value },
+            )
             toggle(InuConfig.SEND_MP4_DOCUMENT_AS_VIDEO, R.string.InuSendMp4DocumentAsVideo, R.string.InuSendMp4DocumentAsVideoInfo)
             toggle(InuConfig.DISABLE_MOTION_PHOTOS, R.string.InuDisableMotionPhotos, R.string.InuDisableMotionPhotosInfo)
             toggle(InuConfig.DISABLE_INTRO_STICKER, R.string.InuDisableIntroSticker, R.string.InuDisableIntroStickerInfo)

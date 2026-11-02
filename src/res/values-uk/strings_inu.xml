@@ -2250,4 +2250,8 @@
     <string name="InuAlwaysSendVideosHdInfo">Вибирає найвищу якість стиснення відео при надсиланні, незалежно від налаштувань економії трафіку.</string>
     <string name="InuFontSyntheticBold">Потовщувати жирний текст</string>
     <string name="InuFontSyntheticBoldInfo">Імітує жирний шрифт, якщо в шрифті немає жирного накреслення. Вимкніть, щоб жирний текст малювався власною товщиною шрифту. Потрібен перезапуск.</string>
+    <string name="InuPlayOriginalVideo">Відтворювати відео в оригінальній якості</string>
+    <string name="InuPlayOriginalVideoInfo">Запускати оригінальний файл замість стиснутого сервером потоку. Витрачає більше трафіку.</string>
+    <string name="InuPlayOriginalVideoInline">Також в автовідтворенні в чаті</string>
+    <string name="InuPlayOriginalVideoInlineInfo">Використовувати оригінал і для відео, які автоматично відтворюються в чаті.</string>
 </resources>
