@@ -2250,4 +2250,6 @@
     <string name="InuPlayOriginalVideoInfo">Start from the original file instead of the stream compressed by the server. Uses more traffic.</string>
     <string name="InuPlayOriginalVideoInline">Also in chat autoplay</string>
     <string name="InuPlayOriginalVideoInlineInfo">Use the original file for videos that autoplay inline as well.</string>
+    <string name="InuDisableOverscrollStory">Disable pull down to open stories</string>
+    <string name="InuDisableOverscrollStoryInfo">The chat list no longer opens stories when you pull it down at the top.</string>
 </resources>

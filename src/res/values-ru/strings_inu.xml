@@ -2209,4 +2209,6 @@
     <string name="InuPlayOriginalVideoInfo">Запускать оригинальный файл вместо сжатого сервером потока. Расходует больше трафика.</string>
     <string name="InuPlayOriginalVideoInline">Также в автовоспроизведении в чате</string>
     <string name="InuPlayOriginalVideoInlineInfo">Использовать оригинал и для видео, которые автоматически воспроизводятся в чате.</string>
+    <string name="InuDisableOverscrollStory">Отключить свайп вниз к историям</string>
+    <string name="InuDisableOverscrollStoryInfo">Список чатов больше не открывает истории при протягивании вниз в начале.</string>
 </resources>

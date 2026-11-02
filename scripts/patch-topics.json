@@ -220,6 +220,7 @@
   "video-near-end-freeze": "media",
   "gif-recycle-interrupt": "media",
   "play-original-video": "media",
+  "disable-overscroll-story": "ui",
   "faster-downloads-byte-budget": "media",
   "safe-editable-spans": "ui",
   "settings-search-history": "settings",

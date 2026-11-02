@@ -623,3 +623,4 @@ entiny/media/video-near-end-freeze.patch
 entiny/chat/forbidden-record-button-mode.patch
 entiny/media/gif-recycle-interrupt.patch
 entiny/media/play-original-video.patch
+entiny/ui/disable-overscroll-story.patch

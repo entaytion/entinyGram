@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:23:53 +0200
+Subject: add a toggle to disable pull down to open stories
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java      | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -4388,7 +4388,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                             if (undoView[0] != null && undoView[0].getVisibility() == View.VISIBLE) {
+                                 undoView[0].hide(true, 1);
+                             }
+-                        } else if (((currentPosition == 1 && hasHiddenArchive) || currentPosition == 0) && hasStories && isDragging && !rightSlidingDialogContainer.hasFragment()) {
++                        } else if (((currentPosition == 1 && hasHiddenArchive) || currentPosition == 0) && hasStories && !desu.inugram.InuConfig.DISABLE_OVERSCROLL_STORY.getValue() && isDragging && !rightSlidingDialogContainer.hasFragment()) {
+                             if (scrollYOffset == 0) {
+                                 viewPage.listView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+                             } else {
+@@ -4480,7 +4480,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         if (firstView != null) {
+                             firstView.invalidate();
+                         }
+-                        if (viewPage.archivePullViewState == ARCHIVE_ITEM_STATE_SHOWED && usedDy == 0 && dy < 0 && isDragging && !rightSlidingDialogContainer.hasFragment() && hasStories && progressToActionMode == 0) {
++                        if (viewPage.archivePullViewState == ARCHIVE_ITEM_STATE_SHOWED && usedDy == 0 && dy < 0 && isDragging && !rightSlidingDialogContainer.hasFragment() && hasStories && !desu.inugram.InuConfig.DISABLE_OVERSCROLL_STORY.getValue() && progressToActionMode == 0) {
+                             float newOverScroll = storiesOverscroll - dy * AndroidUtilities.lerp( 0.2f, 0.5f, dialogStoriesCell.overscrollProgress());
+                             setStoriesOvercroll(viewPage, newOverScroll);
+                         }
+@@ -4488,7 +4488,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     }
+ 
+                     int scrolled = super.scrollVerticallyBy(measuredDy, recycler, state);
+-                    if (scrolled == 0 && dy < 0 && isDragging && !rightSlidingDialogContainer.hasFragment() && hasStories && progressToActionMode == 0) {
++                    if (scrolled == 0 && dy < 0 && isDragging && !rightSlidingDialogContainer.hasFragment() && hasStories && !desu.inugram.InuConfig.DISABLE_OVERSCROLL_STORY.getValue() && progressToActionMode == 0) {
+                         float newOverScroll = storiesOverscroll - dy * dialogStoriesCell.getOverScrollCoef();
+                         setStoriesOvercroll(viewPage, newOverScroll);
+                     }
