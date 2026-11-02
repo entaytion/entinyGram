@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -16097,6 +16097,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -16098,6 +16098,9 @@ public class ChatActivity extends BaseFragment implements
          if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() || messageObject.messageOwner.destroyTime != 0 || messageObject.messageOwner.ttl <= 0) {
              return null;
          }
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
          if (desu.inugram.helpers.security.SelfDestructHelper.shouldAllowMediaViewRead(dialog_id, messageObject)) {
              desu.inugram.helpers.security.GhostHelper.allowReadContents(messageObject.getId());
          }
-@@ -16130,7 +16133,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16131,7 +16134,7 @@ public class ChatActivity extends BaseFragment implements
              return null;
          }
          if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialog_id)) {

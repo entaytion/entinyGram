@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8769,7 +8769,8 @@ public class MessageObject {
+@@ -8747,7 +8747,8 @@ public class MessageObject {
          if (messageOwner.send_state != MESSAGE_SEND_STATE_SENT) {
              hasEntities = false;
          } else {
@@ -43,7 +43,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12605,6 +12605,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -12606,6 +12606,10 @@ public class ChatActivity extends BaseFragment implements
          if (selectionReactionsOverlay != null && selectionReactionsOverlay.isVisible()) {
              selectionReactionsOverlay.setHiddenByScroll(true);
          }
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          Bundle args = new Bundle();
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-@@ -34079,6 +34083,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -34090,6 +34094,12 @@ public class ChatActivity extends BaseFragment implements
                      selectedObjectGroup = null;
                      return;
                  }

@@ -35,7 +35,7 @@ index 0000000..0000000 100644
              unreadCounts.reactionMentionCount += dialog.unread_reactions_count;
              unreadCounts.pollVotesMentionCount += dialog.unread_poll_votes_count;
              if (!unreadCounts.hasUnmutedUnreadDialogs && dialog.unread_count > 0) {
-@@ -14993,6 +14993,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -15172,6 +15172,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              }
                          }
                          getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, UPDATE_MASK_READ_DIALOG_MESSAGE);
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                      }
                      if (!popup) {
                          getNotificationsController().processReadMessages(null, dialogId, 0, maxPositiveId, false);
-@@ -15047,6 +15048,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -15226,6 +15227,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              }
                          }
                          getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, UPDATE_MASK_READ_DIALOG_MESSAGE);
@@ -108,7 +108,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17738,6 +17738,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17739,6 +17739,9 @@ public class ChatActivity extends BaseFragment implements
          if (sideControlsButtonsLayout == null) {
              return;
          }
@@ -118,7 +118,7 @@ index 0000000..0000000 100644
  
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_MENTION, show && !ChatObject.isMonoForum(currentChat), animated);
          if (!show) {
-@@ -24991,6 +24994,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -24993,6 +24996,9 @@ public class ChatActivity extends BaseFragment implements
              long topicId = (Long) args[1];
              if (dialog_id == dialogId && this.getTopicId() == topicId) {
                  int count = (int) args[2];

@@ -100,7 +100,7 @@ index 0000000..0000000 100644
                  inu_updateMenuSlotAvatar();
              }
  
-@@ -17849,6 +17839,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17850,6 +17840,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44338,22 +44331,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -44349,22 +44342,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }

@@ -48,7 +48,7 @@ index 0000000..0000000 100644
          } else {
              if (taskRequest instanceof TLRPC.TL_channels_deleteMessages) {
                  channelId = ((TLRPC.TL_channels_deleteMessages) taskRequest).channel.channel_id;
-@@ -19015,6 +19023,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19194,6 +19202,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);
