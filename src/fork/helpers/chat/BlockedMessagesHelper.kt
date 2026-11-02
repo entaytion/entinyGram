@@ -151,7 +151,6 @@ object BlockedMessagesHelper {
         return false
         // #endif
     }
-    }
 
     @JvmStatic
     fun ensureBlockedPeersLoaded(currentAccount: Int) {

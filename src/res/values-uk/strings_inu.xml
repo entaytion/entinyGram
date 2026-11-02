@@ -1969,6 +1969,7 @@
     <string name="InuPluginRepoId">ID плагіна</string>
     <string name="InuMarket">Маркет</string>
     <string name="InuMarketAll">Усі</string>
+    <string name="InuMarketFilters">Фільтри</string>
     <string name="InuMarketUpdates">Оновлення</string>
     <string name="InuMarketInstalled">Встановлені</string>
     <string name="InuMarketFeaturedTitle">Від entinyGram</string>
@@ -1989,7 +1990,6 @@
     <string name="InuMarketOwnChannels">Власні канали</string>
     <string name="InuMarketSortDefault">За замовчуванням</string>
     <string name="InuMarketSortInstalled">Спочатку встановлені</string>
-    <string name="InuMarketOfficial">офіційний</string>
     <string name="InuMarketWhatsNew">Що нового у v%1$s</string>
     <string name="InuMarketWhatsNewTitle">Нотатки до релізу</string>
     <string name="InuMarketDetails">Деталі</string>

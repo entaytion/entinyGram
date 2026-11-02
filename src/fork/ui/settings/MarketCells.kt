@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.InsetDrawable
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
@@ -17,6 +18,7 @@ import desu.inugram.helpers.plugins.market.MarketTag
 import desu.inugram.helpers.plugins.market.MarketTags
 import desu.inugram.helpers.plugins.ui.PluginManifestIcons
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
@@ -34,76 +36,92 @@ internal fun marketActionText(action: MarketAction): String = LocaleController.g
 )
 
 /** a rounded button: filled for what the person can do, outlined for what is already done */
-internal fun styleMarketAction(view: TextView, action: MarketAction) {
+internal fun styleMarketAction(view: TextView, action: MarketAction, compact: Boolean = true) {
     val accent = Theme.getColor(Theme.key_featuredStickers_addButton)
     view.text = marketActionText(action)
-    view.textSize = 13f
+    view.textSize = if (compact) 12.5f else 13f
     view.typeface = AndroidUtilities.bold()
     view.gravity = Gravity.CENTER
+    view.minimumHeight = AndroidUtilities.dp(48f)
     view.setSingleLine(true)
-    view.setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(7f), AndroidUtilities.dp(16f), AndroidUtilities.dp(7f))
+    val horizontal = AndroidUtilities.dp(if (compact) 12f else 16f)
+    val vertical = AndroidUtilities.dp(if (compact) 5f else 7f)
+    val radius = AndroidUtilities.dp(if (compact) 14f else 16f)
     if (action == MarketAction.INSTALLED) {
         val gray = Theme.getColor(Theme.key_windowBackgroundWhiteGrayText)
         view.setTextColor(gray)
-        view.background = Theme.createRoundRectDrawable(AndroidUtilities.dp(16f), Theme.multAlpha(gray, 0.14f))
+        view.background = Theme.createRoundRectDrawable(radius, Theme.multAlpha(gray, 0.14f))
     } else {
         view.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText))
-        view.background = Theme.createRoundRectDrawable(AndroidUtilities.dp(16f), accent)
+        view.background = Theme.createRoundRectDrawable(radius, accent)
     }
+    if (compact) view.background = InsetDrawable(view.background, 0, AndroidUtilities.dp(8f), 0, AndroidUtilities.dp(8f))
+    view.setPadding(horizontal, vertical, horizontal, vertical)
 }
 
-internal class MarketChip(val key: String, val text: CharSequence, val selected: Boolean, val onClick: () -> Unit)
+internal class MarketChip(val key: String, val text: CharSequence, val iconRes: Int, val selected: Boolean, val onClick: () -> Unit)
 
-/** two scrolling rows of pills: what the person looks at (all, updates, installed) and the categories */
 @SuppressLint("ViewConstructor")
 internal class MarketPillsCell(context: Context) : LinearLayout(context) {
-    private val statesRow = LinearLayout(context)
     private val tagsRow = LinearLayout(context)
 
     init {
         orientation = VERTICAL
+        layoutDirection = if (LocaleController.isRTL) LAYOUT_DIRECTION_RTL else LAYOUT_DIRECTION_LTR
         isClickable = true
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite))
-        for (row in listOf(statesRow, tagsRow)) {
-            row.setPadding(AndroidUtilities.dp(12f), 0, AndroidUtilities.dp(12f), 0)
-            val scroll = HorizontalScrollView(context).apply {
-                isHorizontalScrollBarEnabled = false
-                overScrollMode = OVER_SCROLL_NEVER
-                addView(row, FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
-            }
-            addView(scroll, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 8f, 0f, 2f))
+        tagsRow.setPadding(AndroidUtilities.dp(12f), 0, AndroidUtilities.dp(12f), 0)
+        val scroll = HorizontalScrollView(context).apply {
+            isHorizontalScrollBarEnabled = false
+            overScrollMode = OVER_SCROLL_NEVER
+            addView(tagsRow, FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
         }
+        addView(scroll, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 2f, 0f, 2f))
     }
 
-    fun bind(states: List<MarketChip>, tags: List<MarketChip>) {
-        fill(statesRow, states)
-        fill(tagsRow, tags)
-    }
-
-    private fun fill(row: LinearLayout, chips: List<MarketChip>) {
-        row.removeAllViews()
+    fun bind(chips: List<MarketChip>) {
+        tagsRow.removeAllViews()
         for (chip in chips) {
-            row.addView(chipView(chip), LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 8f, 0f))
+            tagsRow.addView(chipView(chip), LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT).apply {
+                marginEnd = AndroidUtilities.dp(8f)
+            })
         }
     }
 
     private fun chipView(chip: MarketChip): TextView = TextView(context).apply {
         text = chip.text
-        textSize = 13.5f
+        textSize = 13f
         gravity = Gravity.CENTER
+        minimumHeight = AndroidUtilities.dp(48f)
+        isFocusable = true
+        isSelected = chip.selected
         setSingleLine(true)
-        setPadding(AndroidUtilities.dp(14f), AndroidUtilities.dp(8f), AndroidUtilities.dp(14f), AndroidUtilities.dp(8f))
         val base = Theme.getColor(Theme.key_featuredStickers_addButton)
         if (chip.selected) {
             typeface = AndroidUtilities.bold()
             setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText))
-            background = Theme.createRoundRectDrawable(AndroidUtilities.dp(18f), base)
         } else {
             setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
-            background = Theme.createRoundRectDrawable(AndroidUtilities.dp(18f), Theme.multAlpha(base, 0.14f))
         }
+        background = Theme.createSimpleSelectorRoundRectDrawable(
+            AndroidUtilities.dp(18f),
+            if (chip.selected) base else Theme.multAlpha(base, 0.14f),
+            Theme.getColor(Theme.key_listSelector),
+        )
+        background = InsetDrawable(background, 0, AndroidUtilities.dp(6f), 0, AndroidUtilities.dp(6f))
+        setPadding(AndroidUtilities.dp(12f), AndroidUtilities.dp(6f), AndroidUtilities.dp(12f), AndroidUtilities.dp(6f))
+        bindMarketPillIcon(this, chip.iconRes, 14f)
+        compoundDrawablePadding = AndroidUtilities.dp(6f)
         setOnClickListener { chip.onClick() }
     }
+}
+
+private fun bindMarketPillIcon(view: TextView, iconRes: Int, sizeDp: Float) {
+    val drawable = ApplicationLoader.applicationContext.resources.getDrawable(iconRes, null).mutate()
+    val size = AndroidUtilities.dp(sizeDp)
+    drawable.setBounds(0, 0, size, size)
+    drawable.colorFilter = PorterDuffColorFilter(view.currentTextColor, PorterDuff.Mode.SRC_IN)
+    view.setCompoundDrawablesRelative(drawable, null, null, null)
 }
 
 /** the line above the list that says there is something to update */
@@ -165,6 +183,8 @@ internal class MarketTagPills(context: Context) : HorizontalScrollView(context) 
         tags.forEachIndexed { index, tag ->
             val pill = PluginPill(context, accent = index == 0).apply {
                 text = LocaleController.getString(tag.nameRes)
+                bindMarketPillIcon(this, tag.iconRes, 12f)
+                compoundDrawablePadding = AndroidUtilities.dp(4f)
             }
             pills.addView(pill, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT).apply {
                 marginEnd = if (index == tags.lastIndex) 0 else AndroidUtilities.dp(6f)
@@ -251,7 +271,7 @@ internal class MarketFeaturedCell(context: Context) : LinearLayout(context) {
             orientation = VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
             background = Theme.createRoundRectDrawable(AndroidUtilities.dp(18f), Theme.multAlpha(tint, 0.13f))
-            setPadding(AndroidUtilities.dp(10f), AndroidUtilities.dp(12f), AndroidUtilities.dp(10f), AndroidUtilities.dp(10f))
+            setPadding(AndroidUtilities.dp(10f), AndroidUtilities.dp(12f), AndroidUtilities.dp(10f), AndroidUtilities.dp(4f))
         }
         val icon = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(14f)) }
         bindMarketIcon(icon, entry)
@@ -279,13 +299,12 @@ internal class MarketFeaturedCell(context: Context) : LinearLayout(context) {
         val button = TextView(context)
         styleMarketAction(button, action)
         button.setOnClickListener { onAction(entry) }
-        card.addView(button, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 12f, 0f, 0f))
+        card.addView(button, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL))
         card.setOnClickListener { onOpen(entry) }
         return card
     }
 }
 
-/** a plugin in the list: icon, name, a line about it, its categories and the button that matches what it is now */
 @SuppressLint("ViewConstructor")
 internal class MarketRow(context: Context) : LinearLayout(context) {
     private val icon = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(10f)) }
@@ -296,54 +315,73 @@ internal class MarketRow(context: Context) : LinearLayout(context) {
         ellipsize = TextUtils.TruncateAt.END
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
     }
-    private val pill = PluginPill(context, accent = true)
+    private val pill = PluginPill(context).apply { ellipsize = TextUtils.TruncateAt.END }
     private val description = TextView(context).apply {
         textSize = 13f
-        maxLines = 1
+        maxLines = 2
+        ellipsize = TextUtils.TruncateAt.END
+        setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+    }
+    private val author = TextView(context).apply {
+        textSize = 12.5f
+        setSingleLine(true)
         ellipsize = TextUtils.TruncateAt.END
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
     }
     private val tags = MarketTagPills(context)
-    private val button = TextView(context)
+    private val button = TextView(context).apply {
+        isFocusable = true
+    }
 
     init {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
+        layoutDirection = if (LocaleController.isRTL) LAYOUT_DIRECTION_RTL else LAYOUT_DIRECTION_LTR
+        setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(12f), AndroidUtilities.dp(16f), AndroidUtilities.dp(12f))
         background = Theme.createSelectorWithBackgroundDrawable(
             Theme.getColor(Theme.key_windowBackgroundWhite),
             Theme.getColor(Theme.key_listSelector),
         )
-        val titleLine = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
+        val titleLine = object : LinearLayout(context) {
+            override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                val width = MeasureSpec.getSize(widthMeasureSpec)
+                val badgeWidth = if (pill.visibility == GONE) 0 else {
+                    measureChildWithMargins(pill, widthMeasureSpec, width * 2 / 3, heightMeasureSpec, 0)
+                    pill.measuredWidth + AndroidUtilities.dp(6f)
+                }
+                title.maxWidth = (width - badgeWidth).coerceAtLeast(0)
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            }
+        }.apply { gravity = Gravity.START or Gravity.CENTER_VERTICAL }
         titleLine.addView(title, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
-        titleLine.addView(pill, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 6f, 0f, 0f, 0f))
+        titleLine.addView(pill, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT).apply { marginStart = AndroidUtilities.dp(6f) })
         val texts = LinearLayout(context).apply { orientation = VERTICAL }
         texts.addView(titleLine, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
         texts.addView(description, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 2f, 0f, 0f))
+        texts.addView(author, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 4f, 0f, 0f))
         texts.addView(tags, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 4f, 0f, 0f))
-        val views = listOf<Pair<View, LayoutParams>>(
-            icon to LayoutHelper.createLinear(40, 40, Gravity.CENTER_VERTICAL, 16, 0, 12, 0),
-            texts to LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f, Gravity.CENTER_VERTICAL, 0, 8, 8, 8),
-            button to LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, 0, 0, 16, 0),
-        )
-        for ((view, params) in if (LocaleController.isRTL) views.asReversed() else views) addView(view, params)
+        addView(icon, LayoutHelper.createLinear(40, 40, Gravity.TOP).apply { marginEnd = AndroidUtilities.dp(12f) })
+        addView(texts, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f).apply { marginEnd = AndroidUtilities.dp(8f) })
+        addView(button, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
     }
 
     fun bind(entry: MarketEntry, action: MarketAction, onOpen: () -> Unit, onAction: () -> Unit) {
         bindMarketIcon(icon, entry)
         title.text = entry.name
-        pill.text = if (entry.official) LocaleController.getString(R.string.InuMarketOfficial) else null
-        pill.visibility = if (entry.official) VISIBLE else GONE
+        val version = entry.manifest.version?.takeIf { it.isNotBlank() }
+        pill.text = version?.let { "v$it" }
+        pill.visibility = if (version == null) GONE else VISIBLE
         val text = entry.manifest.description(LocaleController.getInstance().currentLocaleInfo?.langCode).orEmpty()
         description.text = text
         description.visibility = if (text.isEmpty()) GONE else VISIBLE
+        author.text = entry.manifest.author.orEmpty()
+        author.visibility = if (author.text.isBlank()) GONE else VISIBLE
         tags.bind(entry.tags)
         styleMarketAction(button, action)
-        button.textSize = 12.5f
-        button.setPadding(AndroidUtilities.dp(12f), AndroidUtilities.dp(5f), AndroidUtilities.dp(12f), AndroidUtilities.dp(5f))
         button.setOnClickListener { onAction() }
         setOnClickListener { onOpen() }
     }
 }
 
 internal fun marketTagChip(tag: MarketTag, count: Int, selected: Boolean, onClick: () -> Unit): MarketChip =
-    MarketChip(tag.id, "${LocaleController.getString(tag.nameRes)} · $count", selected, onClick)
+    MarketChip(tag.id, "${LocaleController.getString(tag.nameRes)} · $count", tag.iconRes, selected, onClick)

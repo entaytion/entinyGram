@@ -638,3 +638,5 @@ entiny/chat/video-message-autoplay.patch
 entiny/chat/alternative-gif-behavior.patch
 entiny/chat/mirror-front-attach-camera.patch
 entiny/media/mirror-front-video-message.patch
+entiny/chat/disable-link-previews.patch
+entiny/chat/send-link-preview-media.patch

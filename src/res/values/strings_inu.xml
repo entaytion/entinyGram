@@ -1995,6 +1995,7 @@
     <string name="InuPluginRepoId">Plugin ID</string>
     <string name="InuMarket">Market</string>
     <string name="InuMarketAll">All</string>
+    <string name="InuMarketFilters">Filters</string>
     <string name="InuMarketUpdates">Updates</string>
     <string name="InuMarketInstalled">Installed</string>
     <string name="InuMarketFeaturedTitle">From entinyGram</string>
@@ -2015,7 +2016,6 @@
     <string name="InuMarketOwnChannels">Own channels</string>
     <string name="InuMarketSortDefault">Default</string>
     <string name="InuMarketSortInstalled">Installed first</string>
-    <string name="InuMarketOfficial">official</string>
     <string name="InuMarketWhatsNew">What\'s new in v%1$s</string>
     <string name="InuMarketWhatsNewTitle">Release notes</string>
     <string name="InuMarketDetails">Details</string>

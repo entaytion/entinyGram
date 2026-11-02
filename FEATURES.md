@@ -196,7 +196,10 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **smaller APK**
 - 📡 **Forward Pro**: edit text or captions in a full-screen editor over your chat wallpaper with a real bubble preview before forwarding, keep albums grouped, send the comment before or after the forwarded message, format the comment text - *inspired by Telegraph*
 - 📡 **replace Forward**: Forward opens the Forward Pro sheet instead of the stock picker
+- 📡 **disable link previews**: never generate or send previews for links in your messages
+- 📡 **send media from link preview**: send the photo, video or file of a web preview straight from its menu - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
 - 📡 **instant mark reactions as read** - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
+- 📡 **reaction read sync**: fixes stale unread reaction badges - *ported from inugram (alina sireneva)*
 - 📡 **local folders** once the server limit is reached
 - 📡 **remember last folder**: the chat list opens on the folder you used last, not on All Chats
 - 📡 **unread chats first**: unread chats, muted ones too, go above read ones in every folder and drop down once read, pinned chats stay on top; optionally among pinned chats too
@@ -248,7 +251,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **plugin crash report**: after a plugin crash a dialog shows which plugin failed and the log, with a copy button
 - 📡 **review plugin permissions**: plugins menu entry that lists plugins asking for more permissions than you allowed (for example after an update) and approves them in one tap
 - 📡 **group entinyGram menu items**: toggle in message menu order to collapse entinyGram-specific items into a single "entinyGram" submenu
-- 📡 **plugin market**: catalog and channel plugins, including files in rich posts, with themed cards and category badges, alphabetical name/author sorting, installed first, updates, search, sharing, and plugin pages; the developer's shelf opens a dedicated entinyGram plugins page, stays visible across sort modes, and required SDK installs automatically
+- 📡 **plugin market**: themed catalog with compact buttons, all categories and Tabler icons, menu filters, version badges, two-line descriptions, authors and tags; search, sorting, sharing, a dedicated entinyGram plugins page and automatic SDK installation
 - 📡 **plugin settings integration**: plugins add controls and choices to the app's settings
 
 ### debloat & premium noise

@@ -15,6 +15,7 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.ActionBar
 import org.telegram.ui.ActionBar.ActionBarMenuItem
+import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import java.util.Locale
@@ -68,6 +69,7 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
                 }
             })
             val more = menu.addItem(MENU_MORE, R.drawable.ic_ab_other)
+            more.addSubItem(MENU_FILTERS, R.drawable.inu_tabler_filter, str(R.string.InuMarketFilters))
             more.addSubItem(MENU_SORT, R.drawable.inu_tabler_arrows_sort, LocaleController.getString(R.string.InuPluginRepoSort))
             more.addSubItem(MENU_REFRESH, R.drawable.msg_retry, LocaleController.getString(R.string.InuMarketRefresh))
             if (!officialOnly) more.addSubItem(MENU_CHANNELS, R.drawable.msg_channel, LocaleController.getString(R.string.InuMarketOwnChannels))
@@ -75,12 +77,20 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
                 override fun onItemClick(id: Int) {
                     when (id) {
                         -1 -> finishFragment()
+                        MENU_FILTERS -> showFilters(more)
                         MENU_SORT -> showSortOptions(more)
                         MENU_REFRESH -> MarketStore.ensureLoaded(currentAccount, force = true)
                         MENU_CHANNELS -> presentFragment(PluginReposActivity())
                     }
                 }
             })
+        }
+    }
+
+    private fun showFilters(anchor: View) {
+        val options = listOf(str(R.string.InuMarketAll), str(R.string.InuMarketUpdates), str(R.string.InuMarketInstalled))
+        RadioItemOptions.show(this, anchor, options, lens.ordinal) { which ->
+            select(Lens.entries[which], tag)
         }
     }
 
@@ -165,22 +175,24 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
             Lens.UPDATES -> updates
             Lens.INSTALLED -> installed
         }
-        val inTag = tag?.let { id -> inLens.filter { id in it.tags } } ?: inLens
+        val inTag = when (val id = tag) {
+            null -> inLens
+            OFFICIAL_TAG -> inLens.filter { it.official }
+            else -> inLens.filter { id in it.tags }
+        }
         val visible = MarketStore.sorted(inTag.filter { matches(it) })
 
         val pillsCell = pills ?: MarketPillsCell(context).also { pills = it }
         pillsCell.bind(
             listOf(
-                MarketChip("all", str(R.string.InuMarketAll), lens == Lens.ALL) { select(Lens.ALL, tag) },
-                MarketChip("updates", "${str(R.string.InuMarketUpdates)} · ${updates.size}", lens == Lens.UPDATES) { select(Lens.UPDATES, tag) },
-                MarketChip("installed", "${str(R.string.InuMarketInstalled)} · ${installed.size}", lens == Lens.INSTALLED) { select(Lens.INSTALLED, tag) },
-            ),
-            MarketTags.ALL.mapNotNull { t ->
+                MarketChip("all", "${str(R.string.InuMarketAll)} · ${inLens.size}", R.drawable.inu_tabler_layout_cards, tag == null) { select(lens, null) },
+                MarketChip(OFFICIAL_TAG, "${str(R.string.InuMarketGroupOfficial)} · ${inLens.count { it.official }}", R.drawable.inu_tabler_brand_telegram, tag == OFFICIAL_TAG) { select(lens, OFFICIAL_TAG) },
+            ) + MarketTags.ALL.map { t ->
                 val count = inLens.count { t.id in it.tags }
-                if (count == 0 && tag != t.id) null else marketTagChip(t, count, tag == t.id) { select(lens, if (tag == t.id) null else t.id) }
+                marketTagChip(t, count, tag == t.id) { select(lens, t.id) }
             },
         )
-        items.add(UItem.asCustom(PILLS, pillsCell))
+        items.add(UItem.asCustom(PILLS, pillsCell).apply { intValue = LayoutHelper.WRAP_CONTENT })
         items.add(UItem.asShadow(null))
 
         when (MarketStore.state) {
@@ -226,6 +238,7 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
 
         val selected = tag?.let { MarketTags.get(it) }
         val about = selected?.let { "${str(it.nameRes)} · ${str(it.aboutRes)}" }
+            ?: str(R.string.InuMarketGroupOfficial).takeIf { tag == OFFICIAL_TAG || officialOnly }
         if (visible.isEmpty()) {
             val empty = when {
                 query.isNotEmpty() -> R.string.InuMarketEmptySearch
@@ -264,7 +277,7 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
             for (entry in list) {
                 val row = rows.getOrPut(entry.id) { MarketRow(context) }
                 row.bind(entry, actionOf(entry), { open(entry) }, { act(entry) })
-                items.add(UItem.asCustom(idOf(entry), row))
+                items.add(UItem.asCustom(idOf(entry), row).apply { intValue = LayoutHelper.WRAP_CONTENT })
             }
         }
         items.add(UItem.asShadow(null))
@@ -311,6 +324,8 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
         const val MENU_SORT = 3
         const val MENU_REFRESH = 4
         const val MENU_CHANNELS = 5
+        const val MENU_FILTERS = 6
+        const val OFFICIAL_TAG = "entinygram"
         val PILLS = InuUtils.generateId()
         val BANNER = InuUtils.generateId()
         val FEATURED = InuUtils.generateId()

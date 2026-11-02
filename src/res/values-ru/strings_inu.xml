@@ -1888,6 +1888,7 @@
     <string name="InuPluginRepoId">ID плагина</string>
     <string name="InuMarket">Маркет</string>
     <string name="InuMarketAll">Все</string>
+    <string name="InuMarketFilters">Фильтры</string>
     <string name="InuMarketUpdates">Обновления</string>
     <string name="InuMarketInstalled">Установленные</string>
     <string name="InuMarketFeaturedTitle">От entinyGram</string>
@@ -1908,7 +1909,6 @@
     <string name="InuMarketOwnChannels">Свои каналы</string>
     <string name="InuMarketSortDefault">По умолчанию</string>
     <string name="InuMarketSortInstalled">Сначала установленные</string>
-    <string name="InuMarketOfficial">официальный</string>
     <string name="InuMarketWhatsNew">Что нового в v%1$s</string>
     <string name="InuMarketWhatsNewTitle">Заметки к релизу</string>
     <string name="InuMarketDetails">Детали</string>

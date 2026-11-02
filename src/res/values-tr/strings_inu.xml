@@ -2086,4 +2086,5 @@
     <string name="InuSendAsSticker">Çıkartma olarak gönder</string>
     <string name="InuStickerPackZipFailed">Paket indirilemedi</string>
     <string name="InuForumSectionsCards">Forum konularında kart bölümleri</string>
+    <string name="InuMarketFilters">Filtreler</string>
 </resources>

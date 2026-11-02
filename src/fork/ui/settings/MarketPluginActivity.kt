@@ -230,7 +230,7 @@ internal class MarketHeroCell(context: Context) : LinearLayout(context) {
         name.text = entry.name
         meta.text = listOfNotNull(entry.manifest.author?.takeIf { it.isNotEmpty() }, entry.manifest.version?.let { "v$it" }).joinToString(" · ")
         tags.bind(entry.tags)
-        styleMarketAction(button, action)
+        styleMarketAction(button, action, compact = false)
         button.textSize = 15f
         button.setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(12f), AndroidUtilities.dp(16f), AndroidUtilities.dp(12f))
         button.setOnClickListener { onClick() }

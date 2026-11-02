@@ -2122,4 +2122,5 @@ Mientras esté activado:</string>
     <string name="InuBookmarksEmpty">No hay marcadores</string>
     <string name="InuBookmarksClearAll">Borrar todos los marcadores</string>
     <string name="InuForumSectionsCards">Secciones en tarjetas en los temas del foro</string>
+    <string name="InuMarketFilters">Filtros</string>
 </resources>

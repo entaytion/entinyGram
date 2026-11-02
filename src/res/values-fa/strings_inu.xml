@@ -2091,4 +2091,5 @@
     <string name="InuSendAsSticker">ارسال به‌عنوان استیکر</string>
     <string name="InuStickerPackZipFailed">دانلود بسته ناموفق بود</string>
     <string name="InuForumSectionsCards">بخش‌های کارتی در موضوعات انجمن</string>
+    <string name="InuMarketFilters">فیلترها</string>
 </resources>

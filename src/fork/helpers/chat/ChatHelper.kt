@@ -2589,7 +2589,7 @@ object ChatHelper {
                 val providers = PluginTranslation.providers.filter { it.session.canDispatch() }
                 if (!InuConfig.PLUGINS_ENABLED.value || providers.isEmpty()) return false
                 openLongTapSubmenu(activity, popupLayout, cell) { swb ->
-                    val names = listOf("" to LocaleController.getString(R.string.InuTranslationProviderTelegram)) +
+                    val names = listOf("" to LocaleController.getString(R.string.InuTranslateProviderTelegram)) +
                         providers.map { it.key to it.name }
                     for ((key, name) in names) {
                         swb.add(R.drawable.msg_translate, name) {

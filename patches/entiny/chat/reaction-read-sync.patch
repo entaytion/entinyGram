@@ -10,7 +10,8 @@ Subject: various fixes for stale unread reactions
  .../messenger/NotificationsController.java    |   2 +-
  .../messenger/SendMessagesHelper.java         |   2 +
  .../java/org/telegram/ui/ChatActivity.java    | 125 +++---
- 6 files changed, 498 insertions(+), 77 deletions(-)
+ .../Reactions/ReactionsLayoutInBubble.java    |   2 +-
+ 7 files changed, 499 insertions(+), 78 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
@@ -869,3 +870,16 @@ index 0000000..0000000 100644
                      updateReactionsMentionButton(true);
                      scrollToMessageId(messageId, 0, false, 0, true, 0);
                  }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+@@ -113,7 +113,7 @@ public class ReactionsLayoutInBubble {
+     HashMap<String, ReactionButton> lastDrawingReactionButtons = new HashMap<>();
+     HashMap<String, ReactionButton> lastDrawingReactionButtonsTmp = new HashMap<>();
+     View parentView;
+-    MessageObject messageObject;
++    public MessageObject messageObject;
+     Theme.ResourcesProvider resourcesProvider;
+     private Integer scrimViewReaction;
+     private float scrimProgress;

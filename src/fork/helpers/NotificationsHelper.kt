@@ -85,6 +85,8 @@ object NotificationsHelper {
             controller.deleteNotificationChannelGlobal(NotificationsController.TYPE_PRIVATE)
             controller.deleteNotificationChannelGlobal(NotificationsController.TYPE_CHANNEL)
         }
+    }
+
     /** drops a message already shown, like a push the full message or an edit now hides */
     @JvmStatic
     fun removeFromNotifications(messageObject: MessageObject) {
