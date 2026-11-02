@@ -13,14 +13,14 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -10923,6 +10923,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
-             prepareSendingVideo(accountInstance, info.path, info.videoEditedInfo, info.coverPath, info.coverPhoto, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, info.entities, info.ttl, editingMessageObject, notify, scheduleDate, scheduleRepeatPeriod, forceDocument, info.hasMediaSpoilers, info.caption, sendMessageChatArguments, effectId, info.stars, monoForumPeerId, suggestionParams, invertMedia);
+@@ -10914,6 +10914,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (media.isEmpty()) {
              return;
          }
 +        desu.inugram.helpers.chat.StickerSendHelper.applyIfArmed(media);
-         final boolean inu_groupMedia = groupMedia;
-         if (desu.inugram.helpers.plugins.telegram.PluginCompose.composeMedia(accountInstance, media, dialogId, replyToMsg, replyToTopMsg, quote, forceDocument, notify, scheduleDate, sendMessageChatArguments,
-                 editingMessageObject != null || storyItem != null || pollToAddOptionMessageObject != null || pollSendParams != null,
+         if (media.size() == 1 && media.get(0).videoEditedInfo != null && media.get(0).videoEditedInfo.roundVideo) {
+             // The grouped/document dispatch below (and prepareSendingPhoto's video branch) never
+             // preserve VideoEditedInfo.roundVideo, so a video sent this way always lands as a
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
