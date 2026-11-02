@@ -1,7 +1,9 @@
 import fs from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 
-// main APK is the pluginless build, so its version props come from that worktree
-const worktree = 'worktree-pluginless'
+// main APK is the pluginless build, so its version props come from that worktree;
+// plugin-only matrix legs have no pluginless worktree, and the props are identical in both
+const worktree = existsSync('worktree-pluginless/gradle.properties') ? 'worktree-pluginless' : 'worktree'
 const props = await fs.readFile(`${worktree}/gradle.properties`, 'utf8')
 const appVerName = /^APP_VERSION_NAME=(.+)$/m.exec(props)?.[1]
 if (!appVerName) throw new Error('failed to read APP_VERSION_NAME')
@@ -63,6 +65,11 @@ const out = {
   'apk-arm7-plugins': `entinygram${isPrerelease ? '-beta' : ''}-plugins-armeabi-v7a-${appVerName}-${verCode}.apk`,
   tag,
 }
+
+// apk.yml builds every APK in its own matrix job, so the release metadata travels
+// between jobs through this file instead of a single build job's outputs
+await fs.mkdir('out', { recursive: true })
+await fs.writeFile('out/version.json', `${JSON.stringify(out, null, 2)}\n`)
 
 const githubOutput = process.env.GITHUB_OUTPUT
 if (githubOutput) {

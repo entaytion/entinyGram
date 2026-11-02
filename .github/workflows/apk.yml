@@ -42,21 +42,46 @@ env:
 # ─────────────────────────────────────────────────────────────────────────────
 jobs:
 
-  # ── 1. BUILD ────────────────────────────────────────────────────────────────
+  # ── 1. PREPARE ──────────────────────────────────────────────────────────────
+  # Every APK is built in its own parallel job, so the leg list is computed once
+  # from the dispatch inputs instead of being hard-coded into skipped steps.
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+
+    steps:
+      - name: Compute build matrix
+        id: matrix
+        env:
+          # Boolean input quirk: `== 'true'` never matches a real boolean, so accept both shapes.
+          BUILD_ARM7: ${{ inputs.build_arm7 == true || inputs.build_arm7 == 'true' }}
+          BUILD_PLUGINS: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
+        run: |
+          legs=$(jq -cn '[{name:"arm64",worktree:"worktree-pluginless",abi:"arm64-v8a",apk:"apk-arm64",plugins:false}]')
+          if [ "$BUILD_ARM7" = 'true' ]; then
+            legs=$(jq -c '. + [{name:"arm7",worktree:"worktree-pluginless",abi:"armeabi-v7a",apk:"apk-arm7",plugins:false}]' <<< "$legs")
+          fi
+          if [ "$BUILD_PLUGINS" = 'true' ]; then
+            legs=$(jq -c '. + [{name:"plugins",worktree:"worktree",abi:"arm64-v8a",apk:"apk-plugins",plugins:true}]' <<< "$legs")
+            if [ "$BUILD_ARM7" = 'true' ]; then
+              legs=$(jq -c '. + [{name:"arm7-plugins",worktree:"worktree",abi:"armeabi-v7a",apk:"apk-arm7-plugins",plugins:true}]' <<< "$legs")
+            fi
+          fi
+          echo "matrix={\"include\":$legs}" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$legs"
+
+  # ── 2. BUILD (one job per APK) ──────────────────────────────────────────────
   build:
-    name: Build
+    name: Build ${{ matrix.name }}
+    needs: prepare
     runs-on: ubuntu-24.04
     timeout-minutes: 180
-    outputs:
-      apk-arm64:      ${{ steps.info.outputs.apk-arm64 }}
-      apk-arm7:       ${{ steps.info.outputs.apk-arm7 }}
-      apk-plugins:    ${{ steps.info.outputs.apk-plugins }}
-      ver-name:       ${{ steps.info.outputs.ver-name }}
-      ver-code:       ${{ steps.info.outputs.ver-code }}
-      app-ver-code:   ${{ steps.info.outputs.app-ver-code }}
-      day-counter:    ${{ steps.info.outputs.day-counter }}
-      date:           ${{ steps.info.outputs.date }}
-      tag:            ${{ steps.info.outputs.tag }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
 
     steps:
       - name: Free disk space
@@ -93,9 +118,10 @@ jobs:
         uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2
         with:
           append-timestamp: true
-          key: ${{ runner.os }}-ndk-27.2-release
+          key: ${{ runner.os }}-ndk-27.2-${{ matrix.name }}-release
           restore-keys: |
-            ${{ runner.os }}-ndk-27.2-release
+            ${{ runner.os }}-ndk-27.2-${{ matrix.name }}-release
+            ${{ runner.os }}-ndk-27.2-
             ${{ runner.os }}-
           max-size: 5G
           verbose: 2
@@ -103,10 +129,11 @@ jobs:
 
       - name: Set up worktree
         run: |
-          # Pluginless worktree always (worktree-pluginless/). Plugins worktree only when plugins are requested.
-          bun run setup -- --ci --pluginless
-          if [ '${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}' = 'true' ]; then
+          # Pluginless worktree for the stock-flavoured APKs, plugins worktree for the *_plugins ones.
+          if [ '${{ matrix.plugins }}' = 'true' ]; then
             bun run setup -- --ci
+          else
+            bun run setup -- --ci --pluginless
           fi
 
       - name: Write google-services.json
@@ -160,7 +187,7 @@ jobs:
       # The plugin engine is Rust: rquickjs-sys runs bindgen, which needs libclang (the runner image ships only the
       # clang drivers), and cargo-ndk drives the Android cross build.
       - name: Install libclang
-        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
+        if: ${{ matrix.plugins }}
         timeout-minutes: 10
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -185,7 +212,7 @@ jobs:
           fi
 
       - name: Cache cargo
-        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
+        if: ${{ matrix.plugins }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: |
@@ -193,12 +220,13 @@ jobs:
             ~/.cargo/git
             ~/.cargo/bin/cargo-ndk
             src/native/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('src/native/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ matrix.name }}-${{ hashFiles('src/native/Cargo.lock') }}
           restore-keys: |
+            ${{ runner.os }}-cargo-${{ matrix.name }}-
             ${{ runner.os }}-cargo-
 
       - name: Install Android Rust toolchain
-        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
+        if: ${{ matrix.plugins }}
         run: |
           rustup target add aarch64-linux-android armv7-linux-androideabi
           cargo install cargo-ndk --version 4.1.2 --locked --force
@@ -206,70 +234,151 @@ jobs:
       - name: Reset ccache stats
         run: ccache -z
 
-      - name: Build arm64-v8a
-        working-directory: worktree-pluginless
+      - name: Build ${{ matrix.name }}
+        working-directory: ${{ matrix.worktree }}
         env:
           COMMIT_ID: ${{ github.sha }}
           INU_BUILD: ${{ steps.info.outputs.ver-code }}
           INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
-          ABI_FILTERS: arm64-v8a
+          ABI_FILTERS: ${{ matrix.abi }}
           CCACHE_COMPILERCHECK: content
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
-          CCACHE_BASEDIR: ${{ github.workspace }}/worktree-pluginless
+          CCACHE_BASEDIR: ${{ github.workspace }}/${{ matrix.worktree }}
         run: |
           # Pre-release and stable builds both compile the release buildType.
           ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
           mkdir -p "$GITHUB_WORKSPACE/out"
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
-
-      - name: Build armeabi-v7a
-        if: ${{ inputs.build_arm7 == true || inputs.build_arm7 == 'true' }}
-        working-directory: worktree-pluginless
-        env:
-          COMMIT_ID: ${{ github.sha }}
-          INU_BUILD: ${{ steps.info.outputs.ver-code }}
-          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
-          ABI_FILTERS: armeabi-v7a
-          CCACHE_COMPILERCHECK: content
-          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
-          CCACHE_BASEDIR: ${{ github.workspace }}/worktree-pluginless
-        run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7 }}"
-
-      - name: Build arm64-v8a with plugins
-        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
-        working-directory: worktree
-        env:
-          COMMIT_ID: ${{ github.sha }}
-          INU_BUILD: ${{ steps.info.outputs.ver-code }}
-          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
-          ABI_FILTERS: arm64-v8a
-          CCACHE_COMPILERCHECK: content
-          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
-          CCACHE_BASEDIR: ${{ github.workspace }}/worktree
-        run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-plugins }}"
-
-      - name: Build armeabi-v7a with plugins
-        if: ${{ (inputs.build_plugins == true || inputs.build_plugins == 'true') && (inputs.build_arm7 == true || inputs.build_arm7 == 'true') }}
-        working-directory: worktree
-        env:
-          COMMIT_ID: ${{ github.sha }}
-          INU_BUILD: ${{ steps.info.outputs.ver-code }}
-          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
-          ABI_FILTERS: armeabi-v7a
-          CCACHE_COMPILERCHECK: content
-          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
-          CCACHE_BASEDIR: ${{ github.workspace }}/worktree
-        run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7-plugins }}"
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs[matrix.apk] }}"
 
       - name: Show ccache stats
         if: always()
         run: ccache -s -v
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ${{ env.ARTIFACT_NAME }}-unsigned-${{ matrix.name }}
+          path: out/*.apk
+          if-no-files-found: error
+          retention-days: 1
+
+      # Every leg computes the same tag/versionCode/day state, but a single copy is enough
+      # for the metadata job -- arm64 is always built.
+      - name: Upload version info
+        if: ${{ matrix.name == 'arm64' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ${{ env.ARTIFACT_NAME }}-version
+          path: out/version.json
+          if-no-files-found: error
+          retention-days: 1
+
+  # ── 3. SIGN ─────────────────────────────────────────────────────────────────
+  sign:
+    name: Sign
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: signing
+    permissions:
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+      contents: read
+
+    steps:
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
+        with:
+          packages: build-tools;35.0.0
+
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          pattern: ${{ env.ARTIFACT_NAME }}-unsigned-*
+          path: out
+          merge-multiple: true
+
+      - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::KEYSTORE_BASE64 secret missing"
+            exit 1
+          fi
+          umask 077
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+
+      - name: Sign APKs
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD:      ${{ secrets.KEY_PASSWORD }}
+        run: |
+          apksigner=$ANDROID_HOME/build-tools/35.0.0/apksigner
+          # Signs whatever APKs the build jobs staged (arm64 alone, or any arm64/arm7/plugins combination).
+          for apk in out/*.apk; do
+            "$apksigner" sign \
+              --ks "$RUNNER_TEMP/release.keystore" \
+              --ks-type PKCS12 \
+              --ks-key-alias mrtv \
+              --ks-pass "pass:$KEYSTORE_PASSWORD" \
+              --key-pass "pass:$KEY_PASSWORD" \
+              --v1-signing-enabled false \
+              --in  "$apk" \
+              --out "$apk.signed"
+            "$apksigner" verify --print-certs "$apk.signed"
+            mv "$apk.signed" "$apk"
+          done
+
+      - name: Wipe keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.keystore"
+
+      - name: Attest signed APKs
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: out/*.apk
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: out/*
+          if-no-files-found: error
+          retention-days: 30
+
+  # ── 4. METADATA ─────────────────────────────────────────────────────────────
+  meta:
+    name: Release metadata
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      tag:         ${{ steps.info.outputs.tag }}
+      day-counter: ${{ steps.info.outputs.day-counter }}
+      date:        ${{ steps.info.outputs.date }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - run: bun install --frozen-lockfile
+
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: ${{ env.ARTIFACT_NAME }}-version
+          path: out
+
+      - name: Read version info
+        id: info
+        run: jq -r 'to_entries[] | "\(.key)=\(.value)"' out/version.json >> "$GITHUB_OUTPUT"
 
       - name: Stage artifacts
         env:
@@ -343,91 +452,15 @@ jobs:
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: ${{ env.ARTIFACT_NAME }}-unsigned
+          name: ${{ env.ARTIFACT_NAME }}-meta
           path: out/*
           if-no-files-found: error
           retention-days: 1
 
-  # ── 2. SIGN ─────────────────────────────────────────────────────────────────
-  sign:
-    name: Sign
-    needs: build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    environment: signing
-    permissions:
-      id-token: write
-      attestations: write
-      artifact-metadata: write
-      contents: read
-
-    steps:
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
-        with:
-          packages: build-tools;35.0.0
-
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
-        with:
-          name: entinygram-${{ github.sha }}-unsigned
-          path: out
-
-      - name: Decode keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-        run: |
-          if [ -z "$KEYSTORE_BASE64" ]; then
-            echo "::error::KEYSTORE_BASE64 secret missing"
-            exit 1
-          fi
-          umask 077
-          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
-
-      - name: Sign APKs
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_PASSWORD:      ${{ secrets.KEY_PASSWORD }}
-        run: |
-          apksigner=$ANDROID_HOME/build-tools/35.0.0/apksigner
-          # Signs whatever APKs the build job staged (arm64 alone, or arm64 + arm7).
-          for apk in out/*.apk; do
-            "$apksigner" sign \
-              --ks "$RUNNER_TEMP/release.keystore" \
-              --ks-type PKCS12 \
-              --ks-key-alias mrtv \
-              --ks-pass "pass:$KEYSTORE_PASSWORD" \
-              --key-pass "pass:$KEY_PASSWORD" \
-              --v1-signing-enabled false \
-              --in  "$apk" \
-              --out "$apk.signed"
-            "$apksigner" verify --print-certs "$apk.signed"
-            mv "$apk.signed" "$apk"
-          done
-
-      - name: Wipe keystore
-        if: always()
-        run: rm -f "$RUNNER_TEMP/release.keystore"
-
-      - name: Attest signed APKs
-        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
-        with:
-          subject-path: out/*.apk
-
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        with:
-          name: entinygram-${{ github.sha }}
-          path: out/*
-          if-no-files-found: error
-          retention-days: 30
-
-  # ── 3. UPLOAD ───────────────────────────────────────────────────────────────
+  # ── 5. UPLOAD ───────────────────────────────────────────────────────────────
   upload:
     name: Upload
-    needs: [build, sign]
+    needs: [sign, meta]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -444,7 +477,12 @@ jobs:
 
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         with:
-          name: entinygram-${{ github.sha }}
+          name: ${{ env.ARTIFACT_NAME }}
+          path: out
+
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: ${{ env.ARTIFACT_NAME }}-meta
           path: out
 
       - name: Create GitHub release
@@ -452,7 +490,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag='${{ needs.build.outputs.tag }}'
+          tag='${{ needs.meta.outputs.tag }}'
 
           # AI-generated English notes for GitHub (full markdown).
           notes_en=''
@@ -497,7 +535,7 @@ jobs:
             cp out/changelog.json assets/changelog.json
             git add assets/changelog.json
             if ! git diff --cached --quiet; then
-              HUSKY=0 git commit -m "[=] update changelog.json for ${{ needs.build.outputs.tag }}"
+              HUSKY=0 git commit -m "[=] update changelog.json for ${{ needs.meta.outputs.tag }}"
               git push origin HEAD:main
             fi
           fi
@@ -544,13 +582,11 @@ jobs:
           GH_TOKEN: ${{ secrets.INU_VARS_TOKEN }}
           PRE_RELEASE: ${{ inputs.prerelease }}
         run: |
-          next_day_counter=$((${{ needs.build.outputs.day-counter }} + 1))
-          gh variable set INU_DAY_STATE --body "${{ needs.build.outputs.date }}:$next_day_counter"
+          next_day_counter=$((${{ needs.meta.outputs.day-counter }} + 1))
+          gh variable set INU_DAY_STATE --body "${{ needs.meta.outputs.date }}:$next_day_counter"
           head_sha=$(git rev-parse HEAD)
           # LAST_BUILD_SHA moves on every build; LAST_RELEASE_SHA only on stable.
           gh variable set LAST_BUILD_SHA --body "$head_sha"
           if [ "$PRE_RELEASE" != 'true' ]; then
             gh variable set LAST_RELEASE_SHA --body "$head_sha"
           fi
-
-
