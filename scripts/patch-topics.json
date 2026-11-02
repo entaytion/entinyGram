@@ -216,6 +216,7 @@
   "rtl-gradient-ellipsize": "ui",
   "dialogs-menu-proxy": "ui",
   "send-videos-hd": "media",
+  "video-near-end-freeze": "media",
   "faster-downloads-byte-budget": "media",
   "safe-editable-spans": "ui",
   "settings-search-history": "settings",

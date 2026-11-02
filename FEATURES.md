@@ -222,6 +222,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **crash fix** when deleting all messages of a user while their media messages are selected
 - 📡 **square camera tile**: the attach gallery camera takes one cell instead of two
 - 📡 **save selected files**: download button when selecting files in profile media and search - *ported from the Save Selected Files plugin by @akresik*
+- 📡 **fix looping videos freezing** when seeking near the end - *ported from Hundgram (@lurepheonix)*
 - 📡 **free memory in background**: clears image caches shortly after the app is minimized
 - 📡 **no emoji panel leak**: closed chats and photo viewers are no longer kept in memory by the emoji panel
 - 📡 **keep keyboard while typing**: scrolling the chat doesn't hide the keyboard when there's a draft
@@ -237,7 +238,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **plugin crash report**: after a plugin crash a dialog shows which plugin failed and the log, with a copy button
 - 📡 **review plugin permissions**: plugins menu entry that lists plugins asking for more permissions than you allowed (for example after an update) and approves them in one tap
 - 📡 **group entinyGram menu items**: toggle in message menu order to collapse entinyGram-specific items into a single "entinyGram" submenu
-- 📡 **plugin market**: catalog and channel plugins with category badges, alphabetical name/author sorting, installed first, updates, search, and plugin pages; the developer's shelf stays visible across sort modes, and required SDK installs automatically
+- 📡 **plugin market**: catalog and channel plugins with themed cards and category badges, alphabetical name/author sorting, installed first, updates, search, and plugin pages; the developer's shelf stays visible across sort modes, and required SDK installs automatically
 - 📡 **plugin settings integration**: plugins add controls and choices to the app's settings
 
 ### debloat & premium noise

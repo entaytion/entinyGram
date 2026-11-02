@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:07:36 +0200
+Subject: fix looping videos freezing when seeking near the end
+
+---
+ .../java/org/telegram/ui/Components/VideoPlayer.java  | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
+@@ -203,9 +203,9 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+ 
+     /**
+      * The platform never starts a MODE_STREAM AudioTrack whose buffer has not filled, so a buffer
+-     * longer than the media itself stalls forever when the media loops instead of ending. Sizing
+-     * for AudioTrack playback params multiplies the buffer by MAX_PLAYBACK_SPEED (8x), which for
+-     * short clips overshoots the content, so cap it at half the media.
++     * longer than the remaining audio stalls forever: after a near-end seek on a looping video only
++     * a couple seconds of audio remain before the loop point. Sizing for AudioTrack playback params
++     * multiplies the buffer by MAX_PLAYBACK_SPEED (8x), so cap it at ~1s (or half the media).
+      */
+     private final DefaultAudioSink.AudioTrackBufferSizeProvider inu_bufferSizeProvider =
+             (minBufferSizeInBytes, encoding, outputMode, pcmFrameSize, sampleRate, bitrate, maxAudioTrackPlaybackSpeed) -> {
+@@ -215,8 +215,11 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+                     return size;
+                 }
+                 final int unscaled = provider.getBufferSizeInBytes(minBufferSizeInBytes, encoding, outputMode, pcmFrameSize, sampleRate, bitrate, 1.0);
++                final long oneSecond = (long) pcmFrameSize * sampleRate;
+                 final long halfMedia = (long) pcmFrameSize * sampleRate * inu_mediaDurationMs / 2000L;
+-                return (int) Math.max(unscaled, Math.min(size, halfMedia - halfMedia % Math.max(pcmFrameSize, 1)));
++                final long cap = Math.min(oneSecond, halfMedia);
++                final long alignedCap = cap - cap % Math.max(pcmFrameSize, 1);
++                return (int) Math.max(unscaled, Math.min(size, alignedCap));
+             };
+ 
+     public VideoPlayer() {
