@@ -255,7 +255,6 @@
     <string name="InuRoundRecorderExposureLevels">Exposure level buttons</string>
     <string name="InuRoundRecorderExposureLevelsInfo">Show EV buttons to brighten or darken the shot while recording.</string>
     <string name="InuShowAllRecentStickers">Show all recent stickers</string>
-    <string name="InuNoStickerExtraPadding">Remove extra bottom padding</string>
     <string name="InuHideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="InuKeepKeyboardWhileTyping">Keep keyboard while typing</string>
     <string name="InuKeepKeyboardWhileTypingInfo">Don\'t hide it on scroll when there is a draft</string>
@@ -388,7 +387,7 @@
     <string name="InuHideTrendingStickers">Hide trending stickers</string>
     <string name="InuBottomTabs">Bottom tabs</string>
     <string name="InuBottomTabsHide">Hide bottom tabs</string>
-<string name="InuBottomTabsHideInfo">Items are moved into the hamburger menu of the main screen</string>
+    <string name="InuBottomTabsHideInfo">Items are moved into the hamburger menu of the main screen</string>
     <string name="InuBottomTabsHideTopSearch">Hide top search</string>
     <string name="InuBottomTabsHideTopSearchInfo">Hide the search field above the chat list</string>
     <string name="InuBottomTabsSeparateSearch">Separate Search button</string>
@@ -1050,6 +1049,12 @@
     <string name="InuTextClassifierModeOff">Off</string>
     <string name="InuTextClassifierModeOffInfo">Disabling text classifier improves text selection responsiveness</string>
 
+    <string name="InuSelectionProcessText">Extra text actions</string>
+    <string name="InuWebSearch">Web search</string>
+    <string name="InuSelectionProcessTextInfo">Show actions provided by other apps in the message text selection menu</string>
+    <string name="InuSelectionProcessTextItems">Actions</string>
+    <string name="InuSelectionProcessTextReset">Reset to defaults</string>
+
     <string name="InuSuggestCustomEmojiAfter">Suggest custom emoji after regular</string>
     <string name="InuSuggestCustomEmojiAfterInfo">In the \":shortcode\" suggestion popup, show animated/custom emoji after the regular ones instead of before</string>
 
@@ -1084,6 +1089,8 @@
     <string name="InuEventLogBanConfirm">Ban **%1$s**?</string>
     <string name="InuEventLogShowDiff">Show as diff</string>
     <string name="InuShowPinnedPanel">Show pinned messages</string>
+    <string name="InuShowFilteredMessages">Show hidden messages</string>
+    <string name="InuHideFilteredMessages">Hide hidden messages</string>
     <string name="InuHidePinnedTitle">Hide pinned messages</string>
     <string name="InuHidePinnedUntilNew">Until a new message is pinned</string>
     <string name="InuHidePinnedForever">Always in this chat</string>
@@ -1364,9 +1371,12 @@
     <string name="InuLogsCopySystemInfo">Copy system info</string>
     <string name="InuLogsSystemInfoCopied">System info copied to clipboard</string>
     <string name="InuLogsHeapUsage">Heap: %1$s / %2$s</string>
+    <string name="InuLogsRunGc">Run garbage collection</string>
     <string name="InuLogsMakeHeapDump">Make heap dump</string>
     <string name="InuLogsMakingHeapDump">Making a heap dump…</string>
-    <string name="InuLogsHeapDumpWarning">**NEVER** share the .hprof file — it\'s a memory snapshot **containing sensitive data** (messages, tokens, etc.) and should only be inspected by yourself. The app will freeze briefly while it\'s created.</string>
+    <string name="InuLogsHeapDumpSaved">Heap dump saved</string>
+    <string name="InuLogsHeapDumpSaveError">Failed to save heap dump</string>
+    <string name="InuLogsHeapDumpWarning">**NEVER** share the resulting .hprof file with anyone — it is a snapshot of the app\'s memory and **contains sensitive information** (messages, tokens, etc.).\n\nInspect it **ONLY** by yourself.\n\nThe app will freeze for a while.</string>
 
     <string name="InuBiometricConfirm">Biometric confirmation</string>
     <string name="InuBiometricConfirmTitle">Confirm your identity</string>
@@ -1955,6 +1965,7 @@
     <string name="InuPluginReposUpToDate">No updates available</string>
     <string name="InuPluginReposErrorLink">Enter a channel username or link</string>
     <string name="InuPluginReposErrorNotChannel">This is not a public channel</string>
+    <string name="InuPluginReposAddConfirm">Add **%1$s** as a plugin repository?</string>
     <string name="InuPluginReposErrorExists">This repository is already added</string>
     <string name="InuPluginRepoEmpty">No plugins in this repository</string>
     <string name="InuPluginRepoErrorLoad">Could not load the repository</string>
@@ -2063,6 +2074,9 @@
     <string name="InuPluginGrantOnUpdate">Watch updates</string>
     <string name="InuPluginGrantInterceptUpdate">Intercept updates</string>
     <string name="InuPluginGrantInterceptSend">Intercept outgoing messages</string>
+    <string name="InuPluginRewrittenBy">Rewritten by %1$s.</string>
+    <string name="InuPluginRewriteRevert">Revert ></string>
+    <string name="InuPluginGrantFilterMessages">Hide or change messages in chats</string>
     <string name="InuPluginGrantInterceptRpc">Intercept API requests</string>
     <string name="InuPluginGrantInvokeRpc">Raw API access</string>
     <string name="InuPluginGrantTakeout">Data export sessions</string>

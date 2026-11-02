@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -10918,7 +10918,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10917,7 +10917,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
              videoPlayer.inu_setMediaDurationMs(currentMessageObject != null ? (long) (currentMessageObject.getDuration() * 1000) : 0);
              if (videoUrises != null) {

@@ -1364,8 +1364,9 @@ declare namespace inu {
       button?: { text?: InputText, onClick(): void }
       /**
        * Customizable overflow menu items, shown as a three-dot dropdown in the header.
+       * `'separator'` draws a gap between the items around it
        */
-      menu?(): MaybePromise<ChatHistoryMenuItem[]>
+      menu?(): MaybePromise<(ChatHistoryMenuItem | 'separator')[]>
     }): ChatHistory
 
     /**
@@ -1541,7 +1542,7 @@ declare namespace inu {
     /** Anchor for the menus */
     interface UIAnchor {
       /** Open a contextual menu */
-      openMenu(items: {
+      openMenu(items: ({
         /** Text of the item */
         text: string
         /** Whether the item should have a checkmark */
@@ -1550,7 +1551,7 @@ declare namespace inu {
         danger?: boolean
         /** Click handler */
         onClick: () => void
-      }[]): void
+      } | 'separator')[]): void
     }
 
     /** Header element */
@@ -1817,6 +1818,144 @@ declare namespace inu {
     types: U | U[],
     middleware: (context: UpdateMiddlewareContext<U>) => MaybePromise<'deliver' | 'drop'>,
   ): Disposer
+
+  /**
+   * Which messages a {@link filterMessages} rule applies to.
+   *
+   * Fields within the same object are logical AND.
+   */
+  interface MessageFilter {
+    /** Regex the message's text or caption should match, or whether it has any (`true`) or none (`false`) */
+    text?: RegExp | boolean
+    /**
+     * Regex the message's text should match, as {@link utils.thtml} HTML.
+     *
+     * **Note**: `&` inside a text-link (`<a>`) is `&amp;`
+     */
+    html?: RegExp
+    /** Regex the URL of at least one of the message's inline buttons matches */
+    buttons?: RegExp
+    /** Marked peer id(s) of the sender. A channel post's sender is the channel */
+    sender?: number | number[]
+    /** Chat(s) the message is in: marked peer ids, peer types, or both */
+    peer?: SendMessagePeer | SendMessagePeer[]
+    /** Whether the message has media (`true`) or not (`false`), or the type(s) of its media */
+    media?: boolean | MediaType | MediaType[]
+    /** Whether the message is a forward (`true`) or not (`false`) */
+    forward?: boolean
+  }
+
+  type MessageFilterVerdict = 'show' | 'hide' | 'spoiler' | { rewrite: InputText }
+
+  /**
+   * Register a message filter, applied when *rendering* the messages.
+   *
+   * Currently the supported actions are:
+   * - `hide` - to hide the message completely
+   * - `spoiler` - to hide the message text/media with a spoiler
+   * - `{ rewrite: InputText }` - to modify the visible text of the message
+   *
+   * Prefer a fixed verdict (i.e. plain action as the second argument) where possible,
+   * since that allows for better performance.
+   *
+   * A callback only runs for matched messages, and the verdict for a message is cached.
+   * Callbacks are synchronous and share a 50 ms budget per message: once it runs out, the
+   * running callback is stopped, the rest are skipped, the message shows as is, and the
+   * plugin takes a strike. Three strikes stop the plugin.
+   *
+   * When several rules match, the following applies, in order:
+   * - any `hide` verdict wins
+   * - any `spoiler` verdict wins
+   * - the first rewrite in the user's plugin order wins.
+   *
+   * Service messages, secret chats, messages from Telegram (777000), Saved Messages
+   * and outgoing messages are never filtered.
+   *
+   * **Limits: 50 ms per message**
+   *
+   * @needs-grant filterMessages
+   * @example
+   * ```ts
+   * inu.filterMessages({ html: /[?&](amp;)?erid=/i, peer: 'broadcast' }, 'hide')
+   * inu.filterMessages({ text: /crypto/i, peer: 'group' }, message => (message.forwardedFrom ? 'hide' : 'spoiler'))
+   * ```
+   */
+  function filterMessages(filter: MessageFilter | MessageFilter[], verdict: 'hide' | 'spoiler'): Disposer
+  function filterMessages(
+    filter: MessageFilter | MessageFilter[],
+    callback: (message: Message, account: Account) => MessageFilterVerdict | undefined,
+  ): Disposer
+
+  /** {@link registerTextEntity} callback context */
+  interface TextEntityContext extends ChatActionContext {
+    message: Message
+    /** The match and its groups */
+    match: readonly (string | undefined)[]
+    /** The named groups from the tegex, if any */
+    groups: Readonly<Record<string, string>>
+    /**
+     * Abort signal to cancel any pending async tasks.
+     *
+     * Aborted when the user taps another link, leaves the chat, or the 30 s budget ran out.
+     */
+    readonly signal: AbortSignal
+    /**
+     * The tapped link, to open a menu at.
+     *
+     * Not available outside chat bubbles (e.g. in the media viewer),
+     * so make sure to provide alternative ui if you use it
+     */
+    readonly anchor?: ui.UIAnchor
+  }
+
+  type TextEntityOptions = {
+    /** Regex for the entity to be highlighted */
+    pattern: RegExp
+    /** Only look in messages this matches */
+    filter?: MessageFilter
+  } & (
+    | {
+      /**
+       * Turn the match into a text link.
+       *
+       * Supports `String.prototype.replace`-style patterns (`$1`, `$<name>`, `$&`, `$$`),
+       * encoded using `encodeURIComponent`
+       */
+      url: string
+      callback?: never
+      secondaryCallback?: never
+    }
+    | {
+      url?: never
+      /** While the returned promise runs, the link shows as loading in the chat */
+      callback: (ctx: TextEntityContext) => void | Promise<void>
+      /** Long-tap handler. Without one, a long tap runs `callback` */
+      secondaryCallback?: (ctx: TextEntityContext) => void | Promise<void>
+    }
+  )
+
+  /**
+   * Make matches of a pattern in message text tappable.
+   *
+   * Matching runs natively while the app lays out the message - JS only runs on tap.
+   *
+   * - Matches inside links, mentions or code are ignored
+   * - Messages in secret chats, from Telegram (777000) and in the admin log are ignored
+   * - When multiple plugins match the same text, the first one in the user's plugin order wins.
+   *
+   * **Limits: 100 matches per message per plugin.**
+   *
+   * @example
+   * ```ts
+   * inu.registerTextEntity({ pattern: /\b[A-Z]+-\d+\b/, filter: { peer: -1001234567890 }, url: 'https://tracker.example/$&' })
+   * inu.registerTextEntity({
+   *   pattern: /(?<amount>\d+(?:[.,]\d+)?)\s?(?<currency>USD|EUR|CNY)/i,
+   *   callback: ({ groups }) => inu.ui.toast(convert(groups.amount, groups.currency)),
+   * })
+   * ```
+   * @experimental Subject to breaking changes between releases.
+   */
+  function registerTextEntity(options: TextEntityOptions): Disposer
 
   interface ActionContext {
     account: Account

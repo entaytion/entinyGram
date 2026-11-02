@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -5226,6 +5226,9 @@ public class AndroidUtilities {
+@@ -5229,6 +5229,9 @@ public class AndroidUtilities {
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
              final View decorView = window.getDecorView();
              changeSetSystemUiVisibility(decorView, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR, enable);

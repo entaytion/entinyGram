@@ -249,7 +249,6 @@ Sistema: %6$s
     <string name="InuRoundRecorderExposureLevels">Pulsanti del livello di esposizione</string>
     <string name="InuRoundRecorderExposureLevelsInfo">Mostra pulsanti EV per schiarire o scurire l\'inquadratura durante la registrazione.</string>
     <string name="InuShowAllRecentStickers">Mostra tutti gli sticker recenti</string>
-    <string name="InuNoStickerExtraPadding">Rimuovi il margine inferiore extra</string>
     <string name="InuHideKeyboardOnScroll">Nascondi la tastiera allo scorrimento</string>
     <string name="InuKeepKeyboardWhileTyping">Mantieni la tastiera durante la digitazione</string>
     <string name="InuKeepKeyboardWhileTypingInfo">Non nasconderla allo scorrimento quando c\'è una bozza</string>
@@ -382,7 +381,7 @@ Sistema: %6$s
     <string name="InuHideTrendingStickers">Nascondi gli sticker di tendenza</string>
     <string name="InuBottomTabs">Schede in basso</string>
     <string name="InuBottomTabsHide">Nascondi le schede in basso</string>
-<string name="InuBottomTabsHideInfo">Le voci vengono spostate nel menu hamburger della schermata principale</string>
+    <string name="InuBottomTabsHideInfo">Le voci vengono spostate nel menu hamburger della schermata principale</string>
     <string name="InuBottomTabsHideTopSearch">Nascondi la ricerca in alto</string>
     <string name="InuBottomTabsHideTopSearchInfo">Nascondi il campo di ricerca sopra l\'elenco delle chat</string>
     <string name="InuBottomTabsSeparateSearch">Pulsante di ricerca separato</string>

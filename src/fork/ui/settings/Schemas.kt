@@ -1044,6 +1044,21 @@ object Schemas {
                 },
                 click = { page, _ -> showTextClassifierModeSelector(page) },
             )
+            custom(
+                "selection-process-text", R.string.InuSelectionProcessText,
+                build = { page, id ->
+                    page.splitCheck(id, R.string.InuSelectionProcessText, R.string.InuSelectionProcessTextInfo, InuConfig.SELECTION_PROCESS_TEXT.value)
+                },
+                clickAt = { page, view, x ->
+                    val isSwitch = if (LocaleController.isRTL) x < AndroidUtilities.dp(76f) else x > view.measuredWidth - AndroidUtilities.dp(76f)
+                    if (isSwitch) {
+                        val new = InuConfig.SELECTION_PROCESS_TEXT.toggle()
+                        (view as? NotificationsCheckCell)?.isChecked = new
+                    } else {
+                        page.presentFragment(ProcessTextActivity())
+                    }
+                },
+            )
         }
     }
 

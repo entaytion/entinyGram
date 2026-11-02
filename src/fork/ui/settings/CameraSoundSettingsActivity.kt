@@ -7,6 +7,7 @@ import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.RoundRecorderHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -252,7 +253,11 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             }
 
             TOGGLE_ROUND_NEW_RECORDER -> {
-                SharedSettings.roundVideoCamera2Enabled.toggle()
+                val newRecorder = SharedSettings.roundVideoCamera2Enabled.toggle()
+                if (newRecorder) {
+                    SharedConfig.useCamera2Force = null
+                    MessagesController.getGlobalMainSettings().edit().remove("useCamera2Force_2").apply()
+                }
                 listView.adapter.update(true)
             }
             TOGGLE_ROUND_COMPOSITION -> (view as? TextCheckCell)?.isChecked = SharedSettings.roundVideoComposition.toggle()

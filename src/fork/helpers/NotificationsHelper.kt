@@ -8,6 +8,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.chat.BlockedMessagesHelper
 // #if PLUGINS
 import desu.inugram.helpers.plugins.platform.PluginNotifications
+import desu.inugram.helpers.plugins.telegram.PluginMessageFilters
 // #endif
 import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.security.PasscodeHelper
@@ -49,6 +50,9 @@ object NotificationsHelper {
     @JvmStatic
     fun shouldSuppressMessageNotification(messageObject: MessageObject?): Boolean {
         if (messageObject == null) return false
+        // #if PLUGINS
+        PluginMessageFilters.awaitVerdicts(listOf(messageObject))
+        // #endif
         return BlockedMessagesHelper.shouldHide(messageObject)
             || ParanoiaHelper.isHidden(messageObject.currentAccount, messageObject.dialogId)
     }
@@ -81,6 +85,32 @@ object NotificationsHelper {
             controller.deleteNotificationChannelGlobal(NotificationsController.TYPE_PRIVATE)
             controller.deleteNotificationChannelGlobal(NotificationsController.TYPE_CHANNEL)
         }
+    /** drops a message already shown, like a push the full message or an edit now hides */
+    @JvmStatic
+    fun removeFromNotifications(messageObject: MessageObject) {
+        val channelId = messageObject.messageOwner.peer_id.channel_id
+        val ids = LongSparseArray<ArrayList<Int>>()
+        ids.put(if (channelId != 0L) -channelId else 0L, arrayListOf(messageObject.id))
+        NotificationsController.getInstance(messageObject.currentAccount).removeDeletedMessagesFromNotifications(ids, false)
+    }
+
+    /**
+     * Stock formats the full notification text from the original text, or from the server's own text for a push.
+     * [filtered] is the text the message shows, with spoilers masked.
+     */
+    @JvmStatic
+    fun applyFilteredText(messageObject: MessageObject, text: String?, filtered: String?): String? {
+        // #if PLUGINS
+        val rewrite = messageObject.inu_rewrite?.text
+        // #else
+        val rewrite: String? = null
+        // #endif
+        if (text == null || filtered == null || rewrite == null && !BlockedMessagesHelper.shouldSpoil(messageObject)) return text
+        val source = listOfNotNull(messageObject.messageOwner.message, rewrite)
+            .filter { it.isNotEmpty() && it in text }
+            .maxByOrNull { it.length } ?: return text
+        val at = text.lastIndexOf(source)
+        return text.replaceRange(at, at + source.length, filtered)
     }
 
     // Stock's `NotificationsController.wearNotificationsIds` (dialogId -> notification id) is the only record of

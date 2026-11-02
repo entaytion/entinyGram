@@ -74,7 +74,7 @@ index 0000000..0000000 100644
                  searchWas = false;
                  if (viewPages[0] != null) {
                      viewPages[0].listView.setEmptyView(folderId == 0 ? viewPages[0].progressView : null);
-@@ -5581,6 +5587,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5583,6 +5589,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
              @Override
              public void openAnimationStarted(boolean open) {

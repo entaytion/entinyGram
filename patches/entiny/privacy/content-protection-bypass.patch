@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8484,7 +8484,7 @@ public class MessageObject {
+@@ -8485,7 +8485,7 @@ public class MessageObject {
              return false;
          } else if (searchType == ChatActivity.SEARCH_PUBLIC_POSTS) {
              return true;
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
              return false;
          } else if (messageOwner.fwd_from != null && !isOutOwner() && messageOwner.fwd_from.saved_from_peer != null && getDialogId() == UserConfig.getInstance(currentAccount).getClientUserId()) {
              return true;
-@@ -8755,7 +8755,7 @@ public class MessageObject {
+@@ -8756,7 +8756,7 @@ public class MessageObject {
              return;
          }
          boolean hasUrls = applyEntities();
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
          if (!noforwards) {
              final long dialogId = getDialogId();
              noforwards = MessagesController.getInstance(currentAccount).isPeerNoForwards(dialogId);
-@@ -9251,7 +9251,7 @@ public class MessageObject {
+@@ -9252,7 +9252,7 @@ public class MessageObject {
          public TextLayoutBlocks(MessageObject messageObject, @NonNull CharSequence text, TextPaint textPaint, int width) {
              this.text = text;
              textWidth = 0;
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
              if (messageObject != null && !noforwards) {
                  final long dialogId = messageObject.getDialogId();
                  noforwards = MessagesController.getInstance(messageObject.currentAccount).isPeerNoForwards(dialogId);
-@@ -11703,7 +11703,7 @@ public class MessageObject {
+@@ -11704,7 +11704,7 @@ public class MessageObject {
      public boolean canForwardMessage() {
          if (isQuickReply()) return false;
          if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
@@ -149,7 +149,7 @@ index 0000000..0000000 100644
              );
          }
  
-@@ -10475,7 +10475,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -10476,7 +10476,7 @@ public class ChatActivity extends BaseFragment implements
          }
          ChatActionsHelper.addActionModeItems(this, actionMode, edit);
          actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
@@ -158,7 +158,7 @@ index 0000000..0000000 100644
          actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -12347,6 +12347,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12348,6 +12348,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private boolean hasSelectedNoforwardsMessage() {
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
          try {
              for (int i = 0; i < selectedMessagesIds.length; ++i) {
                  for (int j = 0; j < selectedMessagesIds[i].size(); ++j) {
-@@ -13540,7 +13541,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13541,7 +13542,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void showTextSelectionHint(MessageObject messageObject) {
@@ -175,7 +175,7 @@ index 0000000..0000000 100644
              return;
          }
          CharSequence text;
-@@ -19673,7 +19674,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19674,7 +19675,7 @@ public class ChatActivity extends BaseFragment implements
                  int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
                  if (copyItem != null) {
                      copyVisible = copyItem.getVisibility();
@@ -184,7 +184,7 @@ index 0000000..0000000 100644
                      newCopyVisible = copyItem.getVisibility();
                  }
                  if (starItem != null) {
-@@ -19765,7 +19766,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19766,7 +19767,7 @@ public class ChatActivity extends BaseFragment implements
                                  MessageObject msg = selectedMessagesIds[a].valueAt(i);
                                  if (msg == null) continue;
                                  if (msg.isVoiceOnce() || msg.isRoundOnce()) continue;
@@ -193,7 +193,7 @@ index 0000000..0000000 100644
                                  if (msg.isVoice() || msg.isRoundVideo())
                                      show = true;
                              }
-@@ -31419,7 +31420,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -31418,7 +31419,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
@@ -202,7 +202,7 @@ index 0000000..0000000 100644
          boolean noforwardsOrPaidMedia = noforwards || message.type == MessageObject.TYPE_PAID_MEDIA;
          boolean allowUnpin = message.getDialogId() != mergeDialogId && allowPin && (pinnedMessageObjects.containsKey(message.getId()) || groupedMessages != null && !groupedMessages.messages.isEmpty() && pinnedMessageObjects.containsKey(groupedMessages.messages.get(0).getId())) && !message.isExpiredStory();
          boolean allowEdit = message.canEditMessage(currentChat) && !chatActivityEnterView.hasAudioToSend() && message.getDialogId() != mergeDialogId && message.type != MessageObject.TYPE_STORY && message.type != MessageObject.TYPE_POLL;
-@@ -34104,7 +34105,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34103,7 +34104,7 @@ public class ChatActivity extends BaseFragment implements
                  break;
              }
              case OPTION_REPLY: {
@@ -211,7 +211,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  if (selectedObject != null && currentChat != null && (!ChatHelper.isEffectivelyInChat(currentChat) && !ChatObject.isMonoForum(currentChat) && !isThreadChat() || ChatObject.isChannel(currentChat) && !ChatObject.canPost(currentChat) && !currentChat.megagroup || !ChatObject.canSendMessages(currentChat))) {
-@@ -36688,7 +36689,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -36687,7 +36688,7 @@ public class ChatActivity extends BaseFragment implements
                      builder.setTitleMultipleLines(true);
                  }
                  final int finalTimestamp = timestamp;
@@ -220,7 +220,7 @@ index 0000000..0000000 100644
                  builder.setItems(noforwards ? new CharSequence[] {LocaleController.getString(R.string.Open)} : new CharSequence[]{LocaleController.getString(R.string.Open), LocaleController.getString(R.string.Copy)}, (dialog, which) -> {
                      if (which == 0) {
                          if (str.startsWith("video?")) {
-@@ -37065,7 +37066,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37064,7 +37065,7 @@ public class ChatActivity extends BaseFragment implements
          if (url == null || getParentActivity() == null) {
              return;
          }

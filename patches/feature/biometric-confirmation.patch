@@ -98,7 +98,7 @@ index 0000000..0000000 100644
                  } else if (id == share_contact) {
                      if (currentUser == null || getParentActivity() == null) {
                          return;
-@@ -8725,12 +8727,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -8726,12 +8728,12 @@ public class ChatActivity extends BaseFragment implements
                      }
                  } else {
                      boolean canDeleteHistory = chatInfo != null && chatInfo.can_delete_channel;
@@ -201,7 +201,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9463,7 +9463,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9465,7 +9465,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
  
@@ -210,7 +210,7 @@ index 0000000..0000000 100644
                      if (selectedDialogs.isEmpty()) {
                          return;
                      }
-@@ -9487,7 +9487,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9489,7 +9489,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          }, null);
                      }
                      hideActionMode(action == clear);
@@ -219,7 +219,7 @@ index 0000000..0000000 100644
              return;
          } else if (action == block && alert) {
              TLRPC.User user;
-@@ -9497,7 +9497,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9499,7 +9499,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  user = null;
              }
@@ -228,7 +228,7 @@ index 0000000..0000000 100644
                  for (int a = 0, N = selectedDialogs.size(); a < N; a++) {
                      long did = selectedDialogs.get(a);
                      if (report) {
-@@ -9510,7 +9510,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9512,7 +9512,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      getMessagesController().blockPeer(did);
                  }
                  hideActionMode(false);
@@ -237,7 +237,7 @@ index 0000000..0000000 100644
              return;
          }
          int minPinnedNum = Integer.MAX_VALUE;
-@@ -9594,7 +9594,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9596,7 +9596,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
                          showDialog(builder.create());
                      } else {
@@ -246,7 +246,7 @@ index 0000000..0000000 100644
                              hideActionMode(false);
                              if (action == clear && ChatObject.isChannel(chat) && (!chat.megagroup || ChatObject.isPublic(chat))) {
                                  getMessagesController().deleteDialog(selectedDialog, 2, param);
-@@ -9642,7 +9642,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9644,7 +9644,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      }
                                  }
                              }

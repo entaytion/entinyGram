@@ -168,7 +168,6 @@
     <string name="InuRoundRecorderExposureLevels">أزرار مستوى التعريض</string>
     <string name="InuRoundRecorderExposureLevelsInfo">إظهار أزرار EV لتفتيح اللقطة أو تعتيمها أثناء التسجيل.</string>
     <string name="InuShowAllRecentStickers">إظهار كل الملصقات الأخيرة</string>
-    <string name="InuNoStickerExtraPadding">إزالة الحشوة السفلية الإضافية</string>
     <string name="InuHideKeyboardOnScroll">إخفاء لوحة المفاتيح عند التمرير</string>
     <string name="InuKeepKeyboardWhileTyping">إبقاء لوحة المفاتيح أثناء الكتابة</string>
     <string name="InuKeepKeyboardWhileTypingInfo">عدم إخفائها عند التمرير إذا كان هناك نص في الحقل</string>

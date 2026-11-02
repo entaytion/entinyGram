@@ -25,7 +25,7 @@ index 0000000..0000000 100644
  
      private final ReferenceList<View> glassAttachedViews = new ReferenceList<>();
      private final ReferenceList<BlurredBackgroundDrawable> glassAttachedDrawables = new ReferenceList<>();
-@@ -3688,6 +3690,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -3689,6 +3691,18 @@ public class ChatActivity extends BaseFragment implements
                  return super.getBackgroundColor();
              }
          };
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  
          if (textSelectionHelper == null) {
              Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
-@@ -8066,6 +8080,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8068,6 +8082,10 @@ public class ChatActivity extends BaseFragment implements
              public void setVisibility(int visibility) {
                  super.setVisibility(visibility);
                  bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -8280,7 +8298,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8282,7 +8300,10 @@ public class ChatActivity extends BaseFragment implements
          chatActivityEnterView.setViewParentForEmoji(chatInputInAppContainer);
          checkSendButtonBlockedByTyping(false);
  
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -43351,6 +43372,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -43366,6 +43387,12 @@ public class ChatActivity extends BaseFragment implements
              if (blurredBackgroundColorProviderWhite != null) {
                  blurredBackgroundColorProviderWhite.updateColors();
              }
@@ -1400,7 +1400,7 @@ index 0000000..0000000 100644
                  return rLottieDrawable;
              }
              return obj;
-@@ -51,17 +55,25 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
+@@ -57,17 +61,25 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
      }
  
      public void setState(State state, boolean animate) {

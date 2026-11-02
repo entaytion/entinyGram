@@ -2,6 +2,7 @@ package desu.inugram.helpers.plugins
 
 import desu.inugram.core.plugins.PluginAsset
 import desu.inugram.core.plugins.PluginPermissions
+import desu.inugram.helpers.plugins.telegram.PluginMessageFilters
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -212,6 +213,19 @@ open class QuickJs {
 
     open fun abandonTranslation(dispatchId: Long, timedOut: Boolean) = ifLive { nativeAbandonTranslation(it, dispatchId, timedOut) }
 
+    /**
+     * Runs [callbackIds] over the message, on the engine thread. `H` hides; otherwise `S` (spoiler) or
+     * `V` and the first rewrite's json. Empty when the engine has closed
+     */
+    open fun filterMessage(callbackIds: IntArray, accountId: Int, messageJson: String): String =
+        ifLiveOr("") { nativeFilterMessage(it, callbackIds, accountId, messageJson) }
+
+    /** answered once through [TextEntitiesListener.textEntitySettled], unless abandoned first */
+    open fun dispatchTextEntity(token: Int, secondary: Boolean, tapId: Long, tapJson: String) =
+        ifLive { nativeDispatchTextEntity(it, token, secondary, tapId, tapJson) }
+
+    open fun abandonTextEntityTap(tapId: Long, timedOut: Boolean) = ifLive { nativeAbandonTextEntityTap(it, tapId, timedOut) }
+
     /** the host owns the diff ([desu.inugram.core.plugins.ScreenStack]) */
     fun dispatchScreenChange(changeJson: String, stackJson: String) = requireLive { nativeDispatchScreenChange(it, changeJson, stackJson) }
 
@@ -224,6 +238,9 @@ open class QuickJs {
     /** answered exactly once through [SendsListener.onSendVerdict] */
     open fun dispatchSend(callbackId: Int, dispatchId: Long, accountId: Int, messageJson: String) =
         requireLive { nativeDispatchSend(it, callbackId, dispatchId, accountId, messageJson) }
+
+    /** any thread, without the engine lease: whether the text pattern of interceptor [callbackId] matches [text] */
+    open fun matchSendText(callbackId: Int, text: String): Boolean = ifLiveOr(false) { nativeMatchSendText(it, callbackId, text) }
 
     open fun abandonSendDispatch(dispatchId: Long, reasonWire: String) = requireLive { nativeAbandonSendDispatch(it, dispatchId, reasonWire) }
 
@@ -343,10 +360,14 @@ open class QuickJs {
     private external fun nativeDispatchTranslation(ptr: Long, token: Int, dispatchId: Long, requestJson: String)
     private external fun nativeAbandonTranslation(ptr: Long, dispatchId: Long, timedOut: Boolean)
     private external fun nativeDispatchScreenChange(ptr: Long, changeJson: String, stackJson: String)
+    private external fun nativeFilterMessage(ptr: Long, callbackIds: IntArray, accountId: Int, messageJson: String): String
+    private external fun nativeDispatchTextEntity(ptr: Long, token: Int, secondary: Boolean, tapId: Long, tapJson: String)
+    private external fun nativeAbandonTextEntityTap(ptr: Long, tapId: Long, timedOut: Boolean)
     private external fun nativeDispatchNotification(ptr: Long, callbackId: Int, name: String, accountId: Int, args: Array<String>)
     private external fun nativeWriteProgress(ptr: Long, requestId: Long, loaded: Long, total: Long)
     private external fun nativeDispatchRpc(ptr: Long, callbackId: Int, dispatchId: Long, method: String, accountId: Int, requestWire: String)
     private external fun nativeDispatchSend(ptr: Long, callbackId: Int, dispatchId: Long, accountId: Int, messageJson: String)
+    private external fun nativeMatchSendText(ptr: Long, callbackId: Int, text: String): Boolean
     private external fun nativeAbandonSendDispatch(ptr: Long, dispatchId: Long, reasonWire: String)
     private external fun nativeCompleteNext(ptr: Long, dispatchId: Long, resultWire: String)
     private external fun nativeAbandonDispatch(ptr: Long, dispatchId: Long, reasonWire: String)
@@ -362,6 +383,54 @@ open class QuickJs {
     private external fun nativeDestroy(ptr: Long)
 
     companion object {
+        /**
+         * Any thread, without the engine lease. Each of [engines] in turn answers `[count, matched, ...callback ids]`,
+         * `matched` being 0, 1 for a spoiler or 2 for a hide, a closed engine `[0]`; none follow a hide
+         */
+        fun matchMessageFilters(engines: List<QuickJs>, probe: PluginMessageFilters.Probe): IntArray? = with(probe) {
+            nativeMatchMessageFilters(readPtrs(engines), text, entitiesJson, buttons, sender, peer, peerType, media, forward)
+        }
+
+        /**
+         * Any thread, without the engine lease, like [matchMessageFilters]: the entities each of [engines] finds in
+         * [shown], as one array of rust's `TextEntities::matches` entries with the `engine` index. Null without any;
+         * a closed engine finds none
+         */
+        fun matchTextEntities(engines: List<QuickJs>, shown: String, probe: PluginMessageFilters.Probe): String? = with(probe) {
+            nativeMatchTextEntities(
+                readPtrs(engines), shown, text.takeIf { it != shown }, entitiesJson, buttons, sender, peer, peerType, media, forward,
+            )
+        }
+
+        private fun readPtrs(engines: List<QuickJs>) = LongArray(engines.size) { engines[it].ptr }
+
+        @JvmStatic
+        private external fun nativeMatchMessageFilters(
+            ptrs: LongArray,
+            text: String,
+            entitiesJson: String,
+            buttons: String,
+            sender: Long,
+            peer: Long,
+            peerType: Int,
+            media: String,
+            forward: Boolean,
+        ): IntArray?
+
+        @JvmStatic
+        private external fun nativeMatchTextEntities(
+            ptrs: LongArray,
+            shown: String,
+            text: String?,
+            entitiesJson: String,
+            buttons: String,
+            sender: Long,
+            peer: Long,
+            peerType: Int,
+            media: String,
+            forward: Boolean,
+        ): String?
+
         /** `console.*` binds 0..4 only, so plugin JS cannot forge a fault */
         const val LEVEL_FAULT = 5
 

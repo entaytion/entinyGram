@@ -389,3 +389,4 @@ Upstream (`teidesu/inugram`) is an external dependency. Merges from upstream fre
    - Verify stock API renames (e.g. `UItem.text2` → `UItem.subtext`).
 5. **Known Upstream Bugs to Leave Off:**
    - `NON_ISLAND_SHARED_MEDIA_TABS` (`SharedMediaLayout.inu_dockOffset()` clips profile media tabs). Upstream bug; keep toggle OFF.
+6. **Never Pull Upstream Changelogs:** `changelogs/` is ours only. Do not import, merge, or copy inugram's release notes on sync or rebase; on conflict keep ours or drop their files.

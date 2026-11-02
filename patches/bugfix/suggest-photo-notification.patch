@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -2224,7 +2224,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -2234,7 +2234,7 @@ public class NotificationsController extends BaseController implements Notificat
                          return messageObject.messageText.toString();
                      } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionGiveawayResults) {
                          return messageObject.messageText.toString();
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                          return messageObject.messageText.toString();
                      } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionPinMessage) {
                          if (chat != null && (!ChatObject.isChannel(chat) || chat.megagroup)) {
-@@ -2754,7 +2754,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -2764,7 +2764,7 @@ public class NotificationsController extends BaseController implements Notificat
                              msg = messageObject.messageText.toString();
                          } else if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionStarGiftUnique) {
                              msg = messageObject.messageText.toString();

@@ -96,7 +96,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -12187,6 +12187,9 @@ public class MessageObject {
+@@ -12204,6 +12204,9 @@ public class MessageObject {
                  if (!mediaExists) {
                      mediaExists = file.exists();
                  }

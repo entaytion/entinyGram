@@ -8,8 +8,8 @@ Subject: Block sponsored messages and video ads
  .../main/java/org/telegram/messenger/video/VideoAds.java  | 2 +-
  .../org/telegram/ui/Adapters/DialogsSearchAdapter.java    | 2 +-
  .../src/main/java/org/telegram/ui/Cells/DialogCell.java   | 8 ++++++++
- .../src/main/java/org/telegram/ui/ChatActivity.java       | 4 ++--
- 5 files changed, 13 insertions(+), 4 deletions(-)
+ .../src/main/java/org/telegram/ui/ChatActivity.java       | 2 +-
+ 5 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -25466,7 +25466,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25465,7 +25465,7 @@ public class ChatActivity extends BaseFragment implements
      private Pattern sponsoredUrlPattern;
      private MessageObject botSponsoredMessage;
      private void addSponsoredMessages(boolean animated) {
@@ -88,12 +88,3 @@ index 0000000..0000000 100644
              return;
          }
          MessagesController.SponsoredMessagesInfo res = getMessagesController().getSponsoredMessages(dialog_id);
-@@ -37353,7 +37353,7 @@ public class ChatActivity extends BaseFragment implements
-         private int messagesEndRow;
- 
-         public ArrayList<MessageObject> getMessages() {
--            return desu.inugram.helpers.chat.BlockedMessagesHelper.isHideMode() ? inu_visibleMessages : inu_getSourceMessages();
-+            return desu.inugram.helpers.chat.BlockedMessagesHelper.refreshVisible(this);
-         }
- 
-         public final ArrayList<MessageObject> inu_visibleMessages = new ArrayList<>();

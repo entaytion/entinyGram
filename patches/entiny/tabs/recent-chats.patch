@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9068,6 +9068,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -9070,6 +9070,10 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
              savedMessagesHint.setMultilineText(true);
-@@ -9196,6 +9200,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9198,6 +9202,7 @@ public class ChatActivity extends BaseFragment implements
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
          Timer.finish(t);
  
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
              if (t != topPadding || b != getPaddingBottom()) {
                  setTopGlowOffset(t);
                  setPadding(0, t, 0, b);
-@@ -5777,6 +5781,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5779,6 +5783,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          checkUi_searchFieldStyle();
  
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);

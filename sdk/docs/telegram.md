@@ -304,6 +304,77 @@ handled by Inugram directly.
 
 Manually using `invokeRpc({ _: 'messages.translateText', ... })` works as usual, however.
 
+## Message filters
+
+`inu.filterMessages` changes how messages appear in chats, without modifying the messages in database.
+
+Example use-cases: ad blockers, local keyword filters, etc.
+
+```ts
+// hide channel posts with an ad marker in a link or a button
+inu.filterMessages([{ html: /[?&](amp;)?erid=/i, peer: 'broadcast' }, { buttons: /erid=/i }], 'hide')
+
+// customized behavior with a callback
+inu.filterMessages({ text: /crypto/i, peer: 'group' }, message => ({ rewrite: '[crypto spam]' }))
+```
+
+For better performance, message filters have a declarative pre-filter,
+which is a set of conditions that need to match for the filter to apply.
+Items in the array are logical OR, items within one object are logical AND:
+
+```ts
+// hide all messages containing "meow" + hide all channel posts containing "mrrp"
+inu.filterMessages([
+  { text: /meow/ },
+  { peer: 'broadcast', text: /mrrp/ }
+], 'hide')
+```
+
+Empty filters (`{}`) are not allowed.
+
+A filter returns a verdict, which can be one of:
+- `'hide'` - to hide the message completely
+- `'spoiler'` - to hide the message text (and media, if any) with a spoiler
+- `{ rewrite: InputText }` - to arbitrarily customize the text of the message.
+
+### Extra points
+
+- **Fixed verdicts are *almost* free.** They don't incur a JS<->app interaction and can thus be handled very quickly and efficiently
+- **Callbacks are synchronous**, and share a budget of 50 ms per message, to ensure janklessness. Once it runs out, the running callback is stopped, the rest are skipped, the message shows as is, and the plugin takes a strike. Three strikes stop the plugin.
+- **Verdicts are cached** per-message, so make sure your filters are idempotent
+- **The user can bypass it.** There's a "Show hidden messages" in the chat's menu to reveal the hidden messages and undo any rewrites, and every rewritten message shows which plugin did that with a link to undo.
+- **Notifications follow the verdicts.** A hidden message doesn't notify, and spoilers and rewrites apply to the notification text. A push received while the app is in background only carries the message text, so filters on media, buttons or entities won't match it until the full message arrives.
+- **Some messages can't be touched**, notably: service messages, messages in secret chats, messages from Telegram (777000), Saved Messages and outgoing messages.
+
+## Text entities
+
+`inu.registerTextEntity` makes matches of a pattern in message text tappable, like links,
+with a customizable handler.
+
+Example use-cases: currency converters, github issues, timezones, etc.
+
+```ts
+// a link, opened like a text link (no JS runs on tap)
+inu.registerTextEntity({ pattern: /#(\d+)/, filter: { peer: -1001234567890 }, url: 'https://github.com/x/y/issues/$1' })
+
+// a custom callback, with the match and its groups passed to it
+inu.registerTextEntity({
+  pattern: /(?<amount>\d+(?:[.,]\d+)?)\s?(?<currency>USD|EUR|CNY)/i,
+  callback: async ({ groups, signal }) => {
+    const rates = await getRates(signal)
+    inu.ui.dialog({ title: `${groups.amount} ${groups.currency}`, message: convert(rates, groups), positive: 'OK' })
+  },
+})
+```
+
+- The `url` template works like the `String.prototype.replace` (`$1`, `$<name>`, `$&`, `$$`), with each group encoded using `encodeURIComponent`.
+- Async callbacks are supported – the link will shimmer while the callback resolves, and you can
+use `signal` to abort any operation in case the user taps on another link or leaves the chat.
+- `anchor` opens a menu at the tapped link, like the one stock shows on a long tap.
+- Matches inside some entities (notably - links, mentions, code) are not matched
+- When the same entity is matched by multiple plugins, the first one in the user's plugin order wins.
+- Messages in secret chats, from Telegram (777000) and in the "Recent actions" are never matched.
+
 ## Events
 
 There are a few methods that are events you can subscribe to, to do something when something happens.

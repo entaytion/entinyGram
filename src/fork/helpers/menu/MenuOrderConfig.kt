@@ -159,6 +159,12 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         OPEN_FORUM("open_forum", listOf(ChatActivity.open_forum), R.string.OpenAllTopics, R.drawable.msg_discussion),
         CLOSE_TOPIC("close_topic", listOf(ChatActivity.topic_close), R.string.CloseTopic, R.drawable.msg_topic_close),
         SHOW_PINNED_PANEL("show_pinned_panel", listOf(ChatActionsHelper.ACTION_SHOW_PINNED_PANEL), R.string.InuShowPinnedPanel, R.drawable.msg_pin),
+        SHOW_HIDDEN_MESSAGES(
+            "show_hidden_messages",
+            listOf(ChatActionsHelper.ACTION_SHOW_HIDDEN_MESSAGES),
+            R.string.InuShowFilteredMessages,
+            R.drawable.msg_message
+        ),
         RECENT_ACTIONS("recent_actions", listOf(ChatActionsHelper.ACTION_RECENT_ACTIONS), R.string.EventLog, R.drawable.msg_log),
         GO_TO_BEGINNING("go_to_beginning", listOf(ChatActionsHelper.ACTION_GO_TO_BEGINNING), R.string.InuJumpToBeginning, R.drawable.msg_go_up),
         GO_TO_MESSAGE("go_to_message", listOf(ChatActionsHelper.ACTION_GO_TO_MESSAGE), R.string.InuGoToMessage, R.drawable.msg_message),
@@ -470,13 +476,14 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
 class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
     enum class Item(
         override val key: String,
-        override val labelRes: Int,
-        override val iconRes: Int,
+        override open val labelRes: Int,
+        override open val iconRes: Int,
     ) : MenuOrderItem {
         MY_PROFILE("my_profile", R.string.MyProfile, R.drawable.left_status_profile),
         BOTS("bots", R.string.InuDrawerBots, R.drawable.msg_bot),
         DIVIDER_1("divider_1", R.string.InuMenuDivider, R.drawable.msg_list),
         COMPOSE("compose", R.string.NewMessageTitle, R.drawable.menu_topic_add),
+        NEW_CHANNEL("new_channel", R.string.NewChannel, R.drawable.msg_channel),
         CONTACTS("contacts", R.string.Contacts, R.drawable.msg_contacts),
         CALLS("calls", R.string.Calls, R.drawable.msg_calls),
         SAVED_MESSAGES("saved_messages", R.string.SavedMessages, R.drawable.msg_saved),
@@ -486,7 +493,7 @@ class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key
         ARCHIVE("archive", R.string.ArchivedChats, R.drawable.msg_archive),
         PROXY("proxy", R.string.ProxySettings, R.drawable.outline_shield_check),
         GHOST_MODE("ghost_mode", R.string.InuGhostMode, R.drawable.inu_ghost),
-        SETTINGS("settings", R.string.Settings, R.drawable.msg_settings),
+        SETTINGS("settings", R.string.Settings, R.drawable.msg_settings_old),
         ENTINY_SETTINGS("entiny_settings", R.string.InuSettings, R.drawable.icon_settings_inu),
         PLUGIN_SETTINGS("plugin_settings", R.string.InuPlugins, R.drawable.msg_customize),
         RESTART_APP("restart_app", R.string.InuRestartApp, R.drawable.msg_retry),
@@ -526,6 +533,7 @@ class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key
             Item.ENTINY_SETTINGS,
             Item.PLUGIN_SETTINGS,
             Item.RESTART_APP,
+            Item.NEW_CHANNEL,
             Item.DIVIDER_2,
             Item.DIVIDER_3,
             Item.DIVIDER_4,

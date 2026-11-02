@@ -32,6 +32,7 @@ object TranslationProviderHelper {
 
     private val requests = ConcurrentHashMap<Long, Request>()
     private val sourceLanguages = Collections.synchronizedMap(WeakHashMap<TLRPC.TL_textWithEntities, String>())
+    private val requestProviders = Collections.synchronizedMap(WeakHashMap<TLObject, String>())
 
     // #endif
 
@@ -49,6 +50,14 @@ object TranslationProviderHelper {
         // #endif
     }
 
+    /** [provider] overrides the user's choice for this request, empty for Telegram */
+    @JvmStatic
+    fun setRequestProvider(request: TLObject, provider: String?) {
+        // #if PLUGINS
+        if (provider != null) requestProviders[request] = provider
+        // #endif
+    }
+
     @JvmStatic
     fun createRichRequest(message: TL_iv.RichMessage, language: String?, toLanguage: String): TLObject =
         RichTranslationRequest(listOf(message), listOf(language), toLanguage)
@@ -62,9 +71,13 @@ object TranslationProviderHelper {
         )
 
     @JvmStatic
-    fun isActive(): Boolean =
+    fun isActive(): Boolean = isActive(null)
+
+    /** [provider] as in [setRequestProvider] */
+    @JvmStatic
+    fun isActive(provider: String?): Boolean =
         // #if PLUGINS
-        InuConfig.PLUGINS_ENABLED.value && InuConfig.TRANSLATION_PROVIDER.value.isNotEmpty()
+        InuConfig.PLUGINS_ENABLED.value && (provider ?: InuConfig.TRANSLATION_PROVIDER.value).isNotEmpty()
         // #else
         false
         // #endif
@@ -79,7 +92,8 @@ object TranslationProviderHelper {
         onCompleteTimestamp: RequestDelegateTimestamp?,
     ): Boolean {
         // #if PLUGINS
-        if (!isActive()) {
+        val provider = requestProviders.remove(request)
+        if (!isActive(provider)) {
             if (request !is RichTranslationRequest) return false
             Utilities.stageQueue.postRunnable {
                 val error = createError("TRANSLATION_PROVIDER_FAILED")
@@ -89,7 +103,7 @@ object TranslationProviderHelper {
             return true
         }
         if (request !is RichTranslationRequest && PluginRpc.isBypassed(request)) return false
-        val key = InuConfig.TRANSLATION_PROVIDER.value
+        val key = provider ?: InuConfig.TRANSLATION_PROVIDER.value
         val complete = { response: TLObject?, error: TLRPC.TL_error? ->
             Utilities.stageQueue.postRunnable {
                 onComplete?.run(response, error)

@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Mon, 26 Oct 2026 00:02:15 +0200
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 22:47:32 +0400
 Subject: allow minimizing the attach panel without discarding the selection
 
 ---
@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13815,8 +13815,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -13816,8 +13816,11 @@ public class ChatActivity extends BaseFragment implements
              chatAttachAlert.setMaxSelectedPhotos(-1, true);
          }
          chatAttachAlert.enableDefaultMode();
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
          chatAttachAlert.parentThemeDelegate = themeDelegate;
          showDialog(chatAttachAlert);
      }
-@@ -30422,6 +30425,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30421,6 +30424,7 @@ public class ChatActivity extends BaseFragment implements
      public void onResume() {
          super.onResume();
          checkShowBlur(false);

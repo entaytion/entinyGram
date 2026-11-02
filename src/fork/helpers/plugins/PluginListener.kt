@@ -145,6 +145,23 @@ interface TranslationListener {
     fun translationResult(dispatchId: Long, wire: String)
 }
 
+/** `filterMessages` */
+interface MessageFiltersListener {
+    /** called from inside the engine; [needs] is rust's `NEEDS_*` bits, 0 once the plugin has no filters */
+    fun messageFiltersChanged(needs: Int)
+}
+
+/** `registerTextEntity` */
+interface TextEntitiesListener {
+    /** called from inside the engine; [needs] is rust's `filters::NEEDS_*` bits, 0 once the plugin has no entities */
+    fun textEntitiesChanged(needs: Int)
+
+    /** answers [QuickJs.dispatchTextEntity]: the callback and its promise are done */
+    fun textEntitySettled(tapId: Long)
+
+    fun uiOpenTextEntityMenu(menuId: Long, tapId: Long, itemsJson: String): String?
+}
+
 /** a separate table in rust from [RpcListener]'s */
 interface UpdatesListener {
     /** [scope] "" means each constructor is its own scope, else the demuxed event name */

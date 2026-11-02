@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -9435,7 +9435,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -9443,7 +9443,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              sizes.add(size);
          }
          if (highQuality) {
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          } else {
              size = ImageLoader.scaleAndSaveImage(bitmap, AndroidUtilities.getPhotoSize(highQuality), AndroidUtilities.getPhotoSize(highQuality), true, 80, false, 101, 101);
          }
-@@ -12127,7 +12127,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -12138,7 +12138,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
  
          int selectedCompression = Math.round(DownloadController.getInstance(UserConfig.selectedAccount).getMaxVideoBitrate() / (100f / compressionsCount));
  
@@ -57,7 +57,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -22196,6 +22196,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22195,6 +22195,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      private int selectCompression() {

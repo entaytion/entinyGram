@@ -1,8 +1,8 @@
-use jni::objects::{JByteArray, JClass, JObject, JObjectArray, JString, JValue};
+use jni::objects::{JByteArray, JClass, JIntArray, JLongArray, JObject, JObjectArray, JString, JValue};
 use jni::refs::IntoAuto;
 use jni::signature::{MethodSignature, RuntimeMethodSignature};
 use jni::strings::JNIString;
-use jni::sys::{jboolean, jint, jlong, jobject, jstring};
+use jni::sys::{jboolean, jint, jintArray, jlong, jobject, jstring};
 use jni::{Env, EnvUnowned};
 use rquickjs::context::EvalOptions;
 use rquickjs::{Coerced, Context, Ctx, Persistent, Result as JsResult, Runtime, Value};
@@ -18,8 +18,8 @@ use super::env::{
 use super::eval::{evaluate_inspected, EvalReply};
 use super::log::{install_console, make_log, Inspect};
 use super::{
-  engine_jvm_refs, enter_engine, insert_engine, remove_engine, stop_engine_callbacks, try_enter_engine, CallerEntry,
-  Engine, EntryError, CALLER_LEASE_WAIT,
+  engine_jvm_refs, engine_message_filters, engine_send_patterns, engine_text_entities, enter_engine, insert_engine, remove_engine,
+  stop_engine_callbacks, try_enter_engine, CallerEntry, Engine, EntryError, CALLER_LEASE_WAIT,
 };
 use crate::api::canvas::{install_canvas, CanvasHost};
 use crate::api::error::{describe_js_error, install_plugin_error, install_rejection_tracker};
@@ -35,8 +35,10 @@ use crate::api::platform::notifications::{install_notifications, NotificationHos
 use crate::api::platform::open_url::install_open_url;
 use crate::api::platform::xposed;
 use crate::api::telegram::account::{install_account, AccountHost};
+use crate::api::telegram::filters::{install_filters, FilterHost, Probe, FILTER_DEADLINE_MS, MATCHED_HIDE};
 use crate::api::telegram::reads::{install_reads, ReadsHost};
 use crate::api::telegram::rpc::RpcHost;
+use crate::api::telegram::text_entities::{install_text_entities, TextEntityHost};
 use crate::api::telegram::writes::{install_writes, WritesDeps, WritesHost};
 use crate::api::timers::{install_timers, TimerHost};
 use crate::api::tl::message::install_message;
@@ -297,6 +299,30 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeCreate(
       let translation = install_part(&ctx, "inu.registerTranslationProvider", log.as_ref(), |ctx, globals| {
         install_translation(&ctx, translation_host, lifecycle.clone(), log.clone(), &globals)
       })?;
+      let filter_host: Rc<dyn FilterHost> = bridge.clone();
+      let filters = install_part(&ctx, "inu.filterMessages", log.as_ref(), |ctx, globals| {
+        install_filters(
+          &ctx,
+          filter_host,
+          grants.clone(),
+          lifecycle.clone(),
+          Some(account.clone()),
+          log.clone(),
+          &globals,
+        )
+      })?;
+      let text_entity_host: Rc<dyn TextEntityHost> = bridge.clone();
+      let text_entities = install_part(&ctx, "inu.registerTextEntity", log.as_ref(), |ctx, globals| {
+        install_text_entities(
+          &ctx,
+          text_entity_host,
+          lifecycle.clone(),
+          Some(account.clone()),
+          Some(ui.clone()),
+          log.clone(),
+          &globals,
+        )
+      })?;
       // last onto the account prototype, since this installs before the reads and writes that build it
       install_part(&ctx, "Account.suppressNotifications", log.as_ref(), |ctx, _| {
         notifications.install_account_suppress(&ctx, &account)
@@ -316,6 +342,8 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeCreate(
         history,
         actions,
         translation,
+        filters,
+        text_entities,
         account,
         reads,
         writes,
@@ -1162,6 +1190,172 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeDispatchR
   })
 }
 
+/// Without the engine lease: the app asks about every message it builds, on whichever thread builds it.
+/// Each of `ptrs` in turn answers `[count, ...MessageFilters::matches]`, a closed engine `[0]`; none
+/// after a static hide
+#[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeMatchMessageFilters<'local>(
+  mut env: EnvUnowned<'local>,
+  _class: JClass<'local>,
+  ptrs: JLongArray<'local>,
+  text: JString<'local>,
+  entities_json: JString<'local>,
+  buttons: JString<'local>,
+  sender: jlong,
+  peer: jlong,
+  peer_type: jint,
+  media: JString<'local>,
+  forward: jboolean,
+) -> jintArray {
+  in_env(&mut env, std::ptr::null_mut(), |env| {
+    let mut handles = vec![0; ptrs.len(env).unwrap_or_default()];
+    if ptrs.get_region(env, 0, &mut handles).is_err() {
+      return std::ptr::null_mut();
+    }
+    let (text, entities_json) = (jstring_to_string(env, &text), jstring_to_string(env, &entities_json));
+    let (buttons, media) = (jstring_to_string(env, &buttons), jstring_to_string(env, &media));
+    let probe = Probe {
+      text: &text,
+      entities_json: &entities_json,
+      buttons: &buttons,
+      sender,
+      peer,
+      peer_type,
+      media: &media,
+      forward,
+    };
+    let mut html = None;
+    let mut matched = Vec::new();
+    for handle in handles {
+      let Some(filters) = engine_message_filters(handle) else {
+        matched.push(0);
+        continue;
+      };
+      let found = filters.matches(&probe, &mut html);
+      matched.push(found.len() as i32);
+      matched.extend_from_slice(&found);
+      if found[0] == MATCHED_HIDE {
+        break;
+      }
+    }
+    let Ok(array) = env.new_int_array(matched.len()) else {
+      return std::ptr::null_mut();
+    };
+    match array.set_region(env, 0, &matched) {
+      Ok(()) => array.into_raw(),
+      Err(_) => std::ptr::null_mut(),
+    }
+  })
+}
+
+/// Without the engine lease, like [Java_desu_inugram_helpers_plugins_QuickJs_nativeMatchMessageFilters]:
+/// the matches of all `ptrs` in order, each with its `engine` index, null without any. `shown` is the
+/// text on screen, the rest is the probe for the entities' filters, with a null `text` for `shown`
+#[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeMatchTextEntities<'local>(
+  mut env: EnvUnowned<'local>,
+  _class: JClass<'local>,
+  ptrs: JLongArray<'local>,
+  shown: JString<'local>,
+  text: JString<'local>,
+  entities_json: JString<'local>,
+  buttons: JString<'local>,
+  sender: jlong,
+  peer: jlong,
+  peer_type: jint,
+  media: JString<'local>,
+  forward: jboolean,
+) -> jstring {
+  in_env(&mut env, std::ptr::null_mut(), |env| {
+    let mut handles = vec![0; ptrs.len(env).unwrap_or_default()];
+    if ptrs.get_region(env, 0, &mut handles).is_err() {
+      return std::ptr::null_mut();
+    }
+    let shown = jstring_to_string(env, &shown);
+    let text = (!text.is_null()).then(|| jstring_to_string(env, &text));
+    let (entities_json, buttons, media) = (
+      jstring_to_string(env, &entities_json),
+      jstring_to_string(env, &buttons),
+      jstring_to_string(env, &media),
+    );
+    let probe = Probe {
+      text: text.as_deref().unwrap_or(&shown),
+      entities_json: &entities_json,
+      buttons: &buttons,
+      sender,
+      peer,
+      peer_type,
+      media: &media,
+      forward,
+    };
+    let mut html = None;
+    let mut matched = Vec::new();
+    for (index, handle) in handles.into_iter().enumerate() {
+      let Some(entities) = engine_text_entities(handle) else {
+        continue;
+      };
+      matched.extend(entities.matches(&shown, &probe, &mut html).into_iter().map(|mut entry| {
+        entry["engine"] = index.into();
+        entry
+      }));
+    }
+    if matched.is_empty() {
+      return std::ptr::null_mut();
+    }
+    new_jstring_raw(env, serde_json::Value::Array(matched).to_string())
+  })
+}
+
+#[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeDispatchTextEntity(
+  mut env: EnvUnowned,
+  _this: JObject,
+  ptr: jlong,
+  token: jint,
+  secondary: jboolean,
+  tap_id: jlong,
+  tap_json: JString,
+) {
+  with_engine_env(&mut env, ptr, (), |env, engine| {
+    let tap_json = jstring_to_string(env, &tap_json);
+    engine.text_entities.dispatch(&engine.ctx, token as u32, secondary, tap_id, &tap_json);
+  })
+}
+
+#[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeAbandonTextEntityTap(
+  _env: EnvUnowned,
+  _this: JObject,
+  ptr: jlong,
+  tap_id: jlong,
+  timed_out: jboolean,
+) {
+  with_engine(ptr, (), |engine| engine.text_entities.abandon(&engine.ctx, tap_id, timed_out));
+}
+
+#[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeFilterMessage<'local>(
+  mut env: EnvUnowned<'local>,
+  _this: JObject<'local>,
+  ptr: jlong,
+  callback_ids: JIntArray<'local>,
+  account_id: jint,
+  message_json: JString<'local>,
+) -> jstring {
+  with_engine_env(&mut env, ptr, std::ptr::null_mut(), |env, engine| {
+    let mut ids = vec![0; callback_ids.len(env).unwrap_or_default()];
+    if callback_ids.get_region(env, 0, &mut ids).is_err() {
+      return std::ptr::null_mut();
+    }
+    let message_json = jstring_to_string(env, &message_json);
+    let verdict = {
+      let _deadline = arm(FILTER_DEADLINE_MS);
+      engine.filters.dispatch(&engine.ctx, &ids, account_id, &message_json)
+    };
+    new_jstring_raw(env, verdict)
+  })
+}
+
 #[no_mangle]
 pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeDispatchSend(
   mut env: EnvUnowned,
@@ -1175,6 +1369,24 @@ pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeDispatchS
   with_engine_env(&mut env, ptr, (), |env, engine| {
     let message_json = jstring_to_string(env, &message_json);
     engine.rpc.dispatch_send(&engine.ctx, callback_id as u32, dispatch_id, account_id, &message_json);
+  })
+}
+
+/// Without the engine lease: whether the text pattern of interceptor `callback_id` matches `text`. A
+/// closed engine or a disposed interceptor matches nothing
+#[no_mangle]
+pub extern "system" fn Java_desu_inugram_helpers_plugins_QuickJs_nativeMatchSendText(
+  mut env: EnvUnowned,
+  _this: JObject,
+  ptr: jlong,
+  callback_id: jint,
+  text: JString,
+) -> jboolean {
+  in_env(&mut env, false, |env| {
+    let Some(patterns) = engine_send_patterns(ptr) else {
+      return false;
+    };
+    patterns.matches(callback_id as u32, &jstring_to_string(env, &text))
   })
 }
 

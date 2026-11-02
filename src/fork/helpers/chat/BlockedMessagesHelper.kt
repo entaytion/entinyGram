@@ -3,7 +3,12 @@ package desu.inugram.helpers.chat
 import androidx.core.content.edit
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
+// #if PLUGINS
+import desu.inugram.helpers.plugins.telegram.PluginMessageFilters
+import desu.inugram.helpers.plugins.telegram.PluginTextEntities
+// #endif
 import org.telegram.messenger.MessageObject
+import java.util.concurrent.ConcurrentHashMap
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.tgnet.TLRPC
@@ -11,6 +16,7 @@ import org.telegram.ui.ChatActivity
 
 object BlockedMessagesHelper {
     private val extraHiddenCache = HashMap<Int, Set<Long>>()
+    private val revealed = ConcurrentHashMap.newKeySet<Pair<Int, Long>>()
 
     private fun getExtraHiddenKey(account: Int) = "blocked_messages_extra:$account"
 
@@ -55,6 +61,60 @@ object BlockedMessagesHelper {
 
     @JvmStatic
     fun isHideMode(): Boolean {
+        return isBlockedHideMode() || isPluginFiltering()
+    }
+
+    fun hasFiltered(messages: List<MessageObject>): Boolean {
+        if (!isEnabled() && !isPluginFiltering()) return false
+        return messages.any {
+            shouldSpoil(it)
+                // #if PLUGINS
+                || PluginMessageFilters.getRewrite(it) != null
+                // #endif
+        }
+    }
+
+    fun isRevealed(account: Int, dialogId: Long): Boolean = revealed.isNotEmpty() && Pair(account, dialogId) in revealed
+
+    fun setRevealed(account: Int, dialogId: Long, reveal: Boolean) {
+        val key = Pair(account, dialogId)
+        if (if (reveal) revealed.add(key) else revealed.remove(key)) notifyChanged(account)
+    }
+
+    @JvmStatic
+    fun onFilteringChanged(activity: ChatActivity, adapter: ChatActivity.ChatActivityAdapter?) {
+        ChatActionsHelper.updateRevealItem(activity)
+        if (adapter == null) return
+        var changed = adapter.inu_filtering || isHideMode()
+        for (msg in activity.messages) changed = rebuildIfStale(msg) || changed
+        if (changed) adapter.notifyDataSetChanged(true)
+    }
+
+    fun rebuildIfStale(msg: MessageObject): Boolean {
+        val spoiled = shouldSpoil(msg)
+        // #if PLUGINS
+        val rewrite = PluginMessageFilters.getRewrite(msg)
+        val textStale = rewrite !== msg.inu_rewrite || PluginTextEntities.isStale(msg)
+        // #else
+        val textStale = false
+        // #endif
+        if (spoiled == msg.inu_spoiled && !textStale) return false
+        msg.forceUpdate = true
+        // #if PLUGINS
+        msg.inu_rewrite = rewrite
+        PluginTextEntities.markCurrent(msg)
+        // #endif
+        if (msg.translated) return true
+        if (msg.caption != null) {
+            msg.caption = null
+            msg.generateCaption()
+        } else if (msg.type == MessageObject.TYPE_TEXT || msg.type == MessageObject.TYPE_EMOJIS) {
+            msg.applyNewText()
+        }
+        return true
+    }
+
+    private fun isBlockedHideMode(): Boolean {
         return InuConfig.BLOCKED_MESSAGES_MODE.value == InuConfig.BlockedMessagesModeItem.HIDE
     }
 
@@ -84,6 +144,15 @@ object BlockedMessagesHelper {
             action is TLRPC.TL_messageActionGiftCode
     }
 
+    private fun isPluginFiltering(): Boolean {
+        // #if PLUGINS
+        return PluginMessageFilters.isActive
+        // #else
+        return false
+        // #endif
+    }
+    }
+
     @JvmStatic
     fun ensureBlockedPeersLoaded(currentAccount: Int) {
         if (!isEnabled()) return
@@ -95,7 +164,11 @@ object BlockedMessagesHelper {
 
     @JvmStatic
     fun shouldHide(messageObject: MessageObject?): Boolean {
-        if (isHideMode() && isBlockedMessage(messageObject)) return true
+        if (messageObject == null || isRevealed(messageObject.currentAccount, messageObject.dialogId)) return false
+        // #if PLUGINS
+        if (PluginMessageFilters.getVerdict(messageObject)?.hide == true) return true
+        // #endif
+        if (isBlockedHideMode() && isBlockedMessage(messageObject)) return true
         if (RegexFilterHelper.isEnabled() && RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.HIDE) {
             if (isRegexFilteredMessage(messageObject)) return true
         }
@@ -105,8 +178,13 @@ object BlockedMessagesHelper {
         return false
     }
 
+    /** a message a plugin hides is spoilered wherever it still shows, like a quote of it */
     @JvmStatic
     fun shouldSpoil(messageObject: MessageObject?): Boolean {
+        if (messageObject == null || isRevealed(messageObject.currentAccount, messageObject.dialogId)) return false
+        // #if PLUGINS
+        if (PluginMessageFilters.getVerdict(messageObject)?.let { it.hide || it.spoiler } == true) return true
+        // #endif
         if (InuConfig.BLOCKED_MESSAGES_MODE.value == InuConfig.BlockedMessagesModeItem.SPOILER && isBlockedMessage(messageObject)) return true
         if (RegexFilterHelper.isEnabled() && RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.SPOILER) {
             if (isRegexFilteredMessage(messageObject)) return true
@@ -119,7 +197,31 @@ object BlockedMessagesHelper {
         messageObject: MessageObject?,
         original: ArrayList<TLRPC.MessageEntity>?,
     ): ArrayList<TLRPC.MessageEntity>? {
-        val text = messageObject?.messageOwner?.message
+        messageObject?.inu_spoiled = shouldSpoil(messageObject)
+        // #if PLUGINS
+        messageObject?.inu_rewrite?.let { return addSpoiler(messageObject, original, it.text) }
+        // #endif
+        return addSpoiler(messageObject, original, messageObject?.messageOwner?.message)
+    }
+
+    @JvmStatic
+    fun checkBlockedEntities(messageObject: MessageObject?): ArrayList<TLRPC.MessageEntity>? {
+        // #if PLUGINS
+        messageObject?.inu_rewrite?.let { return addSpoiler(messageObject, it.entities, it.text) }
+        // #endif
+        return checkBlockedOwnEntities(messageObject)
+    }
+
+    @JvmStatic
+    fun checkBlockedOwnEntities(messageObject: MessageObject?): ArrayList<TLRPC.MessageEntity>? {
+        return addSpoiler(messageObject, messageObject?.messageOwner?.entities, messageObject?.messageOwner?.message)
+    }
+
+    private fun addSpoiler(
+        messageObject: MessageObject?,
+        original: ArrayList<TLRPC.MessageEntity>?,
+        text: String?,
+    ): ArrayList<TLRPC.MessageEntity>? {
         if (!shouldSpoil(messageObject) || text.isNullOrEmpty()) return original
 
         val entities = if (original != null) ArrayList(original) else ArrayList()
@@ -129,11 +231,6 @@ object BlockedMessagesHelper {
         entities.add(spoiler)
 
         return entities
-    }
-
-    @JvmStatic
-    fun checkBlockedEntities(messageObject: MessageObject?): ArrayList<TLRPC.MessageEntity>? {
-        return checkBlockedEntities(messageObject, messageObject?.messageOwner?.entities)
     }
 
     private class VisibleState {
@@ -218,7 +315,9 @@ object BlockedMessagesHelper {
     fun refreshVisible(adapter: ChatActivity.ChatActivityAdapter): ArrayList<MessageObject> {
         val source = adapter.inu_getSourceMessages()
         val state = stateFor(adapter)
-        if (!hasHideFilter() && manualHidden.isEmpty()) return source
+        val filtering = hasHideFilter() || manualHidden.isNotEmpty()
+        adapter.inu_filtering = filtering
+        if (!filtering) return source
         val buffer = adapter.inu_visibleMessages
         // entiny: getMessages() runs per adapter query, so rebuild only after the data actually changed
         val config = configStamp()

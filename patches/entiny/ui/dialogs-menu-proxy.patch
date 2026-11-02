@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14248,7 +14248,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14250,7 +14250,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              final boolean proxyVisible = proxyEnabled && !TextUtils.isEmpty(proxyAddress)
                      || getMessagesController().blockedCountry && !SharedConfig.proxyList.isEmpty();
  

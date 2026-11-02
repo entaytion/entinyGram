@@ -29,7 +29,7 @@ index 0000000..0000000 100644
          MediaDataController mediaDataController = getMediaDataController();
          long date1 = DialogObject.getLastMessageOrDraftDate(dialog1, mediaDataController.getDraft(dialog1.id, 0));
          long date2 = DialogObject.getLastMessageOrDraftDate(dialog2, mediaDataController.getDraft(dialog2.id, 0));
-@@ -14103,6 +14107,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14104,6 +14108,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      }
                  }
              }

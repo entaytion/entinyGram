@@ -11,6 +11,8 @@ import desu.inugram.helpers.plugins.platform.PluginXposed
 import desu.inugram.helpers.plugins.telegram.PluginReads
 import desu.inugram.helpers.plugins.telegram.PluginRpc
 import desu.inugram.helpers.plugins.telegram.PluginCompose
+import desu.inugram.helpers.plugins.telegram.PluginMessageFilters
+import desu.inugram.helpers.plugins.telegram.PluginTextEntities
 import desu.inugram.helpers.plugins.telegram.PluginSends
 import desu.inugram.helpers.plugins.telegram.PluginTranslation
 import desu.inugram.helpers.plugins.telegram.PluginUpdates
@@ -290,6 +292,8 @@ fun attachBridge(
         canvas = canvas,
         notifications = PluginNotifications.listenerFor(session),
         translation = PluginTranslation.listenerFor(session),
+        filters = PluginMessageFilters.listenerFor(session),
+        textEntities = PluginTextEntities.listenerFor(session),
         jvm = jvm,
         xposed = PluginXposed.listenerFor(session, jvm),
     )

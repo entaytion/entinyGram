@@ -10,7 +10,7 @@ Show app update bar only in the drawer when it is enabled
  .../ui/ActionBar/DrawerLayoutContainer.java   | 38 +++++++++++++++++--
  .../ui/Components/ProfileActionsView.java     | 10 ++++-
  .../java/org/telegram/ui/DialogsActivity.java | 32 ++++++++++++----
- .../java/org/telegram/ui/LaunchActivity.java  | 14 ++++---
+ .../java/org/telegram/ui/LaunchActivity.java  | 17 ++++++---
  .../java/org/telegram/ui/LoginActivity.java   |  1 +
  .../org/telegram/ui/MainTabsActivity.java     |  2 +-
  .../java/org/telegram/ui/ProfileActivity.java | 12 +++++-
@@ -18,7 +18,7 @@ Show app update bar only in the drawer when it is enabled
  .../ui/TwoStepVerificationActivity.java       |  1 +
  .../ui/TwoStepVerificationSetupActivity.java  |  2 +
  .../org/telegram/ui/ViewPagerActivity.java    |  2 +-
- 11 files changed, 94 insertions(+), 22 deletions(-)
+ 11 files changed, 97 insertions(+), 22 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/DrawerLayoutContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/DrawerLayoutContainer.java
 index 0000000..0000000 100644
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
      public void startAnimatedActions() {
          if (mode == MODE_MY_PROFILE) {
              int c = actions.size();
-@@ -1235,7 +1242,8 @@ public class ProfileActionsView extends View {
+@@ -1242,7 +1249,8 @@ public class ProfileActionsView extends View {
          SET_PHOTO(R.string.ProfileActionsEditPhoto2, R.drawable.filled_profile_photo, R.drawable.outline_profile_photo),
          EDIT_USERNAME(R.string.ProfileActionsEditUsername, R.drawable.filled_profile_edit_24, R.drawable.outline_profile_edit_24),
          EDIT_INFO(R.string.ProfileActionsEditInfo, R.drawable.filled_profile_edit_24, R.drawable.outline_profile_edit_24),
@@ -169,7 +169,7 @@ index 0000000..0000000 100644
              optionsItem = menu.addItem(4, R.drawable.ic_ab_other);
              optionsItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
              optionsItem.setOnClickListener(v -> {
-@@ -3545,6 +3545,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3547,6 +3547,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              if (searchString != null || folderId != 0 || communityId != 0) {
                  actionBar.setBackButtonDrawable(backDrawable = new BackDrawable(false));
@@ -181,7 +181,7 @@ index 0000000..0000000 100644
              }
              if (folderId != 0) {
                  actionBar.setTitle(getString(R.string.ArchivedChats));
-@@ -3923,6 +3928,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3925,6 +3930,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      return;
                  }
                  if (id == -1) {
@@ -193,7 +193,7 @@ index 0000000..0000000 100644
                      if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
                          if (actionBar.isActionModeShowed()) {
                              if (searchViewPager != null && searchViewPager.getVisibility() == View.VISIBLE && searchViewPager.actionModeShowing()) {
-@@ -5384,7 +5394,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5386,7 +5396,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          };
          dialogStoriesCell.setActionBar(actionBar);
@@ -202,7 +202,7 @@ index 0000000..0000000 100644
          dialogStoriesCell.allowGlobalUpdates = false;
          dialogStoriesCell.setVisibility(View.GONE);
          animateToHasStories = false;
-@@ -5414,7 +5424,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5416,7 +5426,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          undoView[1] = null;
  
          if (hasMainTabs) {
@@ -211,7 +211,7 @@ index 0000000..0000000 100644
              actionBar.setTitleColor(getThemedColor(Theme.key_telegram_color_dialogsLogo));
          }
  
-@@ -5943,6 +5953,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5945,6 +5955,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              yoff = -(actionBar.getHeight() - AndroidUtilities.rectTmp2.centerY()) - dp(16);
              xoff = AndroidUtilities.rectTmp2.centerX() - dp(16);
              xoff += dp(4);
@@ -221,7 +221,7 @@ index 0000000..0000000 100644
              if (animatedStatusView != null) {
                  animatedStatusView.translate(AndroidUtilities.rectTmp2.centerX(), AndroidUtilities.rectTmp2.centerY());
              }
-@@ -6796,7 +6809,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6798,7 +6811,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          // actionMode.setBackgroundColor(Color.TRANSPARENT);
          // actionMode.drawBlur = false;
  
@@ -231,7 +231,7 @@ index 0000000..0000000 100644
              actionModeCloseView = new ImageView(getContext());
              actionModeCloseView.setScaleType(ImageView.ScaleType.CENTER);
              actionModeCloseView.setImageDrawable(new BackDrawable(true));
-@@ -6811,7 +6825,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6813,7 +6827,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogsCountTextView.setTextSize(18);
          selectedDialogsCountTextView.setTypeface(AndroidUtilities.bold());
          selectedDialogsCountTextView.setTextColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
@@ -240,7 +240,7 @@ index 0000000..0000000 100644
          selectedDialogsCountTextView.setOnTouchListener((v, event) -> true);
  
          pinItem = actionMode.addItemWithWidth(pin, R.drawable.msg_pin, dp(48));
-@@ -9146,6 +9160,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9148,6 +9162,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogs.clear();
          if (backDrawable != null) {
              backDrawable.setRotation(0, true);
@@ -249,7 +249,7 @@ index 0000000..0000000 100644
          }
          if (filterTabsView != null) {
              filterTabsView.animateColorsTo(Theme.key_actionBarTabLine, Theme.key_actionBarTabActiveText, Theme.key_actionBarTabUnactiveText, Theme.key_actionBarTabSelector, Theme.key_windowBackgroundWhite);
-@@ -10233,6 +10249,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10235,6 +10251,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              if (backDrawable != null) {
                  backDrawable.setRotation(1, true);
@@ -332,6 +332,16 @@ index 0000000..0000000 100644
                      }
                  }
              }
+@@ -8515,6 +8517,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+         } else if (ArticleViewer.hasInstance() && ArticleViewer.getInstance().isVisible()) {
+             if (invoked) ArticleViewer.getInstance().close(true, false);
+             return false;
++        } else if (drawerLayoutContainer != null && drawerLayoutContainer.inu_drawer != null && drawerLayoutContainer.inu_drawer.isDrawerVisible()) {
++            if (invoked) drawerLayoutContainer.inu_drawer.closeDrawer(false);
++            return false;
+         }
+         return true;
+     }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java

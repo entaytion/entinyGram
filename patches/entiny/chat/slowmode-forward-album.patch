@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12694,6 +12694,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12700,6 +12700,7 @@ public class ChatActivity extends BaseFragment implements
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
          args.putInt("messagesCount", canForwardMessagesCount);
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
              hasPoll = arguments.getInt("hasPoll", 0);
              hasInvoice = arguments.getBoolean("hasInvoice", false);
              showSetPasswordConfirm = arguments.getBoolean("showSetPasswordConfirm", showSetPasswordConfirm);
-@@ -10384,7 +10386,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10386,7 +10388,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      }
  
      private boolean validateSlowModeDialog(long dialogId) {

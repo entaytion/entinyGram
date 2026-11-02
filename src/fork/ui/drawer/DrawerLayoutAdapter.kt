@@ -275,6 +275,8 @@ class DrawerLayoutAdapter(
                     } else {
                         items.add(Item(2, LocaleController.getString(R.string.NewGroup), R.drawable.msg_groups))
                     }
+                DrawerMenuConfig.Item.NEW_CHANNEL ->
+                    items.add(Item(ITEM_NEW_CHANNEL, LocaleController.getString(R.string.NewChannel), R.drawable.msg_channel))
                 DrawerMenuConfig.Item.CONTACTS ->
                     items.add(Item(6, LocaleController.getString(R.string.Contacts), R.drawable.msg_contacts))
                 DrawerMenuConfig.Item.CALLS ->
@@ -328,6 +330,7 @@ class DrawerLayoutAdapter(
         const val ITEM_PROXY = 9
         const val ITEM_ARCHIVE = 18
         const val ITEM_GHOST = 19
+        const val ITEM_NEW_CHANNEL = 20
         const val ITEM_FEED = 21
         const val ITEM_RECENT_CHATS = 22
         const val ITEM_ENTINY_SETTINGS = 23

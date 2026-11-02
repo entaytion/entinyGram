@@ -35,7 +35,7 @@ index 0000000..0000000 100644
  
      private NotificationCenter.ObserversGroup observersGroup;
  
-@@ -4686,7 +4703,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4688,7 +4705,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                  } else {
                                      goingDown = firstVisiblePosition > prevPosition;
                                  }
@@ -49,7 +49,7 @@ index 0000000..0000000 100644
                                      hideFloatingButton(goingDown);
                                  }
                                  prevPosition = firstVisiblePosition;
-@@ -9183,7 +9205,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9185,7 +9207,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      }
  
      public void updateFloatingButtonOffset() {
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
          final float baseTranslationY = top
              - floatingButtonPanOffset;
  
-@@ -14502,6 +14524,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14504,6 +14526,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private void checkUi_mainTabsVisible() {
          final boolean mainTabsVisible = !searching && (blurredView == null || blurredView.getBackground() == null || blurredView.getAlpha() < 0.01f || blurredView.getVisibility() == View.GONE);
          if (mainTabsActivityController != null) {
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
              mainTabsActivityController.setTabsVisible(mainTabsVisible);
          }
      }
-@@ -14698,7 +14721,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14700,7 +14723,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else if (communityId != 0) {
              return navigationBarHeight + dp(12 + 48 + 12);
          } else {

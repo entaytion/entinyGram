@@ -168,7 +168,6 @@
     <string name="InuRoundRecorderExposureLevels">دکمه‌های سطح نوردهی</string>
     <string name="InuRoundRecorderExposureLevelsInfo">نمایش دکمه‌های EV برای روشن یا تیره کردن تصویر هنگام ضبط.</string>
     <string name="InuShowAllRecentStickers">نمایش همه استیکرهای اخیر</string>
-    <string name="InuNoStickerExtraPadding">حذف فاصله اضافی پایین</string>
     <string name="InuHideKeyboardOnScroll">پنهان کردن صفحه‌کلید هنگام اسکرول</string>
     <string name="InuKeepKeyboardWhileTyping">حفظ صفحه‌کلید هنگام تایپ</string>
     <string name="InuKeepKeyboardWhileTypingInfo">در صورت وجود متن در کادر، هنگام اسکرول پنهان نشود</string>

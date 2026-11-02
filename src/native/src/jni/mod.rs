@@ -20,7 +20,14 @@ use crate::{
     io::fetch::FetchState,
     lifecycle::LifecycleState,
     platform::{jvm::JvmState, notifications::NotificationState, xposed::XposedState},
-    telegram::{account::AccountState, reads::ReadsState, rpc::RpcState, writes::WritesState},
+    telegram::{
+      account::AccountState,
+      filters::{FilterState, MessageFilters},
+      reads::ReadsState,
+      rpc::{sends::SendPatterns, RpcState},
+      text_entities::{TextEntities, TextEntityState},
+      writes::WritesState,
+    },
     timers::TimerState,
     translation::TranslationState,
     ui::{actions::ActionState, dialogs::DialogState, history::HistoryState, pages::UiState, screens::ScreenState},
@@ -66,6 +73,9 @@ impl Deref for TransferEngine {
 struct EngineSlot {
   engine: Arc<Serialized<TransferEngine>>,
   jvm_refs: Option<Arc<crate::api::platform::jvm::RefTable>>,
+  message_filters: Arc<MessageFilters>,
+  text_entities: Arc<TextEntities>,
+  send_patterns: Arc<SendPatterns>,
 }
 
 static ENGINES: OnceLock<Mutex<SlotMap<EngineKey, EngineSlot>>> = OnceLock::new();
@@ -77,6 +87,9 @@ fn lock_engines() -> Option<std::sync::MutexGuard<'static, SlotMap<EngineKey, En
 
 pub(crate) fn insert_engine(engine: Engine) -> jlong {
   let jvm_refs = engine.jvm.as_ref().map(|state| state.refs().clone());
+  let message_filters = engine.filters.rules.clone();
+  let text_entities = engine.text_entities.entities.clone();
+  let send_patterns = engine.rpc.send_patterns.clone();
   ENGINES
     .get_or_init(|| Mutex::new(SlotMap::with_key()))
     .lock()
@@ -84,6 +97,9 @@ pub(crate) fn insert_engine(engine: Engine) -> jlong {
     .insert(EngineSlot {
       engine: Serialized::new(TransferEngine(engine)),
       jvm_refs,
+      message_filters,
+      text_entities,
+      send_patterns,
     })
     .data()
     .as_ffi() as jlong
@@ -91,6 +107,18 @@ pub(crate) fn insert_engine(engine: Engine) -> jlong {
 
 pub(crate) fn engine_jvm_refs(handle: jlong) -> Option<Arc<crate::api::platform::jvm::RefTable>> {
   lock_engines()?.get(get_engine_key(handle))?.jvm_refs.clone()
+}
+
+pub(crate) fn engine_message_filters(handle: jlong) -> Option<Arc<MessageFilters>> {
+  Some(lock_engines()?.get(get_engine_key(handle))?.message_filters.clone())
+}
+
+pub(crate) fn engine_text_entities(handle: jlong) -> Option<Arc<TextEntities>> {
+  Some(lock_engines()?.get(get_engine_key(handle))?.text_entities.clone())
+}
+
+pub(crate) fn engine_send_patterns(handle: jlong) -> Option<Arc<SendPatterns>> {
+  Some(lock_engines()?.get(get_engine_key(handle))?.send_patterns.clone())
 }
 
 /// A caller-thread entry waits out the engine thread's longest turn: that thread lends the engine
@@ -207,6 +235,8 @@ pub(crate) struct Engine {
   pub(crate) history: Rc<HistoryState>,
   pub(crate) actions: Rc<ActionState>,
   pub(crate) translation: Rc<TranslationState>,
+  pub(crate) filters: Rc<FilterState>,
+  pub(crate) text_entities: Rc<TextEntityState>,
   pub(crate) account: Rc<AccountState>,
   pub(crate) reads: Rc<ReadsState>,
   pub(crate) writes: Rc<WritesState>,
@@ -233,6 +263,8 @@ impl Engine {
       &*self.history,
       &*self.actions,
       &*self.translation,
+      &*self.filters,
+      &*self.text_entities,
       &*self.writes,
       &*self.reads,
       &*self.account,

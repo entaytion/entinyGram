@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                  } else if (id == 889) {
                      sendDebugRichMessage();
                  }
-@@ -4624,10 +4622,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -4625,10 +4623,6 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  

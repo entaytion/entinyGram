@@ -249,7 +249,6 @@ Sistema: %6$s
     <string name="InuRoundRecorderExposureLevels">Botones de nivel de exposición</string>
     <string name="InuRoundRecorderExposureLevelsInfo">Muestra botones EV para aclarar u oscurecer la toma mientras grabas.</string>
     <string name="InuShowAllRecentStickers">Mostrar todos los stickers recientes</string>
-    <string name="InuNoStickerExtraPadding">Quitar el relleno inferior extra</string>
     <string name="InuHideKeyboardOnScroll">Ocultar el teclado al desplazarse</string>
     <string name="InuKeepKeyboardWhileTyping">Mantener teclado al escribir</string>
     <string name="InuKeepKeyboardWhileTypingInfo">No ocultarlo al desplazarse cuando haya un borrador</string>
@@ -382,7 +381,7 @@ Sistema: %6$s
     <string name="InuHideTrendingStickers">Ocultar stickers en tendencia</string>
     <string name="InuBottomTabs">Pestañas inferiores</string>
     <string name="InuBottomTabsHide">Ocultar pestañas inferiores</string>
-<string name="InuBottomTabsHideInfo">Los elementos se mueven al menú hamburguesa de la pantalla principal</string>
+    <string name="InuBottomTabsHideInfo">Los elementos se mueven al menú hamburguesa de la pantalla principal</string>
     <string name="InuBottomTabsHideTopSearch">Ocultar búsqueda superior</string>
     <string name="InuBottomTabsHideTopSearchInfo">Ocultar el campo de búsqueda sobre la lista de chats</string>
     <string name="InuBottomTabsSeparateSearch">Botón de búsqueda separado</string>

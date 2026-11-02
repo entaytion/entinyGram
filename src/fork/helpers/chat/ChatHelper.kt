@@ -42,6 +42,7 @@ import desu.inugram.helpers.plugins.ui.PluginActions
 import desu.inugram.helpers.plugins.ui.PluginChatHistory
 import desu.inugram.helpers.plugins.ui.PluginIcons
 import desu.inugram.helpers.plugins.ui.RegisteredActionRow
+import desu.inugram.helpers.plugins.telegram.PluginTranslation
 import desu.inugram.ui.settings.PluginsActivity
 // #else
 import desu.inugram.ui.settings.InuSettingsActivity
@@ -78,6 +79,7 @@ import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagePreviewParams
 import org.telegram.messenger.MessageSuggestionParams
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.SendMessageChatArguments
 import org.telegram.messenger.R
@@ -127,6 +129,25 @@ object ChatHelper {
         InuConfig.EditedMessageDateModeItem.EDIT_DATE -> true
         InuConfig.EditedMessageDateModeItem.SEND_DATE -> false
         else -> AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get()
+    }
+
+    @JvmStatic
+    fun isReplyToInaccessibleChat(currentAccount: Int, msg: MessageObject): Boolean {
+        val replyTo = msg.messageOwner?.reply_to ?: return false
+        val dialogId = msg.dialogId
+        val peerId = replyTo.reply_to_peer_id
+        val replyFrom = replyTo.reply_from
+        val did = when {
+            peerId is TLRPC.TL_peerUser -> if (DialogObject.getPeerDialogId(peerId) != dialogId) return true else dialogId
+            peerId != null -> DialogObject.getPeerDialogId(peerId)
+            replyFrom == null -> dialogId
+            replyFrom.from_id != null -> if (replyFrom.from_id is TLRPC.TL_peerUser) return true else DialogObject.getPeerDialogId(replyFrom.from_id)
+            replyFrom.saved_from_peer != null -> DialogObject.getPeerDialogId(replyFrom.saved_from_peer)
+            else -> return true
+        }
+        if (did >= 0 || did == dialogId) return false
+        val chat = MessagesController.getInstance(currentAccount).getChat(-did) ?: return false
+        return !ChatObject.isPublic(chat) && (chat.left || chat.kicked)
     }
 
     private var skipNextReactionConfirm = false
@@ -2562,6 +2583,23 @@ object ChatHelper {
                 activity.processSelectedOption(OPTION_SHOW_JSON)
                 true
             }
+
+            // #if PLUGINS
+            ChatActivity.OPTION_TRANSLATE -> {
+                val providers = PluginTranslation.providers.filter { it.session.canDispatch() }
+                if (!InuConfig.PLUGINS_ENABLED.value || providers.isEmpty()) return false
+                openLongTapSubmenu(activity, popupLayout, cell) { swb ->
+                    val names = listOf("" to LocaleController.getString(R.string.InuTranslationProviderTelegram)) +
+                        providers.map { it.key to it.name }
+                    for ((key, name) in names) {
+                        swb.add(R.drawable.msg_translate, name) {
+                            TranslateHelper.triggerTranslate(activity, message, group, key)
+                            activity.closeMenu()
+                        }
+                    }
+                }
+            }
+            // #endif
 
             ChatActivity.OPTION_REPLY -> {
                 val noforwards = activity.isPeerNoForwards || RestrictedFeaturesHelper.noforwards(message.messageOwner)

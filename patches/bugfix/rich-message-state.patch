@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Mon, 26 Oct 2026 00:04:30 +0200
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 11 Oct 2026 23:46:34 +0200
 Subject: preserve rich message state on message object replace
 
 ---

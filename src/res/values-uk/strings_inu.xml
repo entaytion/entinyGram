@@ -164,8 +164,7 @@
     <string name="InuRoundRecorderExposureButton">Кнопка фіксації експозиції</string>
     <string name="InuRoundRecorderExposureButtonInfo">Показувати кнопку для швидкого блокування або розблокування експозиції під час запису.</string>
     <string name="InuShowAllRecentStickers">Показувати всі нещодавні наліпки</string>
-    <string name="InuNoStickerExtraPadding">Прибрати додатковий відступ знизу</string>
-    <string name="InuHideKeyboardOnScroll">Приховувати клавіатуру при прокручуванні</string>
+    <string name="InuHideKeyboardOnScroll">Ховати клавіатуру під час прокручування</string>
     <string name="InuKeepKeyboardWhileTyping">Не ховати клавіатуру під час набору</string>
     <string name="InuKeepKeyboardWhileTypingInfo">Не приховувати при прокручуванні, якщо в полі є текст</string>
     <string name="InuDisablePullToNext">Вимкнути потягування до наступного каналу</string>
@@ -821,8 +820,12 @@
     <string name="InuTextClassifierModeImproved">Покращений</string>
     <string name="InuTextClassifierModeImprovedInfo">Обробляє тільки частину сутностей для уникнення хибних спрацювань</string>
     <string name="InuTextClassifierModeOff">Вимкнено</string>
-    <string name="InuTextClassifierModeOffInfo">Вимкнення пришвидшує відгук виділення тексту</string>
-
+    <string name="InuTextClassifierModeOffInfo">Вимкнення класифікатора тексту покращує швидкість виділення тексту</string>
+    <string name="InuSelectionProcessText">Додаткові дії з текстом</string>
+    <string name="InuWebSearch">Пошук в інтернеті</string>
+    <string name="InuSelectionProcessTextInfo">Показувати дії інших додатків у меню виділення тексту повідомлення</string>
+    <string name="InuSelectionProcessTextItems">Дії</string>
+    <string name="InuSelectionProcessTextReset">Скинути за замовчуванням</string>
     <string name="InuSuggestCustomEmojiAfter">Підказувати кастомні емодзі після звичайних</string>
     <string name="InuSuggestCustomEmojiAfterInfo">У підказках \":shortcode\" показувати анімовані емодзі після звичайних</string>
 
@@ -857,6 +860,8 @@
     <string name="InuEventLogBanConfirm">Заблокувати **%1$s**?</string>
     <string name="InuEventLogShowDiff">Показати різницю (diff)</string>
     <string name="InuShowPinnedPanel">Показувати закріплені повідомлення</string>
+    <string name="InuShowFilteredMessages">Показати приховані повідомлення</string>
+    <string name="InuHideFilteredMessages">Сховати приховані повідомлення</string>
     <string name="InuHidePinnedTitle">Приховати закріплені повідомлення</string>
     <string name="InuHidePinnedUntilNew">До нового закріпленого повідомлення</string>
     <string name="InuHidePinnedForever">Завжди в цьому чаті</string>
@@ -1243,9 +1248,27 @@
     <string name="InuLogsCopySystemInfo">Копіювати системну інформацію</string>
     <string name="InuLogsSystemInfoCopied">Системну інформацію скопійовано в буфер обміну</string>
     <string name="InuLogsHeapUsage">Купа: %1$s / %2$s</string>
+    <string name="InuLogsRunGc">Запустити збирання сміття</string>
     <string name="InuLogsMakeHeapDump">Зробити дамп купи</string>
     <string name="InuLogsMakingHeapDump">Створення дампу купи…</string>
-    <string name="InuLogsHeapDumpWarning">**НІКОЛИ** не діліться файлом .hprof — це знімок пам’яті з **чутливими даними** (повідомлення, токени тощо), переглядайте його лише самостійно. Додаток ненадовго зависне під час створення дампу.</string>
+    <string name="InuLogsHeapDumpSaved">Дамп купи збережено</string>
+    <string name="InuLogsHeapDumpSaveError">Не вдалося зберегти дамп купи</string>
+    <string name="InuLogsHeapDumpWarning">**НІКОЛИ** не ділися отриманим файлом .hprof ні з ким — це знімок пам’яті додатка, який **містить чутливу інформацію** (повідомлення, токени тощо).\n\nДосліджуй його **ТІЛЬКИ** самостійно.\n\nДодаток ненадовго зависне.</string>
+    <string name="InuDeleteOwnMessages">Видалити мої повідомлення</string>
+    <string name="InuDeleteOwnMessagesSearching">Пошук ваших повідомлень…</string>
+    <string name="InuDeleteOwnMessagesFoundProgress">Знайдено %1$d / %2$d</string>
+    <string name="InuDeleteOwnMessagesNone">У цьому чаті немає ваших повідомлень</string>
+    <string name="InuDeleteOwnMessagesConfirm_one">Видалити %d ваше повідомлення? Цю дію неможливо скасувати.</string>
+    <string name="InuDeleteOwnMessagesConfirm_few">Видалити %d ваші повідомлення? Цю дію неможливо скасувати.</string>
+    <string name="InuDeleteOwnMessagesConfirm_many">Видалити %d ваших повідомлень? Цю дію неможливо скасувати.</string>
+    <string name="InuDeleteOwnMessagesConfirm_other">Видалити %d ваших повідомлень? Цю дію неможливо скасувати.</string>
+    <string name="InuDeleteOwnMessagesDeleting">Видалено %1$d / %2$d</string>
+    <string name="InuDeleteOwnMessagesDone_one">Видалено %d повідомлення</string>
+    <string name="InuDeleteOwnMessagesDone_few">Видалено %d повідомлення</string>
+    <string name="InuDeleteOwnMessagesDone_many">Видалено %d повідомлень</string>
+    <string name="InuDeleteOwnMessagesDone_other">Видалено %d повідомлень</string>
+    <string name="InuDeleteOwnMessagesError">Помилка: %1$s</string>
+    <string name="InuDeleteOwnMessagesFloodWait">Ліміт запитів, очікуємо %d с…</string>
     <string name="InuBiometricConfirm">Біометричне підтвердження</string>
     <string name="InuBiometricConfirmTitle">Підтвердьте особу</string>
     <string name="InuBiometricExplicitConfirmation">Додаткове підтвердження</string>
@@ -1921,6 +1944,7 @@
     <string name="InuPluginReposUpToDate">Оновлень немає</string>
     <string name="InuPluginReposErrorLink">Введіть юзернейм або посилання на канал</string>
     <string name="InuPluginReposErrorNotChannel">Це не публічний канал</string>
+    <string name="InuPluginReposAddConfirm">Додати **%1$s** як репозиторій плагінів?</string>
     <string name="InuPluginReposErrorExists">Цей репозиторій уже додано</string>
     <string name="InuPluginRepoEmpty">У цьому репозиторії немає плагінів</string>
     <string name="InuPluginRepoErrorLoad">Не вдалося завантажити репозиторій</string>
@@ -2031,6 +2055,9 @@
     <string name="InuPluginGrantOnUpdate">Відстеження оновлень</string>
     <string name="InuPluginGrantInterceptUpdate">Перехоплення оновлень</string>
     <string name="InuPluginGrantInterceptSend">Перехоплення вихідних повідомлень</string>
+    <string name="InuPluginRewrittenBy">Змінено плагіном %1$s.</string>
+    <string name="InuPluginRewriteRevert">Повернути ></string>
+    <string name="InuPluginGrantFilterMessages">Приховування та зміна повідомлень у чатах</string>
     <string name="InuPluginGrantInterceptRpc">Перехоплення API-запитів</string>
     <string name="InuPluginGrantInvokeRpc">Прямий доступ до API</string>
     <string name="InuPluginGrantTakeout">Сеанси експорту даних</string>

@@ -159,6 +159,11 @@ object OriginalVideoQualityHelper {
         return name.endsWith(".mp4") || name.endsWith(".m4v") || name.endsWith(".mov")
     }
 
+    /**
+     * Stock only trusts an Exynos allowlist here (stories have no avc fallback, so a
+     * broken encoder there means a broken story). Re-encoding at original quality does
+     * fall back to avc, so any hardware encoder that reports the target size/rate will do.
+     */
     @JvmStatic
     fun findHevcEncoderName(width: Int, height: Int, framerate: Int): String? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null

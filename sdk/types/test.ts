@@ -219,6 +219,19 @@ inu.interceptSendMessage({ stage: 'uploaded' }, ({ message }) => {
   return ids.length > 10 ? 'drop' : 'send'
 })
 
+inu.filterMessages([{ html: /erid=/i, peer: 'broadcast' }, { buttons: /erid=/i }], 'hide')
+inu.filterMessages({ sender: [1, 2], media: ['photo', 'video'], forward: false }, (message, account) => {
+  if (message.senderId === account.userId) return undefined
+  return message.text.length > 4000 ? { rewrite: { text: message.text.slice(0, 200), entities: [] } } : 'spoiler'
+})
+
+inu.registerTextEntity({ pattern: /#(\d+)/, filter: { peer: -1001234567890 }, url: 'https://tracker.example/issues/$1' })
+inu.registerTextEntity({
+  pattern: /(?<amount>\d+)\s?(?<currency>USD|CNY)/,
+  callback: ({ groups, match, message, dialogId }) => inu.ui.toast(`${groups.amount} ${match[2] ?? ''} ${message.id} ${dialogId}`),
+  secondaryCallback: ctx => inu.clipboard.write(ctx.match[0] ?? ''),
+})
+
 inu.interceptUpdate(['updateNewMessage', 'updateNewChannelMessage'], ({ update }) => {
   const message = new inu.Message(update.message)
   if (message.text.includes('spoilers ahead')) return 'drop'

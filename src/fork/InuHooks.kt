@@ -15,6 +15,7 @@ import desu.inugram.helpers.font.FontHelper
 import desu.inugram.helpers.maps.MapsHelper
 // #if PLUGINS
 import desu.inugram.helpers.plugins.PluginManager
+import desu.inugram.ui.settings.PluginReposActivity
 // #endif
 import desu.inugram.helpers.security.PasscodeHelper
 import desu.inugram.helpers.theme.MonetHelper
@@ -180,6 +181,9 @@ object InuHooks {
             || SearchRegistry.tryHandleDeepLink(activity, intent)
             || desu.inugram.helpers.plugins.market.MarketLinks.tryHandleDeepLink(activity, intent)
             || tryHandleUpdateDeepLink(activity, intent)
+            // #if PLUGINS
+            || PluginReposActivity.tryHandleDeepLink(activity, intent)
+            // #endif
             || tryHandleFunDeepLink(activity, intent)
             || ShortcutHelper.handleAction(activity, intent)
     }

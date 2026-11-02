@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sun, 25 Oct 2026 23:59:06 +0200
+From: alina sireneva <alina@tei.su>
+Date: Wed, 20 May 2026 22:08:21 +0400
 Subject: paranoia mode (hide chats, accounts, disguise as stock app)
 
 ---
@@ -14,6 +14,7 @@ Subject: paranoia mode (hide chats, accounts, disguise as stock app)
  .../ui/Adapters/SearchAdapterHelper.java      |  8 ++---
  .../java/org/telegram/ui/CallLogActivity.java |  4 +++
  .../ui/Cells/AppIconsSelectorCell.java        |  1 +
+ .../org/telegram/ui/Cells/SessionCell.java    |  4 +++
  .../ui/Components/SharedMediaLayout.java      | 12 +++----
  .../java/org/telegram/ui/DialogsActivity.java |  5 +--
  .../org/telegram/ui/GroupCreateActivity.java  |  4 ++-
@@ -25,7 +26,7 @@ Subject: paranoia mode (hide chats, accounts, disguise as stock app)
  .../telegram/ui/Stars/StarsController.java    |  3 ++
  .../ui/Stories/StoriesController.java         | 33 +++++++++++++++++++
  .../org/telegram/ui/Wallet/GramWallet.java    |  2 +-
- 21 files changed, 122 insertions(+), 29 deletions(-)
+ 22 files changed, 126 insertions(+), 29 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/AppGlobalConfig.java
 index 0000000..0000000 100644
@@ -443,6 +444,21 @@ index 0000000..0000000 100644
          if (MessagesController.getInstance(currentAccount).premiumFeaturesBlocked()) {
              for (int i = 0; i < availableIcons.size(); i++) {
                  if (availableIcons.get(i).premium) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
+@@ -251,6 +251,10 @@ public class SessionCell extends FrameLayout {
+             stringBuilder.append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(session.app_name));
+             stringBuilder.append(" ").append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppVersion(session.app_version));
+ 
++            if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
++                stringBuilder = new StringBuilder("Telegram Android " + desu.inugram.helpers.update.UpdateHelper.getStockVersionName());
++            }
++
+             detailTextView.setText(stringBuilder);
+         } else if (object instanceof TLRPC.TL_webAuthorization) {
+             TLRPC.TL_webAuthorization session = (TLRPC.TL_webAuthorization) object;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
@@ -500,7 +516,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6969,7 +6969,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6971,7 +6971,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterOptions = null;
          }
          final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
@@ -509,7 +525,7 @@ index 0000000..0000000 100644
              if (force || filterTabsView.getVisibility() != View.VISIBLE) {
                  boolean animatedUpdateItems = animated;
                  if (filterTabsView.getVisibility() != View.VISIBLE) {
-@@ -8626,7 +8626,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8628,7 +8628,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              getMessagesController().filtersEnabled &&
              getMessagesController().dialogFiltersLoaded &&
              getMessagesController().dialogFilters != null &&
