@@ -620,3 +620,4 @@ entiny/chat/confirm-links.patch
 entiny/ui/expandable-switch-theme.patch
 entiny/ui/show-online-indicator.patch
 entiny/media/video-near-end-freeze.patch
+entiny/chat/forbidden-record-button-mode.patch

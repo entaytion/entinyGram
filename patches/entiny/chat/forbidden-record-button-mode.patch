@@ -1,0 +1,62 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:11:10 +0200
+Subject: show the dimmed voice icon when voice and round video are both forbidden
+
+---
+ .../ui/Components/ChatActivityEnterView.java    | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -7107,6 +7107,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         sendPlainEnabled = true;
+         sendRoundEnabled = true;
+         sendVoiceEnabled = true;
++        boolean currentModeVideo = isInVideoMode;
+ 
+         if (chat != null) {
+             audioVideoButtonContainerForbidden = !(ChatObject.canSendVoice(chat) || (ChatObject.canSendRoundVideo(chat) && hasRecordVideo));
+@@ -7125,6 +7126,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+         } else if (userFull != null) {
+             audioVideoButtonContainerForbidden = userFull.voice_messages_forbidden;
+             userInfo = userFull;
++            if (audioVideoButtonContainerForbidden) {
++                currentModeVideo = false;
++            }
+         }
+ 
+         audioVideoButtonContainer.setAlpha(audioVideoButtonContainerForbidden ? 0.5f : 1.0f);
+@@ -7132,16 +7136,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+         updateAudioVideoSendButtonColor();
+         audioVideoSendButton.invalidate();
+         updateFieldHint(false);
+-        boolean currentModeVideo = isInVideoMode;
+         if (!sendRoundEnabled && currentModeVideo) {
+             currentModeVideo = false;
+         }
+         if (!sendVoiceEnabled && !currentModeVideo) {
+-            if (hasRecordVideo) {
+-                currentModeVideo = true;
+-            } else {
+-                currentModeVideo = false;
+-            }
++            currentModeVideo = sendRoundEnabled && hasRecordVideo;
+         }
+         setRecordVideoButtonVisible(currentModeVideo, false);
+     }
+@@ -7324,11 +7323,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             currentModeVideo = false;
+         }
+         if (!sendVoiceEnabled && !currentModeVideo) {
+-            if (hasRecordVideo) {
+-                currentModeVideo = true;
+-            } else {
+-                currentModeVideo = false;
+-            }
++            currentModeVideo = sendRoundEnabled && hasRecordVideo;
+         }
+         setRecordVideoButtonVisible(currentModeVideo, false);
+     }

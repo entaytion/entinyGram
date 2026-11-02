@@ -223,6 +223,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **square camera tile**: the attach gallery camera takes one cell instead of two
 - 📡 **save selected files**: download button when selecting files in profile media and search - *ported from the Save Selected Files plugin by @akresik*
 - 📡 **fix looping videos freezing** when seeking near the end - *ported from Hundgram (@lurepheonix)*
+- 📡 **dimmed voice icon** when voice and round video messages are both forbidden - *ported from Hundgram (@lurepheonix)*
 - 📡 **free memory in background**: clears image caches shortly after the app is minimized
 - 📡 **no emoji panel leak**: closed chats and photo viewers are no longer kept in memory by the emoji panel
 - 📡 **keep keyboard while typing**: scrolling the chat doesn't hide the keyboard when there's a draft
