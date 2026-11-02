@@ -178,6 +178,7 @@ object InuHooks {
     fun handleIntent(activity: LaunchActivity, intent: Intent?): Boolean {
         return PasscodeHelper.tryHandleDeepLink(activity, intent)
             || SearchRegistry.tryHandleDeepLink(activity, intent)
+            || desu.inugram.helpers.plugins.market.MarketLinks.tryHandleDeepLink(activity, intent)
             || tryHandleUpdateDeepLink(activity, intent)
             || tryHandleFunDeepLink(activity, intent)
             || ShortcutHelper.handleAction(activity, intent)

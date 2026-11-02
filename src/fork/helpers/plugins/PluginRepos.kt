@@ -23,7 +23,7 @@ import org.telegram.tgnet.TLRPC
 class PluginRepo(val channelId: Long, val username: String, val title: String)
 
 /** [document] carries the file reference of the request that found it */
-class PluginRepoPost(val repo: PluginRepo, val messageId: Int, val document: TLRPC.Document) {
+class PluginRepoPost(val repo: PluginRepo, val messageId: Int, val document: TLRPC.Document, val text: String = "") {
     val origin: PluginOrigin get() = PluginOrigin(repo.channelId, messageId)
 }
 
@@ -134,7 +134,7 @@ object PluginRepos {
                     val posts = res.messages.mapNotNull { msg ->
                         val document = msg.media?.document ?: return@mapNotNull null
                         val name = FileLoader.getDocumentFileName(document) ?: return@mapNotNull null
-                        if (name.endsWith(".inu.js", ignoreCase = true)) PluginRepoPost(repo, msg.id, document) else null
+                        if (name.endsWith(".inu.js", ignoreCase = true)) PluginRepoPost(repo, msg.id, document, msg.message.orEmpty()) else null
                     }
                     val more = res.messages.size >= PAGE_SIZE
                     callback(Page(posts, if (more) res.messages.last().id else 0))

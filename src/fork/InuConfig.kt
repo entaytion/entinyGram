@@ -321,6 +321,10 @@ object InuConfig {
     @JvmField
     val PLUGIN_REPO_SORT = IntItem("plugin_repo_sort", 0)
 
+    // 0 default, 1 installed first, 2 by name, 3 by author
+    @JvmField
+    val MARKET_SORT = IntItem("market_sort", 0)
+
     // the "only install plugins you trust" warning was read and accepted: consent, not a
     // preference, so it is never carried over by an import
     @JvmField

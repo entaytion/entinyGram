@@ -164,7 +164,7 @@ class SchemaBuilder {
 fun schema(slug: String, titleRes: Int, iconRes: Int, build: SchemaBuilder.() -> Unit): Schema =
     Schema(slug, titleRes, iconRes, SchemaBuilder().apply(build).sections)
 
-class SchemaPageActivity(private val schema: Schema = Schemas.CHATS) : SettingsPageActivity() {
+class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActivity() {
     private val groups = HashMap<Int, ExpandableBoolGroup>().also { map ->
         schema.rows.filterIsInstance<Row.Group>().forEach { map[it.id] = it.create(it.id) }
     }
@@ -211,7 +211,7 @@ class SchemaPageActivity(private val schema: Schema = Schemas.CHATS) : SettingsP
             val rows = section.rows.filter { it.visible?.invoke() != false }
             if (rows.isEmpty()) continue
             if (section.headerRes != 0) {
-                items.add(UItem.asHeader(LocaleController.getString(section.headerRes)))
+                items.add(UItem.asHeader(section.id, LocaleController.getString(section.headerRes)))
             }
             for (row in rows) addRow(items, row)
             items.add(UItem.asShadow(if (section.footerRes != 0) LocaleController.getString(section.footerRes) else null))

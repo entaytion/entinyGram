@@ -170,7 +170,7 @@ class PluginsActivity : SettingsPageActivity() {
         )
 
         items.add(UItem.asShadow(null))
-        items.add(UItem.asButton(BUTTON_REPOS, R.drawable.msg_channel, LocaleController.getString(R.string.InuPluginRepos)))
+        items.add(mkSubPageButton(BUTTON_REPOS, R.drawable.msg_channel, LocaleController.getString(R.string.InuMarket)))
         items.add(
             UItem.asButton(
                 BUTTON_LOAD,
@@ -288,7 +288,7 @@ class PluginsActivity : SettingsPageActivity() {
                 }
             }
             BUTTON_LOAD -> launchLoad()
-            BUTTON_REPOS -> presentFragment(PluginReposActivity())
+            BUTTON_REPOS -> presentFragment(MarketActivity())
             // plugin rows handle their own clicks (see PluginRow's background comment)
         }
     }
@@ -418,6 +418,7 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
     private val switch: Switch
     private val settingsButton: ImageView
     private var description: TextView? = null
+    private var tagPills: MarketTagPills? = null
     private var settingsAction: TextView? = null
     private var reloadAction: TextView? = null
     private var removeAction: TextView? = null
@@ -533,6 +534,9 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
                     if (rtl) 22 else 0, 4, if (rtl) 0 else 22, 0,
                 ),
             )
+            tagPills = MarketTagPills(context).also {
+                content.addView(it, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, if (rtl) 22f else 0f, 4f, if (rtl) 0f else 22f, 0f))
+            }
 
             val body = RowBody(context, gutter, content, actions)
             addView(
@@ -583,6 +587,7 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
             }
         }
         reloadAction?.visibility = if (plugin.enabled) VISIBLE else GONE
+        tagPills?.bind(desu.inugram.helpers.plugins.market.MarketTags.fromHeader(plugin.manifest.raw["entiny-tags"]))
         switch.setChecked(plugin.enabled, false)
     }
 
