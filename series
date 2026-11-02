@@ -627,3 +627,4 @@ entiny/ui/disable-overscroll-story.patch
 entiny/media/sleep-timer.patch
 entiny/ui/shorter-swipe-gestures.patch
 entiny/chat/video-message-autoplay.patch
+entiny/chat/alternative-gif-behavior.patch

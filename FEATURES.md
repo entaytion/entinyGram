@@ -230,6 +230,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **sleep timer** for music: a dial in the player menu, optionally finishing the current song first - *ported from Hundgram (@lurepheonix)*
 - 📡 **shorter swipe gestures**: back, reply, folder and media swipes count at half the distance - *ported from Hundgram (@lurepheonix)*
 - 📡 **video message autoplay toggle** in Lite Mode: stop round video messages from playing on their own - *ported from Hundgram (@lurepheonix)*
+- 📡 **alternative GIF behavior**: with GIF autoplay off, tap opens the GIF fullscreen instead of stopping it in the bubble - *ported from Hundgram (@lurepheonix)*
 - 📡 **free memory in background**: clears image caches shortly after the app is minimized
 - 📡 **no emoji panel leak**: closed chats and photo viewers are no longer kept in memory by the emoji panel
 - 📡 **keep keyboard while typing**: scrolling the chat doesn't hide the keyboard when there's a draft

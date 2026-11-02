@@ -1072,6 +1072,8 @@
     <string name="InuDisableBrowserSwipeCollapse">Отключить свайп для закрытия браузера</string>
     <string name="InuGifSeekbar">Полоса перемотки для GIF</string>
     <string name="InuGifSeekbarInfo">Работает только для «новых» GIF (т.е. беззвучных MP4)</string>
+    <string name="InuAlternativeGifBehavior">Альтернативное поведение GIF</string>
+    <string name="InuAlternativeGifBehaviorInfo">Когда автовоспроизведение GIF выключено, GIF открываются на весь экран по нажатию и останавливаются после закрытия</string>
     <string name="InuPublicPhotoMark">публичное фото</string>
     <string name="InuPersonalPhotoMark">личное фото</string>
     <string name="InuDisableGlassGlare">Отключить блик стекла</string>

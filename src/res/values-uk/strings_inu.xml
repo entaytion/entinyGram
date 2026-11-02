@@ -458,6 +458,8 @@
     <string name="InuDisableBrowserSwipeCollapse">Вимкнути свайп вниз для згортання браузера</string>
     <string name="InuGifSeekbar">Слайдер прокручування GIF</string>
     <string name="InuGifSeekbarInfo">Працює для нових GIF (беззвучних MP4)</string>
+    <string name="InuAlternativeGifBehavior">Альтернативна поведінка GIF</string>
+    <string name="InuAlternativeGifBehaviorInfo">Коли автовідтворення GIF вимкнено, GIF відкриваються на весь екран при натисканні та зупиняються після закриття</string>
     <string name="InuPublicPhotoMark">публічне фото</string>
     <string name="InuPersonalPhotoMark">особисте фото</string>
     <string name="InuConfirmReactionNonMember">Підтверджувати реакції у непідписаних чатах</string>

@@ -375,6 +375,7 @@ object Schemas {
         section(R.string.InuMediaSection) {
             toggle(InuConfig.KEEP_CHATS_IN_STACK, R.string.InuKeepChatsInStack, R.string.InuKeepChatsInStackInfo)
             toggle(InuConfig.GIF_SEEKBAR, R.string.InuGifSeekbar, R.string.InuGifSeekbarInfo)
+            toggle(InuConfig.ALTERNATIVE_GIF_BEHAVIOR, R.string.InuAlternativeGifBehavior, R.string.InuAlternativeGifBehaviorInfo)
             toggle(InuConfig.PLAY_ORIGINAL_VIDEO, R.string.InuPlayOriginalVideo, R.string.InuPlayOriginalVideoInfo)
             toggle(
                 InuConfig.PLAY_ORIGINAL_VIDEO_INLINE,

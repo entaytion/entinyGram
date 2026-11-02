@@ -1,0 +1,132 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:53:02 +0200
+Subject: open GIFs fullscreen when autoplay is off
+
+---
+ .../telegram/ui/Cells/ChatMessageCell.java    | 43 ++++++++++++++-----
+ .../java/org/telegram/ui/PhotoViewer.java     | 14 ++++--
+ 2 files changed, 42 insertions(+), 15 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -3260,7 +3260,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     } else if (buttonPressed != 0) {
+                         buttonPressed = 0;
+                         playSoundEffect(SoundEffectConstants.CLICK);
+-                        if (drawVideoImageButton || buttonState == -1 && documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || currentMessageObject.sponsoredMedia != null) {
++                        if (inu_canOpenGifViewer() && desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() && !SharedConfig.isAutoplayGifs()) {
++                            delegate.didPressImage(this, lastTouchX, lastTouchY, false);
++                        } else if (drawVideoImageButton || buttonState == -1 && documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || currentMessageObject.sponsoredMedia != null) {
+                             didClickedImage();
+                         } else {
+                             didPressButton(true, false);
+@@ -3283,17 +3285,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         resetPressedLink(2);
+                     } else {
+                         if (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF && drawImageButton) {
+-                            if (buttonState == -1) {
++                            if (inu_canOpenGifViewer() && desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() && !SharedConfig.isAutoplayGifs()) {
++                                delegate.didPressImage(this, lastTouchX, lastTouchY, false);
++                            } else if (buttonState == -1) {
+                                 if (SharedConfig.isAutoplayGifs() && !currentMessageObject.isRepostPreview) {
+                                     delegate.didPressImage(this, lastTouchX, lastTouchY, false);
+                                 } else {
+-                                    buttonState = 2;
+-                                    currentMessageObject.gifState = 1;
+-                                    photoImage.setAllowStartAnimation(false);
+-                                    photoImage.stopAnimation();
+-                                    radialProgress.setIcon(getIconForCurrentState(), false, true);
+-                                    invalidate();
+-                                    playSoundEffect(SoundEffectConstants.CLICK);
++                                    inu_stopGifAnimation();
+                                 }
+                             } else if (buttonState == 2 || buttonState == 0) {
+                                 didPressButton(true, false);
+@@ -4372,7 +4370,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 } else if (buttonPressed == 1) {
+                     buttonPressed = 0;
+                     playSoundEffect(SoundEffectConstants.CLICK);
+-                    if (drawVideoImageButton) {
++                    if (inu_canOpenGifViewer() && desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() && !SharedConfig.isAutoplayGifs()) {
++                        delegate.didPressImage(this, lastTouchX, lastTouchY, false);
++                    } else if (drawVideoImageButton) {
+                         didClickedImage();
+                     } else {
+                         didPressButton(true, false);
+@@ -4385,7 +4385,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     invalidate();
+                 } else if (imagePressed) {
+                     imagePressed = false;
+-                    if (buttonState == -1 || buttonState == 1 && isRoundVideo || buttonState == 2 || buttonState == 3 || drawVideoImageButton) {
++                    if (inu_canOpenGifViewer() && desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() && !SharedConfig.isAutoplayGifs()) {
++                        playSoundEffect(SoundEffectConstants.CLICK);
++                        delegate.didPressImage(this, lastTouchX, lastTouchY, false);
++                    } else if (buttonState == -1 || buttonState == 1 && isRoundVideo || buttonState == 2 || buttonState == 3 || drawVideoImageButton) {
+                         playSoundEffect(SoundEffectConstants.CLICK);
+                         didClickedImage();
+                     } else if (buttonState == 0) {
+@@ -29939,4 +29942,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         }
+         return text;
+     }
++
++    private void inu_stopGifAnimation() {
++        buttonState = 2;
++        currentMessageObject.gifState = 1;
++        photoImage.setAllowStartAnimation(false);
++        photoImage.stopAnimation();
++        radialProgress.setIcon(getIconForCurrentState(), false, true);
++        invalidate();
++        playSoundEffect(SoundEffectConstants.CLICK);
++    }
++
++    private boolean inu_canOpenGifViewer() {
++        if (currentMessageObject == null || !currentMessageObject.isGif() || !(currentMessageObject.mediaExists() || currentMessageObject.attachPathExists)) {
++            return false;
++        }
++        String fileName = currentMessageObject.attachPathExists && !TextUtils.isEmpty(currentMessageObject.messageOwner.attachPath) ? currentMessageObject.messageOwner.attachPath : currentMessageObject.getFileName();
++        return !FileLoader.getInstance(currentAccount).isLoadingFile(fileName);
++    }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -10990,7 +10990,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+             setVideoPlayerControlVisible(!isCurrentVideo && !livePhoto, true);
+         }
+         if (!isCurrentVideo) {
+-            scheduleActionBarHide(playerAutoStarted ? 3000 : 1000);
++            scheduleActionBarHide((playerAutoStarted || desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() && desu.inugram.helpers.media.PhotoViewerHelper.gifAsVideo(currentMessageObject) && !SharedConfig.isAutoplayGifs()) ? 3000 : 1000);
+         }
+         if (currentMessageObject != null) {
+             videoPlayer.setPlaybackSpeed(currentVideoSpeed);
+@@ -14730,7 +14730,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+             }
+         }
+         if (currentMessageObject != null && currentMessageObject.isVideo() || desu.inugram.helpers.media.PhotoViewerHelper.gifAsVideo(currentMessageObject) || currentBotInlineResult != null && (currentBotInlineResult.type.equals("video") || MessageObject.isVideoDocument(currentBotInlineResult.document)) || (pageBlocksAdapter != null && (pageBlocksAdapter.isVideo(index) || pageBlocksAdapter.isHardwarePlayer(index))) || (sendPhotoType == SELECT_TYPE_NO_SELECT && ((MediaController.PhotoEntry)imagesArrLocals.get(index)).isVideo)) {
+-            playerAutoStarted = true;
++            playerAutoStarted = !desu.inugram.helpers.media.PhotoViewerHelper.gifAsVideo(currentMessageObject) || !desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() || SharedConfig.isAutoplayGifs();
+             onActionClick(false);
+         } else if (!imagesArrLocals.isEmpty()) {
+             final Object entry = imagesArrLocals.get(index);
+@@ -18583,8 +18583,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                         animation.seekTo(seekTo, !FileLoader.getInstance(currentAccount).isLoadingVideo(document, true), true);
+                     }
+                     if (object != null && object.imageReceiver != null) {
+-                        object.imageReceiver.setAllowStartAnimation(true);
+-                        object.imageReceiver.startAnimation();
++                        boolean inu_stopGif = currentMessageObject != null && currentMessageObject.isGif() && desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() && !SharedConfig.isAutoplayGifs();
++                        object.imageReceiver.setAllowStartAnimation(!inu_stopGif);
++                        if (inu_stopGif) {
++                            currentMessageObject.gifState = 1;
++                            object.imageReceiver.stopAnimation();
++                        } else {
++                            object.imageReceiver.startAnimation();
++                        }
+                     }
+                 };
+                 if (textureUploaded) {

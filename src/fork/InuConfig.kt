@@ -465,6 +465,9 @@ object InuConfig {
     val GIF_SEEKBAR = BoolItem("gif_seekbar", true)
 
     @JvmField
+    val ALTERNATIVE_GIF_BEHAVIOR = BoolItem("alternative_gif_behavior", false)
+
+    @JvmField
     val PLAY_ORIGINAL_VIDEO = BoolItem("play_original_video", false)
 
     @JvmField

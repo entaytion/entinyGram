@@ -224,6 +224,7 @@
   "sleep-timer": "media",
   "shorter-swipe-gestures": "ui",
   "video-message-autoplay": "chat",
+  "alternative-gif-behavior": "chat",
   "faster-downloads-byte-budget": "media",
   "safe-editable-spans": "ui",
   "settings-search-history": "settings",

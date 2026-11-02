@@ -613,6 +613,8 @@
     <string name="InuDisableBrowserSwipeCollapse">Disable swipe-down to minimize browser</string>
     <string name="InuGifSeekbar">Seek bar for GIFs</string>
     <string name="InuGifSeekbarInfo">Note: only works for \"new\" GIFs (i.e. silent MP4)</string>
+    <string name="InuAlternativeGifBehavior">Alternative GIF behavior</string>
+    <string name="InuAlternativeGifBehaviorInfo">When GIF autoplay is off, open GIFs fullscreen on first tap and stop them after closing fullscreen</string>
     <string name="InuPublicPhotoMark">public photo</string>
     <string name="InuPersonalPhotoMark">personal photo</string>
     <string name="InuConfirmReactionNonMember">Confirm reactions in non-joined chats</string>
