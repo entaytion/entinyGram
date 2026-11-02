@@ -1,11 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 24 Sep 2026 09:00:50 +0300
-Subject: fix(entiny): don't crash saving a new contact on cloud-default devices
+Subject: don't crash saving a new contact on cloud-default devices
 
-Android 16+ rejects raw contacts with a null (local) account when the default
-account is cloud. Leave the account unset so the provider picks the default,
-catch IllegalArgumentException, and write the last name to FAMILY_NAME.
 ---
  .../java/org/telegram/ui/NewContactBottomSheet.java  | 12 +++++++-----
  1 file changed, 7 insertions(+), 5 deletions(-)

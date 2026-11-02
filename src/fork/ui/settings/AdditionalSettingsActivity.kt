@@ -151,7 +151,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.inu_tabler_terminal_2, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
+        items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.inu_tabler_info_square, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
         items.add(UItem.asShadow(null))
     }
 
@@ -499,7 +499,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             slug = "about",
             aliases = listOf("additional"),
             titleRes = R.string.InuAbout,
-            iconRes = R.drawable.inu_tabler_device_floppy,
+            iconRes = R.drawable.inu_tabler_info_circle,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("channel", R.string.InuAboutChannel, BUTTON_CHANNEL_LINK),

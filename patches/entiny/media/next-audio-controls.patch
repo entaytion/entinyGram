@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 17 Oct 2026 15:51:23 +0300
-Subject: [+] next audio controls
+Subject: next audio controls
 
 ---
  .../java/org/telegram/messenger/MediaController.java  | 11 ++++++++---

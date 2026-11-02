@@ -3,7 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 2 Sep 2026 10:10:42 +0300
 Subject: Allow hiding chat-list banners, PSA promo, and startup permission nags
 
-Signed-off-by: no
 ---
  .../main/java/org/telegram/ui/DialogsActivity.java  | 13 +++++++++----
  1 file changed, 9 insertions(+), 4 deletions(-)

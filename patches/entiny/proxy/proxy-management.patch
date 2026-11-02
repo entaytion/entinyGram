@@ -3,9 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 12 Sep 2026 17:37:06 +0300
 Subject: Add proxy list management: bulk delete/ping, and save without connecting
 
-- "Delete Failed Proxies": remove every saved proxy that failed its last check in one tap
-- "Ping All Proxies": force-recheck every saved proxy now, ignoring the usual cooldown
-- adding a new proxy has a "Connect immediately" toggle, so it can be saved without switching to it
 ---
  .../org/telegram/ui/ProxyListActivity.java    | 86 ++++++++++++++++++-
  .../telegram/ui/ProxySettingsActivity.java    | 26 +++++-

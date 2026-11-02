@@ -2041,6 +2041,8 @@
     <string name="InuChatOnlineDots">チャットのオンライン表示</string>
     <string name="InuChatOnlineDotsInfo">グループ内の送信者アバターにオンライン表示を出します。</string>
     <string name="InuOnlineDotsSection">オンラインドット</string>
+    <string name="InuShowOnlineIndicator">オンライン表示を出す</string>
+    <string name="InuShowOnlineIndicatorInfo">オフにすると、オンラインドットはどこにも表示されず、下の項目も非表示になります。</string>
     <string name="InuMutualContactSection">相互連絡先</string>
     <string name="InuDesignStyle">デザインスタイル</string>
     <string name="InuDialogsFabRaise">FABボタンを少し上げる</string>

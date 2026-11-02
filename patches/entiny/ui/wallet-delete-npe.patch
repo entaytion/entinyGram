@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 23 Oct 2026 15:26:38 +0300
-Subject: [*] wallet delete crash
+Subject: wallet delete crash
 
 ---
  .../java/org/telegram/ui/Wallet/WalletKeysBackupFragment.java   | 2 +-

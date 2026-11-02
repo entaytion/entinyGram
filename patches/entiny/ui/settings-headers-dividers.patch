@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 1 Nov 2026 22:29:32 +0200
-Subject: [*] settings headers in card and hide dividers
+Subject: settings headers in card and hide dividers
 
 ---
  .../java/org/telegram/ui/Components/UniversalAdapter.java    | 5 +++--

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 21 Oct 2026 12:30:41 +0300
-Subject: [+] send photo as sticker
+Subject: send photo as sticker
 
 ---
  .../org/telegram/messenger/SendMessagesHelper.java   |  1 +

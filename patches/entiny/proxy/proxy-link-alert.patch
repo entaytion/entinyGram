@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 28 Sep 2026 14:29:05 +0300
-Subject: [+] proxy link alert
+Subject: proxy link alert
 
 ---
  .../telegram/messenger/AndroidUtilities.java  | 134 +-----------------

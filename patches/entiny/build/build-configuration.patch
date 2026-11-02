@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 1 Sep 2026 11:12:44 +0300
-Subject: [*] build configuration: gradle 8 / AGP 8 like inugram, plugin build fixes
+Subject: build configuration: gradle 8 / AGP 8 like inugram, plugin build fixes
 
 ---
  .gitignore                                    |   3 +

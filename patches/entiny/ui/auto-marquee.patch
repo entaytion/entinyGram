@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 23 Aug 2026 23:56:36 +0300
-Subject: feat(chat-header): auto-scrolling marquee for long titles + iOS-style header with centered alignment
+Subject: auto-scrolling marquee for long titles + iOS-style header with centered alignment
 
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  | 339 +++++++++++++++-
@@ -1445,7 +1445,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -5654,6 +5654,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5660,6 +5660,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              nameTextView[a].setPivotX(0);
              nameTextView[a].setPivotY(0);
              nameTextView[a].setAlpha(a == 0 ? 0.0f : 1.0f);

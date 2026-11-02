@@ -1,10 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 24 Sep 2026 09:15:38 +0300
-Subject: feat(entiny): UnifiedPush as a push provider
+Subject: UnifiedPush as a push provider
 
-Register Telegram's simple push (token type 4) through a UnifiedPush
-distributor; the provider and service live in desu.inugram.helpers.push.
 ---
  TMessagesProj/build.gradle                                  | 1 +
  TMessagesProj/src/main/AndroidManifest.xml                  | 6 ++++++

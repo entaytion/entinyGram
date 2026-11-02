@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 27 Oct 2026 13:43:00 +0200
-Subject: [+] edit history hooks
+Subject: edit history hooks
 
 ---
  .../main/java/org/telegram/messenger/DownloadController.java    | 2 ++

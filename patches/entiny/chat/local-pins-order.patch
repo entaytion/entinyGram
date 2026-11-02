@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 14 Oct 2026 21:32:04 +0300
-Subject: [*] keep local pins in order after folder edits
+Subject: keep local pins in order after folder edits
 
 ---
  .../src/main/java/org/telegram/messenger/MessagesController.java | 1 +

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 27 Oct 2026 13:42:58 +0200
-Subject: [+] save deleted messages: chat and delete hooks
+Subject: save deleted messages: chat and delete hooks
 
 ---
  .../org/telegram/messenger/SendMessagesHelper.java  |  2 +-
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -23129,6 +23129,19 @@ public class ChatActivity extends BaseFragment implements
+@@ -23133,6 +23133,19 @@ public class ChatActivity extends BaseFragment implements
              ArrayList<Integer> sentMessages = null;
              if (args.length > 6) sentMessages = (ArrayList<Integer>) args[6];
              boolean movedToScheduled = args.length > 4 && (boolean) args[4] || sentMessages != null && !sentMessages.isEmpty();

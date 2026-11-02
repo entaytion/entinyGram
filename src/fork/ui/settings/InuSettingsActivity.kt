@@ -78,8 +78,8 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_discussion, LocaleController.getString(R.string.InuChatsAndMessages)))
         items.add(mkSubPageButton(CAT_PROFILE_ACCOUNTS, R.drawable.msg_contacts, LocaleController.getString(R.string.InuProfileAndAccounts)))
         items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.inu_tabler_shield_check, LocaleController.getString(R.string.InuPrivacyAndFreedom)))
-        items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_shield_cancel, LocaleController.getString(R.string.InuAnnoyances)))
-        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_floppy, LocaleController.getString(R.string.InuRootSystem)))
+        items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_mood_annoyed, LocaleController.getString(R.string.InuAnnoyances)))
+        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_desktop_cog, LocaleController.getString(R.string.InuRootSystem)))
         // #if PLUGINS
         items.add(mkSubPageButton(BUTTON_PLUGINS, R.drawable.inu_tabler_code, addExperimentalSpan(LocaleController.getString(R.string.InuPlugins))))
         // #endif

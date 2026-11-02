@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 30 Oct 2026 00:06:42 +0200
-Subject: [+] unread chats first
+Subject: unread chats first
 
 ---
  .../main/java/org/telegram/messenger/MessagesController.java | 5 +++++

@@ -2041,6 +2041,8 @@
     <string name="InuChatOnlineDots">聊天中的在线圆点</string>
     <string name="InuChatOnlineDotsInfo">在群组中的发送者头像上显示在线圆点。</string>
     <string name="InuOnlineDotsSection">在线圆点</string>
+    <string name="InuShowOnlineIndicator">显示在线指示</string>
+    <string name="InuShowOnlineIndicatorInfo">关闭后，在线圆点在所有位置隐藏，下方选项也会消失。</string>
     <string name="InuMutualContactSection">互为联系人</string>
     <string name="InuDesignStyle">设计风格</string>
     <string name="InuDialogsFabRaise">略微抬高 FAB 按钮</string>

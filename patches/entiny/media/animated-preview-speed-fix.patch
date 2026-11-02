@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 27 Sep 2026 21:50:04 +0300
-Subject: [*] slow animated previews in chats
+Subject: slow animated previews in chats
 
 ---
  TMessagesProj/jni/gifvideo.cpp                                | 4 +++-

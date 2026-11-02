@@ -1,17 +1,60 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 7 Oct 2026 12:58:00 +0300
-Subject: [*] hide premium star in chats title
+Subject: Show premium badges in chat titles and dialogs
 
 ---
- .../src/main/java/org/telegram/ui/DialogsActivity.java        | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../main/java/org/telegram/messenger/MessagesController.java | 2 ++
+ .../org/telegram/ui/Components/AnimatedEmojiDrawable.java    | 5 ++++-
+ .../src/main/java/org/telegram/ui/DialogsActivity.java       | 4 ++--
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -6863,6 +6863,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             return false;
+         }
+         desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
++        desu.inugram.helpers.badges.BadgeRegistry.applyTo(user);
+         fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
+         TLRPC.User oldUser = users.get(user.id);
+         if (oldUser == user && !force) {
+@@ -6998,6 +6999,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (chat == null) {
+             return;
+         }
++        desu.inugram.helpers.badges.BadgeRegistry.applyTo(chat);
+         TLRPC.Chat oldChat = chats.get(chat.id);
+         if (oldChat == chat) {
+             return;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java
+@@ -1276,6 +1276,9 @@ public class AnimatedEmojiDrawable extends Drawable {
+                     if (((AnimatedEmojiDrawable) drawables[0]).imageReceiver != null) {
+                         ((AnimatedEmojiDrawable) drawables[0]).imageReceiver.setRoundRadius(dp(4));
+                     }
++                    if (cacheType == CACHE_TYPE_EMOJI_STATUS && desu.inugram.helpers.badges.BadgeRegistry.isBadgeEmoji(((AnimatedEmojiDrawable) drawables[0]).getDocumentId())) {
++                        canvas.scale(1.18f, 1.18f, bounds.centerX(), bounds.centerY());
++                    }
+                     if (progress < 1) {
+                         float scale = overshootInterpolator.getInterpolation(progress);
+                         canvas.scale(scale, scale, bounds.centerX(), bounds.centerY());
+@@ -1555,4 +1558,4 @@ public class AnimatedEmojiDrawable extends Drawable {
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3086,7 +3086,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3081,7 +3081,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
          Long emojiStatusId = UserObject.getEmojiStatusDocumentId(user);
          statusDrawableGiftId = null;
@@ -20,7 +63,7 @@ index 0000000..0000000 100644
              final boolean isCollectible = user.emoji_status instanceof TLRPC.TL_emojiStatusCollectible;
              statusDrawable.set(emojiStatusId, animated);
              statusDrawable.setParticles(isCollectible, animated);
-@@ -3101,7 +3101,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3096,7 +3096,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  showSelectStatusDialog();
              });
              SelectAnimatedEmojiDialog.preload(currentAccount);

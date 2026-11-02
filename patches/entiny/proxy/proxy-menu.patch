@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 9 Oct 2026 18:16:19 +0300
-Subject: [+] proxy list menu with ping, delete and copy actions
+Subject: proxy list menu with ping, delete and copy actions
 
 ---
  .../org/telegram/ui/ProxyListActivity.java    | 238 +++++++++++-------

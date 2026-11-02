@@ -2044,6 +2044,8 @@
     <string name="InuChatOnlineDots">Sohbetlerde çevrimiçi noktaları</string>
     <string name="InuChatOnlineDotsInfo">Gruplarda gönderen avatarlarında çevrimiçi noktasını göster.</string>
     <string name="InuOnlineDotsSection">Çevrimiçi noktalar</string>
+    <string name="InuShowOnlineIndicator">Çevrimiçi göstergesini göster</string>
+    <string name="InuShowOnlineIndicatorInfo">Kapalıyken çevrimiçi noktası her yerde gizlenir ve aşağıdaki seçenekler kaybolur.</string>
     <string name="InuMutualContactSection">Karşılıklı kişiler</string>
     <string name="InuDesignStyle">Tasarım stili</string>
     <string name="InuDialogsFabRaise">FAB düğmelerini biraz yükselt</string>

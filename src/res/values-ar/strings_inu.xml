@@ -2075,6 +2075,8 @@
     <string name="InuChatOnlineDots">نقاط الاتصال في المحادثات</string>
     <string name="InuChatOnlineDotsInfo">إظهار نقطة الاتصال على صور المرسلين داخل المجموعات.</string>
     <string name="InuOnlineDotsSection">نقاط الاتصال</string>
+    <string name="InuShowOnlineIndicator">إظهار مؤشر الاتصال</string>
+    <string name="InuShowOnlineIndicatorInfo">عند الإيقاف تختفي نقطة الاتصال في كل مكان وتختفي الخيارات أدناه.</string>
     <string name="InuMutualContactSection">جهات الاتصال المتبادلة</string>
     <string name="InuDesignStyle">نمط التصميم</string>
     <string name="InuDialogsFabRaise">رفع أزرار FAB قليلاً</string>

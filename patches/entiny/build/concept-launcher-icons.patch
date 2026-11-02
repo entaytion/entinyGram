@@ -1,9 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 6 Sep 2026 00:39:15 +0300
-Subject: [*] launcher icons: concept set, round icon, old alias and splash theme
+Subject: launcher icons: concept set, round icon, old alias and splash theme
 
-Merges icon alias theme, splash icon theme and round app icon fixes.
 ---
  TMessagesProj/src/main/AndroidManifest.xml    | 333 +++++++++++++++++-
  .../ui/Cells/AppIconsSelectorCell.java        |   2 +-

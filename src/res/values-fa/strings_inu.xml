@@ -2060,6 +2060,8 @@
     <string name="InuChatOnlineDots">نقطه‌های آنلاین در گفتگوها</string>
     <string name="InuChatOnlineDotsInfo">نمایش نقطه آنلاین روی آواتار فرستنده‌ها در گروه‌ها.</string>
     <string name="InuOnlineDotsSection">نقطه‌های آنلاین</string>
+    <string name="InuShowOnlineIndicator">نمایش نشانگر آنلاین</string>
+    <string name="InuShowOnlineIndicatorInfo">در حالت خاموش، نقطه آنلاین همه‌جا پنهان می‌شود و گزینه‌های زیر ناپدید می‌شوند.</string>
     <string name="InuMutualContactSection">مخاطبین متقابل</string>
     <string name="InuDesignStyle">سبک طراحی</string>
     <string name="InuDialogsFabRaise">کمی بالا بردن دکمه‌های FAB</string>

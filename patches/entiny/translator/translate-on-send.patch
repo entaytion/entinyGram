@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 22 Oct 2026 00:39:47 +0300
-Subject: [+] translate on send
+Subject: translate on send
 
 ---
  .../java/org/telegram/ui/Components/ChatActivityEnterView.java | 3 +++

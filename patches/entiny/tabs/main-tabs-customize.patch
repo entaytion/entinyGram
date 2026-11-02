@@ -3,11 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 22 Aug 2026 01:30:15 +0300
 Subject: Add customizable bottom tabs: independent Contacts/Settings/Calls/Profile reorder and show/hide
 
-- Settings and Calls no longer share one ViewPager slot via stock showCallsTab swap; each is its own independent, always-instantiated tab like Contacts/Profile
-- new MainTabsMenuConfig (MenuOrderConfig-based, same infra as ChatMenuOrderActivity) drives order + enabled state, exposed via a new "Customize bottom tabs" screen (drag to reorder, tap to show/hide); Chats stays first and mandatory
-- Calls defaults off to match stock showCallsTab default; rewired the CallLogActivity quick-toggle menu/hint and the DialogsActivity overflow Settings fallback onto the new config instead of the orphaned stock showCallsTab/callTabsVisibleToggled path
-- added a standalone "Show tab titles" toggle (GlassTabView.setMainTabsCompact already supported hiding just the title, previously only reachable via compact mode)
-- MainTabsHelper.enabledOrder() is snapshotted for the process lifetime: MainTabsActivity builds its ViewPager positions once at creation, so a live re-read after a mid-session toggle (before the user restarts) desynced the tab bar from the ViewPager position count and crashed in ViewPagerFixed.scrollToPosition with a null fragment
 ---
  .../java/org/telegram/ui/CallLogActivity.java | 12 +--
  .../java/org/telegram/ui/DialogsActivity.java |  2 +-

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 22 Oct 2026 18:25:57 +0300
-Subject: [*] fix proxy rotation stalling
+Subject: fix proxy rotation stalling
 
 ---
  .../messenger/ProxyRotationController.java    | 169 ++++++++++++------

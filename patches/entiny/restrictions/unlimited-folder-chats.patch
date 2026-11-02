@@ -3,7 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 20 Aug 2026 00:00:00 +0300
 Subject: Allow folders to include more chats than Telegram's server-side
 
-limit
 ---
  .../messenger/MessagesController.java         |  3 ++
  .../java/org/telegram/ui/DialogsActivity.java | 15 +++++++--

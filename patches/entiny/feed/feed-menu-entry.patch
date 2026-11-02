@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 13 Sep 2026 09:50:41 +0300
-Subject: feat(feed): add Feed entry to chats menu and bottom tab bar
+Subject: add Feed entry to chats menu and bottom tab bar
 
 ---
  .../java/org/telegram/ui/Components/glass/GlassTabView.java | 1 +

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 12 Sep 2026 18:03:38 +0300
-Subject: [*] preserve and restore archived media
+Subject: preserve and restore archived media
 
 ---
  .../src/main/java/org/telegram/messenger/FileLoader.java        | 2 ++

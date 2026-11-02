@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 28 Oct 2026 23:47:32 +0200
-Subject: [*] emoji suggestion bar crash
+Subject: emoji suggestion bar crash
 
 ---
  .../java/org/telegram/ui/Components/SuggestEmojiView.java  | 7 ++++++-

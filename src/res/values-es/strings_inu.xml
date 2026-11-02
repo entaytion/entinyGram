@@ -1845,6 +1845,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuChatOnlineDots">Puntos en línea en los chats</string>
     <string name="InuChatOnlineDotsInfo">Muestra el punto en línea en los avatares de los remitentes dentro de los grupos.</string>
     <string name="InuOnlineDotsSection">Puntos de conexión</string>
+    <string name="InuShowOnlineIndicator">Mostrar indicador de conexión</string>
+    <string name="InuShowOnlineIndicatorInfo">Si se desactiva, el punto de conexión se oculta en todas partes y desaparecen las opciones de abajo.</string>
     <string name="InuMutualContactSection">Contactos mutuos</string>
     <string name="InuOnlineDotsInfo">Punto azul en línea; amarillo a los 20 min y rojo tras una hora desconectado.</string>
     <string name="InuGhostModeLauncherShortcut">Acceso directo en el icono de la app</string>

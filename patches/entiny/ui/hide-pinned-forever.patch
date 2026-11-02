@@ -1,10 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 24 Sep 2026 00:05:22 +0300
-Subject: feat(entiny): hide pinned messages forever per chat
+Subject: hide pinned messages forever per chat
 
-Long-press on the pinned panel close button offers hiding until a new pin
-(stock behaviour) or always in this chat; the menu item shows it again.
 ---
  TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -13,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -29151,7 +29151,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29155,7 +29155,7 @@ public class ChatActivity extends BaseFragment implements
          String callLink = callLink(pinnedMessageObject);
          pinnedMessageButtonShown = botButton != null || !TextUtils.isEmpty(callLink);
          SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);

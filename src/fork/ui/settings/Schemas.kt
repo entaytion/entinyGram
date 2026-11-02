@@ -872,16 +872,16 @@ object Schemas {
             )
         }
         section(R.string.InuMenus) {
-            link(R.string.InuSideMenu, R.drawable.inu_tabler_menu_2) { DrawerMenuOrderActivity() }
-            link(R.string.InuDialogsMenuOrder, R.drawable.inu_tabler_list) { DialogsMenuOrderActivity() }
-            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_menu_2) { ChatMenuOrderActivity() }
-            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_list) { MessageMenuOrderActivity() }
-            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_menu_2) { ProfileSettingsMenuOrderActivity() }
-            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_menu_2) { ProfileInfoMenuOrderActivity() }
+            link(R.string.InuSideMenu, R.drawable.inu_tabler_layout_sidebar) { DrawerMenuOrderActivity() }
+            link(R.string.InuDialogsMenuOrder, R.drawable.inu_tabler_list_details) { DialogsMenuOrderActivity() }
+            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_arrows_sort) { ChatMenuOrderActivity() }
+            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_message_dots) { MessageMenuOrderActivity() }
+            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort) { ProfileSettingsMenuOrderActivity() }
+            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort) { ProfileInfoMenuOrderActivity() }
         }
     }
 
-    val SYSTEM = schema("system", R.string.InuRootSystem, R.drawable.inu_tabler_device_floppy) {
+    val SYSTEM = schema("system", R.string.InuRootSystem, R.drawable.inu_tabler_device_desktop_cog) {
         section {
             link(R.string.InuCloudSync, R.drawable.inu_tabler_cloud) { BackupSettingsActivity() }
             link(R.string.InuCacheManagement, R.drawable.inu_tabler_trash_x) { CacheManagementSettingsActivity() }
@@ -1038,7 +1038,7 @@ object Schemas {
     }
 
 
-    val ANNOYANCES = schema("annoyances", R.string.InuAnnoyances, R.drawable.inu_tabler_shield_cancel) {
+    val ANNOYANCES = schema("annoyances", R.string.InuAnnoyances, R.drawable.inu_tabler_mood_annoyed) {
         section(R.string.InuAnnoyancesChats) {
             group("hide-bottom-bar", R.string.InuHideBottomBar) { id ->
                 ExpandableBoolGroup(

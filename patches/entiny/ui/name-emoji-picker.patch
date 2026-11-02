@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 19 Aug 2026 15:21:58 +0300
-Subject: feat(profile): add emoji picker to name and surname fields in account settings
+Subject: add emoji picker to name and surname fields in account settings
 
 ---
  .../org/telegram/ui/UserInfoActivity.java     | 184 ++++++++++++++++--

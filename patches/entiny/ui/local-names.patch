@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 3 Oct 2026 14:09:06 +0300
-Subject: [+] Local names, photos and bios
+Subject: Local names, photos and bios
 
 ---
  .../org/telegram/messenger/ImageLocation.java |  6 ++++++

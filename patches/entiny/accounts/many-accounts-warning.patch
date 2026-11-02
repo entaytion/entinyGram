@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 6 Oct 2026 12:49:17 +0300
-Subject: [+] warn when adding more than 8 accounts
+Subject: warn when adding more than 8 accounts
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java | 1 +

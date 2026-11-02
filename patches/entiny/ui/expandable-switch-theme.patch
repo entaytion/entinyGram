@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 2 Nov 2026 01:15:44 +0200
-Subject: [*] expandable switch colors after theme change
+Subject: expandable switch colors after theme change
 
 ---
  .../src/main/java/org/telegram/ui/Cells/TextCheckCell2.java    | 3 +++

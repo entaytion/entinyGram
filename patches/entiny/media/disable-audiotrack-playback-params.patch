@@ -3,9 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 25 Sep 2026 23:46:37 +0300
 Subject: Disable AudioTrack playback params to prevent stuck audio on pause
 
-- inugram's video-speed-artifacts enabled factory.setEnableAudioTrackPlaybackParams(true)
-- on MIUI / Snapdragon HALs, this causes audio to keep playing after pause near stream end
-- disable playback params to keep audio sink pause synchronous and reliable
 ---
  .../src/main/java/org/telegram/ui/Components/VideoPlayer.java   | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

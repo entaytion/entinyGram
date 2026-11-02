@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 01:36:19 +0200
+Subject: Add a toggle to hide the online indicator everywhere
+
+---
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java        | 3 +++
+ .../src/main/java/org/telegram/ui/Cells/HintDialogCell.java    | 2 +-
+ .../src/main/java/org/telegram/ui/Cells/ShareDialogCell.java   | 2 +-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -822,6 +822,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+     }
+ 
+     private boolean isOnline() {
++        if (!desu.inugram.InuConfig.SHOW_ONLINE_INDICATOR.getValue()) {
++            return false;
++        }
+         if (isForumCell()) {
+             return false;
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
+@@ -242,7 +242,7 @@ public class HintDialogCell extends FrameLayout {
+     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+         boolean result = super.drawChild(canvas, child, drawingTime);
+         if (child == imageView) {
+-            boolean showOnline = !premiumBlocked && currentUser != null && !currentUser.bot && (currentUser.status != null && currentUser.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(currentUser.id));
++            boolean showOnline = desu.inugram.InuConfig.SHOW_ONLINE_INDICATOR.getValue() && !premiumBlocked && currentUser != null && !currentUser.bot && (currentUser.status != null && currentUser.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(currentUser.id));
+             int inu_presenceColor = 0;
+             if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !premiumBlocked && currentUser != null && !currentUser.bot && !currentUser.self) {
+                 inu_presenceColor = desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(currentUser.status, showOnline);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
+@@ -409,7 +409,7 @@ public class ShareDialogCell extends FrameLayout implements NotificationCenter.N
+                     canvas.restore();
+                 }
+ 
+-                boolean isOnline = !premiumBlocked && !user.self && !user.bot && (user.status != null && user.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(user.id));
++                boolean isOnline = desu.inugram.InuConfig.SHOW_ONLINE_INDICATOR.getValue() && !premiumBlocked && !user.self && !user.bot && (user.status != null && user.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(user.id));
+                 int inu_presenceColor = (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !premiumBlocked && !user.self && !user.bot) ? desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) : 0;
+                 if (inu_presenceColor != 0) isOnline = true;
+                 if (isOnline || onlineProgress != 0) {

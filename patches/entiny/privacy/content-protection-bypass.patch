@@ -1,11 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 1 Aug 2026 14:16:29 +0300
-Subject: feat(content-protection): allow opted-in access to protected content
+Subject: allow opted-in access to protected content
 
-- bypass forwarding restrictions only when the selected messages require it
-- allow copying protected messages under the same setting
-- message-level noforwards respects the same setting
 ---
  .../org/telegram/messenger/FileLoader.java    |  4 +--
  .../org/telegram/messenger/MessageObject.java |  8 +++---

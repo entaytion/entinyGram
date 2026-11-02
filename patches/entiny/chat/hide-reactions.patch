@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 15 Oct 2026 16:44:14 +0300
-Subject: [+] hide reactions
+Subject: hide reactions
 
 ---
  .../src/main/java/org/telegram/ui/Cells/DialogCell.java     | 2 +-
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
                  return;
              }
              MessageObject messageObject;
-@@ -32043,7 +32043,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32047,7 +32047,7 @@ public class ChatActivity extends BaseFragment implements
              final boolean isEphemeral = message != null && message.isEphemeral();
              final boolean isReactionsViewAvailable = !isEphemeral && !suggestEdit && !isSecretChat() && !isInScheduleMode() && currentUser == null && primaryMessage.hasReactions() && (!ChatObject.isChannel(currentChat) || currentChat.megagroup) && !ChatObject.isMonoForum(currentChat) && !availableReacts.isEmpty() && primaryMessage.messageOwner.reactions.can_see_list && !primaryMessage.isSecretMedia();
              final boolean isReactionsAvailable;

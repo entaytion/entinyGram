@@ -3,8 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 1 Sep 2026 00:10:55 +0300
 Subject: Add No-Quote button option to the message selection bar
 
-- InuConfig.SELECTION_BOTTOM_NO_QUOTE toggle
-- when enabled, the Reply button in the multi-select bottom bar forwards without quoting instead of replying
 ---
  .../main/java/org/telegram/ui/ChatActivity.java  | 16 +++++++++++++++-
  .../ChatActivityActionsButtonsLayout.java        |  6 +++++-

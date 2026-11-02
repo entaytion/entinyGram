@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 16 Oct 2026 14:41:50 +0300
-Subject: [*] light status bar icons on android 15
+Subject: light status bar icons on android 15
 
 ---
  .../src/main/java/org/telegram/messenger/AndroidUtilities.java | 3 +++

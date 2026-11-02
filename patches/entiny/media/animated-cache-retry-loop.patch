@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 25 Oct 2026 00:47:20 +0300
-Subject: [*] Stop the animated cache retry loop when the cache file cannot be created
+Subject: Stop the animated cache retry loop when the cache file cannot be created
 
 ---
  .../java/org/telegram/messenger/utils/BitmapsCache.java  | 9 ++++++++-

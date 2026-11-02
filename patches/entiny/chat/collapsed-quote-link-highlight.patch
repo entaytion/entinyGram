@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 2 Oct 2026 21:07:26 +0300
-Subject: [*] collapsed quote link highlight stays inside the quote
+Subject: collapsed quote link highlight stays inside the quote
 
 ---
  .../org/telegram/ui/Cells/ChatMessageCell.java   | 16 ++++++++++++++++

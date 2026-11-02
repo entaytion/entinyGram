@@ -3,10 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 1 Sep 2026 00:11:13 +0300
 Subject: Keep swipeback submenu pages transparent over a live blur3 popup background
 
-PopupSwipeBackLayout painted an opaque foreground rect behind every
-non-root swipeback page. When the parent ActionBarPopupWindowLayout's
-background is a live BlurredBackgroundDrawable (blur3), skip that fill
-so submenu pages show the same live blur instead of a flat color.
 ---
  .../ui/Components/PopupSwipeBackLayout.java   | 20 ++++++++++++++-----
  1 file changed, 15 insertions(+), 5 deletions(-)

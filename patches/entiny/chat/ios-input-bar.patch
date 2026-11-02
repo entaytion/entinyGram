@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 20 Sep 2026 00:14:19 +0300
-Subject: [+] iOS-style input bar
+Subject: iOS-style input bar
 
 ---
  .../java/org/telegram/ui/ChatActivity.java    |  29 +-
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -43341,6 +43362,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -43351,6 +43372,12 @@ public class ChatActivity extends BaseFragment implements
              if (blurredBackgroundColorProviderWhite != null) {
                  blurredBackgroundColorProviderWhite.updateColors();
              }

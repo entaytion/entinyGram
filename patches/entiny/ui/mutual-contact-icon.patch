@@ -3,8 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 12 Apr 2026 17:20:59 +0300
 Subject: show mutual contact icon in user lists and chat member lists with auto-shifted tags
 
-Modified from inugram base patch by alina sireneva <alina@tei.su> and Oleksii Kulinich <entaytion@gmail.com> for entinyGram.
-This is an entiny-owned overlay patch taken over from inugram's feature/mutual-contact-icon; do not pull/overwrite during upstream inugram syncs.
 ---
  .../telegram/ui/Adapters/ContactsAdapter.java |  2 +-
  .../java/org/telegram/ui/Cells/UserCell.java  | 83 +++++++++++++++++++

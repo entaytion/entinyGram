@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 20 Oct 2026 14:36:45 +0300
-Subject: [+] quote restricted posts into other chats
+Subject: quote restricted posts into other chats
 
 ---
  .../org/telegram/messenger/SendMessagesHelper.java  | 13 +++++++++++++

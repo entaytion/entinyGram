@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 17 Oct 2026 23:04:23 +0300
-Subject: [+] message date in saved file names
+Subject: message date in saved file names
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java       | 6 +++---
@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -34271,7 +34271,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34275,7 +34275,7 @@ public class ChatActivity extends BaseFragment implements
                  return;
              }
          }
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      }
  
      public void processSelectedOption(int option) {
-@@ -34574,7 +34574,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34584,7 +34584,7 @@ public class ChatActivity extends BaseFragment implements
                          break;
                      }
                  }
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
                  BulletinFactory.createSaveToGalleryBulletin(this, selectedObject.isVideo() && !selectedObject.isLivePhoto(), selectedObject.isLivePhoto(), themeDelegate).show();
                  break;
              }
-@@ -34725,7 +34725,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34735,7 +34735,7 @@ public class ChatActivity extends BaseFragment implements
                              path = f.getPath();
                          }
                      }

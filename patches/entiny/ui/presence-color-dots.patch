@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 25 Sep 2026 15:09:43 +0300
-Subject: [+] presence color dots
+Subject: presence color dots
 
 ---
  .../src/main/java/org/telegram/ui/Cells/DialogCell.java    | 7 ++++++-

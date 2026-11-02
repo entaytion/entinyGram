@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 18 Oct 2026 15:34:45 +0300
-Subject: [*] fix media lost after restart when saved to public dir
+Subject: fix media lost after restart when saved to public dir
 
 ---
  .../org/telegram/messenger/FileLoader.java    | 49 ++++++++++++++++++-

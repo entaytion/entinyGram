@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 17 Oct 2026 17:28:56 +0300
-Subject: [+] raise bottom bar
+Subject: Raise the bottom bar and add a start tab option
 
 ---
- .../src/main/java/org/telegram/ui/MainTabsActivity.java     | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java   | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 index 0000000..0000000 100644
@@ -29,6 +29,15 @@ index 0000000..0000000 100644
          tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
          tabsViewWrapper.setClipToPadding(false);
          M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
+@@ -859,7 +859,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+     @Override
+     protected int getStartPosition() {
+-        return MainTabsHelper.chatsPosition();
++        return MainTabsHelper.startPosition();
+     }
+ 
+     private DialogsActivity dialogsActivity;
 @@ -1071,7 +1071,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {

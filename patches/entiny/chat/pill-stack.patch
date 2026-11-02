@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 17 Sep 2026 00:05:12 +0300
-Subject: [+] pill stack
+Subject: pill stack
 
 ---
  .../main/java/org/telegram/ui/ActionBar/ActionBarMenu.java | 2 +-

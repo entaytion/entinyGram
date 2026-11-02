@@ -34,7 +34,7 @@ class ParanoiaActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 SET_CODE,
-                R.drawable.inu_tabler_password,
+                R.drawable.inu_tabler_lock_password,
                 LocaleController.getString(
                     if (ParanoiaHelper.hasExitCode()) R.string.InuParanoiaExitCodeChange
                     else R.string.InuParanoiaExitCodeSet

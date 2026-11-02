@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 21 Sep 2026 22:06:55 +0300
-Subject: feat(chats): separator after mention
+Subject: separator after mention
 
 ---
  .../java/org/telegram/ui/ChatActivity.java    | 20 +++++++++++--------
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                          chatActivityEnterView.replaceWithText(start, len, spannable, false);
                      }
                  }
-@@ -40613,7 +40616,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40623,7 +40626,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  String username = ChatObject.getPublicUsername(chat);
                  if (username != null) {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                  } else {
                      return;
                  }
-@@ -40639,11 +40642,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -40649,11 +40652,12 @@ public class ChatActivity extends BaseFragment implements
                  }
                  String username = UserObject.getPublicUsername(user);
                  if (username != null) {

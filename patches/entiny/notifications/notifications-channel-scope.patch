@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 10 Oct 2026 10:46:17 +0300
-Subject: [*] scope system notification channel mutes
+Subject: scope system notification channel mutes
 
 ---
  .../messenger/NotificationsController.java      | 17 +++++++++--------

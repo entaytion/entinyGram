@@ -1,9 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 8 Oct 2026 15:09:30 +0300
-Subject: [*] translator logic
+Subject: translator logic
 
-- merge feature and entiny translator patches into one
 ---
  .../telegram/messenger/LanguageDetector.java  |  54 ++++
  .../messenger/MediaDataController.java        |   2 +-

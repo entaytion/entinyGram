@@ -3,9 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 21 Aug 2026 22:55:44 +0300
 Subject: Add customizable avatar corner radius
 
-- avatar corner radius is now driven by a 0-28dp slider instead of the hardcoded fully-round shape
-- applies to ImageReceiver-drawn avatars (dialog list, chat header, forum topics), AvatarDrawable placeholder backgrounds, and the profile screen expanded avatar (ProfileActivity/ProfileActivity2)
-- optional "unified corner radius" mode applies the same radius to forum avatars instead of their own multiplier
 ---
  .../org/telegram/messenger/ImageReceiver.java | 16 ++++++--
  .../ui/Components/AvatarDrawable.java         | 10 ++++-
@@ -169,7 +166,7 @@ index 0000000..0000000 100644
              }
  
              canvas.save();
-@@ -5437,6 +5442,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5443,6 +5448,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          };
          avatarImage.createBlurEffect(getActionsExtraHeight());
@@ -177,7 +174,7 @@ index 0000000..0000000 100644
          avatarImage.getImageReceiver().setAllowDecodeSingleFrame(true);
          avatarImage.setRoundRadiusForExpand(getSmallAvatarRoundRadius());
          avatarImage.setPivotX(0);
-@@ -6531,6 +6537,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6537,6 +6543,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private int getSmallAvatarRoundRadius() {

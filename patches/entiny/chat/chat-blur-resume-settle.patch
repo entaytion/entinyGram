@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 18 Oct 2026 23:42:21 +0300
-Subject: [*] chat blur resume settle
+Subject: chat blur resume settle
 
 ---
  .../java/org/telegram/ui/ChatActivity.java    | 20 +++++++++++++++++++
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -30806,6 +30806,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -30810,6 +30810,26 @@ public class ChatActivity extends BaseFragment implements
          }
          if (contentView != null) {
              contentView.onResume();

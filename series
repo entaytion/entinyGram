@@ -407,7 +407,6 @@ entiny/premium/hide-gift-elements.patch
 entiny/privacy/save-self-destruct.patch
 entiny/media/round-recorder-60fps-and-exposure-lock.patch
 entiny/ui/hide-channel-share-button.patch
-entiny/ui/non-island-shared-media-scroll.patch
 entiny/misc/redundant-lang-code-native-calls.patch
 entiny/ui/wide-channel-posts.patch
 entiny/ui/local-custom-emoji.patch
@@ -418,7 +417,7 @@ entiny/premium/badge-tap-bulletin.patch
 entiny/chat/chat-menu-live-reorder.patch
 entiny/accounts/parallel-account-init.patch
 entiny/misc/positional-format-args.patch
-entiny/premium/remote-badges.patch
+entiny/premium/premium-badge-dialogs.patch
 entiny/media/restore-archived-media.patch
 entiny/feed/feed-menu-entry.patch
 entiny/tabs/dialogs-menu-customization.patch
@@ -452,7 +451,6 @@ entiny/ui/presence-color-dots.patch
 entiny/media/disable-audiotrack-playback-params.patch
 entiny/chat/centered-header-fixes.patch
 entiny/ui/theme-switch-recovery.patch
-entiny/premium/badge-emoji-size.patch
 entiny/media/animated-preview-speed-fix.patch
 entiny/tabs/main-tabs-separate-search.patch
 entiny/ui/clock-format.patch
@@ -492,7 +490,6 @@ entiny/misc/share-intent-lag.patch
 entiny/chat/keyboard-scroll-typing.patch
 entiny/media/keep-screen-on-recording.patch
 entiny/tabs/drawer-keep-options-menu.patch
-entiny/premium/premium-badge-dialogs.patch
 entiny/chat/read-time.patch
 entiny/privacy/last-seen.patch
 entiny/privacy/contact-changes.patch
@@ -519,7 +516,6 @@ bugfix/scrim-menu-theme.patch
 entiny/chat/local-message-edit.patch
 entiny/premium/force-wallet.patch
 entiny/chat/chat-snowflakes.patch
-entiny/privacy/log-redaction.patch
 entiny/tabs/folders-bottom-glass.patch
 entiny/chat/local-pins-order.patch
 entiny/chat/hide-reactions.patch
@@ -589,7 +585,6 @@ entiny/translator/translate-on-send.patch
 entiny/proxy/proxy-rotation-fix.patch
 entiny/ui/photoviewer-stickermaker-npe.patch
 entiny/ui/wallet-delete-npe.patch
-entiny/tabs/start-tab.patch
 entiny/tabs/tab-counter-default.patch
 bugfix/round-recorder-ae-lock-toggle.patch
 entiny/misc/plugin-dev-provider.patch
@@ -601,8 +596,6 @@ entiny/ui/safe-editable-spans.patch
 entiny/settings/settings-search-history.patch
 entiny/media/faster-downloads-byte-budget.patch
 entiny/media/send-videos-hd.patch
-entiny/chat/forward-pro-comment-order.patch
-entiny/chat/forward-pro-comment-format.patch
 entiny/privacy/ghost-hide-seen-mentions.patch
 entiny/tabs/bottom-tabs-hide-on-scroll.patch
 entiny/restrictions/save-deleted-core.patch
@@ -615,17 +608,14 @@ entiny/chat/ios-message-menu.patch
 entiny/chat/suggest-emoji-crash.patch
 entiny/chat/rich-editor-media-caption.patch
 entiny/chat/slowmode-forward-album.patch
-entiny/ui/profile-add-animation-crash.patch
 entiny/ui/monet-m3-style.patch
-entiny/chat/forward-pro-replaces-forward.patch
 entiny/ui/unread-chats-first.patch
 entiny/chat/new-bot-link-crash.patch
-entiny/media/hd-photo-q87.patch
 entiny/calls/call-proximity-sensor.patch
 entiny/chat/hide-business-bot-banner.patch
 entiny/chat/notify-bell-in-menu.patch
-entiny/chat/reactions-overlay-null-media.patch
 entiny/ui/settings-headers-dividers.patch
 entiny/ui/forum-m3-sections.patch
 entiny/chat/confirm-links.patch
 entiny/ui/expandable-switch-theme.patch
+entiny/ui/show-online-indicator.patch

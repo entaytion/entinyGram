@@ -96,15 +96,6 @@ object DrawerHelper {
     private var statusPopup: SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow? = null
 
     @JvmStatic
-    @JvmOverloads
-    fun createMainFragment(args: Bundle? = null): BaseFragment {
-        if (MainTabsHelper.isHidden) return DialogsActivity(args)
-        val main = MainTabsActivity()
-        if (args != null) main.prepareDialogsActivity(args)
-        return main
-    }
-
-    @JvmStatic
     fun setupMainFragment(activity: LaunchActivity, layout: INavigationLayout, dlc: DrawerLayoutContainer) {
         layout.addFragmentToStack(MainTabsActivity())
         if (InuConfig.NAVIGATION_DRAWER.value) setup(activity, dlc, layout)

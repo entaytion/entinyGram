@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 5 Oct 2026 20:17:48 +0300
-Subject: [*] topic icon inset in header
+Subject: topic icon inset in header
 
 ---
  .../java/org/telegram/ui/Components/ChatAvatarContainer.java  | 4 +++-

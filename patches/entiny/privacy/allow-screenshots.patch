@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 18 Aug 2026 01:41:50 +0300
-Subject: [*] allow screenshots in chats and stories
+Subject: allow screenshots in chats and stories
 
 ---
  .../main/java/org/telegram/messenger/FlagSecureReason.java  | 5 +++++

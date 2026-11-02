@@ -66,10 +66,6 @@ object CrashReporter {
         return crashed
     }
 
-    fun invalidateCrashState() {
-        crashState = -1
-    }
-
     fun hasHeapDump(): Boolean = BuildVars.LOGS_ENABLED && getHeapDumpFile().let { it.exists() && it.length() > 0 }
 
     fun getCrashErrorName(): String? {

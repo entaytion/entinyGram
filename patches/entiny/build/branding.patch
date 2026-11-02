@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 8 Oct 2026 15:32:21 +0300
-Subject: [*] entinyGram branding
+Subject: entinyGram branding
 
 ---
  TMessagesProj/build.gradle                    | 10 +++-

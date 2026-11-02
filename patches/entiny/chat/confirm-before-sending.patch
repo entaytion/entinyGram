@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 19 Sep 2026 13:31:12 +0300
-Subject: [+] confirm before sending
+Subject: confirm before sending
 
 ---
  .../ui/Components/ChatActivityEnterView.java  | 34 ++++++------

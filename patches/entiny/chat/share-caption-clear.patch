@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 28 Sep 2026 13:42:05 +0300
-Subject: [*] clear removed shared captions
+Subject: clear removed shared captions
 
 ---
  .../src/main/java/org/telegram/ui/LaunchActivity.java      | 7 +++++--

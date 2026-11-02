@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 30 Sep 2026 00:56:23 +0300
-Subject: [+] rotate the call screen
+Subject: rotate the call screen
 
 ---
  .../java/org/telegram/ui/Components/voip/VoIPWindowView.java    | 2 +-

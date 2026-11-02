@@ -1846,6 +1846,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuChatOnlineDots">Punti online nelle chat</string>
     <string name="InuChatOnlineDotsInfo">Mostra il punto online sugli avatar dei mittenti nei gruppi.</string>
     <string name="InuOnlineDotsSection">Indicatori online</string>
+    <string name="InuShowOnlineIndicator">Mostra indicatore online</string>
+    <string name="InuShowOnlineIndicatorInfo">Se disattivato, il punto online è nascosto ovunque e le opzioni sotto scompaiono.</string>
     <string name="InuMutualContactSection">Contatti reciproci</string>
     <string name="InuOnlineDotsInfo">Punto azzurro online; giallo entro 20 min e rosso entro un\'ora dopo essere andato offline.</string>
     <string name="InuGhostModeLauncherShortcut">Scorciatoia di attivazione sull\'icona dell\'app</string>

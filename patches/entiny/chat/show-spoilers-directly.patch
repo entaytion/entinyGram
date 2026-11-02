@@ -3,10 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 22 Aug 2026 21:28:38 +0300
 Subject: Add auto-reveal spoilers option (show text spoilers without tapping)
 
-- add InuConfig.SHOW_SPOILERS_DIRECTLY (default off)
-- skip SpoilerEffect.addSpoilers() when enabled so text spoilers render already-revealed
-- SpoilersTextView.setText() marks isSpoilersRevealed=true when enabled
-- toggle in Messages settings under Spoilers section, triggers interface reload
 ---
  .../main/java/org/telegram/messenger/MessageObject.java   | 8 ++++++++
  .../telegram/ui/Components/spoilers/SpoilerEffect.java    | 6 ++++++

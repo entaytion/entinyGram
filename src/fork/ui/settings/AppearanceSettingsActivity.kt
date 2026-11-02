@@ -25,6 +25,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
     private var avatarCornerPreview: AvatarCornerPreviewCell? = null
+    private var notificationIconCell: NotificationIconCell? = null
     private var nonIslandInfo: TextView? = null
 
     private fun nonIslandInfoItem(context: Context): UItem {
@@ -73,18 +74,10 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
         items.add(mkSubPageButton(BUTTON_FONTS, LocaleController.getString(R.string.InuFonts)))
         items.add(mkTwoLineEntry(BUTTON_ICON_REPLACEMENT, R.drawable.phosphor_palette, LocaleController.getString(R.string.InuIconReplacement), IconPackHelper.getActivePacksSummary()))
-        items.add(
-            mkTwoLineEntry(
-                BUTTON_NOTIFICATION_ICON,
-                R.drawable.phosphor_palette,
-                LocaleController.getString(R.string.InuNotificationIcon),
-                when (InuConfig.NOTIFICATION_ICON.value) {
-                    InuConfig.NotificationIconItem.INUGRAM -> LocaleController.getString(R.string.InuNotificationIconInugram)
-                    InuConfig.NotificationIconItem.OLD_ENTINYGRAM -> LocaleController.getString(R.string.InuNotificationIconOldEntinygram)
-                    else -> LocaleController.getString(R.string.InuNotificationIconTelegram)
-                },
-            )
-        )
+        if (notificationIconCell == null) {
+            notificationIconCell = NotificationIconCell(ctx) { showRestartBulletin() }
+        }
+        items.add(UItem.asCustom(notificationIconCell).apply { id = BUTTON_NOTIFICATION_ICON })
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDesignStyle)))
@@ -206,20 +199,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             }
 
             BUTTON_ICON_REPLACEMENT -> presentFragment(IconPacksActivity())
-            BUTTON_NOTIFICATION_ICON -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuNotificationIconTelegram),
-                    LocaleController.getString(R.string.InuNotificationIconInugram),
-                    LocaleController.getString(R.string.InuNotificationIconOldEntinygram),
-                ),
-                InuConfig.NOTIFICATION_ICON.value,
-            ) { which ->
-                InuConfig.NOTIFICATION_ICON.value = which
-                showRestartBulletin()
-                listView.adapter.update(false)
-            }
-
             BUTTON_FONTS -> presentFragment(FontsSettingsActivity())
 
             TOGGLE_DISABLE_SCRIM_BLUR -> {

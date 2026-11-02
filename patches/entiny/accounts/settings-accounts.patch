@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 21 Oct 2026 12:28:58 +0300
-Subject: feat(entiny): optional accounts list on the settings screen
+Subject: optional accounts list on the settings screen
 
 ---
  .../src/main/java/org/telegram/ui/SettingsActivity.java    | 7 +++++++

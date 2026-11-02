@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 30 Sep 2026 10:46:38 +0300
-Subject: [*] m3 bottom tabs full width
+Subject: m3 bottom tabs full width
 
 ---
  .../src/main/java/org/telegram/ui/MainTabsActivity.java  | 9 +++++++--

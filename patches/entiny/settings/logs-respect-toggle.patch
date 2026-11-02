@@ -1,11 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 3 Oct 2026 21:44:32 +0300
-Subject: [*] let debug builds respect the logs toggle
+Subject: Respect the logs toggle and redact sensitive data in logs
 
 ---
- .../src/main/java/org/telegram/messenger/BuildVars.java         | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../src/main/java/org/telegram/messenger/BuildVars.java       | 2 +-
+ .../src/main/java/org/telegram/messenger/FileLog.java         | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java b/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
 index 0000000..0000000 100644
@@ -20,3 +21,22 @@ index 0000000..0000000 100644
              if (LOGS_ENABLED) {
                  final Thread.UncaughtExceptionHandler pastHandler = Thread.getDefaultUncaughtExceptionHandler();
                  Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
+@@ -344,12 +344,12 @@ public class FileLog {
+             logQueue = new DispatchQueue("logQueue");
+             currentFile.createNewFile();
+             FileOutputStream stream = new FileOutputStream(currentFile);
+-            streamWriter = new OutputStreamWriter(stream);
++            streamWriter = new desu.inugram.helpers.RedactingWriter(stream);
+             streamWriter.write("-----start log " + date + "-----\n");
+             streamWriter.flush();
+ 
+             FileOutputStream tlStream = new FileOutputStream(tlRequestsFile);
+-            tlStreamWriter = new OutputStreamWriter(tlStream);
++            tlStreamWriter = new desu.inugram.helpers.RedactingWriter(tlStream);
+             tlStreamWriter.write("-----start log " + date + "-----\n");
+             tlStreamWriter.flush();
+         } catch (Exception e) {

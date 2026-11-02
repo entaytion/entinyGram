@@ -1,22 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 1 Sep 2026 00:10:13 +0300
-Subject: fix(entiny): keep wide channel post text inside the bubble
+Subject: keep wide channel post text inside the bubble
 
-Long captions/messages on wide channel posts overflowed past the bubble
-edge instead of staying within the wide width, and the side avatar slot
-still reserved space it no longer needs in wide mode.
-
-Thanks to exteraless (https://github.com/exteraless/exteraless) for the
-original fix we ported this from (commit db2016b).
-
-- gate the caption/text-overflow width recompute on isWideChannelPost()
-  so long text no longer forces the bubble past the wide-post width
-- add drawsSideAvatar() and use it in place of needDrawAvatar() for all
-  side-avatar-dependent positioning (seek bar, buttons, background,
-  overlays, poll buttons) so wide posts don't reserve avatar space
-- drop the dead WIDE_FEED_POSTS/searchType==4 branch -- this fork has no
-  Feed surface for it to apply to, so it was an unreachable toggle
 ---
  .../org/telegram/messenger/MessageObject.java | 106 ++++++++-
  .../telegram/ui/Cells/ChatMessageCell.java    | 201 +++++++++++++++---

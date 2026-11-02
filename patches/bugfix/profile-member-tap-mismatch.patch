@@ -32,7 +32,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -4558,10 +4558,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -4564,10 +4564,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  ReportBottomSheet.openChat(ProfileActivity.this, getDialogId());
              } else if (position >= membersStartRow && position < membersEndRow) {
                  TLRPC.ChatParticipant participant;
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                  }
                  onMemberClick(participant, false, view);
              } else if (position == addMemberRow) {
-@@ -5116,8 +5116,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5122,8 +5122,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      return true;
                  } else if (position >= membersStartRow && position < membersEndRow) {
                      final TLRPC.ChatParticipant participant;

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 29 Oct 2026 23:05:20 +0200
-Subject: [*] slow mode counts a forwarded album once
+Subject: slow mode counts a forwarded album once
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 1 +
@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12690,6 +12690,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12694,6 +12694,7 @@ public class ChatActivity extends BaseFragment implements
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
          args.putInt("messagesCount", canForwardMessagesCount);

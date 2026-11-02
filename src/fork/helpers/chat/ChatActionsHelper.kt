@@ -989,12 +989,6 @@ object ChatActionsHelper {
     }
 
     @JvmStatic
-    fun shouldAnimateEditButton(activity: ChatActivity): Boolean {
-        val item = activity.actionBar?.createActionMode()?.getItem(ACTION_SELECT_RANGE) ?: return true
-        return item.visibility != View.VISIBLE
-    }
-
-    @JvmStatic
     fun updateActionModeVisibility(activity: ChatActivity) {
         val actionMode = activity.actionBar?.createActionMode() ?: return
         actionMode.setItemVisibility(

@@ -83,29 +83,6 @@ object FeedMessageUtils {
     }
 
     @JvmStatic
-    fun createReplacement(currentAccount: Int, dialogId: Long, original: MessageObject?): MessageObject? {
-        if (original == null) {
-            return null
-        }
-        val feedController = FeedController.getInstance(currentAccount)
-        val stored = feedController.getMessage(dialogId, original.realId) ?: return null
-        val copy = copyMessage(original.messageOwner)
-        copy.id = stored.id
-        copy.realId = stored.realId
-        copy.dialog_id = stored.dialogId
-
-        val replacement = MessageObject(
-            currentAccount, copy, stored.replyMessageObject,
-            null, null, null, null, true, true, 0L, false, false, false, SEARCH_TYPE_FEED
-        )
-        replacement.isPrimaryGroupMessage = stored.isPrimaryGroupMessage
-        replacement.localGroupId = stored.localGroupId
-        replacement.copyStableParams(stored)
-        feedController.replaceMessage(stored, replacement)
-        return replacement
-    }
-
-    @JvmStatic
     fun createUnreadDivider(currentAccount: Int, stableId: Int): MessageObject {
         val divider = TLRPC.TL_message()
         divider.message = ""
@@ -195,24 +172,6 @@ object FeedMessageUtils {
             !message.isDateObject &&
             message.type != MessageObject.TYPE_LOADING &&
             !message.isSponsored
-
-    @JvmStatic
-    fun matchesPlaybackNotification(currentAccount: Int, message: MessageObject?, messageId: Int): Boolean {
-        if (message == null) {
-            return false
-        }
-        if (message.id == messageId) {
-            return true
-        }
-        val feedController = FeedController.peekInstance(currentAccount) ?: return false
-        val realDialogId = feedController.resolveRealDialogId(messageId)
-        return realDialogId != 0L &&
-            realDialogId == message.dialogId &&
-            feedController.resolveRealMessageId(realDialogId, messageId) == getFeedRealId(message)
-    }
-
-    private fun getFeedRealId(message: MessageObject): Int =
-        if (message.searchType == SEARCH_TYPE_FEED) message.realId else message.id
 
     private fun onPostLinkExported(response: TLObject?, chatActivity: ChatActivity) {
         if (response !is TLRPC.TL_exportedMessageLink) {

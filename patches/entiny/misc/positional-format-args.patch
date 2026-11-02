@@ -3,13 +3,6 @@ From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 12 Sep 2026 13:39:11 +0300
 Subject: Pin implicit %s/%d format args to explicit positions in strings.xml
 
-Several stock strings interpolate multiple %s/%d placeholders without an explicit
-index (e.g. "%s, %d exception"). Android formats these positionally per-locale, so
-a translation that reorders the arguments (common for grammar reasons) silently
-swaps values instead of reordering them, and can throw MissingFormatArgumentException
-on some locales/ICU versions. Pin every multi-arg string in this pass to %1$s/%2$d
-style explicit indices so translations control word order without touching argument
-order.
 ---
  TMessagesProj/src/main/res/values/strings.xml | 84 +++++++++----------
  1 file changed, 42 insertions(+), 42 deletions(-)

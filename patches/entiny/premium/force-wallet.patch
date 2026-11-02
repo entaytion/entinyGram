@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 26 Oct 2026 00:08:31 +0200
-Subject: [+] force wallet availability
+Subject: force wallet availability
 
 ---
  .../java/org/telegram/messenger/AppGlobalConfig.java  | 11 +++++++++--

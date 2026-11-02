@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 27 Sep 2026 22:39:03 +0300
-Subject: [*] clock format
+Subject: clock format
 
 ---
  .../main/java/org/telegram/messenger/LocaleController.java  | 6 ++++--
