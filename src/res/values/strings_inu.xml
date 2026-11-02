@@ -475,6 +475,8 @@
     <string name="InuSpoilerExtendToLineEndInfo">Stretches spoiler blocks to the edge of the line when text ends just short of it</string>
     <string name="InuLinkPreviewSpoiler">Spoiler link previews</string>
     <string name="InuLinkPreviewSpoilerInfo">When the link that generated a web preview is hidden under a spoiler, cover the preview with a spoiler too</string>
+    <string name="InuDisableLinkPreviews">Disable link previews</string>
+    <string name="InuDisableLinkPreviewsInfo">Never generate or send previews for links in your messages</string>
     <string name="InuMediaSpoilerLabel">Spoiler</string>
     <string name="InuMediaSpoilerMode">Media spoiler style</string>
     <string name="InuMediaSpoilerModeTelegram">Telegram</string>

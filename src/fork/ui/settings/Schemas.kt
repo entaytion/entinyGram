@@ -115,6 +115,7 @@ object Schemas {
             toggle(InuConfig.HIDE_KEYBOARD_ON_SCROLL, R.string.InuHideKeyboardOnScroll)
             toggle(InuConfig.KEEP_KEYBOARD_WHILE_TYPING, R.string.InuKeepKeyboardWhileTyping, R.string.InuKeepKeyboardWhileTypingInfo)
             toggle(InuConfig.DISABLE_BOT_DRAFT_TOP, R.string.InuDisableBotDraftTop)
+            toggle(InuConfig.DISABLE_LINK_PREVIEWS, R.string.InuDisableLinkPreviews, R.string.InuDisableLinkPreviewsInfo)
         }
         section(R.string.InuChatNavigation) {
             toggle(InuConfig.DISABLE_PULL_TO_NEXT, R.string.InuDisablePullToNext)

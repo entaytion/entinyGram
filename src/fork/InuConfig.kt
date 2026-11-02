@@ -403,6 +403,9 @@ object InuConfig {
     @JvmField
     val LINK_PREVIEW_SPOILER = BoolItem("link_preview_spoiler", true)
 
+    @JvmField
+    val DISABLE_LINK_PREVIEWS = BoolItem("disable_link_previews", false)
+
     class MediaSpoilerModeItem : IntItem("media_spoiler_mode", PILL) {
         override fun read(prefs: SharedPreferences): Int {
             if (prefs.contains(key)) return prefs.getInt(key, default)

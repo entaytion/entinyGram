@@ -223,6 +223,7 @@
   "gif-recycle-interrupt": "media",
   "play-original-video": "media",
   "disable-overscroll-story": "ui",
+  "disable-link-previews": "chat",
   "sleep-timer": "media",
   "shorter-swipe-gestures": "ui",
   "video-message-autoplay": "chat",

@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 21:49:27 +0200
+Subject: Disable link previews
+
+---
+ .../java/org/telegram/messenger/SendMessagesHelper.java   | 8 +++++++-
+ .../src/main/java/org/telegram/ui/ChatActivity.java       | 3 +++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -3627,7 +3627,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (message != null) {
+             req.message = message;
+             req.flags |= 2048;
+-            req.no_webpage = !searchLinks;
++            req.no_webpage = !searchLinks || desu.inugram.InuConfig.DISABLE_LINK_PREVIEWS.getValue();
+         }
+         if (messageObject.messageOwner != null && (messageObject.messageOwner.flags & 1073741824) != 0) {
+             req.quick_reply_shortcut_id = messageObject.messageOwner.quick_reply_shortcut_id;
+@@ -4512,6 +4512,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         PollSendParams pollSendParams = sendMessageParams.pollSendParams;
+         TL_iv.RichMessage richMessage = sendMessageParams.richMessage;
+ 
++        if (desu.inugram.InuConfig.DISABLE_LINK_PREVIEWS.getValue()) {
++            searchLinks = false;
++            webPage = null;
++            mediaWebPage = null;
++        }
++
+         if (sendMessageChatArguments.welcomeMessageChatId != 0) {
+             peer = -sendMessageChatArguments.welcomeMessageChatId;
+             user = null;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -14576,6 +14576,9 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     public void searchLinks(final CharSequence charSequence, final boolean force, final boolean inu_force) {
++        if (desu.inugram.InuConfig.DISABLE_LINK_PREVIEWS.getValue()) {
++            return;
++        }
+         if (desu.inugram.helpers.UrlCleanerHelper.hasPendingRedirects(charSequence)) {
+             return;
+         }
