@@ -1,0 +1,170 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:45:21 +0200
+Subject: count swipe gestures at half the distance
+
+---
+ .../org/telegram/ui/ActionBar/ActionBarLayout.java  |  2 +-
+ .../main/java/org/telegram/ui/Cells/DialogCell.java |  2 +-
+ .../src/main/java/org/telegram/ui/ChatActivity.java |  8 ++++++--
+ .../telegram/ui/Components/SharedMediaLayout.java   |  9 ++++++++-
+ .../main/java/org/telegram/ui/DialogsActivity.java  | 13 ++++++++++---
+ .../src/main/java/org/telegram/ui/PhotoViewer.java  |  2 +-
+ 6 files changed, 27 insertions(+), 9 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+@@ -1522,7 +1522,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                         float x = containerView.getX();
+                         float velX = velocityTracker.getXVelocity();
+                         float velY = velocityTracker.getYVelocity();
+-                        final boolean backAnimation = (newBackTransitions() ? x < dp(56) / 2 || velX < -1000 : x < containerView.getMeasuredWidth() / 3.0f) && (velX < 3500 || Math.abs(velX) < Math.abs(velY));
++                        final boolean backAnimation = (newBackTransitions() ? x < desu.inugram.helpers.SwipeSensitivity.adjustDpCompletion(dp(56)) / 2 || velX < -1000 : x < desu.inugram.helpers.SwipeSensitivity.adjustPixelCompletion(containerView.getMeasuredWidth() / 3.0f)) && (velX < 3500 || Math.abs(velX) < Math.abs(velY));
+                         animateBackEndAnimation(backAnimation);
+                     } else {
+                         maybeStartTracking = false;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -3834,7 +3834,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+         }
+         if (isSliding && !swipeCanceled) {
+             boolean prevValue = drawRevealBackground;
+-            drawRevealBackground = Math.abs(translationX) >= getMeasuredWidth() * 0.45f;
++            drawRevealBackground = Math.abs(translationX) >= getMeasuredWidth() * desu.inugram.helpers.SwipeSensitivity.adjustFractionCompletion(0.45f);
+             if (prevValue != drawRevealBackground && archiveHidden == SharedConfig.archiveHidden) {
+                 try {
+                     performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -4847,6 +4847,7 @@ public class ChatActivity extends BaseFragment implements
+             private float trackAnimationProgress;
+             private float endTrackingX;
+             private boolean wasTrackingVibrate;
++            private boolean inu_swipeDisabledForCurrentTouch;
+ 
+             private float springMultiplier = 2000f;
+ 
+@@ -4994,6 +4995,7 @@ public class ChatActivity extends BaseFragment implements
+                 }
+                 boolean result = super.onInterceptTouchEvent(e);
+                 if (actionBar.isActionModeShowed() || isReport()) {
++                    inu_swipeDisabledForCurrentTouch = true;
+                     return result;
+                 }
+                 processTouchEvent(e);
+@@ -5221,6 +5223,7 @@ public class ChatActivity extends BaseFragment implements
+                         }
+                         startedTrackingPointerId = e.getPointerId(0);
+                         maybeStartTrackingSlidingView = true;
++                        inu_swipeDisabledForCurrentTouch = false;
+                         startedTrackingX = (int) e.getX();
+                         startedTrackingY = (int) e.getY();
+                     }
+@@ -5240,7 +5243,7 @@ public class ChatActivity extends BaseFragment implements
+                             getParent().requestDisallowInterceptTouchEvent(true);
+                         }
+                     } else if (startedTrackingSlidingView) {
+-                        if (Math.abs(dx) >= AndroidUtilities.dp(50)) {
++                        if (Math.abs(dx) >= desu.inugram.helpers.SwipeSensitivity.adjustDpCompletion(AndroidUtilities.dp(50))) {
+                             if (!wasTrackingVibrate) {
+                                 try {
+                                     performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+@@ -5261,7 +5264,7 @@ public class ChatActivity extends BaseFragment implements
+                         invalidate();
+                     }
+                 } else if (slidingView != null && (e == null || e.getPointerId(0) == startedTrackingPointerId && (e.getAction() == MotionEvent.ACTION_CANCEL || e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP))) {
+-                    if (e != null && e.getAction() != MotionEvent.ACTION_CANCEL && Math.abs(getSlidingNonAnimationTranslationX(false)) >= AndroidUtilities.dp(50)) {
++                    if (e != null && e.getAction() != MotionEvent.ACTION_CANCEL && !inu_swipeDisabledForCurrentTouch && Math.abs(getSlidingNonAnimationTranslationX(false)) >= desu.inugram.helpers.SwipeSensitivity.adjustDpCompletion(AndroidUtilities.dp(50))) {
+                         MessageObject message = getSlidingMessageObject();
+                         final boolean allowReplyOnOpenTopic = canSendMessageToTopic(message);
+                         if (
+@@ -5395,6 +5398,7 @@ public class ChatActivity extends BaseFragment implements
+                 }
+                 boolean result = super.onTouchEvent(e);
+                 if (actionBar.isActionModeShowed() || isReport()) {
++                    inu_swipeDisabledForCurrentTouch = true;
+                     return result;
+                 }
+                 processTouchEvent(e);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -5993,13 +5993,20 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+             if (inu_additionalOffset != 0) {
+                 if (Math.abs(velX) > 1500) {
+                     backAnimation = animatingForward ? velX > 0 : velX < 0;
++                } else if (desu.inugram.helpers.SwipeSensitivity.isEnabled()) {
++                    float completionDistance = desu.inugram.helpers.SwipeSensitivity.adjustPixelCompletion(mediaPages[0].getMeasuredWidth() / 2.0f);
++                    if (animatingForward) {
++                        backAnimation = mediaPages[1].getX() > mediaPages[0].getMeasuredWidth() - completionDistance;
++                    } else {
++                        backAnimation = mediaPages[0].getX() < completionDistance;
++                    }
+                 } else if (animatingForward) {
+                     backAnimation = mediaPages[1].getX() > (mediaPages[0].getMeasuredWidth() >> 1);
+                 } else {
+                     backAnimation = mediaPages[0].getX() < (mediaPages[0].getMeasuredWidth() >> 1);
+                 }
+             } else {
+-                backAnimation = Math.abs(x) < mediaPages[0].getMeasuredWidth() / 3.0f && (Math.abs(velX) < 3500 || Math.abs(velX) < Math.abs(velY));
++                backAnimation = Math.abs(x) < desu.inugram.helpers.SwipeSensitivity.adjustPixelCompletion(mediaPages[0].getMeasuredWidth() / 3.0f) && (Math.abs(velX) < 3500 || Math.abs(velX) < Math.abs(velY));
+             }
+             float dx;
+             ValueAnimator invalidate = ValueAnimator.ofFloat(0, 1);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -1508,14 +1508,21 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                                 if (Math.abs(velX) > 1500) {
+                                     backAnimation = animatingForward ? velX > 0 : velX < 0;
+                                 } else {
+-                                    if (animatingForward) {
++                                    if (desu.inugram.helpers.SwipeSensitivity.isEnabled()) {
++                                        float completionDistance = desu.inugram.helpers.SwipeSensitivity.adjustPixelCompletion(viewPages[0].getMeasuredWidth() / 2.0f);
++                                        if (animatingForward) {
++                                            backAnimation = viewPages[1].getX() > viewPages[0].getMeasuredWidth() - completionDistance;
++                                        } else {
++                                            backAnimation = viewPages[0].getX() < completionDistance;
++                                        }
++                                    } else if (animatingForward) {
+                                         backAnimation = (viewPages[1].getX() > (viewPages[0].getMeasuredWidth() >> 1));
+                                     } else {
+                                         backAnimation = (viewPages[0].getX() < (viewPages[0].getMeasuredWidth() >> 1));
+                                     }
+                                 }
+                             } else {
+-                                backAnimation = Math.abs(x) < viewPages[0].getMeasuredWidth() / 3.0f && (Math.abs(velX) < 3500 || Math.abs(velX) < Math.abs(velY));
++                                backAnimation = Math.abs(x) < desu.inugram.helpers.SwipeSensitivity.adjustPixelCompletion(viewPages[0].getMeasuredWidth() / 3.0f) && (Math.abs(velX) < 3500 || Math.abs(velX) < Math.abs(velY));
+                             }
+                         }
+                         float dx;
+@@ -2741,7 +2748,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+         @Override
+         public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
+-            return 0.45f;
++            return desu.inugram.helpers.SwipeSensitivity.adjustFractionCompletion(0.45f);
+         }
+ 
+         @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -19676,7 +19676,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 zooming = false;
+                 moving = false;
+             } else if (draggingDown) {
+-                if (Math.abs(dragY - ev.getY()) > getContainerViewHeight() / 6.0f) {
++                if (Math.abs(dragY - ev.getY()) > desu.inugram.helpers.SwipeSensitivity.adjustPixelCompletion(getContainerViewHeight() / 6.0f)) {
+                     if (enableSwipeToPiP() && (dragY - ev.getY() > 0)) {
+                         switchToPip(true);
+                     } else {

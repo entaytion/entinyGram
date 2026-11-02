@@ -625,3 +625,4 @@ entiny/media/gif-recycle-interrupt.patch
 entiny/media/play-original-video.patch
 entiny/ui/disable-overscroll-story.patch
 entiny/media/sleep-timer.patch
+entiny/ui/shorter-swipe-gestures.patch

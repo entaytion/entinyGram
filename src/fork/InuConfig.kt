@@ -474,6 +474,9 @@ object InuConfig {
     val SLEEP_TIMER_END_OF_TRACK = BoolItem("sleep_timer_end_of_track", false)
 
     @JvmField
+    val SHORTER_SWIPE_GESTURES = BoolItem("shorter_swipe_gestures", false)
+
+    @JvmField
     val SEND_MP4_DOCUMENT_AS_VIDEO = BoolItem("send_mp4_document_as_video", true)
 
     @JvmField

@@ -2217,4 +2217,6 @@
     <string name="InuSleepTimerDisable">Отключить</string>
     <string name="InuSleepTimerStatusOn">Таймер включён · осталось %1$s</string>
     <string name="InuSleepTimerStatusOff">Таймер выключен</string>
+    <string name="InuShorterSwipeGestures">Короткие свайпы</string>
+    <string name="InuShorterSwipeGesturesInfo">Засчитывать свайп на половине пути: назад, ответ, папки, страницы медиа и свайп вниз в просмотрщике.</string>
 </resources>

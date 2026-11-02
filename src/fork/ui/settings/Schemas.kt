@@ -121,6 +121,7 @@ object Schemas {
             toggle(InuConfig.CHAT_ALWAYS_SHOW_DOWN, R.string.InuChatAlwaysShowDown, R.string.InuChatAlwaysShowDownInfo)
             toggle(InuConfig.CHAT_TWO_FINGER_SELECT, R.string.InuChatTwoFingerSelect, R.string.InuChatTwoFingerSelectInfo)
             toggle(InuConfig.SELECTION_BOTTOM_NO_QUOTE, R.string.InuSelectionBottomNoQuote, R.string.InuSelectionBottomNoQuoteInfo)
+            toggle(InuConfig.SHORTER_SWIPE_GESTURES, R.string.InuShorterSwipeGestures, R.string.InuShorterSwipeGesturesInfo)
         }
         section(R.string.InuMentionsAndSearch) {
             custom(

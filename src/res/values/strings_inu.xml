@@ -2258,4 +2258,6 @@
     <string name="InuSleepTimerDisable">Disable</string>
     <string name="InuSleepTimerStatusOn">Timer on · %1$s left</string>
     <string name="InuSleepTimerStatusOff">Timer off</string>
+    <string name="InuShorterSwipeGestures">Shorter swipe gestures</string>
+    <string name="InuShorterSwipeGesturesInfo">Count a swipe at half the distance: back, reply, chat folders, media pages and swipe down in the viewer.</string>
 </resources>
