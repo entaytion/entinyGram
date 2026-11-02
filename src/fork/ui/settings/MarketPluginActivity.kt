@@ -1,3 +1,4 @@
+// #if PLUGINS
 package desu.inugram.ui.settings
 
 import android.annotation.SuppressLint
@@ -236,3 +237,4 @@ internal class MarketHeroCell(context: Context) : LinearLayout(context) {
         button.setOnClickListener { onClick() }
     }
 }
+// #endif

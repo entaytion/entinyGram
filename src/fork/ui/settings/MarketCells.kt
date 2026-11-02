@@ -1,3 +1,4 @@
+// #if PLUGINS
 package desu.inugram.ui.settings
 
 import android.annotation.SuppressLint
@@ -385,3 +386,4 @@ internal class MarketRow(context: Context) : LinearLayout(context) {
 
 internal fun marketTagChip(tag: MarketTag, count: Int, selected: Boolean, onClick: () -> Unit): MarketChip =
     MarketChip(tag.id, "${LocaleController.getString(tag.nameRes)} · $count", tag.iconRes, selected, onClick)
+// #endif

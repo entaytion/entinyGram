@@ -1,3 +1,4 @@
+// #if PLUGINS
 package desu.inugram.ui.settings
 
 import android.content.Context
@@ -332,3 +333,4 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
         val BUTTON_RETRY = InuUtils.generateId()
     }
 }
+// #endif
