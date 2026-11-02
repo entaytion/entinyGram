@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:14:52 +0200
+Subject: clear a pending interrupt before recycling animated drawables
+
+---
+ .../src/main/java/org/telegram/messenger/ImageLoader.java       | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
+@@ -1171,6 +1171,7 @@ public class ImageLoader {
+                 if (fistFrame) {
+                     Bitmap bitmap = fileDrawable.getFrameAtTime(0, false);
+ 
++                    Thread.interrupted();
+                     fileDrawable.recycle();
+                     Thread.interrupted();
+                     if (bitmap == null) {
+@@ -1671,6 +1672,7 @@ public class ImageLoader {
+             try {
+                 return fileDrawable.getFrameAtTime(0, true);
+             } finally {
++                Thread.interrupted();
+                 fileDrawable.recycle();
+             }
+         }
