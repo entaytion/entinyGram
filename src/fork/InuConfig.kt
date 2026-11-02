@@ -498,6 +498,9 @@ object InuConfig {
     val ATTACH_CAMERA_SQUARE = BoolItem("attach_camera_square", true)
 
     @JvmField
+    val ATTACH_CAMERA_MIRROR_FRONT = BoolItem("attach_camera_mirror_front", false)
+
+    @JvmField
     val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram", allowed = setOf("entinyGram", "Telegram"))
 
     @JvmField

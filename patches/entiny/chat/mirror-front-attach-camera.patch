@@ -1,0 +1,75 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:56:32 +0200
+Subject: mirror the front attach camera
+
+---
+ .../telegram/messenger/camera/CameraView.java  | 18 +++++++++++++++---
+ .../Components/ChatAttachAlertPhotoLayout.java |  6 +++++-
+ 2 files changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraView.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraView.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraView.java
+@@ -1759,7 +1759,11 @@ public class CameraView extends FrameLayout implements TextureView.SurfaceTextur
+                 GLES20.glUniformMatrix4fv(oppositeCameraMatrixHandle, 1, false, cameraMatrix[1 - i], 0);
+ 
+                 GLES20.glUniformMatrix4fv(textureMatrixHandle, 1, false, mSTMatrix[i], 0);
+-                GLES20.glUniformMatrix4fv(vertexMatrixHandle, 1, false, mMVPMatrix[i], 0);
++                float[] inu_vertexMatrix = mMVPMatrix[i];
++                if (desu.inugram.helpers.chat.AttachCameraHelper.shouldMirrorFront(i == 0 ? isFrontface : !isFrontface)) {
++                    inu_vertexMatrix = desu.inugram.helpers.chat.RoundRecorderHelper.mirroredVertexMatrix(mMVPMatrix[i]);
++                }
++                GLES20.glUniformMatrix4fv(vertexMatrixHandle, 1, false, inu_vertexMatrix, 0);
+                 Size size = previewSize[i];
+                 if (size != null && currentSession[i] != null) {
+                     int angle = currentSession[i].getWorldAngle();
+@@ -1863,7 +1867,11 @@ public class CameraView extends FrameLayout implements TextureView.SurfaceTextur
+                     GLES20.glUniformMatrix4fv(blurCameraMatrixHandle, 1, false, cameraMatrix[0], 0);
+ 
+                     GLES20.glUniformMatrix4fv(blurTextureMatrixHandle, 1, false, mSTMatrix[0], 0);
+-                    GLES20.glUniformMatrix4fv(blurVertexMatrixHandle, 1, false, mMVPMatrix[0], 0);
++                    float[] inu_blurVertexMatrix = mMVPMatrix[0];
++                    if (desu.inugram.helpers.chat.AttachCameraHelper.shouldMirrorFront(isFrontface)) {
++                        inu_blurVertexMatrix = desu.inugram.helpers.chat.RoundRecorderHelper.mirroredVertexMatrix(mMVPMatrix[0]);
++                    }
++                    GLES20.glUniformMatrix4fv(blurVertexMatrixHandle, 1, false, inu_blurVertexMatrix, 0);
+ 
+                     GLES20.glUniform2f(blurPixelHandle, pixelW, pixelH);
+ 
+@@ -2784,7 +2792,11 @@ public class CameraView extends FrameLayout implements TextureView.SurfaceTextur
+                 GLES20.glEnableVertexAttribArray(positionHandle);
+                 GLES20.glVertexAttribPointer(textureHandle, 2, GLES20.GL_FLOAT, false, 8, textureBuffer);
+                 GLES20.glEnableVertexAttribArray(textureHandle);
+-                GLES20.glUniformMatrix4fv(vertexMatrixHandle, 1, false, mMVPMatrix[i], 0);
++                float[] inu_vertexMatrix = mMVPMatrix[i];
++                if (desu.inugram.helpers.chat.AttachCameraHelper.shouldMirrorFront(i == 0 ? isFrontface : !isFrontface)) {
++                    inu_vertexMatrix = desu.inugram.helpers.chat.RoundRecorderHelper.mirroredVertexMatrix(mMVPMatrix[i]);
++                }
++                GLES20.glUniformMatrix4fv(vertexMatrixHandle, 1, false, inu_vertexMatrix, 0);
+ 
+                 GLES20.glUniformMatrix4fv(cameraMatrixHandle, 1, false, cameraMatrix[i], 0);
+                 GLES20.glUniformMatrix4fv(oppositeCameraMatrixHandle, 1, false, cameraMatrix[1 - i], 0);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+@@ -1368,12 +1368,16 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+                 }
+                 final File cameraFile = AndroidUtilities.generatePicturePath(parentAlert.baseFragment instanceof ChatActivity && ((ChatActivity) parentAlert.baseFragment).isSecretChat(), null);
+                 final boolean sameTakePictureOrientation = cameraView.getCameraSession().isSameTakePictureOrientation();
+-                cameraView.getCameraSession().setFlipFront(parentAlert.baseFragment instanceof ChatActivity || parentAlert.avatarPicker == 2);
++                final boolean inu_mirrorPhoto = desu.inugram.helpers.chat.AttachCameraHelper.shouldMirrorFront(cameraView.isFrontface());
++                cameraView.getCameraSession().setFlipFront(parentAlert.baseFragment instanceof ChatActivity || parentAlert.avatarPicker == 2 || inu_mirrorPhoto);
+                 takingPhoto = CameraController.getInstance().takePicture(cameraFile, false, cameraView.getCameraSessionObject(), (orientation) -> {
+                     takingPhoto = false;
+                     if (cameraFile == null || parentAlert.destroyed) {
+                         return;
+                     }
++                    if (inu_mirrorPhoto) {
++                        desu.inugram.helpers.chat.AttachCameraHelper.mirrorPhotoFile(cameraFile);
++                    }
+ //                    Pair<Integer, Integer> orientation = AndroidUtilities.getImageOrientation(cameraFile);
+                     mediaFromExternalCamera = false;
+                     int width = 0, height = 0;

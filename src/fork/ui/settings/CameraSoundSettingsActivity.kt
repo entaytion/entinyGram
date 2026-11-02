@@ -154,6 +154,14 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 InuConfig.ATTACH_CAMERA_SQUARE.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ATTACH_CAMERA_MIRROR_FRONT,
+                R.string.InuAttachCameraMirrorFront,
+                R.string.InuAttachCameraMirrorFrontInfo,
+                InuConfig.ATTACH_CAMERA_MIRROR_FRONT.value,
+            )
+        )
         val cameraApiText = LocaleController.formatString(
             R.string.InuRoundRecorderCameraApi,
             if (SharedConfig.isUsingCamera2(currentAccount)) "Camera2" else "Camera1",
@@ -222,6 +230,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             TOGGLE_CHAT_VOICE_IN_ATTACH -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_VOICE_IN_ATTACH.toggle()
             TOGGLE_CONFIRM_SEND_VOICE -> (view as? TextCheckCell)?.isChecked = InuConfig.CONFIRM_SEND_VOICE.toggle()
             TOGGLE_ATTACH_CAMERA_SQUARE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_SQUARE.toggle()
+            TOGGLE_ATTACH_CAMERA_MIRROR_FRONT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_MIRROR_FRONT.toggle()
             BUTTON_ROUND_DEFAULT_CAMERA -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -316,6 +325,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CHAT_VOICE_IN_ATTACH = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_VOICE = InuUtils.generateId()
         private val TOGGLE_ATTACH_CAMERA_SQUARE = InuUtils.generateId()
+        private val TOGGLE_ATTACH_CAMERA_MIRROR_FRONT = InuUtils.generateId()
         private val BUTTON_ROUND_DEFAULT_CAMERA = InuUtils.generateId()
         private val TOGGLE_ROUND_NEW_RECORDER = InuUtils.generateId()
         private val TOGGLE_ROUND_COMPOSITION = InuUtils.generateId()
@@ -384,6 +394,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("chat-voice-in-attach", R.string.InuChatVoiceInAttach, TOGGLE_CHAT_VOICE_IN_ATTACH),
                 SearchRegistry.Entry("confirm-send-voice", R.string.InuConfirmSendVoice, TOGGLE_CONFIRM_SEND_VOICE),
                 SearchRegistry.Entry("attach-camera-square", R.string.InuAttachCameraSquare, TOGGLE_ATTACH_CAMERA_SQUARE),
+                SearchRegistry.Entry("attach-camera-mirror-front", R.string.InuAttachCameraMirrorFront, TOGGLE_ATTACH_CAMERA_MIRROR_FRONT),
                 SearchRegistry.Entry("round-default-camera", R.string.InuRoundDefaultCamera, BUTTON_ROUND_DEFAULT_CAMERA),
                 SearchRegistry.Entry("round-recorder-zoom-slider", R.string.InuRoundRecorderZoomSlider, TOGGLE_ROUND_RECORDER_ZOOM_SLIDER),
                 SearchRegistry.Entry("round-recorder-zoom-buttons", R.string.InuRoundRecorderZoomButtons, TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS),

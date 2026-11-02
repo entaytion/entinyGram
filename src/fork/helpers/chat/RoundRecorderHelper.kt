@@ -29,6 +29,16 @@ object RoundRecorderHelper {
     private const val MAX_PINCH_RATIO = 3f
 
     @JvmStatic
+    fun mirroredVertexMatrix(m: FloatArray): FloatArray {
+        val out = m.clone()
+        out[0] = -out[0]
+        out[4] = -out[4]
+        out[8] = -out[8]
+        out[12] = -out[12]
+        return out
+    }
+
+    @JvmStatic
     fun pinchDeltaT(fingerRatio: Float): Float {
         val dR = fingerRatio - 1f
         val magnitude = minOf(1f, kotlin.math.abs(dR) / (MAX_PINCH_RATIO - 1f))

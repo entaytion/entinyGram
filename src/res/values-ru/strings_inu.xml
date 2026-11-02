@@ -1637,6 +1637,8 @@
     <string name="InuStopBotAction">Остановить</string>
     <string name="InuStopBotAlert">Остановить **%1$s**? Бот больше не сможет отправлять вам сообщения.</string>
     <string name="InuStopBotDone">Бот остановлен</string>
+    <string name="InuAttachCameraMirrorFront">Зеркалить фронтальную камеру</string>
+    <string name="InuAttachCameraMirrorFrontInfo">Отражать по горизонтали превью фронтальной камеры и снятое фото или видео</string>
     <string name="InuAttachCameraSquare">Квадратная плитка камеры</string>
     <string name="InuAttachCameraSquareInfo">Камера в галерее занимает одну ячейку вместо двух</string>
     <string name="InuSortAlbumsBySize">Сортировать альбомы по размеру</string>

@@ -221,6 +221,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **PhotoViewer close crash fix** when the selected-media strip is not initialized
 - 📡 **crash fix** when deleting all messages of a user while their media messages are selected
 - 📡 **square camera tile**: the attach gallery camera takes one cell instead of two
+- 📡 **mirror front camera** in the attach gallery: flip the preview and the captured photo or video horizontally - *ported from Hundgram (@lurepheonix)*
 - 📡 **save selected files**: download button when selecting files in profile media and search - *ported from the Save Selected Files plugin by @akresik*
 - 📡 **fix looping videos freezing** when seeking near the end - *ported from Hundgram (@lurepheonix)*
 - 📡 **dimmed voice icon** when voice and round video messages are both forbidden - *ported from Hundgram (@lurepheonix)*

@@ -2,9 +2,14 @@ package desu.inugram.helpers.chat
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.BitmapDrawable
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -14,16 +19,48 @@ import desu.inugram.InuConfig.AttachCameraModeItem.Companion.FAB
 import desu.inugram.InuConfig.AttachCameraModeItem.Companion.INSTANT
 import desu.inugram.InuConfig.AttachCameraModeItem.Companion.STATIC
 import desu.inugram.InuConfig.AttachCameraModeItem.Companion.TAB
+import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ImageLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.ChatAttachAlert
 import org.telegram.ui.Components.ChatAttachAlertPhotoLayout
+import java.io.File
+import java.io.FileOutputStream
 import java.lang.ref.WeakReference
+import java.util.Locale
 
 object AttachCameraHelper {
     private var pendingOpen: WeakReference<ChatAttachAlert>? = null
+
+    @JvmStatic
+    fun shouldMirrorFront(isFrontface: Boolean): Boolean =
+        isFrontface && InuConfig.ATTACH_CAMERA_MIRROR_FRONT.value
+
+    @JvmStatic
+    fun mirrorPhotoFile(file: File): Boolean {
+        try {
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath) ?: return false
+            val matrix = Matrix().apply { postScale(-1f, 1f) }
+            val mirrored = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            if (mirrored !== bitmap) bitmap.recycle()
+            FileOutputStream(file).use { out ->
+                mirrored.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                out.flush()
+                out.fd.sync()
+            }
+            val size = (AndroidUtilities.getPhotoSize() / AndroidUtilities.density).toInt()
+            val key = String.format(Locale.US, "%s@%d_%d", Utilities.MD5(file.absolutePath), size, size)
+            ImageLoader.getInstance().putImageToCache(BitmapDrawable(mirrored), key, false)
+            return true
+        } catch (t: Throwable) {
+            Log.d("InuMirror", "mirrorPhotoFile failed", t)
+            return false
+        }
+    }
 
     @JvmStatic
     fun isInstant(): Boolean = InuConfig.ATTACH_CAMERA_MODE.value == INSTANT

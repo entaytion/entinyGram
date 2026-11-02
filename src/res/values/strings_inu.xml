@@ -1227,6 +1227,8 @@
     <string name="InuBlockSleepWhileDownloadingInfo">Holds a partial wake lock while a download is active so Android doesn\'t pause it in the background.</string>
     <string name="InuSendMp4DocumentAsVideo">Send MP4 documents as videos</string>
     <string name="InuSendMp4DocumentAsVideoInfo">MP4 files attached through Files are sent as playable videos without conversion</string>
+    <string name="InuAttachCameraMirrorFront">Mirror front camera</string>
+    <string name="InuAttachCameraMirrorFrontInfo">Horizontally flip the front camera preview and the captured photo or video</string>
     <string name="InuAttachCameraSquare">Square camera tile</string>
     <string name="InuAttachCameraSquareInfo">Camera in the gallery takes one cell instead of two</string>
     <string name="InuSortAlbumsBySize">Sort albums by size</string>
