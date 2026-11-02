@@ -477,6 +477,9 @@
     <string name="InuLinkPreviewSpoilerInfo">When the link that generated a web preview is hidden under a spoiler, cover the preview with a spoiler too</string>
     <string name="InuDisableLinkPreviews">Disable link previews</string>
     <string name="InuDisableLinkPreviewsInfo">Never generate or send previews for links in your messages</string>
+    <string name="InuPreviewSendPhoto">Send Photo</string>
+    <string name="InuPreviewSendFile">Send File</string>
+    <string name="InuPreviewSendVideo">Send Video</string>
     <string name="InuMediaSpoilerLabel">Spoiler</string>
     <string name="InuMediaSpoilerMode">Media spoiler style</string>
     <string name="InuMediaSpoilerModeTelegram">Telegram</string>

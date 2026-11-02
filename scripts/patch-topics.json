@@ -219,6 +219,7 @@
   "rtl-gradient-ellipsize": "ui",
   "dialogs-menu-proxy": "ui",
   "send-videos-hd": "media",
+  "send-link-preview-media": "chat",
   "video-near-end-freeze": "media",
   "gif-recycle-interrupt": "media",
   "play-original-video": "media",

@@ -1,0 +1,81 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 21:49:30 +0200
+Subject: Send media from the link preview menu
+
+---
+ .../java/org/telegram/ui/ChatActivity.java    | 25 +++++++++++++++++++
+ .../ui/Components/MessagePreviewView.java     | 17 +++++++++++++
+ 2 files changed, 42 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -11383,6 +11383,31 @@ public class ChatActivity extends BaseFragment implements
+                 fallbackFieldPanel();
+             }
+ 
++            @Override
++            protected void sendWebpageMedia(boolean notify, int scheduleDate, int scheduleRepeatPeriod) {
++                if (checkSlowModeAlert()) {
++                    SendMessagesHelper.SendMessageParams params;
++                    if (messagePreviewParams.webpage.document != null) {
++                        params = SendMessagesHelper.SendMessageParams.of((TLRPC.TL_document) messagePreviewParams.webpage.document, null, null, dialog_id, replyingMessageObject, getThreadMessage(), null, null, null, null, notify, scheduleDate, scheduleRepeatPeriod, 0, messagePreviewParams.webpage, null, false);
++                    } else {
++                        params = SendMessagesHelper.SendMessageParams.of((TLRPC.TL_photo) messagePreviewParams.webpage.photo, null, dialog_id, replyingMessageObject, getThreadMessage(), null, null, null, null, notify, scheduleDate, scheduleRepeatPeriod, 0, messagePreviewParams.webpage, false);
++                    }
++                    params.quick_reply_shortcut = quickReplyShortcut;
++                    params.quick_reply_shortcut_id = getQuickReplyId();
++                    SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
++                    dismiss(true);
++                    if (threadMessageId == 0 || isTopic) {
++                        if (isTopic) {
++                            replyingMessageObject = threadMessageObject;
++                        } else {
++                            replyingMessageObject = null;
++                        }
++                        replyingQuote = null;
++                        chatActivityEnterView.setReplyingMessageObject(null, null);
++                    }
++                }
++            }
++
+             @Override
+             protected void onFullDismiss(boolean canShowKeyboard) {
+                 if (messagePreviewParams != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePreviewView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePreviewView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePreviewView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePreviewView.java
+@@ -1152,6 +1152,19 @@ public class MessagePreviewView extends FrameLayout {
+                 applyChanges.setOnClickListener(v -> dismiss(true));
+                 menu.addView(applyChanges, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+ 
++                if (messagePreviewParams.webpage != null && (messagePreviewParams.webpage.document != null || messagePreviewParams.webpage.photo != null)) {
++                    ActionBarMenuSubItem sendMediaItem = new ActionBarMenuSubItem(context, false, false, resourcesProvider);
++                    sendMediaItem.setTextAndIcon(LocaleController.getString(messagePreviewParams.webpage.document != null ? (messagePreviewParams.isVideo ? R.string.InuPreviewSendVideo : R.string.InuPreviewSendFile) : R.string.InuPreviewSendPhoto), R.drawable.msg_send);
++                    sendMediaItem.setOnClickListener(v -> {
++                        if (chatActivity.isInScheduleMode()) {
++                            AlertsCreator.createScheduleDatePickerDialog(chatActivity.getParentActivity(), chatActivity.getDialogId(), MessagePreviewView.this::sendWebpageMedia).show();
++                        } else {
++                            sendWebpageMedia(true, 0, 0);
++                        }
++                    });
++                    menu.addView(sendMediaItem, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
++                }
++
+                 ActionBarMenuSubItem deleteLink = new ActionBarMenuSubItem(context, true, false, true, resourcesProvider);
+                 deleteLink.setTextAndIcon(LocaleController.getString(R.string.DoNotLinkPreview), R.drawable.msg_delete);
+                 deleteLink.setColors(getThemedColor(Theme.key_text_RedBold), getThemedColor(Theme.key_text_RedRegular));
+@@ -2040,6 +2053,10 @@ public class MessagePreviewView extends FrameLayout {
+ 
+     }
+ 
++    protected void sendWebpageMedia(boolean notify, int scheduleDate, int scheduleRepeatPeriod) {
++
++    }
++
+     protected void didSendPressed() {
+ 
+     }
