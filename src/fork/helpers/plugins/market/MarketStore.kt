@@ -44,7 +44,7 @@ object MarketStore {
             if (--remaining > 0) return
             val official = catalog.orEmpty()
             val known = official.map { it.id }.toSet()
-            val merged = official.filter { PluginManager.incompatibility(it.manifest) == null } +
+            val merged = official.filter { PluginManager.incompatibility(it.manifest, checkDependencies = false) == null } +
                 posts.orEmpty().filter { it.id !in known }
             entries = merged
             state = if (catalog == null && posts == null) State.FAILED else State.READY
@@ -70,12 +70,12 @@ object MarketStore {
         var remaining = repos.size
         var anyOk = false
         for (repo in repos) {
-            PluginRepos.loadPage(account, repo, 0) { page ->
-                if (page == null) {
+            PluginRepos.loadPostsSince(account, repo, 0, 0, ArrayList()) { posts ->
+                if (posts == null) {
                     if (--remaining == 0) callback(if (anyOk) found else null)
-                    return@loadPage
+                    return@loadPostsSince
                 }
-                PluginRepos.loadManifests(account, page.posts) { loaded ->
+                PluginRepos.loadManifests(account, posts) { loaded ->
                     if (loaded != null) {
                         anyOk = true
                         for ((post, manifest) in PluginRepos.pickLatest(loaded)) {

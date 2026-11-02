@@ -2,6 +2,7 @@ package desu.inugram.helpers.plugins.market
 
 import desu.inugram.helpers.plugins.PluginDependencies
 import desu.inugram.helpers.plugins.PluginImportHelper
+import desu.inugram.helpers.plugins.PluginManager
 import desu.inugram.ui.settings.installRepoPost
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -18,7 +19,7 @@ class MarketInstaller(private val fragment: BaseFragment) {
     /** call when the installed plugins change: the plugin that waited for the SDK goes in once the SDK is on */
     fun onPluginsChanged() {
         val waiting = afterSdk ?: return
-        if (!PluginDependencies.sdkEnabled()) return
+        if (PluginDependencies.unmetFor(waiting.manifest.raw[PluginDependencies.KEY].orEmpty(), waiting.id) != null) return
         afterSdk = null
         installOne(waiting)
     }
@@ -29,6 +30,12 @@ class MarketInstaller(private val fragment: BaseFragment) {
             val sdk = MarketStore.entries.firstOrNull { it.id == PluginDependencies.SDK_ID }
             if (sdk != null && sdk.id != entry.id) {
                 afterSdk = entry
+                val installed = MarketStore.installed(sdk)
+                if (installed != null && !installed.enabled) {
+                    PluginManager.setEnabled(installed, true)
+                    onPluginsChanged()
+                    if (afterSdk == null) return
+                }
                 installOne(sdk)
                 return
             }

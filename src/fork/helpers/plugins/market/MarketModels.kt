@@ -28,20 +28,20 @@ class MarketEntry(
     }
 }
 
-class MarketTag(val id: String, val color: Int, val iconRes: Int, val nameRes: Int, val aboutRes: Int)
+class MarketTag(val id: String, val iconRes: Int, val nameRes: Int, val aboutRes: Int)
 
 object MarketTags {
     val ALL = listOf(
-        MarketTag("privacy", 0xFF6C8CFF.toInt(), R.drawable.inu_tabler_shield_check, R.string.InuMarketTagPrivacy, R.string.InuMarketTagPrivacyAbout),
-        MarketTag("chat", 0xFF4AA8FF.toInt(), R.drawable.msg_discussion, R.string.InuMarketTagChat, R.string.InuMarketTagChatAbout),
-        MarketTag("media", 0xFFFF7A59.toInt(), R.drawable.msg_camera, R.string.InuMarketTagMedia, R.string.InuMarketTagMediaAbout),
-        MarketTag("ui", 0xFFB04CFF.toInt(), R.drawable.msg_palette, R.string.InuMarketTagUi, R.string.InuMarketTagUiAbout),
-        MarketTag("calls", 0xFF2DC6B4.toInt(), R.drawable.inu_tabler_microphone, R.string.InuMarketTagCalls, R.string.InuMarketTagCallsAbout),
-        MarketTag("ai", 0xFFA78BFA.toInt(), R.drawable.inu_tabler_sparkles, R.string.InuMarketTagAi, R.string.InuMarketTagAiAbout),
-        MarketTag("tools", 0xFF8B9BB0.toInt(), R.drawable.inu_tabler_stack_2, R.string.InuMarketTagTools, R.string.InuMarketTagToolsAbout),
-        MarketTag("integrations", 0xFFF29D49.toInt(), R.drawable.inu_tabler_world, R.string.InuMarketTagIntegrations, R.string.InuMarketTagIntegrationsAbout),
-        MarketTag("fun", 0xFFFFB454.toInt(), R.drawable.inu_tabler_mood_smile, R.string.InuMarketTagFun, R.string.InuMarketTagFunAbout),
-        MarketTag("dev", 0xFF7DD3FC.toInt(), R.drawable.inu_tabler_code, R.string.InuMarketTagDev, R.string.InuMarketTagDevAbout),
+        MarketTag("privacy", R.drawable.inu_tabler_shield_check, R.string.InuMarketTagPrivacy, R.string.InuMarketTagPrivacyAbout),
+        MarketTag("chat", R.drawable.msg_discussion, R.string.InuMarketTagChat, R.string.InuMarketTagChatAbout),
+        MarketTag("media", R.drawable.msg_camera, R.string.InuMarketTagMedia, R.string.InuMarketTagMediaAbout),
+        MarketTag("ui", R.drawable.msg_palette, R.string.InuMarketTagUi, R.string.InuMarketTagUiAbout),
+        MarketTag("calls", R.drawable.inu_tabler_microphone, R.string.InuMarketTagCalls, R.string.InuMarketTagCallsAbout),
+        MarketTag("ai", R.drawable.inu_tabler_sparkles, R.string.InuMarketTagAi, R.string.InuMarketTagAiAbout),
+        MarketTag("tools", R.drawable.inu_tabler_stack_2, R.string.InuMarketTagTools, R.string.InuMarketTagToolsAbout),
+        MarketTag("integrations", R.drawable.inu_tabler_world, R.string.InuMarketTagIntegrations, R.string.InuMarketTagIntegrationsAbout),
+        MarketTag("fun", R.drawable.inu_tabler_mood_smile, R.string.InuMarketTagFun, R.string.InuMarketTagFunAbout),
+        MarketTag("dev", R.drawable.inu_tabler_code, R.string.InuMarketTagDev, R.string.InuMarketTagDevAbout),
     )
 
     const val MAX_PER_PLUGIN = 3

@@ -2,12 +2,14 @@ package desu.inugram.ui.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import desu.inugram.helpers.plugins.market.MarketEntry
@@ -50,7 +52,7 @@ internal fun styleMarketAction(view: TextView, action: MarketAction) {
     }
 }
 
-internal class MarketChip(val key: String, val text: CharSequence, val selected: Boolean, val color: Int?, val onClick: () -> Unit)
+internal class MarketChip(val key: String, val text: CharSequence, val selected: Boolean, val onClick: () -> Unit)
 
 /** two scrolling rows of pills: what the person looks at (all, updates, installed) and the categories */
 @SuppressLint("ViewConstructor")
@@ -91,13 +93,13 @@ internal class MarketPillsCell(context: Context) : LinearLayout(context) {
         gravity = Gravity.CENTER
         setSingleLine(true)
         setPadding(AndroidUtilities.dp(14f), AndroidUtilities.dp(8f), AndroidUtilities.dp(14f), AndroidUtilities.dp(8f))
-        val base = chip.color ?: Theme.getColor(Theme.key_featuredStickers_addButton)
+        val base = Theme.getColor(Theme.key_featuredStickers_addButton)
         if (chip.selected) {
             typeface = AndroidUtilities.bold()
-            setTextColor(Color.WHITE)
+            setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText))
             background = Theme.createRoundRectDrawable(AndroidUtilities.dp(18f), base)
         } else {
-            setTextColor(if (chip.color != null) base else Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+            setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
             background = Theme.createRoundRectDrawable(AndroidUtilities.dp(18f), Theme.multAlpha(base, 0.14f))
         }
         setOnClickListener { chip.onClick() }
@@ -179,10 +181,24 @@ internal class MarketFeaturedCell(context: Context) : LinearLayout(context) {
         textSize = 15f
         typeface = AndroidUtilities.bold()
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader))
+        setSingleLine(true)
+        ellipsize = TextUtils.TruncateAt.END
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
     }
     private val count = TextView(context).apply {
         textSize = 13f
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+        setSingleLine(true)
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+    }
+    private val head = LinearLayout(context).apply {
+        gravity = Gravity.CENTER_VERTICAL
+        layoutDirection = if (LocaleController.isRTL) LAYOUT_DIRECTION_RTL else LAYOUT_DIRECTION_LTR
+        minimumHeight = AndroidUtilities.dp(48f)
+        setPadding(AndroidUtilities.dp(20f), 0, AndroidUtilities.dp(20f), 0)
+        background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2)
+        isFocusable = true
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
     }
     private val cards = LinearLayout(context)
 
@@ -190,10 +206,17 @@ internal class MarketFeaturedCell(context: Context) : LinearLayout(context) {
         orientation = VERTICAL
         isClickable = true
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite))
-        val head = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
         head.addView(title, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
         head.addView(count, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
-        addView(head, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 20f, 14f, 20f, 8f))
+        val arrow = ImageView(context).apply {
+            setImageResource(R.drawable.msg_arrowright)
+            scaleType = ImageView.ScaleType.CENTER
+            scaleX = if (LocaleController.isRTL) -1f else 1f
+            colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY)
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        head.addView(arrow, LayoutHelper.createLinear(24, 24).apply { marginStart = AndroidUtilities.dp(8f) })
+        addView(head, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
         cards.setPadding(AndroidUtilities.dp(14f), 0, AndroidUtilities.dp(8f), AndroidUtilities.dp(14f))
         val scroll = HorizontalScrollView(context).apply {
             isHorizontalScrollBarEnabled = false
@@ -210,9 +233,12 @@ internal class MarketFeaturedCell(context: Context) : LinearLayout(context) {
         action: (MarketEntry) -> MarketAction,
         onOpen: (MarketEntry) -> Unit,
         onAction: (MarketEntry) -> Unit,
+        onOpenAll: () -> Unit,
     ) {
         title.text = titleText
         count.text = countText
+        head.contentDescription = "$titleText, $countText"
+        head.setOnClickListener { onOpenAll() }
         cards.removeAllViews()
         for (entry in entries) {
             cards.addView(card(entry, action(entry), onOpen, onAction), LayoutHelper.createLinear(136, LayoutHelper.WRAP_CONTENT, 0f, 0f, 10f, 0f))
@@ -220,7 +246,7 @@ internal class MarketFeaturedCell(context: Context) : LinearLayout(context) {
     }
 
     private fun card(entry: MarketEntry, action: MarketAction, onOpen: (MarketEntry) -> Unit, onAction: (MarketEntry) -> Unit): View {
-        val tint = MarketTags.get(entry.tags.firstOrNull().orEmpty())?.color ?: Theme.getColor(Theme.key_featuredStickers_addButton)
+        val tint = Theme.getColor(Theme.key_featuredStickers_addButton)
         val card = LinearLayout(context).apply {
             orientation = VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
@@ -320,4 +346,4 @@ internal class MarketRow(context: Context) : LinearLayout(context) {
 }
 
 internal fun marketTagChip(tag: MarketTag, count: Int, selected: Boolean, onClick: () -> Unit): MarketChip =
-    MarketChip(tag.id, "${LocaleController.getString(tag.nameRes)} · $count", selected, tag.color, onClick)
+    MarketChip(tag.id, "${LocaleController.getString(tag.nameRes)} · $count", selected, onClick)

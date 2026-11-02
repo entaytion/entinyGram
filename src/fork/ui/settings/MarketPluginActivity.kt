@@ -2,6 +2,7 @@ package desu.inugram.ui.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
@@ -23,6 +24,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.BackupImageView
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.Components.ShareAlert
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.messenger.browser.Browser
@@ -53,8 +55,9 @@ internal class MarketPluginActivity(
                     when (id) {
                         -1 -> finishFragment()
                         MENU_SHARE -> {
-                            AndroidUtilities.addToClipboard(link())
-                            BulletinFactory.of(this@MarketPluginActivity).createCopyLinkBulletin().show()
+                            val ctx = parentActivity ?: return
+                            val link = link()
+                            showDialog(ShareAlert(ctx, null, link, false, link, false, resourceProvider))
                         }
                     }
                 }
@@ -74,7 +77,7 @@ internal class MarketPluginActivity(
         PluginManager.removeOnChangedListener(onPluginsChanged)
     }
 
-    private fun link(): String = "https://t.me/entinyPlugins/${entry.slug}"
+    private fun link(): String = "tg://entinyPlugins/${Uri.encode(entry.slug)}"
 
     private fun str(res: Int): String = LocaleController.getString(res)
 

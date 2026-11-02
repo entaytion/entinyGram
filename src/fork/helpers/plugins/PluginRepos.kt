@@ -13,6 +13,7 @@ import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController.getString
+import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
@@ -113,14 +114,19 @@ object PluginRepos {
         }
     }
 
-    /** newest first. [Page.nextOffsetId] is 0 once the channel has no older documents */
+    private fun findDocument(message: TLRPC.Message, id: Long? = null): TLRPC.Document? {
+        val matches: (TLRPC.Document) -> Boolean = {
+            (id == null || it.id == id) && FileLoader.getDocumentFileName(it)?.endsWith(".inu.js", ignoreCase = true) == true
+        }
+        return message.media?.document?.takeIf(matches) ?: message.rich_message?.documents?.firstOrNull(matches)
+    }
+
+    /** newest first. [Page.nextOffsetId] is 0 once the channel has no older messages */
     fun loadPage(account: Int, repo: PluginRepo, offsetId: Int, minId: Int = 0, callback: (Page?) -> Unit) {
         resolvePeer(account, repo) { peer ->
             if (peer == null) return@resolvePeer callback(null)
-            val req = TLRPC.TL_messages_search().apply {
+            val req = TLRPC.TL_messages_getHistory().apply {
                 this.peer = peer
-                q = ""
-                filter = TLRPC.TL_inputMessagesFilterDocument()
                 offset_id = offsetId
                 min_id = minId
                 limit = PAGE_SIZE
@@ -132,9 +138,9 @@ object PluginRepos {
                     mc.putUsers(res.users, false)
                     mc.putChats(res.chats, false)
                     val posts = res.messages.mapNotNull { msg ->
-                        val document = msg.media?.document ?: return@mapNotNull null
-                        val name = FileLoader.getDocumentFileName(document) ?: return@mapNotNull null
-                        if (name.endsWith(".inu.js", ignoreCase = true)) PluginRepoPost(repo, msg.id, document, msg.message.orEmpty()) else null
+                        val document = findDocument(msg) ?: return@mapNotNull null
+                        val text = msg.rich_message?.let { MessageObject.formatRichMessage(it, false, false, Int.MAX_VALUE).toString() } ?: msg.message.orEmpty()
+                        PluginRepoPost(repo, msg.id, document, text)
                     }
                     val more = res.messages.size >= PAGE_SIZE
                     callback(Page(posts, if (more) res.messages.last().id else 0))
@@ -255,14 +261,14 @@ object PluginRepos {
             id.add(post.messageId)
         }
         ConnectionsManager.getInstance(account).sendRequest(req) { response, _ ->
-            val document = (response as? TLRPC.messages_Messages)?.messages?.firstOrNull()?.media?.document
+            val document = (response as? TLRPC.messages_Messages)?.messages?.firstOrNull()?.let { findDocument(it, post.document.id) }
             Utilities.globalQueue.postRunnable { callback(document) }
         }
     }
 
     /** the newest runnable post of each plugin; [posts] are newest first */
     fun pickLatest(posts: List<Pair<PluginRepoPost, PluginManifest>>): List<Pair<PluginRepoPost, PluginManifest>> =
-        posts.filter { PluginManager.incompatibility(it.second) == null }.distinctBy { it.second.id ?: it.first.messageId }
+        posts.filter { PluginManager.incompatibility(it.second, checkDependencies = false) == null }.distinctBy { it.second.id ?: it.first.messageId }
 
     /** only the repo [plugin] was installed from may update it */
     fun isUpdate(plugin: Plugin, post: PluginRepoPost, manifest: PluginManifest): Boolean {
@@ -296,7 +302,7 @@ object PluginRepos {
         }
     }
 
-    private fun loadPostsSince(
+    fun loadPostsSince(
         account: Int,
         repo: PluginRepo,
         minId: Int,

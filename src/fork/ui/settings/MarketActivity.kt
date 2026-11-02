@@ -20,13 +20,14 @@ import org.telegram.ui.Components.UniversalAdapter
 import java.util.Locale
 
 /** the plugin Market: the developer's plugins and the ones posted to the repository channels, filed under categories */
-class MarketActivity(private val openSlug: String? = null) : SettingsPageActivity() {
+class MarketActivity(private val openSlug: String? = null, private val officialOnly: Boolean = false) : SettingsPageActivity() {
     private enum class Lens { ALL, UPDATES, INSTALLED }
 
     private var lens = Lens.ALL
     private var tag: String? = null
     private var query = ""
     private var pendingSlug = openSlug
+    private var fullyVisible = false
 
     private val installer = MarketInstaller(this)
     private val rows = HashMap<String, MarketRow>()
@@ -35,7 +36,7 @@ class MarketActivity(private val openSlug: String? = null) : SettingsPageActivit
     private var banner: MarketBannerCell? = null
     private var featured: MarketFeaturedCell? = null
 
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMarket)
+    override fun getTitle(): CharSequence = LocaleController.getString(if (officialOnly) R.string.InuMarketFeaturedTitle else R.string.InuMarket)
 
     private val onStoreChanged: () -> Unit = {
         openPendingSlug()
@@ -69,7 +70,7 @@ class MarketActivity(private val openSlug: String? = null) : SettingsPageActivit
             val more = menu.addItem(MENU_MORE, R.drawable.ic_ab_other)
             more.addSubItem(MENU_SORT, R.drawable.inu_tabler_arrows_sort, LocaleController.getString(R.string.InuPluginRepoSort))
             more.addSubItem(MENU_REFRESH, R.drawable.msg_retry, LocaleController.getString(R.string.InuMarketRefresh))
-            more.addSubItem(MENU_CHANNELS, R.drawable.msg_channel, LocaleController.getString(R.string.InuMarketOwnChannels))
+            if (!officialOnly) more.addSubItem(MENU_CHANNELS, R.drawable.msg_channel, LocaleController.getString(R.string.InuMarketOwnChannels))
             actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
                 override fun onItemClick(id: Int) {
                     when (id) {
@@ -106,17 +107,32 @@ class MarketActivity(private val openSlug: String? = null) : SettingsPageActivit
         onPluginsChanged()
     }
 
+    override fun onBecomeFullyVisible() {
+        super.onBecomeFullyVisible()
+        fullyVisible = true
+        openPendingSlug()
+    }
+
     override fun onPause() {
         super.onPause()
         MarketStore.removeListener(onStoreChanged)
         PluginManager.removeOnChangedListener(onPluginsChanged)
     }
 
+    override fun onBecomeFullyHidden() {
+        fullyVisible = false
+        super.onBecomeFullyHidden()
+    }
+
     private fun openPendingSlug() {
-        val slug = pendingSlug ?: return
+        if (!fullyVisible || isPaused || pendingSlug == null) return
         if (MarketStore.state == MarketStore.State.LOADING || MarketStore.state == MarketStore.State.IDLE) return
-        pendingSlug = null
-        MarketStore.find(slug)?.let { presentFragment(MarketPluginActivity(it, installer)) }
+        listView?.post {
+            if (!fullyVisible || isPaused) return@post
+            val slug = pendingSlug ?: return@post
+            val entry = MarketStore.find(slug) ?: return@post
+            if (presentFragment(MarketPluginActivity(entry, installer))) pendingSlug = null
+        }
     }
 
     private fun actionOf(entry: MarketEntry): MarketAction = when {
@@ -139,10 +155,10 @@ class MarketActivity(private val openSlug: String? = null) : SettingsPageActivit
     private fun str(res: Int): String = LocaleController.getString(res)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val all = MarketStore.entries
+        val all = if (officialOnly) MarketStore.entries.filter { it.official } else MarketStore.entries
         val updates = all.filter { MarketStore.hasUpdate(it) }
         // plugins put on the phone by hand or from elsewhere are installed too, whether or not the Market lists them
-        val installed = all.filter { MarketStore.installed(it) != null } + localEntries(all)
+        val installed = all.filter { MarketStore.installed(it) != null } + localEntries(all).filter { !officialOnly || it.official }
 
         val inLens = when (lens) {
             Lens.ALL -> all
@@ -155,9 +171,9 @@ class MarketActivity(private val openSlug: String? = null) : SettingsPageActivit
         val pillsCell = pills ?: MarketPillsCell(context).also { pills = it }
         pillsCell.bind(
             listOf(
-                MarketChip("all", str(R.string.InuMarketAll), lens == Lens.ALL, null) { select(Lens.ALL, tag) },
-                MarketChip("updates", "${str(R.string.InuMarketUpdates)} · ${updates.size}", lens == Lens.UPDATES, null) { select(Lens.UPDATES, tag) },
-                MarketChip("installed", "${str(R.string.InuMarketInstalled)} · ${installed.size}", lens == Lens.INSTALLED, null) { select(Lens.INSTALLED, tag) },
+                MarketChip("all", str(R.string.InuMarketAll), lens == Lens.ALL) { select(Lens.ALL, tag) },
+                MarketChip("updates", "${str(R.string.InuMarketUpdates)} · ${updates.size}", lens == Lens.UPDATES) { select(Lens.UPDATES, tag) },
+                MarketChip("installed", "${str(R.string.InuMarketInstalled)} · ${installed.size}", lens == Lens.INSTALLED) { select(Lens.INSTALLED, tag) },
             ),
             MarketTags.ALL.mapNotNull { t ->
                 val count = inLens.count { t.id in it.tags }
@@ -181,7 +197,7 @@ class MarketActivity(private val openSlug: String? = null) : SettingsPageActivit
         }
 
         val sort = InuConfig.MARKET_SORT.value
-        val plain = lens == Lens.ALL && tag == null && query.isEmpty()
+        val plain = !officialOnly && lens == Lens.ALL && tag == null && query.isEmpty()
         if (plain && sort == 0 && updates.isNotEmpty()) {
             val bannerCell = banner ?: MarketBannerCell(context).also { banner = it }
             bannerCell.bind(
@@ -202,6 +218,7 @@ class MarketActivity(private val openSlug: String? = null) : SettingsPageActivit
                 ::actionOf,
                 { open(it) },
                 { act(it) },
+                { presentFragment(MarketActivity(officialOnly = true)) },
             )
             items.add(UItem.asCustom(FEATURED, shelfCell))
             items.add(UItem.asShadow(null))

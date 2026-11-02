@@ -248,7 +248,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **plugin crash report**: after a plugin crash a dialog shows which plugin failed and the log, with a copy button
 - 📡 **review plugin permissions**: plugins menu entry that lists plugins asking for more permissions than you allowed (for example after an update) and approves them in one tap
 - 📡 **group entinyGram menu items**: toggle in message menu order to collapse entinyGram-specific items into a single "entinyGram" submenu
-- 📡 **plugin market**: catalog and channel plugins with themed cards and category badges, alphabetical name/author sorting, installed first, updates, search, sharing, and plugin pages; the developer's shelf stays visible across sort modes, and required SDK installs automatically
+- 📡 **plugin market**: catalog and channel plugins, including files in rich posts, with themed cards and category badges, alphabetical name/author sorting, installed first, updates, search, sharing, and plugin pages; the developer's shelf opens a dedicated entinyGram plugins page, stays visible across sort modes, and required SDK installs automatically
 - 📡 **plugin settings integration**: plugins add controls and choices to the app's settings
 
 ### debloat & premium noise

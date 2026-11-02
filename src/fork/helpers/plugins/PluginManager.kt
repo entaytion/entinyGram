@@ -453,7 +453,8 @@ object PluginManager {
     }
 
     /** also the install flow's gate. `@plugin-api` reads like minSdkVersion: a shipped level never breaks */
-    fun incompatibility(manifest: PluginManifest): String? {
+    @JvmOverloads
+    fun incompatibility(manifest: PluginManifest, checkDependencies: Boolean = true): String? {
         val wanted = manifest.pluginApi
         if (wanted != null && wanted > PLUGIN_API_VERSION) {
             return formatString(R.string.InuPluginsErrorApiVersion, wanted, PLUGIN_API_VERSION)
@@ -462,7 +463,7 @@ object PluginManager {
         if (platform != null && !platform.equals(PLATFORM, ignoreCase = true)) {
             return formatString(R.string.InuPluginsErrorPlatform, platform)
         }
-        PluginDependencies.unmet(manifest)?.let { return it }
+        if (checkDependencies) PluginDependencies.unmet(manifest)?.let { return it }
         return badGrants(manifest)
     }
 

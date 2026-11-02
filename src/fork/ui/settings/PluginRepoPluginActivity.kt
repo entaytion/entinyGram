@@ -27,7 +27,7 @@ internal class PluginRepoPluginActivity(
 
     private val versions: List<Pair<PluginRepoPost, PluginManifest>> by lazy {
         val id = manifest.id ?: return@lazy listOf(post to manifest)
-        repoPosts.filter { it.second.id == id && PluginManager.incompatibility(it.second) == null }.sortedByDescending { it.first.messageId }
+        repoPosts.filter { it.second.id == id && PluginManager.incompatibility(it.second, checkDependencies = false) == null }.sortedByDescending { it.first.messageId }
     }
 
     override fun getTitle(): CharSequence = manifest.name
