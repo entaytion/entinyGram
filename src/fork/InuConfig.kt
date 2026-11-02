@@ -477,6 +477,9 @@ object InuConfig {
     val SHORTER_SWIPE_GESTURES = BoolItem("shorter_swipe_gestures", false)
 
     @JvmField
+    val DISABLE_VIDEO_MESSAGE_AUTOPLAY = BoolItem("disable_video_message_autoplay", false)
+
+    @JvmField
     val SEND_MP4_DOCUMENT_AS_VIDEO = BoolItem("send_mp4_document_as_video", true)
 
     @JvmField

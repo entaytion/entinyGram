@@ -2219,4 +2219,5 @@
     <string name="InuSleepTimerStatusOff">Таймер выключен</string>
     <string name="InuShorterSwipeGestures">Короткие свайпы</string>
     <string name="InuShorterSwipeGesturesInfo">Засчитывать свайп на половине пути: назад, ответ, папки, страницы медиа и свайп вниз в просмотрщике.</string>
+    <string name="InuAutoplayVideoMessages">Автовоспроизведение видеосообщений</string>
 </resources>

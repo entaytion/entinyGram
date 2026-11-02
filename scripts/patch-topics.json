@@ -223,6 +223,7 @@
   "disable-overscroll-story": "ui",
   "sleep-timer": "media",
   "shorter-swipe-gestures": "ui",
+  "video-message-autoplay": "chat",
   "faster-downloads-byte-budget": "media",
   "safe-editable-spans": "ui",
   "settings-search-history": "settings",
