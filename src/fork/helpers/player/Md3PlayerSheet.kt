@@ -32,6 +32,8 @@ import android.window.OnBackInvokedDispatcher
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
+import desu.inugram.helpers.media.SleepTimerHelper
+import desu.inugram.ui.SleepTimerDialog
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
@@ -1260,6 +1262,11 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
             Md3PlayerActions.showInChat(a, mo)
         }
         o.addGap()
+        val sleepTimerRemaining = if (SleepTimerHelper.isActive()) SleepTimerHelper.formatRemaining() else str(R.string.InuSleepTimerOff)
+        o.add(R.drawable.menu_feature_hourglass, str(R.string.InuSleepTimer) + " · " + sleepTimerRemaining) {
+            o.dismiss()
+            SleepTimerDialog.show(a, provider)
+        }
         o.add(R.drawable.msg_filled_data_music, str(R.string.InuMd3PlayerClassic)) {
             o.dismiss()
             openClassic()

@@ -2252,4 +2252,10 @@
     <string name="InuPlayOriginalVideoInlineInfo">Use the original file for videos that autoplay inline as well.</string>
     <string name="InuDisableOverscrollStory">Disable pull down to open stories</string>
     <string name="InuDisableOverscrollStoryInfo">The chat list no longer opens stories when you pull it down at the top.</string>
+    <string name="InuSleepTimer">Sleep timer</string>
+    <string name="InuSleepTimerOff">Off</string>
+    <string name="InuSleepTimerEndOfTrack">Play current song to end</string>
+    <string name="InuSleepTimerDisable">Disable</string>
+    <string name="InuSleepTimerStatusOn">Timer on · %1$s left</string>
+    <string name="InuSleepTimerStatusOff">Timer off</string>
 </resources>

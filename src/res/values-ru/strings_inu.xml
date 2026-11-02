@@ -2211,4 +2211,10 @@
     <string name="InuPlayOriginalVideoInlineInfo">Использовать оригинал и для видео, которые автоматически воспроизводятся в чате.</string>
     <string name="InuDisableOverscrollStory">Отключить свайп вниз к историям</string>
     <string name="InuDisableOverscrollStoryInfo">Список чатов больше не открывает истории при протягивании вниз в начале.</string>
+    <string name="InuSleepTimer">Таймер сна</string>
+    <string name="InuSleepTimerOff">Выкл</string>
+    <string name="InuSleepTimerEndOfTrack">Доиграть текущую песню до конца</string>
+    <string name="InuSleepTimerDisable">Отключить</string>
+    <string name="InuSleepTimerStatusOn">Таймер включён · осталось %1$s</string>
+    <string name="InuSleepTimerStatusOff">Таймер выключен</string>
 </resources>

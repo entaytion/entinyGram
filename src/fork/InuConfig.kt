@@ -471,6 +471,9 @@ object InuConfig {
     val PLAY_ORIGINAL_VIDEO_INLINE = BoolItem("play_original_video_inline", false)
 
     @JvmField
+    val SLEEP_TIMER_END_OF_TRACK = BoolItem("sleep_timer_end_of_track", false)
+
+    @JvmField
     val SEND_MP4_DOCUMENT_AS_VIDEO = BoolItem("send_mp4_document_as_video", true)
 
     @JvmField

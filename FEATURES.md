@@ -227,6 +227,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **fast GIF scrolling crash fix** - *ported from Hundgram (@lurepheonix)*
 - 📡 **play videos in original quality**, also in chat autoplay - *ported from Hundgram (@lurepheonix)*
 - 📡 **disable pull down to open stories** from the chat list - *ported from Hundgram (@lurepheonix)*
+- 📡 **sleep timer** for music: a dial in the player menu, optionally finishing the current song first - *ported from Hundgram (@lurepheonix)*
 - 📡 **free memory in background**: clears image caches shortly after the app is minimized
 - 📡 **no emoji panel leak**: closed chats and photo viewers are no longer kept in memory by the emoji panel
 - 📡 **keep keyboard while typing**: scrolling the chat doesn't hide the keyboard when there's a draft

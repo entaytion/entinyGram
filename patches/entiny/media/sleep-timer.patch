@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 2 Nov 2026 15:34:08 +0200
+Subject: add a sleep timer to the music player
+
+---
+ .../main/java/org/telegram/messenger/MediaController.java | 4 ++++
+ .../java/org/telegram/ui/Components/AudioPlayerAlert.java | 8 ++++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -3973,6 +3973,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                         if (playbackState == ExoPlayer.STATE_ENDED || (playbackState == ExoPlayer.STATE_IDLE || playbackState == ExoPlayer.STATE_BUFFERING) && playWhenReady && messageObject.audioProgress >= 0.999f) {
+                             messageObject.audioProgress = 1f;
+                             NotificationCenter.getInstance(messageObject.currentAccount).postNotificationName(NotificationCenter.messagePlayingProgressDidChanged, messageObject.getId(), 0);
++                            if (desu.inugram.helpers.media.SleepTimerHelper.onTrackEnded()) {
++                                cleanupPlayer(true, hasNoNextVoiceOrRoundVideoMessage(), messageObject.isVoice(), false);
++                                return;
++                            }
+                             final boolean restored = restoreMusicPlaylistState();
+                             if (!restored) {
+                                 if (!playlist.isEmpty() && (playlist.size() > 1 || !messageObject.isVoice())) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+@@ -127,6 +127,9 @@ import java.io.File;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++import desu.inugram.helpers.media.SleepTimerHelper;
++import desu.inugram.ui.SleepTimerDialog;
++
+ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, DownloadController.FileDownloadProgressListener {
+ 
+     public static AudioPlayerAlert instance;
+@@ -2982,6 +2985,11 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+             o.dismiss();
+             onSubItemClick(7);
+         });
++        final String sleepTimerText = getString(R.string.InuSleepTimer) + " · " + (SleepTimerHelper.isActive() ? SleepTimerHelper.formatRemaining() : getString(R.string.InuSleepTimerOff));
++        o.add(R.drawable.menu_feature_hourglass, sleepTimerText, () -> {
++            o.dismiss();
++            SleepTimerDialog.show(getContext(), resourcesProvider);
++        });
+         o.setTranslationY(dp(64));
+         o.show();
+     }
