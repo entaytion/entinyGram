@@ -80,7 +80,7 @@ object Schemas {
     )
 
     val LEGACY_PAGE_SLUGS: Map<String, List<String>> = mapOf(
-        "chats-messages" to listOf("chats", "behavior", "messages", "messages-open", "camera-sound-open"),
+        "chats-messages" to listOf("chats", "behavior", "messages", "messages-open"),
         "home" to listOf("main-screen", "side-menu", "menus", "recent-chats"),
         "privacy-freedom" to listOf("tos", "stalker-pack", "anti-censorship", "privacy-security"),
         "profile-accounts" to listOf("user-profile"),
@@ -91,9 +91,9 @@ object Schemas {
     val CHATS = schema("chats-messages", R.string.InuChatsAndMessages, R.drawable.msg_discussion) {
         section {
             link(R.string.InuAiCompose, R.drawable.inu_tabler_sparkles) { AiSettingsActivity() }
-            link(R.string.InuTranslator, R.drawable.msg_translate) { TranslatorSettingsActivity() }
+            link(R.string.InuTranslator, R.drawable.msg_translate, slug = "open-translator") { TranslatorSettingsActivity() }
             link(R.string.InuMessageDesign, R.drawable.msg_palette) { MessageDesignSettingsActivity() }
-            link(R.string.InuCameraSound, R.drawable.msg_camera) { CameraSoundSettingsActivity() }
+            link(R.string.InuCameraSound, R.drawable.msg_camera, slug = "camera-sound-open") { CameraSoundSettingsActivity() }
         }
         section(R.string.InuMessageInput) {
             custom(
@@ -188,6 +188,7 @@ object Schemas {
                         LocaleController.getString(R.string.SlowmodeOff)
                     }
                 },
+                slug = "web-preview-replacements",
             ) { WebPreviewReplacementsActivity() }
         }
         section(R.string.InuMapsHeader) {
@@ -213,7 +214,7 @@ object Schemas {
             ) { page -> MapsHelper.syncMapProvider(page.messagesController) }
         }
         section(R.string.InuReactions) {
-            link(R.string.InuPinnedReactions, R.drawable.inu_tabler_mood_smile) { PinnedReactionsActivity() }
+            link(R.string.InuPinnedReactions, R.drawable.inu_tabler_mood_smile, slug = "pinned-reactions") { PinnedReactionsActivity() }
             toggle(InuConfig.INSTANT_MARK_REACTIONS_READ, R.string.InuInstantMarkReactionsRead)
             toggle(InuConfig.HIDE_REACTIONS_DISPLAY, R.string.InuHideReactionsDisplay, R.string.InuHideReactionsDisplayInfo)
             toggle(InuConfig.HIDE_REACTIONS_SET, R.string.InuHideReactionsSet, R.string.InuHideReactionsSetInfo)
@@ -516,6 +517,7 @@ object Schemas {
                     if (InuConfig.LOCAL_NAMES.value) LocalNameHelper.count(UserConfig.selectedAccount).toString()
                     else LocaleController.getString(R.string.PasswordOff)
                 },
+                slug = "local-names",
             ) { LocalNamesSettingsActivity() }
         }
         section(R.string.InuContentProtectionBypass) {
@@ -758,9 +760,9 @@ object Schemas {
     val HOME = schema("home", R.string.InuHomeAndChatList, R.drawable.msg_home_solar) {
         section {
             link(R.string.InuChatList, R.drawable.msg_viewchats) { SchemaPageActivity(DIALOGS) }
-            link(R.string.InuPillStack, R.drawable.inu_tabler_stack_2) { PillStackSettingsActivity() }
-            link(R.string.InuBookmarks, R.drawable.msg_fave) { BookmarksManagerActivity() }
-            link(R.string.InuFeed, R.drawable.msg_channel) { FeedExcludedChannelsSettingsActivity() }
+            link(R.string.InuPillStack, R.drawable.inu_tabler_stack_2, slug = "pill-stack-open") { PillStackSettingsActivity() }
+            link(R.string.InuBookmarks, R.drawable.msg_fave, slug = "bookmarks-open") { BookmarksManagerActivity() }
+            link(R.string.InuFeed, R.drawable.msg_channel, slug = "feed-open") { FeedExcludedChannelsSettingsActivity() }
         }
         section(R.string.InuRecentChats, R.string.InuRecentChatsStyleInfo) {
             toggle(
@@ -881,19 +883,19 @@ object Schemas {
         }
         section(R.string.InuMenus) {
             link(R.string.InuSideMenu, R.drawable.inu_tabler_layout_sidebar) { DrawerMenuOrderActivity() }
-            link(R.string.InuDialogsMenuOrder, R.drawable.inu_tabler_list_details) { DialogsMenuOrderActivity() }
-            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_arrows_sort) { ChatMenuOrderActivity() }
-            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_message_dots) { MessageMenuOrderActivity() }
-            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort) { ProfileSettingsMenuOrderActivity() }
-            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort) { ProfileInfoMenuOrderActivity() }
+            link(R.string.InuDialogsMenuOrder, R.drawable.inu_tabler_list_details, slug = "dialogs-menu-order") { DialogsMenuOrderActivity() }
+            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_arrows_sort, slug = "chat-menu-order") { ChatMenuOrderActivity() }
+            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_message_dots, slug = "message-menu-order") { MessageMenuOrderActivity() }
+            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-settings-rows-order") { ProfileSettingsMenuOrderActivity() }
+            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-info-rows-order") { ProfileInfoMenuOrderActivity() }
         }
     }
 
     val SYSTEM = schema("system", R.string.InuRootSystem, R.drawable.inu_tabler_device_desktop_cog) {
         section {
             link(R.string.InuCloudSync, R.drawable.inu_tabler_cloud) { BackupSettingsActivity() }
-            link(R.string.InuCacheManagement, R.drawable.inu_tabler_trash_x) { CacheManagementSettingsActivity() }
-            link(R.string.InuDatacenterStatus, R.drawable.inu_tabler_server) { DatacenterStatusActivity() }
+            link(R.string.InuCacheManagement, R.drawable.inu_tabler_trash_x, slug = "additional-cache-management") { CacheManagementSettingsActivity() }
+            link(R.string.InuDatacenterStatus, R.drawable.inu_tabler_server, slug = "additional-datacenter-status") { DatacenterStatusActivity() }
         }
         section(R.string.InuPushHeader) {
             custom(

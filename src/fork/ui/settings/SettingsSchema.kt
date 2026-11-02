@@ -31,6 +31,7 @@ sealed class Row {
     ) : Row()
 
     class Link(
+        val slug: String,
         val titleRes: Int,
         val icon: Int,
         val value: (() -> CharSequence?)?,
@@ -87,7 +88,7 @@ class Schema(val slug: String, val titleRes: Int, val iconRes: Int, val sections
                     is Row.Group -> entry(r.slug, r.titleRes, r.id)
                     is Row.Custom -> entry(r.slug, r.titleRes, r.id)
                     is Row.Slider -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
-                    is Row.Link -> null
+                    is Row.Link -> if (r.slug.isEmpty()) null else entry(r.slug, r.titleRes, r.id)
                 }
             },
         )
@@ -119,8 +120,8 @@ class SectionBuilder {
         rows.add(Row.Choice(item, titleRes, options, values, onChange).also { it.visible = visible })
     }
 
-    fun link(titleRes: Int, icon: Int = 0, value: (() -> CharSequence?)? = null, visible: (() -> Boolean)? = null, create: () -> SettingsPageActivity) {
-        rows.add(Row.Link(titleRes, icon, value, create).also { it.visible = visible })
+    fun link(titleRes: Int, icon: Int = 0, value: (() -> CharSequence?)? = null, visible: (() -> Boolean)? = null, slug: String = "", create: () -> SettingsPageActivity) {
+        rows.add(Row.Link(slug, titleRes, icon, value, create).also { it.visible = visible })
     }
 
     fun group(slug: String, titleRes: Int, create: (Int) -> ExpandableBoolGroup) {
