@@ -236,6 +236,8 @@
     <string name="InuAttachCameraModeFab">Floating button</string>
     <string name="InuAttachCameraModeTab">Bottom tab</string>
     <string name="InuRoundRecorderKeepZoom">Keep zoom on pinch release</string>
+    <string name="InuRoundRecorderMirrorFront">Mirror front camera</string>
+    <string name="InuRoundRecorderMirrorFrontInfo">Horizontally flip the front camera preview and the recorded video message</string>
     <string name="InuRoundRecorderZoomSlider">Zoom slider</string>
     <string name="InuRoundRecorderZoomButtons">Zoom level buttons</string>
     <string name="InuRoundRecorderZoomButtonsInfo">Fixed 1×/2×/3×/5×/10× zoom buttons over the round camera, capped to what the lens supports.</string>

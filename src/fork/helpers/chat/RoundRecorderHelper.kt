@@ -29,6 +29,10 @@ object RoundRecorderHelper {
     private const val MAX_PINCH_RATIO = 3f
 
     @JvmStatic
+    fun shouldMirrorFront(isFrontface: Boolean): Boolean =
+        isFrontface && InuConfig.ROUND_RECORDER_MIRROR_FRONT.value
+
+    @JvmStatic
     fun mirroredVertexMatrix(m: FloatArray): FloatArray {
         val out = m.clone()
         out[0] = -out[0]

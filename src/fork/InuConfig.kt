@@ -1292,6 +1292,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ROUND_RECORDER_KEEP_ZOOM = BoolItem("round_recorder_keep_zoom", false)
 
     @JvmField
+    val ROUND_RECORDER_MIRROR_FRONT = BoolItem("round_recorder_mirror_front", false)
+
+    @JvmField
     val ROUND_RECORDER_ZOOM_SLIDER = BoolItem("round_recorder_zoom_slider", true)
 
     @JvmField

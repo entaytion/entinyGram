@@ -147,6 +147,8 @@
     <string name="InuAttachCameraModeFab">Плаваюча кнопка</string>
     <string name="InuAttachCameraModeTab">Нижня вкладка</string>
     <string name="InuRoundRecorderKeepZoom">Зберігати зум після відпускання</string>
+    <string name="InuRoundRecorderMirrorFront">Дзеркалити фронтальну камеру</string>
+    <string name="InuRoundRecorderMirrorFrontInfo">Відображати по горизонталі прев’ю фронтальної камери та записане відеоповідомлення</string>
     <string name="InuRoundRecorderZoomSlider">Слайдер зуму</string>
     <string name="InuRoundRecorderZoomButtons">Кнопки рівня зуму</string>
     <string name="InuRoundRecorderZoomButtonsInfo">Фіксовані кнопки зуму 1×/2×/3×/5×/10× поверх круглої камери, в межах можливостей об\'єктива.</string>

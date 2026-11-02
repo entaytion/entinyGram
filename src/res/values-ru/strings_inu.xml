@@ -849,6 +849,8 @@
     <string name="InuMonetStyleClassic">Классический</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
     <string name="InuRoundRecorderKeepZoom">Сохранять зум после щипка</string>
+    <string name="InuRoundRecorderMirrorFront">Зеркалить фронтальную камеру</string>
+    <string name="InuRoundRecorderMirrorFrontInfo">Отражать по горизонтали превью фронтальной камеры и записанное видеосообщение</string>
     <string name="InuRoundRecorderZoomSlider">Ползунок зума</string>
     <string name="InuRoundRecorderZoomButtons">Кнопки уровня зума</string>
     <string name="InuRoundRecorderZoomButtonsInfo">Фиксированные кнопки зума 1×/2×/3×/5×/10× поверх круглой камеры, в пределах возможностей объектива.</string>

@@ -87,6 +87,14 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             )
             items.add(
                 mkTwoLineCheckItem(
+                    TOGGLE_ROUND_RECORDER_MIRROR_FRONT,
+                    R.string.InuRoundRecorderMirrorFront,
+                    R.string.InuRoundRecorderMirrorFrontInfo,
+                    InuConfig.ROUND_RECORDER_MIRROR_FRONT.value
+                )
+            )
+            items.add(
+                mkTwoLineCheckItem(
                     TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM,
                     R.string.InuRoundRecorderExponentialZoom,
                     R.string.InuRoundRecorderExponentialZoomInfo,
@@ -298,6 +306,8 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_ZOOM_BUTTONS.toggle()
             TOGGLE_ROUND_RECORDER_KEEP_ZOOM -> (view as? TextCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_KEEP_ZOOM.toggle()
+            TOGGLE_ROUND_RECORDER_MIRROR_FRONT ->
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_MIRROR_FRONT.toggle()
             TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPONENTIAL_ZOOM.toggle()
             TOGGLE_ROUND_RECORDER_DUAL_CAMERA -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_DUAL_CAMERA.toggle()
@@ -338,6 +348,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ROUND_RECORDER_ZOOM_SLIDER = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_KEEP_ZOOM = InuUtils.generateId()
+        private val TOGGLE_ROUND_RECORDER_MIRROR_FRONT = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_DUAL_CAMERA = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_60FPS = InuUtils.generateId()
@@ -399,6 +410,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("round-recorder-zoom-slider", R.string.InuRoundRecorderZoomSlider, TOGGLE_ROUND_RECORDER_ZOOM_SLIDER),
                 SearchRegistry.Entry("round-recorder-zoom-buttons", R.string.InuRoundRecorderZoomButtons, TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS),
                 SearchRegistry.Entry("round-recorder-keep-zoom", R.string.InuRoundRecorderKeepZoom, TOGGLE_ROUND_RECORDER_KEEP_ZOOM),
+                SearchRegistry.Entry("round-recorder-mirror-front", R.string.InuRoundRecorderMirrorFront, TOGGLE_ROUND_RECORDER_MIRROR_FRONT),
                 SearchRegistry.Entry("round-recorder-exponential-zoom", R.string.InuRoundRecorderExponentialZoom, TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM),
                 SearchRegistry.Entry("round-recorder-dual-camera", R.string.InuRoundRecorderDualCamera, TOGGLE_ROUND_RECORDER_DUAL_CAMERA),
                 SearchRegistry.Entry("round-recorder-60fps", R.string.InuRoundRecorder60Fps, TOGGLE_ROUND_RECORDER_60FPS),
