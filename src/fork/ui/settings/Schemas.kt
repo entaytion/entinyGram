@@ -19,7 +19,6 @@ import desu.inugram.helpers.chat.DoubleTapAction
 import desu.inugram.helpers.chat.DoubleTapActionHelper
 import desu.inugram.helpers.chat.DoubleTapContext
 import desu.inugram.helpers.chat.SideButtonAction
-import desu.inugram.helpers.network.CensorshipHelper
 import desu.inugram.helpers.profile.LocalNameHelper
 import desu.inugram.helpers.ShortcutHelper
 import desu.inugram.helpers.chat.WebPreviewHelper
@@ -57,7 +56,6 @@ object Schemas {
     // entiny: pre-schema deeplink slugs (tg://entinySettings/<slug>) that must keep resolving
     val LEGACY_ENTRY_SLUGS: Map<String, List<String>> = mapOf(
         "allow-screenshots" to listOf("disable-flag-secure"),
-        "anticensor-ws-tunnel" to listOf("ws-tunnel"),
         "blocked-messages-hide-replies" to listOf("blocked-messages-replies"),
         "chat-presence-dots" to listOf("chat-online-dots"),
         "confirm-before-sending" to listOf("confirm-send-sticker", "confirm-send-gif"),
@@ -554,16 +552,6 @@ object Schemas {
             toggle(InuConfig.UNLIMITED_FAVORITE_STICKERS, R.string.InuUnlimitedFavoriteStickers, R.string.InuUnlimitedFavoriteStickersInfo)
             toggle(InuConfig.UNLIMITED_FOLDER_CHATS, R.string.InuUnlimitedFolderChats, R.string.InuUnlimitedFolderChatsInfo)
             toggle(InuConfig.LOCAL_FOLDERS, R.string.InuLocalFolders, R.string.InuLocalFoldersInfo)
-        }
-        section(R.string.InuAntiCensorshipTransport, R.string.InuWsTunnelFooter) {
-            toggle(
-                InuConfig.ANTICENSOR_WS_TUNNEL, R.string.InuWsTunnel, R.string.InuWsTunnelInfo,
-                experimental = true,
-                onChange = { _, on -> CensorshipHelper.setTunnelEnabled(on) },
-            )
-        }
-        section(R.string.InuAntiCensorshipPrivacy, R.string.InuLeakGuardFooter) {
-            toggle(InuConfig.LEAK_GUARD, R.string.InuLeakGuard, R.string.InuLeakGuardInfo, experimental = true)
         }
     }
 

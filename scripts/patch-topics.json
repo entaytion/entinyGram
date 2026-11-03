@@ -11,7 +11,6 @@
   "android-auto-cleanup": "build",
   "animated-file-drawable-recycle-crash": "media",
   "animated-preview-speed-fix": "media",
-  "anticensorship": "privacy",
   "app-icon-picker": "ui",
   "archive-biometric-lock": "privacy",
   "confirm-links": "chat",

@@ -47,7 +47,6 @@ object InuHooks {
     fun preInit(context: Context) {
         CrashReporter.install()
         InuConfig.load(context)
-        desu.inugram.helpers.network.CensorshipHelper.init()
     }
 
     /**

@@ -439,7 +439,6 @@ entiny/chat/no-forward-selection-cap.patch
 entiny/chat/ios-input-bar.patch
 entiny/media/burn-voice-round.patch
 entiny/chat/mention-separator.patch
-entiny/privacy/anticensorship.patch
 entiny/ui/hide-pinned-forever.patch
 entiny/accounts/settings-accounts.patch
 entiny/accounts/new-contact-default-account.patch

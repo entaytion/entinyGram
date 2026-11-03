@@ -1,7 +1,6 @@
 package desu.inugram.helpers.network
 
 import android.os.SystemClock
-import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.Utilities
 import java.io.DataInputStream
@@ -24,7 +23,6 @@ object DatacenterPing {
         data class Available(val pingMs: Long) : Result()
         data class Slow(val pingMs: Long) : Result()
         object Unavailable : Result()
-        object LeakGuardBlocked : Result()
     }
 
     class DcStatus(
@@ -47,12 +45,6 @@ object DatacenterPing {
         if (status.isChecking) return
         val now = SystemClock.elapsedRealtime()
         if (!force && status.result !is Result.Idle && now - status.checkTime < 2 * 60 * 1000) {
-            return
-        }
-        if (InuConfig.LEAK_GUARD.value) {
-            status.result = Result.LeakGuardBlocked
-            status.checkTime = now
-            onUpdated()
             return
         }
         status.result = Result.Checking

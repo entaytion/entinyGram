@@ -287,9 +287,6 @@ class DatacenterStatusActivity(private val dcToHighlight: Int = 0) : SettingsPag
                 is DatacenterPing.Result.Unavailable -> {
                     LocaleController.getString(R.string.Unavailable) to Theme.key_text_RedRegular
                 }
-                is DatacenterPing.Result.LeakGuardBlocked -> {
-                    LocaleController.getString(R.string.InuDatacenterLeakGuardBlocked) to Theme.key_windowBackgroundWhiteGrayText2
-                }
             }
             statusView.text = text
             statusView.setTextColor(Theme.getColor(colorKey, resourceProvider))
