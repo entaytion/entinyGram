@@ -1,181 +1,127 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="entinyGram Logo" width="108" height="108" />
+  <img src="assets/logo.svg" width="108" height="108" alt="entinyGram" />
 </p>
 
-<h1 align="center">entinyGram</h1>
+<h3 align="center">entinyGram</h3>
 
 <p align="center">
-  <strong>A refined, private, and deeply customizable Telegram Android client</strong><br>
-  Built as an independent StGit patchset on top of official Telegram and Inugram.
+  An independent StGit patchset on top of official Telegram and Inugram.<br>
+  Focused on client-side privacy, restriction bypass, and UI customization.
 </p>
 
 <p align="center">
-  <a href="https://t.me/entinyGram"><img src="https://img.shields.io/badge/Telegram-Channel-26A5E4?style=flat-square&logo=telegram&logoColor=white" alt="Telegram Channel"></a>
-  <a href="https://github.com/entaytion/entinyGram/releases"><img src="https://img.shields.io/github/downloads/entaytion/entinyGram/total?style=flat-square&label=Downloads&color=b3261e&logo=github&logoColor=white" alt="Total downloads"></a>
-  <a href="https://developer.android.com"><img src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android 8.0+"></a>
-  <a href="https://stacked-git.github.io/"><img src="https://img.shields.io/badge/Patchset-StGit-4A90E2?style=flat-square" alt="StGit Patchset"></a>
-  <a href="https://bun.sh"><img src="https://img.shields.io/badge/Tooling-Bun-f472b6?style=flat-square&logo=bun&logoColor=white" alt="Bun Tooling"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--2.0%20%2F%20GPL--3.0-orange?style=flat-square" alt="License: GPL"></a>
+  <a href="https://github.com/entaytion/entinyGram/releases"><img src="https://img.shields.io/badge/releases-latest_APK-333333?style=flat-square&labelColor=333333&logo=github&logoColor=white" alt="Releases"></a>
+  <a href="https://entinygram.vercel.app/build"><img src="https://img.shields.io/badge/build_docs-entinygram.vercel.app-333333?style=flat-square&labelColor=333333&logo=vercel&logoColor=white" alt="Build docs"></a>
+  <a href="https://t.me/entinyGram"><img src="https://img.shields.io/badge/channel-@entinyGram-333333?style=flat-square&labelColor=333333&logo=telegram&logoColor=white" alt="Telegram channel"></a>
+  <br>
+  <a href="https://github.com/entaytion/entinyGram/releases"><img src="https://img.shields.io/github/downloads/entaytion/entinyGram/total?style=flat-square&label=downloads&labelColor=333333&color=333333" alt="Downloads"></a>
+  <a href="https://developer.android.com/"><img src="https://img.shields.io/badge/android-8.0%2B-333333?style=flat-square&labelColor=333333" alt="Android 8.0+"></a>
+  <a href="https://stacked-git.github.io/"><img src="https://img.shields.io/badge/patchset-StGit-333333?style=flat-square&labelColor=333333" alt="StGit"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-333333?style=flat-square&labelColor=333333" alt="License: MIT"></a>
 </p>
 
----
+## Overview
 
-**entinyGram** is our independent fork of **[Inugram](https://github.com/teidesu/inugram)** and the official **[Telegram Android](https://github.com/DrKLO/Telegram)** codebase. 
+**entinyGram** is a StGit patchset on top of [Inugram](https://github.com/teidesu/inugram) and the official [Telegram for Android](https://github.com/DrKLO/Telegram) client.
 
-While Inugram established a clean, modular patchset architecture focused on minimalism, Material 3, and bugfixes, **entinyGram** pushes it further: restoring user privacy (Ghost Mode, anti-deletion), unlocking server-restricted capabilities, providing free AI translation & transcription, and introducing deep visual customization.
+Stock Telegram decides for you what counts as read, what disappears when someone deletes it, and what only Premium is allowed to do. This patchset moves those decisions back to the client and adds a comfort layer around them.
 
-All features are optional. Toggle them on in `Settings → entinyGram`, or keep them off to stay 100% stock-identical.
+Nothing is forced: every change is a separate patch behind a switch in `Settings → entinyGram`, and with all switches off the app behaves like the stock client.
 
-> **Open Engineering:** This project is developed with AI assistance for research, patch engineering, refactoring, and code review. Every change is tested, maintained, and curated with strict fork isolation and rebase hygiene.
+What that layer actually gives you - privacy and ghost mode, archives of deleted messages and edits, restricted-content unlocks, adblock, translation and transcription on your own keys, interface and startup tweaks - is listed in [FEATURES.md](FEATURES.md), patch by patch.
 
----
+## Repository architecture
 
-## ✨ Key Highlights
-
-### 🛡️ Ghost Mode & Privacy
-- **Stealth Browsing:** Read messages, stories, and watch video notes without sending read receipts.
-- **Online & Status Spoofing:** Hide online status, auto-resend offline presence after sending messages, and spoof fake typing/recording indicators.
-- **Anti-Leak Calls:** Enforce routing through Telegram relay servers to completely prevent peer-to-peer IP leaks.
-- **Expiring Media Keeper:** Keep view-once photos, videos, and self-destructing secret chat media permanently saved and playable.
-
-### 🗑️ Anti-Deletion & Edit Archive
-- **Save Deleted Messages:** Automatically preserve deleted messages and media locally in `Downloads/entinyGram/media/`.
-- **Edit History:** Track every edit with text diffs, original formatting, and media preservation.
-- **Local Archive Search:** Full-text search across saved deleted messages and edit history.
-
-### 🔓 Restrictions Bypass & Local Premium
-- **Save Any Story:** Download any user or channel story directly to your gallery.
-- **Forward Restricted Content:** Copy text, download media, and forward messages from protected channels without author tags.
-- **Local Premium Perks:** Unlocked client-side premium badges, custom app icons, emoji statuses, and increased limits for pins and folders.
-- **Skip Login Countdown:** Tap the countdown timer on the login screen to request a new SMS or call code immediately.
-
-### 🌐 Free AI Translation & Voice-to-Text
-- **Whole-Chat Translation:** Free chat translation bar powered by Google, DeepL, Bing, Azure, or custom OpenAI-compatible LLM endpoints with conversation context.
-- **Free Voice Transcription:** Transcribe voice messages and video notes via Groq Whisper, Gemini Flash, Cloudflare AI, or OpenAI without Telegram Premium.
-
-### 🎨 Aesthetics & Deep Customization
-- **True AMOLED Theme:** Pure-black AMOLED theme independent of system Monet.
-- **Avatar Corner Slider:** Freely adjust avatar roundness from 0dp (square) to 28dp (circle) with live preview.
-- **iOS-Style UI:** Centered pill chat header, full-width bottom navigation bar, and clean dialog actions.
-- **Icon Packs:** Built-in switcher for Solar, VKUI, and Phosphor icon sets with real-time UI preview.
-- **Pill Stack:** Interactive status pills in the search bar (clock, battery, storage, proxy ping, RAM, currency rates).
-
-### 🧹 Debloat & Performance
-- **Zero Ads:** Completely eliminate Telegram sponsored messages, proxy promo channels, and gift auction banners.
-- **Gift & Upsell Muting:** Hide profile gift rings, gift tabs, star reactions, and subscription upsell banners.
-- **Trimmed Binary:** Dropped unused transitives and legacy dependencies to reduce APK size and memory overhead.
-- **Instant Cold Start:** Binary serialization cache for downloaded translations drops locale load times from ~1.6s to ~20ms.
-
----
-
-## 📊 Comparison
-
-| Feature / Philosophy | Official Telegram | Inugram | entinyGram |
-| :--- | :---: | :---: | :---: |
-| **Architecture** | Monolithic Java/C++ | StGit Patchset | StGit Patchset (`patches/entiny/`) |
-| **Ghost Mode (Stealth)** | ❌ | ❌ | ✅ |
-| **Save Deleted Messages & Edits** | ❌ | ❌ | ✅ |
-| **Bypass Protected Content & Stories** | ❌ | ❌ | ✅ |
-| **AdBlock & Sponsored Debloat** | ❌ | Partial | ✅ Complete |
-| **Free Voice-to-Text (Whisper/Gemini)** | ❌ (Paid) | ❌ | ✅ |
-| **Free Chat Translation (LLM/DeepL)** | ❌ (Paid) | ❌ | ✅ |
-| **AMOLED Theme & Avatar Corner Slider**| ❌ | ❌ | ✅ |
-| **Material 3 / Classic UI Modes** | ❌ | ✅ | ✅ |
-| **Map Engine** | MapLibre (heavy) | OSMDroid (lite) | OSMDroid (lite) |
-
----
-
-## 🏗️ Architecture (The Patchset Way)
-
-Unlike conventional forks that clone millions of lines of stock code into messy commits, entinyGram uses **[StGit](https://stacked-git.github.io/)** patch stacks over clean stock Telegram Android:
+Most Telegram forks clone millions of lines and mix custom features into the commit history, which makes every upstream update painful. entinyGram keeps stock code and fork code strictly separated with [StGit](https://stacked-git.github.io/).
 
 ```text
 entinyGram/
 ├── src/
-│   ├── kotlin/        # Fork logic, UI helpers, and InuConfig toggles
-│   └── res/           # Drawables, layouts, and strings (values/strings_inu.xml)
+│   ├── fork/             # Kotlin helpers, InuConfig toggles, settings pages
+│   ├── fork-app/         # the same, for the bits in the app module
+│   ├── core/             # InuCore, a plain JVM module (testable without a device)
+│   ├── native/           # rust bridge for the plugin engine
+│   ├── kotlin-osmdroid/  # our map provider, replaces MapLibre
+│   ├── res/              # our strings, drawables, layouts, icon packs
+│   └── vendor/           # third-party code kept as-is
 ├── patches/
-│   ├── entiny/        # entinyGram-owned patches (exclusive features & overrides)
-│   ├── feature/       # Upstream Inugram features
-│   ├── debloat/       # Upstream Inugram debloat patches
-│   ├── bugfix/        # Stock Telegram bug fixes
-│   └── hooks/         # Extension points for Kotlin helpers
-├── series             # Patch application order
-└── worktree/          # Clean stock Telegram Android checkout (symlinked, gitignored)
+│   ├── entiny/           # entinyGram patches and overrides, split by topic
+│   ├── feature/          # Inugram features
+│   ├── debloat/          # Inugram debloat patches
+│   ├── bugfix/           # fixes for stock Telegram bugs
+│   ├── hooks/            # extension points bridging stock Java to our Kotlin
+│   └── misc/             # build support and everything else
+├── patches-native/       # native-layer patches (LSPlant)
+├── sdk/                  # plugin SDK: API typings and the author CLI
+├── scripts/              # setup, export, lint, code generation
+├── upstream-commit       # pinned Telegram base commit
+├── series                # patch application order
+└── worktree/             # Telegram checkout the stack is applied to (gitignored)
 ```
 
-- **Stock stays clean:** Telegram code is never rewritten directly; patches hook into Kotlin helpers.
-- **Rebase resilience:** Updating to the latest Telegram Android version is a matter of rebasing patches rather than resolving thousands of git conflicts.
-- **Strict Fork Isolation:** All our work lives in `patches/entiny/` and `src/`, completely isolated from upstream remotes.
+Stock code in `worktree/` is never rewritten in git history; the patches only inject small hooks that call our Kotlin helpers. Updating to a new Telegram version means rebasing the stack, not merging a million-line diff. Real logic lives in `src/fork`, resources live in `src/res`, and stock Java files stay tiny.
 
----
+*Tooling note: AI assistance is used here for research, patch scaffolding and code review. Every patch is manually curated, tested on device and isolated to keep rebase hygiene clean.*
 
-## 🚀 Getting Started
+## Building from source
 
-### Downloading the APK
-Pre-built APKs are available on the **[Releases](../../releases)** page.
+Signed pre-built APKs are on the [Releases](https://github.com/entaytion/entinyGram/releases) page.
 
-### Building from Source
+You need **git**, **StGit**, **[Bun](https://bun.sh/)** and **JDK 21**. For the Android SDK, Windows specifics and signing setup see [entinygram.vercel.app/build](https://entinygram.vercel.app/build).
 
-Full build instructions (Windows setup, JDK 21, Android SDK, Gradle, debug/release builds, CI differences, troubleshooting) live on the project website:
-
-**https://entinygram.vercel.app/build**
-
-Requirements: **[Bun](https://bun.sh/)**, **Git**, **StGit**, and **JDK 21**.
-
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/entaytion/entinyGram.git
-   cd entinyGram
-   ```
-
-2. **Bootstrap the workspace:**
-   ```sh
-   bun install
-   bun run setup
-   ```
-   *The setup script prepares `worktree/` and applies the StGit patch stack.*
-
-3. **Build the debug APK:**
-   ```sh
-   bun run build-debug
-   ```
-   *The resulting APK will be placed at `worktree/TMessagesProj_App/build/outputs/apk/debug/app.apk`.*
-
-### Patch Validation & Code Quality
 ```sh
-bun run lint-patches       # Verify patch series and detect conflicts
-bun run entinychecker      # Validate SearchRegistry slugs and variants
-bun run check-translations # Verify localization completeness
+git clone https://github.com/entaytion/entinyGram.git
+cd entinyGram
+
+bun install
+bun run setup          # fetch the Telegram source and apply the stack to worktree/
+
+bun run build-debug            # full build with the plugin engine
+bun run build-debug-pluginless # without plugins, quickjs and LSPlant
 ```
 
----
+APKs land in `worktree/TMessagesProj_App/build/outputs/apk/`.
 
-## 🤝 Acknowledgements & Credits
+Before opening a pull request, run the validation suite:
 
-entinyGram is made possible thanks to the work of the open-source Telegram community:
+```sh
+bun run lint-patches        # patch series integrity and overwrite detection
+bun run entinychecker       # settings search slugs and unused variants
+bun run check-translations  # missing or stale locale keys
+bun run export              # regenerate patches/ and series from stgit
+```
 
-- **[Inugram](https://github.com/teidesu/inugram)** by **[@teidesu](https://github.com/teidesu)** — the foundational project, build architecture, and StGit patchset methodology we build upon.
-- **[Telegram Android](https://github.com/DrKLO/Telegram)** — official client codebase.
-- **[AyuGram](https://github.com/AyuGram)** — inspiration for Ghost Mode architecture, quick-toggle locks and the archive exclusions screen.
-- **[gettele/android (tele)](https://github.com/gettele/android)** by **[@nitreojs](https://github.com/nitreojs)** — the keep-deleted-messages model and chat-style archive we adapted for anti-deletion.
-- **[NagramX Turbo Classic](https://github.com/AlexeyLCP/NagramXTurboClassic)** by **[@AlexeyLCP](https://github.com/AlexeyLCP)** and **[NagramXFC](https://github.com/rhythmcache/NagramXFC)** by **[@rhythmcache](https://github.com/rhythmcache)** — Forward Pro comment position and formatting, ghost-mode seen mentions.
-- **[Cherrygram](https://github.com/arsLan4k1390/Cherrygram)** by **[@arsLan4k1390](https://github.com/arsLan4k1390)** — iOS design patterns, camera AE lock, and biometric safety guards.
-- **[exteraGram / exteraLess](https://github.com/exteraless/exteraless)** — pill stack, wide channel posts, recent chats switcher, and instant reactions read.
-- **[Nekogram](https://github.com/Nekogram/Nekogram)** — in-app updater, passcode privacy/hidden accounts, sticker sizing, and blocked users filtering.
-- **[NagramX](https://github.com/risin42/NagramX)** by **[@risin42](https://github.com/risin42)** & **[NagramXF](https://github.com/Keeperorowner/NagramXF)** by **[@Keeperorowner](https://github.com/Keeperorowner)** — Monet theming, avatar corner radius controls, icon replacement, and Ultra HDR support.
-- **[NagramXTurbo](https://github.com/temporaryna/NagramXTurbo)** by **[@temporaryna](https://github.com/temporaryna)** — download byte budget boost for non-premium accounts, background download queue and by-reference sending for protected forwards, thicken-bold toggle.
-- **[Nagram](https://github.com/NextAlone/Nagram)** by **[@NextAlone](https://github.com/NextAlone)** — compact small GIFs in chat bubbles.
-- **[OwlGram](https://github.com/OwlGramDev/OwlGram)** — per-dialog auto-translation UX ideas.
-- **[NiagramX](https://github.com/HSSkyBoy/NiagramX)** by **[@HSSkyBoy](https://github.com/HSSkyBoy)** — login code countdown skip, always-HD video sending.
-- **[Catogram](https://github.com/Catogram/Catogram)** — VKUI icon pack integration.
-- **[materialgram](https://github.com/kukuruzka165/materialgram)** by **[@kukuruzka165](https://github.com/kukuruzka165)** — Material You patterns and Android design inspiration.
-- **Telegraph** — Forward Pro inspiration.
-- **[MaxExteraPlugins](https://github.com/MaxExteraPlugins)** — background download resilience.
-- **[480 Design](https://t.me/Design480)** — Solar icon pack.
+## Credits and prior art
 
----
+entinyGram stands on the shoulders of the Telegram modding community. Special thanks to **[@teidesu](https://github.com/teidesu)** for [Inugram](https://github.com/teidesu/inugram), which is the foundation and the build system of this project, and to [DrKLO](https://github.com/DrKLO/Telegram) for the official client.
 
-## 📜 License
+<details>
+<summary><strong>Forks and projects we borrowed from</strong></summary>
+<br>
 
-Licensed under the **GNU General Public License v2.0 or later** (matching upstream Telegram Android and Inugram). See **[LICENSE](LICENSE)** for the full text.
+- **[AyuGram](https://github.com/AyuGram)** - ghost mode concepts, quick-toggle locks, archive exclusion UI.
+- **[gettele/android](https://github.com/gettele/android)** ([@nitreojs](https://github.com/nitreojs)) - keep-in-chat model for deleted messages and the chat-style archive.
+- **[Cherrygram](https://github.com/arsLan4k1390/Cherrygram)** ([@arsLan4k1390](https://github.com/arsLan4k1390)) - iOS layout patterns, camera AE lock, biometric guards.
+- **[exteraGram / exteraless](https://github.com/exteraless/exteraless)** - pill stack, wide channel posts, recent chats switcher, instant reaction reads, Material 3 music player.
+- **[Nekogram](https://github.com/Nekogram/Nekogram)** - in-app updater, hidden accounts behind a passcode, sticker sizing, datacenter ping.
+- **[NagramX](https://github.com/risin42/NagramX)** ([@risin42](https://github.com/risin42)) - icon pack switcher, Solar pack wiring.
+- **[NagramXTurbo](https://github.com/temporaryna/NagramXTurbo)** ([@temporaryna](https://github.com/temporaryna)) - download byte budget, background download queue, by-reference forwards of protected content, bold text tweaks.
+- **[NagramX Turbo Classic](https://github.com/AlexeyLCP/NagramXTurboClassic)** ([@AlexeyLCP](https://github.com/AlexeyLCP)) - AMOLED theme, standalone black palette.
+- **[NagramXF](https://github.com/Keeperorowner/NagramXF)** ([@Keeperorowner](https://github.com/Keeperorowner)) - avatar radius control, clown avatar for users who blocked you.
+- **[NagramXFC](https://github.com/rhythmcache/NagramXFC)** ([@rhythmcache](https://github.com/rhythmcache)) - hide seen mentions.
+- **[NiagramX](https://github.com/HSSkyBoy/NiagramX)** ([@HSSkyBoy](https://github.com/HSSkyBoy)) - login countdown skip, forced HD photo sending.
+- **[Nagram](https://github.com/NextAlone/Nagram)** ([@NextAlone](https://github.com/NextAlone)) - liquid glass refraction controls, compact GIFs in bubbles.
+- **[OwlGram](https://github.com/OwlGramDev/OwlGram)** - per-dialog auto-translation UX.
+- **[Catogram](https://github.com/Catogram/Catogram)** - VKUI icon pack.
+- **[materialgram](https://github.com/kukuruzka165/materialgram)** ([@kukuruzka165](https://github.com/kukuruzka165)) - Material You patterns.
+- **[Telegram-Monet](https://github.com/mi-g-alex/Telegram-Monet)** (mi-g-alex) - Monet palette generation.
+- Plugin authors **[@anivPlugins](https://t.me/anivPlugins)** (hide business bot banner), **Pixuz** (local message edit), **[@chestertech](https://t.me/chestertech)**.
+- **[480 Design](https://t.me/Design480)** - Solar icons; **[@r4in80w](https://t.me/r4in80w)** - the bundled Solar pack.
+
+</details>
+
+## License
+
+The patchset and all fork code in this repository are released under the **MIT license** - see [LICENSE](LICENSE). That grant covers source code only: the project name, logo and visual identity are not licensed and may not be used to imply affiliation with entinyGram.
+
+The built application contains Telegram for Android, licensed under GPL-2.0-or-later, and other third-party components under their own licenses.

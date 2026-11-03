@@ -10,269 +10,135 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 
 ## entinyGram additions
 
-our own layer on top of the inugram patchset: restricted Telegram features, privacy tools, and power-user controls.
+our own layer on top of the inugram patchset — read chats without leaving traces, keep messages and media the other side deleted or hid, unlock what telegram restricts (protected channels, stories, view-once, premium walls), translate and transcribe on your own keys, filter ads and spam, and rebuild the interface to taste.
+
+everything below is a switch in `Settings → entinyGram` — turn it all off and the app is the stock client.
 
 ### privacy & protection
 
-- 📡 **ghost mode**:
-  - quick toggle in drawer, chats menu and launcher shortcut, with optional status indicator - *inspired by [AyuGram](https://github.com/AyuGram)*
-  - hide read receipts, story views, online status, typing, recording and upload indicators
-  - **read on send**: mark messages read only when you reply
-  - **mark as read locally**: clear unread badges while keeping them unread on the server
-  - **hide seen mentions**: drop the mention badge and jump button in chats you already opened - *ported from NagramXFC (@rhythmcache)*
-  - **online status**: always hidden, or go offline right after you come online or act in chats - *offline-after-action ported from NagramX / AyuGram*
-  - **per-chat overrides** for read receipts and typing - *inspired by Alexgram / XF*
-  - **apply to**: private chats, groups and channels separately
-- 📡 **anti-deletion & edit history** - *keep-in-chat model ported from [gettele/android](https://github.com/gettele/android)*:
-  - messages deleted by the other side stay visible in the chat with a 🗑️ mark; deleting one again removes it for good
-  - save messages and media deleted by the other side; your own deletions go to the archive but are never kept in the chat
-  - separate "where to save" for deleted messages, edit history and attachments: all chats except exclusions, or only selected chats, with the chat-folder picker (types, bots in groups, secret chats, single chats) — *idea from AyuGram*
-  - attachment size limits for Wi-Fi and mobile data
-  - save edit history (✏️) with formatting, media and text diff
-  - deleted and edited archives use Telegram-style chat lists with previews, timestamps, counts and bulk clearing — *layout adapted from [gettele/android](https://github.com/gettele/android)*
-  - edit history keeps only real changes, one entry per revision; old duplicates are cleaned up once
-  - text and caption diffs between revisions of the same post in edited archives
-  - deleted archives open as native chats with sender groups, albums, day separators, deletion time and full-size media
-  - edit history shows each version as a chat bubble, with optional highlight of added and removed words
-  - replies to saved deleted messages show the saved copy instead of "Deleted message"
-  - download missing archived media on tap without background prefetching
-  - optionally mirror deleted photos and videos to Download/entinyGram/Ghosts, hidden from the gallery, moved along when the download folder changes; the archive is capped at 3 GB
-  - preserve downloaded media before deletion cleanup and reject incomplete documents
-  - custom styling for deleted messages
-  - full-text search and a browsable archive of everything saved, with sender names in groups
-  - cache TTL and automatic expiration
-  - preserve repeated revisions and formatting changes, with private account-isolated media archives
-  - open private archived media without crashing
-  - separate settings sections for deleted messages, edit history and self-destructing media
-  - export the archive to a JSON file
-- 📡 **self-destructing & expiring media**:
-  - save view-once photos, videos, video notes and voice notes, optionally straight to the gallery when you open them
-  - keep secret-chat media, text and timed messages
-  - expired voice notes and round videos stay playable
-- 📡 **save user info**: keep phone country, registration date and a change log of name, username, bio and photo, shown in the profile menu
-- 📡 **read time**: when the other side read your private messages, shown next to the bubble time
-- 📡 **last seen**: remembers the last online time, so it stays visible after a contact hides their status
-- 📡 **presence logger**: per-contact online/offline history with notifications
-- 📡 **force relay calls**: route calls through Telegram servers to hide your IP
-- 📡 **datacenter status**: live ping for DC1–DC5 - *inspired by [Nekogram](https://github.com/Nekogram/Nekogram) / [NagramX](https://github.com/temporaryna/NagramXTurbo)*
-- 📡 **adblock & content filtering**:
-  - hide sponsored messages
-  - hide the proxy sponsor chat
-  - hide the business bot banner and start or stop the bot from the chat menu - *inspired by Hide Business Bot Banner plugin (@anivPlugins)*
-  - hide or spoiler-cover messages matching regex rules
-  - optionally hide replies to filtered messages
+- 📡 **ghost mode** — hide read receipts, story views, online status, typing, recording and upload indicators; read-on-send, mark-as-read locally, hide seen mentions, per-chat overrides and per chat-type scope, with a quick toggle in the drawer, chats menu and a launcher shortcut
+- 📡 **anti-deletion & edit history** — messages the other side deletes stay in the chat under a 🗑️ mark, and deleted text, media and every real edit revision land in an archive with word and caption diffs; archives open as native chat lists with search, TTL, bulk clearing and JSON export, you pick which chats to save and cap attachment size per network, replies to a saved message show the saved copy, missing media downloads on tap
+- 📡 **self-destructing media** — save view-once photos, videos, video notes and voice notes (optionally straight to the gallery), keep secret-chat media and timed text, expired voice notes and round videos stay playable
+- 📡 **save user info** — phone country, registration date and a change log of name, username, bio and photo
+- 📡 **read time and remembered last seen** — when the other side read your private messages, and the last online time that survives them hiding their status
+- 📡 **presence logger** — per-contact online/offline history with notifications
+- 📡 **force relay calls** — route calls through Telegram servers to hide your IP
+- 📡 **datacenter status** — live ping for DC1–DC5
+- 📡 **adblock & content filtering** — hide sponsored messages, the proxy sponsor chat and the business bot banner (start or stop the bot from the chat menu), spoiler or hide messages matching regex rules and optionally their replies
+- 📡 **redact logs** — phone numbers, IDs, tokens, IPs and usernames are replaced with stable placeholders as logs are written
+- 📡 **hide last message preview** — last messages in the chats list show under a spoiler
 
-- 📡 **redact logs**: phone numbers, IDs, tokens, IPs and usernames are replaced with stable placeholders as logs are written
-- 📡 **hide last message preview**: last messages in the chats list show under a spoiler
+### unlocks & restrictions
 
-### restricted features
-
-- 📡 **device spoof**: choose the device name, system and app version shown in Settings → Devices, hide time zone and install source, and check what Telegram sees
-- 📡 **disable FLAG_SECURE**: allow screenshots and screen recording in protected windows, secret chats, expiring media and protected stories
-- 📡 **hide screenshot notifications** in secret chats
-- 📡 copy text and select messages in protected chats
+- 📡 **device spoof** — choose the device name, system and app version shown in Settings → Devices, hide time zone and install source, and check what Telegram sees
+- 📡 **screenshots anywhere** — disable FLAG_SECURE in protected windows, secret chats, expiring media and protected stories, and hide secret-chat screenshot notifications
+- 📡 **protected content** — copy text and select messages in protected chats, save any story or auto-save the ones you view, copy and forward from protected channels with a background bulk download, forward as your own without the "Forwarded from" header, re-send saved view-once media
 - 📡 **quote protected posts** into another chat as a bold title and a blockquote
-- 📡 **share button action**: make the round button next to channel posts forward, Forward Pro, save, edit, delete, translate, copy or show details
-- 📡 phone book contact links open the chat on newer Android versions
-- 📡 keyboard opens after choosing a chat to quote into
-- 📡 **local Telegram Premium**: Premium UI and limits on the client side
-- 📡 **local custom emoji**: send Premium custom emoji without Premium
-- 📡 **local names**: change name, username, photo, bio, verified badge, Premium badge and emoji status of any person, bot, group or channel on your device only, with export and import
-- ✏️ **local message edit**: edit the text of any message on your device only and reset it back anytime, from the message menu - *inspired by Local Message Edit plugin (Pixuz)*
-- 📡 **content protection & forward bypass**:
-  - save any story to gallery, or auto-save the ones you view
-  - copy and forward from protected chats and channels
-  - background download with progress, cancel and a confirm for huge batches - *idea from [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
-  - copies are sent by server reference when possible, with no download or re-upload - *idea from [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
-  - forward as your own message, without the "Forwarded from" header
-  - forward, re-send or share saved view-once media
-- 📡 **whole-chat translation without Premium**
-- 📡 **translation providers**: Google, DeepL, OpenAI-compatible LLM, Bing, Azure, MyMemory
-- 📡 **auto-translate every chat**, with per-chat exceptions - *inspired by [OwlGram](https://github.com/OwlGramDev/OwlGram)*
-- 📡 **LLM translation with conversation context**
-- 📡 **LLM translator endpoint**: auto-detect the base URL and pick the model from the provider's list
-- 📡 **input actions**: translate a draft before sending into its own language, link preview toggle, find & replace, attachment picker from the input menu
-- 📡 **translate in send preview** - *inspired by [NagramX](https://github.com/temporaryna/NagramXTurbo)*
-- 📡 **translate on send**: your text is translated into the outgoing language as you send it; if translating fails nothing is sent
-- 📡 **free voice transcription** via Groq Whisper, Gemini Flash, OpenAI or Cloudflare AI
-  - AI provider selection shows missing credentials and opens setup instead of hiding incomplete providers
-- 📡 **official-app emulation**: purchases and premium checkout without official app blocks
-- 📡 **wallet for everyone**: the Gram wallet entry is always available - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
-- 📡 **raised limits**: pins, favorite stickers and GIFs kept locally past the server cap, and folders
-- 📡 **skip login code countdown** - *inspired by [NiagramX](https://github.com/HSSkyBoy/NiagramX)*
+- 📡 **share button action** — make the round button next to channel posts forward, Forward Pro, save, edit, delete, translate, copy or show details
+- 📡 **local unlocks** — Telegram Premium UI and limits on the client side, Premium custom emoji without Premium, local names (name, username, photo, bio, verified and Premium badges, emoji status of anyone, on your device only, with export and import) and local message edit you can reset anytime
+- 📡 **official-app emulation** — purchases and premium checkout without official app blocks
+- 📡 **wallet for everyone** — the Gram wallet entry is always available
+- 📡 **raised limits** — pins, favorite stickers and GIFs kept locally past the server cap, and folders
+- 📡 **login and contact fixes** — skip the login code countdown, phone book contact links open the chat on newer Android, keyboard opens after choosing a chat to quote into
+
+### translation & ai
+
+- 📡 **whole-chat translation without Premium** via Google, DeepL, Bing, Azure, MyMemory or any OpenAI-compatible LLM, with auto-translate for every chat and per-chat exceptions
+- 📡 **translate before sending** — in the send preview, as you send, and of a draft from the input menu
+- 📡 **LLM translation with conversation context**, auto-detected endpoints and models picked from the provider's list
+- 📡 **AI providers as cards** — add any number of Gemini, OpenAI, Groq, OpenRouter, Cloudflare or custom OpenAI-compatible endpoints and choose which one serves chat and voice
+- 📡 **AI by task** — voice-to-text, AI editor and message summaries each get their own provider, model and temperature
+- 📡 **ai compose & tools** — rewrite, translate and format drafts
+- 📡 **free voice transcription** via Groq Whisper, Gemini Flash, OpenAI or Cloudflare AI; providers with missing credentials are shown and open setup instead of being hidden
 
 ### appearance & customization
 
-- 📡 **chat header preview**: real chat header with your avatar and wallpaper in settings - *inspired by [Finegram](https://github.com/Th3Nekit/Finegram) (@Th3Nekit)*
-- 📡 **system folders**: Administrator, Bots, Unread, Groups and Channels tabs in the folder bar, each switchable and removable on this device - *inspired by [NagramXF](https://github.com/Keeperorowner/NagramXF)*
-- 📡 **fix folder opening empty**: switching to a folder tab always shows its chats on the first try
-- 📡 **avatar corners**: adjustable radius - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
-- 📡 **clown avatar for blocked users**: blocked users show 🤡 (or 💩 / 💀) instead of their photo - *ported from [NiagramX](https://github.com/HSSkyBoy/NiagramX)*
-- 📡 **clown avatar for users who blocked me**: guessed from a missing photo and last seen, so it can be wrong - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
-- 📡 **standalone AMOLED theme** - *ported from NagramX Turbo*
-- 📡 **Monet style**: Material 3 colors for the Monet themes next to the classic ones - *inspired by [exteraless](https://github.com/exteraless/exteraless), colors from [Telegram-Monet](https://github.com/mi-g-alex/Telegram-Monet) (mi-g-alex)*
-- 📡 **theme switch recovery**: fixes interrupted theme transitions and stale Monet palettes
-- 📡 **liquid glass controls**: adjustable refraction angle and intensity - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
-- 📡 **icon packs**: stackable `.icons` packs with a bundled Solar pack
-- 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram) and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
-  - compact bottom navigation bar
-  - compact chat header pill with adjustable avatar placement, optionally in the menu button slot with tap and long-press swappable
-  - option to hide the chat avatar and keep the three-dot menu
-  - iOS-style input bar with optional compact mode and the option to put the commands button next to stickers
-  - iOS-style chat list with larger avatars and roomier rows - *inspired by [Finegram](https://github.com/Th3Nekit/Finegram) (@Th3Nekit)*
-  - iOS-style message menu: chat blurred behind, menu as a card under the message - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram) and [Finegram](https://github.com/Th3Nekit/Finegram) (@Th3Nekit)*
-- 📡 **action button style**: Accent, Neutral or White - *ported from [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
-- 📡 **header centering** and customizable chat headers
-- 📡 **compact pill & profile transition fixes**
-- 📡 **raise bottom bar**: slider to lift the compact bottom bar off the screen edge
-- 📡 **raise FAB buttons**: toggle to lift the floating action buttons a bit higher
-- 📡 **fix topics side panel flicker**: no more constant jitter/smearing after using search inside the panel
-- 📡 **auto marquee** for long titles - *inspired by auto_marquee plugin (@chestertech)*
-- 📡 **unread counter on the chat header back button**, with an iOS-styled variant and a live preview in chat header settings - *ported from [Finegram](https://github.com/Th3Nekit/Finegram)*
-- 📡 **Material 3 music player**: full-screen player with cover-based colors, wavy seek bar, morphing controls, queue, synced lyrics and a mini player - *ported from [exteraless](https://github.com/exteraless/exteraless)*
-- 📡 **show spoilers directly**
-- 📡 **customizable bottom tabs**, with an optional separate Search button; the Chats tab can be moved too, and any tab can be set to open first - *button layout ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
-- 📡 **bottom tabs hide on scroll**: the bar slides away when you scroll the chat list down and comes back on any scroll up
-- 📡 **recent chats**: popup, side panel or full page with tabs, search and history limit - *inspired by [exteraless](https://github.com/exteraless/exteraless), [Aprel Gram](https://t.me/aprelmods) and [NagramXF](https://github.com/Keeperorowner/NagramXF)*
-- 📡 **clear cache** and **restart app** shortcuts in the chats menu; **restart app** is also available in the side menu
-- 📡 **plugin settings** entry in the side menu
-- 📡 **customizable settings screen**: reorder and hide rows, new Telegram rows (like Money) are picked up automatically
-- 📡 **hide accounts list** in settings
-- 📡 **customizable My Profile info rows**
-- 📡 **wide channel posts** with adjustable side padding
-- 📡 **feed**: all subscribed channels in one native chat-style timeline with channel management, folder filter and an option to show the newest posts on top, off by default - *ported from [exteraless](https://github.com/exteraless/exteraless)*
-  - new posts preserve your reading position; the jump button counts unread messages toward the newest post, and media posts show the channel name
-- 📡 **show online indicator**: toggle the online dot everywhere; when off, the dot options are hidden
-- 📡 **color-coded online dot** - *inspired by [NagramX](https://github.com/NextAlone/NagramX)*
-- 📡 **online dots in chats**: online dot on sender avatars inside groups - *inspired by [NagramX](https://github.com/NextAlone/NagramX)*
-- 📡 **clock format**: system, 12-hour or 24-hour
-- 📡 **branded first-run intro**
-- 📡 **pill stack**: interactive pills in chats search bar - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
-- 📡 **forum topic cards**: topics of a forum as rounded Material 3 cards with pinned topics as their own card
-- 📡 **disable dividers**: remove the lines and gaps between rows in settings lists, section titles sit inside the card
-- 📡 **support card**: optional way to support the developer, can be hidden
-- 📡 **downloads button**: always show the downloads list button in the chats header
-- 📡 **hide downloads button**: never show the downloads button in the chats header
-- 📡 **app icon picker**: full-screen icon chooser with live preview - *ported from [exteraless](https://github.com/exteraless/exteraless)*
-- 📡 **messages appearance**: hide reply background, custom reply colors and pattern emoji - *inspired by [Finegram](https://github.com/Th3Nekit/Finegram)*
-- 📡 **snowflakes in chats**: falling snow over the chat background any time of year
-- 📡 **snowflakes in header**: falling snow over the title bar any time of year - *ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
-- rtl text truncated in the chat header keeps its beginning visible
+- 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar, chat list with larger avatars, message menu as a card over a blurred chat, unread counter on the header back button
+- 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size
+- 📡 **chat headers** — live header preview in settings, centered titles, auto marquee for long names
+- 📡 **bottom tabs** — custom layout with an optional separate Search button, any tab first, hide on scroll, sliders to raise the bar and the FABs
+- 📡 **system folders** — Administrator, Bots, Unread, Groups and Channels tabs in the folder bar, each switchable and removable on this device
+- 📡 **pill stack** — interactive status pills in the chats search bar
+- 📡 **recent chats** — popup, side panel or full page with tabs, search and a history limit
+- 📡 **feed** — all subscribed channels in one native chat-style timeline with folder filter and newest-on-top, off by default; reading position survives new posts
+- 📡 **Material 3 music player** — full-screen player with cover-based colors, wavy seek bar, morphing controls, queue, synced lyrics and a mini player
+- 📡 **online dots** — hide them everywhere, color-code them, or put them on sender avatars inside groups
+- 📡 **clown avatars** — blocked users show 🤡 (or 💩 / 💀), users who blocked you are guessed from a missing photo and last seen, so it can be wrong
+- 📡 **messages appearance** — hide reply background, custom reply colors and pattern emoji, wide channel posts with adjustable padding, show spoilers directly, forum topics as Material 3 cards, snowflakes over the chat or the header
+- 📡 **settings screen** — reorder and hide rows (new Telegram rows are picked up automatically), hide the accounts list, custom My Profile rows, disable dividers, hide the support card, downloads button always or never, full-screen app icon picker, clock format, branded first-run intro
+- 📡 **menu shortcuts** — clear cache and restart app in the chats menu, restart app and plugin settings in the side menu
 
-### profile & identity tools
+### profile & identity
 
 - 📡 **developer badges** in chat headers and profiles, optionally in the side menu header
-- 📡 **mutual contact icon**: optionally shown to the left of the avatar
+- 📡 **mutual contact icon** — optionally shown to the left of the avatar
 - 📡 **estimated registration date & DC** in profiles
-- 📡 **delete profile photos**: all or selected
-- 📡 **delete my messages** in any chat
-- 📡 **emoji picker** in name and surname fields
-- 📡 **open by numeric ID**
-- 📡 **bot account stays in sync**: accounts logged in with a bot token keep receiving new messages after long offline gaps
+- 📡 **cleanup** — delete profile photos (all or selected) and delete your own messages in any chat
+- 📡 **identity tools** — emoji picker in name and surname fields, open a chat by numeric ID
+- 📡 **bot accounts stay in sync** — logged in with a bot token, they keep receiving new messages after long offline gaps
 
-### messages & media tools
+### messages & sending
 
-- 📡 **message details & JSON view**
-- 📡 **hide message**: message menu item that hides a message until you leave the chat - *inspired by exteraGram*
-- 📡 **url parsing improvements**
-- 📡 **AI providers as cards**: add any number of providers (Gemini, OpenAI, Groq, OpenRouter, Cloudflare or a custom OpenAI-compatible endpoint), auto-detect the endpoint, pick models from a searchable list and choose which one serves chat and voice
-- 📡 **AI by task**: voice-to-text, AI editor and message summaries each get their own provider, model and temperature; AI editor opens on your own provider
-- 📡 **ai compose & tools**: rewrite, translate and format drafts
-- 📡 **typing status spoof**: fake "typing…", "recording…" or "uploading…" in any chat
-- 📡 **background downloads** - *ported from [MaxExteraPlugins](https://github.com/MaxExteraPlugins)*
-- 📡 **small GIFs** in chat bubbles - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
-- 📡 **send as round video** from the gallery
-- 📡 **round recorder**: zoom buttons, exposure lock and EV buttons - *exposure lock inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
-- 📡 **60 FPS round video messages**
-- 📡 **round video up to 720p**
-- 📡 **round audio**: pick video bitrate up to 4 Mbps, audio bitrate and microphone source for round videos
-- 📡 **proxy management**: delete failed, ping all, save without connecting
-- 📡 **tap avatar to open profile** from the chat list
-- 📡 **confirm before sending** voice/video messages, stickers and GIFs
-- 📡 **faster cold start** and locale caching
-- 📡 **smaller APK**
-- 📡 **Forward Pro**: edit text or captions in a full-screen editor over your chat wallpaper with a real bubble preview before forwarding, keep albums grouped, send the comment before or after the forwarded message, format the comment text - *inspired by Telegraph*
-- 📡 **replace Forward**: Forward opens the Forward Pro sheet instead of the stock picker
-- 📡 **disable link previews**: never generate or send previews for links in your messages
-- 📡 **send media from link preview**: send the photo, video or file of a web preview straight from its menu - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
-- 📡 **instant mark reactions as read** - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
-- 📡 **reaction read sync**: fixes stale unread reaction badges - *ported from inugram (alina sireneva)*
-- 📡 **local folders** once the server limit is reached
-- 📡 **remember last folder**: the chat list opens on the folder you used last, not on All Chats
-- 📡 **unread chats first**: unread chats, muted ones too, go above read ones in every folder and drop down once read, pinned chats stay on top; optionally among pinned chats too
-- 📡 **folder icon picker**
-- 📡 **separator after mention** - *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
+- 📡 **Forward Pro** — full-screen editor over your chat wallpaper with a real bubble preview, albums kept grouped, comment before or after the forwarded message, formatted comment text; Forward can open it instead of the stock picker
+- 📡 **round videos** — send from the gallery, zoom, exposure lock and EV buttons, up to 720p at 60 FPS with chosen video and audio bitrate and microphone source
+- 📡 **send as sticker** — long-press the send button on selected photos to send them as 512 px stickers
+- 📡 **confirm before sending** voice and video messages, stickers and GIFs, and keep the screen on while recording
+- 📡 **typing status spoof** — fake "typing…", "recording…" or "uploading…" in any chat
+- 📡 **input actions** — link preview toggle, find & replace and the attachment picker from the input menu
+- 📡 **link previews** — never generate or send them, or send the photo, video or file of a preview straight from its menu
+- 📡 **message menu** — message details & JSON view, hide a message until you leave the chat, copy photo as its own item (also on captions, and in the quick actions row), optionally collapse our items into one "entinyGram" submenu
 - 📡 **export chat** as JSON or HTML with media, including your own voice and video messages; the options sheet remembers your defaults
-- 📡 **UnifiedPush** notifications without Google Play - *ported from [Forkgram](https://github.com/forkgram/TelegramAndroid) & [Mercurygram](https://github.com/mercurygram/mercurygram)*
-- 📡 **background service**: optional always-on connection so notifications arrive on time, at the cost of battery - *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
-- 📡 **fix notifications dying everywhere**: muting one topic or system notification channel no longer mutes the whole chat list, no server-side mute either
-- 📡 **system channel mute**: optional — keep a channel muted only in system settings, without the app muting those chats too
-- 📡 **per-chat notification channels**: own system channel for every chat, so muting one channel or topic can't silence the rest
-- 📡 **fix stuck playback on pause** (MIUI and certain DSPs)
-- 📡 **fix in-app vibration setting ignored**: turning in-app notification vibration on or off now takes effect
-- 📡 **rotate the call screen** instead of locking it to portrait
-- 📡 **disable proximity sensor in calls**: the screen stays on when you hold the phone to your ear
-- 📡 **message date in saved file names**: optionally add the date and time a message was sent to saved photos, videos and files
-- 📡 **cache management**: per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once
-- 📡 **media size badge**: optional file size label on photos
-- 📡 **HD photos at q87**: smaller uploads and no double compression - *ported from [NagramXF](https://github.com/rlauuzo/NagramXF)*
-- 📡 **silent broadcast bell in the chat menu**: optionally move the bell out of the channel input field
-- 📡 **copy photo** in the message menu as its own item, also on photos with a caption, and it can go into the quick actions row
-- 📡 **PhotoViewer close crash fix** when the selected-media strip is not initialized
-- 📡 **crash fix** when deleting all messages of a user while their media messages are selected
-- 📡 **square camera tile**: the attach gallery camera takes one cell instead of two
-- 📡 **mirror front camera** in the attach gallery: flip the preview and the captured photo or video horizontally - *ported from Hundgram (@lurepheonix)*
-- 📡 **mirror front camera** in round videos: flip the preview and the recorded video message horizontally - *ported from Hundgram (@lurepheonix)*
-- 📡 **save selected files**: download button when selecting files in profile media and search - *ported from the Save Selected Files plugin by @akresik*
-- 📡 **fix looping videos freezing** when seeking near the end - *ported from Hundgram (@lurepheonix)*
-- 📡 **dimmed voice icon** when voice and round video messages are both forbidden - *ported from Hundgram (@lurepheonix)*
-- 📡 **fast GIF scrolling crash fix** - *ported from Hundgram (@lurepheonix)*
-- 📡 **play videos in original quality**, also in chat autoplay - *ported from Hundgram (@lurepheonix)*
-- 📡 **disable pull down to open stories** from the chat list - *ported from Hundgram (@lurepheonix)*
-- 📡 **sleep timer** for music: a dial in the player menu, optionally finishing the current song first - *ported from Hundgram (@lurepheonix)*
-- 📡 **shorter swipe gestures**: back, reply, folder and media swipes count at half the distance - *ported from Hundgram (@lurepheonix)*
-- 📡 **video message autoplay toggle** in Lite Mode: stop round video messages from playing on their own - *ported from Hundgram (@lurepheonix)*
-- 📡 **alternative GIF behavior**: with GIF autoplay off, tap opens the GIF fullscreen instead of stopping it in the bubble - *ported from Hundgram (@lurepheonix)*
-- 📡 **free memory in background**: clears image caches shortly after the app is minimized
-- 📡 **no emoji panel leak**: closed chats and photo viewers are no longer kept in memory by the emoji panel
-- 📡 **keep keyboard while typing**: scrolling the chat doesn't hide the keyboard when there's a draft
-- 📡 **keep three-dot menu**: option to keep the chats list menu button when the side menu is on
-- 📡 **keep screen on while recording**: the screen doesn't turn off during a voice or video message
-- "Save to Downloads" for regular voice messages (stock only has it for files and music)
-- 📡 **send as sticker**: long-press the send button on selected photos to send them as 512 px stickers
-- 📡 **sticker pack ZIP**: download a whole sticker or emoji pack as a ZIP from the pack menu
-- 📡 **hide reactions**: separate toggles to hide reactions on messages, disable setting them, and hide reaction badges in the chat list
-- 📡 **next audio controls**: don't preload the next track, don't auto-play the next music or voice message - *voice auto-play inspired by [ForkGram](https://github.com/forkgram/TelegramAndroid)*
-- 📡 **bookmarks**: bookmark messages from the message menu (up to 500 per chat), see a star next to the time and browse them by chat in a separate screen with tabs - *inspired by NagramX*
-- 📡 **proxy in menus**: hide the proxy entry in the dialogs menu, optional proxy settings entry in the chat menu
-- 📡 **plugin crash report**: after a plugin crash a dialog shows which plugin failed and the log, with a copy button
-- 📡 **review plugin permissions**: plugins menu entry that lists plugins asking for more permissions than you allowed (for example after an update) and approves them in one tap
-- 📡 **group entinyGram menu items**: toggle in message menu order to collapse entinyGram-specific items into a single "entinyGram" submenu
-- 📡 **plugin market**: themed catalog with compact buttons, all categories and Tabler icons, menu filters, version badges, two-line descriptions, authors and tags; search, sorting, sharing, a dedicated entinyGram plugins page and automatic SDK installation
-- 📡 **plugin settings integration**: plugins add controls and choices to the app's settings
+- 📡 **bookmarks** — bookmark from the message menu (up to 500 per chat), star next to the time, browsable by chat in its own screen
+- 📡 **silent broadcast bell** — move the channel's broadcast bell out of the input field into the chat menu
+- 📡 **reactions** — hide them on messages, disable setting them, hide chat-list badges, mark them read instantly, and stale unread badges stop sticking
+- 📡 **text and input fixes** — better url parsing, separator after mention, keyboard stays up when scrolling a chat with a draft
+- 📡 **long-press to close the pinned panel** — until a new pin, or always in this chat
+- 📡 **don't confirm opening links** — external links open without the "Open link" dialog
+
+### media, camera & player
+
+- 📡 **save what you see** — background downloads with progress and cancel, download button for selected files in profile media and search, "Save to Downloads" for regular voice messages, optional file-size badge on photos, message date in saved file names
+- 📡 **photos, GIFs and stickers** — HD photos at q87 with no double compression, small GIFs in chat bubbles, whole sticker or emoji pack downloaded as a ZIP
+- 📡 **square camera tile** — the attach gallery camera takes one cell instead of two
+- 📡 **camera, player and gesture pack** — mirrored front camera in the gallery and round videos, original-quality video playback and autoplay, tap-to-fullscreen GIFs when autoplay is off, music sleep timer, Lite Mode round-autoplay toggle, halved swipe distances, dimmed voice icon when both voice and rounds are banned, no pull-down-to-stories, fixes for looping-video and fast-GIF-scroll crashes
+
+### chat list & folders
+
+- 📡 **local folders** once the server limit is reached, folder icon picker, the chat list opens on the folder you used last
+- 📡 **unread chats first** — unread chats, muted ones too, go above read ones in every folder and drop down once read; pinned chats stay on top, optionally sorted too
+- 📡 **fix folder opening empty** — switching to a folder tab always shows its chats on the first try
+- 📡 **tap avatar to open profile** from the chat list
+- 📡 **keep three-dot menu** — option to keep the chats list menu button when the side menu is on
+
+### notifications & calls
+
+- 📡 **UnifiedPush** notifications without Google Play
+- 📡 **background service** — optional always-on connection so notifications arrive on time, at the cost of battery
+- 📡 **notification fixes** — muting one topic or system channel no longer silences the whole chat list and nothing gets muted server-side, keep a channel muted only in system settings if you want, an own system channel per chat, and the in-app vibration switch actually takes effect
+- 📡 **calls** — rotate the call screen instead of locking it to portrait, keep the screen on by ignoring the proximity sensor
+- 📡 **audio** — fix playback stuck on pause (MIUI and certain DSPs), don't preload the next track or auto-play the next music or voice message
+
+### proxy, plugins & performance
+
+- 📡 **proxy management** — delete failed, ping all, save without connecting; hide the proxy entry in the dialogs menu, add a settings entry to the chat menu
+- 📡 **plugin market** — themed catalog with compact buttons, all categories and Tabler icons, filters, version badges, two-line descriptions, authors and tags, a dedicated entinyGram page and automatic SDK installation
+- 📡 **plugins** — settings integration so a plugin can add controls to the app settings, a crash report naming the plugin with a copy button, and a permission review that lists plugins asking for more than you allowed and approves them in one tap
+- 📡 **osmdroid map view** — pure-Java OpenStreetMap renderer with no native libraries, replacing MapLibre to cut ~12MB of native code from the APK
+- 📡 **faster cold start**, locale caching and a smaller APK
+- 📡 **memory** — free image caches shortly after the app is minimized, and closed chats and photo viewers no longer leak through the emoji panel
+- 📡 **cache management** — per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once
+- 📡 **stability fixes** — PhotoViewer close crash with an uninitialized media strip, crash when deleting a user's messages while their media is selected
+- 📡 **UI fixes** — topics side panel stops flickering after search, interrupted theme switches and stale Monet palettes recover, compact pill and profile transitions behave, rtl text truncated in the chat header keeps its beginning visible
 
 ### debloat & premium noise
 
-- 📡 **profile & gifts**:
-  - hide Story / Gift / Live Stream buttons, gift entries in menus, and the gift button in channels
-  - hide Premium badge, collectible status styling, Stars rating and organization verification badge
-  - hide the peer-color profile background and animated pattern icons
-  - hide the gift ring around the avatar and the Gifts tab in shared media
-  - hide the Similar Channels/Bots tab
-  - hide the group emoji-pack hint
-- 📡 **chat gifts & upsells**:
-  - hide the gift button in the input field
-  - hide gift service messages and giveaways
-  - hide Premium upsells and lock badges
-- 📡 **chat list & prompts**:
-  - hide the gift-auctions banner and the cache-cleanup card
-  - hide PSA promo chats
-  - hide the similar-channels card after joining a channel
-  - disable the post-call rating prompt
-  - disable contacts and lockscreen permission prompts on start
+- 📡 **profile & gifts** — hide the Story / Gift / Live Stream buttons and gift entries everywhere, gift service messages and giveaways, the gift ring and Gifts tab, the Similar Channels/Bots tab and the group emoji-pack hint
+- 📡 **premium noise** — hide the Premium badge, verified-organization badge, Stars rating, collectible status styling, peer-color profile background and animated pattern icons, plus upsells and lock badges in chats
+- 📡 **banners & prompts** — hide the gift-auctions banner, cache-cleanup card, PSA promo chats and the similar-channels card after joining; disable the post-call rating prompt and the contacts and lockscreen permission prompts on start
 - 📡 **hide channel share button**
+- 📡 **hide recent/frequent chats** from the app icon's long-press menu
 
-the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
+the sections below are the inugram base we build on: its features, tweaks adapted from other telegram clients, and bug fixes.
 
 ## inuGram additions
 
@@ -317,7 +183,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - export/import settings to/from json file
 - cloud sync of settings via web app storage api
 - search and deeplinks for fork settings, incl. `tg://settings/...` links tapped from inside a chat message
-- osmdroid-based map view (default) — pure-Java OpenStreetMap renderer with no native libraries, replacing the old MapLibre view to cut ~12MB of native code from the APK
 - customizable map preview provider
 - in-app updater - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
 - 🐶 crash report sheet: catches uncaught exceptions, offers to share the log on next launch, posts a tap-to-restart notification
@@ -360,7 +225,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 keep bot draft messages at the bottom
 - 🐶 long-press reply panel in "Replies" chat opens discussion group
 - show a "Deleted message" placeholder for deleted messages
-- hide pinned panel (📡 long-press close: until a new pin, or always in this chat)
+- hide pinned panel
 - hide channel, group preview (🐶) and replies (🐶) bottom bar (mute/join/etc)
 - send message to discussion group without joining
 - 🐶 member count on private invite sheets (instead of "private group/channel"; like tdesktop)
@@ -375,7 +240,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - always show go-to-bottom button (don't hide on scroll-down)
 - web preview replacements (e.g. twitter→fixupx), optionally applied when pasting links
 - 🐶 strip tracking params (utm_*, fbclid, si, erid, …) from links before opening and/or when pasting — *rules from AdGuard URL Tracking filter*
-- 📡 **don't confirm opening links**: external links open without the "Open link" dialog
 - 🐶 resolve trackable share redirects (TikTok, SoundCloud and more) when pasting/opening
 - 🐶 web preview refetch from menu
 - 🐶 disable web preview limit on twitter-like websites
@@ -428,7 +292,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 ### message input / formatting
 
 - 🐶 customizable max input lines (and bumped default)
-- 📡 chat input text size slider (12-24, default 18)
 - 🐶 voice recorder moved into attachments drawer
 - 🐶 camera placement in the attach panel: instant (stock), static, floating button or bottom tab. the last two free up the grid cell
 - 🐶 custom formatting popup with a separate code block button
@@ -468,7 +331,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - account limit raised to 16 (premium gating disabled); a slowdown warning is shown when adding more than 8
 - 🐶 customizable account order
 - 🐶 launcher shortcut that asks which account to open
-- 📡 option to hide recent/frequent chats from the app icon's long-press menu
 - per-account passcodes, hidden accounts, panic code, hidden settings deeplink - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
 - 🐶 paranoia mode: pick chats/channels to hide everywhere; all secret chats hidden too; exit by typing a custom code in chat search
   - optional whitelist mode: hide everything *except* the picked chats (service notifications stay visible)
