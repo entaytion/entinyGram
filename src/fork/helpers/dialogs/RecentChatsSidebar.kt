@@ -151,11 +151,14 @@ object RecentChatsSidebar {
 
     private fun resolved(fragment: BaseFragment, excludeDialogId: Long): List<Pair<Long, Any>> {
         val controller = MessagesController.getInstance(fragment.currentAccount)
-        return RecentChatsHelper.entries(fragment.currentAccount).mapNotNull { dialogId ->
+        val ids = RecentChatsHelper.entries(fragment.currentAccount)
+        val items = ids.mapNotNull { dialogId ->
             if (dialogId == excludeDialogId) return@mapNotNull null
             val obj: Any = (if (dialogId < 0) controller.getChat(-dialogId) else controller.getUser(dialogId)) ?: return@mapNotNull null
             dialogId to obj
         }
+        android.util.Log.d("EntinyRecent", "bar: cache size=${ids.size} resolved=${items.size}")
+        return items
     }
 
     private class SidebarView(
