@@ -461,6 +461,14 @@ object RoundRecorderHelper {
     }
 
     @JvmStatic
+    fun applyRememberedExposure(session: RoundVideoSession?): Float {
+        if (session == null) return 0f
+        val ev = exposureItem(session).value
+        session.setExposureEv(ev)
+        return ev
+    }
+
+    @JvmStatic
     fun syncExposureButtons(buttons: ExposureLevelButtonsView?, session: RoundVideoSession?) {
         if (buttons == null) return
         if (session == null) {

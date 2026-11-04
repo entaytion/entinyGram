@@ -652,3 +652,4 @@ entiny/ui/icon-pack-alpha-cast.patch
 entiny/media/round-video-exposure.patch
 entiny/chat/attach-camera-exposure.patch
 entiny/media/round-video-512p.patch
+entiny/media/round-video-cg-controls.patch

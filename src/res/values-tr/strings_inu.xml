@@ -2094,4 +2094,5 @@
     <string name="InuStickerPackZipFailed">Paket indirilemedi</string>
     <string name="InuForumSectionsCards">Forum konularında kart bölümleri</string>
     <string name="InuMarketFilters">Filtreler</string>
+    <string name="InuRoundExposure">Pozlama</string>
 </resources>

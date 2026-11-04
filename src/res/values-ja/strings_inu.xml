@@ -2091,4 +2091,5 @@
     <string name="InuStickerPackZipFailed">パックのダウンロードに失敗しました</string>
     <string name="InuForumSectionsCards">フォーラムのトピックをカード表示</string>
     <string name="InuMarketFilters">フィルター</string>
+    <string name="InuRoundExposure">露出</string>
 </resources>

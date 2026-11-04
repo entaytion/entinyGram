@@ -2274,4 +2274,5 @@
     <string name="InuWalletRecoverInvalid">Это некорректные 12 слов</string>
     <string name="InuWalletRecoverNotFound">Не найдена замена ключа на эти 12 слов. Проверьте адрес и слова или попробуйте снова.</string>
     <string name="InuWalletRecoverReplaced">Это не последние 12 слов данного кошелька</string>
+    <string name="InuRoundExposure">Экспозиция</string>
 </resources>
