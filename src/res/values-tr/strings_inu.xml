@@ -2074,6 +2074,14 @@
     <string name="InuHideReactionsSet">Tepki vermeyi devre dışı bırak</string>
     <string name="InuHideReactionsSetInfo">Mesaj menüsünde tepki çubuğu ve çift dokunuşla tepki yok</string>
     <string name="InuMaterial3SettingsInfo">Anahtarlar, kaydırıcılar, bölümler, avatarlar ve daha fazlası.</string>
+    <string name="InuDialogsSections">Sohbet listesi bölümleri</string>
+    <string name="InuDialogsSectionsCards">Kart bölümleri</string>
+    <string name="InuDialogsSectionsMargin">Yan boşluklar</string>
+    <string name="InuDialogsSectionsMarginLarge">Büyük</string>
+    <string name="InuDialogsSectionsMarginMedium">Orta</string>
+    <string name="InuDialogsSectionsMarginNone">Yok</string>
+    <string name="InuDialogsSectionsSeparatePinned">Sabitlenenler ayrı</string>
+    <string name="InuDialogsSectionsSeparatePinnedInfo">Sabitlenmiş sohbetleri ve arşivi ayrı bir kartta göster</string>
     <string name="InuSendAsSticker">Çıkartma olarak gönder</string>
     <string name="InuStickerPackZipFailed">Paket indirilemedi</string>
     <string name="InuForumSectionsCards">Forum konularında kart bölümleri</string>

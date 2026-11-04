@@ -2071,6 +2071,14 @@
     <string name="InuHideReactionsSet">リアクションの送信を無効にする</string>
     <string name="InuHideReactionsSetInfo">メッセージメニューのリアクションバーとダブルタップのリアクションを無効にします</string>
     <string name="InuMaterial3SettingsInfo">スイッチ、スライダー、セクション、アバターなど。</string>
+    <string name="InuDialogsSections">チャットリストのセクション</string>
+    <string name="InuDialogsSectionsCards">カードセクション</string>
+    <string name="InuDialogsSectionsMargin">左右の余白</string>
+    <string name="InuDialogsSectionsMarginLarge">大</string>
+    <string name="InuDialogsSectionsMarginMedium">中</string>
+    <string name="InuDialogsSectionsMarginNone">なし</string>
+    <string name="InuDialogsSectionsSeparatePinned">ピン留めを分離</string>
+    <string name="InuDialogsSectionsSeparatePinnedInfo">ピン留めしたチャットとアーカイブを別カードで表示</string>
     <string name="InuSendAsSticker">ステッカーとして送信</string>
     <string name="InuStickerPackZipFailed">パックのダウンロードに失敗しました</string>
     <string name="InuForumSectionsCards">フォーラムのトピックをカード表示</string>

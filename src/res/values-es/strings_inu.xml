@@ -399,6 +399,14 @@ Sistema: %6$s
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Estilo de diseño</string>
     <string name="InuMaterial3SettingsInfo">Interruptores, deslizadores, secciones, avatares y más.</string>
+    <string name="InuDialogsSections">Secciones de la lista de chats</string>
+    <string name="InuDialogsSectionsCards">Secciones en tarjetas</string>
+    <string name="InuDialogsSectionsMargin">Márgenes laterales</string>
+    <string name="InuDialogsSectionsMarginNone">Ninguno</string>
+    <string name="InuDialogsSectionsMarginMedium">Medio</string>
+    <string name="InuDialogsSectionsMarginLarge">Grande</string>
+    <string name="InuDialogsSectionsSeparatePinned">Fijados por separado</string>
+    <string name="InuDialogsSectionsSeparatePinnedInfo">Muestra los chats fijados y el archivo como una tarjeta propia</string>
     <string name="InuDialogsFabMainAction">Acción principal</string>
     <string name="InuDialogsFabSecondaryAction">Acción secundaria</string>
     <string name="InuDialogsFabHideOnScroll">Ocultar al desplazarse</string>

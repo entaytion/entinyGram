@@ -104,6 +104,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 ### chat list & folders
 
+- 📡 **chat list sections** — rounded Material 3 cards with adjustable side margins and separate pinned chats - *inspired by Modular Sections (@RnPlugins)*
 - 📡 **local folders** once the server limit is reached, folder icon picker, the chat list opens on the folder you used last
 - 📡 **unread chats first** — unread chats, muted ones too, go above read ones in every folder and drop down once read; pinned chats stay on top, optionally sorted too
 - 📡 **fix folder opening empty** — switching to a folder tab always shows its chats on the first try
@@ -123,6 +124,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **proxy management** — delete failed, ping all, save without connecting; hide the proxy entry in the dialogs menu, add a settings entry to the chat menu
 - 📡 **plugin market** — themed catalog with compact buttons, all categories and Tabler icons, filters, version badges, two-line descriptions, authors and tags, a dedicated entinyGram page and automatic SDK installation
 - 📡 **plugins** — settings integration so a plugin can add controls to the app settings, a crash report naming the plugin with a copy button, and a permission review that lists plugins asking for more than you allowed and approves them in one tap
+- 📡 **Windows release builds** — build signed arm64 APKs with plugins from Git Bash on Windows
 - 📡 **osmdroid map view** — pure-Java OpenStreetMap renderer with no native libraries, replacing MapLibre to cut ~12MB of native code from the APK
 - 📡 **faster cold start**, locale caching and a smaller APK
 - 📡 **memory** — free image caches shortly after the app is minimized, and closed chats and photo viewers no longer leak through the emoji panel

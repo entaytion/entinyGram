@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 4 Nov 2026 12:49:36 +0200
+Subject: Material 3 sections in dialogs
+
+---
+ .../src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java | 1 +
+ .../src/main/java/org/telegram/ui/DialogsActivity.java         | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
+@@ -1184,6 +1184,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
+                 break;
+             }
+         }
++        desu.inugram.helpers.dialogs.DialogsM3SectionsHelper.style(holder.itemView, i, this);
+         if (i >= dialogsCount + 1) {
+             holder.itemView.setAlpha(1f);
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -2035,7 +2035,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                             canvas.save();
+                         }
+                         canvas.translate(view.getX(), view.getY());
+-                        canvas.drawRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), paint);
++                        if (!(view instanceof DialogCell) || !desu.inugram.helpers.dialogs.DialogsM3SectionsHelper.isEnabled()) canvas.drawRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), paint);
+                         view.draw(canvas);
+                         canvas.restore();
+                     }
+@@ -4224,6 +4224,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             viewPage.listView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
+             viewPage.listView.setClipToPadding(false);
+             viewPage.listView.setPivotY(0);
++            desu.inugram.helpers.dialogs.DialogsM3SectionsHelper.attach(viewPage.listView);
+             if (initialDialogsType == DIALOGS_TYPE_BOT_REQUEST_PEER) {
+                 viewPage.listView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+             }

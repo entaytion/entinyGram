@@ -2071,6 +2071,14 @@
     <string name="InuHideReactionsSet">禁用设置回应</string>
     <string name="InuHideReactionsSetInfo">消息菜单中没有回应栏，也没有双击回应</string>
     <string name="InuMaterial3SettingsInfo">开关、滑块、分区、头像等。</string>
+    <string name="InuDialogsSections">聊天列表分区</string>
+    <string name="InuDialogsSectionsCards">卡片分区</string>
+    <string name="InuDialogsSectionsMargin">侧边距</string>
+    <string name="InuDialogsSectionsMarginLarge">大</string>
+    <string name="InuDialogsSectionsMarginMedium">中</string>
+    <string name="InuDialogsSectionsMarginNone">无</string>
+    <string name="InuDialogsSectionsSeparatePinned">置顶单独显示</string>
+    <string name="InuDialogsSectionsSeparatePinnedInfo">将置顶聊天和归档显示为单独的卡片</string>
     <string name="InuSendAsSticker">作为贴纸发送</string>
     <string name="InuStickerPackZipFailed">下载贴纸包失败</string>
     <string name="InuForumSectionsCards">论坛话题使用卡片分区</string>

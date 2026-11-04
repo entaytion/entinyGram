@@ -2091,6 +2091,14 @@
     <string name="InuHideReactionsSet">تعطيل وضع التفاعلات</string>
     <string name="InuHideReactionsSetInfo">لا شريط تفاعلات في قائمة الرسالة ولا تفاعل بالنقر المزدوج</string>
     <string name="InuMaterial3SettingsInfo">المفاتيح والمنزلقات والأقسام والصور الرمزية والمزيد.</string>
+    <string name="InuDialogsSections">أقسام قائمة المحادثات</string>
+    <string name="InuDialogsSectionsCards">أقسام البطاقات</string>
+    <string name="InuDialogsSectionsMargin">الهوامش الجانبية</string>
+    <string name="InuDialogsSectionsMarginLarge">كبيرة</string>
+    <string name="InuDialogsSectionsMarginMedium">متوسطة</string>
+    <string name="InuDialogsSectionsMarginNone">بلا</string>
+    <string name="InuDialogsSectionsSeparatePinned">المثبتة بشكل منفصل</string>
+    <string name="InuDialogsSectionsSeparatePinnedInfo">عرض المحادثات المثبتة والأرشيف في بطاقة مستقلة</string>
     <string name="InuPluginsEngineDisabled">الإضافات معطلة حالياً\n\nفعّلها من الإعدادات لتثبيت هذه الإضافة</string>
     <string name="InuPluginsOpenSettings">فتح الإعدادات</string>
     <string name="InuPluginsPluginlessBuild">هذا الإصدار لا يدعم الإضافات\n\nانتقل إلى «حول» للتبديل إلى الإصدار الكامل</string>
