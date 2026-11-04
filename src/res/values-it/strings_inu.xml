@@ -1216,6 +1216,9 @@ Questa azione non può essere annullata.</string>
     <string name="InuSendMp4DocumentAsVideoInfo">I file MP4 allegati tramite File vengono inviati come video riproducibili senza conversione</string>
     <string name="InuAttachCameraSquare">Riquadro quadrato della fotocamera</string>
     <string name="InuAttachCameraSquareInfo">La fotocamera nella galleria occupa una cella invece di due</string>
+    <string name="InuAttachCameraResolution">Risoluzione video</string>
+    <string name="InuAttachCameraExposureLevels">Pulsanti dei livelli di esposizione</string>
+    <string name="InuAttachCameraExposureLevelsInfo">Mostra i pulsanti EV per schiarire o scurire lo scatto mentre la fotocamera è aperta.</string>
     <string name="InuSortAlbumsBySize">Ordina gli album per dimensione</string>
     <string name="InuSortAlbumsBySizeInfo">Gli album nel menu degli allegati sono ordinati per numero di foto invece che per data</string>
     <string name="InuDownloadDirectory">Cartella dei download</string>

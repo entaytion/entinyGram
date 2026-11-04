@@ -1437,6 +1437,9 @@
     <string name="InuArchiveMediaPublicInfo">将已删除/已编辑的照片和视频复制到 Downloads/entinyGram/Ghosts，图库中不显示。关闭后仅保存在应用内。</string>
     <string name="InuAttachCameraSquare">方形相机磁贴</string>
     <string name="InuAttachCameraSquareInfo">图库中的相机占一格而不是两格</string>
+    <string name="InuAttachCameraResolution">视频分辨率</string>
+    <string name="InuAttachCameraExposureLevels">曝光级别按钮</string>
+    <string name="InuAttachCameraExposureLevelsInfo">相机打开时显示用于调亮或调暗画面的 EV 按钮。</string>
     <string name="InuSortAlbumsBySize">按大小排序相册</string>
     <string name="InuSortAlbumsBySizeInfo">附件菜单中的相册按照片数量而非最近使用时间排序</string>
     <string name="InuDownloadDirectory">下载文件夹</string>

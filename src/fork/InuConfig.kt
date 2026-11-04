@@ -531,6 +531,18 @@ object InuConfig {
     val ATTACH_CAMERA_MIRROR_FRONT = BoolItem("attach_camera_mirror_front", false)
 
     @JvmField
+    val ATTACH_CAMERA_RESOLUTION = IntItem("attach_camera_resolution", 0)
+
+    @JvmField
+    val ATTACH_CAMERA_EXPOSURE_LEVELS = BoolItem("attach_camera_exposure_levels", false)
+
+    @JvmField
+    val ATTACH_CAMERA_EXPOSURE_FRONT = FloatItem("attach_camera_exposure_front", 0f)
+
+    @JvmField
+    val ATTACH_CAMERA_EXPOSURE_BACK = FloatItem("attach_camera_exposure_back", 0f)
+
+    @JvmField
     val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram", allowed = setOf("entinyGram", "Telegram"))
 
     @JvmField

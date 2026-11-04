@@ -1672,6 +1672,9 @@
     <string name="InuAttachCameraMirrorFrontInfo">Отражать по горизонтали превью фронтальной камеры и снятое фото или видео</string>
     <string name="InuAttachCameraSquare">Квадратная плитка камеры</string>
     <string name="InuAttachCameraSquareInfo">Камера в галерее занимает одну ячейку вместо двух</string>
+    <string name="InuAttachCameraResolution">Разрешение видео</string>
+    <string name="InuAttachCameraExposureLevels">Кнопки уровней экспозиции</string>
+    <string name="InuAttachCameraExposureLevelsInfo">Показывать кнопки EV, чтобы сделать кадр светлее или темнее, пока открыта камера.</string>
     <string name="InuSortAlbumsBySize">Сортировать альбомы по размеру</string>
     <string name="InuSortAlbumsBySizeInfo">Альбомы в меню вложений сортируются по количеству фото, а не по давности</string>
     <string name="InuDownloadDirectory">Папка загрузок</string>

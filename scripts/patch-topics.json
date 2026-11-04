@@ -15,6 +15,7 @@
   "archive-biometric-lock": "privacy",
   "confirm-links": "chat",
   "forbidden-record-button-mode": "chat",
+  "attach-camera-exposure": "chat",
   "attach-camera-square": "chat",
   "mirror-front-attach-camera": "chat",
   "auto-marquee": "ui",

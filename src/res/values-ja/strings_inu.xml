@@ -1425,6 +1425,9 @@
     <string name="InuArchiveMediaPublicInfo">削除/編集済みの写真と動画を、ギャラリーに表示されない Downloads/entinyGram/Ghosts にコピーします。アプリ内だけに残すにはオフにします。</string>
     <string name="InuAttachCameraSquare">正方形のカメラタイル</string>
     <string name="InuAttachCameraSquareInfo">ギャラリーのカメラが2マスではなく1マスになります</string>
+    <string name="InuAttachCameraResolution">動画の解像度</string>
+    <string name="InuAttachCameraExposureLevels">露出レベルボタン</string>
+    <string name="InuAttachCameraExposureLevelsInfo">カメラが開いている間、撮影を明るくまたは暗くするEVボタンを表示します。</string>
     <string name="InuSortAlbumsBySize">アルバムをサイズ順に並べる</string>
     <string name="InuSortAlbumsBySizeInfo">添付メニューのアルバムを新しい順ではなく写真数の多い順に並べます</string>
     <string name="InuDownloadDirectory">ダウンロードフォルダー</string>

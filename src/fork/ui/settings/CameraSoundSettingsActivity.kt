@@ -171,6 +171,21 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 InuConfig.ATTACH_CAMERA_MIRROR_FRONT.value,
             )
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_ATTACH_CAMERA_RESOLUTION,
+                LocaleController.getString(R.string.InuAttachCameraResolution),
+                attachResolutionLabel(),
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ATTACH_CAMERA_EXPOSURE_LEVELS,
+                R.string.InuAttachCameraExposureLevels,
+                R.string.InuAttachCameraExposureLevelsInfo,
+                InuConfig.ATTACH_CAMERA_EXPOSURE_LEVELS.value,
+            )
+        )
         val cameraApiText = LocaleController.formatString(
             R.string.InuRoundRecorderCameraApi,
             if (SharedConfig.isUsingCamera2(currentAccount)) "Camera2" else "Camera1",
@@ -240,6 +255,16 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             TOGGLE_CONFIRM_SEND_VOICE -> (view as? TextCheckCell)?.isChecked = InuConfig.CONFIRM_SEND_VOICE.toggle()
             TOGGLE_ATTACH_CAMERA_SQUARE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_SQUARE.toggle()
             TOGGLE_ATTACH_CAMERA_MIRROR_FRONT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_MIRROR_FRONT.toggle()
+            BUTTON_ATTACH_CAMERA_RESOLUTION -> RadioItemOptions.show(
+                this, view,
+                listOf(LocaleController.getString(R.string.InuRoundBitrateDefault), "720p", "1080p"),
+                InuConfig.ATTACH_CAMERA_RESOLUTION.value.coerceIn(0, 2),
+            ) { which ->
+                InuConfig.ATTACH_CAMERA_RESOLUTION.value = which
+                listView.adapter.update(true)
+            }
+            TOGGLE_ATTACH_CAMERA_EXPOSURE_LEVELS ->
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_EXPOSURE_LEVELS.toggle()
             BUTTON_ROUND_DEFAULT_CAMERA -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -334,6 +359,12 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         else -> "$defaultLabel (${SharedSettings.roundVideoOutputResolution.get().size}p)"
     }
 
+    private fun attachResolutionLabel(): String = when (InuConfig.ATTACH_CAMERA_RESOLUTION.value) {
+        1 -> "720p"
+        2 -> "1080p"
+        else -> LocaleController.getString(R.string.InuRoundBitrateDefault)
+    }
+
     companion object {
         private val BUTTON_ATTACH_CAMERA_MODE = InuUtils.generateId()
         private val TOGGLE_KEEP_SCREEN_ON_RECORDING = InuUtils.generateId()
@@ -341,6 +372,8 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CONFIRM_SEND_VOICE = InuUtils.generateId()
         private val TOGGLE_ATTACH_CAMERA_SQUARE = InuUtils.generateId()
         private val TOGGLE_ATTACH_CAMERA_MIRROR_FRONT = InuUtils.generateId()
+        private val BUTTON_ATTACH_CAMERA_RESOLUTION = InuUtils.generateId()
+        private val TOGGLE_ATTACH_CAMERA_EXPOSURE_LEVELS = InuUtils.generateId()
         private val BUTTON_ROUND_DEFAULT_CAMERA = InuUtils.generateId()
         private val TOGGLE_ROUND_NEW_RECORDER = InuUtils.generateId()
         private val TOGGLE_ROUND_COMPOSITION = InuUtils.generateId()

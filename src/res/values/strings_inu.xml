@@ -1265,6 +1265,9 @@
     <string name="InuAttachCameraMirrorFrontInfo">Horizontally flip the front camera preview and the captured photo or video</string>
     <string name="InuAttachCameraSquare">Square camera tile</string>
     <string name="InuAttachCameraSquareInfo">Camera in the gallery takes one cell instead of two</string>
+    <string name="InuAttachCameraResolution">Video resolution</string>
+    <string name="InuAttachCameraExposureLevels">Exposure level buttons</string>
+    <string name="InuAttachCameraExposureLevelsInfo">Show EV buttons to brighten or darken the shot while the camera is open.</string>
     <string name="InuSortAlbumsBySize">Sort albums by size</string>
     <string name="InuSortAlbumsBySizeInfo">Albums in the attachment menu are ordered by photo count instead of recency</string>
     <string name="InuDownloadDirectory">Download folder</string>

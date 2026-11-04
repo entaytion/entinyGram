@@ -1806,6 +1806,9 @@
     <string name="InuAttachCameraMirrorFrontInfo">Відображати по горизонталі прев’ю фронтальної камери та зняте фото чи відео</string>
     <string name="InuAttachCameraSquare">Квадратна плитка камери</string>
     <string name="InuAttachCameraSquareInfo">Камера в галереї займає одну клітинку замість двох</string>
+    <string name="InuAttachCameraResolution">Роздільна здатність відео</string>
+    <string name="InuAttachCameraExposureLevels">Кнопки рівнів експозиції</string>
+    <string name="InuAttachCameraExposureLevelsInfo">Показувати кнопки EV, щоб зробити кадр світлішим або темнішим, поки камера відкрита.</string>
     <string name="InuSortAlbumsBySize">Сортувати альбоми за розміром</string>
     <string name="InuSortAlbumsBySizeInfo">Альбоми в меню вкладень впорядковуються за кількістю фото, а не за датою</string>
     <string name="InuDownloadDirectory">Папка завантажень</string>

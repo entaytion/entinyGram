@@ -1215,6 +1215,9 @@ Esta acción no se puede deshacer.</string>
     <string name="InuSendMp4DocumentAsVideoInfo">Los archivos MP4 adjuntados como Archivos se envían como videos reproducibles sin conversión</string>
     <string name="InuAttachCameraSquare">Mosaico cuadrado de la cámara</string>
     <string name="InuAttachCameraSquareInfo">La cámara en la galería ocupa una celda en lugar de dos</string>
+    <string name="InuAttachCameraResolution">Resolución del vídeo</string>
+    <string name="InuAttachCameraExposureLevels">Botones de niveles de exposición</string>
+    <string name="InuAttachCameraExposureLevelsInfo">Muestra botones EV para aclarar u oscurecer la toma mientras la cámara está abierta.</string>
     <string name="InuSortAlbumsBySize">Ordenar álbumes por tamaño</string>
     <string name="InuSortAlbumsBySizeInfo">Los álbumes en el menú de adjuntos se ordenan por número de fotos en lugar de fecha</string>
     <string name="InuDownloadDirectory">Carpeta de descargas</string>

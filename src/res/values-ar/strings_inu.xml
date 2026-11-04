@@ -1071,6 +1071,9 @@
     <string name="InuSendMp4DocumentAsVideoInfo">ملفات MP4 المرفقة عبر الملفات تُرسل كفيديوهات قابلة للتشغيل دون تحويل</string>
     <string name="InuAttachCameraSquare">مربع الكاميرا</string>
     <string name="InuAttachCameraSquareInfo">تشغل الكاميرا في المعرض خانة واحدة بدلاً من خانتين</string>
+    <string name="InuAttachCameraResolution">دقة الفيديو</string>
+    <string name="InuAttachCameraExposureLevels">أزرار مستويات التعريض</string>
+    <string name="InuAttachCameraExposureLevelsInfo">إظهار أزرار EV لتفتيح اللقطة أو تغميقها أثناء فتح الكاميرا.</string>
     <string name="InuSortAlbumsBySize">ترتيب الألبومات حسب الحجم</string>
     <string name="InuSortAlbumsBySizeInfo">تُرتَّب الألبومات في قائمة المرفقات حسب عدد الصور بدلاً من الأحدث</string>
     <string name="InuDownloadDirectory">مجلد التنزيل</string>

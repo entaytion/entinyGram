@@ -1438,6 +1438,9 @@
     <string name="InuArchiveMediaPublicInfo">Silinmiş/düzenlenmiş fotoğraf ve videoları galeride görünmeyecek şekilde Downloads/entinyGram/Ghosts klasörüne kopyalar. Yalnızca uygulama içinde tutmak için kapat.</string>
     <string name="InuAttachCameraSquare">Kare kamera karosu</string>
     <string name="InuAttachCameraSquareInfo">Galerideki kamera iki yerine tek hücre kaplar</string>
+    <string name="InuAttachCameraResolution">Video çözünürlüğü</string>
+    <string name="InuAttachCameraExposureLevels">Pozlama düzeyi düğmeleri</string>
+    <string name="InuAttachCameraExposureLevelsInfo">Kamera açıkken çekimi aydınlatmak veya karartmak için EV düğmelerini göster.</string>
     <string name="InuSortAlbumsBySize">Albümleri boyuta göre sırala</string>
     <string name="InuSortAlbumsBySizeInfo">Ek menüsündeki albümler güncellik yerine fotoğraf sayısına göre sıralanır</string>
     <string name="InuDownloadDirectory">İndirme klasörü</string>

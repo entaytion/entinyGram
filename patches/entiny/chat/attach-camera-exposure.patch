@@ -1,0 +1,131 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xmogdemaybe <xmogdelegenda@gmail.com>
+Date: Wed, 4 Nov 2026 22:15:17 +0400
+Subject: [+] attach camera exposure buttons and resolution presets
+
+---
+ .../telegram/messenger/camera/CameraController.java   |  4 ++++
+ .../org/telegram/messenger/camera/CameraInfo.java     |  4 ++++
+ .../org/telegram/messenger/camera/CameraSession.java  | 11 +++++++++++
+ .../ui/Components/ChatAttachAlertPhotoLayout.java     |  7 +++++++
+ 4 files changed, 26 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraController.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraController.java
+@@ -716,6 +716,10 @@ public class CameraController implements MediaRecorder.OnInfoListener {
+                             Size pictureSize;
+                             pictureSize = new Size(16, 9);
+                             pictureSize = CameraController.chooseOptimalSize(info.getPictureSizes(), 720, 480, pictureSize, false);
++                            Size inuPickedSize = desu.inugram.helpers.chat.AttachCameraHelper.pickRecorderVideoSize(info.getPictureSizes(), session);
++                            if (inuPickedSize != null) {
++                                pictureSize = inuPickedSize;
++                            }
+                             int bitrate;
+                             if (Math.min(pictureSize.mHeight, pictureSize.mWidth) >= 720) {
+                                 bitrate = 3500000;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraInfo.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraInfo.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraInfo.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraInfo.java
+@@ -24,6 +24,10 @@ public class CameraInfo {
+     protected ArrayList<Size> previewSizes = new ArrayList<>();
+     public final int frontCamera;
+ 
++    public int inu_exposureMin;
++    public int inu_exposureMax;
++    public android.util.Rational inu_exposureStep;
++
+     protected CameraDevice cameraDevice;
+     CameraCharacteristics cameraCharacteristics;
+     CaptureRequest.Builder captureRequestBuilder;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraSession.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraSession.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraSession.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraSession.java
+@@ -32,6 +32,8 @@ import java.util.List;
+ public class CameraSession {
+ 
+     public CameraInfo cameraInfo;
++    public float inu_exposureEv;
++    public boolean inu_attachRecorder;
+     private String currentFlashMode;
+     private OrientationEventListener orientationEventListener;
+     private int lastOrientation = -1;
+@@ -159,6 +161,13 @@ public class CameraSession {
+         }
+     }
+ 
++    public void inu_setExposureEv(float ev) {
++        inu_exposureEv = ev;
++        if (!isRound) {
++            configurePhotoCamera();
++        }
++    }
++
+     public void setTorchEnabled(boolean enabled) {
+         try {
+             String beforeFlashMode = currentFlashMode;
+@@ -421,6 +430,8 @@ public class CameraSession {
+                     }
+                     params.setFlashMode(useTorch ? Camera.Parameters.FLASH_MODE_TORCH : currentFlashMode);
+ 
++                    desu.inugram.helpers.chat.AttachCameraHelper.applyExposure(params, cameraInfo, inu_exposureEv);
++
+                     try {
+                         camera.setParameters(params);
+                     } catch (Exception e) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+@@ -177,6 +177,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+     private FrameLayout cameraPanel;
+     private ShutterButton shutterButton;
+     private ZoomControlView zoomControlView;
++    private desu.inugram.helpers.chat.ExposureLevelButtonsView inu_exposureButtons;
+     private AnimatorSet zoomControlAnimation;
+     private Runnable zoomControlHideRunnable;
+     private Runnable afterCameraInitRunnable;
+@@ -1312,6 +1313,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+                     AndroidUtilities.runOnUIThread(videoRecordRunnable, 1000);
+                 };
+                 AndroidUtilities.lockOrientation(baseFragment.getParentActivity());
++                desu.inugram.helpers.chat.AttachCameraHelper.markAttachRecorder(cameraView.getCameraSessionObject());
+                 CameraController.getInstance().recordVideo(cameraView.getCameraSessionObject(), outputFile, parentAlert.avatarPicker != 0, (thumbPath, duration) -> {
+                     if (outputFile == null || parentAlert.destroyed || cameraView == null) {
+                         return;
+@@ -1444,6 +1446,8 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         });
+         switchCameraButton.setContentDescription(LocaleController.getString(R.string.AccDescrSwitchCamera));
+ 
++        inu_exposureButtons = desu.inugram.helpers.chat.AttachCameraHelper.attachExposureButtons(container, value -> desu.inugram.helpers.chat.AttachCameraHelper.onExposureSelected(cameraView, value));
++
+         for (int a = 0; a < 2; a++) {
+             flashModeButton[a] = new ImageView(context);
+             flashModeButton[a].setScaleType(ImageView.ScaleType.CENTER);
+@@ -2580,6 +2584,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+             }
+         }
+         cameraOpened = true;
++        desu.inugram.helpers.chat.AttachCameraHelper.syncExposureButtons(inu_exposureButtons, cameraView, true);
+         if (cameraView != null) {
+             cameraView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+         }
+@@ -2670,6 +2675,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+                     }
+                     switchCameraButton.setImageResource(cameraView.isFrontface() ? R.drawable.camera_revert1 : R.drawable.camera_revert2);
+                     switchCameraButton.setVisibility(cameraView.hasFrontFaceCamera() ? View.VISIBLE : View.INVISIBLE);
++                    desu.inugram.helpers.chat.AttachCameraHelper.syncExposureButtons(inu_exposureButtons, cameraView, cameraOpened);
+                     if (!cameraOpened) {
+                         cameraInitAnimation = new AnimatorSet();
+                         cameraInitAnimation.playTogether(
+@@ -2728,6 +2734,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         if (!deviceHasGoodCamera || cameraView == null) {
+             return;
+         }
++        desu.inugram.helpers.chat.AttachCameraHelper.hideExposureButtons(inu_exposureButtons);
+         saveLastCameraBitmap();
+         cameraViewItemDecoration.updateBitmap();
+         cameraView.destroy(async, null);
