@@ -694,6 +694,10 @@ object Schemas {
                 InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL, R.string.InuBottomTabsHideOnScroll, R.string.InuBottomTabsHideOnScrollInfo,
                 visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
             )
+            toggle(
+                InuConfig.BOTTOM_TABS_DISABLE_PROFILE_SWIPE, R.string.InuBottomTabsDisableProfileSwipe, R.string.InuBottomTabsDisableProfileSwipeInfo,
+                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
+            )
             custom(
                 "start-tab", R.string.InuStartTab,
                 visible = { !InuConfig.BOTTOM_TABS_HIDE.value },

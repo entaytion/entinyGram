@@ -158,6 +158,8 @@
     <string name="InuBottomTabsHideTopSearchInfo">チャットリストの上の検索欄を非表示にする</string>
     <string name="InuBottomTabsSeparateSearch">検索ボタンを分離</string>
     <string name="InuBottomTabsSeparateSearchInfo">検索を下部タブの横に丸いボタンとして表示します</string>
+    <string name="InuBottomTabsDisableProfileSwipe">プロフィールの上スワイプを無効にする</string>
+    <string name="InuBottomTabsDisableProfileSwipeInfo">長押しでアカウントメニューを開くことは引き続きできます。</string>
     <string name="InuShowTabTitles">タブのタイトルを表示</string>
     <string name="InuMainTabsCustomizeReset">デフォルトにリセット</string>
     <string name="InuCompactMode">コンパクトモード</string>

@@ -58,6 +58,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size
 - 📡 **chat headers** — live header preview in settings, centered titles, auto marquee for long names
 - 📡 **bottom tabs** — custom layout with an optional separate Search button, any tab first, hide on scroll, sliders to raise the bar and the FABs
+- 📡 **profile swipe** — disable swiping up on Profile to open the account menu, while keeping long press
 - 📡 **system folders** — Administrator, Bots, Unread, Groups and Channels tabs in the folder bar, each switchable and removable on this device
 - 📡 **pill stack** — interactive status pills in the chats search bar
 - 📡 **recent chats** — popup, side panel or full page with tabs, search and a history limit

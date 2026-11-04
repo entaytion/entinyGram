@@ -158,6 +158,8 @@
     <string name="InuBottomTabsHideTopSearchInfo">隐藏聊天列表上方的搜索栏</string>
     <string name="InuBottomTabsSeparateSearch">独立搜索按钮</string>
     <string name="InuBottomTabsSeparateSearchInfo">在底部导航栏旁边显示一个圆形搜索按钮</string>
+    <string name="InuBottomTabsDisableProfileSwipe">禁用个人资料标签的上滑手势</string>
+    <string name="InuBottomTabsDisableProfileSwipeInfo">仍可通过长按打开账号菜单。</string>
     <string name="InuShowTabTitles">显示标签标题</string>
     <string name="InuMainTabsCustomizeReset">恢复默认</string>
     <string name="InuCompactMode">紧凑模式</string>

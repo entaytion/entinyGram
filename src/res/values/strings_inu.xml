@@ -394,6 +394,8 @@
     <string name="InuBottomTabsSeparateSearchInfo">Show Search as a round button beside the bottom tabs</string>
     <string name="InuBottomTabsHideOnScroll">Hide tabs on scroll</string>
     <string name="InuBottomTabsHideOnScrollInfo">Hide the bottom tabs while scrolling the chat list down, show them on scroll up</string>
+    <string name="InuBottomTabsDisableProfileSwipe">Disable swipe up on Profile</string>
+    <string name="InuBottomTabsDisableProfileSwipeInfo">The account menu will still open with a long press.</string>
     <string name="InuCompactMode">Compact mode</string>
     <string name="InuCompactModeInfo">Hides titles and make the tabs smaller</string>
     <string name="InuBottomTabsLift">Raise navigation bar</string>

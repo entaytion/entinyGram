@@ -8,9 +8,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
+import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.ItemOptions
+import org.telegram.ui.Components.glass.GlassTabView
 import kotlin.math.abs
 
 object LongPressDragMenuHelper {
@@ -28,6 +30,7 @@ object LongPressDragMenuHelper {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun installEarlySwipe(source: View) {
+        val profileTab = source is GlassTabView && source.backupImageView != null
         val grabSlop = ViewConfiguration.get(source.context).scaledTouchSlop
         val fireDistance = AndroidUtilities.dp(24f)
         var downX = 0f
@@ -41,7 +44,7 @@ object LongPressDragMenuHelper {
                     fired = false
                 }
 
-                MotionEvent.ACTION_MOVE -> if (!fired) {
+                MotionEvent.ACTION_MOVE -> if (!fired && !(profileTab && InuConfig.BOTTOM_TABS_DISABLE_PROFILE_SWIPE.value)) {
                     val up = downY - event.rawY
                     val sideways = abs(event.rawX - downX)
                     if (up > sideways && up > grabSlop) {

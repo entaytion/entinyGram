@@ -592,6 +592,7 @@ object InuConfig {
     @JvmField val BOTTOM_TABS_HIDE_TOP_SEARCH = BoolItem("bottom_tabs_hide_top_search", false)
     @JvmField val BOTTOM_TABS_SEARCH_SEPARATE = BoolItem("bottom_tabs_search_separate", false)
     @JvmField val BOTTOM_TABS_HIDE_ON_SCROLL = BoolItem("bottom_tabs_hide_on_scroll", false)
+    @JvmField val BOTTOM_TABS_DISABLE_PROFILE_SWIPE = BoolItem("bottom_tabs_disable_profile_swipe", false)
 
     @JvmField
     val DIALOGS_FAB_HIDE = BoolItem("dialogs_fab_hide", false)

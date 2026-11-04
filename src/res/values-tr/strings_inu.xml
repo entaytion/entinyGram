@@ -242,6 +242,8 @@
     <string name="InuBottomTabsHideTopSearchInfo">Sohbet listesinin üstündeki arama alanını gizle</string>
     <string name="InuBottomTabsSeparateSearch">Ayrı arama düğmesi</string>
     <string name="InuBottomTabsSeparateSearchInfo">Aramayı alt gezinme çubuğunun yanında yuvarlak bir düğme olarak göster</string>
+    <string name="InuBottomTabsDisableProfileSwipe">Profilde yukarı kaydırmayı devre dışı bırak</string>
+    <string name="InuBottomTabsDisableProfileSwipeInfo">Hesap menüsü uzun basıldığında açılmaya devam eder.</string>
     <string name="InuShowTabTitles">Sekme başlıklarını göster</string>
     <string name="InuMainTabsCustomizeReset">Varsayılana sıfırla</string>
     <string name="InuCompactMode">Kompakt mod</string>

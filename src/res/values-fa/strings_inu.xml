@@ -291,6 +291,8 @@
     <string name="InuBottomTabsHideTopSearchInfo">پنهان کردن کادر جستجو بالای فهرست گفتگوها</string>
     <string name="InuBottomTabsSeparateSearch">دکمه جستجوی جداگانه</string>
     <string name="InuBottomTabsSeparateSearchInfo">جستجو را به‌صورت دکمه‌ای گرد کنار زبانه‌های پایین نشان بده</string>
+    <string name="InuBottomTabsDisableProfileSwipe">غیرفعال کردن کشیدن به بالا روی نمایه</string>
+    <string name="InuBottomTabsDisableProfileSwipeInfo">منوی حساب‌ها همچنان با فشار طولانی باز می‌شود.</string>
     <string name="InuCompactMode">حالت فشرده</string>
     <string name="InuCompactModeInfo">عنوان‌ها را پنهان و زبانه‌ها را کوچک‌تر می‌کند</string>
     <string name="InuShowTabTitles">نمایش عنوان زبانه‌ها</string>

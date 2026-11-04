@@ -291,6 +291,8 @@
     <string name="InuBottomTabsHideTopSearchInfo">إخفاء حقل البحث أعلى قائمة الدردشات</string>
     <string name="InuBottomTabsSeparateSearch">زر بحث منفصل</string>
     <string name="InuBottomTabsSeparateSearchInfo">إظهار البحث كزر دائري بجانب علامات التبويب السفلية</string>
+    <string name="InuBottomTabsDisableProfileSwipe">تعطيل السحب لأعلى على الملف الشخصي</string>
+    <string name="InuBottomTabsDisableProfileSwipeInfo">ستظل قائمة الحسابات تفتح بالضغط المطوّل.</string>
     <string name="InuCompactMode">الوضع المضغوط</string>
     <string name="InuCompactModeInfo">يخفي العناوين ويصغّر علامات التبويب</string>
     <string name="InuShowTabTitles">إظهار عناوين علامات التبويب</string>

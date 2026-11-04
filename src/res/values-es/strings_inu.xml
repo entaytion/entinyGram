@@ -386,6 +386,8 @@ Sistema: %6$s
     <string name="InuBottomTabsHideTopSearchInfo">Ocultar el campo de búsqueda sobre la lista de chats</string>
     <string name="InuBottomTabsSeparateSearch">Botón de búsqueda separado</string>
     <string name="InuBottomTabsSeparateSearchInfo">Muestra la búsqueda como un botón redondo junto a las pestañas inferiores</string>
+    <string name="InuBottomTabsDisableProfileSwipe">Desactivar el deslizamiento hacia arriba en Perfil</string>
+    <string name="InuBottomTabsDisableProfileSwipeInfo">El menú de cuentas seguirá abriéndose con una pulsación larga.</string>
     <string name="InuCompactMode">Modo compacto</string>
     <string name="InuCompactModeInfo">Oculta los títulos y hace las pestañas más pequeñas</string>
     <string name="InuBottomTabsLift">Elevar la barra de navegación</string>

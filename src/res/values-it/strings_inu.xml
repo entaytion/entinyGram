@@ -386,6 +386,8 @@ Sistema: %6$s
     <string name="InuBottomTabsHideTopSearchInfo">Nascondi il campo di ricerca sopra l\'elenco delle chat</string>
     <string name="InuBottomTabsSeparateSearch">Pulsante di ricerca separato</string>
     <string name="InuBottomTabsSeparateSearchInfo">Mostra la Ricerca come pulsante rotondo accanto alle schede in basso</string>
+    <string name="InuBottomTabsDisableProfileSwipe">Disattiva lo scorrimento verso l\'alto su Profilo</string>
+    <string name="InuBottomTabsDisableProfileSwipeInfo">Il menu degli account continuerà ad aprirsi con una pressione prolungata.</string>
     <string name="InuCompactMode">Modalità compatta</string>
     <string name="InuCompactModeInfo">Nasconde i titoli e rimpicciolisce le schede</string>
     <string name="InuBottomTabsLift">Solleva la barra di navigazione</string>
