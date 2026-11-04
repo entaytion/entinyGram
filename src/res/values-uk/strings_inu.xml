@@ -2289,4 +2289,25 @@
     <string name="InuShorterSwipeGestures">Короткі свайпи</string>
     <string name="InuShorterSwipeGesturesInfo">Зараховувати свайп на половині шляху: назад, відповідь, папки, сторінки медіа та свайп вниз у переглядачі.</string>
     <string name="InuAutoplayVideoMessages">Автовідтворення відеоповідомлень</string>
+    <string name="InuDisableLinkPreviews">Вимкнути прев\'ю посилань</string>
+    <string name="InuDisableLinkPreviewsInfo">Не створювати й не надсилати прев\'ю для посилань у ваших повідомленнях</string>
+    <string name="InuPreviewSendFile">Надіслати файлом</string>
+    <string name="InuPreviewSendPhoto">Надіслати фото</string>
+    <string name="InuPreviewSendVideo">Надіслати відео</string>
+    <string name="InuWalletPrivateKey">Приватний ключ</string>
+    <string name="InuWalletPrivateKeyInfo">Введіть приватний ключ — або адресу гаманця та його 12 слів.</string>
+    <string name="InuWalletPrivateKeyHint">Приватний ключ — або адреса та 12 слів</string>
+    <string name="InuWalletPrivateKeyInvalid">Це некоректний приватний ключ</string>
+    <string name="InuWalletPrivateKeyBackupUnavailable">Гаманці, імпортовані за приватним ключем, не можна зберегти в резервну копію Telegram, бо інші застосунки їх не відновлять. Бережіть ключ самі.</string>
+    <string name="InuWalletKeyReplaced">Ключ замінено</string>
+    <string name="InuWalletKeyReplacedInfo">Вашу адресу та 12 нових слів тепер відновлюють цей гаманець.</string>
+    <string name="InuWalletReplaceKey">Замінити ключ на 12 слів</string>
+    <string name="InuWalletReplaceKeyButton">Замінити</string>
+    <string name="InuWalletReplaceKeyTitle">Замінити ключ на 12 слів?</string>
+    <string name="InuWalletReplaceKeyInfo">Ключі з генераторів могли бачити інші. Після заміни приватний ключ перестане працювати, а гаманець відновлюватиметься вашою адресою та 12 новими словами.</string>
+    <string name="InuWalletRecoverSearching">Шукаємо в історії гаманця…</string>
+    <string name="InuWalletRecoverFailed">Не вдалося завантажити історію гаманця. Спробуйте ще раз.</string>
+    <string name="InuWalletRecoverInvalid">Це некоректні 12 слів</string>
+    <string name="InuWalletRecoverNotFound">Не знайдено заміни ключа на ці 12 слів. Перевірте адресу й слова або спробуйте ще раз.</string>
+    <string name="InuWalletRecoverReplaced">Це не останні 12 слів цього гаманця</string>
 </resources>

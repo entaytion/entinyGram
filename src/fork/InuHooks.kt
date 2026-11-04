@@ -84,12 +84,19 @@ object InuHooks {
     }
 
     @JvmStatic
+    fun resolveClockFormat(): Boolean = when (InuConfig.CLOCK_FORMAT.value) {
+        InuConfig.ClockFormatItem.TWELVE_HOUR -> false
+        InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR -> true
+        else -> android.text.format.DateFormat.is24HourFormat(
+            org.telegram.messenger.ApplicationLoader.applicationContext.createConfigurationContext(
+                android.content.res.Resources.getSystem().configuration
+            )
+        )
+    }
+
+    @JvmStatic
     fun syncClockFormat() {
-        org.telegram.messenger.LocaleController.is24HourFormat = when (InuConfig.CLOCK_FORMAT.value) {
-            InuConfig.ClockFormatItem.TWELVE_HOUR -> false
-            InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR -> true
-            else -> android.text.format.DateFormat.is24HourFormat(org.telegram.messenger.ApplicationLoader.applicationContext)
-        }
+        org.telegram.messenger.LocaleController.is24HourFormat = resolveClockFormat()
         org.telegram.messenger.LocaleController.getInstance().recreateFormatters()
     }
 

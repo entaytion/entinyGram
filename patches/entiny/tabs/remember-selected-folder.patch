@@ -4,34 +4,34 @@ Date: Thu, 1 Oct 2026 13:51:04 +0300
 Subject: remember selected folder
 
 ---
- .../src/main/java/org/telegram/ui/DialogsActivity.java    | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ .../src/main/java/org/telegram/ui/DialogsActivity.java | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -7008,6 +7008,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-         }
-         ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
-         if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < filters.size()) {
-+            if (folderId == 0 && communityId == 0) {
-+                FolderHelper.saveSelectedFolder(currentAccount, filters.get(viewPages[0].selectedType).id);
-+            }
-             inu_updateFolderTitle(filters.get(viewPages[0].selectedType));
-         }
+@@ -6999,15 +6999,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         return index >= 0 && index < filters.size() ? filters.get(index) : null;
      }
-@@ -7065,6 +7068,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-             // folder's name stuck on a page the user never moved to. The settle-time hooks
-             // (tabsAnimation onAnimationEnd, onPageScrolled progress==1) apply the name once the
-             // transition has actually committed, so there is nothing to undo.
-+            if (folderId == 0 && communityId == 0) {
-+                FolderHelper.saveSelectedFolder(currentAccount, filter.id);
-+            }
-             inu_updateFolderTitle(filter);
-         }
  
-@@ -7148,7 +7154,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+-    // Settled page only: the tabs animation end, the swipe progress==1 callback, and
+-    // switchToCurrentSelectedMode when nothing is in flight. Never mid-swipe -- the drag-reversal
+-    // reset and the touch-interrupt path both abandon a transition without notifying us, so
+-    // committing a title early would leave the target folder's name on a page the user left.
++    // entiny: settle-time only — a swipe can be abandoned without notifying us mid-transition
+     private void inu_updateSettledFolderTitle() {
+         MessagesController.DialogFilter filter = inu_getCurrentFilter();
+         if (filter == null) {
+             return;
+         }
++        if (folderId == 0 && communityId == 0) {
++            FolderHelper.saveSelectedFolder(currentAccount, filter.id);
++        }
+         inu_applyDialogsTitle();
+         if (dialogStoriesCell != null) {
+             dialogStoriesCell.updateItems(true, false);
+@@ -7139,7 +7139,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      if (viewPages[a].selectedType >= filters.size()) {
                          viewPages[a].selectedType = filters.size() - 1;
                      }

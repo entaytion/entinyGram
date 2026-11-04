@@ -229,7 +229,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33975,6 +33996,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33978,6 +33999,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -242,7 +242,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -40165,7 +40192,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40168,7 +40195,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -251,7 +251,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -42339,6 +42366,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -42342,6 +42369,10 @@ public class ChatActivity extends BaseFragment implements
                      final int timestamp = message.getVideoStartsTimestamp();
                      message.forceSeekTo = (float) (timestamp / message.getDuration());
                  }
@@ -262,7 +262,7 @@ index 0000000..0000000 100644
                  openPhotoViewerForMessage(cell, message);
              } else if (message.type == MessageObject.TYPE_VIDEO) {
                  sendSecretMessageRead(message, true);
-@@ -46633,7 +46664,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46636,7 +46667,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

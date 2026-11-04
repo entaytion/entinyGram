@@ -2230,4 +2230,25 @@
     <string name="InuShorterSwipeGestures">Короткие свайпы</string>
     <string name="InuShorterSwipeGesturesInfo">Засчитывать свайп на половине пути: назад, ответ, папки, страницы медиа и свайп вниз в просмотрщике.</string>
     <string name="InuAutoplayVideoMessages">Автовоспроизведение видеосообщений</string>
+    <string name="InuDisableLinkPreviews">Отключить превью ссылок</string>
+    <string name="InuDisableLinkPreviewsInfo">Не создавать и не отправлять превью для ссылок в ваших сообщениях</string>
+    <string name="InuPreviewSendFile">Отправить файлом</string>
+    <string name="InuPreviewSendPhoto">Отправить фото</string>
+    <string name="InuPreviewSendVideo">Отправить видео</string>
+    <string name="InuWalletPrivateKey">Приватный ключ</string>
+    <string name="InuWalletPrivateKeyInfo">Введите приватный ключ — или адрес кошелька и его 12 слов.</string>
+    <string name="InuWalletPrivateKeyHint">Приватный ключ — или адрес и 12 слов</string>
+    <string name="InuWalletPrivateKeyInvalid">Это некорректный приватный ключ</string>
+    <string name="InuWalletPrivateKeyBackupUnavailable">Кошельки, импортированные по приватному ключу, нельзя сохранить в резервную копию Telegram, потому что другие приложения их не восстановят. Берегите ключ сами.</string>
+    <string name="InuWalletKeyReplaced">Ключ заменён</string>
+    <string name="InuWalletKeyReplacedInfo">Ваш адрес и 12 новых слов теперь восстанавливают этот кошелёк.</string>
+    <string name="InuWalletReplaceKey">Заменить ключ на 12 слов</string>
+    <string name="InuWalletReplaceKeyButton">Заменить</string>
+    <string name="InuWalletReplaceKeyTitle">Заменить ключ на 12 слов?</string>
+    <string name="InuWalletReplaceKeyInfo">Ключи из генераторов могли быть видны другим. После замены приватный ключ перестанет работать, а кошелёк будет восстанавливаться вашим адресом и 12 новыми словами.</string>
+    <string name="InuWalletRecoverSearching">Ищем в истории кошелька…</string>
+    <string name="InuWalletRecoverFailed">Не удалось загрузить историю кошелька. Попробуйте снова.</string>
+    <string name="InuWalletRecoverInvalid">Это некорректные 12 слов</string>
+    <string name="InuWalletRecoverNotFound">Не найдена замена ключа на эти 12 слов. Проверьте адрес и слова или попробуйте снова.</string>
+    <string name="InuWalletRecoverReplaced">Это не последние 12 слов данного кошелька</string>
 </resources>

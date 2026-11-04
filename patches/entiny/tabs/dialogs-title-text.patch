@@ -4,8 +4,9 @@ Date: Tue, 1 Sep 2026 11:15:02 +0300
 Subject: Show custom title text on the dialogs list, with an option for the archive
 
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ .../java/org/telegram/ui/DialogsActivity.java | 53 ++++++++++++++++++-
+ .../ui/Stories/DialogStoriesCell.java         |  4 +-
+ 2 files changed, 54 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
@@ -22,25 +23,24 @@ index 0000000..0000000 100644
                                  viewPages[1].setVisibility(View.GONE);
                                  showScrollbars(true);
                                  tabsAnimationInProgress = false;
-@@ -3057,6 +3061,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3057,6 +3061,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private Drawable premiumStar;
  
      public void updateStatus(TLRPC.User user, boolean animated) {
-+        if (!desu.inugram.helpers.security.ParanoiaHelper.isDisguised() && actionBar != null && communityId == 0 &&
-+                (folderId == 0 || desu.inugram.InuConfig.DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE.getValue())) {
-+            if (folderId == 0 && desu.inugram.InuConfig.DIALOGS_TITLE_TEXT.getValue() == desu.inugram.InuConfig.DialogsTitleTextItem.FOLDER) {
-+                // getDialogsTitle() has no FOLDER branch and falls through to the app name, so
-+                // running it here would drop the current folder's name on every status update
-+                // (emoji status, premium, mainUserInfoChanged).
-+                inu_updateSettledFolderTitle();
-+            } else {
-+                actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
-+            }
-+        }
++        inu_applyDialogsTitle();
          if (dialogStoriesCell != null) {
              dialogStoriesCell.updateStatus(user, animated);
          }
-@@ -3729,6 +3744,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3583,7 +3588,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                 actionBar.setTitle(ssb, statusDrawable);
+                 } else {
+-                    actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
++                    inu_applyDialogsTitle();
+                 }
+                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
+             }
+@@ -3729,6 +3734,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          checkListLoad(viewPages[0]);
                          viewPages[0].dialogsAdapter.resume();
                          viewPages[1].dialogsAdapter.pause();
@@ -48,59 +48,87 @@ index 0000000..0000000 100644
                      }
                  }
  
-@@ -6946,6 +6962,35 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6946,6 +6952,45 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
-+    // Applies whichever folder viewPages[0] currently holds. Safe to call at any time: it reads
-+    // the settled page, so it is a no-op-equivalent repeat rather than a mid-transition guess.
-+    private void inu_updateSettledFolderTitle() {
++    public MessagesController.DialogFilter inu_getCurrentFilter() {
 +        if (viewPages == null || viewPages.length == 0 || viewPages[0] == null) {
-+            return;
++            return null;
 +        }
 +        ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
-+        if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < filters.size()) {
-+            inu_updateFolderTitle(filters.get(viewPages[0].selectedType));
-+        }
++        int index = viewPages[0].selectedType;
++        return index >= 0 && index < filters.size() ? filters.get(index) : null;
 +    }
 +
-+    // Only ever called for a settled page: the two transition-completion hooks (tabsAnimation
-+    // onAnimationEnd, onPageScrolled progress==1) and switchToCurrentSelectedMode when no
-+    // transition is in flight. Never while a swipe is mid-flight -- see the comment there.
-+    private void inu_updateFolderTitle(MessagesController.DialogFilter filter) {
-+        if (actionBar == null || folderId != 0 || communityId != 0 || filter == null) {
++    // Settled page only: the tabs animation end, the swipe progress==1 callback, and
++    // switchToCurrentSelectedMode when nothing is in flight. Never mid-swipe -- the drag-reversal
++    // reset and the touch-interrupt path both abandon a transition without notifying us, so
++    // committing a title early would leave the target folder's name on a page the user left.
++    private void inu_updateSettledFolderTitle() {
++        MessagesController.DialogFilter filter = inu_getCurrentFilter();
++        if (filter == null) {
 +            return;
 +        }
-+        if (desu.inugram.InuConfig.DIALOGS_TITLE_TEXT.getValue() != desu.inugram.InuConfig.DialogsTitleTextItem.FOLDER) {
-+            return;
-+        }
-+        desu.inugram.helpers.chat.ChatHelper.folderTitle = filter.isDefault() ? null : desu.inugram.helpers.dialogs.FolderHelper.getTabInfo(filter).first;
-+        actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount));
++        inu_applyDialogsTitle();
 +        if (dialogStoriesCell != null) {
 +            dialogStoriesCell.updateItems(true, false);
 +        }
 +    }
 +
++    private void inu_applyDialogsTitle() {
++        if (actionBar == null || communityId != 0 || desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
++            return;
++        }
++        if (folderId != 0 && !desu.inugram.InuConfig.DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE.getValue()) {
++            return;
++        }
++        CharSequence title = desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(this, currentAccount);
++        SimpleTextView titleView = actionBar.getTitleTextView();
++        if (titleView != null && titleView.getVisibility() == View.VISIBLE && titleView.getAlpha() == 1f && !TextUtils.equals(titleView.getText(), title)) {
++            actionBar.setTitleAnimated(title, animatingForward, 220, CubicBezierInterpolator.DEFAULT);
++        }
++        actionBar.setTitle(title, statusDrawable);
++    }
++
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6972,6 +7017,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6972,6 +7017,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  
 +        if (!animated && !startedTracking && !tabsAnimationInProgress) {
-+            // Only apply the title when no transition is in flight. animated==true is the
-+            // transition *starting* (prepareForMoving / tab tap), where `filter` is the target
-+            // page -- committing to it here means every way a swipe can be abandoned has to undo
-+            // it, and two of them can't: the drag-reversal reset below prepareForMoving returns
-+            // false for, and the touch-interrupt path that calls removeAllListeners() before
-+            // cancel() so the animator's settle listener never runs. Both leave the target
-+            // folder's name stuck on a page the user never moved to. The settle-time hooks
-+            // (tabsAnimation onAnimationEnd, onPageScrolled progress==1) apply the name once the
-+            // transition has actually committed, so there is nothing to undo.
-+            inu_updateFolderTitle(filter);
++            inu_updateSettledFolderTitle();
 +        }
 +
          viewPages[a].dialogsAdapter.setDialogsType(viewPages[a].dialogsType);
          viewPages[a].layoutManager.scrollToPositionWithOffset(viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0, (int) scrollYOffset);
          checkListLoad(viewPages[a]);
+@@ -7063,6 +7112,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 FolderHelper.refreshSelectedTab(filterTabsView, viewPages[0].selectedType, filters.size());
+                 if (updateCurrentTab) {
+                     switchToCurrentSelectedMode(false);
++                } else {
++                    inu_applyDialogsTitle();
+                 }
+                 if (filterTabsView.isLocked(filterTabsView.getCurrentTabId())) {
+                     filterTabsView.selectFirstTab();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+@@ -628,11 +628,11 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+                     currentTitle = str;
+                 }
+             } else {
+-                currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
++                currentTitle = menuItemsOffset < dp(50) || desu.inugram.helpers.chat.ChatHelper.overridesStoriesTitle() ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(fragment, currentAccount)) :
+                     LocaleController.getString(R.string.MyStory);
+             }
+         } else {
+-            currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
++            currentTitle = menuItemsOffset < dp(50) || desu.inugram.helpers.chat.ChatHelper.overridesStoriesTitle() ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(fragment, currentAccount)) :
+                 LocaleController.formatPluralString("Stories", totalCount);
+         }
+ 

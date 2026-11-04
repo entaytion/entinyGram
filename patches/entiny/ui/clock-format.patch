@@ -4,30 +4,28 @@ Date: Sun, 27 Sep 2026 22:39:03 +0300
 Subject: clock format
 
 ---
- .../main/java/org/telegram/messenger/LocaleController.java  | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ .../main/java/org/telegram/messenger/LocaleController.java    | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -727,7 +727,8 @@ public class LocaleController {
+@@ -727,7 +727,7 @@ public class LocaleController {
          }
  
          systemDefaultLocale = Locale.getDefault();
 -        is24HourFormat = DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
-+        is24HourFormat = desu.inugram.InuConfig.CLOCK_FORMAT.getValue() == desu.inugram.InuConfig.ClockFormatItem.TWELVE_HOUR ? false
-+                : desu.inugram.InuConfig.CLOCK_FORMAT.getValue() == desu.inugram.InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR || DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
++        is24HourFormat = desu.inugram.InuHooks.resolveClockFormat();
          LocaleInfo currentInfo = null;
          boolean override = false;
  
-@@ -2053,7 +2054,8 @@ public class LocaleController {
+@@ -2053,7 +2053,7 @@ public class LocaleController {
          if (changingConfiguration) {
              return;
          }
 -        is24HourFormat = DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
-+        is24HourFormat = desu.inugram.InuConfig.CLOCK_FORMAT.getValue() == desu.inugram.InuConfig.ClockFormatItem.TWELVE_HOUR ? false
-+                : desu.inugram.InuConfig.CLOCK_FORMAT.getValue() == desu.inugram.InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR || DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
++        is24HourFormat = desu.inugram.InuHooks.resolveClockFormat();
          systemDefaultLocale = newConfig.locale;
          if (languageOverride != null) {
              if (currentLocaleInfo != null && localizationExternalSize > 0) {

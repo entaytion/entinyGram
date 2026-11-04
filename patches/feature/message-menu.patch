@@ -6,12 +6,12 @@ Subject: visual tweaks for the message menu
 ---
  .../ui/ActionBar/ActionBarPopupWindow.java    |   4 +
  .../java/org/telegram/ui/ChatActivity.java    | 117 ++++++++++++++----
- .../ChatScrimPopupContainerLayout.java        |  27 ++--
+ .../ChatScrimPopupContainerLayout.java        |  23 ++--
  .../Reactions/CustomEmojiReactionsWindow.java |  13 +-
  .../Components/ReactionsContainerLayout.java  |  21 +++-
  .../java/org/telegram/ui/MessageSeenView.java |   9 +-
  .../ui/SelectAnimatedEmojiDialog.java         |  10 +-
- 7 files changed, 158 insertions(+), 43 deletions(-)
+ 7 files changed, 154 insertions(+), 43 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
 index 0000000..0000000 100644
@@ -310,7 +310,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPop
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPopupContainerLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPopupContainerLayout.java
-@@ -45,11 +45,12 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -46,11 +46,12 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
              super.onMeasure(widthMeasureSpec, heightMeasureSpec);
  
              int maxWidth = reactionsLayout.getMeasuredWidth();
@@ -327,14 +327,9 @@ index 0000000..0000000 100644
              }
              if (reactionsLayout.showCustomEmojiReaction()) {
                  widthMeasureSpec = MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.EXACTLY);
-@@ -164,9 +165,19 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
-         }
+@@ -176,8 +177,14 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
      }
  
-+    private boolean inu_isBelow() {
-+        return reactionsLayout != null && reactionsLayout.isTop;
-+    }
-+
      private void updateBottomViewPosition() {
 -        if (bottomView != null) {
 -            bottomView.setTranslationY(bottomViewYOffset + expandSize + bottomViewReactionsOffset);
@@ -349,7 +344,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -175,7 +186,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -195,7 +202,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
      }
  
      public void setExpandSize(float expandSize) {
@@ -358,7 +353,7 @@ index 0000000..0000000 100644
          this.expandSize = expandSize;
          updateBottomViewPosition();
      }
-@@ -193,7 +204,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -213,7 +220,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
              bottomView.setAlpha(v);
              float scale = 0.5f + v * 0.5f;
              bottomView.setPivotX(bottomView.getMeasuredWidth());

@@ -2,6 +2,7 @@ package desu.inugram.helpers.chat
 
 import desu.inugram.helpers.archive.DeletedMessagesHelper
 import desu.inugram.helpers.archive.EditHistoryHelper
+import desu.inugram.helpers.dialogs.FolderHelper
 import android.Manifest
 import android.content.ClipData
 import android.content.Context
@@ -9,6 +10,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -24,6 +26,7 @@ import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.View.MeasureSpec
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -93,6 +96,7 @@ import org.telegram.messenger.utils.tlutils.TLKeyboardHelper
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_keyboard
+import desu.inugram.helpers.security.ParanoiaHelper
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
 import org.telegram.ui.ActionBar.AlertDialog
@@ -107,6 +111,7 @@ import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UndoView
 import org.telegram.ui.Components.ChatActivityEnterView
+import org.telegram.ui.Components.ChatScrimPopupContainerLayout
 import org.telegram.ui.Components.ColoredImageSpan
 import org.telegram.ui.Components.EditTextCaption
 import org.telegram.ui.Components.ItemOptions
@@ -2649,8 +2654,12 @@ object ChatHelper {
         val swipeBack = popupLayout.swipeBack ?: return false
         val rp = activity.resourceProvider
         val swb = ItemOptions.swipeback(popupLayout, rp)
-        val foregroundIndex = popupLayout.addViewToSwipeBack(swb.linearLayout)
-        (swb.linearLayout.layoutParams as? FrameLayout.LayoutParams)?.gravity = Gravity.TOP
+        val scroll = ScrollView(activity.context).apply {
+            isVerticalScrollBarEnabled = false
+            addView(swb.linearLayout)
+        }
+        val foregroundIndex = popupLayout.addViewToSwipeBack(scroll)
+        (scroll.layoutParams as? FrameLayout.LayoutParams)?.gravity = Gravity.TOP
         swipeBack.inu_pinnedScrimForegroundIndex = foregroundIndex
 
         // entiny: size submenu to full menu width when anchor is a narrow bottom-row button
@@ -2660,9 +2669,69 @@ object ChatHelper {
         swb.addGap()
         fill(swb)
 
+        val overlapBelow = reserveSubmenuRoom(popupLayout, swipeBack, swb.linearLayout)
+        swipeBack.inu_onForegroundClosed = Runnable {
+            swipeBack.removeView(scroll)
+            swipeBack.inu_pinnedScrimForegroundIndex = -1
+            if (overlapBelow > 0) {
+                popupLayout.layoutParams = (popupLayout.layoutParams as ViewGroup.MarginLayoutParams).apply { bottomMargin += overlapBelow }
+                swipeBack.inu_onVisibleBottomUpdate?.run()
+            }
+        }
         swipeBack.inu_setForegroundOffsetY(foregroundIndex, computeSubmenuOffsetY(swipeBack, anchorCell, swb.linearLayout))
         swipeBack.openForeground(foregroundIndex)
         return true
+    }
+
+    // a popup window moved after it's shown reaches the screen frames after its relayout, so the room a
+    // submenu may grow into upwards is reserved at show time as padding above the menu
+    @JvmStatic
+    fun reserveMenuRoomAbove(container: ChatScrimPopupContainerLayout, popupY: Int): Int {
+        val reserve = (popupY - AndroidUtilities.statusBarHeight - AndroidUtilities.dp(8f)).coerceAtLeast(0)
+        container.setPadding(container.paddingLeft, container.paddingTop + reserve, container.paddingRight, container.paddingBottom)
+        return popupY - reserve
+    }
+
+    /** @return how far the popup grew over a reactions bar below it, to be given back on close */
+    private fun reserveSubmenuRoom(
+        popupLayout: ActionBarPopupWindow.ActionBarPopupWindowLayout,
+        swipeBack: PopupSwipeBackLayout,
+        submenu: LinearLayout,
+    ): Int {
+        val container = popupLayout.parent as? ChatScrimPopupContainerLayout ?: return 0
+        val frame = Rect()
+        container.getWindowVisibleDisplayFrame(frame)
+        val location = IntArray(2)
+        container.getLocationOnScreen(location)
+        val limit = minOf(container.inu_getAvailableHeight(), frame.bottom - location[1] - AndroidUtilities.dp(8f))
+        container.inu_setMaxHeight(limit)
+        // stock animates the info box itself, so the popup must not move under it
+        if (container.bottomView != null) return 0
+
+        val spec = MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000f), MeasureSpec.AT_MOST)
+        submenu.measure(spec, spec)
+        val missing = submenu.measuredHeight - swipeBack.measuredHeight - (limit - container.measuredHeight)
+        val bar = container.reactionsLayout?.takeIf { it.parent === container }
+        val barBelow = bar != null && container.inu_isBelow()
+        val overlapBelow = if (barBelow) missing.coerceIn(0, container.measuredHeight - popupLayout.bottom) else 0
+        val overlapAbove = if (bar != null && !barBelow) (missing - overlapBelow).coerceIn(0, popupLayout.top - container.paddingTop) else 0
+        val fromPadding = (missing - overlapBelow - overlapAbove).coerceIn(0, container.paddingTop)
+        if (overlapBelow + overlapAbove + fromPadding == 0) return 0
+
+        val popupParams = popupLayout.layoutParams as ViewGroup.MarginLayoutParams
+        popupLayout.layoutParams = popupParams.apply {
+            topMargin -= overlapAbove
+            bottomMargin -= overlapBelow
+        }
+        if (overlapAbove + fromPadding > 0) {
+            val menu = swipeBack.getChildAt(0)
+            menu.layoutParams = (menu.layoutParams as ViewGroup.MarginLayoutParams).apply { topMargin += overlapAbove + fromPadding }
+        }
+        if (fromPadding > 0) {
+            container.setPadding(container.paddingLeft, container.paddingTop - fromPadding, container.paddingRight, container.paddingBottom)
+            if (bar != null && !barBelow) bar.translationY += fromPadding
+        }
+        return overlapBelow
     }
 
     private fun computeSubmenuOffsetY(
@@ -2684,7 +2753,8 @@ object ChatHelper {
         for (i in 0 until 2.coerceAtMost(submenu.childCount)) {
             headerHeight += submenu.getChildAt(i).measuredHeight
         }
-        return (anchorY.toInt() - headerHeight).coerceIn(0, slack)
+        val menuTop = (swipeBack.getChildAt(0).layoutParams as ViewGroup.MarginLayoutParams).topMargin
+        return (anchorY.toInt() - headerHeight).coerceIn(minOf(menuTop, slack), slack)
     }
 
     private fun hasCaption(selected: MessageObject, group: MessageObject.GroupedMessages?): Boolean =
@@ -2750,12 +2820,8 @@ object ChatHelper {
     @JvmStatic
     fun getChatInputTextSize(): Float = InuConfig.CHAT_INPUT_TEXT_SIZE.value.toFloat()
 
-    @JvmField
-    @Volatile
-    var folderTitle: CharSequence? = null
-
     @JvmStatic
-    fun getDialogsTitle(account: Int): CharSequence {
+    fun getDialogsTitle(fragment: BaseFragment?, account: Int): CharSequence {
         val user = UserConfig.getInstance(account).getCurrentUser()
         val baseTitle = when (InuConfig.DIALOGS_TITLE_TEXT.value) {
             InuConfig.DialogsTitleTextItem.USERNAME -> {
@@ -2765,7 +2831,8 @@ object ChatHelper {
 
             InuConfig.DialogsTitleTextItem.FIRST_NAME -> getFirstNameOrDefault(user)
             InuConfig.DialogsTitleTextItem.CHATS -> LocaleController.getString(R.string.FilterChats)
-            InuConfig.DialogsTitleTextItem.FOLDER -> folderTitle ?: LocaleController.getString(R.string.AppName)
+            InuConfig.DialogsTitleTextItem.FOLDER -> folderTitleOf(fragment)
+                ?: LocaleController.getString(R.string.AppName)
             InuConfig.DialogsTitleTextItem.CUSTOM -> InuConfig.DIALOGS_TITLE_TEXT_CUSTOM_TEXT.value.ifBlank {
                 LocaleController.getString(R.string.AppName)
             }
@@ -2783,6 +2850,16 @@ object ChatHelper {
             return ssb
         }
         return baseTitle
+    }
+
+    @JvmStatic
+    fun overridesStoriesTitle(): Boolean =
+        InuConfig.DIALOGS_TITLE_TEXT.value != InuConfig.DialogsTitleTextItem.INUGRAM && !ParanoiaHelper.isDisguised()
+
+    // entiny: read the settled page live — a cached title goes stale on folder rename
+    private fun folderTitleOf(fragment: BaseFragment?): CharSequence? {
+        val filter = (fragment as? DialogsActivity)?.inu_getCurrentFilter() ?: return null
+        return if (filter.isDefault) null else FolderHelper.getTabInfo(filter).first
     }
 
     private fun getFirstNameOrDefault(user: TLRPC.User?): String {

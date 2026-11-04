@@ -639,3 +639,8 @@ entiny/chat/mirror-front-attach-camera.patch
 entiny/media/mirror-front-video-message.patch
 entiny/chat/disable-link-previews.patch
 entiny/chat/send-link-preview-media.patch
+misc/wallet-engine-source-build.patch
+bugfix/alert-dialog-vertical-buttons.patch
+feature/wallet-private-key.patch
+bugfix/preview-status-bar-color.patch
+bugfix/forum-topics-transition.patch

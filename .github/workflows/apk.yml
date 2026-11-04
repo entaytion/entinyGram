@@ -231,6 +231,12 @@ jobs:
           rustup target add aarch64-linux-android armv7-linux-androideabi
           cargo install cargo-ndk --version 4.1.2 --locked --force
 
+      # entiny: wallet-engine builds from source in every variant; run inside gram-wallet so the
+      # targets land on the toolchain its rust-toolchain.toml pins, not the runner default
+      - name: Install wallet engine Rust targets
+        working-directory: ${{ matrix.worktree }}/TMessagesProj/jni/gram-wallet
+        run: rustup target add aarch64-linux-android armv7-linux-androideabi
+
       - name: Reset ccache stats
         run: ccache -z
 

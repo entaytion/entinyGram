@@ -67,7 +67,7 @@ index 0000000..0000000 100644
              if (t != topPadding || b != getPaddingBottom()) {
                  setTopGlowOffset(t);
                  setPadding(0, t, 0, b);
-@@ -5779,6 +5783,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5769,6 +5773,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          checkUi_searchFieldStyle();
  
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);

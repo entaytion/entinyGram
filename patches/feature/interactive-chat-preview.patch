@@ -63,7 +63,7 @@ index 0000000..0000000 100644
                      pressTime = -1;
                  }
              }
-@@ -41172,12 +41175,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -41175,12 +41178,12 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean canPerformActions() {

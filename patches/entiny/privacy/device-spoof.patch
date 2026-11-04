@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
          final ProxySettings proxySettings = ProxySettings.fromSharedPreferences(preferences);
          if (preferences.getBoolean("proxy_enabled", false) && proxySettings.isValid()) {
-@@ -711,6 +715,7 @@ public class ConnectionsManager extends BaseController {
+@@ -708,6 +712,7 @@ public class ConnectionsManager extends BaseController {
              packageId = "";
          }
  

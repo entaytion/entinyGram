@@ -65,7 +65,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **online dots** — hide them everywhere, color-code them, or put them on sender avatars inside groups
 - 📡 **clown avatars** — blocked users show 🤡 (or 💩 / 💀), users who blocked you are guessed from a missing photo and last seen, so it can be wrong
 - 📡 **messages appearance** — hide reply background, custom reply colors and pattern emoji, wide channel posts with adjustable padding, show spoilers directly, forum topics as Material 3 cards, snowflakes over the chat or the header
-- 📡 **settings screen** — reorder and hide rows (new Telegram rows are picked up automatically), hide the accounts list, custom My Profile rows, disable dividers, hide the support card, downloads button always or never, full-screen app icon picker, clock format, branded first-run intro
+- 📡 **settings screen** — reorder and hide rows (new Telegram rows are picked up automatically), hide the accounts list, custom My Profile rows, disable dividers, hide the support card, downloads button always or never, full-screen app icon picker, clock format (auto follows the system 12/24h setting, not the Telegram language), branded first-run intro
 - 📡 **menu shortcuts** — clear cache and restart app in the chats menu, restart app and plugin settings in the side menu
 
 ### profile & identity
@@ -198,7 +198,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - folder unread counter modes: hide / regular / exclude muted / 🐶 exclude muted non-dms
 - hide "all chats" folder tab
 - remove "Archived Chats" from the chat list entirely
-- custom title text: Inugram / @username / first name / "Chats"
+- custom title text: Inugram / @username / first name / "Chats" / active folder name / custom text
 - 🐶 dialogs fab customization: main + secondary actions, hide-on-scroll, left-side
 - 🐶 "create as supergroup" toggle in group creation
 - 🐶 deeplink / username / cached peer ID quick-open from global search
@@ -241,6 +241,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - web preview replacements (e.g. twitter→fixupx), optionally applied when pasting links
 - 🐶 strip tracking params (utm_*, fbclid, si, erid, …) from links before opening and/or when pasting — *rules from AdGuard URL Tracking filter*
 - 🐶 resolve trackable share redirects (TikTok, SoundCloud and more) when pasting/opening
+- 🐶 unwrap redirect links (Google, YouTube, Facebook, Instagram, VK, Steam) along with tracking param stripping
 - 🐶 web preview refetch from menu
 - 🐶 disable web preview limit on twitter-like websites
 - 🐶 spoiler web previews: when the preview-generating link is under a spoiler, cover the whole preview card too
@@ -346,6 +347,8 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - optional biometric lock on Archived Chats — ask once per app session or every time you open the archive
 - session list in Settings > Devices shows the real app name (entinyGram) instead of the registered api_id title ("Inugram")
+- import the Money wallet from raw ed25519 private key (+ support for 12 words rotation) - *engine patch from [gettele/money](https://github.com/gettele/money)*
+  - replace an imported key with 12 new words via an on-chain key rotation, offered once right after import - *inspired by [tele](https://github.com/nitreojs/tele)*
 
 ### behavior
 
@@ -444,6 +447,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - share sheet search results unclickable near the top (the touch dead zone under the search field double-counted the status bar inset, swallowing taps on the first row of results)
 - chat list crash while flinging when RecyclerView exposes a stale child without a ViewHolder
 - dialogs list pull-to-reveal-archive glitches
+- dialogs list jumping when opening/closing forum topics (the collapsed avatar column was laid out with the filter tabs' padding, then snapped after the next dialog update; closing re-anchored against the wrong padding and left the top chats under the tabs)
 - inline code in dialog previews no longer inherits chat-bubble colors
 - chat previews no longer persist the scroll position, so opening the chat normally afterwards still starts where you left off
 - big emoji jumping around in emoji-only messages when a visible reply preview shared its spans (stock bug: per-span draw-position cache fought over by both layouts), plus oversized animated emoji in reply previews (stock bug: `cloneSpan` overwrote the resized value with the old size)

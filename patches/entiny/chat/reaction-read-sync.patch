@@ -847,7 +847,7 @@ index 0000000..0000000 100644
                  }
                  updateReactionsMentionButton(true);
              }
-@@ -47660,10 +47669,22 @@ public class ChatActivity extends BaseFragment implements
+@@ -47663,10 +47672,22 @@ public class ChatActivity extends BaseFragment implements
              wasManualScroll = true;
              getMessagesController().getNextReactionMention(dialog_id, getTopicId(), reactionsMentionCount, (messageId) -> {
                  if (messageId == 0) {

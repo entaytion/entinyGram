@@ -1,13 +1,12 @@
 package desu.inugram.ui.settings
 
 import android.view.View
-import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.Cells.TextCell
 import org.telegram.ui.Components.ItemOptions
 
 object RadioItemOptions {
     fun show(
-        fragment: BaseFragment,
+        fragment: SettingsPageActivity,
         anchor: View,
         items: List<CharSequence>,
         selectedIndex: Int,
@@ -18,16 +17,11 @@ object RadioItemOptions {
         var handled = false
         items.forEachIndexed { index, text ->
             options.addChecked(index == selectedIndex, text) {
-                if (handled) return@addChecked
+                if (index == selectedIndex || handled) return@addChecked
                 handled = true
+                (anchor as? TextCell)?.setValue(text, true)
                 onSelect(index)
-                // entiny: rebind without animation because UItem textValue diff would trigger remove and insert crossfade
-                val adapter = (fragment as? SettingsPageActivity)?.listView?.adapter
-                if (adapter != null) {
-                    adapter.update(false)
-                } else {
-                    (anchor as? TextCell)?.setValue(text, true)
-                }
+                fragment.listView.adapter.updateWithoutNotify()
             }
         }
         options.show()

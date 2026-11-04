@@ -54,7 +54,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3081,7 +3081,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3071,7 +3071,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
          Long emojiStatusId = UserObject.getEmojiStatusDocumentId(user);
          statusDrawableGiftId = null;
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              final boolean isCollectible = user.emoji_status instanceof TLRPC.TL_emojiStatusCollectible;
              statusDrawable.set(emojiStatusId, animated);
              statusDrawable.setParticles(isCollectible, animated);
-@@ -3096,7 +3096,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3086,7 +3086,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  showSelectStatusDialog();
              });
              SelectAnimatedEmojiDialog.preload(currentAccount);
