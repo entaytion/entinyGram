@@ -6,6 +6,7 @@ import android.media.MediaCodecList
 import android.media.MediaFormat
 import org.telegram.utils.recorder.round.RoundVideoSession
 import android.util.Range
+import android.util.Rational
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.View
@@ -13,6 +14,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import desu.inugram.InuConfig
+import desu.inugram.core.camera.ExposureEv
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
@@ -365,15 +367,14 @@ object RoundRecorderHelper {
         button.setImageResource(resId)
     }
 
-    // entiny: fixed EV stops, filtered to whatever the device's CONTROL_AE_COMPENSATION_RANGE covers
+    // entiny: fixed EV stops, only the ones this device can hit exactly within CONTROL_AE_COMPENSATION_RANGE
     private val EXPOSURE_EV_CANDIDATES = floatArrayOf(-2f, -1f, 0f, 1f, 2f)
 
     @JvmStatic
-    fun exposureLevelsFor(range: Range<Int>?, step: Float): List<Float> {
-        if (range == null) return listOf(0f)
-        val safeStep = if (step > 0f) step else 1f
+    fun exposureLevelsFor(range: Range<Int>?, step: Rational?): List<Float> {
+        if (range == null || step == null) return listOf(0f)
         return EXPOSURE_EV_CANDIDATES
-            .filter { ev -> range.contains(Math.round(ev / safeStep)) }
+            .filter { ev -> ExposureEv.isRepresentable(ev, step.numerator, step.denominator, range.lower, range.upper) }
             .ifEmpty { listOf(0f) }
     }
 
@@ -429,4 +430,60 @@ object RoundRecorderHelper {
         buttons.setLevels(exposureLevelsFor(session.exposureCompensationRange, session.exposureCompensationStep))
         buttons.setActiveLevel(session.exposureCompensationEv)
     }
+
+    fun interface RoundSessionProvider {
+        fun get(): RoundVideoSession?
+    }
+
+    @JvmStatic
+    fun isAeLocked(session: RoundVideoSession?): Boolean =
+        session?.isAeLocked() ?: InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.value
+
+    // separate name, not an overload: a lambda body valid for both SAM return types (() -> null) makes Java call sites ambiguous
+    @JvmStatic
+    fun attachRoundAeLockButton(
+        parent: LinearLayout,
+        provider: RoundSessionProvider,
+    ): FlashViews.ImageViewInvertable? {
+        if (!InuConfig.ROUND_RECORDER_EXPOSURE_BUTTON.value) return null
+        val button = FlashViews.ImageViewInvertable(parent.context)
+        button.scaleType = ImageView.ScaleType.CENTER
+        button.contentDescription = LocaleController.getString(R.string.InuRoundRecorderLockExposure)
+        updateAeButtonIcon(button, isAeLocked(provider.get()))
+        button.setOnClickListener { v ->
+            v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+            val session = provider.get() ?: return@setOnClickListener
+            session.setAeLocked(!session.isAeLocked())
+            updateAeButtonIcon(button, session.isAeLocked())
+        }
+        parent.addView(button, LayoutHelper.createLinear(44, 44))
+        return button
+    }
+
+    @JvmStatic
+    fun syncAeButton(button: FlashViews.ImageViewInvertable?, session: RoundVideoSession?) {
+        if (button == null) return
+        updateAeButtonIcon(button, isAeLocked(session))
+    }
+
+    @JvmStatic
+    fun rememberExposure(session: RoundVideoSession?, ev: Float) {
+        if (session == null) return
+        exposureItem(session).value = ev
+    }
+
+    @JvmStatic
+    fun syncExposureButtons(buttons: ExposureLevelButtonsView?, session: RoundVideoSession?) {
+        if (buttons == null) return
+        if (session == null) {
+            buttons.setLevels(emptyList())
+            return
+        }
+        session.setExposureEv(exposureItem(session).value)
+        buttons.setLevels(exposureLevelsFor(session.getExposureCompensationRange(), session.getExposureCompensationStep()))
+        buttons.setActiveLevel(session.getExposureEv())
+    }
+
+    private fun exposureItem(session: RoundVideoSession) =
+        if (session.isFrontFacing()) InuConfig.ROUND_RECORDER_EXPOSURE_FRONT else InuConfig.ROUND_RECORDER_EXPOSURE_BACK
 }

@@ -1,6 +1,8 @@
 package desu.inugram.core.camera
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ExposureEvTest {
@@ -65,6 +67,28 @@ class ExposureEvTest {
 
     // значение, показанное в UI, должно конвертироваться обратно в тот же raw: иначе
     // ползунок «едет» при каждом переоткрытии камеры
+    // UI показывает фиксированные стопы EV; показывать можно только ту, которую HAL умеет ровно
+    @Test
+    fun representable_requires_exact_match() {
+        assertTrue(ExposureEv.isRepresentable(1f, 1, 6, -18, 18))
+        assertTrue(ExposureEv.isRepresentable(-2f, 2, 3, -6, 6))
+        assertFalse(ExposureEv.isRepresentable(1f, 2, 3, -6, 6))
+    }
+
+    @Test
+    fun representable_respects_range_bounds() {
+        assertTrue(ExposureEv.isRepresentable(2f, 1, 6, -18, 12))
+        assertFalse(ExposureEv.isRepresentable(4f, 1, 6, -18, 12))
+        assertFalse(ExposureEv.isRepresentable(-2f, 1, 6, -6, 12))
+    }
+
+    @Test
+    fun zero_is_the_only_level_when_device_has_no_control() {
+        assertTrue(ExposureEv.isRepresentable(0f, 0, 0, 0, 0))
+        assertFalse(ExposureEv.isRepresentable(1f, 0, 0, -18, 18))
+        assertFalse(ExposureEv.isRepresentable(0f, 1, 6, 1, 12))
+    }
+
     @Test
     fun snapping_is_idempotent() {
         for (ev in floatArrayOf(-1.1f, -0.25f, 0.7f, 2.4f)) {
