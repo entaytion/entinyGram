@@ -300,6 +300,7 @@
     <string name="InuIosChatList">فهرست گفتگوها به سبک iOS</string>
     <string name="InuIosMessageMenu">منوی پیام به سبک iOS</string>
     <string name="InuDialogsFab">دکمه کنش شناور</string>
+    <string name="InuDialogsFabHide">پنهان کردن دکمه شناور</string>
     <string name="InuDialogsFabMainAction">کنش اصلی</string>
     <string name="InuDialogsFabSecondaryAction">کنش ثانویه</string>
     <string name="InuDialogsFabHideOnScroll">پنهان شدن هنگام اسکرول</string>

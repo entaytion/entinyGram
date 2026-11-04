@@ -247,6 +247,7 @@
     <string name="InuCompactMode">Kompakt mod</string>
     <string name="InuCompactModeInfo">Başlıkları gizler ve sekmeleri küçültür</string>
     <string name="InuDialogsFab">Yüzen Eylem Düğmesi (FAB)</string>
+    <string name="InuDialogsFabHide">FAB düğmesini gizle</string>
     <string name="InuDialogsFabMainAction">Birincil eylem</string>
     <string name="InuDialogsFabSecondaryAction">İkincil eylem</string>
     <string name="InuDialogsFabHideOnScroll">Kaydırırken gizle</string>

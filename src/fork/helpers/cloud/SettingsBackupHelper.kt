@@ -161,6 +161,7 @@ object SettingsBackupHelper {
                 }
             }
             for (item in InuConfig.items) item.load(InuConfig.prefs)
+            InuConfig.migrateDialogsFab()
 
             val sub = root.optJSONObject("stock")?.optJSONObject(STOCK_PREF_NAME) ?: return applied
             stockPrefs().edit {

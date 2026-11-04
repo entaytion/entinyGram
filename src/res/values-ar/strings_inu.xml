@@ -300,6 +300,7 @@
     <string name="InuIosChatList">قائمة الدردشات بنمط iOS</string>
     <string name="InuIosMessageMenu">قائمة الرسائل بنمط iOS</string>
     <string name="InuDialogsFab">زر الإجراء العائم</string>
+    <string name="InuDialogsFabHide">إخفاء زر الإجراء العائم</string>
     <string name="InuDialogsFabMainAction">الإجراء الأساسي</string>
     <string name="InuDialogsFabSecondaryAction">الإجراء الثانوي</string>
     <string name="InuDialogsFabHideOnScroll">إخفاء عند التمرير</string>

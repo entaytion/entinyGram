@@ -192,6 +192,7 @@
     <string name="InuDialogsSectionsMarginLarge">Большие</string>
     <string name="InuDialogsSectionsSeparatePinned">Закрепы отдельно</string>
     <string name="InuDialogsSectionsSeparatePinnedInfo">Показывать закреплённые чаты и архив отдельной карточкой</string>
+    <string name="InuDialogsFabHide">Скрыть FAB</string>
     <string name="InuDialogsFabMainAction">Основное действие</string>
     <string name="InuDialogsFabSecondaryAction">Дополнительное действие</string>
     <string name="InuDialogsFabHideOnScroll">Скрывать при прокрутке</string>

@@ -53,6 +53,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 ### appearance & customization
 
+- 📡 **hide FAB** — hide the chat-list buttons with a separate toggle and keep your chosen actions
 - 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar, chat list with larger avatars, message menu as a card over a blurred chat, unread counter on the header back button
 - 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size
 - 📡 **chat headers** — live header preview in settings, centered titles, auto marquee for long names

@@ -163,6 +163,7 @@
     <string name="InuCompactMode">コンパクトモード</string>
     <string name="InuCompactModeInfo">タイトルを非表示にし、タブを小さくします</string>
     <string name="InuDialogsFab">FAB</string>
+    <string name="InuDialogsFabHide">FABを非表示</string>
     <string name="InuDialogsFabMainAction">メイン動作</string>
     <string name="InuDialogsFabSecondaryAction">サブ動作</string>
     <string name="InuDialogsFabHideOnScroll">スクロール時に非表示</string>

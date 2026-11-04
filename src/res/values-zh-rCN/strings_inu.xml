@@ -163,6 +163,7 @@
     <string name="InuCompactMode">紧凑模式</string>
     <string name="InuCompactModeInfo">隐藏标题并缩小标签</string>
     <string name="InuDialogsFab">悬浮按钮</string>
+    <string name="InuDialogsFabHide">隐藏悬浮按钮</string>
     <string name="InuDialogsFabMainAction">主要操作</string>
     <string name="InuDialogsFabSecondaryAction">次要操作</string>
     <string name="InuDialogsFabHideOnScroll">滚动时隐藏</string>

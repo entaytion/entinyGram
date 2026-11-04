@@ -407,6 +407,7 @@ Sistema: %6$s
     <string name="InuDialogsSectionsMarginLarge">Grande</string>
     <string name="InuDialogsSectionsSeparatePinned">Fijados por separado</string>
     <string name="InuDialogsSectionsSeparatePinnedInfo">Muestra los chats fijados y el archivo como una tarjeta propia</string>
+    <string name="InuDialogsFabHide">Ocultar FAB</string>
     <string name="InuDialogsFabMainAction">Acción principal</string>
     <string name="InuDialogsFabSecondaryAction">Acción secundaria</string>
     <string name="InuDialogsFabHideOnScroll">Ocultar al desplazarse</string>

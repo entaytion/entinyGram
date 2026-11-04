@@ -273,6 +273,7 @@
     <string name="InuDialogsSectionsMarginLarge">Великі</string>
     <string name="InuDialogsSectionsSeparatePinned">Закріплені окремо</string>
     <string name="InuDialogsSectionsSeparatePinnedInfo">Показувати закріплені чати й архів окремою карткою</string>
+    <string name="InuDialogsFabHide">Приховати FAB</string>
     <string name="InuDialogsFabMainAction">Основна дія</string>
     <string name="InuDialogsFabSecondaryAction">Вторинна дія</string>
     <string name="InuDialogsFabHideOnScroll">Приховувати при скролінгу</string>

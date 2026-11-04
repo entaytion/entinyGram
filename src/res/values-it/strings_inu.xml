@@ -407,6 +407,7 @@ Sistema: %6$s
     <string name="InuDialogsSectionsMarginLarge">Grande</string>
     <string name="InuDialogsSectionsSeparatePinned">Fissate separatamente</string>
     <string name="InuDialogsSectionsSeparatePinnedInfo">Mostra le chat fissate e l\'archivio come scheda a sé</string>
+    <string name="InuDialogsFabHide">Nascondi FAB</string>
     <string name="InuDialogsFabMainAction">Azione principale</string>
     <string name="InuDialogsFabSecondaryAction">Azione secondaria</string>
     <string name="InuDialogsFabHideOnScroll">Nascondi durante lo scorrimento</string>

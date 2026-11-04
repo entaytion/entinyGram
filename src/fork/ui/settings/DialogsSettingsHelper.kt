@@ -318,7 +318,9 @@ object DialogsSettingsHelper {
     }
 
     fun showFabAction(page: SchemaPageActivity, anchor: View, item: InuConfig.IntItem) {
-        val options = DialogsFabHelper.Action.entries
+        val options = DialogsFabHelper.Action.entries.filter {
+            item !== InuConfig.DIALOGS_FAB_MAIN_ACTION || it != DialogsFabHelper.Action.NONE
+        }
         RadioItemOptions.show(
             page, anchor,
             options.map { it.label() },

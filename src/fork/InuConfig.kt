@@ -35,7 +35,16 @@ object InuConfig {
         migrateGhostModeEnabledDefault()
         migrateGhostAutoOffline()
         migrateSelfDestructCategories()
+        migrateDialogsFab()
         migrateFeedEnabled(context)
+    }
+
+    fun migrateDialogsFab() {
+        if (DIALOGS_FAB_MAIN_ACTION.value != 0) return
+        prefs.edit {
+            DIALOGS_FAB_HIDE.unsafeSet(true, this)
+            DIALOGS_FAB_MAIN_ACTION.unsafeSet(DIALOGS_FAB_MAIN_ACTION.default, this)
+        }
     }
 
     // entiny: the feed became opt-in; anyone who ever touched it keeps it on
@@ -583,6 +592,9 @@ object InuConfig {
     @JvmField val BOTTOM_TABS_HIDE_TOP_SEARCH = BoolItem("bottom_tabs_hide_top_search", false)
     @JvmField val BOTTOM_TABS_SEARCH_SEPARATE = BoolItem("bottom_tabs_search_separate", false)
     @JvmField val BOTTOM_TABS_HIDE_ON_SCROLL = BoolItem("bottom_tabs_hide_on_scroll", false)
+
+    @JvmField
+    val DIALOGS_FAB_HIDE = BoolItem("dialogs_fab_hide", false)
 
     @JvmField
     val DIALOGS_FAB_MAIN_ACTION = IntItem("dialogs_fab_main_action", 1)

@@ -38,7 +38,8 @@ object DialogsFabHelper {
 
     @JvmStatic
     fun mainAction(): Action =
-        Action.fromValue(InuConfig.DIALOGS_FAB_MAIN_ACTION.value)
+        if (InuConfig.DIALOGS_FAB_HIDE.value) Action.NONE
+        else Action.fromValue(InuConfig.DIALOGS_FAB_MAIN_ACTION.value)
 
     @JvmStatic
     fun secondaryAction(): Action {

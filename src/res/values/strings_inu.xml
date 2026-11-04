@@ -415,6 +415,7 @@
     <string name="InuDialogsSectionsMarginLarge">Large</string>
     <string name="InuDialogsSectionsSeparatePinned">Pinned separately</string>
     <string name="InuDialogsSectionsSeparatePinnedInfo">Show pinned chats and archive as their own card</string>
+    <string name="InuDialogsFabHide">Hide FAB</string>
     <string name="InuDialogsFabMainAction">Primary action</string>
     <string name="InuDialogsFabSecondaryAction">Secondary action</string>
     <string name="InuDialogsFabHideOnScroll">Hide when scrolling</string>

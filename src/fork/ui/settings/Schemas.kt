@@ -712,6 +712,7 @@ object Schemas {
             )
         }
         section(R.string.InuDialogsFab) {
+            toggle(InuConfig.DIALOGS_FAB_HIDE, R.string.InuDialogsFabHide, onChange = { page, _ -> page.rebuildAll() })
             custom(
                 "fab-main-action", R.string.InuDialogsFabMainAction,
                 build = { _, id ->
@@ -726,7 +727,6 @@ object Schemas {
             )
             custom(
                 "fab-secondary-action", R.string.InuDialogsFabSecondaryAction,
-                visible = { DialogsFabHelper.Action.fromValue(InuConfig.DIALOGS_FAB_MAIN_ACTION.value) != DialogsFabHelper.Action.NONE },
                 build = { _, id ->
                     UItem.asButton(
                         id,
