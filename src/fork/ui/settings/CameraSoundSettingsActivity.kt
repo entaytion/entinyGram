@@ -289,13 +289,17 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 listView.adapter.update(true)
             }
             TOGGLE_ROUND_COMPOSITION -> (view as? TextCheckCell)?.isChecked = SharedSettings.roundVideoComposition.toggle()
-            BUTTON_ROUND_VIDEO_RESOLUTION -> RadioItemOptions.show(
-                this, view,
-                RoundVideoSession.OutputResolution.values().map { it.size.toString() + "p" },
-                SharedSettings.roundVideoOutputResolution.get().ordinal,
-            ) { which ->
-                SharedSettings.roundVideoOutputResolution.set(RoundVideoSession.OutputResolution.values()[which])
-                listView.adapter.update(true)
+            BUTTON_ROUND_VIDEO_RESOLUTION -> {
+                // entiny: порядок в попапе — по убыванию размера; enum не сортируем, чтобы не сдвигать сохранённые ordinal'ы
+                val resolutions = RoundVideoSession.OutputResolution.values().sortedByDescending { it.size }
+                RadioItemOptions.show(
+                    this, view,
+                    resolutions.map { it.size.toString() + "p" },
+                    resolutions.indexOf(SharedSettings.roundVideoOutputResolution.get()),
+                ) { which ->
+                    SharedSettings.roundVideoOutputResolution.set(resolutions[which])
+                    listView.adapter.update(true)
+                }
             }
             BUTTON_ROUND_CAMERA_RESOLUTION -> RadioItemOptions.show(
                 this, view,

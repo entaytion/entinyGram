@@ -271,7 +271,10 @@ object RoundRecorderHelper {
 
     @JvmStatic
     fun outputResolution(default: RoundVideoSession.OutputResolution): RoundVideoSession.OutputResolution {
-        if (default == RoundVideoSession.OutputResolution.P720 && !avcEncoderSupports(720, 30)) {
+        // entiny: 512p — максимум, который сервер Telegram принимает как кружок (720p и выше конвертирует в обычное видео)
+        if ((default == RoundVideoSession.OutputResolution.P720 || default == RoundVideoSession.OutputResolution.P512)
+            && !avcEncoderSupports(default.size, 30)
+        ) {
             return RoundVideoSession.OutputResolution.P480
         }
         return default
@@ -282,9 +285,9 @@ object RoundRecorderHelper {
         resolution: RoundVideoSession.OutputResolution,
         default: RoundVideoSession.FrameRate,
     ): RoundVideoSession.FrameRate {
-        if (resolution == RoundVideoSession.OutputResolution.P720
+        if ((resolution == RoundVideoSession.OutputResolution.P720 || resolution == RoundVideoSession.OutputResolution.P512)
             && default == RoundVideoSession.FrameRate.FPS_60
-            && !avcEncoderSupports(720, 60)
+            && !avcEncoderSupports(resolution.size, 60)
         ) return RoundVideoSession.FrameRate.FPS_30
         return default
     }
