@@ -23,6 +23,26 @@ object ExposureEv {
     fun isRepresentable(ev: Float, stepNumerator: Int, stepDenominator: Int, minStep: Int, maxStep: Int): Boolean =
         stepsToEv(evToSteps(ev, stepNumerator, stepDenominator, minStep, maxStep), stepNumerator, stepDenominator) == ev
 
+    // Camera1 отдаёт шаг компенсации как float (0.3333333f); подбираем ближайшую простую дробь со знаменателем до 12
+    @JvmStatic
+    fun stepFraction(step: Float): Pair<Int, Int>? {
+        if (step <= 0f) return null
+        var bestNum = 1
+        var bestDen = 1
+        var bestErr = Float.MAX_VALUE
+        for (den in 1..12) {
+            val num = Math.round(step * den)
+            if (num <= 0) continue
+            val err = Math.abs(num.toFloat() / den - step)
+            if (err < bestErr) {
+                bestErr = err
+                bestNum = num
+                bestDen = den
+            }
+        }
+        return bestNum to bestDen
+    }
+
     private fun roundHalfAwayFromZero(value: Double): Int =
         (if (value >= 0.0) floor(value + 0.5) else ceil(value - 0.5)).toInt()
 }

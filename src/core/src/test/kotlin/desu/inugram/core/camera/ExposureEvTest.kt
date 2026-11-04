@@ -97,4 +97,40 @@ class ExposureEvTest {
             assertEquals(snappedOnce, ExposureEv.evToSteps(reread, 1, 6, -18, 18))
         }
     }
+
+    // Camera1 отдаёт шаг как float; дробь нужна для evToSteps, погрешность float должна схлопываться
+    @Test
+    fun step_fraction_finds_common_hal_steps() {
+        assertEquals(1 to 3, ExposureEv.stepFraction(0.3333333f))
+        assertEquals(2 to 3, ExposureEv.stepFraction(0.6666667f))
+        assertEquals(1 to 6, ExposureEv.stepFraction(0.16666667f))
+        assertEquals(1 to 12, ExposureEv.stepFraction(0.083333336f))
+        assertEquals(1 to 2, ExposureEv.stepFraction(0.5f))
+        assertEquals(1 to 4, ExposureEv.stepFraction(0.25f))
+        assertEquals(1 to 1, ExposureEv.stepFraction(1f))
+    }
+
+    @Test
+    fun step_fraction_rejects_no_control() {
+        assertEquals(null, ExposureEv.stepFraction(0f))
+        assertEquals(null, ExposureEv.stepFraction(-0.5f))
+    }
+
+    @Test
+    fun fraction_from_float_step_is_exact_enough_for_stops() {
+        val cases = mapOf(
+            0.3333333f to floatArrayOf(-2f, -1f, 0f, 1f, 2f),
+            0.6666667f to floatArrayOf(-2f, 0f, 2f),
+            0.16666667f to floatArrayOf(-2f, -1f, 0f, 1f, 2f),
+            0.083333336f to floatArrayOf(-2f, -1f, 0f, 1f, 2f),
+        )
+        for ((step, evs) in cases) {
+            val (num, den) = ExposureEv.stepFraction(step)!!
+            for (ev in evs) {
+                assertTrue(ExposureEv.isRepresentable(ev, num, den, -24, 24))
+            }
+        }
+        // при шаге 2/3 один EV — это 1.5 ступени, HAL его не выставит
+        assertFalse(ExposureEv.isRepresentable(1f, 2, 3, -24, 24))
+    }
 }

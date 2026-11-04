@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.hardware.Camera
 import android.util.Log
 import android.util.Range
+import android.util.Rational
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -210,20 +211,18 @@ object AttachCameraHelper {
     private fun exposureItem(info: org.telegram.messenger.camera.CameraInfo) =
         if (info.isFrontface()) InuConfig.ATTACH_CAMERA_EXPOSURE_FRONT else InuConfig.ATTACH_CAMERA_EXPOSURE_BACK
 
-    // вызывается из CameraSession.configurePhotoCamera; заполняет диапазон в CameraInfo и применяет запомненный EV
+    // вызывается из CameraSession.configurePhotoCamera; Camera1 отдаёт шаг как float — подбираем дробь и кладём Rational в CameraInfo
     @JvmStatic
     fun applyExposure(params: Camera.Parameters, info: org.telegram.messenger.camera.CameraInfo, ev: Float) {
         if (!InuConfig.ATTACH_CAMERA_EXPOSURE_LEVELS.value) return
         try {
             val step = params.exposureCompensationStep
-            info.inu_exposureStep = step
+            if (step <= 0f) return
+            val (num, den) = ExposureEv.stepFraction(step) ?: return
+            info.inu_exposureStep = Rational(num, den)
             info.inu_exposureMin = params.minExposureCompensation
             info.inu_exposureMax = params.maxExposureCompensation
-            if (step.numerator <= 0) return
-            params.exposureCompensation = ExposureEv.evToSteps(
-                ev, step.numerator, step.denominator,
-                info.inu_exposureMin, info.inu_exposureMax,
-            )
+            params.exposureCompensation = ExposureEv.evToSteps(ev, num, den, info.inu_exposureMin, info.inu_exposureMax)
         } catch (_: Throwable) {
         }
     }
