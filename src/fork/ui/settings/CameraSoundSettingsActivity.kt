@@ -391,7 +391,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         private val roundAudioBitrates = listOf(0, 32, 64, 96, 128, 192)
 
         // расширяет базовый список из RoundVideoSettingsActivity (750k..2M) до 4M; пишет в SharedSettings
-        private fun roundBitrates(): List<Int> = listOf(750_000, 1_000_000, 1_200_000, 2_000_000, 3_000_000, 4_000_000)
+        private fun roundBitrates(): List<Int> = listOf(750_000, 1_000_000, 1_200_000, 2_000_000)
 
         private fun roundAudioBitrateLabel(): String =
             InuConfig.ROUND_AUDIO_BITRATE.value.let { if (it == 0) LocaleController.getString(R.string.InuRoundBitrateDefault) else "$it kbps" }
