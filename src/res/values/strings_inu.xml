@@ -248,8 +248,6 @@
     <string name="InuRoundRecorderDualCamera">Dual camera</string>
     <string name="InuRoundRecorderDualCameraInfo">Opens front and rear cameras at once for instant switching. Uses more battery.</string>
     <string name="InuRoundRecorderCameraApi">Round recorder uses %1$s API. **Switch to %2$s >**</string>
-    <string name="InuRoundRecorder60Fps">60 FPS</string>
-    <string name="InuRoundRecorder60FpsInfo">Record video messages at 60 frames per second if supported by the camera.</string>
     <string name="InuRoundRecorderLockExposure">Lock exposure</string>
     <string name="InuRoundRecorderLockExposureInfo">Lock auto-exposure during recording to prevent flickering and brightness jumps.</string>
     <string name="InuRoundRecorderExposureButton">Exposure lock button</string>

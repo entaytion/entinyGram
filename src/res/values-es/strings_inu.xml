@@ -242,8 +242,6 @@ Sistema: %6$s
     <string name="InuRoundRecorderDualCamera">Cámara dual</string>
     <string name="InuRoundRecorderDualCameraInfo">Abre las cámaras frontal y trasera a la vez para cambiar al instante. Consume más batería.</string>
     <string name="InuRoundRecorderCameraApi">La grabadora redonda usa la API %1$s. **Cambiar a %2$s &gt;**</string>
-    <string name="InuRoundRecorder60Fps">60 FPS</string>
-    <string name="InuRoundRecorder60FpsInfo">Graba mensajes de vídeo a 60 fotogramas por segundo si la cámara lo admite.</string>
     <string name="InuRoundRecorderLockExposure">Bloquear exposición</string>
     <string name="InuRoundRecorderLockExposureInfo">Bloquea la exposición automática durante la grabación para evitar parpadeos y saltos de brillo.</string>
     <string name="InuRoundRecorderExposureButton">Botón de bloqueo de exposición</string>

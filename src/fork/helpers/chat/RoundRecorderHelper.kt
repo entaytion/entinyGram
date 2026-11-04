@@ -5,6 +5,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.media.MediaCodecList
 import android.media.MediaFormat
 import org.telegram.utils.recorder.round.RoundVideoSession
+import org.telegram.utils.settings.SharedSettings
 import android.util.Range
 import android.util.Rational
 import android.view.Gravity
@@ -262,34 +263,18 @@ object RoundRecorderHelper {
 
     // entiny: only report 60 FPS when HAL actually negotiated it to prevent timestamp corruption
     @JvmStatic
-    fun getTargetFps(session: Camera2Session?): Int =
-        if (InuConfig.ROUND_RECORDER_60FPS.value && session?.negotiatedFps == 60) 60 else 30
+    fun getTargetFps(session: Camera2Session?): Int = session?.negotiatedFps ?: 30
 
+    // entiny: общая настройка битрейта кружочков — единый источник для обоих рекордеров, читается из Java без импорта SharedSettings
     @JvmStatic
-    fun getVideoBitrate(defaultBitrate: Int, session: Camera2Session?): Int {
-        return if (InuConfig.ROUND_RECORDER_60FPS.value && session?.negotiatedFps == 60) {
-            (defaultBitrate * 1.5f).toInt()
-        } else {
-            defaultBitrate
-        }
-    }
-
-    @JvmStatic
-    fun videoBitrate(defaultBps: Int): Int =
-        InuConfig.ROUND_VIDEO_BITRATE.value.takeIf { it > 0 } ?: defaultBps
+    fun sharedVideoBitrate(): Int = SharedSettings.roundVideoVideoBitrate.get()
 
     @JvmStatic
     fun outputResolution(default: RoundVideoSession.OutputResolution): RoundVideoSession.OutputResolution {
-        val picked = when (InuConfig.ROUND_VIDEO_RESOLUTION.value) {
-            1 -> RoundVideoSession.OutputResolution.P360
-            2 -> RoundVideoSession.OutputResolution.P480
-            3 -> RoundVideoSession.OutputResolution.P720
-            else -> return default
-        }
-        if (picked == RoundVideoSession.OutputResolution.P720 && !avcEncoderSupports(720, 30)) {
+        if (default == RoundVideoSession.OutputResolution.P720 && !avcEncoderSupports(720, 30)) {
             return RoundVideoSession.OutputResolution.P480
         }
-        return picked
+        return default
     }
 
     @JvmStatic

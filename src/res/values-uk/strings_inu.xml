@@ -159,8 +159,6 @@
     <string name="InuRoundRecorderDualCamera">Подвійна камера</string>
     <string name="InuRoundRecorderDualCameraInfo">Вмикає фронтальну та основну камери одночасно для миттєвого перемикання. Споживає більше батареї.</string>
     <string name="InuRoundRecorderCameraApi">Запис кружечків використовує %1$s API. **Перемкнутися на %2$s >**</string>
-    <string name="InuRoundRecorder60Fps">60 FPS у відеоповідомленнях</string>
-    <string name="InuRoundRecorder60FpsInfo">Записувати відеоповідомлення з частотою 60 кадрів на секунду, якщо це підтримується камерою.</string>
     <string name="InuRoundRecorderLockExposure">Фіксувати експозицію</string>
     <string name="InuRoundRecorderLockExposureInfo">Блокує автоекспозицію під час запису відеоповідомлень, запобігаючи мерехтінню та стрибкам яскравості.</string>
     <string name="InuRoundRecorderExposureButton">Кнопка фіксації експозиції</string>

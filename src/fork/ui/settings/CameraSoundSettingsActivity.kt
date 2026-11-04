@@ -4,7 +4,6 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.chat.RoundRecorderHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
@@ -28,7 +27,6 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val defaultLabel = LocaleController.getString(R.string.InuRoundBitrateDefault)
         val newRecorder = SharedSettings.roundVideoCamera2Enabled.get()
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuRoundVideos)))
@@ -50,17 +48,30 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.RoundVideoUseNewRecorder),
             ).setChecked(newRecorder)
         )
+        // entiny: FPS и битрейт — общая настройка кружочков (SharedSettings), действует на оба рекордера
+        items.add(
+            UItem.asButton(
+                BUTTON_ROUND_FRAME_RATE,
+                LocaleController.getString(R.string.RoundVideoFrameRate),
+                SharedSettings.roundVideoFrameRate.get().value.toString() + " FPS",
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_ROUND_BITRATE,
+                LocaleController.getString(R.string.RoundVideoBitrate),
+                formatRoundBitrate(SharedSettings.roundVideoVideoBitrate.get()),
+            )
+        )
         if (newRecorder) {
             items.add(
                 UItem.asButton(
                     BUTTON_ROUND_VIDEO_RESOLUTION,
                     LocaleController.getString(R.string.RoundVideoOutputResolution),
-                    roundResolutionLabel(defaultLabel),
+                    SharedSettings.roundVideoOutputResolution.get().size.toString() + "p",
                 )
             )
             items.add(UItem.asButton(BUTTON_ROUND_CAMERA_RESOLUTION, LocaleController.getString(R.string.RoundVideoCameraResolution), roundCameraResolutionLabel(SharedSettings.roundVideoCameraResolution.get())))
-            items.add(UItem.asButton(BUTTON_ROUND_FRAME_RATE, LocaleController.getString(R.string.RoundVideoFrameRate), SharedSettings.roundVideoFrameRate.get().value.toString() + " FPS"))
-            items.add(UItem.asButton(BUTTON_ROUND_BITRATE, LocaleController.getString(R.string.RoundVideoBitrate), formatRoundBitrate(RoundRecorderHelper.videoBitrate(SharedSettings.roundVideoVideoBitrate.get()))))
             items.add(
                 UItem.asCheck(TOGGLE_ROUND_COMPOSITION, LocaleController.getString(R.string.RoundVideoCompositionEnabled))
                     .setChecked(SharedSettings.roundVideoComposition.get())
@@ -112,14 +123,6 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                     )
                 )
             }
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_ROUND_RECORDER_60FPS,
-                    R.string.InuRoundRecorder60Fps,
-                    R.string.InuRoundRecorder60FpsInfo,
-                    InuConfig.ROUND_RECORDER_60FPS.value
-                )
-            )
             items.add(
                 mkTwoLineCheckItem(
                     TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE,
@@ -288,10 +291,10 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             TOGGLE_ROUND_COMPOSITION -> (view as? TextCheckCell)?.isChecked = SharedSettings.roundVideoComposition.toggle()
             BUTTON_ROUND_VIDEO_RESOLUTION -> RadioItemOptions.show(
                 this, view,
-                listOf(LocaleController.getString(R.string.InuRoundBitrateDefault), "360p", "480p", "720p"),
-                InuConfig.ROUND_VIDEO_RESOLUTION.value.coerceIn(0, 3),
+                RoundVideoSession.OutputResolution.values().map { it.size.toString() + "p" },
+                SharedSettings.roundVideoOutputResolution.get().ordinal,
             ) { which ->
-                InuConfig.ROUND_VIDEO_RESOLUTION.value = which
+                SharedSettings.roundVideoOutputResolution.set(RoundVideoSession.OutputResolution.values()[which])
                 listView.adapter.update(true)
             }
             BUTTON_ROUND_CAMERA_RESOLUTION -> RadioItemOptions.show(
@@ -309,15 +312,12 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 SharedSettings.roundVideoFrameRate.set(if (which == 0) RoundVideoSession.FrameRate.FPS_30 else RoundVideoSession.FrameRate.FPS_60)
                 listView.adapter.update(true)
             }
-            BUTTON_ROUND_BITRATE -> {
-                val bitrates = roundBitrates()
-                RadioItemOptions.show(
-                    this, view, bitrates.map { if (it == 0) LocaleController.getString(R.string.InuRoundBitrateDefault) else formatRoundBitrate(it) },
-                    bitrates.indexOf(InuConfig.ROUND_VIDEO_BITRATE.value).coerceAtLeast(0),
-                ) { which ->
-                    InuConfig.ROUND_VIDEO_BITRATE.value = bitrates[which]
-                    listView.adapter.update(true)
-                }
+            BUTTON_ROUND_BITRATE -> RadioItemOptions.show(
+                this, view, roundBitrates().map { formatRoundBitrate(it) },
+                roundBitrates().indexOf(SharedSettings.roundVideoVideoBitrate.get()).coerceAtLeast(0),
+            ) { which ->
+                SharedSettings.roundVideoVideoBitrate.set(roundBitrates()[which])
+                listView.adapter.update(true)
             }
             BUTTON_ROUND_AUDIO_BITRATE -> RadioItemOptions.show(
                 this, view, roundAudioBitrates.map { if (it == 0) LocaleController.getString(R.string.InuRoundBitrateDefault) else "$it kbps" },
@@ -341,8 +341,6 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPONENTIAL_ZOOM.toggle()
             TOGGLE_ROUND_RECORDER_DUAL_CAMERA -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_DUAL_CAMERA.toggle()
-            TOGGLE_ROUND_RECORDER_60FPS ->
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_60FPS.toggle()
             TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.toggle()
             TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON ->
@@ -350,13 +348,6 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.toggle()
         }
-    }
-
-    private fun roundResolutionLabel(defaultLabel: String): String = when (InuConfig.ROUND_VIDEO_RESOLUTION.value) {
-        1 -> "360p"
-        2 -> "480p"
-        3 -> "720p"
-        else -> "$defaultLabel (${SharedSettings.roundVideoOutputResolution.get().size}p)"
     }
 
     private fun attachResolutionLabel(): String = when (InuConfig.ATTACH_CAMERA_RESOLUTION.value) {
@@ -389,14 +380,14 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ROUND_RECORDER_MIRROR_FRONT = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_DUAL_CAMERA = InuUtils.generateId()
-        private val TOGGLE_ROUND_RECORDER_60FPS = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS = InuUtils.generateId()
 
         private val roundAudioBitrates = listOf(0, 32, 64, 96, 128, 192)
 
-        private fun roundBitrates(): List<Int> = listOf(0, 750_000, 1_000_000, 1_500_000, 2_000_000, 3_000_000, 4_000_000)
+        // расширяет базовый список из RoundVideoSettingsActivity (750k..2M) до 4M; пишет в SharedSettings
+        private fun roundBitrates(): List<Int> = listOf(750_000, 1_000_000, 1_200_000, 2_000_000, 3_000_000, 4_000_000)
 
         private fun roundAudioBitrateLabel(): String =
             InuConfig.ROUND_AUDIO_BITRATE.value.let { if (it == 0) LocaleController.getString(R.string.InuRoundBitrateDefault) else "$it kbps" }
@@ -451,7 +442,6 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("round-recorder-mirror-front", R.string.InuRoundRecorderMirrorFront, TOGGLE_ROUND_RECORDER_MIRROR_FRONT),
                 SearchRegistry.Entry("round-recorder-exponential-zoom", R.string.InuRoundRecorderExponentialZoom, TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM),
                 SearchRegistry.Entry("round-recorder-dual-camera", R.string.InuRoundRecorderDualCamera, TOGGLE_ROUND_RECORDER_DUAL_CAMERA),
-                SearchRegistry.Entry("round-recorder-60fps", R.string.InuRoundRecorder60Fps, TOGGLE_ROUND_RECORDER_60FPS),
                 SearchRegistry.Entry("round-new-recorder", R.string.RoundVideoUseNewRecorder, TOGGLE_ROUND_NEW_RECORDER),
                 SearchRegistry.Entry("round-output-resolution", R.string.RoundVideoOutputResolution, BUTTON_ROUND_VIDEO_RESOLUTION),
                 SearchRegistry.Entry("round-camera-resolution", R.string.RoundVideoCameraResolution, BUTTON_ROUND_CAMERA_RESOLUTION),

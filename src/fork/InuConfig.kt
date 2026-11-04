@@ -1341,9 +1341,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ROUND_RECORDER_DUAL_CAMERA = BoolItem("round_recorder_dual_camera", true)
 
     @JvmField
-    val ROUND_RECORDER_60FPS = BoolItem("round_recorder_60fps", false)
-
-    @JvmField
     val ROUND_RECORDER_LOCK_EXPOSURE = BoolItem("round_recorder_lock_exposure", false)
 
     @JvmField
@@ -1357,12 +1354,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val ROUND_RECORDER_EXPOSURE_BACK = FloatItem("round_recorder_exposure_back", 0f)
-
-    @JvmField
-    val ROUND_VIDEO_RESOLUTION = IntItem("round_video_resolution", 0)
-
-    @JvmField
-    val ROUND_VIDEO_BITRATE = IntItem("round_video_bitrate", 0)
 
     @JvmField
     val ROUND_AUDIO_BITRATE = IntItem("round_audio_bitrate", 0)

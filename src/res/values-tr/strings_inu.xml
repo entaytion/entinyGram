@@ -151,8 +151,6 @@
     <string name="InuRoundRecorderDualCamera">Çift kamera</string>
     <string name="InuRoundRecorderDualCameraInfo">Kayıt sırasında anında geçiş yapmak için hem ön hem de arka kamerayı aynı anda açar. Daha fazla pil tüketir.</string>
     <string name="InuRoundRecorderCameraApi">Yuvarlak kaydedici %1$s API\'sini kullanıyor. **%2$s API\'sine geç >**</string>
-    <string name="InuRoundRecorder60Fps">Video mesajlarında 60 FPS</string>
-    <string name="InuRoundRecorder60FpsInfo">Kamera destekliyorsa video mesajlarını 60 FPS hızında kaydedin.</string>
     <string name="InuRoundRecorderLockExposure">Pozlamayı kilitle</string>
     <string name="InuRoundRecorderLockExposureInfo">Parlaklık değişimlerini önlemek için kayıt sırasında otomatik pozlamayı kilitler.</string>
     <string name="InuRoundRecorderExposureButton">Pozlama kilidi düğmesi</string>
