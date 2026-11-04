@@ -96,7 +96,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -5993,13 +5993,20 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -5997,13 +5997,20 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              if (inu_additionalOffset != 0) {
                  if (Math.abs(velX) > 1500) {
                      backAnimation = animatingForward ? velX > 0 : velX < 0;

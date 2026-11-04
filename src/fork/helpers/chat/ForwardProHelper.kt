@@ -34,6 +34,7 @@ import org.telegram.messenger.VideoEditedInfo
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
+import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.LaunchActivity
@@ -51,6 +52,7 @@ object ForwardProHelper {
     private const val FOLDER_TABS_BOTTOM_GAP_DP = 6
 
     private class AlertState {
+        var host: BaseFragment? = null
         var active: Boolean = false
         var hideCaption: Boolean = false
         var silentSend: Boolean = false
@@ -450,7 +452,7 @@ object ForwardProHelper {
     private fun openEditor(alert: ShareAlert) {
         val state = getState(alert)
         val messages = alert.sendingMessageObjects ?: return
-        val chat = LaunchActivity.getSafeLastFragment() as? ChatActivity ?: return
+        val host = state.host ?: LaunchActivity.getSafeLastFragment() ?: return
         val commentView = alert.commentTextView
         val metrics = (commentView?.getEditText()?.paint ?: Paint()).fontMetricsInt
         val units = unitsOf(messages)
@@ -478,7 +480,7 @@ object ForwardProHelper {
 
         val copy = ArrayList(messages)
         alert.dismiss()
-        chat.presentFragment(ForwardProFragment(items) { result ->
+        host.presentFragment(ForwardProFragment(items) { result ->
             AndroidUtilities.runOnUIThread({
                 if (result != null) {
                     if (multi) {
@@ -488,7 +490,7 @@ object ForwardProHelper {
                         requestForwardProWithEditedText(result[item.carrier.id] ?: item.original)
                     }
                 }
-                openSheet(chat, copy, forcePro = true)
+                openSheet(host, copy, forcePro = true)
             }, 250)
         })
     }
@@ -868,33 +870,46 @@ object ForwardProHelper {
     @JvmOverloads
     fun takeOver(activity: ChatActivity, message: MessageObject?, group: MessageObject.GroupedMessages?, noQuote: Boolean = false): Boolean {
         if (message == null || !InuConfig.FORWARD_PRO_REPLACE.value) return false
-        openSheet(activity, group?.messages ?: listOf(message), noQuote = noQuote)
-        return true
+        return openSheet(activity, group?.messages ?: listOf(message), noQuote = noQuote)
     }
 
     @JvmStatic
-    fun takeOverSelection(activity: ChatActivity, selected: Array<android.util.SparseArray<MessageObject>>): Boolean {
+    fun takeOverSelection(activity: BaseFragment, selected: Array<android.util.SparseArray<MessageObject>>): Boolean {
         if (!InuConfig.FORWARD_PRO_REPLACE.value) return false
         val messages = ArrayList<MessageObject>()
-        for (side in selected) for (i in 0 until side.size()) messages.add(side.valueAt(i))
-        if (messages.isEmpty()) return false
-        messages.sortBy { it.id }
-        openSheet(activity, messages)
+        ChatActionsHelper.forEachSelectedMessage(selected) {
+            if (activity is ChatActivity || it.id > 0) messages.add(it)
+        }
+        return openSheet(activity, messages)
+    }
+
+    fun hideSelectionAuthor(activity: BaseFragment): Boolean {
+        val alert = activity.visibleDialog as? ShareAlert ?: return false
+        if (states[alert]?.host !== activity || !alert.isShowing) return false
+        alert.showSendersName = false
+        updateQuickToggleIcons(alert)
         return true
     }
 
     @JvmStatic
     @JvmOverloads
-    fun openSheet(activity: ChatActivity, messages: List<MessageObject>, forcePro: Boolean = false, noQuote: Boolean = false) {
-        val context = activity.parentActivity ?: return
+    fun openSheet(activity: BaseFragment, messages: List<MessageObject>, forcePro: Boolean = false, noQuote: Boolean = false): Boolean {
+        if (messages.isEmpty()) return false
+        val context = activity.parentActivity ?: return false
+        val chat = activity as? ChatActivity
+        val sourceChat = if (chat != null) chat.currentChat else activity.messagesController.getChat(messages[0].chatId)
         if (forcePro) pendingOverride = true
         val alert = ShareAlert(
-            context, activity, ArrayList(messages), null, null,
-            ChatObject.isChannel(activity.currentChat), null, null,
-            false, false, false, null, activity.themeDelegate
+            context, chat, ArrayList(messages), null, null,
+            ChatObject.isChannel(sourceChat), null, null,
+            false, false, false, null, activity.resourceProvider
         )
-        if (noQuote) alert.showSendersName = false
-        activity.showDialog(alert)
+        getState(alert).host = activity
+        if (noQuote) {
+            alert.showSendersName = false
+            updateQuickToggleIcons(alert)
+        }
+        return activity.showDialog(alert) != null
     }
 
     @JvmStatic

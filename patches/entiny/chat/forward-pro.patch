@@ -9,8 +9,9 @@ Subject: Forward Pro: quick toggles, edit before forward, comment format and ord
  .../java/org/telegram/ui/ChatActivity.java    |  10 ++
  .../ui/Components/FilterTabsView.java         |   2 +-
  .../telegram/ui/Components/ShareAlert.java    | 114 +++++++++++++-----
+ .../ui/Components/SharedMediaLayout.java      |   4 +
  .../java/org/telegram/ui/PhotoViewer.java     |   5 +-
- 6 files changed, 105 insertions(+), 31 deletions(-)
+ 7 files changed, 109 insertions(+), 31 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
@@ -392,6 +393,21 @@ index 0000000..0000000 100644
                      break;
                  }
                  case 2: {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -5403,6 +5403,10 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+                 return;
+             }
+ 
++            if (desu.inugram.helpers.chat.ForwardProHelper.takeOverSelection(profileActivity, selectedFiles)) {
++                closeActionMode();
++                return;
++            }
+             Bundle args = new Bundle();
+             args.putBoolean("onlySelect", true);
+             args.putBoolean("canSelectTopics", true);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java

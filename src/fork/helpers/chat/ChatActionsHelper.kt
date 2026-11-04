@@ -912,7 +912,7 @@ object ChatActionsHelper {
             {
                 ChatHelper.clearForwardFlags()
                 forward.run(overflow)
-                ChatHelper.pendingHideAuthor = true
+                if (!ForwardProHelper.hideSelectionAuthor(fragment)) ChatHelper.pendingHideAuthor = true
             },
         )
         overflow.setDelegate { id -> handleSelectionClick(menu, id) }
@@ -1151,7 +1151,7 @@ object ChatActionsHelper {
 
     // #endif
 
-    private inline fun forEachSelectedMessage(selected: Array<SparseArray<MessageObject>>, action: (MessageObject) -> Unit) {
+    internal inline fun forEachSelectedMessage(selected: Array<SparseArray<MessageObject>>, action: (MessageObject) -> Unit) {
         // index 1 (merged dialog) first, then 0; SparseArray iteration is id-ascending within each
         for (a in 1 downTo 0) {
             val arr = selected[a]
@@ -1176,7 +1176,7 @@ object ChatActionsHelper {
     fun forwardSelectionNoQuote(activity: ChatActivity) {
         ChatHelper.clearForwardFlags()
         activity.openForward(true)
-        ChatHelper.pendingHideAuthor = true
+        if (!ForwardProHelper.hideSelectionAuthor(activity)) ChatHelper.pendingHideAuthor = true
     }
 
     private fun translateSelection(activity: ChatActivity) {
