@@ -48,7 +48,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **LLM translation with conversation context**, auto-detected endpoints and models picked from the provider's list
 - 📡 **AI providers as cards** — add any number of Gemini, OpenAI, Groq, OpenRouter, Cloudflare or custom OpenAI-compatible endpoints and choose which one serves chat and voice
 - 📡 **AI by task** — voice-to-text, AI editor and message summaries each get their own provider, model and temperature
-- 📡 **ai compose & tools** — rewrite, translate and format drafts
+- 📡 **ai compose & tools** — the stock Telegram AI editor (styles, translate, fix, emojis) running on your own endpoint
 - 📡 **free voice transcription** via Groq Whisper, Gemini Flash, OpenAI or Cloudflare AI; providers with missing credentials are shown and open setup instead of being hidden
 - 📡 **insecure AI endpoints opt-in** — plain-HTTP providers (e.g. Ollama on your LAN) work behind an explicit toggle; secure by default
 

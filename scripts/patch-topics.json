@@ -1,6 +1,7 @@
 {
   "adblock": "privacy",
   "ai-compose": "ai",
+  "ai-compose-hook": "ai",
   "ai-summary-inline": "ai",
   "allow-screenshots": "privacy",
   "always-show-downloads": "media",

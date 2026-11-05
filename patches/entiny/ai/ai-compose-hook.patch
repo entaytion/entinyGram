@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 5 Nov 2026 22:35:02 +0200
+Subject: Answer the stock AI editor with custom endpoints
+
+---
+ .../main/java/org/telegram/tgnet/ConnectionsManager.java | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -399,6 +399,9 @@ public class ConnectionsManager extends BaseController {
+         if (desu.inugram.helpers.translate.TranslationProviderHelper.maybeTranslate(currentAccount, requestToken, object, onComplete, onCompleteTimestamp)) {
+             return;
+         }
++        if (desu.inugram.helpers.ai.AiComposeHelper.maybeCompose(currentAccount, requestToken, object, onComplete, onCompleteTimestamp)) {
++            return;
++        }
+         if (desu.inugram.helpers.plugins.telegram.PluginRpc.maybeIntercept(this, object, onComplete, onCompleteTimestamp, onQuickAck, onWriteToSocket, flags, datacenterId, connectionType, immediate, requestToken, currentAccount)) {
+             return;
+         }
+@@ -608,6 +611,12 @@ public class ConnectionsManager extends BaseController {
+                 }
+                 return;
+             }
++            if (desu.inugram.helpers.ai.AiComposeHelper.cancelCompose(currentAccount, token)) {
++                if (onCancelled != null) {
++                    onCancelled.run();
++                }
++                return;
++            }
+             desu.inugram.helpers.plugins.telegram.PluginRpc.onRequestCancelled(currentAccount, token, notifyServer, onCancelled);
+             if (onCancelled != null) {
+                 listenCancel(token, () -> {
