@@ -180,12 +180,13 @@ object Schemas {
             toggle(InuConfig.DISABLE_BROWSER_SWIPE_COLLAPSE, R.string.InuDisableBrowserSwipeCollapse)
             link(
                 R.string.InuWebPreviewReplacements,
+                badge = {
+                    if (InuConfig.WEB_PREVIEW_REPLACEMENTS_ENABLED.value) WebPreviewHelper.load().size.toString()
+                    else null
+                },
                 value = {
-                    if (InuConfig.WEB_PREVIEW_REPLACEMENTS_ENABLED.value) {
-                        WebPreviewHelper.load().size.toString()
-                    } else {
-                        LocaleController.getString(R.string.SlowmodeOff)
-                    }
+                    if (InuConfig.WEB_PREVIEW_REPLACEMENTS_ENABLED.value) null
+                    else LocaleController.getString(R.string.SlowmodeOff)
                 },
                 slug = "web-preview-replacements",
             ) { WebPreviewReplacementsActivity() }
@@ -512,8 +513,12 @@ object Schemas {
             toggle(InuConfig.LOCAL_CUSTOM_EMOJI, R.string.InuLocalCustomEmoji, R.string.InuLocalCustomEmojiInfo)
             link(
                 R.string.InuLocalNames,
-                value = {
+                badge = {
                     if (InuConfig.LOCAL_NAMES.value) LocalNameHelper.count(UserConfig.selectedAccount).toString()
+                    else null
+                },
+                value = {
+                    if (InuConfig.LOCAL_NAMES.value) null
                     else LocaleController.getString(R.string.PasswordOff)
                 },
                 slug = "local-names",

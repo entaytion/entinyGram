@@ -35,6 +35,7 @@ sealed class Row {
         val titleRes: Int,
         val icon: Int,
         val value: (() -> CharSequence?)?,
+        val badge: (() -> CharSequence?)?,
         val create: () -> SettingsPageActivity,
     ) : Row()
 
@@ -120,8 +121,8 @@ class SectionBuilder {
         rows.add(Row.Choice(item, titleRes, options, values, onChange).also { it.visible = visible })
     }
 
-    fun link(titleRes: Int, icon: Int = 0, value: (() -> CharSequence?)? = null, visible: (() -> Boolean)? = null, slug: String = "", create: () -> SettingsPageActivity) {
-        rows.add(Row.Link(slug, titleRes, icon, value, create).also { it.visible = visible })
+    fun link(titleRes: Int, icon: Int = 0, value: (() -> CharSequence?)? = null, badge: (() -> CharSequence?)? = null, visible: (() -> Boolean)? = null, slug: String = "", create: () -> SettingsPageActivity) {
+        rows.add(Row.Link(slug, titleRes, icon, value, badge, create).also { it.visible = visible })
     }
 
     fun group(slug: String, titleRes: Int, create: (Int) -> ExpandableBoolGroup) {
@@ -240,7 +241,15 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
             is Row.Link -> items.add(
                 when {
                     row.icon != 0 -> mkSubPageButton(row.id, row.icon, LocaleController.getString(row.titleRes))
-                    else -> mkSubPageButton(row.id, LocaleController.getString(row.titleRes), row.value?.invoke())
+                    else -> {
+                        val title = LocaleController.getString(row.titleRes)
+                        val badge = row.badge?.invoke()
+                        mkSubPageButton(
+                            row.id,
+                            if (badge.isNullOrEmpty()) title else withBadge(title, badge),
+                            row.value?.invoke(),
+                        )
+                    }
                 }
             )
 

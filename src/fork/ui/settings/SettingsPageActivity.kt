@@ -332,14 +332,23 @@ abstract class SettingsPageActivity : UniversalFragment() {
     protected fun addExperimentalSpan(string: CharSequence): CharSequence {
         val pill = SpannableString(" ")
         pill.setSpan(
-            BetaPillSpan(LocaleController.getString(R.string.InuBetaPill), Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader)),
+            PillSpan(LocaleController.getString(R.string.InuBetaPill), Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader)),
             0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
         )
         return SpannableStringBuilder().append(pill).append("  ").append(string)
     }
 
-    /** small tinted "beta" pill drawn before a title, same look as the value pills on settings rows */
-    private class BetaPillSpan(private val label: String, tint: Int) : ReplacementSpan() {
+    protected fun withBadge(title: CharSequence, badge: CharSequence): CharSequence {
+        val pill = SpannableString(" ")
+        pill.setSpan(
+            PillSpan(badge.toString(), Theme.getColor(Theme.key_featuredStickers_addButton)),
+            0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+        )
+        return SpannableStringBuilder().append(title).append(" ").append(pill)
+    }
+
+    /** small tinted pill drawn inline with a settings title */
+    private class PillSpan(private val label: String, tint: Int) : ReplacementSpan() {
         private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             typeface = AndroidUtilities.bold()
             textSize = AndroidUtilities.dp(11f).toFloat()
