@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xmogdemaybe <xmogdelegenda@gmail.com>
+Date: Thu, 5 Nov 2026 11:12:35 +0400
+Subject: Add side option for the round exposure slider
+
+---
+ .../java/org/telegram/ui/Components/InstantCameraView2.java  | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
+@@ -336,16 +336,17 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+         if (desu.inugram.InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.getValue()) {
+             inu_evSlider = new SliderView(context, SliderView.TYPE_EXPOSURE_CG);
+             inu_evSlider.setRotation(270);
++            boolean evRight = desu.inugram.InuConfig.ROUND_RECORDER_EV_SLIDER_RIGHT.getValue();
+             addView(inu_evSlider, LayoutHelper.createFrame(
+                     dp(30),
+                     dp(100),
+-                    Gravity.LEFT | Gravity.CENTER_VERTICAL,
++                    (evRight ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL,
+                     0,
+                     0,
+                     0,
+                     0
+             ));
+-            inu_evSlider.setTranslationX(-dp(25));
++            inu_evSlider.setTranslationX(evRight ? dp(25) : -dp(25));
+             inu_evSlider.setValue(0.5f);
+             inu_evSlider.setVisibility(INVISIBLE);
+             inu_evSlider.setOnValueChange(value -> {

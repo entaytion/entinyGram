@@ -1,0 +1,195 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xmogdemaybe <xmogdelegenda@gmail.com>
+Date: Thu, 5 Nov 2026 11:11:20 +0400
+Subject: Add zoom-ratio API to the round recorder engine
+
+---
+ .../round/RoundVideoCameraController.java     | 40 ++++++++++++++++++-
+ .../recorder/round/RoundVideoSession.java     | 32 ++++++++++++++-
+ 2 files changed, 68 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
+@@ -126,7 +126,8 @@ final class RoundVideoCameraController {
+     private static final int MAXIMUM_SOURCE_SHORT_SIDE = 1088;
+     private static final int MAXIMUM_SOURCE_LONG_SIDE = 1920;
+     private static final int MAXIMUM_CROP_OVERSIZE_PERCENT = 15;
+-    private static final float MAXIMUM_UI_ZOOM_RATIO = 4f;
++    private static final float MAXIMUM_UI_ZOOM_RATIO = 20f;
++    private static final float MINIMUM_UI_ZOOM_RATIO = 0.5f;
+     private static final long FRAME_METRICS_PERIOD_NS = 5_000_000_000L;
+     private static final long FRAME_GAP_WARNING_NS = 50_000_000L;
+     private static final long FRAME_GAP_SEVERE_NS = 100_000_000L;
+@@ -176,6 +177,9 @@ final class RoundVideoCameraController {
+     private long timelineOffsetUs;
+     private volatile float zoomProgress;
+     private float maximumZoomRatio = 1f;
++    // entiny: zoom-ratio API для CG-слайдера; ниже 1 — ультраширик через CONTROL_ZOOM_RATIO_RANGE
++    private volatile float minimumZoomRatio = 1f;
++    private volatile float requestedZoomRatio = Float.NaN;
+     private boolean torchEnabled;
+     private volatile float requestedExposureEv;
+     private volatile boolean aeLocked = desu.inugram.InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.getValue();
+@@ -324,6 +328,7 @@ final class RoundVideoCameraController {
+ 
+     boolean setZoom(float progress) {
+         zoomProgress = clamp(progress, 0f, 1f);
++        requestedZoomRatio = Float.NaN;
+         Handler handler = cameraHandler;
+         if (!active || handler == null) return false;
+         handler.removeCallbacks(applyZoomRunnable);
+@@ -331,6 +336,24 @@ final class RoundVideoCameraController {
+         return true;
+     }
+ 
++    boolean setZoomRatio(float ratio) {
++        requestedZoomRatio = clamp(ratio, minimumZoomRatio, maximumZoomRatio);
++        Handler handler = cameraHandler;
++        if (!active || handler == null) return false;
++        handler.removeCallbacks(applyZoomRunnable);
++        handler.post(applyZoomRunnable);
++        return true;
++    }
++
++    float getZoomRatio() {
++        if (!Float.isNaN(requestedZoomRatio)) return requestedZoomRatio;
++        return 1f + zoomProgress * (maximumZoomRatio - 1f);
++    }
++
++    float getMinimumZoomRatio() {
++        return minimumZoomRatio;
++    }
++
+     boolean setTorchEnabled(boolean enabled) {
+         Handler handler = cameraHandler;
+         if (!active || handler == null) return false;
+@@ -690,6 +713,7 @@ final class RoundVideoCameraController {
+         torchEnabled = false;
+         torchVerificationPending = false;
+         zoomProgress = 0f;
++        requestedZoomRatio = Float.NaN;
+         callback.onCameraSwitchStarted(facing);
+         cameraSwitchStartedNs = SystemClock.elapsedRealtimeNanos();
+         lastSwitchUsedWarmDevice = false;
+@@ -1922,7 +1946,9 @@ final class RoundVideoCameraController {
+     }
+ 
+     private void applyZoom(@NonNull CaptureRequest.Builder builder) {
+-        float ratio = 1f + zoomProgress * (maximumZoomRatio - 1f);
++        float ratio = Float.isNaN(requestedZoomRatio)
++                ? 1f + zoomProgress * (maximumZoomRatio - 1f)
++                : requestedZoomRatio;
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+             Range<Float> range = characteristics == null
+                     ? null
+@@ -2090,6 +2116,7 @@ final class RoundVideoCameraController {
+         sourceCropSize = pair.cropSize;
+         activeCameraResolution = pair.cameraResolution;
+         maximumZoomRatio = readMaximumZoomRatio(selectedCharacteristics);
++        minimumZoomRatio = readMinimumZoomRatio(selectedCharacteristics);
+         long previewMinFrameDurationNs = getMinimumFrameDurationNs(
+                 selectedCharacteristics,
+                 previewSize
+@@ -2161,6 +2188,7 @@ final class RoundVideoCameraController {
+         activeFpsRange = selection.fpsRange;
+         regularFallbackPair = selection.regularFallbackPair;
+         maximumZoomRatio = selection.maximumZoomRatio;
++        minimumZoomRatio = readMinimumZoomRatio(selection.characteristics);
+         frameRateFallbackAttempted = false;
+         resetCaptureFpsMeasurement();
+     }
+@@ -2282,6 +2310,14 @@ final class RoundVideoCameraController {
+         return clamp(maximum, 1f, MAXIMUM_UI_ZOOM_RATIO);
+     }
+ 
++    private float readMinimumZoomRatio(@NonNull CameraCharacteristics cameraCharacteristics) {
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
++            Range<Float> range = cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE);
++            if (range != null) return clamp(range.getLower(), MINIMUM_UI_ZOOM_RATIO, 1f);
++        }
++        return 1f;
++    }
++
+     private boolean isTorchAvailable() {
+         return activeFacing == RoundVideoSession.CameraFacing.BACK
+                 && characteristics != null
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
+@@ -408,6 +408,8 @@ public final class RoundVideoSession {
+         private final FrameRate activeFrameRate;
+         private final FlashType flashType;
+         private final float maximumZoomRatio;
++        // entiny: нижняя граница zoom-ratio (CONTROL_ZOOM_RATIO_RANGE) — ниже 1 означает ультраширик
++        private final float minimumZoomRatio;
+ 
+         private CameraCapabilities(
+                 CameraFacing requestedFacing,
+@@ -417,7 +419,8 @@ public final class RoundVideoSession {
+                 FrameRate requestedFrameRate,
+                 FrameRate activeFrameRate,
+                 FlashType flashType,
+-                float maximumZoomRatio
++                float maximumZoomRatio,
++                float minimumZoomRatio
+         ) {
+             this.requestedFacing = requestedFacing;
+             this.activeFacing = activeFacing;
+@@ -427,6 +430,7 @@ public final class RoundVideoSession {
+             this.activeFrameRate = activeFrameRate;
+             this.flashType = flashType;
+             this.maximumZoomRatio = maximumZoomRatio;
++            this.minimumZoomRatio = minimumZoomRatio;
+         }
+ 
+         /** Returns the camera requested for the current or next segment. */
+@@ -453,6 +457,9 @@ public final class RoundVideoSession {
+         /** Returns the maximum zoom ratio exposed by the normalized zoom control. */
+         public float getMaximumZoomRatio() { return maximumZoomRatio; }
+ 
++        /** Returns the minimum zoom ratio exposed by the zoom-ratio control. */
++        public float getMinimumZoomRatio() { return minimumZoomRatio; }
++
+         /** Returns whether the configured camera supports zoom. */
+         public boolean isZoomSupported() { return maximumZoomRatio > 1f; }
+     }
+@@ -752,6 +759,26 @@ public final class RoundVideoSession {
+         return cameraController.setZoom(zoomProgress);
+     }
+ 
++    // entiny: zoom-ratio API для CG-слайдера; ratio ниже 1 попадает в ультраширик, если камера позволяет
++
++    /** Applies an absolute zoom ratio clamped to the camera's zoom-ratio range. */
++    @MainThread
++    public boolean setZoomRatio(float ratio) {
++        requireMainThread();
++        if (state != State.RECORDING || cameraSwitching) return false;
++        return cameraController.setZoomRatio(ratio);
++    }
++
++    /** Returns the zoom ratio currently requested from the camera. */
++    public float getZoomRatio() {
++        return cameraController.getZoomRatio();
++    }
++
++    /** Returns the minimum zoom ratio exposed by the zoom-ratio control. */
++    public float getMinimumZoomRatio() {
++        return cameraController.getMinimumZoomRatio();
++    }
++
+     /** Enables the rear torch or requests front-camera screen flash. */
+     @MainThread
+     public boolean setFlashEnabled(boolean enabled) {
+@@ -1412,7 +1439,8 @@ public final class RoundVideoSession {
+                 requestedFrameRate,
+                 activeFrameRate,
+                 flashType,
+-                maximumZoomRatio
++                maximumZoomRatio,
++                cameraController.getMinimumZoomRatio()
+         ));
+     }
+ 
