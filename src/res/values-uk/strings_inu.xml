@@ -158,7 +158,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">Плавніша крива зуму, як у Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Подвійна камера</string>
     <string name="InuRoundRecorderDualCameraInfo">Вмикає фронтальну та основну камери одночасно для миттєвого перемикання. Споживає більше батареї.</string>
-    <string name="InuRoundRecorderCameraApi">Запис кружечків використовує %1$s API. **Перемкнутися на %2$s >**</string>
+    <string name="InuRoundRecorderEvSliderRight">Слайдер експозиції праворуч</string>
     <string name="InuRoundRecorderLockExposure">Фіксувати експозицію</string>
     <string name="InuRoundRecorderLockExposureInfo">Блокує автоекспозицію під час запису відеоповідомлень, запобігаючи мерехтінню та стрибкам яскравості.</string>
     <string name="InuRoundRecorderExposureButton">Кнопка фіксації експозиції</string>

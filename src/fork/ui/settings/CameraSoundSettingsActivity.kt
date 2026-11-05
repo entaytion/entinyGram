@@ -76,6 +76,12 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 UItem.asCheck(TOGGLE_ROUND_COMPOSITION, LocaleController.getString(R.string.RoundVideoCompositionEnabled))
                     .setChecked(SharedSettings.roundVideoComposition.get())
             )
+            items.add(
+                UItem.asCheck(
+                    TOGGLE_ROUND_EV_SLIDER_RIGHT,
+                    LocaleController.getString(R.string.InuRoundRecorderEvSliderRight),
+                ).setChecked(InuConfig.ROUND_RECORDER_EV_SLIDER_RIGHT.value)
+            )
         } else {
             items.add(
                 UItem.asCheck(
@@ -189,23 +195,6 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 InuConfig.ATTACH_CAMERA_EXPOSURE_LEVELS.value,
             )
         )
-        val cameraApiText = LocaleController.formatString(
-            R.string.InuRoundRecorderCameraApi,
-            if (SharedConfig.isUsingCamera2(currentAccount)) "Camera2" else "Camera1",
-            if (SharedConfig.isUsingCamera2(currentAccount)) "Camera1" else "Camera2",
-        )
-        items.add(
-            UItem.asShadow(
-                AndroidUtilities.replaceArrows(
-                    AndroidUtilities.replaceSingleTag(cameraApiText) {
-                        SharedConfig.toggleUseCamera2(currentAccount)
-                        listView.adapter.update(true)
-                    },
-                    true,
-                )
-            )
-        )
-
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuVoiceMessages)))
         items.add(
             mkTwoLineCheckItem(
@@ -289,6 +278,8 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 listView.adapter.update(true)
             }
             TOGGLE_ROUND_COMPOSITION -> (view as? TextCheckCell)?.isChecked = SharedSettings.roundVideoComposition.toggle()
+            TOGGLE_ROUND_EV_SLIDER_RIGHT ->
+                (view as? TextCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EV_SLIDER_RIGHT.toggle()
             BUTTON_ROUND_VIDEO_RESOLUTION -> {
                 // entiny: порядок в попапе — по убыванию размера; enum не сортируем, чтобы не сдвигать сохранённые ordinal'ы
                 val resolutions = RoundVideoSession.OutputResolution.values().sortedByDescending { it.size }
@@ -387,6 +378,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS = InuUtils.generateId()
+        private val TOGGLE_ROUND_EV_SLIDER_RIGHT = InuUtils.generateId()
 
         private val roundAudioBitrates = listOf(0, 32, 64, 96, 128, 192)
 

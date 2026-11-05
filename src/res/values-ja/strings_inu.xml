@@ -744,7 +744,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">Google Camera のような滑らかなズームカーブ</string>
     <string name="InuRoundRecorderDualCamera">デュアルカメラ</string>
     <string name="InuRoundRecorderDualCameraInfo">フロントとリアのカメラを同時に開き、録画中に瞬時に切り替えできます。電池消費が増えます。</string>
-    <string name="InuRoundRecorderCameraApi">丸メッセージの録画は %1$s API を使用しています。**%2$s に切り替える >**</string>
+    <string name="InuRoundRecorderEvSliderRight">露出スライダーを右側に</string>
     <string name="InuRoundRecorderLockExposure">露出を固定</string>
     <string name="InuRoundRecorderLockExposureInfo">録画中の自動露出をロックし、明るさのちらつきや急激な変化を防ぎます。</string>
     <string name="InuRoundRecorderExposureButton">露出固定ボタン</string>

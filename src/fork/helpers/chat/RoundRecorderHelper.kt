@@ -399,7 +399,7 @@ object RoundRecorderHelper {
     }
 
     private fun exposureItem(session: Camera2Session) =
-        if (session.isFrontCamera) InuConfig.ROUND_RECORDER_EXPOSURE_FRONT else InuConfig.ROUND_RECORDER_EXPOSURE_BACK
+        if (session.isFrontCamera) InuConfig.ATTACH_CAMERA_EXPOSURE_FRONT else InuConfig.ATTACH_CAMERA_EXPOSURE_BACK
 
     @JvmStatic
     fun rememberExposure(session: Camera2Session?, ev: Float) {

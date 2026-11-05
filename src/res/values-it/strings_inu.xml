@@ -241,7 +241,7 @@ Sistema: %6$s
     <string name="InuRoundRecorderExponentialZoomInfo">Curva di zoom più fluida, come in Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Doppia fotocamera</string>
     <string name="InuRoundRecorderDualCameraInfo">Apre insieme la fotocamera anteriore e posteriore per cambiare all\'istante. Consuma più batteria.</string>
-    <string name="InuRoundRecorderCameraApi">Il registratore rotondo usa l\'API %1$s. **Passa a %2$s &gt;**</string>
+    <string name="InuRoundRecorderEvSliderRight">Slider dell\'esposizione a destra</string>
     <string name="InuRoundRecorderLockExposure">Blocca esposizione</string>
     <string name="InuRoundRecorderLockExposureInfo">Blocca l\'esposizione automatica durante la registrazione per evitare sfarfallii e sbalzi di luminosità.</string>
     <string name="InuRoundRecorderExposureButton">Pulsante di blocco esposizione</string>

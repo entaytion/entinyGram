@@ -743,7 +743,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">更平滑的缩放曲线，类似 Google Camera</string>
     <string name="InuRoundRecorderDualCamera">双摄像头</string>
     <string name="InuRoundRecorderDualCameraInfo">同时打开前后摄像头，可在录制中即时切换。耗电更多。</string>
-    <string name="InuRoundRecorderCameraApi">圆形录制使用 %1$s API。**切换到 %2$s >**</string>
+    <string name="InuRoundRecorderEvSliderRight">曝光滑块靠右</string>
     <string name="InuRoundRecorderLockExposure">锁定曝光</string>
     <string name="InuRoundRecorderLockExposureInfo">录制期间锁定自动曝光，防止画面亮度闪烁跳动。</string>
     <string name="InuRoundRecorderExposureButton">曝光锁定按钮</string>

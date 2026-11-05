@@ -160,7 +160,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">منحنى تكبير أنعم، مثل كاميرا Google</string>
     <string name="InuRoundRecorderDualCamera">كاميرا مزدوجة</string>
     <string name="InuRoundRecorderDualCameraInfo">تفتح الكاميرتين الأمامية والخلفية معاً للتبديل الفوري. تستهلك بطارية أكثر.</string>
-    <string name="InuRoundRecorderCameraApi">مسجّل الفيديو الدائري يستخدم واجهة %1$s. **التبديل إلى %2$s >**</string>
+    <string name="InuRoundRecorderEvSliderRight">شريط التعرض على اليمين</string>
     <string name="InuRoundRecorderLockExposure">قفل التعريض</string>
     <string name="InuRoundRecorderLockExposureInfo">قفل التعريض التلقائي أثناء التسجيل لمنع الوميض وقفزات السطوع.</string>
     <string name="InuRoundRecorderExposureButton">زر قفل التعريض</string>

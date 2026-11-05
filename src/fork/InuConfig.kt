@@ -1350,6 +1350,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ROUND_RECORDER_EXPOSURE_LEVELS = BoolItem("round_recorder_exposure_levels", true)
 
     @JvmField
+    val ROUND_RECORDER_EV_SLIDER_RIGHT = BoolItem("round_recorder_ev_slider_right", false)
+
+    @JvmField
     val ROUND_RECORDER_EXPOSURE_FRONT = FloatItem("round_recorder_exposure_front", 0f)
 
     @JvmField

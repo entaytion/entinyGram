@@ -160,7 +160,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">منحنی زوم نرم‌تر، مانند Google Camera</string>
     <string name="InuRoundRecorderDualCamera">دوربین دوگانه</string>
     <string name="InuRoundRecorderDualCameraInfo">دوربین جلو و عقب را هم‌زمان باز می‌کند تا جابه‌جایی فوری باشد. باتری بیشتری مصرف می‌کند.</string>
-    <string name="InuRoundRecorderCameraApi">ضبط پیام گرد از API %1$s استفاده می‌کند. **تغییر به %2$s >**</string>
+    <string name="InuRoundRecorderEvSliderRight">اسلایدر نوردهی در سمت راست</string>
     <string name="InuRoundRecorderLockExposure">قفل نوردهی</string>
     <string name="InuRoundRecorderLockExposureInfo">نوردهی خودکار را هنگام ضبط قفل می‌کند تا از سوسو و جهش روشنایی جلوگیری شود.</string>
     <string name="InuRoundRecorderExposureButton">دکمه قفل نوردهی</string>

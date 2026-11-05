@@ -247,7 +247,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">Smoother zoom curve, like Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Dual camera</string>
     <string name="InuRoundRecorderDualCameraInfo">Opens front and rear cameras at once for instant switching. Uses more battery.</string>
-    <string name="InuRoundRecorderCameraApi">Round recorder uses %1$s API. **Switch to %2$s >**</string>
+    <string name="InuRoundRecorderEvSliderRight">Exposure slider on the right</string>
     <string name="InuRoundRecorderLockExposure">Lock exposure</string>
     <string name="InuRoundRecorderLockExposureInfo">Lock auto-exposure during recording to prevent flickering and brightness jumps.</string>
     <string name="InuRoundRecorderExposureButton">Exposure lock button</string>
