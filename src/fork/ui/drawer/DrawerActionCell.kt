@@ -46,7 +46,7 @@ class DrawerActionCell(context: Context) : FrameLayout(context) {
         textView = TextView(context)
         DrawerM3SectionsHelper.styleMenuLabel(textView, 15f, AndroidUtilities.bold())
         textView.gravity = Gravity.CENTER_VERTICAL or startGravity
-        addView(imageView, LayoutHelper.createFrame(24, 24f, startGravity or Gravity.TOP, if (isRTL) 0f else 19f, 12f, if (isRTL) 19f else 0f, 0f))
+        addView(imageView, LayoutHelper.createFrame(24, 24f, startGravity or Gravity.CENTER_VERTICAL, if (isRTL) 0f else 16f, 0f, if (isRTL) 16f else 0f, 0f))
         addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat(), startGravity or Gravity.TOP, if (isRTL) 16f else 56f, 0f, if (isRTL) 56f else 16f, 0f))
 
         setWillNotDraw(false)

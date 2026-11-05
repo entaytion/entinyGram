@@ -45,7 +45,7 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
 
         val startGravity = if (isRTL) Gravity.RIGHT else Gravity.LEFT
         val endGravity = if (isRTL) Gravity.LEFT else Gravity.RIGHT
-        addView(imageView, LayoutHelper.createFrame(24, 24f, startGravity or Gravity.TOP, if (isRTL) 0f else 19f, 12f, if (isRTL) 19f else 0f, 0f))
+        addView(imageView, LayoutHelper.createFrame(24, 24f, startGravity or Gravity.CENTER_VERTICAL, if (isRTL) 0f else 16f, 0f, if (isRTL) 16f else 0f, 0f))
         addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat(), startGravity or Gravity.TOP, if (isRTL) 16f else 56f, 0f, if (isRTL) 56f else 16f, 0f))
         addView(checkBox, LayoutHelper.createFrame(37, 24f, endGravity or Gravity.CENTER_VERTICAL, if (isRTL) 22f else 0f, 0f, if (isRTL) 0f else 22f, 0f))
 
