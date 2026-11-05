@@ -1,12 +1,14 @@
 package desu.inugram.helpers.chat
 
 import android.content.Context
+import android.text.SpannableStringBuilder
 import android.util.Base64
 import desu.inugram.InuConfig
-import desu.inugram.ui.showInputDialog
+import desu.inugram.ui.ForwardProFragment
 import org.json.JSONObject
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MediaDataController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.R
 import org.telegram.tgnet.SerializedData
@@ -19,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
 object LocalEditHelper {
     private const val PREFS = "inu_local_edits"
 
-    private class Entry(val original: String, val text: String, val entities: String?)
+    private class Entry(val original: String, val text: String, val entities: String?, val edited: String?)
 
     private val prefs by lazy { ApplicationLoader.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE) }
 
@@ -27,7 +29,12 @@ object LocalEditHelper {
         val map = ConcurrentHashMap<String, Entry>()
         for ((key, value) in prefs.all) {
             val json = (value as? String)?.let { runCatching { JSONObject(it) }.getOrNull() } ?: continue
-            map[key] = Entry(json.optString("o"), json.optString("t"), json.optString("e").ifEmpty { null })
+            map[key] = Entry(
+                json.optString("o"),
+                json.optString("t"),
+                json.optString("e").ifEmpty { null },
+                json.optString("n").ifEmpty { null },
+            )
         }
         map
     }
@@ -41,7 +48,15 @@ object LocalEditHelper {
             if (entry == null) {
                 remove(key)
             } else {
-                putString(key, JSONObject().put("o", entry.original).put("t", entry.text).put("e", entry.entities ?: "").toString())
+                putString(
+                    key,
+                    JSONObject()
+                        .put("o", entry.original)
+                        .put("t", entry.text)
+                        .put("e", entry.entities ?: "")
+                        .put("n", entry.edited ?: "")
+                        .toString(),
+                )
             }
         }.apply()
     }
@@ -73,7 +88,7 @@ object LocalEditHelper {
         val entry = entries[key(message)] ?: return
         if (owner.message == entry.text) return
         owner.message = entry.text
-        owner.entities = ArrayList()
+        owner.entities = deserialize(entry.edited)
     }
 
     fun has(message: MessageObject): Boolean = entries.containsKey(key(message))
@@ -96,27 +111,27 @@ object LocalEditHelper {
         val owner = message.messageOwner ?: return
         val key = key(message)
         val existing = entries[key]
-        showInputDialog(
-            activity,
-            LocaleController.getString(R.string.InuLocalEditTitle),
-            initialText = existing?.text ?: owner.message.orEmpty(),
-            multiline = true,
-        ) { text ->
-            if (text.isEmpty()) return@showInputDialog false
-            val original = existing?.original ?: owner.message.orEmpty()
-            if (text == original) {
-                if (existing != null) reset(activity, message)
-                return@showInputDialog true
-            }
-            val entry = Entry(original, text, existing?.entities ?: serialize(owner.entities))
-            entries[key] = entry
-            persist(key, entry)
-            owner.message = text
-            owner.entities = ArrayList()
-            refresh(activity, message)
-            BulletinFactory.of(activity).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuLocalEditSaved)).show()
-            true
-        }
+        val original = existing?.original ?: owner.message.orEmpty()
+        val item = ForwardProFragment.Item(message, true, original, existing?.text ?: original, false)
+        activity.presentFragment(
+            ForwardProFragment(listOf(item), R.string.InuLocalEditTitle) { result ->
+                if (result == null) return@ForwardProFragment
+                val text = result[message.id]?.toString()
+                if (text == null) {
+                    if (existing != null) reset(activity, message)
+                    return@ForwardProFragment
+                }
+                val holder = arrayOf<CharSequence>(SpannableStringBuilder(text))
+                val entities = MediaDataController.getInstance(message.currentAccount).getEntities(holder, true)
+                val entry = Entry(original, holder[0].toString(), existing?.entities ?: serialize(owner.entities), serialize(entities))
+                entries[key] = entry
+                persist(key, entry)
+                owner.message = entry.text
+                owner.entities = entities ?: ArrayList()
+                refresh(activity, message)
+                BulletinFactory.of(activity).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuLocalEditSaved)).show()
+            },
+        )
     }
 
     fun reset(activity: ChatActivity, message: MessageObject) {

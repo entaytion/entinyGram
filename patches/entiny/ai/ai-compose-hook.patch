@@ -11,26 +11,26 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -399,6 +399,9 @@ public class ConnectionsManager extends BaseController {
-         if (desu.inugram.helpers.translate.TranslationProviderHelper.maybeTranslate(currentAccount, requestToken, object, onComplete, onCompleteTimestamp)) {
-             return;
+@@ -405,6 +405,9 @@ public class ConnectionsManager extends BaseController {
+         if (BuildVars.LOGS_ENABLED) {
+             FileLog.d("send request " + object + " with token = " + requestToken);
          }
 +        if (desu.inugram.helpers.ai.AiComposeHelper.maybeCompose(currentAccount, requestToken, object, onComplete, onCompleteTimestamp)) {
 +            return;
 +        }
-         if (desu.inugram.helpers.plugins.telegram.PluginRpc.maybeIntercept(this, object, onComplete, onCompleteTimestamp, onQuickAck, onWriteToSocket, flags, datacenterId, connectionType, immediate, requestToken, currentAccount)) {
+         if (desu.inugram.helpers.security.GhostHelper.processSendRequest(object, currentAccount, onComplete, onCompleteTimestamp)) {
              return;
          }
-@@ -608,6 +611,12 @@ public class ConnectionsManager extends BaseController {
-                 }
-                 return;
-             }
+@@ -602,6 +605,12 @@ public class ConnectionsManager extends BaseController {
+ 
+     public void cancelRequest(int token, boolean notifyServer, Runnable onCancelled) {
+         Utilities.stageQueue.postRunnable(() -> {
 +            if (desu.inugram.helpers.ai.AiComposeHelper.cancelCompose(currentAccount, token)) {
 +                if (onCancelled != null) {
 +                    onCancelled.run();
 +                }
 +                return;
 +            }
-             desu.inugram.helpers.plugins.telegram.PluginRpc.onRequestCancelled(currentAccount, token, notifyServer, onCancelled);
-             if (onCancelled != null) {
-                 listenCancel(token, () -> {
+             if (desu.inugram.helpers.translate.TranslationProviderHelper.cancelRequest(currentAccount, token)) {
+                 if (onCancelled != null) {
+                     onCancelled.run();

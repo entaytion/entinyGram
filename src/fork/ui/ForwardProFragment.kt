@@ -43,6 +43,7 @@ import kotlin.math.max
 // entiny: full-screen forward editor with a stock bubble preview, inspired by Telegraph's special forward
 class ForwardProFragment(
     private val items: List<Item>,
+    private val titleRes: Int = R.string.InuForwardPro,
     private val onResult: (Map<Int, CharSequence>?) -> Unit,
 ) : BaseFragment() {
 
@@ -238,7 +239,7 @@ class ForwardProFragment(
             typeface = AndroidUtilities.bold()
             setTextColor(Theme.getColor(Theme.key_chat_messagePanelText, resourceProvider))
             maxLines = 1
-            text = LocaleController.getString(R.string.InuForwardPro)
+            text = LocaleController.getString(titleRes)
         })
         if (multi) {
             title.addView(TextView(context).apply {

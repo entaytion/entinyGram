@@ -35,7 +35,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **protected content** — copy text and select messages in protected chats, save any story or auto-save the ones you view, copy and forward from protected channels with a background bulk download, forward as your own without the "Forwarded from" header, re-send saved view-once media
 - 📡 **quote protected posts** into another chat as a bold title and a blockquote
 - 📡 **share button action** — make the round button next to channel posts forward, Forward Pro, save, edit, delete, translate, copy or show details
-- 📡 **local unlocks** — Telegram Premium UI and limits on the client side, Premium custom emoji without Premium, local names (name, username, photo, bio, verified and Premium badges, emoji status of anyone, on your device only, with export and import) and local message edit you can reset anytime
+- 📡 **local unlocks** — Telegram Premium UI and limits on the client side, Premium custom emoji without Premium, local names (name, username, photo, bio, verified and Premium badges, emoji status of anyone, on your device only, with export and import) and local message edit in a full-screen editor with a live bubble preview, resettable anytime
 - 📡 **official-app emulation** — purchases and premium checkout without official app blocks
 - 📡 **wallet for everyone** — the Gram wallet entry is always available
 - 📡 **raised limits** — pins, favorite stickers and GIFs kept locally past the server cap, and folders
