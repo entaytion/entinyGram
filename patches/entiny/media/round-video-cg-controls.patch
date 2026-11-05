@@ -11,11 +11,11 @@ are reachable. EV level buttons are replaced by the CG stories-style
 exposure slider (SliderView.TYPE_EXPOSURE_CG) with 5s auto-hide.
 ---
  .../ui/Components/InstantCameraView2.java     |  226 ++-
- .../ui/Components/RoundZoomSliderView.java    | 1691 +++++++++++++++++
+ .../ui/Components/RoundZoomSliderView.java    | 1687 +++++++++++++++++
  .../ui/Stories/recorder/SliderView.java       |   20 +
  .../round/RoundVideoCameraController.java     |   38 +-
  .../recorder/round/RoundVideoSession.java     |   32 +-
- 5 files changed, 1954 insertions(+), 53 deletions(-)
+ 5 files changed, 1950 insertions(+), 53 deletions(-)
  create mode 100644 TMessagesProj/src/main/java/org/telegram/ui/Components/RoundZoomSliderView.java
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
@@ -74,13 +74,21 @@ index 0000000..0000000 100644
      private int zoomPointerId1 = -1;
      private int zoomPointerId2 = -1;
  
+     private boolean pinchZoomActive;
+-    private ZoomControlView inu_zoomSlider;
+-    private ExposureLevelButtonsView inu_exposureButtons;
++    private boolean pinchZoomLatched;
++    private RoundZoomSliderView inu_cgZoomSlider;
++    private SliderView inu_evSlider;
+     private FlashViews.ImageViewInvertable inu_aeButton;
+-    private float inu_pinchStartT;
++
 +    private final InuZoomCamera inu_zoomCamera = new InuZoomCamera();
 +
 +    private final Runnable inu_evSliderHide = () -> {
 +        if (inu_evSlider != null) inu_evSlider.setVisibility(INVISIBLE);
 +    };
 +
-+    /** Camera-side adapter handing the CG zoom slider the round-video session. */
 +    private final class InuZoomCamera implements RoundZoomSliderView.ZoomCamera {
 +        private Runnable settledListener;
 +
@@ -127,14 +135,6 @@ index 0000000..0000000 100644
 +        }
 +    }
 +
-     private boolean pinchZoomActive;
--    private ZoomControlView inu_zoomSlider;
--    private ExposureLevelButtonsView inu_exposureButtons;
-+    private boolean pinchZoomLatched;
-+    private RoundZoomSliderView inu_cgZoomSlider;
-+    private SliderView inu_evSlider;
-     private FlashViews.ImageViewInvertable inu_aeButton;
--    private float inu_pinchStartT;
      private boolean heavyOperationsStopped;
      private float previousWindowBrightness = Float.NaN;
      private int textureViewSize;
@@ -145,7 +145,7 @@ index 0000000..0000000 100644
 -        inu_zoomSlider = RoundRecorderHelper.attachZoomSlider(this, t -> inu_setZoomT(t));
 +        // entiny: CG-слайдер зума (порт CherryGram) вместо ZoomControlView
 +        if (desu.inugram.InuConfig.ROUND_RECORDER_ZOOM_SLIDER.getValue()) {
-+            inu_cgZoomSlider = new RoundZoomSliderView(context);
++            inu_cgZoomSlider = new RoundZoomSliderView(context, resourcesProvider, false);
 +            addView(inu_cgZoomSlider, LayoutHelper.createFrame(
 +                    LayoutHelper.MATCH_PARENT,
 +                    dp(56),
@@ -402,7 +402,7 @@ new file mode 100644
 index 0000000..0000000
 --- /dev/null
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RoundZoomSliderView.java
-@@ -0,0 +1,1691 @@
+@@ -0,0 +1,1687 @@
 +/**
 + * This is the source code of Cherrygram for Android.
 + * It is licensed under GNU GPL v. 2 or later.
@@ -490,7 +490,7 @@ index 0000000..0000000
 +
 +    private static final float ZOOM_SMOOTH_TAU_MS = 150f;
 +
-+    private static final FloatPropertyCompat<RoundZoomSliderView> CONTROL_WIDTH = new FloatPropertyCompat<>("controlWidth") {
++    private static final FloatPropertyCompat<RoundZoomSliderView> CONTROL_WIDTH = new FloatPropertyCompat<RoundZoomSliderView>("controlWidth") {
 +        @Override
 +        public float getValue(RoundZoomSliderView view) {
 +            return view.animatedControlWidth;
@@ -503,7 +503,7 @@ index 0000000..0000000
 +        }
 +    };
 +
-+    private static final FloatPropertyCompat<RoundZoomSliderView> SELECTOR_OFFSET = new FloatPropertyCompat<>("selectorOffset") {
++    private static final FloatPropertyCompat<RoundZoomSliderView> SELECTOR_OFFSET = new FloatPropertyCompat<RoundZoomSliderView>("selectorOffset") {
 +        @Override
 +        public float getValue(RoundZoomSliderView view) {
 +            return view.animatedSelectorOffset;
@@ -520,10 +520,7 @@ index 0000000..0000000
 +        void onPresetSelected(float zoom);
 +    }
 +
-+    /**
-+     * Camera-side contract for the slider. Port replaces CherryGram's CameraXController
-+     * (stripped in their public tree) with an adapter over the round-video session.
-+     */
++    // entiny: замена CameraXController CherryGram — контракт камеры поверх RoundVideoSession
 +    public interface ZoomCamera {
 +        boolean isCameraReady();
 +        float getMinZoomRatio();
@@ -531,7 +528,6 @@ index 0000000..0000000
 +        float getZoomRatio();
 +        void setZoomRatio(float ratio);
 +        boolean isFrontface();
-+        /** Fired by the adapter when the camera baseline is ready for binding. */
 +        default void setOnZoomSettledListener(Runnable listener) {}
 +        default float[] getLensZoomBreakpoints() { return null; }
 +    }
