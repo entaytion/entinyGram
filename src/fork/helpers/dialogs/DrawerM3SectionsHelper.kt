@@ -1,9 +1,12 @@
 package desu.inugram.helpers.dialogs
 
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
+import android.util.TypedValue
 import android.view.View
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
@@ -14,6 +17,21 @@ object DrawerM3SectionsHelper {
     @JvmStatic
     fun isEnabled(): Boolean =
         InuConfig.NAVIGATION_DRAWER.value && InuConfig.DRAWER_M3_SECTIONS.value
+
+    private fun isMaterial3Enabled(): Boolean = InuConfig.NAVIGATION_DRAWER.value
+
+    fun styleMenuLabel(view: TextView, legacySize: Float, legacyTypeface: Typeface) {
+        val enabled = isMaterial3Enabled()
+        view.setTextColor(Theme.getColor(if (enabled) Theme.key_windowBackgroundWhiteBlackText else Theme.key_chats_menuItemText))
+        view.setTextSize(if (enabled) TypedValue.COMPLEX_UNIT_SP else TypedValue.COMPLEX_UNIT_DIP, if (enabled) 14f else legacySize)
+        view.typeface = if (enabled) Typeface.create("sans-serif-medium", Typeface.NORMAL) else legacyTypeface
+    }
+
+    fun menuIconColor(): Int = Theme.getColor(
+        if (isMaterial3Enabled()) Theme.key_windowBackgroundWhiteGrayText else Theme.key_chats_menuItemIcon
+    )
+
+    fun menuItemHeight(): Int = AndroidUtilities.dp(if (isMaterial3Enabled()) 56f else 48f)
 
     private val outerR get() = AndroidUtilities.dp(16f).toFloat()
 

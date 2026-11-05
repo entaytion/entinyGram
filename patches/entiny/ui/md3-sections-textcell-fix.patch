@@ -1,17 +1,90 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 1 Sep 2026 00:11:02 +0300
-Subject: Remove M3SectionsHelper text-centering override in TextCell
+Subject: [*] TextCell layout fixes
 
 ---
- .../src/main/java/org/telegram/ui/Cells/TextCell.java          | 3 ---
- 1 file changed, 3 deletions(-)
+ .../java/org/telegram/ui/Cells/TextCell.java  | 47 ++++++++++++-------
+ 1 file changed, 31 insertions(+), 16 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
-@@ -298,9 +298,6 @@ public class TextCell extends FrameLayout {
+@@ -192,18 +192,26 @@ public class TextCell extends FrameLayout {
+         }
+         lastWidth = width;
+ 
++        int valueImageInset = 0;
++        if (valueImageView.getVisibility() == VISIBLE) {
++            valueImageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
++            valueImageInset = Math.max(0, valueImageView.getMeasuredWidth() + dp(27) - dp(leftPadding));
++        }
++
+         int valueWidth;
+         if (prioritizeTitleOverValue) {
+             textView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
+             subtitleView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
+-            valueTextView.measure(MeasureSpec.makeMeasureSpec(width - dp(103 + leftPadding) - textView.getTextWidth(), LocaleController.isRTL ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
+-            valueSpoilersTextView.measure(MeasureSpec.makeMeasureSpec(width - dp(103 + leftPadding) - textView.getTextWidth(), LocaleController.isRTL ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
++            int availableValueWidth = Math.max(0, width - dp(103 + leftPadding) - textView.getTextWidth() - valueImageInset);
++            valueTextView.measure(MeasureSpec.makeMeasureSpec(availableValueWidth, LocaleController.isRTL ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
++            valueSpoilersTextView.measure(MeasureSpec.makeMeasureSpec(availableValueWidth, LocaleController.isRTL ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
+         } else {
+-            valueTextView.measure(MeasureSpec.makeMeasureSpec(width - dp(leftPadding), LocaleController.isRTL ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
+-            valueSpoilersTextView.measure(MeasureSpec.makeMeasureSpec(width - dp(leftPadding), LocaleController.isRTL ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
++            int availableValueWidth = Math.max(0, width - dp(leftPadding) - valueImageInset);
++            valueTextView.measure(MeasureSpec.makeMeasureSpec(availableValueWidth, LocaleController.isRTL ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
++            valueSpoilersTextView.measure(MeasureSpec.makeMeasureSpec(availableValueWidth, LocaleController.isRTL ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
+             valueWidth = Math.max(valueTextView.width(), valueSpoilersTextView.getTextWidth());
+-            textView.measure(MeasureSpec.makeMeasureSpec(Math.max(0, width - dp(71 + leftPadding) - valueWidth), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
+-            subtitleView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding) - valueWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
++            textView.measure(MeasureSpec.makeMeasureSpec(Math.max(0, width - dp(71 + leftPadding) - valueWidth - valueImageInset), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
++            subtitleView.measure(MeasureSpec.makeMeasureSpec(Math.max(0, width - dp(71 + leftPadding) - valueWidth - valueImageInset), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
+         }
+         if (imageView.getVisibility() == VISIBLE) {
+             if (!forceStockColorfulIcon && desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled()) {
+@@ -229,9 +237,6 @@ public class TextCell extends FrameLayout {
+                 imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
+             }
+         }
+-        if (valueImageView.getVisibility() == VISIBLE) {
+-            valueImageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
+-        }
+         if (checkBox != null) {
+             checkBox.measure(MeasureSpec.makeMeasureSpec(dp(37), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(desu.inugram.InuConfig.MATERIAL3_SWITCHES.getValue() ? 24 : 20), MeasureSpec.EXACTLY));
+         }
+@@ -277,12 +282,25 @@ public class TextCell extends FrameLayout {
+         int width = right - left;
+ 
+         int viewTop = (height - Math.max(valueSpoilersTextView.getTextHeight(), valueTextView.getTextHeight())) / 2 + 1;
+-        int viewLeft = LocaleController.isRTL ? dp(leftPadding - 6) : width - valueTextView.getMeasuredWidth() - dp(leftPadding - 6);
+-        if (prioritizeTitleOverValue && !LocaleController.isRTL) {
+-            viewLeft = width - valueTextView.getMeasuredWidth() - dp(leftPadding);
++        int viewLeft;
++        if (valueImageView.getVisibility() == VISIBLE) {
++            viewLeft = LocaleController.isRTL
++                ? valueImageView.getMeasuredWidth() + dp(27)
++                : width - valueTextView.getMeasuredWidth() - valueImageView.getMeasuredWidth() - dp(27);
++        } else {
++            viewLeft = LocaleController.isRTL ? dp(leftPadding - 6) : width - valueTextView.getMeasuredWidth() - dp(leftPadding - 6);
++            if (prioritizeTitleOverValue && !LocaleController.isRTL) {
++                viewLeft = width - valueTextView.getMeasuredWidth() - dp(leftPadding);
++            }
+         }
+         valueTextView.layout(viewLeft, viewTop, viewLeft + valueTextView.getMeasuredWidth(), viewTop + valueTextView.getMeasuredHeight());
+-        viewLeft = LocaleController.isRTL ? dp(leftPadding - 6) : width - valueSpoilersTextView.getMeasuredWidth() - dp(leftPadding - 6);
++        if (valueImageView.getVisibility() == VISIBLE) {
++            viewLeft = LocaleController.isRTL
++                ? valueImageView.getMeasuredWidth() + dp(27)
++                : width - valueSpoilersTextView.getMeasuredWidth() - valueImageView.getMeasuredWidth() - dp(27);
++        } else {
++            viewLeft = LocaleController.isRTL ? dp(leftPadding - 6) : width - valueSpoilersTextView.getMeasuredWidth() - dp(leftPadding - 6);
++        }
+         valueSpoilersTextView.layout(viewLeft, viewTop, viewLeft + valueSpoilersTextView.getMeasuredWidth(), viewTop + valueSpoilersTextView.getMeasuredHeight());
+ 
+         if (LocaleController.isRTL) {
+@@ -298,9 +316,6 @@ public class TextCell extends FrameLayout {
              subtitleView.layout(viewLeft, viewTop, viewLeft + subtitleView.getMeasuredWidth(), viewTop + subtitleView.getMeasuredHeight());
          } else {
              viewTop = (height - textView.getTextHeight()) / 2 + dp(1);

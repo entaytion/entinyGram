@@ -8,7 +8,6 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.RectF
 import android.text.SpannableStringBuilder
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.FrameLayout
@@ -17,6 +16,7 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.DocumentObject
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.FileLog
+import org.telegram.messenger.LocaleController
 import org.telegram.messenger.ImageLocation
 import org.telegram.messenger.MediaDataController
 import org.telegram.messenger.MessagesController
@@ -36,17 +36,17 @@ class DrawerActionCell(context: Context) : FrameLayout(context) {
     private val rect = RectF()
 
     init {
+        val isRTL = LocaleController.isRTL
+        val startGravity = if (isRTL) Gravity.RIGHT else Gravity.LEFT
         imageView = BackupImageView(context)
-        imageView.setColorFilter(PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuItemIcon), PorterDuff.Mode.SRC_IN))
+        imageView.setColorFilter(PorterDuffColorFilter(DrawerM3SectionsHelper.menuIconColor(), PorterDuff.Mode.SRC_IN))
         imageView.imageReceiver.setFileLoadingPriority(FileLoader.PRIORITY_HIGH)
 
         textView = TextView(context)
-        textView.setTextColor(Theme.getColor(Theme.key_chats_menuItemText))
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
-        textView.typeface = AndroidUtilities.bold()
-        textView.gravity = Gravity.CENTER_VERTICAL or Gravity.LEFT
-        addView(imageView, LayoutHelper.createFrame(24, 24f, Gravity.LEFT or Gravity.TOP, 19f, 12f, 0f, 0f))
-        addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat(), Gravity.LEFT or Gravity.TOP, 72f, 0f, 16f, 0f))
+        DrawerM3SectionsHelper.styleMenuLabel(textView, 15f, AndroidUtilities.bold())
+        textView.gravity = Gravity.CENTER_VERTICAL or startGravity
+        addView(imageView, LayoutHelper.createFrame(24, 24f, startGravity or Gravity.TOP, if (isRTL) 0f else 19f, 12f, if (isRTL) 19f else 0f, 0f))
+        addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat(), startGravity or Gravity.TOP, if (isRTL) 16f else 56f, 0f, if (isRTL) 56f else 16f, 0f))
 
         setWillNotDraw(false)
     }
@@ -58,7 +58,7 @@ class DrawerActionCell(context: Context) : FrameLayout(context) {
             it.contains("VALIDATE_PHONE_NUMBER") || it.contains("VALIDATE_PASSWORD")
         }
         if (error) {
-            val countTop = AndroidUtilities.dp(12.5f)
+            val countTop = (measuredHeight - AndroidUtilities.dp(23f)) / 2
             val countWidth = AndroidUtilities.dp(9f)
             val countLeft = measuredWidth - countWidth - AndroidUtilities.dp(25f)
 
@@ -80,21 +80,21 @@ class DrawerActionCell(context: Context) : FrameLayout(context) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(
             MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48f), MeasureSpec.EXACTLY)
+            MeasureSpec.makeMeasureSpec(DrawerM3SectionsHelper.menuItemHeight(), MeasureSpec.EXACTLY)
         )
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        textView.setTextColor(Theme.getColor(Theme.key_chats_menuItemText))
+        DrawerM3SectionsHelper.styleMenuLabel(textView, 15f, AndroidUtilities.bold())
     }
 
     fun setTextAndIcon(id: Int, text: CharSequence, resId: Int) {
         currentId = id
         try {
             textView.text = text
-            textView.setTextColor(Theme.getColor(Theme.key_chats_menuItemText))
-            imageView.setColorFilter(PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuItemIcon), PorterDuff.Mode.SRC_IN))
+            DrawerM3SectionsHelper.styleMenuLabel(textView, 15f, AndroidUtilities.bold())
+            imageView.setColorFilter(PorterDuffColorFilter(DrawerM3SectionsHelper.menuIconColor(), PorterDuff.Mode.SRC_IN))
             imageView.setImageResource(resId)
         } catch (e: Throwable) {
             FileLog.e(e)
@@ -104,6 +104,7 @@ class DrawerActionCell(context: Context) : FrameLayout(context) {
     fun setBot(bot: TLRPC.TL_attachMenuBot) {
         currentId = bot.bot_id.toInt()
         try {
+            DrawerM3SectionsHelper.styleMenuLabel(textView, 15f, AndroidUtilities.bold())
             textView.text = if (bot.side_menu_disclaimer_needed) applyNewSpan(bot.short_name) else bot.short_name
             val botIcon = MediaDataController.getSideAttachMenuBotIcon(bot)
             if (botIcon != null) {

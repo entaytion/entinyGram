@@ -70,6 +70,8 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **messages appearance** — hide reply background, custom reply colors and pattern emoji, wide channel posts with adjustable padding, show spoilers directly, forum topics as Material 3 cards, snowflakes over the chat or the header
 - 📡 **tablet mode** — force the tablet layout on or off, or leave it to the screen size
 - 📡 **settings screen** — reorder and hide rows (new Telegram rows are picked up automatically), hide the accounts list, custom My Profile rows, disable dividers, hide the support card, downloads button always or never, full-screen app icon picker, clock format (auto follows the system 12/24h setting, not the Telegram language), branded first-run intro
+- 📡 **settings link status** — on/off values stay clear of their chevrons in either layout direction
+- 📡 **side drawer** — Material 3 menu sections with aligned icons and labels
 - 📡 **menu shortcuts** — clear cache and restart app in the chats menu, restart app and plugin settings in the side menu
 
 ### profile & identity

@@ -147,6 +147,8 @@ class DrawerLayoutAdapter(
                 cell.setAccount(accountNumbers[position - 2])
             }
 
+            5 -> (holder.itemView as DrawerAddCell).bind()
+
             7 -> {
                 val cell = holder.itemView as DrawerProxyCell
                 var pos = position - 2
