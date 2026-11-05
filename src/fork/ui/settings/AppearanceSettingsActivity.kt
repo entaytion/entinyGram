@@ -110,6 +110,16 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLayout)))
+        items.add(
+            UItem.asButton(
+                BUTTON_TABLET_MODE,
+                LocaleController.getString(R.string.InuTabletMode),
+                tabletModeLabel(InuConfig.TABLET_MODE.value),
+            )
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuTabletModeInfo)))
+
         if (animationSpeedSlider == null) {
             animationSpeedSlider = SliderCell(
                 this.context, min = 0.5f, max = 3f,
@@ -231,6 +241,21 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 showRestartBulletin()
             }
 
+            BUTTON_TABLET_MODE -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuTabletModeAuto),
+                    LocaleController.getString(R.string.InuTabletModeOn),
+                    LocaleController.getString(R.string.InuTabletModeOff),
+                ),
+                InuConfig.TABLET_MODE.value,
+            ) { which ->
+                if (InuConfig.TABLET_MODE.value == which) return@show
+                InuConfig.TABLET_MODE.value = which
+                listView?.adapter?.update(true)
+                showRestartBulletin()
+            }
+
             BUTTON_IOS_STYLE -> presentFragment(IosStyleSettingsActivity())
             BUTTON_MATERIAL3 -> presentFragment(Material3SettingsActivity())
 
@@ -254,6 +279,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
+        private val BUTTON_TABLET_MODE = InuUtils.generateId()
         private val BUTTON_IOS_STYLE = InuUtils.generateId()
         private val BUTTON_MATERIAL3 = InuUtils.generateId()
         private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
@@ -266,6 +292,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             InuConfig.PredictiveBackModeItem.OFF -> LocaleController.getString(R.string.InuPredictiveBackOff)
             InuConfig.PredictiveBackModeItem.STOCK -> LocaleController.getString(R.string.InuPredictiveBackStock)
             else -> LocaleController.getString(R.string.InuPredictiveBackMaterial3)
+        }
+
+        private fun tabletModeLabel(value: Int): String = when (value) {
+            InuConfig.TabletModeItem.ON -> LocaleController.getString(R.string.InuTabletModeOn)
+            InuConfig.TabletModeItem.OFF -> LocaleController.getString(R.string.InuTabletModeOff)
+            else -> LocaleController.getString(R.string.InuTabletModeAuto)
         }
 
         @JvmField
@@ -284,6 +316,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),
+                SearchRegistry.Entry("tablet-mode", R.string.InuTabletMode, BUTTON_TABLET_MODE),
                 SearchRegistry.Entry("non-island-folders-bar", R.string.InuNonIslandFoldersBar, TOGGLE_NON_ISLAND_FOLDERS_BAR),
                 SearchRegistry.Entry("non-island-shared-media-tabs", R.string.InuNonIslandSharedMediaTabs, TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS),
                 SearchRegistry.Entry("non-island-global-search", R.string.InuNonIslandGlobalSearch, TOGGLE_NON_ISLAND_GLOBAL_SEARCH),

@@ -249,5 +249,6 @@
   "unread-badge-on-back-button": "chat",
   "user-info-saver": "privacy",
   "wide-channel-posts": "ui",
+  "tablet-mode": "ui",
   "emoji-view-observer-leak": "chat"
 }

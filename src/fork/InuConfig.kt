@@ -381,6 +381,17 @@ object InuConfig {
     @JvmField
     val PREDICTIVE_BACK_MODE = PredictiveBackModeItem()
 
+    class TabletModeItem : IntItem("tablet_mode", AUTO) {
+        companion object {
+            const val AUTO = 0
+            const val ON = 1
+            const val OFF = 2
+        }
+    }
+
+    @JvmField
+    val TABLET_MODE = TabletModeItem()
+
     class ClockFormatItem : IntItem("clock_format", SYSTEM) {
         companion object {
             const val SYSTEM = 0

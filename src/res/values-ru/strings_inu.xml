@@ -210,6 +210,12 @@
     <string name="InuPredictiveBackOff">Откл.</string>
     <string name="InuPredictiveBackStock">Стандартная</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
+    <string name="InuLayout">Макет</string>
+    <string name="InuTabletMode">Режим планшета</string>
+    <string name="InuTabletModeAuto">Авто</string>
+    <string name="InuTabletModeOn">Включён</string>
+    <string name="InuTabletModeOff">Выключен</string>
+    <string name="InuTabletModeInfo">«Авто» подстраивается под размер экрана. «Включён» всегда использует планшетный макет, «Выключен» — телефонный.</string>
     <string name="InuClockFormat">Формат времени</string>
     <string name="InuClockFormatSystem">Как в системе</string>
     <string name="InuClockFormat12Hour">12-часовой</string>

@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 5 Nov 2026 12:38:58 +0200
+Subject: tablet mode: on, off or automatic
+
+---
+ .../java/org/telegram/messenger/AndroidUtilities.java     | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+@@ -2969,7 +2969,9 @@ public class AndroidUtilities {
+     }
+ 
+     public static boolean isTabletForce() {
+-        return ApplicationLoader.applicationContext != null && ApplicationLoader.applicationContext.getResources().getBoolean(R.bool.isTablet);
++        return desu.inugram.helpers.TabletModeHelper.apply(
++            ApplicationLoader.applicationContext != null && ApplicationLoader.applicationContext.getResources().getBoolean(R.bool.isTablet)
++        );
+     }
+ 
+     public static boolean isTabletInternal() {
+@@ -2979,6 +2981,10 @@ public class AndroidUtilities {
+         return isTablet;
+     }
+ 
++    public static void inu_resetTabletCache() {
++        isTablet = null;
++    }
++
+     public static void resetTabletFlag() {
+         if (wasTablet == null) {
+             wasTablet = isTabletInternal();

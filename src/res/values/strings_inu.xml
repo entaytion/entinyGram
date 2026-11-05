@@ -472,6 +472,12 @@
     <string name="InuPredictiveBackOff">Off</string>
     <string name="InuPredictiveBackStock">Stock</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
+    <string name="InuLayout">Layout</string>
+    <string name="InuTabletMode">Tablet mode</string>
+    <string name="InuTabletModeAuto">Auto</string>
+    <string name="InuTabletModeOn">On</string>
+    <string name="InuTabletModeOff">Off</string>
+    <string name="InuTabletModeInfo">Auto follows the screen size. On always uses the tablet layout, Off always the phone one.</string>
     <string name="InuClockFormat">Clock format</string>
     <string name="InuClockFormatSystem">Use system setting</string>
     <string name="InuClockFormat12Hour">12-hour</string>

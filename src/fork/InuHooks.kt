@@ -8,6 +8,7 @@ import desu.inugram.helpers.LoginHelper
 import desu.inugram.helpers.ProxyVpnHelper
 import desu.inugram.helpers.ShortcutHelper
 import desu.inugram.helpers.SplashScreenHelper
+import desu.inugram.helpers.TabletModeHelper
 import desu.inugram.helpers.UrlCleanerHelper
 import desu.inugram.helpers.cloud.CloudSettingsHelper
 import desu.inugram.helpers.dialogs.DrawerHelper
@@ -47,6 +48,9 @@ object InuHooks {
     fun preInit(context: Context) {
         CrashReporter.install()
         InuConfig.load(context)
+        // entiny: isTablet is read from AndroidUtilities' static block before the config exists, so re-apply it after loading
+        TabletModeHelper.sync()
+        AndroidUtilities.inu_resetTabletCache()
     }
 
     /**
