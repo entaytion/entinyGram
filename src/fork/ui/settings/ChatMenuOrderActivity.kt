@@ -1,11 +1,10 @@
 package desu.inugram.ui.settings
 
 import desu.inugram.InuConfig
-import desu.inugram.helpers.InuUtils
-import android.view.View
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import desu.inugram.helpers.menu.ChatMenuConfig
+import desu.inugram.helpers.menu.MenuOrderEntry
 // #if PLUGINS
 import desu.inugram.helpers.plugins.ui.PluginActions
 // #endif
@@ -23,22 +22,39 @@ class ChatMenuOrderActivity : MenuOrderActivity<ChatMenuConfig.Item>() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuChatMenuOrder)
 
+    override fun mainRowVisible(entry: MenuOrderEntry<ChatMenuConfig.Item>): Boolean =
+        super.mainRowVisible(entry) && !entry.item.isEntinyMenuItem
+
+    override fun isToggleable(item: ChatMenuConfig.Item): Boolean =
+        item != ChatMenuConfig.Item.ENTINY_MENU
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        super.fillItems(items, adapter)
+        fillMainSection(items, adapter)
         items.add(UItem.asShadow(null))
-        items.add(UItem.asCheck(TOGGLE_GROUP_ARCHIVES, LocaleController.getString(R.string.InuGroupChatArchives)).setChecked(InuConfig.GROUP_CHAT_ARCHIVES.value))
-    }
-
-    override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (item.id == TOGGLE_GROUP_ARCHIVES) {
-            InuConfig.GROUP_CHAT_ARCHIVES.toggle()
-            listView.adapter.update(true)
-        } else {
-            super.onClick(item, view, position, x, y)
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatMenuEntinyGram)))
+        val groupedEntries = entries.filter {
+            !it.bottom && rowVisible(it) && isAvailable(it.item) && it.item.isEntinyMenuItem
         }
+        openReorderSection(adapter, toBottom = false) { reordered -> reorderEntinyItems(reordered) }
+        for (entry in groupedEntries) items.add(buildRow(entry))
+        adapter.reorderSectionEnd()
+        // #if PLUGINS
+        fillPluginSection(items, adapter)
+        // #endif
+        fillResetSection(items, adapter)
     }
 
-    companion object {
-        private val TOGGLE_GROUP_ARCHIVES = InuUtils.generateId()
+    private fun reorderEntinyItems(items: List<UItem>) {
+        val reordered = items.mapNotNull { it.`object` as? ChatMenuConfig.Item }
+        val byItem = entries.associateBy { it.item }
+        val reorderedEntries = reordered.mapNotNull(byItem::get)
+        val visible = entries.filter {
+            !it.bottom && rowVisible(it) && isAvailable(it.item) && it.item.isEntinyMenuItem
+        }
+        if (reorderedEntries.size != visible.size) return
+        val next = reorderedEntries.iterator()
+        entries = entries.map { if (it in visible) next.next() else it }.toMutableList()
+        config.value = entries
     }
+
 }

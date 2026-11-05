@@ -1315,6 +1315,7 @@
     <string name="InuMenuBottomRowFull">Quick actions row is full (max 4)</string>
     <string name="InuChatMenuOrder">Chat menu</string>
     <string name="InuChatMenuItems">Items</string>
+    <string name="InuChatMenuEntinyGram" translatable="false">entinyGram</string>
     <string name="InuChatMenuOrderInfo">Reorder or hide chat three-dots menu items. Drag to move, toggle to hide.</string>
     <string name="InuChatMenuReset">Reset to default</string>
     <string name="InuDialogsMenuOrder">Options menu</string>
@@ -2247,7 +2248,6 @@
     <string name="InuUnreadBadgeOnBackButtonInfo">Show the number of unread chats on the back button in a chat.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">iOS-styled counter</string>
     <string name="InuEditedArchive">Edited archive</string>
-    <string name="InuGroupChatArchives">Group archives in entinyGram folder</string>
     <string name="InuLogsRedact">Redact sensitive data</string>
     <string name="InuLogsRedactInfo">Replace phone numbers, IDs, tokens, IPs and usernames in logs with stable placeholders as they are written</string>
     <string name="InuProfileJoinDate">Join Date</string>

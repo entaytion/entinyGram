@@ -1902,7 +1902,6 @@
     <string name="InuUnreadBadgeOnBackButtonInfo">تعداد چت‌های خوانده‌نشده را روی دکمه بازگشت در چت نمایش می‌دهد</string>
     <string name="InuUnreadBadgeOnBackButtonIos">شمارنده به سبک iOS</string>
     <string name="InuEditedArchive">بایگانی پیام‌های ویرایش‌شده</string>
-    <string name="InuGroupChatArchives">گروه‌بندی بایگانی‌ها در پوشه entinyGram</string>
     <string name="InuAllowForwardRestrictedWarning">ممکن است Telegram حتی با فعال بودن این گزینه برخی ارسال‌ها را مسدود کند. اگر پیام «Plain forwarding is not allowed.» را دیدید، به‌جای آن متن را کپی کنید یا رسانه را ذخیره کنید.</string>
     <string name="InuAppIconAmongUs">Among Us</string>
     <string name="InuAppIconBlush">گلگون</string>

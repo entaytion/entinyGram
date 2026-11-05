@@ -1917,7 +1917,6 @@
     <string name="InuUnreadBadgeOnBackButtonInfo">يعرض عدد المحادثات غير المقروءة على زر الرجوع داخل المحادثة.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">عدّاد بأسلوب iOS</string>
     <string name="InuEditedArchive">أرشيف الرسائل المعدلة</string>
-    <string name="InuGroupChatArchives">تجميع الأرشيفات في مجلد entinyGram</string>
     <string name="InuAllowForwardRestrictedWarning">قد يظل Telegram يحظر بعض عمليات إعادة التوجيه حتى مع تفعيل هذا الخيار. إذا ظهرت لك رسالة «Plain forwarding is not allowed.»، فانسخ النص أو احفظ الوسائط بدلاً من ذلك.</string>
     <string name="InuAppIconAmongUs">Among Us</string>
     <string name="InuAppIconBlush">خجل</string>

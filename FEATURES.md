@@ -97,6 +97,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **bookmarks** — bookmark from the message menu (up to 500 per chat), star next to the time, browsable by chat in its own screen
 - 📡 **silent broadcast bell** — move the channel's broadcast bell out of the input field into the chat menu
 - 📡 **reactions** — hide them on messages, disable setting them, hide chat-list badges, mark them read instantly, and stale unread badges stop sticking
+- 📡 **chat menu** — personal privacy and local-data actions grouped under entinyGram, with a separate order section
 - 📡 **text and input fixes** — better url parsing, separator after mention, keyboard stays up when scrolling a chat with a draft
 - 📡 **long-press to close the pinned panel** — until a new pin, or always in this chat
 - 📡 **don't confirm opening links** — external links open without the "Open link" dialog

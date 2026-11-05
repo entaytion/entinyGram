@@ -2111,7 +2111,6 @@ Mentre è attivo:</string>
     <string name="InuUnreadBadgeOnBackButtonInfo">Mostra il numero di chat non lette sul pulsante indietro dentro una chat.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">Contatore in stile iOS</string>
     <string name="InuEditedArchive">Archivio delle modifiche</string>
-    <string name="InuGroupChatArchives">Raggruppa gli archivi nella cartella di entinyGram</string>
     <string name="InuLogsRedact">Oscura i dati sensibili</string>
     <string name="InuLogsRedactInfo">Sostituisce numeri di telefono, ID, token, IP e nomi utente nei log con segnaposto stabili mentre vengono scritti</string>
     <string name="InuProfileJoinDate">Data di iscrizione</string>

@@ -188,7 +188,15 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         CHAT_LOCAL_NAME("chat_local_name", listOf(ChatActionsHelper.ACTION_CHAT_LOCAL_NAME), R.string.InuLocalName, R.drawable.msg_edit),
         CHAT_MARK_READ("chat_mark_read", listOf(ChatActionsHelper.ACTION_CHAT_MARK_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
         CHAT_DELETE_MY_MESSAGES("chat_delete_my_messages", listOf(ChatActionsHelper.ACTION_CHAT_DELETE_MY_MESSAGES), R.string.InuDeleteMyMessages, R.drawable.msg_delete),
+        ENTINY_MENU("entiny_menu", listOf(ChatActionsHelper.ACTION_ENTINY_MENU), R.string.InuChatMenuEntinyGram, R.drawable.icon_settings_inu),
         ACTIONS("actions", listOf(ChatActionsHelper.ACTION_PLUGIN_ACTIONS), R.string.InuActions, R.drawable.msg_settings_old);
+
+        val isEntinyMenuItem: Boolean
+            get() = when (this) {
+                CLEAR_DELETED, TYPING_SPOOF, REGEX_CHAT_FILTERS, DELETED_MESSAGES, EDITED_MESSAGES,
+                GHOST_MODE, SHOW_HIDDEN, CHAT_LOCAL_NAME, CHAT_MARK_READ, SHOW_HIDDEN_MESSAGES -> true
+                else -> false
+            }
 
         companion object {
             private val byId: Map<Int, Item> by lazy {

@@ -98,6 +98,7 @@ object ChatActionsHelper {
     const val ACTION_BUSINESS_BOT = 550
     const val ACTION_SILENT_BROADCAST = 551
     const val ACTION_SHOW_HIDDEN_MESSAGES = 552
+    const val ACTION_ENTINY_MENU = 553
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -113,35 +114,51 @@ object ChatActionsHelper {
     /** the back row and the gap under it, which every plugin submenu keeps across a rebuild */
     private const val SUBMENU_HEADER_CELLS = 2
 
-    private fun addArchiveItems(activity: ChatActivity, headerItem: ActionBarMenuItem) {
-        val archives = listOf(
-            Triple(ACTION_DELETED_MESSAGES, R.drawable.msg_delete, R.string.InuDeletedArchive),
-            Triple(ACTION_EDITED_MESSAGES, R.drawable.msg_edit, R.string.InuEditedArchive),
-        )
-        if (!InuConfig.GROUP_CHAT_ARCHIVES.value) {
-            for ((id, icon, title) in archives) headerItem.lazilyAddSubItem(id, icon, LocaleController.getString(title))
-            return
-        }
-        val enabled = InuConfig.CHAT_MENU_ITEMS.value.filter { it.enabled }.map { it.item }
-        val visible = archives.filter { ChatMenuConfig.Item.forId(it.first) in enabled }
-        if (visible.isEmpty()) return
+    private fun addEntinyItems(activity: ChatActivity, headerItem: ActionBarMenuItem) {
+        val visible = InuConfig.CHAT_MENU_ITEMS.value
+            .filter { it.enabled && it.item.isEntinyMenuItem }
+            .filter { isEntinyItemAvailable(it.item, activity) }
+        if (visible.isEmpty() || InuConfig.CHAT_MENU_ITEMS.value.none { it.enabled && it.item == ChatMenuConfig.Item.ENTINY_MENU }) return
         val popup = headerItem.getPopupLayout()
         val submenu = ItemOptions.swipeback(popup, activity.resourceProvider)
         submenu.add(R.drawable.ic_ab_back, LocaleController.getString(R.string.Back)) {
             popup.swipeBack?.closeForeground()
         }
         submenu.addGap()
-        for ((id, icon, title) in visible) {
-            submenu.add(icon, LocaleController.getString(title)) {
-                activity.presentFragment(if (id == ACTION_EDITED_MESSAGES) {
-                    EditHistoryActivity(activity.dialogId, activity.currentAccount)
-                } else {
-                    DeletedArchiveActivity(activity.dialogId, activity.currentAccount)
-                })
+        for (entry in visible) {
+            val item = entry.item
+            submenu.add(item.iconRes, LocaleController.getString(item.labelRes)) {
+                handleClick(item.ids.first(), activity)
                 headerItem.closeSubMenu()
             }
+            if (item == ChatMenuConfig.Item.SHOW_HIDDEN_MESSAGES) {
+                submenu.last?.let { revealItems[activity] = it }
+            }
         }
-        headerItem.inu_lazilyAddSwipeBackItem(visible.first().first, R.drawable.msg_archive, null, "entinygram", submenu.linearLayout)
+        headerItem.inu_lazilyAddSwipeBackItem(
+            ACTION_ENTINY_MENU,
+            R.drawable.icon_settings_inu,
+            null,
+            LocaleController.getString(R.string.InuChatMenuEntinyGram),
+            submenu.linearLayout,
+        )
+        updateRevealItem(activity)
+    }
+
+    private fun isEntinyItemAvailable(item: ChatMenuConfig.Item, activity: ChatActivity): Boolean {
+        val notEncrypted = activity.currentEncryptedChat == null && activity.dialogId != 0L
+        return when (item) {
+            ChatMenuConfig.Item.GHOST_MODE ->
+                activity.dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId &&
+                    !GhostHelper.isChannelDialog(activity.dialogId)
+            ChatMenuConfig.Item.CHAT_LOCAL_NAME -> InuConfig.LOCAL_NAMES.value && notEncrypted
+            ChatMenuConfig.Item.TYPING_SPOOF -> notEncrypted &&
+                TypingSpoofHelper.canSpoofTyping(activity.currentAccount, activity.dialogId)
+            ChatMenuConfig.Item.CHAT_MARK_READ -> notEncrypted && GhostHelper.shouldSuppressRead(activity.dialogId)
+            ChatMenuConfig.Item.REGEX_CHAT_FILTERS,
+            ChatMenuConfig.Item.SHOW_HIDDEN_MESSAGES -> activity.currentEncryptedChat == null
+            else -> true
+        }
     }
 
     @JvmStatic
@@ -193,11 +210,6 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InuShowPinnedPanel),
             )
             headerItem.setSubItemShown(ACTION_SHOW_PINNED_PANEL, false)
-            revealItems[activity] = headerItem.lazilyAddSubItem(
-                ACTION_SHOW_HIDDEN_MESSAGES, R.drawable.msg_message,
-                LocaleController.getString(R.string.InuShowFilteredMessages),
-            )
-            updateRevealItem(activity)
         }
         if (canViewAdminLog(activity.currentChat)) {
             headerItem.lazilyAddSubItem(
@@ -225,10 +237,6 @@ object ChatActionsHelper {
             ACTION_HIDE_TITLE, R.drawable.inu_tabler_eye_off,
             LocaleController.getString(R.string.InuHideTitle),
         )
-        headerItem.lazilyAddSubItem(
-            ACTION_CLEAR_DELETED, R.drawable.inu_tabler_trash_x,
-            LocaleController.getString(R.string.InuClearDeletedHere),
-        )
         if (ChatObject.isBoostSupported(activity.currentChat) && ChatObject.hasAdminRights(activity.currentChat)) {
             headerItem.lazilyAddSubItem(
                 ACTION_STATISTICS, R.drawable.msg_stats,
@@ -252,25 +260,7 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InviteLinks),
             )
         }
-        if (activity.currentEncryptedChat == null && TypingSpoofHelper.canSpoofTyping(activity.currentAccount, activity.dialogId)) {
-            headerItem.lazilyAddSubItem(
-                ACTION_TYPING_SPOOF, R.drawable.input_mic,
-                LocaleController.getString(R.string.InuTypingSpoof),
-            )
-        }
-        if (activity.currentEncryptedChat == null) {
-            headerItem.lazilyAddSubItem(
-                ACTION_REGEX_CHAT_FILTERS, R.drawable.msg_block2,
-                LocaleController.getString(R.string.InuRegexChatFilters),
-            )
-        }
-        addArchiveItems(activity, headerItem)
-        if (activity.dialogId != 0L && activity.dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId && !GhostHelper.isChannelDialog(activity.dialogId)) {
-            headerItem.lazilyAddSubItem(
-                ACTION_GHOST_MODE, R.drawable.inu_ghost,
-                LocaleController.getString(R.string.InuGhostMode),
-            )
-        }
+        addEntinyItems(activity, headerItem)
         val dialogId = activity.dialogId
         val notEncrypted = activity.currentEncryptedChat == null && dialogId != 0L
         if (InuConfig.CHAT_EXPORT.value && notEncrypted) {
@@ -292,25 +282,9 @@ object ChatActionsHelper {
             )
         }
         headerItem.lazilyAddSubItem(
-            ACTION_SHOW_HIDDEN, R.drawable.inu_tabler_eye,
-            LocaleController.getString(R.string.InuRestoreHiddenMessages),
-        )
-        headerItem.lazilyAddSubItem(
             ACTION_CHAT_PROXY, R.drawable.outline_shield_check,
             LocaleController.getString(R.string.ProxySettings),
         )
-        if (InuConfig.LOCAL_NAMES.value && notEncrypted) {
-            headerItem.lazilyAddSubItem(
-                ACTION_CHAT_LOCAL_NAME, R.drawable.msg_edit,
-                LocaleController.getString(R.string.InuLocalName),
-            )
-        }
-        if (notEncrypted && GhostHelper.shouldSuppressRead(dialogId)) {
-            headerItem.lazilyAddSubItem(
-                ACTION_CHAT_MARK_READ, R.drawable.msg_markread,
-                LocaleController.getString(R.string.InuMarkChatAsRead),
-            )
-        }
         if (notEncrypted && !ChatObject.isChannelAndNotMegaGroup(activity.currentChat) && dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
             headerItem.lazilyAddSubItem(
                 ACTION_CHAT_DELETE_MY_MESSAGES, R.drawable.msg_delete,
@@ -352,15 +326,24 @@ object ChatActionsHelper {
     // #endif
 
     private val selectionMenus = WeakHashMap<ChatActivity, SelectionMenu>()
-    private val revealItems = WeakHashMap<ChatActivity, ActionBarMenuItem.Item>()
+    private val revealItems = WeakHashMap<ChatActivity, ActionBarMenuSubItem>()
 
     @JvmStatic
     fun updateRevealItem(activity: ChatActivity) {
         val item = revealItems[activity] ?: return
         val revealed = BlockedMessagesHelper.isRevealed(activity.currentAccount, activity.dialogId)
-        item.setText(LocaleController.getString(if (revealed) R.string.InuHideFilteredMessages else R.string.InuShowFilteredMessages))
-        item.setIcon(if (revealed) R.drawable.menu_hide_gift else R.drawable.msg_message)
-        activity.headerItem?.setSubItemShown(ACTION_SHOW_HIDDEN_MESSAGES, revealed || BlockedMessagesHelper.hasFiltered(activity.messages))
+        val shown = revealed || BlockedMessagesHelper.hasFiltered(activity.messages)
+        item.setTextAndIcon(
+            LocaleController.getString(if (revealed) R.string.InuHideFilteredMessages else R.string.InuShowFilteredMessages),
+            if (revealed) R.drawable.menu_hide_gift else R.drawable.msg_message,
+        )
+        item.visibility = if (shown) View.VISIBLE else View.GONE
+        val hasOtherItems = InuConfig.CHAT_MENU_ITEMS.value.any {
+            it.enabled && it.item.isEntinyMenuItem && it.item != ChatMenuConfig.Item.SHOW_HIDDEN_MESSAGES &&
+                isEntinyItemAvailable(it.item, activity)
+        }
+        val folderEnabled = InuConfig.CHAT_MENU_ITEMS.value.any { it.enabled && it.item == ChatMenuConfig.Item.ENTINY_MENU }
+        activity.headerItem?.setSubItemShown(ACTION_ENTINY_MENU, folderEnabled && (shown || hasOtherItems))
     }
 
     fun onFragmentDestroy(activity: ChatActivity) {

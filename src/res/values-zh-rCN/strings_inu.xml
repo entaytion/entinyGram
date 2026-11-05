@@ -1909,7 +1909,6 @@
     <string name="InuBiometricRequireConfirmationBots">在小程序中</string>
     <string name="InuBiometricRequireConfirmationActions">删除聊天或登出时</string>
     <string name="InuEditedArchive">已编辑消息存档</string>
-    <string name="InuGroupChatArchives">将存档分组到 entinyGram 文件夹</string>
     <string name="InuAllowForwardRestrictedWarning">即使开启此选项，Telegram 仍可能拦截部分转发。如果看到“Plain forwarding is not allowed.”，请改为复制文本或保存媒体。</string>
     <string name="InuAppIconAmongUs">Among Us</string>
     <string name="InuAppIconBlush">腮红</string>

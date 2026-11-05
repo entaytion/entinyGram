@@ -1913,7 +1913,6 @@
     <string name="InuBiometricRequireConfirmationBots">Mini uygulamalarda</string>
     <string name="InuBiometricRequireConfirmationActions">Sohbetleri silerken veya çıkış yaparken</string>
     <string name="InuEditedArchive">Düzenlenen mesaj arşivi</string>
-    <string name="InuGroupChatArchives">Arşivleri entinyGram klasöründe grupla</string>
     <string name="InuAllowForwardRestrictedWarning">Bu açık olsa bile Telegram bazı iletmeleri yine de engelleyebilir. “Plain forwarding is not allowed.” hatasını görürseniz bunun yerine metni kopyalayın veya medyayı kaydedin.</string>
     <string name="InuAppIconAmongUs">Among Us</string>
     <string name="InuAppIconBlush">Allık</string>

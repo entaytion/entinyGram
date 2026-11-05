@@ -2237,7 +2237,6 @@
     <string name="InuUnreadBadgeOnBackButtonInfo">Показує кількість непрочитаних чатів на кнопці «назад» у чаті.</string>
     <string name="InuUnreadBadgeOnBackButtonIos">Лічильник у стилі iOS</string>
     <string name="InuEditedArchive">Архів відредагованих</string>
-    <string name="InuGroupChatArchives">Згрупувати архіви в папку entinyGram</string>
     <string name="InuCameraSound">Камера і звук</string>
     <string name="InuRoundAudioBitrate">Бітрейт звуку відеоповідомлень</string>
     <string name="InuRoundAudioSource">Джерело звуку відеоповідомлень</string>

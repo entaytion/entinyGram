@@ -1909,7 +1909,6 @@
     <string name="InuBiometricRequireConfirmationBots">ミニアプリ内</string>
     <string name="InuBiometricRequireConfirmationActions">チャットの削除またはログアウト時</string>
     <string name="InuEditedArchive">編集済みメッセージのアーカイブ</string>
-    <string name="InuGroupChatArchives">アーカイブをentinyGramフォルダーにまとめる</string>
     <string name="InuAllowForwardRestrictedWarning">この設定をオンにしても、Telegram が一部の転送をブロックする場合があります。「Plain forwarding is not allowed.」と表示された場合は、代わりにテキストをコピーするかメディアを保存してください。</string>
     <string name="InuAppIconAmongUs">Among Us</string>
     <string name="InuAppIconBlush">ブラッシュ</string>
