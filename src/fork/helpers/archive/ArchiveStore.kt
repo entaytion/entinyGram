@@ -651,6 +651,8 @@ object ArchiveStore {
         }
     }
 
+    private val ACCOUNT_DIR_REGEX = Regex("account_[1-9][0-9]*")
+
     private fun deleteUnreferencedMediaFiles(db: SQLiteDatabase, paths: Collection<String>) {
         val archiveRoot = try {
             java.io.File(org.telegram.messenger.ApplicationLoader.applicationContext.filesDir, "entinyGram/media").canonicalFile
@@ -662,7 +664,7 @@ object ArchiveStore {
             val relativePath = file.path.removePrefix(archiveRoot.path + java.io.File.separator)
             if (relativePath == file.path) continue
             val accountDirectory = relativePath.substringBefore(java.io.File.separator)
-            if (!accountDirectory.matches(Regex("account_[1-9][0-9]*"))) continue
+            if (!accountDirectory.matches(ACCOUNT_DIR_REGEX)) continue
             val accountRoot = java.io.File(archiveRoot, accountDirectory)
             if (!file.path.startsWith(accountRoot.path + java.io.File.separator) || !file.isFile) continue
             val cursor = db.queryFinalized(

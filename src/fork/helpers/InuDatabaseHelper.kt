@@ -159,6 +159,13 @@ object InuDatabaseHelper {
                 db.executeFast("ALTER TABLE inu_edit_history ADD COLUMN from_id INTEGER DEFAULT 0").stepThis().dispose()
             } catch (e: Throwable) { }
         },
+        Migration(27) { db ->
+            // entiny: unreferenced-media probes check media_path per file, without these each probe is a full scan
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_media ON inu_deleted_messages(media_path)")
+                .stepThis().dispose();
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_edit_history_media ON inu_edit_history(media_path)")
+                .stepThis().dispose();
+        },
     )
 
     @JvmStatic

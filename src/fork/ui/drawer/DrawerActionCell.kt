@@ -12,6 +12,7 @@ import android.view.Gravity
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.FrameLayout
 import android.widget.TextView
+import desu.inugram.helpers.dialogs.DrawerM3SectionsHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.DocumentObject
 import org.telegram.messenger.FileLoader

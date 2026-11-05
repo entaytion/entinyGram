@@ -53,7 +53,8 @@ object DeletedMessagesHelper {
     @JvmStatic
     fun filterInChat(account: Int, dialogId: Long, ids: ArrayList<Int>, userInitiated: Boolean, lookup: (Int) -> MessageObject?): ArrayList<Int>? {
         if (ids.isEmpty()) return null
-        ArchiveCache.ensureAccountLoaded(account)
+        // entiny: without the feature nothing is kept, so the whole-archive index load is pure waste here
+        if (isSaveDeletedEnabled() || userInitiated) ArchiveCache.ensureAccountLoaded(account)
         val now = System.currentTimeMillis() / 1000L
         var keptAny = false
         val result = ArrayList<Int>(ids.size)

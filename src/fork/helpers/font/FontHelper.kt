@@ -100,11 +100,21 @@ object FontHelper {
     fun getActiveFallbackIds(): List<FontId> =
         (FontConfig.FONT.value as? FontMode.Custom)?.fallbacks ?: emptyList()
 
+    // entiny: composite build is expensive per paint; font changes already ask for a restart, so key-stale is fine
+    private val compositeCache = HashMap<String, Typeface>()
+
+    @Synchronized
     private fun resolve(targetWeight: Int, targetItalic: Boolean): Typeface? {
         val m = FontConfig.FONT.value as? FontMode.Custom ?: return null
         val primary = maybeResolveLegacyEmpty(m.fontId) ?: return null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            composite(primary, m.fallbacks, targetWeight, targetItalic)?.let { return it }
+            val key = "${primary.token()}|${m.fallbacks.joinToString(",") { it.token() }}|$targetWeight|$targetItalic"
+            compositeCache[key]?.let { return it }
+            composite(primary, m.fallbacks, targetWeight, targetItalic)?.let {
+                if (compositeCache.size > 16) compositeCache.clear()
+                compositeCache[key] = it
+                return it
+            }
         }
         return singleTokenTypeface(primary, targetWeight, targetItalic)
     }

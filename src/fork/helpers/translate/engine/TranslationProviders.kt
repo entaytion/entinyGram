@@ -102,6 +102,8 @@ private fun errorSnippet(text: String): String {
     return trimmed.take(200)
 }
 
+private const val MAX_RESPONSE_CHARS = 2_000_000
+
 internal fun httpJson(
     url: String,
     method: String = "GET",
@@ -126,7 +128,18 @@ internal fun httpJson(
     }
     val code = conn.responseCode
     val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
-        ?.bufferedReader()?.use { it.readText() } ?: ""
+        ?.bufferedReader()?.use { r ->
+            val sb = StringBuilder()
+            val buf = CharArray(8192)
+            while (true) {
+                val n = r.read(buf)
+                if (n <= 0) break
+                sb.append(buf, 0, n)
+                // entiny: providers are trusted-ish but a runaway body must not eat the heap
+                if (sb.length > MAX_RESPONSE_CHARS) throw IOException("provider response too large")
+            }
+            sb.toString()
+        } ?: ""
     return when {
         code == 429 -> throw ProviderRateLimitException("HTTP 429: ${errorSnippet(text)}")
         code in 200..299 -> text

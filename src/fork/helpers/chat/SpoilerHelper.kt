@@ -52,6 +52,7 @@ object SpoilerHelper {
     }
     private val cachedFm = Paint.FontMetrics()
     private var cachedLabel: String? = null
+    private var cachedLabelSource: String? = null
 
     @JvmStatic
     fun drawSolidIfOverridden(canvas: Canvas, effect: SpoilerEffect, parent: View?, lastColor: Int, mAlpha: Int): Boolean {
@@ -157,8 +158,11 @@ object SpoilerHelper {
             return
         }
 
-        val cur = LocaleController.getString(R.string.InuMediaSpoilerLabel).uppercase()
-        if (cachedLabel != cur) cachedLabel = cur
+        val raw = LocaleController.getString(R.string.InuMediaSpoilerLabel)
+        if (cachedLabelSource != raw) {
+            cachedLabelSource = raw
+            cachedLabel = raw.uppercase()
+        }
         val label = cachedLabel!!
         val padH = dp(16f).toFloat()
         val padV = dp(7f).toFloat()

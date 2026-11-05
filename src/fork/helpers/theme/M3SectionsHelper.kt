@@ -242,17 +242,25 @@ object M3SectionsHelper {
     @JvmStatic
     fun drawOwnSectionsBackgrounds(canvas: Canvas, container: ViewGroup) {
         if (container.getTag(R.id.inu_own_sections) != TRUE) return
-        drawRowsBackgrounds(canvas, container, getVisibleChildren(container), null, fullWidth = false)
+        drawRowsBackgrounds(canvas, container, fillVisibleChildren(container, visibleChildrenScratch), null, fullWidth = false)
     }
 
     @JvmStatic
     fun clipOwnSectionChild(canvas: Canvas, container: ViewGroup, child: View) {
         if (container.getTag(R.id.inu_own_sections) != TRUE) return
-        clipRowsChild(canvas, container, getVisibleChildren(container), child, fullWidth = false)
+        clipRowsChild(canvas, container, fillVisibleChildren(container, visibleChildrenScratch), child, fullWidth = false)
     }
 
-    private fun getVisibleChildren(container: ViewGroup): List<View> {
-        return (0 until container.childCount).map { container.getChildAt(it) }.filter { it.visibility == View.VISIBLE }
+    // entiny: drawChild calls this per child every frame - reuse the list instead of allocating two per child
+    private val visibleChildrenScratch = ArrayList<View>()
+
+    private fun fillVisibleChildren(container: ViewGroup, out: ArrayList<View>): ArrayList<View> {
+        out.clear()
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i)
+            if (child.visibility == View.VISIBLE) out.add(child)
+        }
+        return out
     }
 
     private fun drawRowsBackgrounds(

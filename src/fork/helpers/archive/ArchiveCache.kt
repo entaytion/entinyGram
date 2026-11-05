@@ -212,6 +212,9 @@ object ArchiveCache {
         val deleted = LongSparseArray<DeletedIdSet>()
         val media = LongSparseArray<LongSparseArray<String>>()
         val edits = LongSparseArray<DeletedIdSet>()
+        // entiny: rows are buffered per page and merged once, arraycopy-shifting the master set per row is O(n^2)
+        val pageDeleted = LongSparseArray<DeletedIdSet>()
+        val pageEdits = LongSparseArray<DeletedIdSet>()
         var lastDeletedRow = 0L
         var lastEditRow = 0L
         var deletedDone = false
@@ -237,6 +240,15 @@ object ArchiveCache {
         storage.storageQueue.postRunnable { loadIndexPage(account, storage, index) }
     }
 
+    private fun mergePageSets(page: LongSparseArray<DeletedIdSet>, master: LongSparseArray<DeletedIdSet>) {
+        for (i in 0 until page.size()) {
+            val dialogId = page.keyAt(i)
+            val set = master.get(dialogId) ?: DeletedIdSet().also { master.put(dialogId, it) }
+            set.addAll(page.valueAt(i))
+        }
+        page.clear()
+    }
+
     // entiny: one page per runnable so dialog and message loads can run between pages
     private fun loadIndexPage(account: Int, storage: MessagesStorage, index: ArchiveIndex) {
         if (synchronized(cacheLock) { (cacheGeneration[account] ?: 0L) != index.generation }) return
@@ -247,17 +259,19 @@ object ArchiveCache {
             if (!index.deletedDone) {
                 val count = ArchiveStore.readDeletedIndexPage(db, index.lastDeletedRow, LOAD_PAGE_ROWS) { rowId, dialogId, msgId, date, mediaPath ->
                     index.lastDeletedRow = rowId
-                    (index.deleted.get(dialogId) ?: DeletedIdSet().also { index.deleted.put(dialogId, it) }).add(msgId, date)
+                    (index.pageDeleted.get(dialogId) ?: DeletedIdSet().also { index.pageDeleted.put(dialogId, it) }).add(msgId, date)
                     if (mediaPath != null) (index.media.get(dialogId) ?: LongSparseArray<String>().also { index.media.put(dialogId, it) }).put(msgId.toLong(), mediaPath)
                 }
+                mergePageSets(index.pageDeleted, index.deleted)
                 index.rows += count
                 if (count < LOAD_PAGE_ROWS) index.deletedDone = true
                 finished = false
             } else {
                 val count = ArchiveStore.readEditIndexPage(db, index.lastEditRow, LOAD_PAGE_ROWS) { rowId, dialogId, msgId ->
                     index.lastEditRow = rowId
-                    (index.edits.get(dialogId) ?: DeletedIdSet().also { index.edits.put(dialogId, it) }).add(msgId, 0L)
+                    (index.pageEdits.get(dialogId) ?: DeletedIdSet().also { index.pageEdits.put(dialogId, it) }).add(msgId, 0L)
                 }
+                mergePageSets(index.pageEdits, index.edits)
                 index.rows += count
                 finished = count < LOAD_PAGE_ROWS
             }

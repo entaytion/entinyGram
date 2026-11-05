@@ -201,11 +201,29 @@ object ChatHelper {
         return msg.messageOwner?.forwards ?: 0
     }
 
-    private fun formatForwardsCount(msg: MessageObject?): String? {
+    private class ForwardsLabel(val text: String, val width: Int)
+
+    private val forwardsLabels = HashMap<Int, ForwardsLabel>()
+    private var forwardsLabelsTextSize = 0f
+
+    // entiny: rebuilt and re-measured on every bind otherwise, same trick as MediaSizeHelper labels
+    private fun forwardsLabelOf(msg: MessageObject?): ForwardsLabel? {
         val forwards = getForwardsCount(msg)
         if (forwards <= 0) return null
-        return " " + LocaleController.formatShortNumber(forwards, null) + "  "
+        val textSize = Theme.chat_timePaint.textSize
+        if (forwardsLabelsTextSize != textSize) {
+            forwardsLabels.clear()
+            forwardsLabelsTextSize = textSize
+        }
+        forwardsLabels[forwards]?.let { return it }
+        val text = " " + LocaleController.formatShortNumber(forwards, null) + "  "
+        val label = ForwardsLabel(text, ceil(Theme.chat_timePaint.measureText(text)).toInt())
+        if (forwardsLabels.size >= 64) forwardsLabels.clear()
+        forwardsLabels[forwards] = label
+        return label
     }
+
+    private fun formatForwardsCount(msg: MessageObject?): String? = forwardsLabelOf(msg)?.text
 
     private fun isBookmarked(msg: MessageObject?): Boolean =
         msg != null && msg.id > 0 && isBookmarkMenuEnabled() &&
@@ -258,9 +276,9 @@ object ChatHelper {
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             width += AndroidUtilities.dp(11f)
         }
-        val forwards = formatForwardsCount(msg)
+        val forwards = forwardsLabelOf(msg)
         if (forwards != null) {
-            width += AndroidUtilities.dp(11f) + ceil(Theme.chat_timePaint.measureText(forwards)).toInt()
+            width += AndroidUtilities.dp(11f) + forwards.width
         }
         if (isBookmarked(msg)) width += AndroidUtilities.dp(11f) + ceil(Theme.chat_timePaint.measureText(" ")).toInt()
         return width
@@ -2250,17 +2268,28 @@ object ChatHelper {
         return sb
     }
 
+    private val compactForwardBlankLayouts = HashMap<Int, StaticLayout>()
+    private var compactForwardBlankTextSize = 0f
+
     @JvmStatic
     fun maybeCompactForwardLayouts(layouts: Array<StaticLayout>, width: Int, messageObject: MessageObject) {
         if (!isCompactForward(messageObject)) return
         layouts[0] = layouts[1]
         // entiny: Builder setLineSpacing flips legacy constructor arg order to (spacingAdd, spacingMultiplier)
-        layouts[1] = StaticLayout.Builder
-            .obtain("", 0, 0, Theme.chat_forwardNamePaint, width)
-            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-            .setLineSpacing(0f, 1f)
-            .setIncludePad(false)
-            .build()
+        val size = Theme.chat_forwardNamePaint.textSize
+        if (compactForwardBlankTextSize != size) {
+            compactForwardBlankLayouts.clear()
+            compactForwardBlankTextSize = size
+        }
+        val blank = compactForwardBlankLayouts.getOrPut(width) {
+            StaticLayout.Builder
+                .obtain("", 0, 0, Theme.chat_forwardNamePaint, width)
+                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                .setLineSpacing(0f, 1f)
+                .setIncludePad(false)
+                .build()
+        }
+        layouts[1] = blank
     }
 
     @JvmStatic

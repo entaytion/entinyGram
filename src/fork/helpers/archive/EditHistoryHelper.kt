@@ -14,6 +14,7 @@ import org.telegram.ui.Components.BulletinFactory
 
 object EditHistoryHelper {
     private const val TAG = "EditHistoryHelper"
+    private const val MAX_EDIT_CACHE_DIALOGS = 64
 
     // entiny: history preview objects avoid stamping history rows with current message's deleted state
     private val historyPreviewObjects: MutableSet<MessageObject> =
@@ -129,6 +130,8 @@ object EditHistoryHelper {
     private fun cachedRevisions(account: Int, dialogId: Long, msgId: Int): ArrayList<EditEntry> {
         val accMap = ArchiveCache.editHistoryCache.get(account.toLong())
             ?: LongSparseArray<LongSparseArray<ArrayList<EditEntry>>>().also { ArchiveCache.editHistoryCache.put(account.toLong(), it) }
+        // entiny: the cache is only a view over the db (hasEditHistory falls back to editHistoryIds), so drop it wholesale instead of growing per edited message
+        if (accMap.get(dialogId) == null && accMap.size() >= MAX_EDIT_CACHE_DIALOGS) accMap.clear()
         val dialogMap = accMap.get(dialogId) ?: LongSparseArray<ArrayList<EditEntry>>().also { accMap.put(dialogId, it) }
         return dialogMap.get(msgId.toLong()) ?: ArrayList<EditEntry>().also { dialogMap.put(msgId.toLong(), it) }
     }
