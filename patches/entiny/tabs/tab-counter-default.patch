@@ -4,9 +4,24 @@ Date: Sat, 24 Oct 2026 21:39:19 +0300
 Subject: Show unread counter on the All chats tab on cold start
 
 ---
- .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../src/main/java/org/telegram/messenger/MessagesStorage.java  | 3 ++-
+ .../src/main/java/org/telegram/ui/DialogsActivity.java         | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -2810,7 +2810,8 @@ public class MessagesStorage extends BaseController {
+                 /*if (BuildVars.DEBUG_VERSION) {
+                     FileLog.d("unread chat " + did + " counters = " + unread + " and " + mentions);
+                 }*/
+-                dialogsByFolders.put(did, folderId);
++                // entiny: stale rows can carry folder_id -1, keep the array index in range
++                dialogsByFolders.put(did, folderId < 0 || folderId > 1 ? 0 : folderId);
+                 if (DialogObject.isEncryptedDialog(did)) {
+                     int encryptedChatId = DialogObject.getEncryptedChatId(did);
+                     if (!encryptedToLoad.contains(encryptedChatId)) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
