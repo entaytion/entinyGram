@@ -4,8 +4,8 @@ Date: Thu, 5 Nov 2026 11:12:22 +0400
 Subject: Wire CherryGram zoom and EV sliders into the round recorder
 
 ---
- .../ui/Components/InstantCameraView2.java     | 226 ++++++++++++++----
- 1 file changed, 176 insertions(+), 50 deletions(-)
+ .../ui/Components/InstantCameraView2.java     | 224 ++++++++++++++----
+ 1 file changed, 174 insertions(+), 50 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
 index 0000000..0000000 100644
@@ -149,7 +149,7 @@ index 0000000..0000000 100644
  
          switchCameraButton = new FlashViews.ImageViewInvertable(context);
          switchCameraButton.setScaleType(ImageView.ScaleType.CENTER);
-@@ -264,13 +332,31 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -264,13 +332,29 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
          buttonsLayout.addView(flashButton, LayoutHelper.createLinear(44, 44));
          flashButton.setOnClickListener(view -> toggleFlash());
  
@@ -180,15 +180,13 @@ index 0000000..0000000 100644
 +                if (session == null) return;
 +                float maxAbsEv = inu_getMaxAbsEv();
 +                float ev = (value - 0.5f) * 2f * maxAbsEv;
-+                if (session.setExposureEv(ev)) {
-+                    RoundRecorderHelper.rememberExposure(session, ev);
-+                }
++                session.setExposureEv(ev);
 +            });
 +        }
          inu_aeButton = RoundRecorderHelper.attachRoundAeLockButton(buttonsLayout, () -> session);
  
          buttonIconSize = dp(isNewDesign ? 24 : 28);
-@@ -346,7 +432,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -346,7 +430,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
      public void destroy(boolean async) {
          setRecordingUiFrameClockActive(false);
          cancelCameraFlipAnimation();
@@ -196,7 +194,7 @@ index 0000000..0000000 100644
          if (session != null) {
              session.release();
              session = null;
-@@ -711,21 +796,31 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -711,21 +794,31 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
                      || info.getState() == RoundVideoSession.State.RELEASED) {
                  cancelCameraFlipAnimation();
                  startHeavyOperations();
@@ -219,7 +217,7 @@ index 0000000..0000000 100644
 +                    inu_zoomCamera.notifySettled();
 +                }
 +                if (inu_evSlider != null) {
-+                    RoundRecorderHelper.applyRememberedExposure(session);
++                    session.setExposureEv(0f);
 +                    inu_syncEvSlider();
 +                    inu_showEvSlider();
 +                }
@@ -233,7 +231,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -737,13 +832,20 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -737,13 +830,20 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
                  SharedSettings.roundVideoLastCamera.set(cameraCapabilities.getActiveFacing());
              }
              updateButtons();
@@ -256,7 +254,7 @@ index 0000000..0000000 100644
              startCameraFlipAnimation(facing);
          }
  
-@@ -752,6 +854,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -752,6 +852,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              cameraFlipSessionReady = true;
              FileLog.d("RoundVideo camera flip session ready: facing=" + facing
                      + ", elapsedMs=" + getCameraFlipElapsedMs());
@@ -265,13 +263,13 @@ index 0000000..0000000 100644
 +                inu_zoomCamera.notifySettled();
 +            }
 +            if (inu_evSlider != null) {
-+                RoundRecorderHelper.applyRememberedExposure(session);
++                session.setExposureEv(0f);
 +                inu_syncEvSlider();
 +            }
              maybeFinishCameraFlip();
          }
  
-@@ -1014,7 +1124,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1014,7 +1122,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              return false;
          }
          if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
@@ -279,7 +277,7 @@ index 0000000..0000000 100644
              pinchZoomActive = false;
              zoomPointerId1 = event.getPointerId(0);
              zoomPointerId2 = -1;
-@@ -1030,7 +1139,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1030,7 +1137,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              zoomPointerId2 = event.getPointerId(1);
              pinchStartDistance = pointerDistance(event, 0, 1);
              pinchZoomActive = pinchStartDistance > 0f;
@@ -288,7 +286,7 @@ index 0000000..0000000 100644
              return true;
          }
          if (event.getActionMasked() == MotionEvent.ACTION_MOVE && pinchZoomActive) {
-@@ -1040,8 +1149,23 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1040,8 +1147,23 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
                  finishZoomGesture();
                  return true;
              }
@@ -314,7 +312,7 @@ index 0000000..0000000 100644
              return true;
          }
          if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP && pinchZoomActive) {
-@@ -1056,6 +1180,10 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1056,6 +1178,10 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              finishZoomGesture();
              return true;
          }
@@ -325,7 +323,7 @@ index 0000000..0000000 100644
          return true;
      }
  
-@@ -1069,39 +1197,37 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1069,39 +1195,37 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
      private void finishZoomGesture() {
          if (!pinchZoomActive) return;
          pinchZoomActive = false;
