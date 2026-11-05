@@ -471,9 +471,18 @@ export async function generateStablePatchFromCommit(repoDir: string, commitId: s
 export async function getAllPatchCommitIds(repoDir: string) {
   const patchNames = await getAppliedPatchNames(repoDir)
   const map = new Map<string, string>()
+  if (patchNames.length === 0) return map
+  // entiny: the applied stack sits directly on top of branch history, one rev-list walk replaces ~650 `stg id` spawns
+  const revs = (await cd(repoDir)`git rev-list HEAD -n ${patchNames.length}`).stdout.trim().split('\n')
+  const bottomSha = (await cd(repoDir)`stg id ${patchNames[0]}`).stdout.trim()
+  if (revs.length === patchNames.length && revs[patchNames.length - 1] === bottomSha) {
+    for (let i = 0; i < patchNames.length; i++) {
+      map.set(patchNames[i], revs[patchNames.length - 1 - i])
+    }
+    return map
+  }
   for (const patchName of patchNames) {
-    const sha = (await cd(repoDir)`stg id ${patchName}`).stdout.trim()
-    map.set(patchName, sha)
+    map.set(patchName, (await cd(repoDir)`stg id ${patchName}`).stdout.trim())
   }
   return map
 }
