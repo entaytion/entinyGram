@@ -59,15 +59,22 @@ object ArchiveMediaHelper {
     private fun mirrorIndexFile() = File(ApplicationLoader.applicationContext.filesDir, "entinyGram/mirror_index.tsv").also { it.parentFile?.mkdirs() }
 
     private fun rewriteMirrorIndex() {
-        mirrorIndexFile().writeText(mirrorIndex.entries.joinToString("") { "${it.key}\t${it.value.uri}\t${it.value.dir}\t${it.value.kind}\n" })
+        val file = mirrorIndexFile()
+        val payload = mirrorIndex.entries.joinToString("") { "${it.key}\t${it.value.uri}\t${it.value.dir}\t${it.value.kind}\n" }
+        val tmp = File(file.parentFile, "${file.name}.tmp")
+        try {
+            tmp.writeText(payload)
+            if (!tmp.renameTo(file)) file.writeText(payload)
+        } finally {
+            tmp.delete()
+        }
     }
 
     private fun mirrorRelativePath(dir: String) = "${android.os.Environment.DIRECTORY_DOWNLOADS}/$dir/$MIRROR_DIR_NAME/"
 
     // entiny: mirrors an archived photo/video into Download/<download dir>/Ghosts once
     @JvmStatic
-    @JvmOverloads
-    fun exportToGallery(path: String?, kind: String = "") {
+    fun exportToGallery(path: String?, kind: String, account: Int) {
         if (path.isNullOrEmpty() || !isArchivePublic() || kind == "edit") return
         try {
             val source = File(path)
@@ -75,7 +82,7 @@ object ArchiveMediaHelper {
             if (source.extension.lowercase() !in EXPORTABLE_EXTENSIONS) return
             synchronized(mirrorIndex) { if (source.name in mirrorIndex) return }
             val dir = InuConfig.DOWNLOAD_DIRECTORY.value
-            val uri = mirrorToDownloads(source, mirrorName(source, kind), dir) ?: return
+            val uri = mirrorToDownloads(source, mirrorName(source, kind, account), dir) ?: return
             synchronized(mirrorIndex) {
                 mirrorIndex[source.name] = MirrorRecord(uri.toString(), dir, kind)
                 mirrorIndexFile().appendText("${source.name}\t${uri}\t${dir}\t${kind}\n")
@@ -236,13 +243,13 @@ object ArchiveMediaHelper {
         android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension.lowercase()) ?: "application/octet-stream"
 
     // entiny: "<date>_<chat>_<message id>_<deleted|edit>.<ext>" instead of the stock cache name
-    private fun mirrorName(source: File, kind: String): String {
+    private fun mirrorName(source: File, kind: String, account: Int): String {
         val match = ARCHIVE_NAME_REGEX.matchEntire(source.name)
         val stamp = java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm", java.util.Locale.US).format(java.util.Date(source.lastModified()))
         val parts = ArrayList<String>()
         parts.add(stamp)
         if (match != null) {
-            chatTitle(match.groupValues[1].toLongOrNull())?.let { parts.add(it) }
+            chatTitle(match.groupValues[1].toLongOrNull(), account)?.let { parts.add(it) }
             parts.add(match.groupValues[2])
         } else {
             parts.add(source.nameWithoutExtension.take(40))
@@ -251,10 +258,10 @@ object ArchiveMediaHelper {
         return parts.joinToString("_") + "." + source.extension.lowercase()
     }
 
-    private fun chatTitle(dialogId: Long?): String? {
+    private fun chatTitle(dialogId: Long?, account: Int): String? {
         if (dialogId == null || dialogId == 0L) return null
         return try {
-            val controller = MessagesController.getInstance(UserConfig.selectedAccount)
+            val controller = MessagesController.getInstance(account)
             val title = if (dialogId > 0) {
                 org.telegram.messenger.UserObject.getUserName(controller.getUser(dialogId))
             } else {
@@ -271,31 +278,39 @@ object ArchiveMediaHelper {
     fun exportExistingArchive(account: Int) {
         if (!isArchivePublic()) return
         val storage = MessagesStorage.getInstance(account)
-        storage.storageQueue.postRunnable {
-            val rows = ArrayList<Pair<String, String>>()
-            try {
-                val db = storage.database
-                if (db != null) {
-                    for ((table, kind) in listOf("inu_deleted_messages" to "deleted")) {
-                        val cursor = db.queryFinalized("SELECT media_path FROM $table WHERE media_path IS NOT NULL AND media_path != ''")
+        fun exportPage(lastRowId: Long) {
+            storage.storageQueue.postRunnable {
+                val rows = ArrayList<Pair<String, String>>()
+                var nextRowId = lastRowId
+                try {
+                    val db = storage.database
+                    if (db != null) {
+                        val cursor = db.queryFinalized("SELECT rowid, media_path FROM inu_deleted_messages WHERE media_path IS NOT NULL AND media_path != '' AND rowid > $lastRowId ORDER BY rowid LIMIT 500")
                         try {
-                            while (cursor.next()) cursor.stringValue(0)?.let { rows.add(it to kind) }
+                            while (cursor.next()) {
+                                nextRowId = cursor.longValue(0)
+                                cursor.stringValue(1)?.let { rows.add(it to "deleted") }
+                            }
                         } finally {
                             cursor.dispose()
                         }
                     }
+                } catch (e: Throwable) {
+                    android.util.Log.d(TAG, "archive export query failed", e)
                 }
-            } catch (e: Throwable) {
-                android.util.Log.d(TAG, "archive export query failed", e)
-            }
-            mediaQueue.postRunnable {
-                var done = 0
-                for ((path, kind) in rows) {
-                    exportToGallery(path, kind)
-                    if (++done % 25 == 0) Thread.sleep(200)
+                if (rows.isNotEmpty()) {
+                    mediaQueue.postRunnable {
+                        var done = 0
+                        for ((path, kind) in rows) {
+                            exportToGallery(path, kind, account)
+                            if (++done % 25 == 0) Thread.sleep(200)
+                        }
+                    }
+                    exportPage(nextRowId)
                 }
             }
         }
+        exportPage(0L)
     }
 
     private const val ARCHIVE_QUOTA_BYTES = 3L * 1024 * 1024 * 1024
@@ -307,6 +322,19 @@ object ArchiveMediaHelper {
 
     private fun addArchiveUsage(account: Int, delta: Long) = synchronized(archiveUsage) {
         archiveUsage[account] = (archiveUsage[account] ?: 0L) + delta
+    }
+
+    // entiny: reserves bytes at planning time so concurrent plans cannot overshoot the quota together
+    private fun reserveQuota(account: Int, size: Long): Boolean = synchronized(archiveUsage) {
+        val usage = (archiveUsage[account] ?: 0L) + size
+        if (usage > ARCHIVE_QUOTA_BYTES) false else {
+            archiveUsage[account] = usage
+            true
+        }
+    }
+
+    internal fun releaseCopyReservation(account: Int, plan: PendingMediaCopy?) {
+        if (plan != null && plan.reserved > 0) addArchiveUsage(account, -plan.reserved)
     }
 
     internal fun resetArchiveUsage(account: Int) = synchronized(archiveUsage) { archiveUsage.remove(account) }
@@ -392,7 +420,7 @@ object ArchiveMediaHelper {
         }
     }
 
-    internal data class PendingMediaCopy(val source: File, val target: File, val expectedSize: Long = 0L)
+    internal data class PendingMediaCopy(val source: File, val target: File, val expectedSize: Long = 0L, val reserved: Long = 0L)
 
     // entiny: a copy made while the message is being deleted or edited follows the attachment settings
     internal fun planNewMediaCopy(account: Int, message: TLRPC.Message?): PendingMediaCopy? {
@@ -414,8 +442,12 @@ object ArchiveMediaHelper {
                 fileLoader.getPathToMessage(message, true, true),
             ).filterNotNull().firstOrNull { it.isFile && it.length() > 0 && (expectedSize <= 0 || it.length() == expectedSize) && !it.name.endsWith(".enc") } ?: return null
             if (maxBytes > 0 && path.length() > maxBytes) return null
-            if (maxBytes > 0 && archiveUsage(account) + path.length() > ARCHIVE_QUOTA_BYTES) return null
-            PendingMediaCopy(path, File(getSavedMediaDir(account), "${MessageObject.getDialogId(message)}_${message.id}_${java.util.UUID.randomUUID()}_${path.name}"), expectedSize)
+            var reserved = 0L
+            if (maxBytes > 0) {
+                reserved = path.length()
+                if (!reserveQuota(account, reserved)) return null
+            }
+            PendingMediaCopy(path, File(getSavedMediaDir(account), "${MessageObject.getDialogId(message)}_${message.id}_${java.util.UUID.randomUUID()}_${path.name}"), expectedSize, reserved)
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "planMediaCopy error", e)
             null
@@ -429,11 +461,12 @@ object ArchiveMediaHelper {
             val copied = runMediaCopy(plan)
             android.util.Log.d(TAG, "archive copy ${plan.source.length()} bytes in ${android.os.SystemClock.elapsedRealtime() - started} ms")
             if (copied == null) {
+                if (plan.reserved > 0) addArchiveUsage(account, -plan.reserved)
                 synchronized(pendingCopies) { pendingCopies.remove(key) }
                 return@postRunnable
             }
             val copiedSize = File(copied).length()
-            addArchiveUsage(account, copiedSize)
+            addArchiveUsage(account, copiedSize - plan.reserved)
             val storage = MessagesStorage.getInstance(account)
             storage.storageQueue.postRunnable {
                 val kept = try {
@@ -446,7 +479,7 @@ object ArchiveMediaHelper {
                     File(copied).delete()
                     addArchiveUsage(account, -copiedSize)
                 } else {
-                    mediaQueue.postRunnable { exportToGallery(copied, if (key.startsWith("e:")) "edit" else "deleted") }
+                    mediaQueue.postRunnable { exportToGallery(copied, if (key.startsWith("e:")) "edit" else "deleted", account) }
                 }
                 synchronized(pendingCopies) { pendingCopies.remove(key) }
             }
@@ -568,7 +601,7 @@ object ArchiveMediaHelper {
                     if (stored) {
                         if (deleted) ArchiveCache.rememberDeletedMediaPath(account, dialogId, message.id, copied)
                         else synchronized(ArchiveCache.cacheLock) { ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(message.id.toLong()) }
-                        exportToGallery(copied, if (deleted) "deleted" else "edit")
+                        exportToGallery(copied, if (deleted) "deleted" else "edit", account)
                         deliver(copied)
                     } else {
                         File(copied).delete()

@@ -3,6 +3,7 @@ package desu.inugram.helpers.chat
 import android.text.TextUtils
 import android.util.Base64
 import desu.inugram.InuConfig
+import desu.inugram.helpers.ai.AiComposeHelper
 import desu.inugram.helpers.ai.AiProviderStore
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
@@ -294,6 +295,7 @@ object TranscribeHelper {
         val base = AiProviderStore.baseUrl(p)
         if (base.isEmpty()) throw IOException("Custom endpoint URL is empty")
         val rawUrl = "$base/audio/transcriptions"
+        if (!AiComposeHelper.isEndpointSecure(rawUrl)) throw IOException("plain HTTP is not allowed: ${AiComposeHelper.host(rawUrl)}")
         val apiKey = p.key.trim()
         val model = p.voiceModel.trim().ifBlank { "whisper-1" }
         val parts = mutableMapOf(

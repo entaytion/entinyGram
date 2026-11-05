@@ -35,6 +35,9 @@ import java.net.URL
 
 object AiComposeHelper {
 
+    private const val STREAM_UI_COALESCE_MS = 100L
+    private const val MAX_STREAM_CHARS = 200_000
+
     // entiny: accepts host, /v1 or a full /chat/completions URL
     @JvmStatic
     fun normalizeBase(raw: String): String {
@@ -48,6 +51,16 @@ object AiComposeHelper {
 
     @JvmStatic
     fun completionsUrl(base: String): String = normalizeBase(base).let { if (it.isEmpty()) "" else "$it/chat/completions" }
+
+    // entiny: plain http is allowed only for loopback runtimes unless the user opts in
+    @JvmStatic
+    fun isEndpointSecure(url: String): Boolean = runCatching {
+        val u = URL(url)
+        if (!u.protocol.equals("http", ignoreCase = true)) return@runCatching true
+        if (InuConfig.AI_ALLOW_INSECURE.value) return@runCatching true
+        val h = u.host.lowercase()
+        h == "localhost" || h == "::1" || h == "[::1]" || h.startsWith("127.")
+    }.getOrDefault(false)
 
     enum class Feature { EDITOR, SUMMARY }
 
@@ -147,6 +160,7 @@ object AiComposeHelper {
             var result: String? = null
             var error: String? = null
             try {
+                if (!isEndpointSecure(endpoint.url)) throw IOException("plain HTTP is not allowed: ${host(endpoint.url)}")
                 val json = JSONObject()
                     .put("model", endpoint.model.ifBlank { "gpt-4o-mini" })
                     .put(
@@ -227,6 +241,7 @@ object AiComposeHelper {
             val reasoning = StringBuilder()
             val answerOnly = InuConfig.AI_ONLY_ANSWER.value
             try {
+                if (!isEndpointSecure(endpoint.url)) throw IOException("plain HTTP is not allowed: ${host(endpoint.url)}")
                 val json = JSONObject()
                     .put("model", endpoint.model.ifBlank { "gpt-4o-mini" })
                     .put("stream", true)
@@ -257,27 +272,45 @@ object AiComposeHelper {
                         val errBody = conn.errorStream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() } ?: ""
                         throw IOException("HTTP $code: ${errBody.take(300)}")
                     }
-                    conn.inputStream.bufferedReader(Charsets.UTF_8).forEachLine { line ->
-                        if (!line.startsWith("data:")) return@forEachLine
-                        val data = line.removePrefix("data:").trim()
-                        if (data.isEmpty() || data == "[DONE]") return@forEachLine
-                        val deltaObj = try {
-                            JSONObject(data).getJSONArray("choices").getJSONObject(0).optJSONObject("delta")
-                        } catch (_: Exception) {
-                            null
-                        } ?: return@forEachLine
-                        val delta = deltaObj.optString("content", "")
-                        val thought = deltaObj.optString("reasoning_content", "").ifEmpty { deltaObj.optString("reasoning", "") }
-                        if (delta.isNotEmpty() || thought.isNotEmpty()) {
+                    var lastUiPost = 0L
+                    var dirty = false
+                    fun snapshot(): String = if (!answerOnly && reasoning.isNotBlank()) {
+                        "💭 ${reasoning.trim()}\n\n$accumulated".trimEnd()
+                    } else {
+                        accumulated.toString()
+                    }
+                    conn.inputStream.bufferedReader(Charsets.UTF_8).useLines { lines ->
+                        for (line in lines) {
+                            if (!line.startsWith("data:")) continue
+                            val data = line.removePrefix("data:").trim()
+                            if (data.isEmpty() || data == "[DONE]") continue
+                            val deltaObj = try {
+                                JSONObject(data).getJSONArray("choices").getJSONObject(0).optJSONObject("delta")
+                            } catch (_: Exception) {
+                                null
+                            } ?: continue
+                            val delta = deltaObj.optString("content", "")
+                            val thought = deltaObj.optString("reasoning_content", "").ifEmpty { deltaObj.optString("reasoning", "") }
+                            if (delta.isEmpty() && thought.isEmpty()) continue
                             accumulated.append(delta)
                             reasoning.append(thought)
-                            val snapshot = if (!answerOnly && reasoning.isNotBlank()) {
-                                "💭 ${reasoning.trim()}\n\n$accumulated".trimEnd()
-                            } else {
-                                accumulated.toString()
+                            dirty = true
+                            if (accumulated.length + reasoning.length > MAX_STREAM_CHARS) {
+                                accumulated.append("\n…")
+                                break
                             }
-                            AndroidUtilities.runOnUIThread { onChunk(snapshot) }
+                            val now = System.currentTimeMillis()
+                            if (now - lastUiPost >= STREAM_UI_COALESCE_MS) {
+                                lastUiPost = now
+                                dirty = false
+                                val s = snapshot()
+                                AndroidUtilities.runOnUIThread { onChunk(s) }
+                            }
                         }
+                    }
+                    if (dirty) {
+                        val s = snapshot()
+                        AndroidUtilities.runOnUIThread { onChunk(s) }
                     }
                 } finally {
                     conn.disconnect()

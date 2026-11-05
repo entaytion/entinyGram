@@ -61,8 +61,8 @@ class MarketInstaller(private val fragment: BaseFragment) {
         Utilities.globalQueue.postRunnable {
             val result = runCatching {
                 val bytes = MarketCatalog.download(file.url, MAX_BYTES)
-                // a bundle that is not the one the catalog describes is never handed to the installer
-                check(file.sha256.isEmpty() || MarketCatalog.sha256(bytes).equals(file.sha256, ignoreCase = true)) { "sha256 differs" }
+                // a bundle is only handed to the installer when the catalog states its sha256 and it matches
+                check(file.sha256.isNotEmpty() && MarketCatalog.sha256(bytes).equals(file.sha256, ignoreCase = true)) { "sha256 missing or differs" }
                 bytes.toString(Charsets.UTF_8)
             }
             AndroidUtilities.runOnUIThread {

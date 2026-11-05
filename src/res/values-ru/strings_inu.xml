@@ -1700,6 +1700,8 @@
     <string name="InuRecentChatsEmpty">Пока пусто</string>
     <string name="InuAiInsertQuoteInfo">Когда вы нажимаете «Использовать» в AI-редакторе, результат заменяет черновик как цитата. Если выключено, он заменяет черновик обычным текстом.</string>
     <string name="InuAiOnlyAnswerInfo">Для моделей с рассуждением: скрывает ход мыслей и оставляет только итоговый ответ. Если выключено, рассуждение показывается над ответом после облачка мыслей.</string>
+    <string name="InuAiAllowInsecure">Разрешить небезопасные AI-эндпоинты</string>
+    <string name="InuAiAllowInsecureInfo">Отправлять AI-запросы по обычному HTTP, если у провайдера нет TLS. Только для доверенных локальных сетей — ключ API и промпты идут без шифрования.</string>
     <string name="InuAiProvidersActiveForChat">Активно для чата</string>
     <string name="InuAiProvidersActiveForVoice">Активно для голоса</string>
     <string name="InuAiProvidersTitle">Провайдеры ИИ</string>

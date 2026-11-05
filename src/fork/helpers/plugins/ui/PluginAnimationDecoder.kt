@@ -132,8 +132,8 @@ internal sealed class PluginAnimationDecoder(shared: Executor) {
     ) : PluginAnimationDecoder(shared) {
         private val turned = rotation == 90 || rotation == 270
 
-        override val width = if (wantedWidth > 0) wantedWidth else if (turned) video.height else video.width
-        override val height = if (wantedHeight > 0) wantedHeight else if (turned) video.width else video.height
+        override val width = if (wantedWidth > 0) wantedWidth.coerceAtMost(PluginCanvas.MAX_FRAME_SIDE) else if (turned) video.height else video.width
+        override val height = if (wantedHeight > 0) wantedHeight.coerceAtMost(PluginCanvas.MAX_FRAME_SIDE) else if (turned) video.width else video.height
 
         private val frameWidth = if (turned) height else width
         private val frameHeight = if (turned) width else height
@@ -241,8 +241,8 @@ internal sealed class PluginAnimationDecoder(shared: Executor) {
                 throw IllegalArgumentException("there is nothing to decode here")
             }
             if (isLottie(file)) {
-                val side = if (width > 0) width else LOTTIE_SIDE
-                val lottieHeight = if (height > 0) height else LOTTIE_SIDE
+                val side = if (width > 0) width.coerceAtMost(PluginCanvas.MAX_FRAME_SIDE) else LOTTIE_SIDE
+                val lottieHeight = if (height > 0) height.coerceAtMost(PluginCanvas.MAX_FRAME_SIDE) else LOTTIE_SIDE
                 val lottie = RLottieNative.createFromFile(path)
                 if (lottie != null) return Lottie(shared, lottie, side, lottieHeight, rate)
             } else {
@@ -250,13 +250,17 @@ internal sealed class PluginAnimationDecoder(shared: Executor) {
                 val video = AnimatedFileNative.createDecoderFrom(path, meta, UserConfig.selectedAccount, 0, null, false)
                 if (video != null) {
                     if (video.width > 0 && video.height > 0) {
+                        if (video.width.toLong() * video.height > PluginCanvas.MAX_DECODED_PIXELS) {
+                            video.recycle()
+                            throw IllegalArgumentException("animation is too large to decode")
+                        }
                         val opaque = (width <= 0 && height <= 0) || isOpaque(video)
                         return Video(shared, video, video.rotation, width, height, opaque, rate)
                     }
                     video.recycle()
                 }
             }
-            val still = BitmapFactory.decodeFile(path) ?: throw IllegalArgumentException("this is not an animation the device can decode")
+            val still = PluginCanvas.decodeBounded(path)
             return Still(shared, still)
         }
 
@@ -266,6 +270,7 @@ internal sealed class PluginAnimationDecoder(shared: Executor) {
                 ?: return null
             try {
                 if (video.width <= 0 || video.height <= 0) return null
+                if (video.width.toLong() * video.height > PluginCanvas.MAX_DECODED_PIXELS) return null
                 val scale = minOf(1f, maxSide.toFloat() / maxOf(video.width, video.height))
                 val width = (video.width * scale).toInt().coerceAtLeast(1)
                 val height = (video.height * scale).toInt().coerceAtLeast(1)

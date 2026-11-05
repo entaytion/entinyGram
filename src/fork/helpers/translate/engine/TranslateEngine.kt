@@ -185,6 +185,8 @@ object TranslateEngine {
 
     private const val MAX_ATTEMPTS = 2
     private const val RETRY_BASE_DELAY_MS = 1_000L
+    private const val MAX_QUEUE = 200
+    private const val MAX_FAILED = 512
 
     private val lock = Object()
     private val queue = ArrayDeque<Job>()
@@ -229,6 +231,7 @@ object TranslateEngine {
                 return true
             }
             Log.d(TAG, "enqueue dialog=$dialogId msg=$msgId kind=$kind to=$toLang provider=${provider.id} chars=${text.length}")
+            beforeEnqueueLocked()
             inFlight.add(key)
             queue.addLast(TextJob(key, provider, text, entities, toLang, epochs[dialogId] ?: 0, context, callback))
         }
@@ -255,6 +258,7 @@ object TranslateEngine {
             }
             if (failedAtTs != null) failedAt.remove(key)
             Log.d(TAG, "enqueue webpage dialog=$dialogId msg=$msgId to=$toLang provider=${provider.id} parts=${parts.size}")
+            beforeEnqueueLocked()
             inFlight.add(key)
             queue.addLast(WebPageJob(key, provider, original, parts, toLang, epochs[dialogId] ?: 0, callback))
         }
@@ -280,6 +284,7 @@ object TranslateEngine {
             }
             if (failedAtTs != null) failedAt.remove(key)
             Log.d(TAG, "enqueue poll dialog=$dialogId msg=$msgId to=$toLang provider=${provider.id}")
+            beforeEnqueueLocked()
             inFlight.add(key)
             queue.addLast(PollJob(key, provider, poll, toLang, epochs[dialogId] ?: 0, callback))
         }
@@ -345,6 +350,21 @@ object TranslateEngine {
                 activeWorkers.incrementAndGet()
                 worker.execute { loop() }
             }
+        }
+    }
+
+    private fun beforeEnqueueLocked() {
+        if (failedAt.size > MAX_FAILED) {
+            val cutoff = System.currentTimeMillis() - FAIL_RETRY_WINDOW_MS
+            failedAt.entries.removeIf { it.value < cutoff }
+            if (failedAt.size > MAX_FAILED) failedAt.clear()
+        }
+        // entiny: the oldest pending job is the least likely on screen - deliver a failure
+        // so its caller's "translating" state clears instead of hanging
+        while (queue.size >= MAX_QUEUE) {
+            val dropped = queue.removeFirst()
+            inFlight.remove(dropped.key)
+            AndroidUtilities.runOnUIThread { dropped.deliver(null) }
         }
     }
 

@@ -1351,6 +1351,8 @@
     <string name="InuAiStreamInfo">پاسخ را هنگام تولید کلمه‌به‌کلمه نشان بده، به‌جای انتظار برای پاسخ کامل.</string>
     <string name="InuAiOnlyAnswer">فقط پاسخ نمایش داده شود</string>
     <string name="InuAiOnlyAnswerInfo">برای مدل‌های استدلالی: تفکر را پنهان می‌کند و فقط پاسخ نهایی را نگه می‌دارد. اگر خاموش باشد، تفکر بالای پاسخ بعد از حباب فکر نمایش داده می‌شود.</string>
+    <string name="InuAiAllowInsecure">اجازه نقاط پایانی ناامن هوش مصنوعی</string>
+    <string name="InuAiAllowInsecureInfo">ارسال درخواست‌های هوش مصنوعی از طریق HTTP ساده وقتی ارائه‌دهنده TLS ندارد. فقط برای شبکه‌های محلی مطمئن — کلید API و پرامپت‌ها بدون رمزنگاری ارسال می‌شوند.</string>
     <string name="InuAiInsertQuote">درج پاسخ به‌صورت نقل‌قول</string>
     <string name="InuAiInsertQuoteInfo">وقتی در ویرایشگر هوش مصنوعی «استفاده» را می‌زنید، نتیجه به‌صورت نقل‌قول جای پیش‌نویس شما را می‌گیرد. اگر خاموش باشد، به‌صورت متن ساده جایگزین می‌شود.</string>
     <string name="InuAiRoleNew">نقش جدید</string>

@@ -49,6 +49,7 @@ object AiModelsHelper {
             val result = runCatching {
                 val normalized = baseUrl.trimEnd('/')
                 val url = if (normalized.endsWith("/models")) normalized else "$normalized/models"
+                if (!AiComposeHelper.isEndpointSecure(url)) throw IOException("plain HTTP is not allowed: ${AiComposeHelper.host(url)}")
                 val conn = (URL(url).openConnection() as HttpURLConnection).apply {
                     requestMethod = "GET"
                     connectTimeout = 15_000

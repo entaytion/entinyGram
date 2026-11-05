@@ -413,6 +413,7 @@ object LlmProvider : TranslationProvider {
 
     override fun translate(text: String, toLang: String, context: List<String>): String {
         val endpoint = AiComposeHelper.completionsUrl(InuConfig.TRANSLATE_LLM_URL.value.trim())
+        if (!AiComposeHelper.isEndpointSecure(endpoint)) throw IOException("plain HTTP is not allowed: ${AiComposeHelper.host(endpoint)}")
         val key = InuConfig.TRANSLATE_LLM_KEY.value.trim()
         val model = InuConfig.TRANSLATE_LLM_MODEL.value.trim().ifBlank { "gpt-4o-mini" }
         val system = InuConfig.TRANSLATE_LLM_PROMPT.value.trim().ifBlank { DEFAULT_SYSTEM_PROMPT }

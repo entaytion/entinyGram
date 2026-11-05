@@ -1481,6 +1481,8 @@
     <string name="InuAiSummaryFailed">摘要失败：%1$s</string>
     <string name="InuAiInsertQuoteInfo">在 AI 编辑器中点击“使用”时，结果会以引用块形式替换草稿。关闭时以纯文本替换草稿。</string>
     <string name="InuAiOnlyAnswerInfo">适用于推理模型：隐藏思考过程，只保留最终回答。关闭时，思考内容会显示在回答上方的思考气泡之后。</string>
+    <string name="InuAiAllowInsecure">允许不安全的 AI 端点</string>
+    <string name="InuAiAllowInsecureInfo">当提供商不支持 TLS 时，通过纯 HTTP 发送 AI 请求。仅用于可信的本地网络——API 密钥和提示词将以未加密方式传输。</string>
     <string name="InuAiChatCustomInfo">任何兼容 OpenAI 的 API，例如 https://host/v1（也可填写完整的 /chat/completions 地址）。本地路由器可不填 API 密钥。</string>
     <string name="InuAiProvidersSubtitle">连接你自己的 AI 服务，用于编辑器、摘要和语音转文字。</string>
     <string name="InuAiProviderAdd">添加提供商</string>

@@ -51,7 +51,8 @@ object DownloadKeepAliveHelper {
 
     private fun hasActiveDownloads(): Boolean {
         try {
-            for (account in 0 until UserConfig.getActivatedAccountsCount()) {
+            for (account in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
+                if (!UserConfig.getInstance(account).isClientActivated) continue
                 loadingFiles.clear()
                 FileLoader.getInstance(account).getCurrentLoadingFiles(loadingFiles)
                 if (loadingFiles.isNotEmpty()) return true

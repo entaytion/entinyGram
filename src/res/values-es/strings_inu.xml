@@ -1526,6 +1526,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuAiStreamInfo">Muestra la respuesta palabra por palabra mientras se genera, en lugar de esperar a la respuesta completa.</string>
     <string name="InuAiOnlyAnswer">Mostrar solo la respuesta</string>
     <string name="InuAiOnlyAnswerInfo">Para modelos de razonamiento: oculta el razonamiento y deja solo la respuesta final. Si está desactivado, el razonamiento se muestra sobre la respuesta tras la burbuja de pensamiento.</string>
+    <string name="InuAiAllowInsecure">Permitir endpoints de IA inseguros</string>
+    <string name="InuAiAllowInsecureInfo">Enviar solicitudes de IA por HTTP sin cifrar cuando el proveedor no tenga TLS. Solo para redes locales de confianza: la clave API y los prompts viajan sin cifrar.</string>
     <string name="InuAiInsertQuote">Insertar la respuesta como cita</string>
     <string name="InuAiInsertQuoteInfo">Al tocar Usar en el editor de IA, el resultado reemplaza tu borrador como bloque de cita. Si está desactivado, lo reemplaza como texto normal.</string>
     <string name="InuAiRoleNew">Nuevo rol</string>

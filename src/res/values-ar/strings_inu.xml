@@ -1363,6 +1363,8 @@
     <string name="InuAiStreamInfo">عرض الرد كلمة بكلمة أثناء توليده بدلاً من انتظار الرد الكامل.</string>
     <string name="InuAiOnlyAnswer">إظهار الإجابة فقط</string>
     <string name="InuAiOnlyAnswerInfo">للنماذج المفكّرة: يخفي التفكير ويُبقي الإجابة النهائية فقط. عند الإيقاف يظهر التفكير فوق الإجابة بعد فقاعة الفكر.</string>
+    <string name="InuAiAllowInsecure">السماح بنقاط نهاية الذكاء الاصطناعي غير الآمنة</string>
+    <string name="InuAiAllowInsecureInfo">إرسال طلبات الذكاء الاصطناعي عبر HTTP غير المشفر عندما لا يوفر المزوّد TLS. للشبكات المحلية الموثوقة فقط — يُرسَل مفتاح API والطلبات دون تشفير.</string>
     <string name="InuAiInsertQuote">إدراج الاستجابة كاقتباس</string>
     <string name="InuAiInsertQuoteInfo">عند الضغط على «استخدام» في محرر الذكاء الاصطناعي تحل النتيجة محل مسودتك ككتلة اقتباس. عند الإيقاف تحل محلها كنص عادي.</string>
     <string name="InuAiRoleNew">دور جديد</string>

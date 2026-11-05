@@ -855,6 +855,9 @@ object InuConfig {
     val AI_ONLY_ANSWER = BoolItem("ai_only_answer", false)
 
     @JvmField
+    val AI_ALLOW_INSECURE = BoolItem("ai_allow_insecure", false)
+
+    @JvmField
     val AI_INSERT_QUOTE = BoolItem("ai_insert_quote", true)
 
     @JvmField

@@ -1469,6 +1469,8 @@
     <string name="InuAiSummaryFailed">要約に失敗しました: %1$s</string>
     <string name="InuAiInsertQuoteInfo">AIエディターで「使用」を押すと、結果が引用ブロックとして下書きを置き換えます。オフの場合は通常のテキストで置き換えます。</string>
     <string name="InuAiOnlyAnswerInfo">推論モデル向け: 思考過程を隠し、最終的な回答だけを残します。オフの場合、思考は吹き出しの後に回答の上に表示されます。</string>
+    <string name="InuAiAllowInsecure">安全でないAIエンドポイントを許可</string>
+    <string name="InuAiAllowInsecureInfo">プロバイダーがTLSに対応していない場合、平文のHTTPでAIリクエストを送信します。信頼できるローカルネットワーク専用です。APIキーとプロンプトは暗号化されずに送信されます。</string>
     <string name="InuAiChatCustomInfo">OpenAI互換のAPIならどれでも使えます（例: https://host/v1。/chat/completions の完全なURLも可）。ローカルルーターではAPIキーは不要です。</string>
     <string name="InuAiProvidersSubtitle">エディター、要約、音声文字起こしに使う独自のAIサービスを接続します。</string>
     <string name="InuAiProviderAdd">プロバイダーを追加</string>

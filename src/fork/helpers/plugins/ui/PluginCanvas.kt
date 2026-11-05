@@ -86,6 +86,21 @@ object PluginCanvas : SessionResource {
     private const val STYLE_COLOR = 0
     private const val STYLE_LINEAR = 1
     private const val STYLE_RADIAL = 2
+
+    internal const val MAX_DECODED_PIXELS = 16_000_000L
+    internal const val MAX_FRAME_SIDE = 2048
+
+    /** bounds-first decode with a pixel budget so a plugin asset cannot blow up the bitmap allocator */
+    internal fun decodeBounded(path: String): Bitmap {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(path, bounds)
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) throw IllegalArgumentException("this is not an image the device can decode")
+        var sample = 1
+        while (bounds.outWidth.toLong() * bounds.outHeight / (sample.toLong() * sample) > MAX_DECODED_PIXELS) sample *= 2
+        val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+        return BitmapFactory.decodeFile(path, opts)
+            ?: throw IllegalArgumentException("this is not an image the device can decode")
+    }
     private const val STYLE_CONIC = 3
     private const val STYLE_PATTERN = 4
 
@@ -646,8 +661,7 @@ object PluginCanvas : SessionResource {
             val requestId = reader.i64()
             val path = reader.text()
             submitBitmap(requestId, id) {
-                BitmapFactory.decodeFile(path)
-                    ?: throw IllegalArgumentException("this is not an image the device can decode")
+                decodeBounded(path)
             }
             return ""
         }

@@ -1608,6 +1608,8 @@
     <string name="InuAiStreamInfo">Show the answer word by word while it is generated, instead of waiting for the full reply.</string>
     <string name="InuAiOnlyAnswer">Show only answer</string>
     <string name="InuAiOnlyAnswerInfo">For reasoning models: hide the thinking and keep just the final answer. When off, the thinking is shown above the answer after the thought bubble.</string>
+    <string name="InuAiAllowInsecure">Allow insecure AI endpoints</string>
+    <string name="InuAiAllowInsecureInfo">Send AI requests over plain HTTP when the provider has no TLS. Only for trusted local networks — the API key and prompts travel unencrypted.</string>
     <string name="InuAiInsertQuote">Insert response as quote</string>
     <string name="InuAiInsertQuoteInfo">When you tap Use in the AI editor, the result replaces your draft as a quote block. When off, it replaces the draft as plain text.</string>
     <string name="InuAiRoleNew">New role</string>

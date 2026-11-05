@@ -1482,6 +1482,8 @@
     <string name="InuAiSummaryFailed">Özet başarısız: %1$s</string>
     <string name="InuAiInsertQuoteInfo">Yapay zeka düzenleyicide Kullan seçeneğine dokunduğunuzda sonuç taslağınızın yerine alıntı bloğu olarak geçer. Kapalıyken düz metin olarak geçer.</string>
     <string name="InuAiOnlyAnswerInfo">Akıl yürüten modeller için: düşünme sürecini gizler, yalnızca son yanıtı bırakır. Kapalıyken düşünme, yanıtın üstünde düşünce balonundan sonra görünür.</string>
+    <string name="InuAiAllowInsecure">Güvensiz yapay zekâ uç noktalarına izin ver</string>
+    <string name="InuAiAllowInsecureInfo">Sağlayıcıda TLS yoksa yapay zekâ isteklerini düz HTTP ile gönderin. Yalnızca güvenilen yerel ağlar için — API anahtarı ve istemler şifrelenmemiş olarak iletilir.</string>
     <string name="InuAiChatCustomInfo">OpenAI uyumlu herhangi bir API, örn. https://host/v1 (tam /chat/completions adresi de olur). Yerel yönlendiriciler için API anahtarı isteğe bağlıdır.</string>
     <string name="InuAiProvidersSubtitle">Düzenleyici, özetler ve ses yazıya çevirme için kendi yapay zekâ hizmetlerinizi bağlayın.</string>
     <string name="InuAiProviderAdd">Sağlayıcı ekle</string>
