@@ -550,7 +550,8 @@
     <string name="InuRoundCameraAsk">Her seferinde sor</string>
     <string name="InuDisableScrimBlur">Karartma bulanıklığını devre dışı bırak</string>
     <string name="InuDisableScrimBlurInfo">Bağlam menülerinin ve önizlemelerin arkasındaki bulanık arka planı düz bir karartmayla değiştirir. Etkinleştirmek takılmaları azaltabilir.</string>
-    <string name="InuDisableGlassGlare">Cam parlamasını devre dışı bırak</string>
+    <string name="InuGlassGlare">Cam parlaması</string>
+    <string name="InuGlassGlareSolid">Kesintisiz çerçeve</string>
     <string name="InuDisableProfileAvatarBlur">Profil avatarı bulanıklığını devre dışı bırak</string>
     <string name="InuClownAvatarsSection">Engellenen avatarlar</string>
     <string name="InuClownAvatarBlocked">Engellenen kullanıcılar için palyaço avatar</string>

@@ -765,7 +765,8 @@
     <string name="InuDisableScrimBlur">تعطيل تمويه الخلفية</string>
     <string name="InuDisableScrimBlurInfo">تعتيم مسطح بدلاً من الخلفية الضبابية خلف القوائم والمعاينات. قد يقلل التأخر.</string>
 
-    <string name="InuDisableGlassGlare">تعطيل لمعان الزجاج</string>
+    <string name="InuGlassGlare">لمعان الزجاج</string>
+    <string name="InuGlassGlareSolid">إطار متصل</string>
     <string name="InuDisableProfileAvatarBlur">تعطيل تمويه صورة الملف الشخصي</string>
     <string name="InuClownAvatarsSection">صور المحظورين</string>
     <string name="InuClownAvatarBlocked">صورة مهرج للمستخدمين المحظورين</string>

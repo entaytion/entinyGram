@@ -715,7 +715,8 @@
     <string name="InuDisableScrimBlur">Вимкнути розмиття фону контекстних меню</string>
     <string name="InuDisableScrimBlurInfo">Пласке затемнення замість розмитого фону за меню та переглядами. Може зменшити лаги.</string>
 
-    <string name="InuDisableGlassGlare">Вимкнути відблиски скла</string>
+    <string name="InuGlassGlare">Відблиски скла</string>
+    <string name="InuGlassGlareSolid">Суцільна обводка</string>
     <string name="InuDisableProfileAvatarBlur">Вимкнути розмиття аватара профілю</string>
     <string name="InuClownAvatarsSection">Аватарки заблокованих</string>
     <string name="InuClownAvatarBlocked">Клоун замість аватарки заблокованих</string>

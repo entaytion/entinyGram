@@ -56,6 +56,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **hide FAB** — hide the chat-list buttons with a separate toggle and keep your chosen actions
 - 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar, chat list with larger avatars, message menu as a card over a blurred chat, unread counter on the header back button
 - 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size
+- 📡 **glass glare** — disabled, default or solid outline — *inspired by Cherrygram (@arsLan4k1390)*
 - 📡 **chat headers** — live header preview in settings, centered titles, auto marquee for long names
 - 📡 **bottom tabs** — custom layout with an optional separate Search button, any tab first, hide on scroll, sliders to raise the bar and the FABs
 - 📡 **profile swipe** — disable swiping up on Profile to open the account menu, while keeping long press
@@ -172,7 +173,6 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - 🐶 hide fade views
 - 🐶 old (pre-12.6) mention/reaction indicator
 - 🐶 toggleable scrim blur
-- toggle to disable glass glare
 - 🐶 reduce menu motion: skip context menu stagger and reaction bar slide-in/scale animations
 - material 3:
   - switches

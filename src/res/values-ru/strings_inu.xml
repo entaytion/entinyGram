@@ -1104,7 +1104,8 @@
     <string name="InuAlternativeGifBehaviorInfo">Когда автовоспроизведение GIF выключено, GIF открываются на весь экран по нажатию и останавливаются после закрытия</string>
     <string name="InuPublicPhotoMark">публичное фото</string>
     <string name="InuPersonalPhotoMark">личное фото</string>
-    <string name="InuDisableGlassGlare">Отключить блик стекла</string>
+    <string name="InuGlassGlare">Блики стекла</string>
+    <string name="InuGlassGlareSolid">Сплошная обводка</string>
     <string name="InuDisableProfileAvatarBlur">Отключить размытие аватара профиля</string>
     <string name="InuClownAvatarsSection">Аватарки заблокированных</string>
     <string name="InuClownAvatarBlocked">Клоун вместо аватарки заблокированных</string>

@@ -894,7 +894,8 @@ Sistema: %6$s
     <string name="InuDisableScrimBlur">Desactivar desenfoque del fondo oscurecido</string>
     <string name="InuDisableScrimBlurInfo">Oscurecimiento plano en lugar de fondo desenfocado tras menús y vistas previas. Puede reducir el retraso.</string>
 
-    <string name="InuDisableGlassGlare">Desactivar brillo de cristal</string>
+    <string name="InuGlassGlare">Brillo de cristal</string>
+    <string name="InuGlassGlareSolid">Contorno continuo</string>
     <string name="InuDisableProfileAvatarBlur">Desactivar desenfoque de avatar de perfil</string>
     <string name="InuClownAvatarsSection">Avatares bloqueados</string>
     <string name="InuClownAvatarBlocked">Avatar de payaso para usuarios bloqueados</string>

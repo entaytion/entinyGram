@@ -646,3 +646,4 @@ bugfix/forum-topics-transition.patch
 entiny/ui/dialogs-m3-sections.patch
 entiny/build/wallet-engine-source-build.patch
 entiny/ui/tablet-mode.patch
+entiny/ui/glass-glare-styles.patch

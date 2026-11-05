@@ -894,7 +894,8 @@ Sistema: %6$s
     <string name="InuDisableScrimBlur">Disattiva la sfocatura dello sfondo oscurato</string>
     <string name="InuDisableScrimBlurInfo">Oscuramento piatto invece dello sfondo sfocato dietro menu e anteprime. Può ridurre i rallentamenti.</string>
 
-    <string name="InuDisableGlassGlare">Disattiva il riflesso del vetro</string>
+    <string name="InuGlassGlare">Riflesso del vetro</string>
+    <string name="InuGlassGlareSolid">Contorno continuo</string>
     <string name="InuDisableProfileAvatarBlur">Disattiva la sfocatura dell\'avatar del profilo</string>
     <string name="InuClownAvatarsSection">Avatar bloccati</string>
     <string name="InuClownAvatarBlocked">Avatar clown per gli utenti bloccati</string>

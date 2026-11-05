@@ -1384,6 +1384,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val DISABLE_GLASS_GLARE = BoolItem("disable_glass_glare", false)
 
     @JvmField
+    val GLASS_GLARE_SOLID = BoolItem("glass_glare_solid", false)
+
+    @JvmField
     val LIQUID_GLASS_ANGLE = IntItem("liquid_glass_angle", 0)
 
     @JvmField

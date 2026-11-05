@@ -765,7 +765,8 @@
     <string name="InuDisableScrimBlur">غیرفعال کردن تاری پس‌زمینه</string>
     <string name="InuDisableScrimBlurInfo">به‌جای پس‌زمینه تار، پشت منوها و پیش‌نمایش‌ها تیرگی ساده. ممکن است کندی را کم کند.</string>
 
-    <string name="InuDisableGlassGlare">غیرفعال کردن درخشش شیشه</string>
+    <string name="InuGlassGlare">درخشش شیشه</string>
+    <string name="InuGlassGlareSolid">حاشیهٔ پیوسته</string>
     <string name="InuDisableProfileAvatarBlur">غیرفعال کردن تاری آواتار نمایه</string>
     <string name="InuClownAvatarsSection">آواتار مسدودشده‌ها</string>
     <string name="InuClownAvatarBlocked">آواتار دلقک برای کاربران مسدودشده</string>

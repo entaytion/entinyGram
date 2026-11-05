@@ -935,7 +935,8 @@
     <string name="InuDisableScrimBlur">Disable scrim blur</string>
     <string name="InuDisableScrimBlurInfo">Flat dim instead of blurred backdrop behind menus and previews. May reduce lag.</string>
 
-    <string name="InuDisableGlassGlare">Disable glass glare</string>
+    <string name="InuGlassGlare">Glass glare</string>
+    <string name="InuGlassGlareSolid">Solid outline</string>
     <string name="InuDisableProfileAvatarBlur">Disable profile avatar blur</string>
     <string name="InuClownAvatarsSection">Blocked avatars</string>
     <string name="InuClownAvatarBlocked">Clown avatar for blocked users</string>

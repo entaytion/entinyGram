@@ -901,7 +901,8 @@
     <string name="InuGifSeekbarInfo">注意：仅对「新」GIF（即静音 MP4）生效</string>
     <string name="InuPublicPhotoMark">公开照片</string>
     <string name="InuPersonalPhotoMark">个人照片</string>
-    <string name="InuDisableGlassGlare">禁用玻璃眩光</string>
+    <string name="InuGlassGlare">玻璃眩光</string>
+    <string name="InuGlassGlareSolid">实线描边</string>
     <string name="InuDisableProfileAvatarBlur">禁用个人资料头像模糊</string>
     <string name="InuClownAvatarsSection">已屏蔽用户头像</string>
     <string name="InuClownAvatarBlocked">为已屏蔽用户显示小丑头像</string>

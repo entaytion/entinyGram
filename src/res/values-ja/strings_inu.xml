@@ -902,7 +902,8 @@
     <string name="InuGifSeekbarInfo">注：「新しい」GIF（つまり無音 MP4）にのみ対応</string>
     <string name="InuPublicPhotoMark">公開写真</string>
     <string name="InuPersonalPhotoMark">個人用写真</string>
-    <string name="InuDisableGlassGlare">ガラスのグレアを無効化</string>
+    <string name="InuGlassGlare">ガラスのグレア</string>
+    <string name="InuGlassGlareSolid">実線の輪郭</string>
     <string name="InuDisableProfileAvatarBlur">プロフィールアバターのブラーを無効化</string>
     <string name="InuClownAvatarsSection">ブロックしたアバター</string>
     <string name="InuClownAvatarBlocked">ブロックしたユーザーにピエロのアバター</string>

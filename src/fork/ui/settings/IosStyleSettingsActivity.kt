@@ -7,10 +7,10 @@ import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.ActionButtonStyle
+import desu.inugram.helpers.theme.GlassGlareHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
-import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawableRenderNode
@@ -101,10 +101,11 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLiquidGlass)))
         items.add(
-            UItem.asCheck(
-                TOGGLE_DISABLE_GLASS_GLARE,
-                LocaleController.getString(R.string.InuDisableGlassGlare),
-            ).setChecked(InuConfig.DISABLE_GLASS_GLARE.value)
+            UItem.asButton(
+                BUTTON_GLASS_GLARE,
+                LocaleController.getString(R.string.InuGlassGlare),
+                LocaleController.getString(GLASS_GLARE_MODES[GlassGlareHelper.mode]),
+            )
         )
         if (angleSlider == null) {
             angleSlider = SliderCell(
@@ -208,7 +209,22 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
 
             BUTTON_CHAT_HEADER -> presentFragment(ChatHeaderSettingsActivity())
 
-            TOGGLE_DISABLE_GLASS_GLARE -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_GLASS_GLARE.toggle()
+            BUTTON_GLASS_GLARE -> {
+                val ctx = context ?: return
+                showDialog(
+                    RadioDialogBuilder(ctx, getResourceProvider())
+                        .setTitle(LocaleController.getString(R.string.InuGlassGlare))
+                        .setItems(
+                            GLASS_GLARE_MODES.map { RadioDialogBuilder.Item(LocaleController.getString(it)) },
+                            GlassGlareHelper.mode,
+                        ) { _, which ->
+                            if (GlassGlareHelper.mode == which) return@setItems
+                            GlassGlareHelper.setMode(which)
+                            inputBarPreviewCell?.invalidate()
+                            listView.adapter.update(true)
+                        }.create()
+                )
+            }
 
             BUTTON_ACTION_BUTTON_STYLE -> {
                 val ctx = context ?: return
@@ -239,7 +255,8 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val BUTTON_CHAT_HEADER = InuUtils.generateId()
-        private val TOGGLE_DISABLE_GLASS_GLARE = InuUtils.generateId()
+        private val BUTTON_GLASS_GLARE = InuUtils.generateId()
+        private val GLASS_GLARE_MODES = intArrayOf(R.string.Disable, R.string.Default, R.string.InuGlassGlareSolid)
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_LIST = InuUtils.generateId()
@@ -258,7 +275,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_newphone,
             factory = ::IosStyleSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("disable-glass-glare", R.string.InuDisableGlassGlare, TOGGLE_DISABLE_GLASS_GLARE),
+                SearchRegistry.Entry("disable-glass-glare", R.string.InuGlassGlare, BUTTON_GLASS_GLARE),
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("ios-bottom-bar", R.string.InuIosBottomBar, TOGGLE_IOS_BOTTOM_BAR),
                 SearchRegistry.Entry("ios-chat-list", R.string.InuIosChatList, TOGGLE_IOS_CHAT_LIST),

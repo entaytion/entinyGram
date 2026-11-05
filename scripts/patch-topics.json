@@ -137,6 +137,7 @@
   "last-seen": "privacy",
   "liquid-glass-controls": "ui",
   "liquid-glass-live-update": "ui",
+  "glass-glare-styles": "ui",
   "local-custom-emoji": "ui",
   "local-folders": "tabs",
   "local-message-edit": "chat",
