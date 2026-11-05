@@ -116,6 +116,8 @@
     <string name="InuShowReactions">Показать реакции</string>
     <string name="InuHideStories">Скрыть истории</string>
     <string name="InuHideStoriesInfo">Скрывает панель историй на главном экране чатов</string>
+    <string name="InuHideStoryAvatars">Скрыть аватарки с историями</string>
+    <string name="InuHideStoryAvatarsInfo">Скрывает кольца историй и открывает профиль вместо историй при нажатии на аватар</string>
     <string name="InuShowSeconds">Показывать секунды</string>
     <string name="InuDisableRounding">Отключить округление чисел</string>
     <string name="InuDisableRoundingInfo">1,2K → 1 234</string>

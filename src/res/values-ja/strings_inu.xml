@@ -97,6 +97,8 @@
     <string name="InuShowReactions">リアクションを表示</string>
     <string name="InuHideStories">ストーリーを非表示</string>
     <string name="InuHideStoriesInfo">チャット一覧の上部からストーリーバーを非表示にします</string>
+    <string name="InuHideStoryAvatars">ストーリー付きアバターを非表示</string>
+    <string name="InuHideStoryAvatarsInfo">ストーリーのリングを隠し、アバターをタップするとストーリーではなくプロフィールを開きます</string>
     <string name="InuShowSeconds">秒を表示</string>
     <string name="InuDisableRounding">数値の丸めを無効化</string>
     <string name="InuDisableRoundingInfo">1.2K → 1,234</string>

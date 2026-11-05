@@ -97,6 +97,8 @@
     <string name="InuShowReactions">显示回应</string>
     <string name="InuHideStories">隐藏快拍</string>
     <string name="InuHideStoriesInfo">隐藏主聊天列表顶部的快拍栏</string>
+    <string name="InuHideStoryAvatars">隐藏带快拍的头像</string>
+    <string name="InuHideStoryAvatarsInfo">隐藏快拍圆环，点击头像时打开个人资料而不是快拍</string>
     <string name="InuShowSeconds">显示秒数</string>
     <string name="InuDisableRounding">禁用数字取整</string>
     <string name="InuDisableRoundingInfo">1.2K → 1,234</string>

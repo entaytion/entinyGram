@@ -118,6 +118,8 @@
     <string name="InuShowReactions">نمایش واکنش‌ها</string>
     <string name="InuHideStories">پنهان کردن استوری‌ها</string>
     <string name="InuHideStoriesInfo">نوار استوری‌ها را از فهرست اصلی گفتگوها پنهان می‌کند</string>
+    <string name="InuHideStoryAvatars">پنهان کردن آواتارهای دارای استوری</string>
+    <string name="InuHideStoryAvatarsInfo">حلقه‌های استوری را پنهان می‌کند و با لمس آواتار، پروفایل را به‌جای استوری باز می‌کند</string>
     <string name="InuShowSeconds">نمایش ثانیه</string>
     <string name="InuDisableRounding">غیرفعال کردن رند کردن اعداد</string>
     <string name="InuDisableRoundingInfo">1.2K -> 1,234</string>

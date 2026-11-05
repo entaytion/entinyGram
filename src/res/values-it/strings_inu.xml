@@ -168,6 +168,8 @@ Sistema: %6$s
     <string name="InuShowReactions">Mostra reazioni</string>
     <string name="InuHideStories">Nascondi storie</string>
     <string name="InuHideStoriesInfo">Nasconde la barra delle storie dall\'elenco chat principale</string>
+    <string name="InuHideStoryAvatars">Nascondi avatar con storie</string>
+    <string name="InuHideStoryAvatarsInfo">Nasconde gli anelli delle storie e apre il profilo invece delle storie toccando l\'avatar</string>
     <string name="InuShowSeconds">Mostra secondi</string>
     <string name="InuDisableRounding">Disattiva arrotondamento dei numeri</string>
     <string name="InuDisableRoundingInfo">1.2K -&gt; 1,234</string>

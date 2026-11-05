@@ -1098,6 +1098,7 @@ object Schemas {
         }
         section(R.string.InuAnnoyancesStories) {
             toggle(InuConfig.HIDE_STORIES, R.string.InuHideStories, R.string.InuHideStoriesInfo, onChange = { page, _ -> page.notifyAllAccounts(NotificationCenter.storiesUpdated) })
+            toggle(InuConfig.HIDE_STORY_AVATARS, R.string.InuHideStoryAvatars, R.string.InuHideStoryAvatarsInfo, onChange = { page, _ -> page.notifyAllAccounts(NotificationCenter.storiesUpdated) })
             toggle(InuConfig.DISABLE_OVERSCROLL_STORY, R.string.InuDisableOverscrollStory, R.string.InuDisableOverscrollStoryInfo)
             toggle(InuConfig.HIDE_REPOST_TO_STORY, R.string.InuHideRepostToStory)
             toggle(InuConfig.HIDE_PROFILE_STORY_BUTTON, R.string.InuHideProfileStoryButton)

@@ -108,6 +108,8 @@
     <string name="InuShowReactions">Tepkileri Göster</string>
     <string name="InuHideStories">Hikayeleri gizle</string>
     <string name="InuHideStoriesInfo">Ana sohbet listesindeki hikayeler çubuğunu gizler</string>
+    <string name="InuHideStoryAvatars">Hikayeli avatarları gizle</string>
+    <string name="InuHideStoryAvatarsInfo">Hikaye halkalarını gizler ve avatara dokununca hikayeler yerine profili açar</string>
     <string name="InuShowSeconds">Saniyeleri göster</string>
     <string name="InuDisableRounding">Sayı yuvarlamayı devre dışı bırak</string>
     <string name="InuDisableRoundingInfo">1.2K -> 1.234</string>

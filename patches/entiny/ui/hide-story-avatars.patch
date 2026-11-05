@@ -1,0 +1,103 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 5 Nov 2026 15:32:37 +0200
+Subject: [+] hide story avatars
+
+---
+ .../org/telegram/ui/Components/SharedMediaLayout.java     | 2 +-
+ .../src/main/java/org/telegram/ui/ProfileActivity.java    | 2 +-
+ .../java/org/telegram/ui/Stories/ProfileStoriesView.java  | 7 +++++++
+ .../java/org/telegram/ui/Stories/StoriesController.java   | 2 +-
+ .../java/org/telegram/ui/Stories/StoriesUtilities.java    | 8 ++++++++
+ 5 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -3906,7 +3906,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+     }
+ 
+     protected boolean includeStories() {
+-        return true;
++        return !desu.inugram.InuConfig.HIDE_STORY_AVATARS.getValue();
+     }
+ 
+     protected boolean includeSavedDialogs() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -10631,7 +10631,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     private boolean needInsetForStories() {
+-        return getMessagesController().getStoriesController().hasStories(getDialogId()) && !isTopic;
++        return !desu.inugram.InuConfig.HIDE_STORY_AVATARS.getValue() && getMessagesController().getStoriesController().hasStories(getDialogId()) && !isTopic;
+     }
+ 
+     public void setUserInfo(
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java
+@@ -498,6 +498,10 @@ public class ProfileStoriesView extends View implements NotificationCenter.Notif
+ 
+     @Override
+     protected void dispatchDraw(Canvas canvas) {
++        if (desu.inugram.InuConfig.HIDE_STORY_AVATARS.getValue()) {
++            super.dispatchDraw(canvas);
++            return;
++        }
+         float rright = rightAnimated.set(this.right);
+         float avatarPullProgress = Utilities.clamp((avatarContainer.getScaleX() - 1f) / 0.4f, 1f, 0f);
+         float insetMain = lerp(dpf2(4f), dpf2(3.5f), avatarPullProgress);
+@@ -1168,6 +1172,9 @@ public class ProfileStoriesView extends View implements NotificationCenter.Notif
+ 
+     @Override
+     public boolean onTouchEvent(MotionEvent event) {
++        if (desu.inugram.InuConfig.HIDE_STORY_AVATARS.getValue()) {
++            return false;
++        }
+         boolean hit;
+         if (expandProgress < .9f) {
+             hit = rect2.contains(event.getX(), event.getY());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
+@@ -286,7 +286,7 @@ public class StoriesController {
+     }
+ 
+     public boolean hasStories() {
+-        if (desu.inugram.InuConfig.HIDE_STORIES.getValue()) return false;
++        if (desu.inugram.InuConfig.HIDE_STORIES.getValue() || desu.inugram.InuConfig.HIDE_STORY_AVATARS.getValue()) return false;
+         return (dialogListStories != null && dialogListStories.size() > 0) || hasSelfStories();
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
+@@ -95,6 +95,11 @@ public class StoriesUtilities {
+     private final static RectF rectTmp = new RectF();
+ 
+     public static void drawAvatarWithStory(long dialogId, Canvas canvas, ImageReceiver avatarImage, AvatarStoryParams params) {
++        if (desu.inugram.InuConfig.HIDE_STORY_AVATARS.getValue()) {
++            avatarImage.setImageCoords(params.originalAvatarRect);
++            avatarImage.draw(canvas);
++            return;
++        }
+         StoriesController storiesController = MessagesController.getInstance(UserConfig.selectedAccount).getStoriesController();
+         boolean hasStories = storiesController.hasStories(dialogId);
+         drawAvatarWithStory(dialogId, canvas, avatarImage, UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId() != dialogId && hasStories, params);
+@@ -1293,6 +1298,9 @@ public class StoriesUtilities {
+         }
+ 
+         public boolean checkOnTouchEvent(MotionEvent event, View view) {
++            if (desu.inugram.InuConfig.HIDE_STORY_AVATARS.getValue()) {
++                return false;
++            }
+             child = view;
+             StoriesController storiesController = MessagesController.getInstance(UserConfig.selectedAccount).getStoriesController();
+             if (event.getAction() == MotionEvent.ACTION_DOWN && originalAvatarRect.contains(event.getX(), event.getY())) {

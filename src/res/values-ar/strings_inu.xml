@@ -118,6 +118,8 @@
     <string name="InuShowReactions">إظهار التفاعلات</string>
     <string name="InuHideStories">إخفاء القصص</string>
     <string name="InuHideStoriesInfo">يخفي شريط القصص من قائمة المحادثات الرئيسية</string>
+    <string name="InuHideStoryAvatars">إخفاء الأفاتار مع القصص</string>
+    <string name="InuHideStoryAvatarsInfo">يخفي حلقات القصص ويفتح الملف الشخصي بدلاً من القصص عند النقر على الأفاتار</string>
     <string name="InuShowSeconds">إظهار الثواني</string>
     <string name="InuDisableRounding">تعطيل تقريب الأرقام</string>
     <string name="InuDisableRoundingInfo">1.2K -> 1,234</string>

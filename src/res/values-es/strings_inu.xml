@@ -168,6 +168,8 @@ Sistema: %6$s
     <string name="InuShowReactions">Mostrar reacciones</string>
     <string name="InuHideStories">Ocultar historias</string>
     <string name="InuHideStoriesInfo">Oculta la barra de historias de la lista principal de chats</string>
+    <string name="InuHideStoryAvatars">Ocultar avatares con historias</string>
+    <string name="InuHideStoryAvatarsInfo">Oculta los anillos de historias y abre el perfil en lugar de las historias al tocar el avatar</string>
     <string name="InuShowSeconds">Mostrar segundos</string>
     <string name="InuDisableRounding">Desactivar redondeo de números</string>
     <string name="InuDisableRoundingInfo">1.2K -&gt; 1,234</string>

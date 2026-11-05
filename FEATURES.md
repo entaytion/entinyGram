@@ -143,6 +143,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **banners & prompts** — hide the gift-auctions banner, cache-cleanup card, PSA promo chats and the similar-channels card after joining; disable the post-call rating prompt and the contacts and lockscreen permission prompts on start
 - 📡 **hide channel share button**
 - 📡 **hide recent/frequent chats** from the app icon's long-press menu
+- 📡 **hide story avatars** — story rings are hidden and tapping an avatar opens the profile instead of stories
 
 the sections below are the inugram base we build on: its features, tweaks adapted from other telegram clients, and bug fixes.
 

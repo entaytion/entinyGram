@@ -118,6 +118,7 @@
   "forward-pro-replaces-forward": "chat",
   "two-finger-select": "chat",
   "hide-reactions-overlay": "chat",
+  "hide-story-avatars": "ui",
   "id-in-profile": "ui",
   "inapp-notification-vibration": "notifications",
   "input-menu-reserve": "chat",

@@ -168,6 +168,8 @@
     <string name="InuShowReactions">Show Reactions</string>
     <string name="InuHideStories">Hide stories</string>
     <string name="InuHideStoriesInfo">Hides stories bar from the main chat list</string>
+    <string name="InuHideStoryAvatars">Hide story avatars</string>
+    <string name="InuHideStoryAvatarsInfo">Hides story rings and opens the profile instead of stories on avatar tap</string>
     <string name="InuShowSeconds">Show seconds</string>
     <string name="InuDisableRounding">Disable number rounding</string>
     <string name="InuDisableRoundingInfo">1.2K -> 1,234</string>
