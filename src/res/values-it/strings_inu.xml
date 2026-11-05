@@ -246,8 +246,8 @@ Sistema: %6$s
     <string name="InuRoundRecorderLockExposureInfo">Blocca l\'esposizione automatica durante la registrazione per evitare sfarfallii e sbalzi di luminosità.</string>
     <string name="InuRoundRecorderExposureButton">Pulsante di blocco esposizione</string>
     <string name="InuRoundRecorderExposureButtonInfo">Mostra un pulsante per bloccare o sbloccare rapidamente l\'esposizione durante la registrazione.</string>
-    <string name="InuRoundRecorderExposureLevels">Pulsanti del livello di esposizione</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">Mostra pulsanti EV per schiarire o scurire l\'inquadratura durante la registrazione.</string>
+    <string name="InuRoundRecorderExposureLevels">Controllo dell\'esposizione</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Mostra i controlli dell\'esposizione per schiarire o scurire l\'inquadratura durante la registrazione.</string>
     <string name="InuShowAllRecentStickers">Mostra tutti gli sticker recenti</string>
     <string name="InuHideKeyboardOnScroll">Nascondi la tastiera allo scorrimento</string>
     <string name="InuKeepKeyboardWhileTyping">Mantieni la tastiera durante la digitazione</string>

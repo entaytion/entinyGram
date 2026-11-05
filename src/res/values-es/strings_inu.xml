@@ -246,8 +246,8 @@ Sistema: %6$s
     <string name="InuRoundRecorderLockExposureInfo">Bloquea la exposición automática durante la grabación para evitar parpadeos y saltos de brillo.</string>
     <string name="InuRoundRecorderExposureButton">Botón de bloqueo de exposición</string>
     <string name="InuRoundRecorderExposureButtonInfo">Muestra un botón para bloquear o desbloquear rápidamente la exposición mientras grabas.</string>
-    <string name="InuRoundRecorderExposureLevels">Botones de nivel de exposición</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">Muestra botones EV para aclarar u oscurecer la toma mientras grabas.</string>
+    <string name="InuRoundRecorderExposureLevels">Control de exposición</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Muestra controles de exposición para aclarar u oscurecer la toma mientras grabas.</string>
     <string name="InuShowAllRecentStickers">Mostrar todos los stickers recientes</string>
     <string name="InuHideKeyboardOnScroll">Ocultar el teclado al desplazarse</string>
     <string name="InuKeepKeyboardWhileTyping">Mantener teclado al escribir</string>

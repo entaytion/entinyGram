@@ -165,8 +165,8 @@
     <string name="InuRoundRecorderLockExposureInfo">نوردهی خودکار را هنگام ضبط قفل می‌کند تا از سوسو و جهش روشنایی جلوگیری شود.</string>
     <string name="InuRoundRecorderExposureButton">دکمه قفل نوردهی</string>
     <string name="InuRoundRecorderExposureButtonInfo">نمایش دکمه‌ای برای قفل یا آزاد کردن سریع نوردهی هنگام ضبط.</string>
-    <string name="InuRoundRecorderExposureLevels">دکمه‌های سطح نوردهی</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">نمایش دکمه‌های EV برای روشن یا تیره کردن تصویر هنگام ضبط.</string>
+    <string name="InuRoundRecorderExposureLevels">کنترل نوردهی</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">نمایش ابزارهای کنترل نوردهی برای روشن یا تیره کردن تصویر هنگام ضبط.</string>
     <string name="InuShowAllRecentStickers">نمایش همه استیکرهای اخیر</string>
     <string name="InuHideKeyboardOnScroll">پنهان کردن صفحه‌کلید هنگام اسکرول</string>
     <string name="InuKeepKeyboardWhileTyping">حفظ صفحه‌کلید هنگام تایپ</string>

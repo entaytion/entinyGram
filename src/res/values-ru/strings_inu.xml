@@ -1832,8 +1832,8 @@
     <string name="InuDrawerBots">Мини-приложения</string>
     <string name="InuMenuDivider">Разделитель</string>
     <string name="InuPingAllProxies">Пинг всех прокси</string>
-    <string name="InuRoundRecorderExposureLevels">Кнопки уровня экспозиции</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">Показывать кнопки EV, чтобы осветлять или затемнять кадр во время записи.</string>
+    <string name="InuRoundRecorderExposureLevels">Управление экспозицией</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Показывать элементы управления экспозицией, чтобы осветлять или затемнять кадр во время записи.</string>
     <string name="InuOnlineDots">Цветные точки</string>
     <string name="InuOnlineDotsInfo">Синяя в сети, жёлтая в течение 20 мин, красная в течение часа.</string>
     <string name="InuGhostModeLauncherShortcut">Ярлык на значке приложения</string>

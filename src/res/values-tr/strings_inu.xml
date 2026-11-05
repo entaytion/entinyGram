@@ -1650,8 +1650,8 @@
     <string name="InuHideChatAvatarInfo">Sohbet başlığından avatarı kaldırır, üç nokta menüsü kalır. Profili açmak için başlığa dokunun.</string>
     <string name="InuIosStyle">iOS stili</string>
     <string name="InuPingAllProxies">Tüm proxy\'lere ping at</string>
-    <string name="InuRoundRecorderExposureLevels">Pozlama seviyesi düğmeleri</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">Kayıt sırasında görüntüyü aydınlatmak veya karartmak için EV düğmelerini göster.</string>
+    <string name="InuRoundRecorderExposureLevels">Pozlama kontrolü</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Kayıt sırasında görüntüyü aydınlatmak veya karartmak için pozlama kontrollerini göster.</string>
     <string name="InuSettingsShowAccounts">Ayarlarda hesapları göster</string>
     <string name="InuGhostModeLauncherShortcut">Uygulama simgesinde kısayol</string>
     <string name="InuGhostModeLauncherShortcutInfo">Hayalet Modunu açıp kapatmak için uygulama simgesine uzun basma kısayolu ekleyin.</string>

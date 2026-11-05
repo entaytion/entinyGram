@@ -63,6 +63,12 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 formatRoundBitrate(SharedSettings.roundVideoVideoBitrate.get()),
             )
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_ROUND_RECORDER_ZOOM_SLIDER,
+                LocaleController.getString(R.string.InuRoundRecorderZoomSlider),
+            ).setChecked(InuConfig.ROUND_RECORDER_ZOOM_SLIDER.value)
+        )
         if (newRecorder) {
             items.add(
                 UItem.asButton(
@@ -83,12 +89,6 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 ).setChecked(InuConfig.ROUND_RECORDER_EV_SLIDER_RIGHT.value)
             )
         } else {
-            items.add(
-                UItem.asCheck(
-                    TOGGLE_ROUND_RECORDER_ZOOM_SLIDER,
-                    LocaleController.getString(R.string.InuRoundRecorderZoomSlider),
-                ).setChecked(InuConfig.ROUND_RECORDER_ZOOM_SLIDER.value)
-            )
             items.add(
                 mkTwoLineCheckItem(
                     TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS,
@@ -129,31 +129,31 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                     )
                 )
             }
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE,
-                    R.string.InuRoundRecorderLockExposure,
-                    R.string.InuRoundRecorderLockExposureInfo,
-                    InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.value
-                )
-            )
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON,
-                    R.string.InuRoundRecorderExposureButton,
-                    R.string.InuRoundRecorderExposureButtonInfo,
-                    InuConfig.ROUND_RECORDER_EXPOSURE_BUTTON.value
-                )
-            )
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS,
-                    R.string.InuRoundRecorderExposureLevels,
-                    R.string.InuRoundRecorderExposureLevelsInfo,
-                    InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.value
-                )
-            )
         }
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE,
+                R.string.InuRoundRecorderLockExposure,
+                R.string.InuRoundRecorderLockExposureInfo,
+                InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON,
+                R.string.InuRoundRecorderExposureButton,
+                R.string.InuRoundRecorderExposureButtonInfo,
+                InuConfig.ROUND_RECORDER_EXPOSURE_BUTTON.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS,
+                R.string.InuRoundRecorderExposureLevels,
+                R.string.InuRoundRecorderExposureLevelsInfo,
+                InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.value
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAttachCamera)))
@@ -431,6 +431,8 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("confirm-send-voice", R.string.InuConfirmSendVoice, TOGGLE_CONFIRM_SEND_VOICE),
                 SearchRegistry.Entry("attach-camera-square", R.string.InuAttachCameraSquare, TOGGLE_ATTACH_CAMERA_SQUARE),
                 SearchRegistry.Entry("attach-camera-mirror-front", R.string.InuAttachCameraMirrorFront, TOGGLE_ATTACH_CAMERA_MIRROR_FRONT),
+                SearchRegistry.Entry("attach-camera-resolution", R.string.InuAttachCameraResolution, BUTTON_ATTACH_CAMERA_RESOLUTION),
+                SearchRegistry.Entry("attach-camera-exposure-levels", R.string.InuAttachCameraExposureLevels, TOGGLE_ATTACH_CAMERA_EXPOSURE_LEVELS),
                 SearchRegistry.Entry("round-default-camera", R.string.InuRoundDefaultCamera, BUTTON_ROUND_DEFAULT_CAMERA),
                 SearchRegistry.Entry("round-recorder-zoom-slider", R.string.InuRoundRecorderZoomSlider, TOGGLE_ROUND_RECORDER_ZOOM_SLIDER),
                 SearchRegistry.Entry("round-recorder-zoom-buttons", R.string.InuRoundRecorderZoomButtons, TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS),
@@ -449,6 +451,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("round-recorder-lock-exposure", R.string.InuRoundRecorderLockExposure, TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE),
                 SearchRegistry.Entry("round-recorder-exposure-button", R.string.InuRoundRecorderExposureButton, TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON),
                 SearchRegistry.Entry("round-recorder-exposure-levels", R.string.InuRoundRecorderExposureLevels, TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS),
+                SearchRegistry.Entry("round-recorder-ev-slider-right", R.string.InuRoundRecorderEvSliderRight, TOGGLE_ROUND_EV_SLIDER_RIGHT),
             ),
         )
     }

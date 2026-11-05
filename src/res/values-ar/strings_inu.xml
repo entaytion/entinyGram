@@ -165,8 +165,8 @@
     <string name="InuRoundRecorderLockExposureInfo">قفل التعريض التلقائي أثناء التسجيل لمنع الوميض وقفزات السطوع.</string>
     <string name="InuRoundRecorderExposureButton">زر قفل التعريض</string>
     <string name="InuRoundRecorderExposureButtonInfo">إظهار زر لقفل التعريض أو فتحه بسرعة أثناء التسجيل.</string>
-    <string name="InuRoundRecorderExposureLevels">أزرار مستوى التعريض</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">إظهار أزرار EV لتفتيح اللقطة أو تعتيمها أثناء التسجيل.</string>
+    <string name="InuRoundRecorderExposureLevels">التحكم في التعريض</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">إظهار عناصر التحكم في التعريض لتفتيح اللقطة أو تعتيمها أثناء التسجيل.</string>
     <string name="InuShowAllRecentStickers">إظهار كل الملصقات الأخيرة</string>
     <string name="InuHideKeyboardOnScroll">إخفاء لوحة المفاتيح عند التمرير</string>
     <string name="InuKeepKeyboardWhileTyping">إبقاء لوحة المفاتيح أثناء الكتابة</string>

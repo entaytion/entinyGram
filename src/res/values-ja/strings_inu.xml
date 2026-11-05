@@ -1649,8 +1649,8 @@
     <string name="InuReplaceTextApply">置換</string>
     <string name="InuReplaceTextFind">検索</string>
     <string name="InuReplaceTextWith">置換後</string>
-    <string name="InuRoundRecorderExposureLevels">露出レベルボタン</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">録画中に映像を明るく・暗くする EV ボタンを表示します。</string>
+    <string name="InuRoundRecorderExposureLevels">露出調整</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">録画中に映像を明るくしたり暗くしたりできる露出コントロールを表示します。</string>
     <string name="InuSettingsShowAccounts">設定にアカウントを表示</string>
     <string name="InuGhostModeLauncherShortcut">アプリアイコンのショートカット</string>
     <string name="InuGhostModeLauncherShortcutInfo">アプリアイコンを長押ししてゴーストモードを切り替えるショートカットを追加します。</string>

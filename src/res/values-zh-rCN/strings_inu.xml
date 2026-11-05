@@ -1649,8 +1649,8 @@
     <string name="InuHideChatAvatarInfo">从聊天标题栏移除头像，保留三点菜单。点击标题即可打开资料。</string>
     <string name="InuIosStyle">iOS 风格</string>
     <string name="InuPingAllProxies">Ping 所有代理</string>
-    <string name="InuRoundRecorderExposureLevels">曝光等级按钮</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">录制时显示 EV 按钮，用于调亮或调暗画面。</string>
+    <string name="InuRoundRecorderExposureLevels">曝光控制</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">录制时显示曝光控件，用于调亮或调暗画面。</string>
     <string name="InuSettingsShowAccounts">在设置中显示账号</string>
     <string name="InuGhostModeLauncherShortcut">应用图标快捷方式</string>
     <string name="InuGhostModeLauncherShortcutInfo">在应用图标长按菜单中添加开启或关闭幽灵模式的快捷方式。</string>
