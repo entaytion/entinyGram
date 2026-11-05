@@ -137,12 +137,12 @@ index 0000000..0000000 100644
 +            inu_cgZoomSlider = new RoundZoomSliderView(context, resourcesProvider, false);
 +            addView(inu_cgZoomSlider, LayoutHelper.createFrame(
 +                    LayoutHelper.MATCH_PARENT,
-+                    dp(56),
++                    56,
 +                    Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,
-+                    dp(28),
++                    28,
 +                    0,
-+                    dp(28),
-+                    dp(64)
++                    28,
++                    64
 +            ));
 +            inu_cgZoomSlider.hideImmediately();
 +        }

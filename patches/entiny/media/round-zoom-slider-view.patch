@@ -330,11 +330,11 @@ index 0000000..0000000
 +        plusButtonIcon = ContextCompat.getDrawable(getContext(), R.drawable.zoom_plus);
 +
 +        if (minusButtonIcon != null) {
-+            minusButtonIcon.setTint(onSecondaryFixedColor);
++            minusButtonIcon.setTint(unselectedToggleColor);
 +        }
 +
 +        if (plusButtonIcon != null) {
-+            plusButtonIcon.setTint(onSecondaryFixedColor);
++            plusButtonIcon.setTint(unselectedToggleColor);
 +        }
 +
 +        invalidate();
