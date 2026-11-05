@@ -1454,6 +1454,7 @@
     <string name="InuMd3PlayerSourcePlainFile">Текст із файлу</string>
     <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
     <string name="InuEditedAtTime">Відредаговано о %1$s</string>
+    <string name="InuEditHistoryOriginal">Оригінал</string>
     <string name="InuEditHistoryChanged">Змінено: %1$s</string>
     <string name="InuEditFieldText">текст</string>
     <string name="InuEditFieldCaption">підпис</string>

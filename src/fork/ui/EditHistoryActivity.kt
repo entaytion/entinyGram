@@ -11,7 +11,6 @@ import desu.inugram.helpers.archive.EditHistoryHelper
 import desu.inugram.helpers.archive.EditHistoryHelper.EditEntry
 import java.io.File
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.DialogObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesStorage
@@ -30,7 +29,7 @@ class EditHistoryActivity(
         val entry: EditEntry,
         val source: EditEntry,
         val label: CharSequence,
-        val date: Long,
+        val anchor: Long,
     )
 
     private val entries = ArrayList<EditEntry>()
@@ -74,16 +73,25 @@ class EditHistoryActivity(
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
             val stored = ArchiveStore.loadEditHistoryInDialog(db, dialogId)
-            val loadedEntries = stored.map { (msgId, row) ->
-                EditEntry(row.date, row.text, row.mediaPath, row.entities, row.media, originalMessageId = msgId, rowId = row.rowId)
-            }
             val live = try {
                 ArchiveStore.loadMessagesForArchive(db, dialogId, stored.mapTo(HashSet()) { it.first })
             } catch (e: Throwable) {
                 android.util.Log.d(TAG, "live messages load failed", e)
                 emptyMap()
             }
-            val peers = loadPeers(storage, live.values, listOf(dialogId))
+            val loadedEntries = stored.map { (msgId, row) ->
+                EditEntry(
+                    row.date,
+                    row.text,
+                    row.mediaPath,
+                    row.entities,
+                    row.media,
+                    originalMessageId = msgId,
+                    fromId = row.fromId.takeIf { it != 0L } ?: EditHistoryHelper.messageAuthor(currentAccount, live[msgId]),
+                    rowId = row.rowId,
+                )
+            }
+            val peers = loadPeers(storage, live.values, loadedEntries.map { it.fromId } + dialogId)
             AndroidUtilities.runOnUIThread {
                 if (isFinished) return@runOnUIThread
                 applyPeers(peers)
@@ -98,9 +106,12 @@ class EditHistoryActivity(
 
     private fun loadMessage() {
         val target = message ?: return
+        val author = EditHistoryHelper.messageAuthor(currentAccount, target.messageOwner)
         EditHistoryHelper.getEditHistoryAsync(currentAccount, dialogId, target.id) { list ->
             entries.clear()
-            for (entry in list) entries.add(entry.copy(mediaPath = entry.mediaPath?.takeIf { it.isNotBlank() }))
+            for (entry in list) {
+                entries.add(entry.copy(mediaPath = entry.mediaPath?.takeIf { it.isNotBlank() }, fromId = entry.fromId.takeIf { it != 0L } ?: author))
+            }
             // entiny: raw message rather than messageText because entity offsets address the unformatted string
             val owner = target.messageOwner
             val currentText = owner?.message ?: ""
@@ -112,7 +123,7 @@ class EditHistoryActivity(
             currentVersionIndex = -1
             if (currentText.isNotEmpty() || owner?.media != null) {
                 currentVersionIndex = entries.size
-                entries.add(EditEntry(currentDate, currentText, null, owner?.entities, owner?.media))
+                entries.add(EditEntry(currentDate, currentText, null, owner?.entities, owner?.media, fromId = author))
             }
             onLoaded()
         }
@@ -128,8 +139,8 @@ class EditHistoryActivity(
         buildVersions()
         resetRows()
         versions.forEachIndexed { i, item ->
-            addRow(VIEW_LABEL, i, item.date)
-            addRow(VIEW_MESSAGE, i, item.date)
+            addRow(VIEW_LABEL, i, item.anchor)
+            addRow(VIEW_MESSAGE, i, item.anchor)
         }
     }
 
@@ -139,11 +150,12 @@ class EditHistoryActivity(
         for (entry in entries) {
             groups.getOrPut(message?.id ?: entry.originalMessageId) { ArrayList() }.add(entry)
         }
+        // entiny: one message keeps one block so its revisions never scatter over the whole dialog timeline
         for ((msgId, list) in groups) {
             val liveMessage = if (wholeDialog) liveMessages[msgId] else message?.messageOwner
             val all = ArrayList(list)
             if (wholeDialog) liveMessage?.let { liveEntry(msgId, it) }?.let { all.add(it) }
-            val author = authorOf(liveMessage)
+            val anchor = if (wholeDialog) all.first().timestamp else 0L
             val shown = ArrayList<EditEntry>()
             for (entry in all) {
                 if (shown.isNotEmpty() && EditHistoryHelper.changes(shown.last(), entry).isEmpty()) continue
@@ -152,31 +164,32 @@ class EditHistoryActivity(
             shown.forEachIndexed { i, entry ->
                 val previous = shown.getOrNull(i - 1)
                 versions.add(
-                    VersionItem(withDiff(entry, previous, shown.getOrNull(i + 1), author, msgId), entry, versionLabel(entry, previous), entry.timestamp)
+                    VersionItem(
+                        withDiff(entry, previous, shown.getOrNull(i + 1), msgId),
+                        entry,
+                        versionLabel(entry, previous, previous == null && shown.size > 1),
+                        if (wholeDialog) anchor else entry.timestamp,
+                    )
                 )
             }
         }
-        if (wholeDialog) versions.sortBy { it.date }
     }
 
     private fun liveEntry(msgId: Int, live: TLRPC.Message): EditEntry? {
         val media = live.media?.takeIf { it !is TLRPC.TL_messageMediaEmpty }
         if (live.message.isNullOrEmpty() && media == null) return null
         val date = if (live.edit_date > 0) live.edit_date else live.date
-        return EditEntry(date.toLong(), live.message ?: "", null, live.entities, media, originalMessageId = msgId)
+        return EditEntry(date.toLong(), live.message ?: "", null, live.entities, media, originalMessageId = msgId, fromId = EditHistoryHelper.messageAuthor(currentAccount, live))
     }
 
-    private fun authorOf(live: TLRPC.Message?): Long {
-        if (live == null) return if (DialogObject.isUserDialog(dialogId)) 0L else dialogId
-        live.from_id?.let { DialogObject.getPeerDialogId(it) }?.takeIf { it != 0L }?.let { return it }
-        if (DialogObject.isUserDialog(dialogId)) return if (live.out) userConfig.clientUserId else dialogId
-        return dialogId
-    }
-
-    private fun versionLabel(entry: EditEntry, previous: EditEntry?): CharSequence {
-        val time = LocaleController.formatString(R.string.InuEditedAtTime, formatTime(entry.timestamp))
-        val labels = previous?.let { prev -> EditHistoryHelper.changes(prev, entry).map { LocaleController.getString(it) } }.orEmpty()
-        val head = if (labels.isEmpty()) time else time + " · " + LocaleController.formatString(R.string.InuEditHistoryChanged, labels.joinToString(", "))
+    private fun versionLabel(entry: EditEntry, previous: EditEntry?, isOriginal: Boolean): CharSequence {
+        val head = if (isOriginal) {
+            LocaleController.getString(R.string.InuEditHistoryOriginal)
+        } else {
+            val time = LocaleController.formatString(R.string.InuEditedAtTime, formatTime(entry.timestamp))
+            val labels = previous?.let { EditHistoryHelper.changes(it, entry).map { id -> LocaleController.getString(id) } }.orEmpty()
+            if (labels.isEmpty()) time else time + " · " + LocaleController.formatString(R.string.InuEditHistoryChanged, labels.joinToString(", "))
+        }
         val builder = SpannableStringBuilder(head)
         if (previous != null && InuConfig.SHOW_EDIT_HISTORY_DIFF.value) {
             val (removed, added) = diffRanges(previous.text, entry.text)
@@ -197,7 +210,7 @@ class EditHistoryActivity(
     }
 
     // entiny: the diff rides on strike/underline entities so versions stay ordinary chat bubbles
-    private fun withDiff(entry: EditEntry, previous: EditEntry?, next: EditEntry?, authorId: Long, msgId: Int): EditEntry {
+    private fun withDiff(entry: EditEntry, previous: EditEntry?, next: EditEntry?, msgId: Int): EditEntry {
         var entities = entry.entities
         if (InuConfig.SHOW_EDIT_HISTORY_DIFF.value) {
             val added = previous?.let { diffRanges(it.text, entry.text).second }.orEmpty()
@@ -209,7 +222,7 @@ class EditHistoryActivity(
                 entities = merged
             }
         }
-        return entry.copy(entities = entities, fromId = authorId, originalMessageId = msgId)
+        return entry.copy(entities = entities, originalMessageId = msgId)
     }
 
     // entiny: word-level LCS, returns char ranges removed from old and added to new
@@ -243,7 +256,11 @@ class EditHistoryActivity(
 
     override fun bindMessage(cell: ArchiveMessageCell, row: Row) {
         val item = versions.getOrNull(row.index) ?: return
-        cell.show(item.entry, row, messageOf(item.entry), null, false)
+        cell.show(item.entry, row, messageOf(item.entry), null, showSenders)
+    }
+
+    override fun onTimePressed(message: MessageObject) {
+        showInChat(message)
     }
 
     override fun showMenu(cell: ArchiveMessageCell) {
@@ -251,6 +268,7 @@ class EditHistoryActivity(
         val source = item.source
         val savedMedia = source.mediaPath?.let { File(it) }?.takeIf { it.isFile && it.length() > 0 }
         ItemOptions.makeOptions(this, cell)
+            .add(R.drawable.msg_openin, LocaleController.getString(R.string.InuShowInChat)) { showInChat(messageOf(item.entry)) }
             .addIf(source.text.isNotEmpty(), R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) { copyText(source.text) }
             .addIf(savedMedia != null, R.drawable.msg_openin, LocaleController.getString(R.string.OpenInExternalApp)) {
                 savedMedia?.let { AndroidUtilities.openForView(it, it.name, null, parentActivity, null, false) }

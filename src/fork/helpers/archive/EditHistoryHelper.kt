@@ -4,9 +4,11 @@ import androidx.collection.LongSparseArray
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.DialogObject
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
+import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.BulletinFactory
 
@@ -44,6 +46,15 @@ object EditHistoryHelper {
 
     private fun revisionDate(editDate: Int, date: Int): Long = (if (editDate != 0) editDate else date).toLong()
 
+    // entiny: only the author of the message is knowable — the schema never tells who performed the edit
+    @JvmStatic
+    fun messageAuthor(account: Int, message: TLRPC.Message?): Long {
+        if (message == null) return 0L
+        val id = DialogObject.getPeerDialogId(message.from_id)
+        if (id != 0L) return id
+        return if (message.out) UserConfig.getInstance(account).clientUserId else 0L
+    }
+
     @JvmStatic
     fun onStoredEdit(account: Int, oldMessage: TLRPC.Message?, newMessage: TLRPC.Message) {
         if (!isSaveEditedEnabled()) return
@@ -56,7 +67,7 @@ object EditHistoryHelper {
         if (old == null || newMessage.edit_date <= old.timestamp) return
         val changed = changes(old, revisionOf(newMessage))
         if (changed.isEmpty()) return
-        record(account, dialogId, newMessage.id, old, oldMessage, R.string.InuEditFieldMedia in changed)
+        record(account, dialogId, newMessage.id, old, oldMessage, R.string.InuEditFieldMedia in changed, messageAuthor(account, newMessage))
     }
 
     @JvmStatic
@@ -66,15 +77,16 @@ object EditHistoryHelper {
         val old = revisionOf(owner)
         val edited = EditEntry(0L, newText ?: old.text, null, newEntities ?: owner.entities, newMedia ?: owner.media)
         if (changes(old, edited).isEmpty()) return
-        record(account, obj.dialogId, obj.id, old, owner, false)
+        record(account, obj.dialogId, obj.id, old, owner, false, messageAuthor(account, owner))
     }
 
-    private fun record(account: Int, dialogId: Long, msgId: Int, revision: EditEntry, source: TLRPC.Message?, copyMedia: Boolean) {
+    private fun record(account: Int, dialogId: Long, msgId: Int, revision: EditEntry, source: TLRPC.Message?, copyMedia: Boolean, authorId: Long) {
         if (!ArchiveScope.allows(account, dialogId, source, ArchiveScope.Kind.EDITED)) return
         if (revision.text.isEmpty() && !hasMedia(revision.media)) return
         val kept = revision.copy(
             entities = if (revision.entities.isNullOrEmpty()) null else ArrayList(revision.entities),
             media = ArchiveStore.cloneMedia(revision.media),
+            fromId = authorId,
         )
         synchronized(ArchiveCache.cacheLock) {
             val list = cachedRevisions(account, dialogId, msgId)
@@ -90,7 +102,7 @@ object EditHistoryHelper {
             val db = storage.database ?: return@Runnable
             try {
                 val date = kept.timestamp.toInt()
-                val inserted = ArchiveStore.saveEditHistory(db, dialogId, msgId, kept.text, date, null, kept.entities, kept.media)
+                val inserted = ArchiveStore.saveEditHistory(db, dialogId, msgId, kept.text, date, null, kept.entities, kept.media, kept.fromId)
                 synchronized(ArchiveCache.cacheLock) {
                     ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
                 }
@@ -181,7 +193,7 @@ object EditHistoryHelper {
                 emptyList()
             } else {
                 ArchiveStore.loadEditHistory(db, dialogId, msgId)
-                    .map { EditEntry(it.date, it.text, it.mediaPath, it.entities, it.media, rowId = it.rowId) }
+                    .map { EditEntry(it.date, it.text, it.mediaPath, it.entities, it.media, fromId = it.fromId, rowId = it.rowId) }
             }
             AndroidUtilities.runOnUIThread {
                 synchronized(ArchiveCache.cacheLock) {

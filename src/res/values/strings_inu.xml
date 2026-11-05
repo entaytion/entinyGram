@@ -1646,6 +1646,7 @@
     <string name="InuAiProvidersActiveForVoice">Active for Voice</string>
     <string name="InuNoEditHistory">No edit history recorded for this message</string>
     <string name="InuEditedAtTime">Edited at %1$s</string>
+    <string name="InuEditHistoryOriginal">Original</string>
     <string name="InuEditHistoryChanged">Changed: %1$s</string>
     <string name="InuEditFieldText">text</string>
     <string name="InuEditFieldCaption">caption</string>

@@ -7,7 +7,6 @@ import desu.inugram.helpers.archive.ArchiveCache
 import desu.inugram.helpers.archive.DeletedMessagesHelper
 import desu.inugram.helpers.archive.EditHistoryHelper.EditEntry
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
@@ -29,13 +28,6 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
     override val clearable: Boolean get() = true
     override val isDeletedArchive: Boolean get() = true
     override val overlayActionBar: Boolean get() = true
-
-    private val showSenders: Boolean
-        get() {
-            if (!DialogObject.isChatDialog(dialogId)) return false
-            val chat = messagesController.getChat(-dialogId)
-            return chat != null && !ChatObject.isChannelAndNotMegaGroup(chat)
-        }
 
     override fun hasContent(): Boolean = entries.isNotEmpty()
 

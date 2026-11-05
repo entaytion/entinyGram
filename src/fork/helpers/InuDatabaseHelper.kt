@@ -154,6 +154,11 @@ object InuDatabaseHelper {
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_deleted_at ON inu_deleted_messages(deleted_at)").stepThis().dispose()
             db.executeFast("DROP TABLE IF EXISTS inu_preserved_messages").stepThis().dispose()
         },
+        Migration(26) { db ->
+            try {
+                db.executeFast("ALTER TABLE inu_edit_history ADD COLUMN from_id INTEGER DEFAULT 0").stepThis().dispose()
+            } catch (e: Throwable) { }
+        },
     )
 
     @JvmStatic

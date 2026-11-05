@@ -2205,6 +2205,7 @@
     <string name="InuEditFieldTimer">таймер</string>
     <string name="InuEditHistoryChanged">Изменено: %1$s</string>
     <string name="InuEditedAtTime">Изменено в %1$s</string>
+    <string name="InuEditHistoryOriginal">Оригинал</string>
     <string name="InuHideDialogPreview">Скрыть превью последнего сообщения</string>
     <string name="InuHideDialogPreviewInfo">Показывать последнее сообщение в списке чатов под спойлером</string>
     <string name="InuHideReactionsBadges">Скрыть значки реакций</string>

@@ -22,6 +22,7 @@ import desu.inugram.helpers.archive.EditHistoryHelper.EditEntry
 import java.io.File
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ChatMessageSharedResources
+import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
@@ -73,6 +74,14 @@ abstract class ArchiveChatFragment(
     protected abstract val clearable: Boolean
     protected abstract val isDeletedArchive: Boolean
     protected open val overlayActionBar: Boolean = false
+
+    // entiny: groups name their senders, channels post as one face so the line would be noise
+    protected val showSenders: Boolean
+        get() {
+            if (!DialogObject.isChatDialog(dialogId)) return false
+            val chat = messagesController.getChat(-dialogId)
+            return chat != null && !ChatObject.isChannelAndNotMegaGroup(chat)
+        }
 
     protected abstract fun load()
     protected abstract fun buildRows()
