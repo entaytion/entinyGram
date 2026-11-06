@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xmogdemaybe <xmogdelegenda@gmail.com>
+Date: Thu, 5 Nov 2026 01:18:01 +0400
+Subject: Add 512p round video output resolution
+
+---
+ .../utils/recorder/round/RoundVideoCameraController.java      | 4 ++++
+ .../org/telegram/utils/recorder/round/RoundVideoSession.java  | 3 ++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
+@@ -2844,6 +2844,10 @@ final class RoundVideoCameraController {
+             return outputResolution.getSize();
+         }
+         if (outputResolution == RoundVideoSession.OutputResolution.P720) return 720;
++        if (outputResolution == RoundVideoSession.OutputResolution.P512) {
++            // entiny: кроп 1024 = 2× суперсемплинг 512p из 1080p-съёмки (лимит короткой стороны 1088 позволяет); 720 для среднего тира цепляется за 1280x720
++            return cameraResolution == RoundVideoSession.CameraResolution.HIGH ? 1024 : 720;
++        }
+         if (outputResolution == RoundVideoSession.OutputResolution.P480) {
+             return cameraResolution == RoundVideoSession.CameraResolution.HIGH ? 960 : 720;
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
+@@ -39,7 +39,8 @@ public final class RoundVideoSession {
+         P480(480),
+         /** 360 x 360 output. */
+         P360(360),
+-        P720(720);
++        P720(720),
++        P512(512);
+ 
+         private final int size;
+ 

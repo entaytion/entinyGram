@@ -744,9 +744,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">Google Camera のような滑らかなズームカーブ</string>
     <string name="InuRoundRecorderDualCamera">デュアルカメラ</string>
     <string name="InuRoundRecorderDualCameraInfo">フロントとリアのカメラを同時に開き、録画中に瞬時に切り替えできます。電池消費が増えます。</string>
-    <string name="InuRoundRecorderCameraApi">丸メッセージの録画は %1$s API を使用しています。**%2$s に切り替える >**</string>
-    <string name="InuRoundRecorder60Fps">動画メッセージで60 FPS</string>
-    <string name="InuRoundRecorder60FpsInfo">カメラが対応している場合、60 FPSで動画メッセージを録画します。</string>
+    <string name="InuRoundRecorderEvSliderRight">露出スライダーを右側に</string>
     <string name="InuRoundRecorderLockExposure">露出を固定</string>
     <string name="InuRoundRecorderLockExposureInfo">録画中の自動露出をロックし、明るさのちらつきや急激な変化を防ぎます。</string>
     <string name="InuRoundRecorderExposureButton">露出固定ボタン</string>
@@ -1397,6 +1395,9 @@
     <string name="InuArchiveMediaPublicInfo">削除/編集済みの写真と動画を、ギャラリーに表示されない Downloads/entinyGram/Ghosts にコピーします。アプリ内だけに残すにはオフにします。</string>
     <string name="InuAttachCameraSquare">正方形のカメラタイル</string>
     <string name="InuAttachCameraSquareInfo">ギャラリーのカメラが2マスではなく1マスになります</string>
+    <string name="InuAttachCameraResolution">動画の解像度</string>
+    <string name="InuAttachCameraExposureLevels">露出レベルボタン</string>
+    <string name="InuAttachCameraExposureLevelsInfo">カメラが開いている間、撮影を明るくまたは暗くするEVボタンを表示します。</string>
     <string name="InuSortAlbumsBySize">アルバムをサイズ順に並べる</string>
     <string name="InuSortAlbumsBySizeInfo">添付メニューのアルバムを新しい順ではなく写真数の多い順に並べます</string>
     <string name="InuDownloadDirectory">ダウンロードフォルダー</string>
@@ -1620,8 +1621,8 @@
     <string name="InuReplaceTextApply">置換</string>
     <string name="InuReplaceTextFind">検索</string>
     <string name="InuReplaceTextWith">置換後</string>
-    <string name="InuRoundRecorderExposureLevels">露出レベルボタン</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">録画中に映像を明るく・暗くする EV ボタンを表示します。</string>
+    <string name="InuRoundRecorderExposureLevels">露出調整</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">録画中に映像を明るくしたり暗くしたりできる露出コントロールを表示します。</string>
     <string name="InuSettingsShowAccounts">設定にアカウントを表示</string>
     <string name="InuGhostModeLauncherShortcut">アプリアイコンのショートカット</string>
     <string name="InuGhostModeLauncherShortcutInfo">アプリアイコンを長押ししてゴーストモードを切り替えるショートカットを追加します。</string>

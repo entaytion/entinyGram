@@ -1,0 +1,287 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xmogdemaybe <xmogdelegenda@gmail.com>
+Date: Wed, 4 Nov 2026 09:52:04 +0400
+Subject: [+] camera exposure and AE lock for the round-video engine
+
+---
+ .../messenger/camera/Camera2Session.java      | 17 ++---
+ .../ui/Components/InstantCameraView2.java     | 20 ++++++
+ .../round/RoundVideoCameraController.java     | 62 +++++++++++++++++++
+ .../recorder/round/RoundVideoSession.java     | 43 +++++++++++++
+ 4 files changed, 135 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
+@@ -31,6 +31,8 @@ import android.view.WindowManager;
+ import androidx.annotation.NonNull;
+ import androidx.annotation.RequiresApi;
+ 
++import desu.inugram.core.camera.ExposureEv;
++
+ import org.telegram.messenger.AndroidUtilities;
+ import org.telegram.messenger.ApplicationLoader;
+ import org.telegram.messenger.FileLog;
+@@ -508,25 +510,26 @@ public class Camera2Session {
+         return aeLocked;
+     }
+ 
+-    // entiny: raw device compensation steps, converted to/from human EV via getExposureCompensationStep()
++    // entiny: raw device compensation steps; EV<->step conversion lives in ExposureEv (fractional step, rounding away from zero)
+     private int exposureCompensation = 0;
+     public boolean isFrontCamera() {
+         return isFront;
+     }
+-    public float getExposureCompensationStep() {
+-        Rational step = cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP) : null;
+-        return step != null && step.floatValue() > 0f ? step.floatValue() : 1f;
++    public Rational getExposureCompensationStep() {
++        return cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP) : null;
+     }
+     public Range<Integer> getExposureCompensationRange() {
+         return cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE) : null;
+     }
+     public float getExposureCompensationEv() {
+-        return exposureCompensation * getExposureCompensationStep();
++        Rational step = getExposureCompensationStep();
++        if (step == null) return 0f;
++        return ExposureEv.stepsToEv(exposureCompensation, step.getNumerator(), step.getDenominator());
+     }
+     public void setExposureCompensationEv(float ev) {
++        Rational step = getExposureCompensationStep();
+         Range<Integer> range = getExposureCompensationRange();
+-        int raw = Math.round(ev / getExposureCompensationStep());
+-        if (range != null) raw = Math.max(range.getLower(), Math.min(range.getUpper(), raw));
++        int raw = step == null || range == null ? 0 : ExposureEv.evToSteps(ev, step.getNumerator(), step.getDenominator(), range.getLower(), range.getUpper());
+         if (exposureCompensation != raw) {
+             exposureCompensation = raw;
+             updateCaptureRequest();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
+@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
+ 
+ import androidx.annotation.NonNull;
+ 
++import desu.inugram.helpers.chat.ExposureLevelButtonsView;
+ import desu.inugram.helpers.chat.RoundRecorderHelper;
+ import desu.inugram.helpers.chat.VoiceRecorderHelper;
+ import org.telegram.messenger.AndroidUtilities;
+@@ -130,6 +131,8 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+ 
+     private boolean pinchZoomActive;
+     private ZoomControlView inu_zoomSlider;
++    private ExposureLevelButtonsView inu_exposureButtons;
++    private FlashViews.ImageViewInvertable inu_aeButton;
+     private float inu_pinchStartT;
+     private boolean heavyOperationsStopped;
+     private float previousWindowBrightness = Float.NaN;
+@@ -261,6 +264,15 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+         buttonsLayout.addView(flashButton, LayoutHelper.createLinear(44, 44));
+         flashButton.setOnClickListener(view -> toggleFlash());
+ 
++        inu_exposureButtons = RoundRecorderHelper.attachExposureButtons(this, ev -> {
++            if (session == null) return;
++            if (session.setExposureEv(ev)) {
++                RoundRecorderHelper.rememberExposure(session, ev);
++            }
++            if (inu_exposureButtons != null) inu_exposureButtons.setActiveLevel(ev);
++        });
++        inu_aeButton = RoundRecorderHelper.attachRoundAeLockButton(buttonsLayout, () -> session);
++
+         buttonIconSize = dp(isNewDesign ? 24 : 28);
+         switchCameraDrawable = new RLottieDrawable(
+                 R.raw.roundcamera_flip,
+@@ -708,6 +720,12 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+             zoomProgress = info.getZoomProgress();
+             inu_syncZoomSlider();
+             RoundRecorderHelper.setSliderVisible(inu_zoomSlider, info.getState() == RoundVideoSession.State.RECORDING);
++            boolean inu_recording = info.getState() == RoundVideoSession.State.RECORDING;
++            if (inu_recording && previous != RoundVideoSession.State.RECORDING) {
++                RoundRecorderHelper.syncExposureButtons(inu_exposureButtons, session);
++                RoundRecorderHelper.syncAeButton(inu_aeButton, session);
++            }
++            RoundRecorderHelper.setExposureButtonsVisible(inu_exposureButtons, inu_recording);
+         }
+ 
+         @Override
+@@ -720,6 +738,8 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+             }
+             updateButtons();
+             inu_syncZoomSlider();
++            RoundRecorderHelper.syncExposureButtons(inu_exposureButtons, session);
++            RoundRecorderHelper.syncAeButton(inu_aeButton, session);
+         }
+ 
+         @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
+@@ -21,6 +21,7 @@ import android.os.Handler;
+ import android.os.HandlerThread;
+ import android.os.SystemClock;
+ import android.util.Range;
++import android.util.Rational;
+ import android.util.Size;
+ import android.view.Surface;
+ import android.view.TextureView;
+@@ -30,6 +31,8 @@ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.core.content.ContextCompat;
+ 
++import desu.inugram.core.camera.ExposureEv;
++
+ import java.io.IOException;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+@@ -174,6 +177,8 @@ final class RoundVideoCameraController {
+     private volatile float zoomProgress;
+     private float maximumZoomRatio = 1f;
+     private boolean torchEnabled;
++    private volatile float requestedExposureEv;
++    private volatile boolean aeLocked = desu.inugram.InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.getValue();
+     private boolean torchVerificationPending;
+     private int torchVerificationFrames;
+     private int torchVerificationRetries;
+@@ -343,6 +348,47 @@ final class RoundVideoCameraController {
+         return true;
+     }
+ 
++    boolean setExposureEv(float ev) {
++        requestedExposureEv = ev;
++        Handler handler = cameraHandler;
++        if (!active || handler == null) return false;
++        handler.post(this::applyRepeatingRequest);
++        return true;
++    }
++
++    float getExposureEv() {
++        return requestedExposureEv;
++    }
++
++    boolean setAeLocked(boolean locked) {
++        if (aeLocked == locked) return true;
++        aeLocked = locked;
++        Handler handler = cameraHandler;
++        if (!active || handler == null) return false;
++        handler.post(this::applyRepeatingRequest);
++        return true;
++    }
++
++    boolean isAeLocked() {
++        return aeLocked;
++    }
++
++    boolean isFrontFacing() {
++        return activeFacing == RoundVideoSession.CameraFacing.FRONT;
++    }
++
++    Range<Integer> getExposureCompensationRange() {
++        return characteristics == null
++                ? null
++                : characteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
++    }
++
++    Rational getExposureCompensationStep() {
++        return characteristics == null
++                ? null
++                : characteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP);
++    }
++
+     boolean stopSegment() {
+         Handler handler = cameraHandler;
+         if (!active || stopping || handler == null) return false;
+@@ -1674,6 +1720,7 @@ final class RoundVideoCameraController {
+         if (activeControls) {
+             applyZoom(builder);
+             applyTorch(builder);
++            applyExposure(builder);
+         } else {
+             int[] aeModes = selection.characteristics.get(
+                     CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES
+@@ -1920,6 +1967,21 @@ final class RoundVideoCameraController {
+         }
+     }
+ 
++    private void applyExposure(@NonNull CaptureRequest.Builder builder) {
++        if (characteristics == null) return;
++        Rational step = characteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP);
++        Range<Integer> range = characteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
++        if (step != null && range != null) {
++            builder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ExposureEv.evToSteps(
++                    requestedExposureEv, step.getNumerator(), step.getDenominator(),
++                    range.getLower(), range.getUpper()));
++        }
++        Boolean lockAvailable = characteristics.get(CameraCharacteristics.CONTROL_AE_LOCK_AVAILABLE);
++        if (lockAvailable == null || lockAvailable) {
++            builder.set(CaptureRequest.CONTROL_AE_LOCK, aeLocked);
++        }
++    }
++
+     private void selectCameraAndSizes(@NonNull RoundVideoSession.CameraFacing facing)
+             throws CameraAccessException {
+         CameraSelection cached = selectionForFacing(facing);
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoSession.java
+@@ -7,6 +7,8 @@ import android.os.Build;
+ import android.os.Handler;
+ import android.os.Looper;
+ import android.os.SystemClock;
++import android.util.Range;
++import android.util.Rational;
+ import android.view.TextureView;
+ 
+ import androidx.annotation.MainThread;
+@@ -766,6 +768,47 @@ public final class RoundVideoSession {
+         return true;
+     }
+ 
++    /** Applies exposure compensation in human EV units, ignoring stops the camera cannot reach. */
++    @MainThread
++    public boolean setExposureEv(float ev) {
++        requireMainThread();
++        if (state != State.RECORDING || cameraSwitching) return false;
++        return cameraController.setExposureEv(ev);
++    }
++
++    /** Returns the exposure compensation currently requested from the camera. */
++    public float getExposureEv() {
++        return cameraController.getExposureEv();
++    }
++
++    /** Freezes auto-exposure for the rest of the recording. */
++    @MainThread
++    public boolean setAeLocked(boolean locked) {
++        requireMainThread();
++        if (state != State.RECORDING || cameraSwitching) return false;
++        return cameraController.setAeLocked(locked);
++    }
++
++    /** Returns whether auto-exposure is frozen. */
++    public boolean isAeLocked() {
++        return cameraController.isAeLocked();
++    }
++
++    /** Returns whether the configured camera faces the user. */
++    public boolean isFrontFacing() {
++        return cameraController.isFrontFacing();
++    }
++
++    /** Returns the device compensation range, or null when the camera has no exposure control. */
++    public @Nullable Range<Integer> getExposureCompensationRange() {
++        return cameraController.getExposureCompensationRange();
++    }
++
++    /** Returns the device compensation step, or null when the camera has no exposure control. */
++    public @Nullable Rational getExposureCompensationStep() {
++        return cameraController.getExposureCompensationStep();
++    }
++
+     /** Finalizes the selected recording and optionally removes its audio track. */
+     @MainThread
+     public boolean finish(boolean includeAudio) {

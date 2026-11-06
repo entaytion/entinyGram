@@ -150,9 +150,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">Google Kamera gibi daha pürüzsüz bir yakınlaştırma eğrisi</string>
     <string name="InuRoundRecorderDualCamera">Çift kamera</string>
     <string name="InuRoundRecorderDualCameraInfo">Kayıt sırasında anında geçiş yapmak için hem ön hem de arka kamerayı aynı anda açar. Daha fazla pil tüketir.</string>
-    <string name="InuRoundRecorderCameraApi">Yuvarlak kaydedici %1$s API\'sini kullanıyor. **%2$s API\'sine geç >**</string>
-    <string name="InuRoundRecorder60Fps">Video mesajlarında 60 FPS</string>
-    <string name="InuRoundRecorder60FpsInfo">Kamera destekliyorsa video mesajlarını 60 FPS hızında kaydedin.</string>
+    <string name="InuRoundRecorderEvSliderRight">Pozlama kaydırıcısı sağda</string>
     <string name="InuRoundRecorderLockExposure">Pozlamayı kilitle</string>
     <string name="InuRoundRecorderLockExposureInfo">Parlaklık değişimlerini önlemek için kayıt sırasında otomatik pozlamayı kilitler.</string>
     <string name="InuRoundRecorderExposureButton">Pozlama kilidi düğmesi</string>
@@ -1410,6 +1408,9 @@
     <string name="InuArchiveMediaPublicInfo">Silinmiş/düzenlenmiş fotoğraf ve videoları galeride görünmeyecek şekilde Downloads/entinyGram/Ghosts klasörüne kopyalar. Yalnızca uygulama içinde tutmak için kapat.</string>
     <string name="InuAttachCameraSquare">Kare kamera karosu</string>
     <string name="InuAttachCameraSquareInfo">Galerideki kamera iki yerine tek hücre kaplar</string>
+    <string name="InuAttachCameraResolution">Video çözünürlüğü</string>
+    <string name="InuAttachCameraExposureLevels">Pozlama düzeyi düğmeleri</string>
+    <string name="InuAttachCameraExposureLevelsInfo">Kamera açıkken çekimi aydınlatmak veya karartmak için EV düğmelerini göster.</string>
     <string name="InuSortAlbumsBySize">Albümleri boyuta göre sırala</string>
     <string name="InuSortAlbumsBySizeInfo">Ek menüsündeki albümler güncellik yerine fotoğraf sayısına göre sıralanır</string>
     <string name="InuDownloadDirectory">İndirme klasörü</string>
@@ -1621,8 +1622,8 @@
     <string name="InuHideChatAvatarInfo">Sohbet başlığından avatarı kaldırır, üç nokta menüsü kalır. Profili açmak için başlığa dokunun.</string>
     <string name="InuIosStyle">iOS stili</string>
     <string name="InuPingAllProxies">Tüm proxy\'lere ping at</string>
-    <string name="InuRoundRecorderExposureLevels">Pozlama seviyesi düğmeleri</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">Kayıt sırasında görüntüyü aydınlatmak veya karartmak için EV düğmelerini göster.</string>
+    <string name="InuRoundRecorderExposureLevels">Pozlama kontrolü</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Kayıt sırasında görüntüyü aydınlatmak veya karartmak için pozlama kontrollerini göster.</string>
     <string name="InuSettingsShowAccounts">Ayarlarda hesapları göster</string>
     <string name="InuGhostModeLauncherShortcut">Uygulama simgesinde kısayol</string>
     <string name="InuGhostModeLauncherShortcutInfo">Hayalet Modunu açıp kapatmak için uygulama simgesine uzun basma kısayolu ekleyin.</string>

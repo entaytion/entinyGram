@@ -87,7 +87,8 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 ### messages & sending
 
 - 📡 **Forward Pro** — full-screen editor over your chat wallpaper with a real bubble preview, albums kept grouped, comment before or after the forwarded message, formatted comment text; Forward can open it from chats and shared media instead of the stock picker
-- 📡 **round videos** — send from the gallery, zoom, exposure lock and EV buttons, up to 720p at 60 FPS with chosen video and audio bitrate and microphone source
+- 📡 **round videos** — send from the gallery, bottom zoom slider with presets and visible +/- buttons, pinch zoom, exposure slider starting at neutral (50%) and AE lock, up to 720p with shared 60 FPS and video bitrate settings up to 2 Mbps, chosen audio bitrate and microphone source; 512p stays round, 720p is delivered as regular video — *controls ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+  - Searchable zoom and exposure settings for both round recorders.
 - 📡 **send as sticker** — long-press the send button on selected photos to send them as 512 px stickers
 - 📡 **confirm before sending** voice and video messages, stickers and GIFs, and keep the screen on while recording
 - 📡 **typing status spoof** — fake "typing…", "recording…" or "uploading…" in any chat

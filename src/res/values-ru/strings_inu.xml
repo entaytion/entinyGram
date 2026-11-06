@@ -883,9 +883,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">Более плавная кривая зума, как в Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Две камеры</string>
     <string name="InuRoundRecorderDualCameraInfo">Открывать одновременно фронтальную и основную камеры для мгновенного переключения во время записи. Расходует больше батареи.</string>
-    <string name="InuRoundRecorderCameraApi">Запись кружочков использует %1$s API. **Переключиться на %2$s >**</string>
-    <string name="InuRoundRecorder60Fps">60 FPS в видеосообщениях</string>
-    <string name="InuRoundRecorder60FpsInfo">Записывать видеосообщения с частотой 60 кадров в секунду, если поддерживается камерой.</string>
+    <string name="InuRoundRecorderEvSliderRight">Слайдер экспозиции справа</string>
     <string name="InuRoundRecorderLockExposure">Фиксировать экспозицию</string>
     <string name="InuRoundRecorderLockExposureInfo">Блокирует автоэкспозицию при записи видеосообщений, предотвращая мерцание и скачки яркости.</string>
     <string name="InuRoundRecorderExposureButton">Кнопка фиксации экспозиции</string>
@@ -1644,6 +1642,9 @@
     <string name="InuAttachCameraMirrorFrontInfo">Отражать по горизонтали превью фронтальной камеры и снятое фото или видео</string>
     <string name="InuAttachCameraSquare">Квадратная плитка камеры</string>
     <string name="InuAttachCameraSquareInfo">Камера в галерее занимает одну ячейку вместо двух</string>
+    <string name="InuAttachCameraResolution">Разрешение видео</string>
+    <string name="InuAttachCameraExposureLevels">Кнопки уровней экспозиции</string>
+    <string name="InuAttachCameraExposureLevelsInfo">Показывать кнопки EV, чтобы сделать кадр светлее или темнее, пока открыта камера.</string>
     <string name="InuSortAlbumsBySize">Сортировать альбомы по размеру</string>
     <string name="InuSortAlbumsBySizeInfo">Альбомы в меню вложений сортируются по количеству фото, а не по давности</string>
     <string name="InuDownloadDirectory">Папка загрузок</string>
@@ -1803,8 +1804,8 @@
     <string name="InuDrawerBots">Мини-приложения</string>
     <string name="InuMenuDivider">Разделитель</string>
     <string name="InuPingAllProxies">Пинг всех прокси</string>
-    <string name="InuRoundRecorderExposureLevels">Кнопки уровня экспозиции</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">Показывать кнопки EV, чтобы осветлять или затемнять кадр во время записи.</string>
+    <string name="InuRoundRecorderExposureLevels">Управление экспозицией</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Показывать элементы управления экспозицией, чтобы осветлять или затемнять кадр во время записи.</string>
     <string name="InuOnlineDots">Цветные точки</string>
     <string name="InuOnlineDotsInfo">Синяя в сети, жёлтая в течение 20 мин, красная в течение часа.</string>
     <string name="InuGhostModeLauncherShortcut">Ярлык на значке приложения</string>

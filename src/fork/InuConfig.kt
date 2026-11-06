@@ -531,6 +531,18 @@ object InuConfig {
     val ATTACH_CAMERA_MIRROR_FRONT = BoolItem("attach_camera_mirror_front", false)
 
     @JvmField
+    val ATTACH_CAMERA_RESOLUTION = IntItem("attach_camera_resolution", 0)
+
+    @JvmField
+    val ATTACH_CAMERA_EXPOSURE_LEVELS = BoolItem("attach_camera_exposure_levels", false)
+
+    @JvmField
+    val ATTACH_CAMERA_EXPOSURE_FRONT = FloatItem("attach_camera_exposure_front", 0f)
+
+    @JvmField
+    val ATTACH_CAMERA_EXPOSURE_BACK = FloatItem("attach_camera_exposure_back", 0f)
+
+    @JvmField
     val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram", allowed = setOf("entinyGram", "Telegram"))
 
     @JvmField
@@ -1329,9 +1341,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ROUND_RECORDER_DUAL_CAMERA = BoolItem("round_recorder_dual_camera", true)
 
     @JvmField
-    val ROUND_RECORDER_60FPS = BoolItem("round_recorder_60fps", false)
-
-    @JvmField
     val ROUND_RECORDER_LOCK_EXPOSURE = BoolItem("round_recorder_lock_exposure", false)
 
     @JvmField
@@ -1341,16 +1350,13 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ROUND_RECORDER_EXPOSURE_LEVELS = BoolItem("round_recorder_exposure_levels", true)
 
     @JvmField
+    val ROUND_RECORDER_EV_SLIDER_RIGHT = BoolItem("round_recorder_ev_slider_right", false)
+
+    @JvmField
     val ROUND_RECORDER_EXPOSURE_FRONT = FloatItem("round_recorder_exposure_front", 0f)
 
     @JvmField
     val ROUND_RECORDER_EXPOSURE_BACK = FloatItem("round_recorder_exposure_back", 0f)
-
-    @JvmField
-    val ROUND_VIDEO_RESOLUTION = IntItem("round_video_resolution", 0)
-
-    @JvmField
-    val ROUND_VIDEO_BITRATE = IntItem("round_video_bitrate", 0)
 
     @JvmField
     val ROUND_AUDIO_BITRATE = IntItem("round_audio_bitrate", 0)

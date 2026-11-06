@@ -1,0 +1,386 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xmogdemaybe <xmogdelegenda@gmail.com>
+Date: Thu, 5 Nov 2026 11:12:22 +0400
+Subject: Wire CherryGram zoom and EV sliders into the round recorder
+
+---
+ .../ui/Components/InstantCameraView2.java     | 224 ++++++++++++++----
+ 1 file changed, 174 insertions(+), 50 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
+@@ -18,6 +18,8 @@ import android.graphics.Outline;
+ import android.graphics.Paint;
+ import android.graphics.RectF;
+ import android.os.SystemClock;
++import android.util.Range;
++import android.util.Rational;
+ import android.view.Gravity;
+ import android.view.MotionEvent;
+ import android.view.TextureView;
+@@ -31,7 +33,6 @@ import android.widget.LinearLayout;
+ 
+ import androidx.annotation.NonNull;
+ 
+-import desu.inugram.helpers.chat.ExposureLevelButtonsView;
+ import desu.inugram.helpers.chat.RoundRecorderHelper;
+ import desu.inugram.helpers.chat.VoiceRecorderHelper;
+ import org.telegram.messenger.AndroidUtilities;
+@@ -53,6 +54,7 @@ import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
+ import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProvider;
+ import org.telegram.ui.Components.voip.CellFlickerDrawable;
+ import org.telegram.ui.Stories.recorder.FlashViews;
++import org.telegram.ui.Stories.recorder.SliderView;
+ import org.telegram.utils.recorder.round.RoundVideoSession;
+ 
+ import java.io.File;
+@@ -63,7 +65,9 @@ import java.util.ArrayList;
+ public final class InstantCameraView2 extends InstantCameraViewBase {
+ 
+     private static final long MINIMUM_DURATION_MS = 800L;
+-    private static final float ZOOM_GESTURE_EFFORT = 1.5f;
++    // entiny: чувствительность пинч-зума, порт CherryGram
++    private static final float PINCH_ZOOM_SENSITIVITY = 2.5f;
++    private static final long EV_SLIDER_HIDE_DELAY_MS = 5000L;
+     private static final int SWITCH_PREVIEW_BITMAP_SIZE = 180;
+     private static final long UI_FRAME_FALLBACK_DELAY_NS = 70_000_000L;
+     private static final long CAMERA_FLIP_MINIMUM_DURATION_MS = 580L;
+@@ -100,7 +104,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+     private VideoEditedInfo videoEditedInfo;
+     private SendOptions pendingSend;
+     private AnimatorSet visibilityAnimator;
+-    private ValueAnimator zoomResetAnimator;
+     private ValueAnimator cameraFlipAnimator;
+     private RLottieDrawable switchCameraDrawable;
+     private RLottieDrawable flashOnDrawable;
+@@ -125,15 +128,67 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+     private float panTranslationY;
+     private float animationTranslationY;
+     private float pinchStartDistance;
+-    private float zoomProgress;
+     private int zoomPointerId1 = -1;
+     private int zoomPointerId2 = -1;
+ 
+     private boolean pinchZoomActive;
+-    private ZoomControlView inu_zoomSlider;
+-    private ExposureLevelButtonsView inu_exposureButtons;
++    private boolean pinchZoomLatched;
++    private RoundZoomSliderView inu_cgZoomSlider;
++    private SliderView inu_evSlider;
+     private FlashViews.ImageViewInvertable inu_aeButton;
+-    private float inu_pinchStartT;
++
++    private final InuZoomCamera inu_zoomCamera = new InuZoomCamera();
++
++    private final Runnable inu_evSliderHide = () -> {
++        if (inu_evSlider != null) inu_evSlider.setVisibility(INVISIBLE);
++    };
++
++    private final class InuZoomCamera implements RoundZoomSliderView.ZoomCamera {
++        private Runnable settledListener;
++
++        @Override
++        public boolean isCameraReady() {
++            return session != null && capabilities != null
++                    && capabilities.getActiveFacing() != null
++                    && stateInfo != null && stateInfo.canControlCamera();
++        }
++
++        @Override
++        public float getMinZoomRatio() {
++            return capabilities == null ? 1f : capabilities.getMinimumZoomRatio();
++        }
++
++        @Override
++        public float getMaxZoomRatio() {
++            return capabilities == null ? 1f : capabilities.getMaximumZoomRatio();
++        }
++
++        @Override
++        public float getZoomRatio() {
++            return session == null ? 1f : session.getZoomRatio();
++        }
++
++        @Override
++        public void setZoomRatio(float ratio) {
++            if (session != null) session.setZoomRatio(ratio);
++        }
++
++        @Override
++        public boolean isFrontface() {
++            return capabilities != null
++                    && capabilities.getActiveFacing() == RoundVideoSession.CameraFacing.FRONT;
++        }
++
++        @Override
++        public void setOnZoomSettledListener(Runnable listener) {
++            settledListener = listener;
++        }
++
++        void notifySettled() {
++            if (settledListener != null) settledListener.run();
++        }
++    }
++
+     private boolean heavyOperationsStopped;
+     private float previousWindowBrightness = Float.NaN;
+     private int textureViewSize;
+@@ -249,7 +304,20 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+                 0
+         ));
+ 
+-        inu_zoomSlider = RoundRecorderHelper.attachZoomSlider(this, t -> inu_setZoomT(t));
++        // entiny: CG-слайдер зума (порт CherryGram) вместо ZoomControlView
++        if (desu.inugram.InuConfig.ROUND_RECORDER_ZOOM_SLIDER.getValue()) {
++            inu_cgZoomSlider = new RoundZoomSliderView(context, resourcesProvider, false);
++            addView(inu_cgZoomSlider, LayoutHelper.createFrame(
++                    LayoutHelper.MATCH_PARENT,
++                    56,
++                    Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,
++                    28,
++                    0,
++                    28,
++                    64
++            ));
++            inu_cgZoomSlider.hideImmediately();
++        }
+ 
+         switchCameraButton = new FlashViews.ImageViewInvertable(context);
+         switchCameraButton.setScaleType(ImageView.ScaleType.CENTER);
+@@ -264,13 +332,29 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+         buttonsLayout.addView(flashButton, LayoutHelper.createLinear(44, 44));
+         flashButton.setOnClickListener(view -> toggleFlash());
+ 
+-        inu_exposureButtons = RoundRecorderHelper.attachExposureButtons(this, ev -> {
+-            if (session == null) return;
+-            if (session.setExposureEv(ev)) {
+-                RoundRecorderHelper.rememberExposure(session, ev);
+-            }
+-            if (inu_exposureButtons != null) inu_exposureButtons.setActiveLevel(ev);
+-        });
++        // entiny: слайдер экспозиции stories-стиля (порт CherryGram) вместо EV-кнопок
++        if (desu.inugram.InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.getValue()) {
++            inu_evSlider = new SliderView(context, SliderView.TYPE_EXPOSURE_CG);
++            inu_evSlider.setRotation(270);
++            addView(inu_evSlider, LayoutHelper.createFrame(
++                    dp(30),
++                    dp(100),
++                    Gravity.LEFT | Gravity.CENTER_VERTICAL,
++                    0,
++                    0,
++                    0,
++                    0
++            ));
++            inu_evSlider.setTranslationX(-dp(25));
++            inu_evSlider.setValue(0.5f);
++            inu_evSlider.setVisibility(INVISIBLE);
++            inu_evSlider.setOnValueChange(value -> {
++                if (session == null) return;
++                float maxAbsEv = inu_getMaxAbsEv();
++                float ev = (value - 0.5f) * 2f * maxAbsEv;
++                session.setExposureEv(ev);
++            });
++        }
+         inu_aeButton = RoundRecorderHelper.attachRoundAeLockButton(buttonsLayout, () -> session);
+ 
+         buttonIconSize = dp(isNewDesign ? 24 : 28);
+@@ -346,7 +430,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+     public void destroy(boolean async) {
+         setRecordingUiFrameClockActive(false);
+         cancelCameraFlipAnimation();
+-        if (zoomResetAnimator != null) zoomResetAnimator.cancel();
+         if (session != null) {
+             session.release();
+             session = null;
+@@ -711,21 +794,31 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+                     || info.getState() == RoundVideoSession.State.RELEASED) {
+                 cancelCameraFlipAnimation();
+                 startHeavyOperations();
++                if (inu_cgZoomSlider != null) inu_cgZoomSlider.unbindCamera();
++                inu_hideEvSlider();
+             }
+             if (previous == RoundVideoSession.State.RECORDING
+                     && info.getState() == RoundVideoSession.State.PAUSING) {
+                 postRecordStopped(2);
+             }
+             updateButtons();
+-            zoomProgress = info.getZoomProgress();
+-            inu_syncZoomSlider();
+-            RoundRecorderHelper.setSliderVisible(inu_zoomSlider, info.getState() == RoundVideoSession.State.RECORDING);
+             boolean inu_recording = info.getState() == RoundVideoSession.State.RECORDING;
+             if (inu_recording && previous != RoundVideoSession.State.RECORDING) {
+-                RoundRecorderHelper.syncExposureButtons(inu_exposureButtons, session);
++                if (inu_cgZoomSlider != null) {
++                    inu_cgZoomSlider.bindCamera(inu_zoomCamera);
++                    inu_zoomCamera.notifySettled();
++                }
++                if (inu_evSlider != null) {
++                    session.setExposureEv(0f);
++                    inu_syncEvSlider();
++                    inu_showEvSlider();
++                }
+                 RoundRecorderHelper.syncAeButton(inu_aeButton, session);
+             }
+-            RoundRecorderHelper.setExposureButtonsVisible(inu_exposureButtons, inu_recording);
++            if (previous == RoundVideoSession.State.RECORDING && !inu_recording) {
++                if (inu_cgZoomSlider != null) inu_cgZoomSlider.prepareForCameraChange();
++                inu_hideEvSlider();
++            }
+         }
+ 
+         @Override
+@@ -737,13 +830,20 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+                 SharedSettings.roundVideoLastCamera.set(cameraCapabilities.getActiveFacing());
+             }
+             updateButtons();
+-            inu_syncZoomSlider();
+-            RoundRecorderHelper.syncExposureButtons(inu_exposureButtons, session);
++            if (stateInfo != null && stateInfo.canControlCamera()) {
++                if (inu_cgZoomSlider != null) {
++                    inu_cgZoomSlider.prepareForCameraChange();
++                    inu_cgZoomSlider.bindCamera(inu_zoomCamera);
++                    inu_zoomCamera.notifySettled();
++                }
++                inu_syncEvSlider();
++            }
+             RoundRecorderHelper.syncAeButton(inu_aeButton, session);
+         }
+ 
+         @Override
+         public void onCameraSwitchStarted(@NonNull RoundVideoSession.CameraFacing facing) {
++            if (inu_cgZoomSlider != null) inu_cgZoomSlider.prepareForCameraChange();
+             startCameraFlipAnimation(facing);
+         }
+ 
+@@ -752,6 +852,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+             cameraFlipSessionReady = true;
+             FileLog.d("RoundVideo camera flip session ready: facing=" + facing
+                     + ", elapsedMs=" + getCameraFlipElapsedMs());
++            if (inu_cgZoomSlider != null) {
++                inu_cgZoomSlider.bindCamera(inu_zoomCamera);
++                inu_zoomCamera.notifySettled();
++            }
++            if (inu_evSlider != null) {
++                session.setExposureEv(0f);
++                inu_syncEvSlider();
++            }
+             maybeFinishCameraFlip();
+         }
+ 
+@@ -1014,7 +1122,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+             return false;
+         }
+         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+-            if (zoomResetAnimator != null) zoomResetAnimator.cancel();
+             pinchZoomActive = false;
+             zoomPointerId1 = event.getPointerId(0);
+             zoomPointerId2 = -1;
+@@ -1030,7 +1137,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+             zoomPointerId2 = event.getPointerId(1);
+             pinchStartDistance = pointerDistance(event, 0, 1);
+             pinchZoomActive = pinchStartDistance > 0f;
+-            inu_pinchStartT = RoundRecorderHelper.zoomProgressToT(zoomProgress, inu_getMaximumZoomRatio());
++            pinchZoomLatched = false;
+             return true;
+         }
+         if (event.getActionMasked() == MotionEvent.ACTION_MOVE && pinchZoomActive) {
+@@ -1040,8 +1147,23 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+                 finishZoomGesture();
+                 return true;
+             }
+-            float scale = pointerDistance(event, index1, index2) / pinchStartDistance;
+-            inu_setZoomT(inu_pinchStartT + RoundRecorderHelper.pinchDeltaT(scale));
++            // entiny: пинч по CherryGram — мёртвая зона 0.4см, затем инкрементальный множитель
++            float distance = pointerDistance(event, index1, index2);
++            if (!pinchZoomLatched) {
++                if (Math.abs(distance - pinchStartDistance) >= AndroidUtilities.getPixelsInCM(0.4f, false)) {
++                    pinchStartDistance = distance;
++                    pinchZoomLatched = true;
++                }
++                return true;
++            }
++            float ratio = distance / pinchStartDistance;
++            float factor = 1f + (ratio - 1f) * PINCH_ZOOM_SENSITIVITY;
++            pinchStartDistance = distance;
++            if (inu_cgZoomSlider != null) {
++                inu_cgZoomSlider.scaleZoom(factor);
++            } else {
++                inu_zoomCamera.setZoomRatio(inu_zoomCamera.getZoomRatio() * factor);
++            }
+             return true;
+         }
+         if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP && pinchZoomActive) {
+@@ -1056,6 +1178,10 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+             finishZoomGesture();
+             return true;
+         }
++        if (event.getActionMasked() == MotionEvent.ACTION_UP
++                && stateInfo.getState() == RoundVideoSession.State.RECORDING) {
++            inu_showEvSlider();
++        }
+         return true;
+     }
+ 
+@@ -1069,39 +1195,37 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+     private void finishZoomGesture() {
+         if (!pinchZoomActive) return;
+         pinchZoomActive = false;
++        pinchZoomLatched = false;
+         zoomPointerId1 = -1;
+         zoomPointerId2 = -1;
+-        if (desu.inugram.InuConfig.ROUND_RECORDER_KEEP_ZOOM.getValue()) return;
+-        animateZoomReset();
+     }
+ 
+-    private float inu_getMaximumZoomRatio() {
+-        return capabilities == null ? 1f : capabilities.getMaximumZoomRatio();
++    private void inu_showEvSlider() {
++        if (inu_evSlider == null) return;
++        removeCallbacks(inu_evSliderHide);
++        inu_evSlider.setVisibility(VISIBLE);
++        postDelayed(inu_evSliderHide, EV_SLIDER_HIDE_DELAY_MS);
+     }
+ 
+-    private void inu_setZoomT(float t) {
+-        if (session == null) return;
+-        float progress = RoundRecorderHelper.zoomTToProgress(t, inu_getMaximumZoomRatio());
+-        if (session.setZoom(progress)) zoomProgress = progress;
+-        inu_syncZoomSlider();
++    private void inu_hideEvSlider() {
++        removeCallbacks(inu_evSliderHide);
++        if (inu_evSlider != null) inu_evSlider.setVisibility(INVISIBLE);
+     }
+ 
+-    private void inu_syncZoomSlider() {
+-        if (inu_zoomSlider == null) return;
+-        inu_zoomSlider.setZoom(RoundRecorderHelper.zoomProgressToT(zoomProgress, inu_getMaximumZoomRatio()), false);
++    private void inu_syncEvSlider() {
++        if (inu_evSlider == null || session == null) return;
++        float maxAbsEv = inu_getMaxAbsEv();
++        float value = maxAbsEv <= 0f ? 0.5f
++                : Utilities.clamp(0.5f + session.getExposureEv() / (2f * maxAbsEv), 1f, 0f);
++        inu_evSlider.setValue(value);
+     }
+ 
+-    private void animateZoomReset() {
+-        if (session == null) return;
+-        if (zoomResetAnimator != null) zoomResetAnimator.cancel();
+-        zoomResetAnimator = ValueAnimator.ofFloat(zoomProgress, 0f);
+-        zoomResetAnimator.setDuration(350L);
+-        zoomResetAnimator.addUpdateListener(animation -> {
+-            zoomProgress = (float) animation.getAnimatedValue();
+-            if (session != null) session.setZoom(zoomProgress);
+-            inu_syncZoomSlider();
+-        });
+-        zoomResetAnimator.start();
++    private float inu_getMaxAbsEv() {
++        if (session == null) return 0f;
++        Range<Integer> range = session.getExposureCompensationRange();
++        Rational step = session.getExposureCompensationStep();
++        if (range == null || step == null || step.floatValue() <= 0f) return 0f;
++        return Math.max(Math.abs(range.getLower()), Math.abs(range.getUpper())) * step.floatValue();
+     }
+ 
+     private void setScreenFlashEnabled(boolean enabled) {

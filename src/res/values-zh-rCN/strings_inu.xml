@@ -743,9 +743,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">更平滑的缩放曲线，类似 Google Camera</string>
     <string name="InuRoundRecorderDualCamera">双摄像头</string>
     <string name="InuRoundRecorderDualCameraInfo">同时打开前后摄像头，可在录制中即时切换。耗电更多。</string>
-    <string name="InuRoundRecorderCameraApi">圆形录制使用 %1$s API。**切换到 %2$s >**</string>
-    <string name="InuRoundRecorder60Fps">视频留言 60 FPS</string>
-    <string name="InuRoundRecorder60FpsInfo">如果相机支持，以 60 FPS 录制视频留言。</string>
+    <string name="InuRoundRecorderEvSliderRight">曝光滑块靠右</string>
     <string name="InuRoundRecorderLockExposure">锁定曝光</string>
     <string name="InuRoundRecorderLockExposureInfo">录制期间锁定自动曝光，防止画面亮度闪烁跳动。</string>
     <string name="InuRoundRecorderExposureButton">曝光锁定按钮</string>
@@ -1409,6 +1407,9 @@
     <string name="InuArchiveMediaPublicInfo">将已删除/已编辑的照片和视频复制到 Downloads/entinyGram/Ghosts，图库中不显示。关闭后仅保存在应用内。</string>
     <string name="InuAttachCameraSquare">方形相机磁贴</string>
     <string name="InuAttachCameraSquareInfo">图库中的相机占一格而不是两格</string>
+    <string name="InuAttachCameraResolution">视频分辨率</string>
+    <string name="InuAttachCameraExposureLevels">曝光级别按钮</string>
+    <string name="InuAttachCameraExposureLevelsInfo">相机打开时显示用于调亮或调暗画面的 EV 按钮。</string>
     <string name="InuSortAlbumsBySize">按大小排序相册</string>
     <string name="InuSortAlbumsBySizeInfo">附件菜单中的相册按照片数量而非最近使用时间排序</string>
     <string name="InuDownloadDirectory">下载文件夹</string>
@@ -1620,8 +1621,8 @@
     <string name="InuHideChatAvatarInfo">从聊天标题栏移除头像，保留三点菜单。点击标题即可打开资料。</string>
     <string name="InuIosStyle">iOS 风格</string>
     <string name="InuPingAllProxies">Ping 所有代理</string>
-    <string name="InuRoundRecorderExposureLevels">曝光等级按钮</string>
-    <string name="InuRoundRecorderExposureLevelsInfo">录制时显示 EV 按钮，用于调亮或调暗画面。</string>
+    <string name="InuRoundRecorderExposureLevels">曝光控制</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">录制时显示曝光控件，用于调亮或调暗画面。</string>
     <string name="InuSettingsShowAccounts">在设置中显示账号</string>
     <string name="InuGhostModeLauncherShortcut">应用图标快捷方式</string>
     <string name="InuGhostModeLauncherShortcutInfo">在应用图标长按菜单中添加开启或关闭幽灵模式的快捷方式。</string>
