@@ -2086,4 +2086,5 @@
     <string name="InuStickerPackZipFailed">تعذّر تنزيل الحزمة</string>
     <string name="InuForumSectionsCards">أقسام بطاقات في مواضيع المنتدى</string>
     <string name="InuMarketFilters">الفلاتر</string>
+    <string name="InuRoundExposure">التعرض</string>
 </resources>

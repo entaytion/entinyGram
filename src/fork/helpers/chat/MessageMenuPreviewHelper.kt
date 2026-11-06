@@ -20,7 +20,7 @@ object MessageMenuPreviewHelper {
         dismiss: Runnable,
     ): Column? {
         if (!InuConfig.IOS_MESSAGE_MENU.value || InuConfig.DISABLE_SCRIM_BLUR.value) return null
-        if (cell.messageObject == null || cell.currentMessagesGroup != null) return null
+        if (cell.messageObject == null) return null
         return Column(context, cell, menu, reactions?.takeIf { it.parent != null }, dismiss)
     }
 
@@ -112,6 +112,30 @@ object MessageMenuPreviewHelper {
             postRight = cellX + cell.backgroundDrawableRight
             originalTop = cellY + cell.backgroundDrawableTop
             postHeight = maxOf(cellY + cell.backgroundDrawableBottom, list.y + cell.y + cell.measuredHeight) - originalTop
+            val group = cell.currentMessagesGroup
+            if (group != null) {
+                var l = Float.MAX_VALUE
+                var r = -Float.MAX_VALUE
+                var t = Float.MAX_VALUE
+                var b = -Float.MAX_VALUE
+                val parent = list as ViewGroup
+                for (i in 0 until parent.childCount) {
+                    val c = parent.getChildAt(i) as? ChatMessageCell ?: continue
+                    if (c.currentMessagesGroup !== group) continue
+                    val cx = list.x + c.x
+                    val cy = list.y + c.y + c.paddingTop
+                    l = minOf(l, cx + c.backgroundDrawableLeft)
+                    r = maxOf(r, cx + c.backgroundDrawableRight)
+                    t = minOf(t, cy + c.backgroundDrawableTop)
+                    b = maxOf(b, maxOf(cy + c.backgroundDrawableBottom, list.y + c.y + c.measuredHeight))
+                }
+                if (l <= r && t <= b) {
+                    postLeft = l
+                    postRight = r
+                    originalTop = t
+                    postHeight = b - t
+                }
+            }
 
             menu.setMaxHeight(0)
             val width = (list.width - dp(12f)).coerceAtLeast(1)

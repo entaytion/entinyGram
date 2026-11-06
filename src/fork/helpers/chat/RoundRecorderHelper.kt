@@ -269,6 +269,10 @@ object RoundRecorderHelper {
     @JvmStatic
     fun sharedVideoBitrate(): Int = SharedSettings.roundVideoVideoBitrate.get()
 
+    // entiny: InstantCameraView2 (base-патч инуграма) передаёт дефолт аргументом — оверрайд или дефолт
+    @JvmStatic
+    fun videoBitrate(defaultBps: Int): Int = SharedSettings.roundVideoVideoBitrate.get().takeIf { it > 0 } ?: defaultBps
+
     @JvmStatic
     fun outputResolution(default: RoundVideoSession.OutputResolution): RoundVideoSession.OutputResolution {
         // entiny: 512p — максимум, который сервер Telegram принимает как кружок (720p и выше конвертирует в обычное видео)

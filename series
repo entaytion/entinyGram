@@ -658,4 +658,5 @@ entiny/media/round-zoom-slider-view.patch
 entiny/media/round-ev-slider-view.patch
 entiny/media/round-video-cg-ui.patch
 entiny/media/round-ev-slider-side.patch
+entiny/media/cg-camera-integration.patch
 entiny/build/build-number-config.patch

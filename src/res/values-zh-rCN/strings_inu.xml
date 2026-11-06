@@ -2063,4 +2063,5 @@
     <string name="InuStickerPackZipFailed">下载贴纸包失败</string>
     <string name="InuForumSectionsCards">论坛话题使用卡片分区</string>
     <string name="InuMarketFilters">筛选</string>
+    <string name="InuRoundExposure">曝光</string>
 </resources>
