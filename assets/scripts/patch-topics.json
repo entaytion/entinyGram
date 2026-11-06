@@ -143,6 +143,7 @@
   "liquid-glass-live-update": "ui",
   "glass-glare-styles": "ui",
   "local-custom-emoji": "ui",
+  "build-number-config": "build",
   "local-folders": "tabs",
   "local-message-edit": "chat",
   "chat-snowflakes": "chat",

@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { icons as tablerIcons } from '@iconify-json/tabler'
 
 export const upstreamUrl = 'https://github.com/DrKLO/Telegram'
-export const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+export const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 export const worktreeDir = join(rootDir, 'worktree')
 export const patchesDir = join(rootDir, 'patches')
 export const seriesFile = join(rootDir, 'series')

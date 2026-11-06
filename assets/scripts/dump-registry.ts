@@ -11,7 +11,7 @@
  * Used by release-notes.ts to give the AI a mapping of feature slugs → English labels
  * so it can embed tg://entinySettings/<slug> deep links in changelog bullets.
  *
- * Usage:  bun run tsx scripts/dump-registry.ts [artifactDir=out]
+ * Usage:  bun run tsx assets/scripts/dump-registry.ts [artifactDir=out]
  */
 
 import fs from 'node:fs/promises'

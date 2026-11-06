@@ -14,14 +14,14 @@ $.verbose = false
 //   - extra          : key present only in the locale
 //
 // Usage:
-//   bun scripts/check-translations.ts                  # summary + breakdown for all locales
-//   bun scripts/check-translations.ts ru               # single locale (includes stale check)
-//   bun scripts/check-translations.ts --matrix         # matrix of which keys are missing where
-//   bun scripts/check-translations.ts --missing [iso]  # only missing XML strings
-//   bun scripts/check-translations.ts --untranslated   # only untranslated copy strings
-//   bun scripts/check-translations.ts --stale [iso]    # only stale translations (git blame)
-//   bun scripts/check-translations.ts --summary        # only summary table
-//   bun scripts/check-translations.ts --fill [iso]     # append missing keys with base text into locale files
+//   bun assets/scripts/check-translations.ts                  # summary + breakdown for all locales
+//   bun assets/scripts/check-translations.ts ru               # single locale (includes stale check)
+//   bun assets/scripts/check-translations.ts --matrix         # matrix of which keys are missing where
+//   bun assets/scripts/check-translations.ts --missing [iso]  # only missing XML strings
+//   bun assets/scripts/check-translations.ts --untranslated   # only untranslated copy strings
+//   bun assets/scripts/check-translations.ts --stale [iso]    # only stale translations (git blame)
+//   bun assets/scripts/check-translations.ts --summary        # only summary table
+//   bun assets/scripts/check-translations.ts --fill [iso]     # append missing keys with base text into locale files
 
 const args = process.argv.slice(2)
 const showMatrix = args.includes('--matrix') || args.includes('-m')

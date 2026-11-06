@@ -65,10 +65,10 @@
 ### Patch Groups (`group__name` → `patches/<group>/<name>.patch`)
 | Group | Ownership & Scope |
 | --- | --- |
-| `entiny` | **entinyGram-owned patches.** Named `entiny__<name>`, exported to `patches/entiny/<topic>/<name>.patch`. **Must** have a topic entry in `scripts/patch-topics.json` (`accounts`, `ai`, `build`, `calls`, `chat`, `feed`, `media`, `misc`, `notifications`, `premium`, `privacy`, `proxy`, `restrictions`, `settings`, `tabs`, `translator`, `ui`). |
+| `entiny` | **entinyGram-owned patches.** Named `entiny__<name>`, exported to `patches/entiny/<topic>/<name>.patch`. **Must** have a topic entry in `assets/scripts/patch-topics.json` (`accounts`, `ai`, `build`, `calls`, `chat`, `feed`, `media`, `misc`, `notifications`, `premium`, `privacy`, `proxy`, `restrictions`, `settings`, `tabs`, `translator`, `ui`). |
 | `bugfix`, `feature`, `debloat`, `hooks`, `misc` | **Inherited inugram base.** NEVER create new entinyGram patches under these groups. |
 
-- **Taking Over an Inugram Patch:** `stg float <patch> && stg rename <old> entiny__<name>` (and add to `scripts/patch-topics.json`).
+- **Taking Over an Inugram Patch:** `stg float <patch> && stg rename <old> entiny__<name>` (and add to `assets/scripts/patch-topics.json`).
 - **Folding Fixes:** Squash follow-up fixes into the existing `entiny__` patch (`stg squash -n <existing> -m "<subject>" <existing> <new>`) instead of leaving extra tiny patches.
 - **Patch Author:** Uses active `git config user.name` / `user.email`. Preserve original author metadata when porting from upstream/other forks.
 
@@ -99,7 +99,7 @@ Before writing code or hunting a bug, always load and follow the entinygram-craf
   - Add toggles to existing `*SettingsActivity` pages extending `SettingsPageActivity`.
   - Register in `SearchRegistry.pages` (`@JvmField val PAGE = SearchRegistry.Page(...)`). Slugs must be globally unique and never renamed.
 - **New Locale (`values-<iso>/strings_inu.xml`) Needs All 3:**
-  1. `forkSyncFiles` entry in `scripts/config.ts`.
+  1. `forkSyncFiles` entry in `assets/scripts/config.ts`.
   2. Locale in `localeFilters` in `TMessagesProj_App/build.gradle` (`entiny__build-configuration`).
   3. Symlink created via `bun run setup` in `worktree/TMessagesProj/src/main/res/values-<iso>/strings_inu.xml`.
 
@@ -141,10 +141,10 @@ Before writing code or hunting a bug, always load and follow the entinygram-craf
 
 ### Pre-Completion Verification (Run Before Declaring ANY Task Done)
 - [ ] Zero temp `Log.d` calls or comment spam left in the tree.
-- [ ] New `entiny__` patch has a topic in `scripts/patch-topics.json`.
+- [ ] New `entiny__` patch has a topic in `assets/scripts/patch-topics.json`.
 - [ ] `FEATURES.md` updated under `## entinyGram additions`.
-- [ ] `bun run tsx scripts/entinychecker.ts` passes.
-- [ ] `bun run tsx scripts/check-translations.ts` passes.
+- [ ] `bun run tsx assets/scripts/entinychecker.ts` passes.
+- [ ] `bun run tsx assets/scripts/check-translations.ts` passes.
 - [ ] `bun run lint-patches` passes.
 
 ### Upstream Inugram Sync Hygiene
@@ -152,4 +152,4 @@ Before writing code or hunting a bug, always load and follow the entinygram-craf
 - [ ] Scan `.xml`, `.kt`, `.java`, `.gradle` for `<<<<<<<`, `=======`, `>>>>>>>` and check XML well-formedness.
 - [ ] Verify stock API renames (e.g. `UItem.text2` → `UItem.subtext`).
 - [ ] Keep `NON_ISLAND_SHARED_MEDIA_TABS` OFF (upstream `SharedMediaLayout.inu_dockOffset()` clipping bug).
-- [ ] Run `bun run scripts/apply-branding.ts` immediately to restore `google-services.json` (`ua.entaytion.entinygram`) and `entiny__branding`.
+- [ ] Run `bun run assets/scripts/apply-branding.ts` immediately to restore `google-services.json` (`ua.entaytion.entinygram`) and `entiny__branding`.

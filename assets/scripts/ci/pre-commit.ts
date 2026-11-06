@@ -11,7 +11,7 @@ import {
   parsePatchName,
 } from '../lib.js'
 
-const resCheck = spawnSync('bun', ['scripts/entinychecker.ts', '--res-only'], { stdio: 'inherit', shell: true })
+const resCheck = spawnSync('bun', ['assets/scripts/entinychecker.ts', '--res-only'], { stdio: 'inherit', shell: true })
 if (resCheck.status !== 0) {
   console.error(chalk.red('resource check failed: fix the strings above (aapt2 would reject them)'))
   process.exit(1)

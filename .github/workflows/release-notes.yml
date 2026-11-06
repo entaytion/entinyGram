@@ -42,14 +42,14 @@ jobs:
             tag=$(gh release list --exclude-pre-releases --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
             [ -n "$tag" ] && base=$(git rev-list -n 1 "$tag")
           fi
-          commits_json=$(bun run tsx scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
+          commits_json=$(bun run tsx assets/scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
           jq -n --arg repo "$GITHUB_REPOSITORY" --argjson commits "$commits_json" \
             '{verName:"draft",repo:$repo,commits:$commits}' > out/build-info.json
           jq -n --arg base "$LAST_RELEASE_SHA" --arg head "$GITHUB_SHA" --arg at "$(date -u +%FT%TZ)" \
             '{base:$base,head:$head,createdAt:$at}' > out/meta.json
 
       - name: Dump settings registry
-        run: bun run tsx scripts/dump-registry.ts out
+        run: bun run tsx assets/scripts/dump-registry.ts out
 
       - name: Generate release notes
         env:
@@ -58,7 +58,7 @@ jobs:
           GEMINI_BASE_URL: ${{ vars.GEMINI_BASE_URL }}
           GEMINI_MODEL:    ${{ vars.GEMINI_MODEL }}
           DRAFT_MODE:      'true'
-        run: bun run tsx scripts/release-notes.ts out
+        run: bun run tsx assets/scripts/release-notes.ts out
 
       - name: Push draft to the release-notes-draft branch
         run: |

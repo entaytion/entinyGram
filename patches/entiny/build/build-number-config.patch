@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 6 Nov 2026 23:35:57 +0200
+Subject: Read local build number from YAML
+
+---
+ build.gradle | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/build.gradle b/build.gradle
+index 0000000..0000000 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -75,16 +75,25 @@ def getGitCommitSha = {
+ }
+ 
+ def getNextLocalBuildNumber = {
+-    def file = new File(rootDir.parentFile, '.local_build_number')
++    def file = new File(rootDir.parentFile, 'assets/entiny.yaml')
+     int current = 1000000
+-    if (file.exists()) {
++    def contents = file.exists() ? file.text : ''
++    def matcher = contents =~ /(?m)^local build number:[ \t]*["']?([0-9]*)["']?[ \t]*(?:#.*)?$/
++    if (matcher.find() && matcher.group(1)) {
+         try {
+-            current = file.text.trim().toInteger()
++            current = matcher.group(1).toInteger()
+         } catch (Exception ignored) {}
+     }
+     int next = current + 1
++    def line = "local build number: \"${next}\""
++    if (contents =~ /(?m)^local build number:/) {
++        contents = contents.replaceFirst(/(?m)^local build number:.*$/, line)
++    } else {
++        contents += (contents && !contents.endsWith('\n') ? '\n' : '') + line + '\n'
++    }
+     try {
+-        file.text = next.toString()
++        file.parentFile.mkdirs()
++        file.text = contents
+     } catch (Exception ignored) {}
+     return current
+ }

@@ -53,7 +53,7 @@ entinyGram/
 │   └── misc/             # build support and everything else
 ├── patches-native/       # native-layer patches (LSPlant)
 ├── sdk/                  # plugin SDK: API typings and the author CLI
-├── scripts/              # setup, export, lint, code generation
+├── assets/scripts/       # setup, export, lint, code generation
 ├── upstream-commit       # pinned Telegram base commit
 ├── series                # patch application order
 └── worktree/             # Telegram checkout the stack is applied to (gitignored)

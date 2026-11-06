@@ -1,2 +1,2 @@
 unset $(git rev-parse --local-env-vars)
-bun run scripts/ci/pre-commit.ts
+bun run assets/scripts/ci/pre-commit.ts

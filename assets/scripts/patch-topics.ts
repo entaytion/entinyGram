@@ -29,10 +29,10 @@ export function topicOf(patchName: string): EntinyTopic {
   const name = patchName.startsWith('entiny__') ? patchName.slice('entiny__'.length) : patchName
   const topic = topics[name]
   if (!topic) {
-    throw new Error(`No topic for ${patchName}; add it to scripts/patch-topics.json`)
+    throw new Error(`No topic for ${patchName}; add it to assets/scripts/patch-topics.json`)
   }
   if (!(ENTINY_TOPICS as readonly string[]).includes(topic)) {
-    throw new Error(`Unknown topic "${topic}" for ${patchName} in scripts/patch-topics.json`)
+    throw new Error(`Unknown topic "${topic}" for ${patchName} in assets/scripts/patch-topics.json`)
   }
   return topic as EntinyTopic
 }

@@ -12,14 +12,14 @@ description: >
 
 Base strings: `src/res/values/strings_inu.xml`. Each locale is a sibling
 `src/res/values-<iso>/strings_inu.xml`. Every locale must be registered in
-`scripts/config.ts` → `forkSyncFiles` so it lands in the worktree.
+`assets/scripts/config.ts` → `forkSyncFiles` so it lands in the worktree.
 
 ## Auditing a locale
 
 Always start here:
 
 ```bash
-bun tsx scripts/find-missing-translations.ts <iso>
+bun tsx assets/scripts/find-missing-translations.ts <iso>
 ```
 
 Outputs three sections:
@@ -71,7 +71,7 @@ The stale heuristic also fires for lines you just edited in the same session
 
 1. Create `src/res/values-<iso>/strings_inu.xml` with the full set of keys.
    Easiest: copy base, translate each value in place.
-2. Register in `scripts/config.ts`:
+2. Register in `assets/scripts/config.ts`:
    ```ts
    {
      source: 'src/res/values-<iso>/strings_inu.xml',

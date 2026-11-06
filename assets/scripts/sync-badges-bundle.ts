@@ -9,7 +9,7 @@ import { step, success } from './lib.js'
  * holder on entaytion-is.a.dev, so the bundled copy doesn't drift from the server - it used
  * to be a hand-typed `hashMapOf` in Kotlin, kept in sync with the DB by eyeballing a diff.
  *
- *   bun run scripts/sync-badges-bundle.ts
+ *   bun run assets/scripts/sync-badges-bundle.ts
  */
 
 const ENDPOINT = 'https://entaytion.is-a.dev/api/entinygram/badges'

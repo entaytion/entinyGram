@@ -134,6 +134,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **plugin market** — themed catalog with compact buttons, all categories and Tabler icons, filters, version badges, two-line descriptions, authors and tags, a dedicated entinyGram page and automatic SDK installation
 - 📡 **plugins** — settings integration so a plugin can add controls to the app settings, a crash report naming the plugin with a copy button, and a permission review that lists plugins asking for more than you allowed and approves them in one tap
 - 📡 **Windows release builds** — build signed arm64 APKs with plugins from Git Bash on Windows
+- 📡 **local build numbering** — Gradle reads and increments the local version code in `assets/entiny.yaml`
 - 📡 **osmdroid map view** — pure-Java OpenStreetMap renderer with no native libraries, replacing MapLibre to cut ~12MB of native code from the APK
 - 📡 **faster cold start**, locale caching and a smaller APK
 - 📡 **memory** — free image caches shortly after the app is minimized, and closed chats and photo viewers no longer leak through the emoji panel

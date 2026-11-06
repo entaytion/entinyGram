@@ -155,7 +155,7 @@ jobs:
         env:
           INU_DAY_STATE: ${{ vars.INU_DAY_STATE || '' }}
           PRERELEASE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
-        run: bun run tsx scripts/ci/version.ts
+        run: bun run tsx assets/scripts/ci/version.ts
 
       - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
         with:
@@ -417,7 +417,7 @@ jobs:
           if [ -z "$base" ]; then
             base=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
           fi
-          commits_json=$(bun run tsx scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
+          commits_json=$(bun run tsx assets/scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
 
           jq -n \
             --arg     verName      '${{ steps.info.outputs.ver-name }}'      \
@@ -434,7 +434,7 @@ jobs:
             > out/build-info.json
 
       - name: Dump settings registry
-        run: bun run tsx scripts/dump-registry.ts out
+        run: bun run tsx assets/scripts/dump-registry.ts out
 
       - name: Fetch release notes draft
         continue-on-error: true
@@ -454,7 +454,7 @@ jobs:
           PRE_RELEASE:     ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
           DRAFT_DIR:       draft
           DRAFT_BASE:      ${{ vars.LAST_RELEASE_SHA }}
-        run: bun run tsx scripts/release-notes.ts out
+        run: bun run tsx assets/scripts/release-notes.ts out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
@@ -570,9 +570,9 @@ jobs:
           fi
           # CI channel always. Main channel only for stable release+tg.
           if [ '${{ inputs.mode }}' = 'release+tg' ] && [ '${{ inputs.prerelease }}' != 'true' ]; then
-            bun run tsx scripts/ci/upload.ts out
+            bun run tsx assets/scripts/ci/upload.ts out
           else
-            bun run tsx scripts/ci/upload.ts out --ci-only
+            bun run tsx assets/scripts/ci/upload.ts out --ci-only
           fi
 
       - name: Publish changelog to website
@@ -580,7 +580,7 @@ jobs:
         if: ${{ inputs.prerelease != true && inputs.prerelease != 'true' }}
         env:
           CHANGELOG_TOKEN: ${{ secrets.CHANGELOG_TOKEN }}
-        run: bun run tsx scripts/ci/publish-site.ts out
+        run: bun run tsx assets/scripts/ci/publish-site.ts out
 
       - name: Bump build variables
         continue-on-error: true
