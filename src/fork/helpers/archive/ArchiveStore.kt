@@ -355,7 +355,7 @@ object ArchiveStore {
             doomed.add(row.rowId)
             row.mediaPath?.let(doomedPaths::add)
         }
-        val cursor = db.queryFinalized("SELECT date, text, media_path, entities, media, id, dialog_id, msg_id, from_id FROM inu_edit_history ORDER BY dialog_id, msg_id, date, id")
+        val cursor = db.queryFinalized("SELECT date, text, media_path, entities, media, id, dialog_id, msg_id FROM inu_edit_history ORDER BY dialog_id, msg_id, date, id")
         try {
             while (cursor.next()) {
                 val row = EditHistoryRow(
@@ -365,7 +365,6 @@ object ArchiveStore {
                     readTl(cursor, 3) { data -> TLRPC.TL_textWithEntities.TLdeserialize(data, data.readInt32(false), false)?.entities },
                     readTl(cursor, 4) { data -> TLRPC.MessageMedia.TLdeserialize(data, data.readInt32(false), false) },
                     cursor.longValue(5),
-                    cursor.longValue(8),
                 )
                 val key = cursor.longValue(6) to cursor.intValue(7)
                 if (row.text.isEmpty() && row.mediaPath == null && (row.media == null || row.media is TLRPC.TL_messageMediaEmpty)) {
