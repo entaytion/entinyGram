@@ -660,3 +660,4 @@ entiny/media/round-video-cg-ui.patch
 entiny/media/round-ev-slider-side.patch
 entiny/media/cg-camera-integration.patch
 entiny/build/build-number-config.patch
+entiny/chat/forward-messages-copy.patch

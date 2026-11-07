@@ -130,6 +130,10 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/animator',
   },
   {
+    source: 'src/res/values/colors_inu_splash.xml',
+    target: 'TMessagesProj/src/main/res/values',
+  },
+  {
     source: 'src/res/values-v31/*_inu_splash.xml',
     target: 'TMessagesProj/src/main/res/values-v31',
   },

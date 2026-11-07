@@ -2,11 +2,15 @@ package desu.inugram.helpers.plugins
 
 import android.graphics.Bitmap
 import android.system.Os
+import desu.inugram.InuConfig
 import desu.inugram.helpers.plugins.telegram.PluginRpc
 import desu.inugram.helpers.plugins.telegram.PluginSends
 import desu.inugram.helpers.plugins.telegram.PluginWrites
+import desu.inugram.helpers.restrictions.RestrictedFeaturesHelper
 import java.io.File
 import java.nio.file.Files
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -302,6 +306,45 @@ class PluginSendInterceptTest {
         plugin.passSend(held!!)
         awaitValue("the sends never went out") { sentRequests().takeIf { it.size == 2 } }
         assertEquals(listOf(".hold", "after"), sentRequests().map { (it as TLRPC.TL_messages_sendMessage).message })
+    }
+
+    @Test
+    fun protected_forward_preserves_the_shared_batch_for_every_destination() {
+        val previous = InuConfig.ALLOW_FORWARD_RESTRICTED.value
+        try {
+            InuConfig.ALLOW_FORWARD_RESTRICTED.value = true
+            for (ids in listOf(listOf(1, 3), listOf(4, 5, 6))) {
+                val messages = ArrayList(ids.map { id ->
+                    fromBob(id).apply { messageOwner.noforwards = id != 5 }
+                })
+                val original = messages.toList()
+                onUi {
+                    for (peer in listOf(alice, bob)) {
+                        SendMessagesHelper.getInstance(0).sendMessage(messages, peer, false, false, true, 0, 0L)
+                    }
+                }
+                assertEquals(original, messages, "forwarding to two destinations changed the shared batch $ids")
+            }
+        } finally {
+            try {
+                val drained = CountDownLatch(1)
+                RestrictedFeaturesHelper.restrictedForwardQueue.postRunnable { drained.countDown() }
+                assertTrue(drained.await(10, TimeUnit.SECONDS), "restricted forwarding did not finish")
+                settle()
+            } finally {
+                InuConfig.ALLOW_FORWARD_RESTRICTED.value = previous
+            }
+        }
+
+        val sent = awaitValue("both destinations did not receive both batches") {
+            sentRequests().takeIf { it.size == 10 }
+        }
+        for (peer in listOf(alice, bob)) {
+            val copies = sent.filterIsInstance<TLRPC.TL_messages_sendMessage>().filter { it.peer.user_id == peer }
+            assertEquals(listOf("forwarded 1", "forwarded 3", "forwarded 4", "forwarded 6"), copies.map { it.message })
+            val forwards = sent.filterIsInstance<TLRPC.TL_messages_forwardMessages>().filter { it.to_peer.user_id == peer }
+            assertEquals(listOf(listOf(5)), forwards.map { it.id })
+        }
     }
 
     @Test

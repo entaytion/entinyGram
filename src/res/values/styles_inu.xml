@@ -2,4 +2,7 @@
     <style name="Theme.TMessages.Start.Plain" parent="Theme.TMessages.Start">
         <item name="android:windowSplashScreenAnimatedIcon">@null</item>
     </style>
+    <style name="Theme.TMessages.Start.Monet" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/inu_splash_monet</item>
+    </style>
 </resources>

@@ -264,5 +264,6 @@
   "user-info-saver": "privacy",
   "wide-channel-posts": "ui",
   "tablet-mode": "ui",
-  "emoji-view-observer-leak": "chat"
+  "emoji-view-observer-leak": "chat",
+  "forward-messages-copy": "chat"
 }

@@ -32,7 +32,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 - 📡 **device spoof** — choose the device name, system and app version shown in Settings → Devices, hide time zone and install source, and check what Telegram sees
 - 📡 **screenshots anywhere** — disable FLAG_SECURE in protected windows, secret chats, expiring media and protected stories, and hide secret-chat screenshot notifications
-- 📡 **protected content** — copy text and select messages in protected chats, save any story or auto-save the ones you view, copy and forward from protected channels with a background bulk download, forward as your own without the "Forwarded from" header, re-send saved view-once media
+- 📡 **protected content** — copy text and select messages in protected chats, save any story or auto-save the ones you view, copy and forward from protected channels to multiple chats with a background bulk download, forward as your own without the "Forwarded from" header, re-send saved view-once media
 - 📡 **quote protected posts** into another chat as a bold title and a blockquote
 - 📡 **share button action** — make the round button next to channel posts forward, Forward Pro, save, edit, delete, translate, copy or show details
 - 📡 **local unlocks** — Telegram Premium UI and limits on the client side, Premium custom emoji without Premium, local names (name, username, photo, bio, verified and Premium badges, emoji status of anyone, on your device only, with export and import) and local message edit in a full-screen editor with a live bubble preview, resettable anytime
@@ -165,7 +165,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - icon packs: stackable `.icons` packs (svg/png/webp icons and `lottie:` animations + metadata.json), installed from a file or by opening them in a chat; bundled solar pack by [@r4in80w](https://t.me/r4in80w) - *ported from [NagramX](https://github.com/risin42/NagramX)*
 - 22 concept launcher icons (Inu tribute, Radar, Constellation, Orbit, Avatar, Nothing, Mono, Sunset, Amethyst, Aurora, Google ’26, Lunar, Math Book, Jungle, Gold, Dish, Blush, Nox Sky, Inverse, osu!, Among Us, Crimson) in the app icon picker, free for everyone - *icons by [@xiurann](https://t.me/xiurann) and [@mkr_infinity](https://t.me/mkr_infinity)*
 - notification icon: Telegram (default) or entinyGram
-- 🐶 animated splash screen follows the selected app icon and Monet theme (Android 12+)
+- 🐶 animated splash screen follows the selected app icon and Monet theme (Android 12+), entiny icons painted from your wallpaper
 - show seconds in timestamps
 - override Telegram's detected device performance class
 - 🐶 disable animated avatars in chats independently of video autoplay from Power Saving → Effects in chats
