@@ -61,7 +61,7 @@ index 0000000..0000000 100644
          tabs[INDEX_CONTACTS].setOnLongClickListener(this::openContactsSelector);
          tabs[INDEX_CALLS].setOnLongClickListener(this::openCallsSelector);
          desu.inugram.helpers.LongPressDragMenuHelper.attach(tabs[INDEX_PROFILE], this::openAccountSelector);
-@@ -847,6 +849,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -848,6 +850,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              dialogsActivity = new DialogsActivity(args);
              dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
              return dialogsActivity;

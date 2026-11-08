@@ -664,4 +664,3 @@ entiny/ui/glass-glare-styles.patch
 bugfix/reaction-read-sync.patch
 entiny/feed/feed-chatactivity.patch
 entiny/chat/ios-input-bar.patch
-entiny/misc/port-7291-fixes.patch

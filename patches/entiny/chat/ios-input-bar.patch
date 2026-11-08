@@ -77,7 +77,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -49769,6 +49793,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -49770,6 +49794,12 @@ public class ChatActivity extends BaseFragment implements
          if (blurredBackgroundColorProviderWhite != null) {
              blurredBackgroundColorProviderWhite.updateColors();
          }

@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              paddingBottom = AndroidUtilities.navigationBarHeight;
          } else {
              paddingBottom = blurredViewBottomOffset + dp(NonIslandHelper.chatElements() ? 3 : 9 + 7)
-@@ -46703,7 +46703,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46704,7 +46704,7 @@ public class ChatActivity extends BaseFragment implements
                  removeTag.setColorKeys(Theme.key_color_red, Theme.key_color_red);
                  popupLayout.addView(removeTag);
                  scrimPopupContainerLayout.addView(popupLayout);
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
                  final boolean canDeleteReactions = ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES)
                      && (reaction.count > 1 || !reaction.chosen);
  
-@@ -47847,7 +47847,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47848,7 +47848,7 @@ public class ChatActivity extends BaseFragment implements
              return;
          }
  
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
          fadeHeight += dp(7 - 6);
          fadeHeight += getTopPanelHeightWithPadding(dp(7));
          if (topicsTabs != null) {
-@@ -47866,7 +47866,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47867,7 +47867,7 @@ public class ChatActivity extends BaseFragment implements
              parentChatActivity.checkUi_messagesSearchListPadding();
          }
  

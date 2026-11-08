@@ -30,7 +30,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -38133,7 +38133,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38134,7 +38134,7 @@ public class ChatActivity extends BaseFragment implements
                      cell.resetPressedLink(-1);
                  }
                  if (!messageObject.isVoice()) {
@@ -157,7 +157,7 @@ index 0000000..0000000 100644
  
          tabsViewWrapper = new FrameLayout(context) {
              @Override
-@@ -1182,6 +1183,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1183,6 +1184,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      private void checkUi_fadeView() {

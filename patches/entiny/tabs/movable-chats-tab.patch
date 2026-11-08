@@ -32,7 +32,7 @@ index 0000000..0000000 100644
                      }
                      if (dialogsActivity != null && dialogsActivity.searchItem != null) {
                          dialogsActivity.searchItem.performClick();
-@@ -710,15 +709,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -711,15 +710,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      private void openFolder(int folderId) {
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -844,7 +843,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -845,7 +844,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              if (currentPosition != profile) {
                  dropFragmentAtPosition(profile);
              }
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
                  dialogsActivity.scrollToFolder(pendingFolderId);
                  pendingFolderId = null;
              }
-@@ -877,7 +876,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -878,7 +877,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
      @Override
      protected int getStartPosition() {
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
      }
  
      private DialogsActivity dialogsActivity;
-@@ -905,7 +904,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -906,7 +905,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          bundle.putBoolean("hasMainTabs", true);
          dialogsActivity = new DialogsActivity(bundle);
          dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
          return dialogsActivity;
      }
  
-@@ -962,9 +961,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -963,9 +962,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      public void inu_openChatsAtFilter(int filterIndex) {

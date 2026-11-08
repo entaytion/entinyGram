@@ -264,6 +264,5 @@
   "wide-channel-posts": "ui",
   "tablet-mode": "ui",
   "emoji-view-observer-leak": "chat",
-  "forward-messages-copy": "chat",
-  "port-7291-fixes": "misc"
+  "forward-messages-copy": "chat"
 }

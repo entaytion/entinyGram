@@ -23,7 +23,7 @@ Subject: entinyGram branding
  .../org/telegram/ui/Cells/SessionCell.java    |  4 +-
  .../ChatAttachAlertDocumentLayout.java        |  5 +-
  .../org/telegram/ui/Components/UndoView.java  |  2 +-
- .../java/org/telegram/ui/DialogsActivity.java |  7 ++-
+ .../java/org/telegram/ui/DialogsActivity.java |  6 ++-
  .../java/org/telegram/ui/IntroActivity.java   | 17 +++++--
  .../telegram/ui/LauncherIconController.java   |  7 ++-
  .../org/telegram/ui/SessionBottomSheet.java   |  2 -
@@ -44,7 +44,7 @@ Subject: entinyGram branding
  TMessagesProj/src/main/res/xml/auth.xml       |  2 +-
  .../src/main/res/xml/sync_contacts.xml        |  2 +-
  TMessagesProj_App/build.gradle                |  2 +-
- 40 files changed, 198 insertions(+), 104 deletions(-)
+ 40 files changed, 198 insertions(+), 103 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -578,15 +578,13 @@ index 0000000..0000000 100644
                  logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
                  logoDrawable.setBounds(0, dp(2), logoDrawable.getIntrinsicWidth(), dp(2) + logoDrawable.getIntrinsicHeight());
                  // a new drawable (also when the view is recreated after a theme switch made elsewhere): remember its tint, the
-@@ -14385,5 +14389,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-         keys.add(Theme.key_dialogButtonSelector);
+@@ -14386,4 +14390,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          keys.add(Theme.key_actionBarDefaultSubmenuItem);
          keys.add(Theme.key_actionBarDefaultSubmenuBackground);
--    }
+     }
 -}
 \ No newline at end of file
-+    }
-\ No newline at end of file
++}
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java

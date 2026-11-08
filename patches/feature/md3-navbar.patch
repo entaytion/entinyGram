@@ -5,9 +5,9 @@ Subject: md3-styled bottom navigation bar
 
 ---
  .../ui/Components/glass/GlassTabView.java     | 35 +++++++++++++++----
- .../org/telegram/ui/MainTabsActivity.java     | 23 +++++++-----
+ .../org/telegram/ui/MainTabsActivity.java     | 24 ++++++++-----
  .../java/org/telegram/ui/MainTabsLayout.java  | 15 +++++++-
- 3 files changed, 57 insertions(+), 16 deletions(-)
+ 3 files changed, 58 insertions(+), 16 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
 index 0000000..0000000 100644
@@ -166,16 +166,17 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
          o.show();
          return true;
-@@ -484,8 +488,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -484,8 +488,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          o.add(R.drawable.menu_call_create, getString(R.string.GroupCallCreate2), () -> CallLogActivity.openCreateCall(this));
          o.setBlur(true);
          o.translate(0, -dp(4));
 -        final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
 -        bg.getPaint().setShadowLayer(dp(6), 0, dp(1), Theme.multAlpha(0xFF000000, 0.15f));
++        final android.graphics.drawable.Drawable bg = MainTabsHelper.createTabScrimBackground(anchor, getThemedColor(Theme.key_windowBackgroundWhite));
          o.setScrimViewBackground(bg);
          o.show();
          return true;
-@@ -544,8 +546,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -544,8 +547,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  //        o.setBlur(true);
          o.translate(-dp(8), -dp(4));
          o.setMaxHeight(dp(400));
@@ -185,7 +186,7 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
          o.setGravity(Gravity.LEFT);
          o.show();
-@@ -687,8 +688,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -687,8 +689,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          o.setBlur(true);
          o.translate(0, -dp(4));
@@ -195,7 +196,7 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
  
          HintsController.Hint.AccountSwitchHint.doNotShowAgain();
-@@ -978,7 +978,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -978,7 +979,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              }
          }
  
@@ -206,7 +207,7 @@ index 0000000..0000000 100644
  
          final WindowInsetsCompat consumed = isUpdateLayoutVisible ?
              insets.inset(0, 0, 0, navigationBarHeight) : insets;
-@@ -1298,6 +1300,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1298,6 +1301,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (tabsView != null) {
              tabsView.invalidate();
          }

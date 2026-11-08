@@ -277,7 +277,7 @@ index 0000000..0000000 100644
                          newMentionsCount++;
                      }
                  }
-@@ -30907,6 +30922,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -30908,6 +30923,9 @@ public class ChatActivity extends BaseFragment implements
                  }
                  if (message != null && message.messageOwner != null && message.messageOwner.media_unread && message.messageOwner.mentioned) {
                      if (!message.isVoice() && !message.isRoundVideo()) {
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
                          newMentionsCount--;
                          if (newMentionsCount <= 0) {
                              newMentionsCount = 0;
-@@ -39390,6 +39408,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -39391,6 +39409,9 @@ public class ChatActivity extends BaseFragment implements
                  if (message != null && message.messageOwner != null && message.messageOwner.media_unread && message.messageOwner.mentioned) {
                      if (!inPreviewMode && chatMode == 0) {
                          if (!message.isVoice() && !message.isRoundVideo()) {
@@ -297,7 +297,7 @@ index 0000000..0000000 100644
                              newMentionsCount--;
                              if (newMentionsCount <= 0) {
                                  newMentionsCount = 0;
-@@ -47814,6 +47835,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -47815,6 +47836,9 @@ public class ChatActivity extends BaseFragment implements
  
      private void loadLastUnreadMention() {
          wasManualScroll = true;
@@ -307,7 +307,7 @@ index 0000000..0000000 100644
          if (hasAllMentionsLocal) {
              getMessagesStorage().getUnreadMention(dialog_id, getTopicId(), newMentionsCount, param -> {
                  if (param == 0) {
-@@ -47835,6 +47859,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -47836,6 +47860,9 @@ public class ChatActivity extends BaseFragment implements
              req.add_offset = newMentionsCount - 1;
              getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
                  TLRPC.messages_Messages res = (TLRPC.messages_Messages) response;

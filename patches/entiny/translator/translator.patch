@@ -9,11 +9,11 @@ Subject: translator logic
  .../org/telegram/messenger/MessageObject.java |  13 +-
  .../messenger/TranslateController.java        | 249 ++++++++++++++----
  .../telegram/tgnet/ConnectionsManager.java    |   9 +
- .../java/org/telegram/ui/ArticleViewer.java   |  16 +-
+ .../java/org/telegram/ui/ArticleViewer.java   |  17 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |  36 ++-
  .../ui/Cells/ChatMessageLinkPreview.java      |   4 +-
  .../ui/Cells/TextSelectionHelper.java         |   1 +
- .../java/org/telegram/ui/ChatActivity.java    | 216 ++-------------
+ .../java/org/telegram/ui/ChatActivity.java    | 217 ++-------------
  .../ui/Components/ChatActivityEnterView.java  |   1 +
  .../ui/Components/TranslateAlert2.java        |  42 ++-
  .../ui/Components/TranslateAlert3.java        |  63 ++++-
@@ -21,7 +21,7 @@ Subject: translator logic
  .../telegram/ui/LanguageSelectActivity.java   | 248 ++---------------
  .../ui/RestrictedLanguagesSelectActivity.java |  45 ++--
  .../org/telegram/ui/web/WebActionBar.java     |   3 +
- 17 files changed, 483 insertions(+), 551 deletions(-)
+ 17 files changed, 485 insertions(+), 551 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
 index 0000000..0000000 100644
@@ -874,7 +874,15 @@ index 0000000..0000000 100644
              } else if (id == WebActionBar.share_item) {
                  String url;
                  if (pages[0].isWeb()) {
-@@ -6470,7 +6481,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+@@ -6457,6 +6468,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+ 
+     public class WebpageAdapter extends RecyclerListView.SelectionAdapter {
+ 
++        public TLRPC.WebPage currentPage;
+         private Context context;
+         private ArrayList<TL_iv.PageBlock> localBlocks = new ArrayList<>();
+         private ArrayList<TL_iv.PageBlock> blocks = new ArrayList<>();
+@@ -6470,7 +6482,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
          private ArrayList<Object> textBlocks = new ArrayList<>();
          private HashMap<String, Integer> searchTextOffset = new HashMap<>();
  
@@ -1119,7 +1127,7 @@ index 0000000..0000000 100644
              addToPolls(messageObject, old);
              if (old.richCheckboxEcho && messageObject.type == MessageObject.TYPE_ARTICLE && old.richLayout != null && messageObject.messageOwner != null) {
                  messageObject.richLayout = old.richLayout;
-@@ -30270,11 +30275,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -30270,11 +30275,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
@@ -1128,10 +1136,11 @@ index 0000000..0000000 100644
 -                getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) :
 -                !getMessagesController().premiumFeaturesBlocked() && preferences.getInt("dialog_show_translate_count" + did, 5) <= 0
 -        ) || DEBUG_TOP_PANELS;
++        boolean showTranslate = getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) || getMessagesController().getTranslateController().isTranslatingDialog(getDialogId()) || DEBUG_TOP_PANELS;
          boolean showAddProfilePicture = UserObject.isBot(currentUser) && currentUser.bot_can_edit && currentUser.photo == null;
          boolean showBizBot = currentEncryptedChat == null && preferences.getLong("dialog_botid" + did, 0) != 0 || DEBUG_TOP_PANELS;
          boolean showBotAd = currentUser != null && currentUser.bot && messages.size() >= 2 && botSponsoredMessage != null;
-@@ -33127,169 +33127,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33127,169 +33128,7 @@ public class ChatActivity extends BaseFragment implements
                      });
                      cell.setOnLongClickListener(v1 -> ChatHelper.onMenuOptionLongClick(this, popupLayout, cell, options, i, selectedObject, selectedObjectGroup));
                      if (option == OPTION_TRANSLATE) {
@@ -1302,7 +1311,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (selectedObject != null && selectedObject.messageOwner != null && selectedObject.messageOwner.video_processing_pending) {
-@@ -46924,7 +46762,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46924,7 +46763,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }
@@ -1311,7 +1320,7 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.TranslateMessage));
                      options.add(OPTION_TRANSLATE);
                      icons.add(R.drawable.msg_translate);
-@@ -47272,7 +47110,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47272,7 +47111,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }

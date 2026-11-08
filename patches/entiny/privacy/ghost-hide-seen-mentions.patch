@@ -26,7 +26,7 @@ index 0000000..0000000 100644
                  return false;
              }
              if (dialogId > 0) {
-@@ -9906,7 +9906,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9903,7 +9903,7 @@ public class MessagesController extends BaseController implements NotificationCe
              }
  
              unreadCounts.unreadCount += dialog.unread_count;

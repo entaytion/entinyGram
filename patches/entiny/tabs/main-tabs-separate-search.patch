@@ -381,7 +381,7 @@ index 0000000..0000000 100644
          tabsViewWrapper.setClipToPadding(false);
          M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
          contentView.addView(tabsViewWrapper, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
-@@ -986,7 +1068,23 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -987,7 +1069,23 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {
              final int iosSidePadding = MainTabsHelper.getIosSidePaddingExtra();
              tabsViewWrapper.setPadding(systemInsets.left + iosSidePadding, 0, systemInsets.right + iosSidePadding, navigationBarHeight);
@@ -405,7 +405,7 @@ index 0000000..0000000 100644
  
          final WindowInsetsCompat consumed = isUpdateLayoutVisible ?
              insets.inset(0, 0, 0, navigationBarHeight) : insets;
-@@ -1108,6 +1206,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1109,6 +1207,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (tabsView == null) return;
          if (MainTabsHelper.isHidden()) {
              tabsViewWrapper.setVisibility(View.GONE);
@@ -413,7 +413,7 @@ index 0000000..0000000 100644
              fadeView.setVisibility(View.GONE);
              return;
          }
-@@ -1120,10 +1219,45 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1121,10 +1220,45 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          final float scale = lerp(0.85f, 1f, factor);
  
          tabsViewWrapper.setTranslationY(lerp(hiddenY, normalY, factor));
@@ -461,7 +461,7 @@ index 0000000..0000000 100644
      }
  
      @Override
-@@ -1131,6 +1265,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1132,6 +1266,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          ArrayList<ThemeDescription> themeDescriptions = super.getThemeDescriptions();
  
          ThemeDescription.ThemeDescriptionDelegate cellDelegate = this::blur3_updateColors;
@@ -469,7 +469,7 @@ index 0000000..0000000 100644
  
          return themeDescriptions;
      }
-@@ -1299,6 +1434,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1300,6 +1435,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (tabsViewBackground != null) {
              tabsViewBackground.updateColors();
          }

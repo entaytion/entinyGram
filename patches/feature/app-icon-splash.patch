@@ -4,9 +4,8 @@ Date: Wed, 14 Oct 2026 19:37:05 +0300
 Subject: match splash screen to the selected app icon and monet theme
 
 ---
- TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java  | 1 +
- .../src/main/java/org/telegram/ui/LauncherIconController.java    | 1 +
- 2 files changed, 2 insertions(+)
+ TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
@@ -20,14 +19,3 @@ index 0000000..0000000 100644
          } else if (id == NotificationCenter.needSetDayNightTheme) {
              debugInstantThemeSwitch = false;
              // theme colors never fade: a switch either plays the reveal from a point or recolors everything in one frame
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
-@@ -99,5 +99,6 @@ public class LauncherIconController {
-             this.title = title;
-             this.premium = premium;
-         }
-+        desu.inugram.helpers.SplashScreenHelper.sync(LaunchActivity.instance);
-     }
- }

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -31204,6 +31204,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -31205,6 +31205,26 @@ public class ChatActivity extends BaseFragment implements
          }
          if (contentView != null) {
              contentView.onResume();
@@ -22,10 +22,10 @@ index 0000000..0000000 100644
 +                checkInsets();
 +                updatePagedownButtonsPosition();
 +                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-+                    org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawableRenderNode.inu_invalidateLiquidGlassDrawables();
++                    desu.inugram.helpers.theme.GlassGlareHelper.invalidateLiquidGlass();
 +                }
 +                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && scrollableViewNoiseSuppressor != null) {
-+                    invalidateMergedVisibleBlurredPositionsAndSources(BLUR_INVALIDATE_FLAG_POSITIONS | BLUR_INVALIDATE_FLAG_CLIP);
++                    invalidateBlurCaptures(GlassEngine.FLAG_INVALIDATED_POSITIONS);
 +                }
 +                if (glassBackgroundSourceRenderNode != null) {
 +                    glassBackgroundSourceRenderNode.invalidateDisplayListForDrawables();

@@ -24,7 +24,7 @@ index 0000000..0000000 100644
  
          tabs = new GlassTabView[5];
          tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
-@@ -979,7 +980,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -980,7 +981,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          }
  
          if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {

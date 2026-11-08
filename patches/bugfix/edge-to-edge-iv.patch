@@ -111,7 +111,7 @@ index 0000000..0000000 100644
              searchPanel.setTranslationY((searchPanelTranslation = -keyboardHeight) + dp(51) * (1f - searchPanelAlpha));
          });
  
-@@ -15070,7 +15079,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+@@ -15071,7 +15080,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
              if (BOTTOM_ACTION_BAR) {
                  listView.setPadding(0, (int) (AndroidUtilities.statusBarHeight * 1.25f), 0, dp(24));
              } else {
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
                  listView.setTopGlowOffset(dp(56));
              }
              ((DefaultItemAnimator) listView.getItemAnimator()).setDelayAnimations(false);
-@@ -15108,7 +15117,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+@@ -15109,7 +15118,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
                      ignoreLayout = true;
                      setOffsetY(MeasureSpec.getSize(heightMeasureSpec) * .4f);
                      ignoreLayout = false;
@@ -129,7 +129,7 @@ index 0000000..0000000 100644
                  }
                  @Override
                  public void requestLayout() {
-@@ -16351,6 +16360,11 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+@@ -16352,6 +16361,11 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
                  super(context);
              }
  

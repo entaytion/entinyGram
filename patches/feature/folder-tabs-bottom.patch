@@ -355,7 +355,7 @@ index 0000000..0000000 100644
              }
          };
  
-@@ -1181,7 +1183,16 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1182,7 +1184,16 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          }
      }
  
@@ -364,7 +364,7 @@ index 0000000..0000000 100644
 +            return;
 +        }
 +        final float strip = dialogsActivity != null ? dialogsActivity.inu_getClassicBottomFilterTabsVisibility() : 0f;
-+        M3MainTabsHelper.setTabsDividerAlpha(tabsViewWrapper, 1f - strip * viewPager.getPositionVisibility(POSITION_CHATS));
++        M3MainTabsHelper.setTabsDividerAlpha(tabsViewWrapper, 1f - strip * viewPager.getPositionVisibility(MainTabsHelper.chatsPosition()));
 +    }
 +
      private void checkUi_fadeView() {
@@ -372,7 +372,7 @@ index 0000000..0000000 100644
          if (viewPager != null && updateLayoutWrapper != null) desu.inugram.helpers.player.Md3PlayerHelper.layoutMini(this, navigationBarHeight, updateLayoutWrapper.isUpdateLayoutVisible(), animatorTabsVisible.getFloatValue(), viewPager.getPositionAnimated());
          if (viewPager == null || fadeView == null || MainTabsHelper.isHidden()) {
              return;
-@@ -1283,6 +1294,11 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1284,6 +1295,11 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          public void setTabsVisible(boolean visible) {
              animatorTabsVisible.setValue(visible, true);
          }

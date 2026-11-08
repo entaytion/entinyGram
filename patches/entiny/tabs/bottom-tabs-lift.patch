@@ -29,7 +29,7 @@ index 0000000..0000000 100644
          tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
          tabsViewWrapper.setClipToPadding(false);
          M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
-@@ -876,7 +876,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -877,7 +877,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
      @Override
      protected int getStartPosition() {
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
      }
  
      private DialogsActivity dialogsActivity;
-@@ -1068,7 +1068,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1069,7 +1069,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {
              final int iosSidePadding = MainTabsHelper.getIosSidePaddingExtra();
