@@ -40,15 +40,13 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val context = context ?: return
         iosGroup.addTo(items) { onIosOptionsChanged(it) }
-        if (InuConfig.IOS_CHAT_HEADER.value) {
-            items.add(
-                mkSubPageButton(
-                    BUTTON_CHAT_HEADER,
-                    R.drawable.inu_tabler_app_window,
-                    LocaleController.getString(R.string.InuChatHeaderSettings),
-                )
+        items.add(
+            mkSubPageButton(
+                BUTTON_CHAT_HEADER,
+                R.drawable.inu_tabler_app_window,
+                LocaleController.getString(R.string.InuChatHeaderSettings),
             )
-        }
+        )
         if (InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
             items.add(
                 mkTwoLineCheckItem(

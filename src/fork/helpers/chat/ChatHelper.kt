@@ -23,7 +23,7 @@ import android.text.StaticLayout
 import android.text.style.ForegroundColorSpan
 import android.text.TextUtils
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup

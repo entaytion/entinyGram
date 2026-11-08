@@ -112,10 +112,6 @@
     <string name="InuUnifiedPushGatewayInfo">Rewrite proxy for distributors that require WebPush POST and VAPID (e.g. gCompat-UP, Sunup, Prism).</string>
     <string name="InuUnifiedPushGatewayDirect">Direct (no gateway)</string>
     <string name="InuUnifiedPushGatewayDefault">Default</string>
-    <string name="InuNotifChannelSync">System channel mutes chats</string>
-    <string name="InuNotifChannelSyncInfo">Turning notifications off for a channel in the system settings also mutes those chats inside the app and on the server. When off, the mute stays in the system settings only.</string>
-    <string name="InuPerChatNotifChannels">Separate channel for every chat</string>
-    <string name="InuPerChatNotifChannelsInfo">Creates an individual system notification channel per chat instead of one shared channel per type, so muting one channel or topic cannot silence the others. Existing channels are recreated.</string>
     <string name="InuUpdatesIncludeBetaInfo">Also offer pre-release/beta builds. These are test builds, no need to enable them for everyone: they may nag with frequent updates.</string>
     <string name="InuVersionBetaSuffix">(Beta)</string>
     <string name="InuAnimatedAvatars">Animated avatars</string>
@@ -1449,9 +1445,6 @@
     <string name="InuSaveAnyStoryInfo">Allows downloading any story to gallery without Premium requirements or author restrictions.</string>
     <string name="InuAutoSaveStories">Auto-save viewed stories</string>
     <string name="InuAutoSaveStoriesInfo">Saves every story you open to the gallery, once. Your own stories are skipped.</string>
-    <string name="InuCenteringSection">Centering</string>
-    <string name="InuCenterTitleMain">Center screen titles</string>
-    <string name="InuCenterTitleMainInfo">Centers action bar titles outside chats. Chats have their own toggle below.</string>
     <string name="InuChatHeaderSettings">Chat header</string>
     <string name="InuChatHeaderSettingsInfo">Live preview above updates instantly as you change the options below.</string>
     <string name="InuCenterTitleChats">Center in chats/channels</string>
@@ -2293,4 +2286,6 @@
     <string name="InuWalletPrivateKeyBackupUnavailable">Wallets imported from a private key can\'t be backed up to Telegram, since other apps can\'t restore them. Keep the key safe yourself.</string>
     <string name="InuRoundExposure">Exposure</string>
     <string name="InuSendServerError">Telegram is having trouble delivering your message. Still retrying…</string>
+    <string name="InuForceNoVibration">Disable all vibration</string>
+    <string name="InuForceNoVibrationInfo">Turn off haptics, in-app and notification vibration, even if enabled in Telegram settings.</string>
 </resources>

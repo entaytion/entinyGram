@@ -1559,7 +1559,7 @@ index 0000000..0000000 100644
      public void setTitleColors(int title, int subtitle) {
          // caller-owned colors (re-applied by the caller's theme hook): drop the default-key bindings
          ThemeBind.clear(titleTextView);
-@@ -1434,6 +1446,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1435,6 +1447,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      private boolean showingSavedMessagesHint;
  
      public void updateSubtitle(boolean animated) {

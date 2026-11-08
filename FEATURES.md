@@ -55,10 +55,10 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 ### appearance & customization
 
 - 📡 **hide FAB** — hide the chat-list buttons with a separate toggle and keep your chosen actions
-- 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar, chat list with larger avatars, message menu as a card over a blurred chat, unread counter on the header back button
+- 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar, chat list with larger avatars, message menu as a card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
 - 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size
 - 📡 **glass glare** — disabled, default or solid outline — *inspired by Cherrygram (@arsLan4k1390)*
-- 📡 **chat headers** — live header preview in settings, centered titles, auto marquee for long names
+- 📡 **chat headers** — live header preview, centered chat titles without gradient, and auto marquee for long names
 - 📡 **bottom tabs** — custom layout with an optional separate Search button, any tab first, hide on scroll, sliders to raise the bar and the FABs
 - 📡 **profile swipe** — disable swiping up on Profile to open the account menu, while keeping long press
 - 📡 **system folders** — Administrator, Bots, Unread, Groups and Channels tabs in the folder bar, each switchable and removable on this device
@@ -74,6 +74,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **settings link status** — on/off values stay clear of their chevrons in either layout direction
 - 📡 **side drawer** — Material 3 menu sections with aligned icons and labels
 - 📡 **menu shortcuts** — clear cache and restart app in the chats menu, restart app and plugin settings in the side menu
+- 📡 **disable vibration** across the app, calls and notifications
 
 ### profile & identity
 
@@ -124,7 +125,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 - 📡 **UnifiedPush** notifications without Google Play
 - 📡 **background service** — optional always-on connection so notifications arrive on time, at the cost of battery
-- 📡 **notification fixes** — muting one topic or system channel no longer silences the whole chat list and nothing gets muted server-side, keep a channel muted only in system settings if you want, an own system channel per chat, and the in-app vibration switch actually takes effect
+- 📡 **notification fixes** — topic notification settings stay scoped to their topic, and the in-app vibration switch takes effect
 - 📡 **calls** — rotate the call screen instead of locking it to portrait, keep the screen on by ignoring the proximity sensor
 - 📡 **audio** — fix playback stuck on pause (MIUI and certain DSPs), don't preload the next track or auto-play the next music or voice message
 
@@ -141,6 +142,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **cache management** — per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once
 - 📡 **stability fixes** — PhotoViewer close crash with an uninitialized media strip, crash when deleting a user's messages while their media is selected
 - 📡 **UI fixes** — topics side panel stops flickering after search, interrupted theme switches and stale Monet palettes recover, compact pill and profile transitions behave, rtl text truncated in the chat header keeps its beginning visible, settings pages and their search open correctly
+- 📡 **push notifications** in optimized builds
 
 ### debloat & premium noise
 

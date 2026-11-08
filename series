@@ -445,7 +445,6 @@ entiny/tabs/main-tabs-separate-search.patch
 entiny/ui/clock-format.patch
 entiny/chat/share-caption-clear.patch
 entiny/notifications/push-service-foreground.patch
-entiny/ui/liquid-glass-live-update.patch
 entiny/chat/input-menu-reserve.patch
 entiny/calls/call-rotation.patch
 entiny/tabs/m3-tabs-full-width.patch
@@ -654,7 +653,6 @@ feature/bottom-tabs-hide-on-scroll.patch
 entiny/premium/hide-gift-elements.patch
 entiny/media/save-selected-files.patch
 entiny/ui/auto-marquee.patch
-entiny/chat/centered-header-fixes.patch
 entiny/chat/chat-header-light-colors.patch
 entiny/ui/topic-icon-inset.patch
 entiny/chat/unread-badge-on-back-button.patch
@@ -664,3 +662,4 @@ entiny/ui/glass-glare-styles.patch
 bugfix/reaction-read-sync.patch
 entiny/feed/feed-chatactivity.patch
 entiny/chat/ios-input-bar.patch
+entiny/notifications/no-vibration.patch

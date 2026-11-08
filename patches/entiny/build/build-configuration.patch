@@ -8,7 +8,7 @@ Subject: build configuration: gradle 8 / AGP 8 like inugram, plugin build fixes
  TMessagesProj/build.gradle                    |  62 +++++++---
  TMessagesProj/jni/CMakeLists.txt              |   3 +
  TMessagesProj/jni/exports.map                 |   1 +
- TMessagesProj/proguard-rules.pro              |  17 ++-
+ TMessagesProj/proguard-rules.pro              |  18 ++-
  TMessagesProj/src/main/AndroidManifest.xml    |   6 -
  .../java/org/telegram/ui/LaunchActivity.java  |  21 ----
  .../org/telegram/ui/PaymentFormActivity.java  |  28 +++--
@@ -16,7 +16,7 @@ Subject: build configuration: gradle 8 / AGP 8 like inugram, plugin build fixes
  build.gradle                                  |  49 +++++++-
  gradle.properties                             |   2 +-
  settings.gradle                               |   6 +-
- 12 files changed, 194 insertions(+), 117 deletions(-)
+ 12 files changed, 195 insertions(+), 117 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
 index 0000000..0000000 100644
@@ -245,7 +245,7 @@ index 0000000..0000000 100644
  -keepnames @com.google.android.gms.common.annotation.KeepName class *
  -keepclassmembernames class * {
      @com.google.android.gms.common.annotation.KeepName *;
-@@ -8,6 +8,10 @@
+@@ -8,6 +8,11 @@
  -keep @androidx.annotation.Keep class * { *; }
  -keepclasseswithmembers class * { @androidx.annotation.Keep *; }
  
@@ -253,10 +253,11 @@ index 0000000..0000000 100644
 +-keepclassmembernames,allowshrinking class org.telegram.ui.* { <fields>; }
 +-keepclassmembernames,allowshrinking class org.telegram.ui.Cells.* { <fields>; }
 +-keepclassmembernames,allowshrinking class org.telegram.ui.Components.* { <fields>; }
++-keep class org.telegram.messenger.GcmPushListenerService { *; }
  -keep class org.webrtc.* { *; }
  -keep class org.webrtc.audio.* { *; }
  -keep class org.webrtc.voiceengine.* { *; }
-@@ -32,7 +36,6 @@
+@@ -32,7 +37,6 @@
  -keep class org.telegram.messenger.camera.* { *; }
  -keep class org.telegram.messenger.secretmedia.* { *; }
  -keep class org.telegram.messenger.support.* { *; }
@@ -264,7 +265,7 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -84,9 +87,19 @@
+@@ -84,9 +88,19 @@
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**

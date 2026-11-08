@@ -4,23 +4,14 @@ Date: Sat, 10 Oct 2026 10:46:17 +0300
 Subject: scope system notification channel mutes
 
 ---
- .../messenger/NotificationsController.java      | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ .../telegram/messenger/NotificationsController.java   | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -4076,7 +4076,7 @@ public class NotificationsController extends BaseController implements Notificat
-                         shouldOverwrite = true;
-                     } else if (!newSettingsHash.equals(settings)) {
-                         SharedPreferences.Editor editor = null;
--                        if (channelImportance == NotificationManager.IMPORTANCE_NONE) {
-+                        if (channelImportance == NotificationManager.IMPORTANCE_NONE && desu.inugram.helpers.NotificationsHelper.syncSystemChannelMute()) {
-                             editor = preferences.edit();
-                             if (isDefault) {
-                                 if (!isInApp) {
-@@ -4094,12 +4094,12 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4094,9 +4094,9 @@ public class NotificationsController extends BaseController implements Notificat
                                  if (type == TYPE_STORIES) {
                                      editor.putBoolean("stories_" + NotificationsController.getSharedPrefKey(dialogId, 0), false);
                                  } else {
@@ -31,11 +22,7 @@ index 0000000..0000000 100644
 +                                updateServerNotificationsSettings(dialogId, topicId, true);
                              }
                              edited = true;
--                        } else if (channelImportance != importance) {
-+                        } else if (channelImportance != importance && channelImportance != NotificationManager.IMPORTANCE_NONE) {
-                             if (!isInApp) {
-                                 editor = preferences.edit();
-                                 int priority;
+                         } else if (channelImportance != importance) {
 @@ -4136,9 +4136,10 @@ public class NotificationsController extends BaseController implements Notificat
                                      if (type == TYPE_STORIES) {
                                          editor.putBoolean("stories_" + dialogId, true);
@@ -50,12 +37,3 @@ index 0000000..0000000 100644
                                      }
                                  }
                              }
-@@ -4302,7 +4303,7 @@ public class NotificationsController extends BaseController implements Notificat
- 
-         String defaultPath = Settings.System.DEFAULT_NOTIFICATION_URI.getPath();
- 
--        boolean isDefault = true;
-+        boolean isDefault = !desu.inugram.helpers.NotificationsHelper.perChatChannelsEnabled(systemNotificationManager);
-         boolean isInApp = !ApplicationLoader.mainInterfacePaused;
-         int chatType = TYPE_PRIVATE;
- 

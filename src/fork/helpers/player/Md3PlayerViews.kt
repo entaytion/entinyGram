@@ -14,7 +14,7 @@ import android.os.SystemClock
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.TypedValue
-import android.view.HapticFeedbackConstants
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.SoundEffectConstants
 import android.view.View

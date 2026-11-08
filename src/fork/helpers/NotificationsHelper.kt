@@ -1,7 +1,5 @@
 package desu.inugram.helpers
 
-import android.app.NotificationManager
-import android.os.SystemClock
 import androidx.collection.LongSparseArray
 import androidx.core.content.edit
 import desu.inugram.InuConfig
@@ -15,19 +13,12 @@ import desu.inugram.helpers.security.PasscodeHelper
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.NotificationsController
 import org.telegram.messenger.R
-import org.telegram.messenger.UserConfig
 import java.util.concurrent.ConcurrentHashMap
 
 object NotificationsHelper {
     private val prefs by lazy {
         InuPrefs.of("inugram_notifications")
     }
-
-    @Volatile
-    private var perChatCheckedAt = 0L
-
-    @Volatile
-    private var perChatSlotsLeft = false
 
     @JvmStatic
     fun keepAliveForeground(): Boolean = InuConfig.UNIFIED_PUSH.value || InuConfig.FOREGROUND_PUSH_SERVICE.value
@@ -55,36 +46,6 @@ object NotificationsHelper {
         // #endif
         return BlockedMessagesHelper.shouldHide(messageObject)
             || ParanoiaHelper.isHidden(messageObject.currentAccount, messageObject.dialogId)
-    }
-
-    // entiny: stock reads a disabled OS channel back as a mute for the whole chat type or chat
-    @JvmStatic
-    fun syncSystemChannelMute(): Boolean = InuConfig.NOTIF_CHANNEL_SYNC.value
-
-    // entiny: per-chat channels are capped by the system, so stop before the slot limit is hit
-    @JvmStatic
-    fun perChatChannelsEnabled(manager: NotificationManager): Boolean {
-        if (!InuConfig.PER_CHAT_NOTIF_CHANNELS.value) return false
-        val now = SystemClock.elapsedRealtime()
-        if (now - perChatCheckedAt > PER_CHAT_RECHECK_MS) {
-            perChatCheckedAt = now
-            perChatSlotsLeft = try {
-                (manager.notificationChannels?.size ?: 0) < MAX_OS_NOTIFICATION_CHANNELS
-            } catch (e: Exception) {
-                false
-            }
-        }
-        return perChatSlotsLeft
-    }
-
-    @JvmStatic
-    fun resetDefaultNotificationChannels() {
-        for (a in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
-            val controller = NotificationsController.getInstance(a)
-            controller.deleteNotificationChannelGlobal(NotificationsController.TYPE_GROUP)
-            controller.deleteNotificationChannelGlobal(NotificationsController.TYPE_PRIVATE)
-            controller.deleteNotificationChannelGlobal(NotificationsController.TYPE_CHANNEL)
-        }
     }
 
     /** drops a message already shown, like a push the full message or an edit now hides */
@@ -186,6 +147,4 @@ object NotificationsHelper {
         }
     }
 
-    private const val MAX_OS_NOTIFICATION_CHANNELS = 4500
-    private const val PER_CHAT_RECHECK_MS = 60000L
 }

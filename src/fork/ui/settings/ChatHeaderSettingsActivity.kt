@@ -7,6 +7,7 @@ import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
+import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -24,19 +25,18 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asCustom(previewCell))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuChatHeaderSettingsInfo)))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatHeaderSettings)))
         items.add(
-            mkIconCheckItem(
+            mkTwoLineCheckItem(
                 TOGGLE_CENTER_TITLE_CHATS,
-                R.drawable.inu_tabler_layout_align_center,
                 R.string.InuCenterTitleChats,
                 R.string.InuCenterTitleChatsInfo,
                 InuConfig.CENTER_TITLE_CHATS.value,
             )
         )
         items.add(
-            mkIconCheckItem(
+            mkTwoLineCheckItem(
                 TOGGLE_HIDE_CHAT_AVATAR,
-                R.drawable.inu_tabler_dots_vertical,
                 R.string.InuHideChatAvatar,
                 R.string.InuHideChatAvatarInfo,
                 InuConfig.HIDE_CHAT_AVATAR.value,
@@ -44,19 +44,17 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         )
         if (InuConfig.CENTER_TITLE_CHATS.value) {
             items.add(
-                mkIconCheckItem(
+                mkTwoLineCheckItem(
                     TOGGLE_IOS_CHAT_HEADER,
-                    R.drawable.inu_tabler_focus_2,
                     R.string.InuIosChatHeader,
                     R.string.InuIosChatHeaderInfo,
                     InuConfig.IOS_CHAT_HEADER.value,
                 )
             )
-            if (InuConfig.IOS_CHAT_HEADER.value && !InuConfig.HIDE_CHAT_AVATAR.value) {
+            if (InuUtils.compactChatPill() && !InuUtils.hideChatAvatar()) {
                 items.add(
-                    mkIconCheckItem(
+                    mkTwoLineCheckItem(
                         TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT,
-                        R.drawable.inu_tabler_dots_vertical,
                         R.string.InuIosChatHeaderAvatarSlot,
                         R.string.InuIosChatHeaderAvatarSlotInfo,
                         InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value,
@@ -64,9 +62,8 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 )
                 if (InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value) {
                     items.add(
-                        mkIconCheckItem(
+                        mkTwoLineCheckItem(
                             TOGGLE_IOS_CHAT_HEADER_AVATAR_SWAP,
-                            R.drawable.inu_tabler_dots_vertical,
                             R.string.InuIosChatHeaderAvatarSwap,
                             R.string.InuIosChatHeaderAvatarSwapInfo,
                             InuConfig.IOS_CHAT_HEADER_AVATAR_SWAP.value,
@@ -74,9 +71,8 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                     )
                 } else {
                     items.add(
-                        mkIconCheckItem(
+                        mkTwoLineCheckItem(
                             TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC,
-                            R.drawable.inu_tabler_pin,
                             R.string.InuIosChatHeaderAvatarStatic,
                             R.string.InuIosChatHeaderAvatarStaticInfo,
                             InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value,
@@ -88,22 +84,16 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 (!InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value && !InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value))
             ) {
                 items.add(
-                    mkIconCheckItem(
+                    UItem.asCheck(
                         TOGGLE_CENTER_TITLE_RIGHT_AVATAR,
-                        R.drawable.inu_tabler_arrow_bar_to_right,
-                        R.string.InuCenterTitleRightAvatar,
-                        0,
-                        InuConfig.CENTER_TITLE_RIGHT_AVATAR.value,
-                    )
+                        LocaleController.getString(R.string.InuCenterTitleRightAvatar),
+                    ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
                 )
             }
         }
-        items.add(UItem.asShadow(null))
-
         items.add(
-            mkIconCheckItem(
+            mkTwoLineCheckItem(
                 TOGGLE_CHAT_HEADER_NO_PILL,
-                R.drawable.inu_tabler_photo_x,
                 R.string.InuChatHeaderNoPill,
                 R.string.InuChatHeaderNoPillInfo,
                 InuConfig.CHAT_HEADER_NO_PILL.value,
@@ -111,10 +101,10 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuTitleText)))
         items.add(
-            mkIconCheckItem(
+            mkTwoLineCheckItem(
                 TOGGLE_CHAT_TITLE_MARQUEE,
-                R.drawable.inu_tabler_marquee_2,
                 R.string.InuChatTitleMarquee,
                 R.string.InuChatTitleMarqueeInfo,
                 InuConfig.CHAT_TITLE_MARQUEE.value,
@@ -123,10 +113,10 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuFoldersUnreadCounter)))
         items.add(
-            mkIconCheckItem(
+            mkTwoLineCheckItem(
                 TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON,
-                R.drawable.inu_tabler_arrow_bar_to_right,
                 R.string.InuUnreadBadgeOnBackButton,
                 R.string.InuUnreadBadgeOnBackButtonInfo,
                 InuConfig.UNREAD_BADGE_ON_BACK_BUTTON.value,
@@ -134,9 +124,8 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         )
         if (InuConfig.UNREAD_BADGE_ON_BACK_BUTTON.value) {
             items.add(
-                mkIconCheckItem(
+                mkTwoLineCheckItem(
                     TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON_IOS,
-                    R.drawable.inu_tabler_circle,
                     R.string.InuUnreadBadgeOnBackButtonIos,
                     0,
                     InuConfig.UNREAD_BADGE_ON_BACK_BUTTON_IOS.value,
@@ -145,17 +134,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuCenteringSection))))
-        items.add(
-            mkIconCheckItem(
-                TOGGLE_CENTER_TITLE_MAIN,
-                R.drawable.inu_tabler_layout_align_center,
-                R.string.InuCenterTitleMain,
-                R.string.InuCenterTitleMainInfo,
-                InuConfig.CENTER_TITLE_MAIN.value,
-            )
-        )
-        items.add(UItem.asShadow(null))
+
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -191,19 +170,13 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
             }
 
             TOGGLE_CENTER_TITLE_RIGHT_AVATAR -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.CENTER_TITLE_RIGHT_AVATAR.toggle()
+                (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_RIGHT_AVATAR.toggle()
                 refreshAll()
             }
 
             TOGGLE_CHAT_HEADER_NO_PILL -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_HEADER_NO_PILL.toggle()
                 refreshAll()
-            }
-
-            // entiny: omit restart bulletin because ActionBar.onMeasure re-reads center title live on every pass
-            TOGGLE_CENTER_TITLE_MAIN -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.CENTER_TITLE_MAIN.toggle()
-                listView.adapter.update(true)
             }
 
             TOGGLE_CHAT_TITLE_MARQUEE -> {
@@ -240,7 +213,6 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
         private val TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON = InuUtils.generateId()
         private val TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON_IOS = InuUtils.generateId()
-        private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -261,7 +233,6 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
                 SearchRegistry.Entry("unread-badge-on-back-button", R.string.InuUnreadBadgeOnBackButton, TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON),
                 SearchRegistry.Entry("unread-badge-on-back-button-ios", R.string.InuUnreadBadgeOnBackButtonIos, TOGGLE_UNREAD_BADGE_ON_BACK_BUTTON_IOS),
-                SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
             ),
         )
     }

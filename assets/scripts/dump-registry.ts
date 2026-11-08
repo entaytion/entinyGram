@@ -20,7 +20,7 @@ import { join, resolve, dirname } from 'node:path'
 
 const artifactDir = resolve(process.argv[2] ?? 'out')
 const __filename = fileURLToPath(import.meta.url)
-const root = resolve(dirname(__filename), '..')
+const root = resolve(dirname(__filename), '../..')
 
 // ── 1. Parse strings_inu.xml (English values only) ──────────────────────────
 

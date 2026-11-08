@@ -106,12 +106,19 @@ object MessageMenuPreviewHelper {
         ) {
             this.content = content
             val message = cell.messageObject
-            val cellX = list.x + cell.x
-            val cellY = list.y + cell.y + cell.paddingTop
+            val location = IntArray(2)
+            val position = IntArray(2)
+            content.getLocationOnScreen(location)
+            list.getLocationOnScreen(position)
+            val listLeft = (position[0] - location[0]).toFloat()
+            cell.getLocationOnScreen(position)
+            val cellX = (position[0] - location[0]).toFloat()
+            val cellTop = (position[1] - location[1]).toFloat()
+            val cellY = cellTop + cell.paddingTop
             postLeft = cellX + cell.backgroundDrawableLeft
             postRight = cellX + cell.backgroundDrawableRight
             originalTop = cellY + cell.backgroundDrawableTop
-            postHeight = maxOf(cellY + cell.backgroundDrawableBottom, list.y + cell.y + cell.measuredHeight) - originalTop
+            postHeight = maxOf(cellY + cell.backgroundDrawableBottom, cellTop + cell.measuredHeight) - originalTop
             val group = cell.currentMessagesGroup
             if (group != null) {
                 var l = Float.MAX_VALUE
@@ -122,12 +129,14 @@ object MessageMenuPreviewHelper {
                 for (i in 0 until parent.childCount) {
                     val c = parent.getChildAt(i) as? ChatMessageCell ?: continue
                     if (c.currentMessagesGroup !== group) continue
-                    val cx = list.x + c.x
-                    val cy = list.y + c.y + c.paddingTop
+                    c.getLocationOnScreen(position)
+                    val cx = (position[0] - location[0]).toFloat()
+                    val top = (position[1] - location[1]).toFloat()
+                    val cy = top + c.paddingTop
                     l = minOf(l, cx + c.backgroundDrawableLeft)
                     r = maxOf(r, cx + c.backgroundDrawableRight)
                     t = minOf(t, cy + c.backgroundDrawableTop)
-                    b = maxOf(b, maxOf(cy + c.backgroundDrawableBottom, list.y + c.y + c.measuredHeight))
+                    b = maxOf(b, maxOf(cy + c.backgroundDrawableBottom, top + c.measuredHeight))
                 }
                 if (l <= r && t <= b) {
                     postLeft = l
@@ -156,8 +165,16 @@ object MessageMenuPreviewHelper {
             val gap = 0f
             val total = postHeight + gap + menuHeight
             val available = viewBottom - viewTop
+            val menuAbove = originalTop + total > viewBottom &&
+                originalTop - menuHeight >= viewTop &&
+                originalTop + postHeight <= viewBottom
 
-            if (total <= available) {
+            if (menuAbove) {
+                minScroll = 0f
+                clipTop = 0f
+                viewTop = originalTop
+                scroll = 0f
+            } else if (total <= available) {
                 minScroll = 0f
                 clipTop = 0f
                 val columnTop = originalTop.coerceIn(viewTop, viewBottom - total)
@@ -171,17 +188,15 @@ object MessageMenuPreviewHelper {
             }
             shift = viewTop + scroll - originalTop
 
-            val viewportLeft = list.x + dp(6f)
-            val viewportRight = list.x + list.width - dp(6f)
+            val viewportLeft = listLeft + dp(6f)
+            val viewportRight = listLeft + list.width - dp(6f)
             val card = menu.getChildAt(0)
             val menuLeft = (if (message.isOutOwner) postRight - menuWidth + card.paddingRight else postLeft - card.paddingLeft)
                 .coerceIn(viewportLeft - card.paddingLeft, maxOf(viewportLeft, viewportRight - menuWidth + card.paddingRight))
 
-            val location = IntArray(2)
-            content.getLocationOnScreen(location)
             view.setMenuPosition(
                 location[0] + Math.round(menuLeft),
-                location[1] + Math.round(viewTop + postHeight + gap),
+                location[1] + Math.round(if (menuAbove) viewTop - reactionsInset - menuHeight else viewTop + postHeight + gap),
                 menuWidth,
                 menuHeight,
             )

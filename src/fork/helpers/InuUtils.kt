@@ -135,9 +135,6 @@ public object InuUtils {
     }
 
     @JvmStatic
-    fun centerScreenTitles(): Boolean = desu.inugram.InuConfig.CENTER_TITLE_MAIN.value
-
-    @JvmStatic
     fun centerChatTitle(): Boolean = desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
 
     @JvmStatic
@@ -175,7 +172,7 @@ public object InuUtils {
         if (fragment.javaClass.name == "org.telegram.ui.ChatActivity") {
             return centerChatTitle()
         }
-        return centerScreenTitles()
+        return false
     }
 
     @JvmStatic

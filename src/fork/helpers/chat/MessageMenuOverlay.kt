@@ -85,6 +85,7 @@ class MessageMenuOverlay(
 
     fun setMenuTranslation(value: Float) {
         menu.translationY = value
+        reactions?.translationY = value
     }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
@@ -159,9 +160,11 @@ class MessageMenuOverlay(
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                val dismissOnTap = action == MotionEvent.ACTION_UP && !dragging
                 pointerId = -1
                 dragging = false
                 capturing = false
+                if (dismissOnTap) listener.dismiss()
             }
         }
         return true

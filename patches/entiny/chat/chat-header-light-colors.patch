@@ -4,16 +4,65 @@ Date: Mon, 28 Sep 2026 00:39:21 +0300
 Subject: readable chat header colors on light wallpapers
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 17 +++++-
- .../java/org/telegram/ui/ChatActivity.java    | 45 +++++++-------
- .../ui/Components/ChatAvatarContainer.java    | 60 ++++++++++++-------
- 3 files changed, 76 insertions(+), 46 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 46 +++++++-----
+ .../telegram/ui/ActionBar/SimpleTextView.java |  2 +-
+ .../java/org/telegram/ui/ChatActivity.java    | 45 ++++++------
+ .../ui/Components/ChatAvatarContainer.java    | 71 ++++++++++++-------
+ .../ui/Stories/DialogStoriesCell.java         | 15 ++--
+ 5 files changed, 99 insertions(+), 80 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -2255,7 +2255,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -233,7 +233,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     // entiny: absorbs the Paint#measureText vs StaticLayout#getLineWidth gap so subtitles don't false-trigger the ellipsis fade.
+     private static final int INU_PILL_TEXT_SLACK_DP = 4;
+ 
+-    // entiny: symmetric avatar-room reservation only while the pill spans full width; compact pills reserve it on the avatar's side only.
+     private int inu_pillAvatarRoom() {
+         return chatAvatarContainer != null ? chatAvatarContainer.inu_getPillAvatarRoom() : 0;
+     }
+@@ -253,8 +252,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         if (room == 0) {
+             return dp(INU_PILL_TEXT_PADDING_DP);
+         }
+-        final boolean symmetric = !desu.inugram.helpers.InuUtils.compactChatPill();
+-        return dp(INU_PILL_TEXT_PADDING_DP) + (symmetric || !inu_pillAvatarOnRight() ? room : 0);
++        return dp(INU_PILL_TEXT_PADDING_DP) + (!inu_pillAvatarOnRight() ? room : 0);
+     }
+ 
+     public int inu_getPillTextInsetRight() {
+@@ -262,8 +260,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         if (room == 0) {
+             return dp(INU_PILL_TEXT_PADDING_DP);
+         }
+-        final boolean symmetric = !desu.inugram.helpers.InuUtils.compactChatPill();
+-        return dp(INU_PILL_TEXT_PADDING_DP) + (symmetric || inu_pillAvatarOnRight() ? room : 0);
++        return dp(INU_PILL_TEXT_PADDING_DP) + (inu_pillAvatarOnRight() ? room : 0);
+     }
+ 
+     public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
+@@ -791,15 +788,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         if (titleTextView != null) {
+             for (int a = 0; a < titleTextView.length; a++) {
+                 if (titleTextView[a] != null) {
+-                    titleTextView[a].setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
++                    titleTextView[a].setGravity((isCenterTitle || centerTitleAndGlass) ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
+                 }
+             }
+         }
+         if (subtitleTextView != null) {
+-            subtitleTextView.setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT);
++            subtitleTextView.setGravity((isCenterTitle || centerTitleAndGlass) ? Gravity.CENTER : Gravity.LEFT);
+         }
+         if (additionalSubtitleTextView != null) {
+-            additionalSubtitleTextView.setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT);
++            additionalSubtitleTextView.setGravity((isCenterTitle || centerTitleAndGlass) ? Gravity.CENTER : Gravity.LEFT);
+         }
+     }
+ 
+@@ -2255,7 +2252,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                      contains |= glassDrawableMenu != null && glassDrawableMenu.getBounds().contains(x, y);
                  }
  
@@ -22,7 +71,36 @@ index 0000000..0000000 100644
                      return false;
                  }
              }
-@@ -2767,6 +2767,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2653,21 +2650,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             if (chatAvatarContainer.getTranslationX() != 0) {
+                 chatAvatarContainer.setTranslationX(0);
+             }
+-            final float inu_centeredTextWidth = chatAvatarContainer.inu_getCenteredTextWidth();
+-
+-            // entiny: room is symmetric around the screen midpoint (inset by whichever slot is wider) so an uneven back-button/menu pair doesn't drift the pill off-center.
++            final boolean compactPill = desu.inugram.helpers.InuUtils.compactChatPill();
+             final int symmetricInset = Math.max(baseLeft, rightOffset);
+-            final int roomLeft = symmetricInset;
+-            final int roomRight = Math.max(roomLeft + dp(INU_PILL_MIN_WIDTH_DP), width - symmetricInset);
++            final int roomLeft = compactPill ? symmetricInset : leftLimit;
++            final int roomRight = compactPill
++                    ? Math.max(roomLeft + dp(INU_PILL_MIN_WIDTH_DP), width - symmetricInset)
++                    : Math.max(roomLeft, width - rightOffset);
+             final int centerX = (roomLeft + roomRight) / 2;
+ 
+-            // entiny: compact pill hugs its content; plain centered mode spans the whole room and centers text inside it.
+-            int target = desu.inugram.helpers.InuUtils.compactChatPill()
+-                    ? (int) Math.ceil(inu_centeredTextWidth) + dp(INU_PILL_TEXT_SLACK_DP)
++            int target = compactPill
++                    ? (int) Math.ceil(chatAvatarContainer.inu_getCenteredTextWidth()) + dp(INU_PILL_TEXT_SLACK_DP)
+                         + inu_getPillTextInsetLeft() + inu_getPillTextInsetRight()
+                     : roomRight - roomLeft;
+             target = Math.max(target, dp(INU_PILL_MIN_WIDTH_DP));
+-            // entiny: cap against leftLimit, not just roomLeft -- the static-avatar reserve can be wider than the symmetric inset.
+             target = Math.min(target, roomRight - Math.max(roomLeft, leftLimit));
+ 
+             // entiny: snap on the first pass so the header doesn't unfold from nothing on chat open; animate afterwards.
+@@ -2767,6 +2762,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
      }
  
@@ -37,7 +115,7 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          if (inu_needsUpdateGlassBounds()) {
-@@ -2815,7 +2823,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2815,7 +2818,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int t = getHeight() - extraHeight - (getCurrentActionBarHeight() + s) / 2 - p;
          final int b = t + s + p * 2;
  
@@ -51,6 +129,19 @@ index 0000000..0000000 100644
              if (centerTitleAndGlass && titleTextView[0] != null && titleTextView[0].getVisibility() == View.VISIBLE) {
                  int titleWidth = (int) Math.ceil(titleTextView[0].getTextWidth()) + p * 2 + dp(48);
                  int titleLeft = (getWidth() - titleWidth) / 2 + Math.round(titleTextView[0].getTranslationX());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+@@ -249,7 +249,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     }
+ 
+     public void setEllipsizeByGradient(boolean value, Boolean forceLeft) {
+-        if (scrollNonFitText == value) {
++        if (ellipsizeByGradient == value && java.util.Objects.equals(forceEllipsizeByGradientLeft, forceLeft)) {
+             return;
+         }
+         ellipsizeByGradient = value;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
@@ -130,7 +221,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -271,12 +271,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -271,19 +271,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              if (chat != null && chat.linked_community_id != 0) {
                  ScaleStateListAnimator.apply(avatarImageView, .05f, 1.2f);
              }
@@ -145,7 +236,36 @@ index 0000000..0000000 100644
          }
  
          boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
-@@ -839,16 +835,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+ 
+         titleTextView = new SimpleTextConnectedView(context, titleTextLargerCopyView);
+         titleTextView.setScrollNonFitText(marquee);
+-        titleTextView.setEllipsizeByGradient(!marquee, false);
++        titleTextView.setEllipsizeByGradient(!marquee && !isCenteredTitle(), false);
+         ThemeBind.textColor(titleTextView, Theme.key_actionBarDefaultTitle, resourcesProvider);
+         titleTextView.setTextSize(18);
+         titleTextView.setTypeface(AndroidUtilities.bold());
+@@ -686,7 +682,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         int width = MeasureSpec.getSize(widthMeasureSpec);
+         boolean centerChatTitle = isCenteredTitle();
+         inu_lastMeasureCentered = centerChatTitle;
+-        inu_syncCenteredGravity();
++        titleTextView.setEllipsizeByGradient(!desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue() && !centerChatTitle, false);
++        inu_syncCenteredGravity(centerChatTitle);
+         final int availableWidth;
+         if (centerChatTitle && inu_hasPillBand()) {
+             // entiny: measure text to the exact pill band so an overlong subtitle ellipsizes at the pill edge, not past it.
+@@ -824,8 +821,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     }
+ 
+     // entiny: gravity is a field, not re-derived per pass -- re-assert it every onMeasure so a centering toggle flipped in the back stack doesn't leave text half-centered.
+-    private void inu_syncCenteredGravity() {
+-        final int gravity = isCenteredTitle() ? Gravity.CENTER_HORIZONTAL : Gravity.LEFT;
++    private void inu_syncCenteredGravity(boolean centered) {
++        final int gravity = centered ? Gravity.CENTER_HORIZONTAL : Gravity.LEFT;
+         if (titleTextView != null) {
+             titleTextView.setGravity(gravity);
+         }
+@@ -839,16 +836,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      // entiny: pill width = max(title, subtitle) measured width + each view's own horizontal padding, not SimpleTextView#getTextWidth (stale after a post-measure setText).
@@ -162,7 +282,7 @@ index 0000000..0000000 100644
          float width = 0;
          if (titleTextView != null) {
              width = Math.max(width, titleTextView.getExactWidthIncludeDrawables()
-@@ -864,7 +851,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -864,7 +852,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              width = Math.max(width, animatedSubtitleTextView.getDrawable().getAnimateToWidth()
                      + animatedSubtitleTextView.getPaddingLeft() + animatedSubtitleTextView.getPaddingRight());
          }
@@ -170,7 +290,7 @@ index 0000000..0000000 100644
          return width;
      }
  
-@@ -968,7 +954,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -968,7 +955,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      // entiny: Saved Messages centers like any other chat header now; only non-chat headers (no dialog yet, reply-comments, Replies pseudo-user) stay excluded.
@@ -179,7 +299,7 @@ index 0000000..0000000 100644
          return parentFragment != null
                  && !parentFragment.isReplyChatComment()
                  && parentFragment.getDialogId() != 0
-@@ -996,6 +982,28 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -996,6 +983,28 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarInMenuSlot() && hasVisibleAvatar();
      }
  
@@ -208,7 +328,7 @@ index 0000000..0000000 100644
      // entiny: avatar stays at its non-centered (post-back-button) position while title/subtitle center; action bar reserves its room instead.
      public boolean inu_isStaticAvatar() {
          return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarStatic() && hasVisibleAvatar();
-@@ -1150,7 +1158,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1150,7 +1159,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      public void setRightAvatarPadding(int value) {
          rightAvatarPadding = value;
@@ -216,7 +336,16 @@ index 0000000..0000000 100644
      }
  
      public void setCommunityItemVisible(boolean visible) {
-@@ -2028,7 +2035,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1273,7 +1281,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         }
+         boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
+         titleTextView.setScrollNonFitText(marquee);
+-        titleTextView.setEllipsizeByGradient(!marquee, false);
++        titleTextView.setEllipsizeByGradient(!marquee && !isCenteredTitle(), false);
+         titleTextView.setRightDrawableOutside(inu_titleRightDrawableOutside(marquee));
+         titleTextView.setText(value);
+         rightDrawableIsScam = false;
+@@ -2028,7 +2036,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private int getThemedColor(int key) {
@@ -230,7 +359,7 @@ index 0000000..0000000 100644
      }
  
      // updateColors runs on every theme frame: reuse the filters while their color is unchanged
-@@ -2046,6 +2058,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2046,6 +2059,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      /** also called on every theme update (Theme.Colorable) */
      @Override
      public void updateColors() {
@@ -246,7 +375,7 @@ index 0000000..0000000 100644
          if (currentTypingDrawable != null) {
              currentTypingDrawable.setColor(getThemedColor(Theme.key_chat_status));
          }
-@@ -2085,7 +2106,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2085,7 +2107,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private void checkActionBar(boolean animated) {
@@ -254,3 +383,36 @@ index 0000000..0000000 100644
          if (actionBar != null) {
              actionBar.checkAvatarContainerWidth(animated);
              if (desu.inugram.helpers.InuUtils.centerChatTitle()) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+@@ -30,7 +30,7 @@ import android.text.Spanned;
+ import android.text.TextUtils;
+ import android.text.style.ClickableSpan;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+@@ -942,16 +942,9 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+             titleView.setTranslationY(bottomY - barOffset + dp(14) - offset + dp(FAKE_TOP_PADDING) - dp(6) * subtitleOverlayContainer.getTotalVisibility());
+             int cellWidth = dp(72);
+             lastViewRight += -cellWidth + getAvatarRight(cellWidth, collapsedProgress) + dp(12);
+-            if (desu.inugram.InuConfig.CENTER_TITLE_MAIN.getValue()) {
+-                float titleX = (getMeasuredWidth() - titleView.getDrawable().getCurrentWidth()) / 2f;
+-                titleView.setTranslationX(titleX);
+-                titleView.getDrawable().setRightPadding(0);
+-                telegramLogoView.setTranslationX((getMeasuredWidth() - telegramLogoView.getMeasuredWidth()) / 2f);
+-            } else {
+-                titleView.setTranslationX(lastViewRight);
+-                titleView.getDrawable().setRightPadding(lastViewRight - dp(12) + actionBar.menu.getVisibleItemsMeasuredWidthWithAlpha() * progress);
+-                telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
+-            }
++            titleView.setTranslationX(lastViewRight);
++            titleView.getDrawable().setRightPadding(lastViewRight - dp(12) + actionBar.menu.getVisibleItemsMeasuredWidthWithAlpha() * progress);
++            telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
+             telegramLogoView.setTranslationY(bottomY - barOffset + dp(14 + FAKE_TOP_PADDING + 4.333f) + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
+ 
+             emojiStatusView.setTranslationY(bottomY - barOffset + dp(14 - 11 + FAKE_TOP_PADDING + 4.333f) + translationOffset);

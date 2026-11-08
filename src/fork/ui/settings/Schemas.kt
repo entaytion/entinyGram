@@ -7,7 +7,6 @@ import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.InuHooks
 import desu.inugram.helpers.LocalPremiumHelper
-import desu.inugram.helpers.NotificationsHelper
 import desu.inugram.helpers.ProxyVpnHelper
 import desu.inugram.helpers.push.UnifiedPushHelper
 import desu.inugram.helpers.UrlCleanerHelper
@@ -972,11 +971,7 @@ object Schemas {
                 },
                 click = { page, _ -> PushSettingsHelper.editGateway(page) },
             )
-            toggle(InuConfig.NOTIF_CHANNEL_SYNC, R.string.InuNotifChannelSync, R.string.InuNotifChannelSyncInfo)
-            toggle(
-                InuConfig.PER_CHAT_NOTIF_CHANNELS, R.string.InuPerChatNotifChannels, R.string.InuPerChatNotifChannelsInfo,
-                onChange = { _, _ -> NotificationsHelper.resetDefaultNotificationChannels() },
-            )
+
         }
         section(R.string.InuFasterDownloadsSection) {
             custom(
@@ -1041,6 +1036,7 @@ object Schemas {
             toggle(InuConfig.SAVE_FILENAME_DATE, R.string.InuSaveFilenameDate, R.string.InuSaveFilenameDateInfo)
         }
         section(R.string.InuDeviceSection) {
+            toggle(InuConfig.FORCE_NO_VIBRATION, R.string.InuForceNoVibration, R.string.InuForceNoVibrationInfo)
             custom(
                 "performance-class", R.string.InuPerformanceClass,
                 build = { _, id ->

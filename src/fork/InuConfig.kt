@@ -37,6 +37,7 @@ object InuConfig {
         migrateSelfDestructCategories()
         migrateDialogsFab()
         migrateFeedEnabled(context)
+        desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
     }
 
     fun migrateDialogsFab() {
@@ -1655,9 +1656,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ICON_PACKS_ORDER = StringItem("icon_packs_order", "")
 
     @JvmField
-    val CENTER_TITLE_MAIN = BoolItem("center_title_main", false)
-
-    @JvmField
     val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
 
     @JvmField
@@ -1785,6 +1783,16 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ALLOW_SCREENSHOTS = BoolItem("allow_screenshots", false)
 
     @JvmField
+    val FORCE_NO_VIBRATION = object : BoolItem("force_no_vibration", false) {
+        override var value: Boolean
+            get() = super.value
+            set(v) {
+                super.value = v
+                desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
+            }
+    }
+
+    @JvmField
     val SUPPRESS_SCREENSHOT_NOTIFICATION = BoolItem("suppress_screenshot_notification", false)
 
     @JvmField
@@ -1909,12 +1917,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val NOTIFICATION_ICON = NotificationIconItem()
-
-    @JvmField
-    val NOTIF_CHANNEL_SYNC = BoolItem("notif_channel_sync", true)
-
-    @JvmField
-    val PER_CHAT_NOTIF_CHANNELS = BoolItem("per_chat_notif_channels", false)
 
     class MapProviderItem : IntItem("map_provider", OSM_LITE) {
         // entiny: a plugin's tile source only exists on the osmdroid map, the stored choice stays untouched
