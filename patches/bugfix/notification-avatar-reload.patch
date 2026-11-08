@@ -35,7 +35,7 @@ index 0000000..0000000 100644
          });
      }
  
-@@ -3467,8 +3470,14 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -3483,8 +3486,14 @@ public class NotificationsController extends BaseController implements Notificat
              notificationsQueue.postRunnable(() -> {
                  if (pendingVoiceLoads.remove(path)) {
                      showOrUpdateNotification(true);
@@ -50,7 +50,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -4873,7 +4882,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4889,7 +4898,7 @@ public class NotificationsController extends BaseController implements Notificat
                      mBuilder.setLargeIcon(img.getBitmap());
                  } else {
                      try {
@@ -59,7 +59,7 @@ index 0000000..0000000 100644
                          if (file.exists()) {
                              float scaleFactor = 160.0f / AndroidUtilities.dp(50);
                              BitmapFactory.Options options = new BitmapFactory.Options();
-@@ -5356,7 +5365,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5373,7 +5382,7 @@ public class NotificationsController extends BaseController implements Notificat
              }
  
              if (photoPath != null) {
@@ -68,7 +68,7 @@ index 0000000..0000000 100644
                  if (Build.VERSION.SDK_INT < 28) {
                      BitmapDrawable img = ImageLoader.getInstance().getImageFromMemory(photoPath, null, "50_50");
                      if (img != null) {
-@@ -5448,7 +5457,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5466,7 +5475,7 @@ public class NotificationsController extends BaseController implements Notificat
                  try {
                      if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
                          Person.Builder personBuilder = new Person.Builder().setName(LocaleController.getString(R.string.FromYou));
@@ -77,15 +77,16 @@ index 0000000..0000000 100644
                          loadRoundAvatar(getUserConfig().getClientUserId(), avatar, personBuilder);
                          selfPerson = personBuilder.build();
                          personCache.put(selfUserId, selfPerson);
-@@ -5598,19 +5607,19 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5619,7 +5628,7 @@ public class NotificationsController extends BaseController implements Notificat
                                      }
                                  }
                                  if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
 -                                    avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
 +                                    avatar = inu_getAvatarFile(sender.photo.photo_small, sender);
                                  }
+                                 desu.inugram.helpers.NotificationDebugHelper.onAvatarResolved(currentAccount, dialogId, "sender" + fromId, sender, avatar);
                              }
-                             if (avatar == null && dialogId == UserObject.VERIFY && messageObject.getForwardedFromId() != null) {
+@@ -5627,12 +5636,12 @@ public class NotificationsController extends BaseController implements Notificat
                                  if (uid >= 0) {
                                      TLRPC.User sender = getMessagesController().getUser(uid);
                                      if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
@@ -100,7 +101,7 @@ index 0000000..0000000 100644
                                      }
                                  }
                              }
-@@ -6051,7 +6060,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -6075,7 +6084,7 @@ public class NotificationsController extends BaseController implements Notificat
              if (user1 != null) {
                  username = UserObject.getUserName(user1);
                  if (user1 != null && user1.photo != null && user1.photo.photo_small != null && user1.photo.photo_small.volume_id != 0 && user1.photo.photo_small.local_id != 0) {
@@ -109,7 +110,7 @@ index 0000000..0000000 100644
                      if (!file.exists()) {
                          file = null;
                          if (user1.photo.photo_big != null) {
-@@ -6086,6 +6095,18 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -6110,6 +6119,18 @@ public class NotificationsController extends BaseController implements Notificat
          return new Pair<>(storiesCount, hidden);
      }
  

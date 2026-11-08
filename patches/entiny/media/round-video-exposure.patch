@@ -69,7 +69,7 @@ index 0000000..0000000 100644
  import desu.inugram.helpers.chat.RoundRecorderHelper;
  import desu.inugram.helpers.chat.VoiceRecorderHelper;
  import org.telegram.messenger.AndroidUtilities;
-@@ -130,6 +131,8 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -131,6 +132,8 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
  
      private boolean pinchZoomActive;
      private ZoomControlView inu_zoomSlider;
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
      private float inu_pinchStartT;
      private boolean heavyOperationsStopped;
      private float previousWindowBrightness = Float.NaN;
-@@ -261,6 +264,15 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -262,6 +265,15 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
          buttonsLayout.addView(flashButton, LayoutHelper.createLinear(44, 44));
          flashButton.setOnClickListener(view -> toggleFlash());
  
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
          buttonIconSize = dp(isNewDesign ? 24 : 28);
          switchCameraDrawable = new RLottieDrawable(
                  R.raw.roundcamera_flip,
-@@ -708,6 +720,12 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -756,6 +768,12 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              zoomProgress = info.getZoomProgress();
              inu_syncZoomSlider();
              RoundRecorderHelper.setSliderVisible(inu_zoomSlider, info.getState() == RoundVideoSession.State.RECORDING);
@@ -107,7 +107,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -720,6 +738,8 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -768,6 +786,8 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              }
              updateButtons();
              inu_syncZoomSlider();
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
  import java.io.IOException;
  import java.util.ArrayList;
  import java.util.Arrays;
-@@ -174,6 +177,8 @@ final class RoundVideoCameraController {
+@@ -177,6 +180,8 @@ final class RoundVideoCameraController {
      private volatile float zoomProgress;
      private float maximumZoomRatio = 1f;
      private boolean torchEnabled;
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
      private boolean torchVerificationPending;
      private int torchVerificationFrames;
      private int torchVerificationRetries;
-@@ -343,6 +348,47 @@ final class RoundVideoCameraController {
+@@ -348,6 +353,47 @@ final class RoundVideoCameraController {
          return true;
      }
  
@@ -194,7 +194,7 @@ index 0000000..0000000 100644
      boolean stopSegment() {
          Handler handler = cameraHandler;
          if (!active || stopping || handler == null) return false;
-@@ -1674,6 +1720,7 @@ final class RoundVideoCameraController {
+@@ -1683,6 +1729,7 @@ final class RoundVideoCameraController {
          if (activeControls) {
              applyZoom(builder);
              applyTorch(builder);
@@ -202,7 +202,7 @@ index 0000000..0000000 100644
          } else {
              int[] aeModes = selection.characteristics.get(
                      CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES
-@@ -1920,6 +1967,21 @@ final class RoundVideoCameraController {
+@@ -1929,6 +1976,21 @@ final class RoundVideoCameraController {
          }
      }
  
@@ -237,7 +237,7 @@ index 0000000..0000000 100644
  import android.view.TextureView;
  
  import androidx.annotation.MainThread;
-@@ -766,6 +768,47 @@ public final class RoundVideoSession {
+@@ -768,6 +770,47 @@ public final class RoundVideoSession {
          return true;
      }
  

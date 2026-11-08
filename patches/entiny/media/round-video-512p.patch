@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/Round
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
-@@ -2844,6 +2844,10 @@ final class RoundVideoCameraController {
+@@ -2882,6 +2882,10 @@ final class RoundVideoCameraController {
              return outputResolution.getSize();
          }
          if (outputResolution == RoundVideoSession.OutputResolution.P720) return 720;

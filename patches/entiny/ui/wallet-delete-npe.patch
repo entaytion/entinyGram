@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Wallet/WalletKeysBackup
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Wallet/WalletKeysBackupFragment.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Wallet/WalletKeysBackupFragment.java
-@@ -590,7 +590,7 @@ public class WalletKeysBackupFragment extends UniversalFragment implements Notif
+@@ -595,7 +595,7 @@ public class WalletKeysBackupFragment extends UniversalFragment implements Notif
                          new AlertDialog.Builder(getContext(), getResourceProvider())
                              .setTitle(LocaleController.getString(R.string.WalletReplaceWalletTitle))
                              .setPositiveButton(LocaleController.getString(R.string.WalletCreateNew), (di2, w2) -> {

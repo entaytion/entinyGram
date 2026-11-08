@@ -4,25 +4,25 @@ Date: Wed, 5 Aug 2026 10:20:40 +0300
 Subject: adapt colorful icons, Monet theme transitions, dialog inputs, and popups
 
 ---
- .../java/org/telegram/ui/Cells/TextCell.java  | 58 ++++++++++++++-----
+ .../java/org/telegram/ui/Cells/TextCell.java  | 53 ++++++++++++++-----
  .../ui/Components/IconBackgroundColors.java   |  3 +-
  .../telegram/ui/Components/ItemOptions.java   |  4 +-
  .../org/telegram/ui/SettingsActivity.java     |  2 +-
- 4 files changed, 49 insertions(+), 18 deletions(-)
+ 4 files changed, 44 insertions(+), 18 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
-@@ -64,6 +64,7 @@ public class TextCell extends FrameLayout {
+@@ -66,6 +66,7 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
      public int heightDp = desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? 56 : 50;
-     public int imageLeft = 16;
+     public int imageLeft = 21;
      public int inu_m3IconSize = 22;
 +    private boolean forceStockColorfulIcon;
      private boolean inDialogs;
      private boolean prioritizeTitleOverValue;
      private Theme.ResourcesProvider resourcesProvider;
-@@ -205,20 +206,27 @@ public class TextCell extends FrameLayout {
+@@ -207,20 +208,27 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
              subtitleView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding) - valueWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
          }
          if (imageView.getVisibility() == VISIBLE) {
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
              }
          }
          if (valueImageView.getVisibility() == VISIBLE) {
-@@ -502,6 +510,10 @@ public class TextCell extends FrameLayout {
+@@ -544,6 +552,10 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
      }
  
      public void setTextAndValueAndColorfulIcon(String text, CharSequence value, boolean animated, int resId, int colorTop, int colorBottom, boolean divider) {
@@ -68,10 +68,10 @@ index 0000000..0000000 100644
 +    }
 +
 +    public void setTextAndValueAndColorfulIcon(String text, CharSequence value, boolean animated, int resId, int colorTop, int colorBottom, boolean divider, boolean forceStock) {
-         imageLeft = 21;
+         imageLeft = getDefaultImageLeft();
          offsetFromImage = getOffsetFromImage(false);
          textView.setText(text);
-@@ -509,7 +521,7 @@ public class TextCell extends FrameLayout {
+@@ -551,7 +563,7 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
          valueTextView.setText(value == null ? "" : TextUtils.ellipsize(valueText = value, valueTextView.getPaint(), AndroidUtilities.displaySize.x / 2.5f, TextUtils.TruncateAt.END), animated);
          valueTextView.setVisibility(VISIBLE);
          valueSpoilersTextView.setVisibility(GONE);
@@ -80,7 +80,7 @@ index 0000000..0000000 100644
          valueImageView.setVisibility(GONE);
          needDivider = divider;
          setWillNotDraw(!needDivider);
-@@ -646,19 +658,37 @@ public class TextCell extends FrameLayout {
+@@ -688,20 +700,33 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
      }
  
      public void setColorfulIcon(int colorTop, int colorBottom, int resId) {
@@ -93,17 +93,13 @@ index 0000000..0000000 100644
 -        imageView.setPadding(dp(2), dp(2), dp(2), dp(2));
 +        forceStockColorfulIcon = forceStock;
 +        final boolean isM3 = !forceStock && desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled();
-+        // Match the settings screen exactly: M3 round tiles are a 36dp circle with a 24dp glyph
-+        // (6dp inset); every non-M3 mode is a 28dp stock gradient square with a 24dp glyph (2dp inset).
 +        final int iconPadding = isM3 ? dp(6) : dp(2);
 +        imageView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
 +        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
          imageView.setTranslationX(dp(LocaleController.isRTL ? 0 : -3));
          imageView.setImageResource(resId);
+         iconKeyColors = false;
 -        imageView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
-+
-+        // Stock Telegram look in every non-M3 mode: white glyph on the top→bottom gradient tile
-+        // with a subtle border on dark themes. No per-theme "quasi-monet" flat squares.
 +        if (!isM3) {
 +            imageView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
 +        }
@@ -139,7 +135,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
-@@ -217,7 +217,7 @@ public class ItemOptions {
+@@ -218,7 +218,7 @@ public class ItemOptions {
          this.resourcesProvider = fragment.getResourceProvider();
          this.context = fragment.getContext();
          this.scrimView = scrimView;
@@ -148,7 +144,7 @@ index 0000000..0000000 100644
          this.swipeback = swipeback;
          this.useScrollView = useScrollView;
          this.shownFromBottom = shownFromBottom;
-@@ -238,7 +238,7 @@ public class ItemOptions {
+@@ -239,7 +239,7 @@ public class ItemOptions {
          this.resourcesProvider = resourcesProvider;
          this.context = container.getContext();
          this.scrimView = scrimView;
@@ -161,7 +157,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -711,7 +711,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -792,7 +792,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          }
  
          if (!desu.inugram.helpers.security.ParanoiaHelper.shouldHideSettings()) {

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.java
-@@ -78,6 +78,9 @@ public class TextCheckCell2 extends FrameLayout {
+@@ -79,6 +79,9 @@ public class TextCheckCell2 extends FrameLayout {
              checkBoxClickArea.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
              addView(checkBoxClickArea, LayoutHelper.createFrame(76, LayoutHelper.MATCH_PARENT, LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT));
          }

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
-@@ -1255,6 +1255,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -1256,6 +1256,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
          });
          scrollHelper = new RecyclerAnimationScrollHelper(recyclerListView, layoutManager);
          recyclerListView.setAdapter(adapter);
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          recyclerListView.setClipToPadding(false);
          recyclerListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
  
-@@ -3072,6 +3073,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -3079,6 +3080,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
                  dialogCell.setChecked(selectedTopics.contains(newId), animated);
                  dialogCell.setDialogSelected(selectedTopicForTablet == newId);
                  dialogCell.onReorderStateChanged(reordering, true);
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
              } else if (holder.getItemViewType() == VIEW_TYPE_TOPIC_CREATE) {
                  TopicDialogCell dialogCell = (TopicDialogCell) holder.itemView;
                  dialogCell.setCurrentDialogId(-chatId);
-@@ -3141,12 +3143,12 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -3148,12 +3150,12 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
              xOffset = inPreviewMode && checkBox != null ? checkBox.getProgress() * AndroidUtilities.dp(30) : 0;
              canvas.save();
              canvas.translate(xOffset, translateY = -AndroidUtilities.dp(4));

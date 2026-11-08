@@ -48,7 +48,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
     private var updateLayout: IUpdateLayout? = null
     private var updateWrapper: UpdateLayoutWrapper? = null
-    private var bottomInset: Int = 0
 
     private var donateCard: View? = null
 
@@ -167,22 +166,17 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         val ul = ApplicationLoader.applicationLoaderInstance?.takeUpdateLayout(parentActivity, wrapper)
         updateLayout = ul
         ul?.updateAppUpdateViews(UserConfig.selectedAccount, false)
-        applyListPadding()
+        updateListPadding()
 
         return root
     }
 
     override fun onInsets(left: Int, top: Int, right: Int, bottom: Int) {
-        bottomInset = bottom
         updateWrapper?.setPadding(0, 0, 0, bottom)
-        applyListPadding()
+        super.onInsets(left, top, right, bottom)
     }
 
-    private fun applyListPadding() {
-        val lv = listView ?: return
-        val barHeight = if (SharedConfig.isAppUpdateAvailable()) dp(44f) else 0
-        lv.setPadding(lv.paddingLeft, lv.paddingTop, lv.paddingRight, bottomInset + barHeight)
-    }
+    override fun getListExtraBottomPadding(): Int = if (SharedConfig.isAppUpdateAvailable()) dp(44f) else 0
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
@@ -264,7 +258,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             NotificationCenter.appUpdateAvailable -> {
                 val animated = args.getOrNull(0) as? Boolean ?: true
                 ul.updateAppUpdateViews(acct, animated)
-                applyListPadding()
+                updateListPadding()
             }
 
             NotificationCenter.appUpdateLoading -> {

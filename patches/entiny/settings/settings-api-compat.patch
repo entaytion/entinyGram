@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCheckCell2.java
-@@ -150,11 +150,11 @@ public class TextCheckCell2 extends FrameLayout {
+@@ -151,11 +151,11 @@ public class TextCheckCell2 extends FrameLayout {
          }
      }
  
@@ -31,7 +31,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAda
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
-@@ -1051,7 +1051,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
+@@ -1083,7 +1083,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
              case VIEW_TYPE_SWITCH:
              case VIEW_TYPE_EXPANDABLE_SWITCH:
                  TextCheckCell2 switchCell = (TextCheckCell2) holder.itemView;
@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -702,13 +702,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -783,13 +783,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              items.add(UItem.asShadow(null));
          }
  

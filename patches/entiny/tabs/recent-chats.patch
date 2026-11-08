@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5011,7 +5011,7 @@ public class MediaDataController extends BaseController {
+@@ -5013,7 +5013,7 @@ public class MediaDataController extends BaseController {
              maxShortcuts = 5;
          }
          ArrayList<TLRPC.TL_topPeer> hintsFinal = new ArrayList<>();
@@ -26,8 +26,8 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9070,6 +9070,10 @@ public class ChatActivity extends BaseFragment implements
-             }
+@@ -9029,6 +9029,10 @@ public class ChatActivity extends BaseFragment implements
+             FileLog.d("InuRx[" + classGuid + "] init did=" + dialog_id + " topic=" + getTopicId() + " reactions=" + reactionsMentionCount);
          }
  
 +        if (currentUser != null || currentChat != null) {
@@ -37,9 +37,9 @@ index 0000000..0000000 100644
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
              savedMessagesHint.setMultilineText(true);
-@@ -9198,6 +9202,7 @@ public class ChatActivity extends BaseFragment implements
-         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
-         Timer.finish(t);
+@@ -9172,6 +9176,7 @@ public class ChatActivity extends BaseFragment implements
+             });
+         }
  
 +        desu.inugram.helpers.dialogs.RecentChatsSidebar.attach(this, getDialogId());
          return fragmentView;
@@ -49,7 +49,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2117,12 +2117,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2114,12 +2114,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  additionalPadding += h;
              }
  
@@ -57,9 +57,9 @@ index 0000000..0000000 100644
 +            t += inu_strip;
 +            additionalPadding += inu_strip;
 +
-             if (!NonIslandHelper.foldersBar() && !FolderHelper.atBottom()) {
-                 t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
-                 additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+             if (!NonIslandHelper.foldersBar()) {
+             t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+             additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
              }
  
 -            final int b = calculateListViewPaddingBottom();
@@ -67,8 +67,8 @@ index 0000000..0000000 100644
              if (t != topPadding || b != getPaddingBottom()) {
                  setTopGlowOffset(t);
                  setPadding(0, t, 0, b);
-@@ -5769,6 +5773,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-         checkUi_searchFieldStyle();
+@@ -5689,6 +5693,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         glassEngine.setPositionsMerger(new GlassPositionsMerger(Float.POSITIVE_INFINITY, dp(48)));
  
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
 +        if (!onlySelect && folderId == 0) desu.inugram.helpers.dialogs.RecentChatsSidebar.attach(this, 0);

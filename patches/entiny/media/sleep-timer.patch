@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -3973,6 +3973,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -4053,6 +4053,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                          if (playbackState == ExoPlayer.STATE_ENDED || (playbackState == ExoPlayer.STATE_IDLE || playbackState == ExoPlayer.STATE_BUFFERING) && playWhenReady && messageObject.audioProgress >= 0.999f) {
                              messageObject.audioProgress = 1f;
                              NotificationCenter.getInstance(messageObject.currentAccount).postNotificationName(NotificationCenter.messagePlayingProgressDidChanged, messageObject.getId(), 0);
@@ -27,8 +27,8 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerA
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
-@@ -127,6 +127,9 @@ import java.io.File;
- import java.util.ArrayList;
+@@ -129,6 +129,9 @@ import java.util.ArrayList;
+ import java.util.HashSet;
  import java.util.List;
  
 +import desu.inugram.helpers.media.SleepTimerHelper;
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
  public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, DownloadController.FileDownloadProgressListener {
  
      public static AudioPlayerAlert instance;
-@@ -2982,6 +2985,11 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -2945,6 +2948,11 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
              o.dismiss();
              onSubItemClick(7);
          });

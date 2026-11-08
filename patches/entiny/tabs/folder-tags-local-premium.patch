@@ -25,11 +25,11 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
-@@ -699,6 +699,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+@@ -808,6 +808,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                  req.enabled = !getMessagesController().folderTags;
                  getMessagesController().setFolderTags(req.enabled);
                  getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
 +                    desu.inugram.helpers.dialogs.FolderTagsHelper.onToggleResult(currentAccount, err != null);
                      if (req.enabled && !loadedColors) {
                          loadingFiltersForColors = true;
-                         getMessagesController().loadRemoteFilters(true);
+                         loadedColors = true;

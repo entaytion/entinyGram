@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12701,6 +12701,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12989,6 +12989,7 @@ public class ChatActivity extends BaseFragment implements
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
          args.putInt("messagesCount", canForwardMessagesCount);
@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -555,6 +555,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -557,6 +557,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private boolean checkingImportDialog;
  
      private int messagesCount;
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
      private int hasPoll;
      private boolean hasInvoice;
  
-@@ -2934,6 +2935,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2832,6 +2833,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              resetDelegate = arguments.getBoolean("resetDelegate", true);
              messagesCount = arguments.getInt("messagesCount", 0);
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
              hasPoll = arguments.getInt("hasPoll", 0);
              hasInvoice = arguments.getBoolean("hasInvoice", false);
              showSetPasswordConfirm = arguments.getBoolean("showSetPasswordConfirm", showSetPasswordConfirm);
-@@ -10373,7 +10375,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10276,7 +10278,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      }
  
      private boolean validateSlowModeDialog(long dialogId) {

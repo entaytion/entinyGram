@@ -82,7 +82,7 @@ class AiRoleEditActivity(roleId: String?) : SettingsPageActivity() {
         if (draft.text.isBlank() && draft.prompt.isBlank()) return
         AiRolesHelper.upsertRole(draft)
         saved = true
-        actionBar?.setTitle(getTitle())
+        simpleActionBar?.setTitle(getTitle())
         listView?.adapter?.update(true)
     }
 

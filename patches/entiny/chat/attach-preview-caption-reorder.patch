@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
-@@ -1231,6 +1231,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -1236,6 +1236,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
  
          counterTextView = new TextView(context);
          counterTextView.setBackgroundResource(R.drawable.photos_rounded);
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          counterTextView.setVisibility(View.GONE);
          counterTextView.setTextColor(0xffffffff);
          counterTextView.setGravity(Gravity.CENTER);
-@@ -3191,10 +3192,24 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3215,10 +3216,24 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      }
  
      public void updateSelected(HashMap<Object, Object> newSelectedPhotos, ArrayList<Object> newPhotosOrder, boolean updateLayout) {
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          if (updateLayout) {
              updatePhotosCounter(false);
              updateCheckedPhotoIndices();
-@@ -3606,23 +3621,34 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3630,23 +3645,34 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
  
      @Override
      public void applyCaption(CharSequence text) {

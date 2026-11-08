@@ -19,7 +19,7 @@ index 0000000..0000000 100644
      private float scrollingOffset;
      private long lastUpdateTime;
      private int currentScrollDelay;
-@@ -285,7 +286,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -275,7 +276,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
          if (forceEllipsizeByGradientLeft != null) {
              ellipsizeLeft = forceEllipsizeByGradientLeft;
          } else {
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
  //            ellipsizeLeft = getAlignment() == Layout.Alignment.ALIGN_NORMAL && LocaleController.isRTL || getAlignment() == Layout.Alignment.ALIGN_OPPOSITE && !LocaleController.isRTL;
          }
          if ((fadeEllpsizePaint == null || fadeEllpsizePaintWidth != dp(ellipsizeByGradientWidthDp) || ellipsizeByGradientLeft != ellipsizeLeft) && ellipsizeByGradient) {
-@@ -384,6 +385,10 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -366,6 +367,10 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  }
              }
              textDoesNotFit = textWidth + rightDrawableWidth > (width - paddingRight);

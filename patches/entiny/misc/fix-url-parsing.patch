@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -1326,6 +1326,7 @@ public class AndroidUtilities {
+@@ -1389,6 +1389,7 @@ public class AndroidUtilities {
              for (int i = 0; i < newSpans.length; ++i) {
                  text.setSpan(newSpans[i], newText.getSpanStart(newSpans[i]), newText.getSpanEnd(newSpans[i]), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
              }
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
          }
          return success;
      }
-@@ -1363,7 +1364,7 @@ public class AndroidUtilities {
+@@ -1426,7 +1427,7 @@ public class AndroidUtilities {
  
      @Deprecated // use addLinksSafe
      public static boolean addLinks(Spannable text, int mask, boolean internalOnly, boolean removeOldReplacements) {
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
              return false;
          }
          URLSpan[] old = text.getSpans(0, text.length(), URLSpan.class);
-@@ -1386,6 +1387,12 @@ public class AndroidUtilities {
+@@ -1449,6 +1450,12 @@ public class AndroidUtilities {
          }
          for (int a = 0, N = links.size(); a < N; a++) {
              LinkSpec link = links.get(a);
@@ -46,7 +46,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -13848,19 +13848,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -13861,19 +13861,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      AboutLinkCell aboutLinkCell = (AboutLinkCell) holder.itemView;
                      if (position == userInfoRow) {
                          TLRPC.User user = userInfo.user != null ? userInfo.user : getMessagesController().getUser(userInfo.id);

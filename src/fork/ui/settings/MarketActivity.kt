@@ -55,7 +55,7 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
         banner = null
         featured = null
         return super.createView(context).also {
-            val menu = actionBar.createMenu()
+            val menu = simpleActionBar.createMenu()
             val search = menu.addItem(MENU_SEARCH, R.drawable.outline_header_search).setIsSearchField(true)
             search.setSearchFieldHint(LocaleController.getString(R.string.Search))
             search.setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
@@ -74,7 +74,7 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
             more.addSubItem(MENU_SORT, R.drawable.inu_tabler_arrows_sort, LocaleController.getString(R.string.InuPluginRepoSort))
             more.addSubItem(MENU_REFRESH, R.drawable.msg_retry, LocaleController.getString(R.string.InuMarketRefresh))
             if (!officialOnly) more.addSubItem(MENU_CHANNELS, R.drawable.msg_channel, LocaleController.getString(R.string.InuMarketOwnChannels))
-            actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
+            simpleActionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
                 override fun onItemClick(id: Int) {
                     when (id) {
                         -1 -> finishFragment()

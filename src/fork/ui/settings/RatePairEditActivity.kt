@@ -35,8 +35,8 @@ class RatePairEditActivity(private val instanceId: Int = -1) : SettingsPageActiv
 
     override fun createView(context: Context): View {
         val view = super.createView(context)
-        if (editId == -1) actionBar.createMenu().addItem(MENU_DONE, R.drawable.ic_ab_done)
-        actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
+        if (editId == -1) simpleActionBar.createMenu().addItem(MENU_DONE, R.drawable.ic_ab_done)
+        simpleActionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
             override fun onItemClick(id: Int) {
                 if (id == MENU_DONE) save()
                 if (id == -1 || id == MENU_DONE) finishFragment()
@@ -107,7 +107,7 @@ class RatePairEditActivity(private val instanceId: Int = -1) : SettingsPageActiv
 
     private fun apply() {
         if (editId != -1) RateInstances.setPair(editId, base, target)
-        actionBar.setTitle(getTitle())
+        simpleActionBar.setTitle(getTitle())
         listView?.adapter?.update(true)
         refreshPreview()
     }

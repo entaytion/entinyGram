@@ -4,25 +4,23 @@ Date: Sun, 27 Sep 2026 16:09:07 +0300
 Subject: theme switch recovery for Android 17 and Monet ROMs
 
 ---
- .../src/main/java/org/telegram/ui/LaunchActivity.java       | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ .../src/main/java/org/telegram/ui/LaunchActivity.java         | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -301,8 +301,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
-     private final PipActivityController pipActivityController = new PipActivityController(this);
-     private final IPipActivityHandler pipActivityHandler = pipActivityController.getHandler();
+@@ -307,7 +307,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
--    private ImageView themeSwitchImageView;
+ 
+     private ThemeRevealView themeSwitchImageView;
 -    private ImageView themeSwitchSunView;
-+    public ImageView themeSwitchImageView;
 +    public ImageView themeSwitchSunView;
      public ActionBarLayout actionBarLayout;
      private ActionBarLayout layersActionBarLayout;
      public ActionBarLayout rightActionBarLayout;
-@@ -7146,6 +7146,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7259,6 +7259,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              onResumeStaticCallback.run();
              onResumeStaticCallback = null;
          }
@@ -30,7 +28,7 @@ index 0000000..0000000 100644
          if (Theme.selectedAutoNightType == Theme.AUTO_NIGHT_TYPE_SYSTEM) {
              Theme.checkAutoNightThemeConditions();
          }
-@@ -7589,6 +7590,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7714,6 +7715,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                      }
                      themeSwitchImageView.setImageBitmap(bitmap);
                      themeSwitchImageView.setVisibility(View.VISIBLE);

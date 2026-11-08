@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -3906,7 +3906,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -3669,7 +3669,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
      }
  
      protected boolean includeStories() {
@@ -28,7 +28,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -10631,7 +10631,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10801,7 +10801,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private boolean needInsetForStories() {
@@ -66,7 +66,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
-@@ -286,7 +286,7 @@ public class StoriesController {
+@@ -287,7 +287,7 @@ public class StoriesController {
      }
  
      public boolean hasStories() {
@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilitie
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
-@@ -95,6 +95,11 @@ public class StoriesUtilities {
+@@ -97,6 +97,11 @@ public class StoriesUtilities {
      private final static RectF rectTmp = new RectF();
  
      public static void drawAvatarWithStory(long dialogId, Canvas canvas, ImageReceiver avatarImage, AvatarStoryParams params) {
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
          StoriesController storiesController = MessagesController.getInstance(UserConfig.selectedAccount).getStoriesController();
          boolean hasStories = storiesController.hasStories(dialogId);
          drawAvatarWithStory(dialogId, canvas, avatarImage, UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId() != dialogId && hasStories, params);
-@@ -1293,6 +1298,9 @@ public class StoriesUtilities {
+@@ -1295,6 +1300,9 @@ public class StoriesUtilities {
          }
  
          public boolean checkOnTouchEvent(MotionEvent event, View view) {

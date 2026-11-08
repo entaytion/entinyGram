@@ -63,7 +63,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
                 InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
                 showRestartBulletin()
             }
-            if (changed.any { it.id == TOGGLE_M3_SECTIONS_STYLE }) inu_rebuildSelf()
+            if (changed.any { it.id == TOGGLE_M3_SECTIONS_STYLE }) rebuildAll()
             invalidateVisibleRows()
             softRebuild()
             listView.adapter.update(true)
@@ -120,7 +120,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
         if (m3Group.handleClick(item, view) { changed ->
             when (changed?.id) {
                 TOGGLE_MATERIAL3_SWITCHES -> invalidateVisibleRows()
-                TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_ACCENT_ICONS -> inu_rebuildSelf()
+                TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_ACCENT_ICONS -> rebuildAll()
                 TOGGLE_M3_BOTTOM_TABS -> {
                     if (InuConfig.M3_BOTTOM_TABS.value && InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
                         InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false

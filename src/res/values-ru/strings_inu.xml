@@ -17,11 +17,6 @@
     <string name="InuBanUserConfirm">Заблокировать %1$s в этой группе?</string>
     <string name="InuSettings">Настройки entinyGram</string>
     <string name="InuSettingsInfo">сквозь землю и ветер я следую за тобой</string>
-    <string name="InuWideChannelPosts">Широкие посты</string>
-    <string name="InuWideChannelPostsFooter">Посты каналов и пересланные сообщения используют всю доступную ширину.</string>
-    <string name="InuWideChannelPostsPreviewText">Новости, фото и видео</string>
-    <string name="InuWideChannelPostsPreviewReply">Пересланный пост из канала</string>
-    <string name="InuWideChannelPostsPreviewReplyLabel">Посты каналов</string>
     <string name="InuAutoUpdateCheck">Проверять обновления</string>
     <string name="InuAutoUpdateCheckInfo">Периодически проверять канал entinyGram CI на наличие новых релизов и предлагать их загрузку.</string>
     <string name="InuUpdatesIncludeBeta">Получать бета-обновления</string>
@@ -185,6 +180,8 @@
     <string name="InuMainTabsCustomizeReset">Сбросить по умолчанию</string>
     <string name="InuCompactMode">Компактный режим</string>
     <string name="InuCompactModeInfo">Скрывает названия и уменьшает вкладки</string>
+    <string name="InuDialogsFabOffsetForBottomBar">Отступ для нижней панели</string>
+    <string name="InuDialogsFabOffsetForBottomBarInfo">Отключение может работать некорректно на некоторых размерах экрана</string>
     <string name="InuDialogsFab">Кнопка действия</string>
     <string name="InuDesignStyle">Стиль оформления</string>
     <string name="InuMaterial3SettingsInfo">Переключатели, ползунки, секции, аватары и другое.</string>
@@ -200,8 +197,6 @@
     <string name="InuDialogsFabMainAction">Основное действие</string>
     <string name="InuDialogsFabSecondaryAction">Дополнительное действие</string>
     <string name="InuDialogsFabHideOnScroll">Скрывать при прокрутке</string>
-    <string name="InuDialogsFabOffsetForBottomBar">Отступ для нижней панели</string>
-    <string name="InuDialogsFabOffsetForBottomBarInfo">Отключение может работать некорректно на некоторых размерах экрана</string>
     <string name="InuDialogsFabLeftSide">Переместить влево</string>
     <string name="InuDialogsFabRaise">Поднять кнопки FAB чуть выше</string>
     <string name="InuDialogsFabActionNewMessage">Новое сообщение</string>
@@ -255,7 +250,6 @@
     <string name="InuRememberSelectedFolderInfo">Открывать последнюю активную папку при возврате к списку чатов.</string>
     <string name="InuFoldersInfiniteSwipe">Бесконечное перелистывание папок</string>
     <string name="InuFoldersInfiniteSwipeInfo">При перелистывании вкладок папок список замыкается по кругу.</string>
-    <string name="InuFoldersAtBottom">Перенести папки вниз</string>
     <string name="InuSystemFolderAdministrator">Администратор</string>
     <string name="InuSystemFolderBots">Боты</string>
     <string name="InuSystemFolderUnread">Непрочитанные</string>
@@ -264,6 +258,7 @@
     <string name="InuHideArchive">Убрать «Архив» из списка чатов</string>
     <string name="InuUnreadChatsFirst">Непрочитанные чаты первыми</string>
     <string name="InuUnreadChatsFirstPinned">Непрочитанные первыми среди закреплённых</string>
+    <string name="InuFolderTabsAtBottom">Показывать вкладки снизу</string>
     <string name="InuHideCallActionButton">Скрыть кнопку звонка в заголовке</string>
     <string name="InuDisableProfileScrollSnap">Отключить прилипание прокрутки профиля</string>
     <string name="InuReduceProfileMotion">Уменьшить анимацию профиля</string>
@@ -318,6 +313,15 @@
     <string name="InuFrameCopied">Кадр скопирован в буфер обмена</string>
     <string name="InuDisableDraftUpload">Не загружать черновики</string>
     <string name="InuDisableDraftUploadInfo">Черновики будут сохраняться только локально и не синхронизироваться между устройствами</string>
+    <string name="InuCompactModeChannels">Каналы</string>
+    <string name="InuCompactModeGroups">Группы</string>
+    <string name="InuCompactModeDms">Личные чаты</string>
+    <string name="InuDontAutoplayWidgets">Не запускать виджеты автоматически</string>
+    <string name="InuDontAutoplayWidgetsInfo">Интерактивные виджеты в сообщениях запускаются только после нажатия</string>
+    <string name="InuWidgetPlaceholderTitle">Интерактивный виджет</string>
+    <string name="InuWidgetPlaceholderTap">Нажмите, чтобы загрузить</string>
+    <string name="InuWidgetPlaceholderPreview">Предпросмотр отключён</string>
+    <string name="InuWidgetPlaceholderLoading">Загрузка…</string>
     <string name="InuCallConfirmation">Спрашивать перед звонком</string>
     <string name="InuCallConfirmationTitle">Подтверждение звонка</string>
     <string name="InuCallConfirmationText">Позвонить **%1$s**?</string>
@@ -518,6 +522,7 @@
     <string name="InuNonIslandSharedMediaTabs">Вкладки медиа</string>
     <string name="InuNonIslandGlobalSearch">Глобальный поиск</string>
     <string name="InuNonIslandChatElements">Элементы чата</string>
+    <string name="InuNonIslandHeaders">Заголовки</string>
     <string name="InuNonIslandHint">Классический интерфейс откатывает часть новых (>12.6) изменений «Liquid Glass» назад к старому плоскому дизайну (по мере возможности).\nВероятно, остались визуальные баги — имейте в виду.</string>
     <string name="InuHideFadeView">Скрыть градиенты затухания</string>
     <string name="InuStripTrackingParams">Удалять параметры трекинга</string>
@@ -739,11 +744,15 @@
     <string name="InuFasterUploads">Ускорение выгрузки</string>
     <string name="InuFasterDownloadsSection">Скорость загрузки</string>
     <string name="InuFasterDownloadsFast">Быстро</string>
-    <string name="InuFasterDownloadsUltra">Ультра</string>
-    <string name="InuFasterDownloadsUltraWarning">Быстро: крупнее чанки. Ультра: ещё и снимает премиум-лимиты на объём данных и соединения, на слабом интернете может мешать стримингу.</string>
     <string name="InuSendMp4DocumentAsVideo">Отправлять MP4-документы как видео</string>
     <string name="InuSendMp4DocumentAsVideoInfo">MP4-файлы, прикреплённые через «Файлы», отправляются как проигрываемые видео без конвертации</string>
     <string name="InuMentionInsertTitle">Вставить упоминание</string>
+    <string name="InuSendWithoutVia">Отправить без via</string>
+    <string name="InuSendWithoutViaConfirm">Отправить этот результат как обычное сообщение (без «via»)?</string>
+    <string name="InuSendWithoutViaRestrictedConfirm">Инлайн-боты в этом чате ограничены. Отправить результат как обычное сообщение?</string>
+    <string name="InuSendWithoutViaButtonsWarning">У этого результата есть инлайн-кнопки, которые не будут отправлены. Некоторые боты используют их для интерактивности.</string>
+    <string name="InuSendWithoutViaButtonsLost">Инлайн-кнопки не будут отправлены</string>
+    <string name="InuSendWithoutPack">Отправить без набора</string>
     <string name="InuPasscode">Код-пароль</string>
     <string name="InuPasscodeNeeded">Сначала настройте код-пароль Telegram.</string>
     <string name="InuPasscodeShowInSettings">Показывать в настройках entinyGram</string>
@@ -1728,8 +1737,6 @@
     <string name="InuOneTimeMark">Пометить просмотренным</string>
     <string name="InuSelfDestructKeep">Сохранять</string>
     <string name="InuSmallGifs">Маленькие GIF</string>
-    <string name="InuDeleteFailedProxies">Удалить недоступные прокси</string>
-    <string name="InuDeleteFailedProxiesConfirm">Вы уверены, что хотите удалить все недоступные прокси?</string>
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">Переключатели автора, подписи и беззвучной отправки, плюс редактирование перед пересылкой.</string>
     <string name="InuForwardProReplace">Заменить Forward</string>
@@ -1758,7 +1765,6 @@
     <string name="InuDatacenterYourDc">Ваш DC</string>
     <string name="InuChatHeaderSettings">Заголовок чата</string>
     <string name="InuChatHeaderSettingsInfo">Предпросмотр выше обновляется сразу, как только вы меняете настройки ниже.</string>
-    <string name="InuConnectProxyImmediately">Подключиться сразу</string>
     <string name="InuDialogAvatarOpensProfile">Нажатие на аватар открывает профиль</string>
     <string name="InuDialogAvatarOpensProfileInfo">Нажатие на аватар чата в списке чатов открывает профиль вместо самого чата.</string>
     <string name="InuAlwaysShowDownloads">Кнопка загрузок</string>
@@ -1803,7 +1809,6 @@
     <string name="InuDrawerMenuOrderInfo">Измените порядок или скройте пункты бокового меню. Перетаскивайте для перестановки, переключайте, чтобы скрыть. Разделители делят меню на группы.</string>
     <string name="InuDrawerBots">Мини-приложения</string>
     <string name="InuMenuDivider">Разделитель</string>
-    <string name="InuPingAllProxies">Пинг всех прокси</string>
     <string name="InuRoundRecorderExposureLevels">Управление экспозицией</string>
     <string name="InuRoundRecorderExposureLevelsInfo">Показывать элементы управления экспозицией, чтобы осветлять или затемнять кадр во время записи.</string>
     <string name="InuOnlineDots">Цветные точки</string>
@@ -1812,7 +1817,6 @@
     <string name="InuGhostModeLauncherShortcutInfo">Добавить ярлык по долгому нажатию на значок приложения для включения и выключения режима призрака.</string>
     <string name="InuHideRecentChatsShortcuts">Скрыть недавние чаты со значка приложения</string>
     <string name="InuHideRecentChatsShortcutsInfo">Убрать людей и чаты, с которыми вы общаетесь, из меню быстрого доступа по долгому нажатию на значок приложения.</string>
-    <string name="InuWideChannelPostsInset">Боковые отступы</string>
     <string name="InuRestartApp">Перезапустить приложение</string>
     <string name="InuDonateTitle">Хотите стабильных обновлений?</string>
     <string name="InuDonateText">entinyGram бесплатный и с открытым кодом, без рекламы. Обновления на каждую новую версию Telegram требуют моего времени. Если сообществу это нужно, можно поддержать.</string>
@@ -2077,8 +2081,6 @@
     <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
     <string name="InuPluginsErrorRequires">Нужен плагин %1$s. Сначала установите его</string>
     <string name="InuPluginsErrorRequiresVersion">Нужен %1$s версии %2$s или новее</string>
-    <string name="InuCopyAllProxies">Копировать все</string>
-    <string name="InuShareAllProxies">Поделиться всеми</string>
     <string name="InuOptimizedAttachmentMenu">Оптимизированное меню вложений</string>
     <string name="InuOptimizedAttachmentMenuInfo">Делает анимацию открытия фото и видео плавнее</string>
     <string name="InuEditedMessageDateMode">Время изменения сообщения</string>
@@ -2247,4 +2249,5 @@
     <string name="InuWalletRecoverNotFound">Не найдена замена ключа на эти 12 слов. Проверьте адрес и слова или попробуйте снова.</string>
     <string name="InuWalletRecoverReplaced">Это не последние 12 слов данного кошелька</string>
     <string name="InuRoundExposure">Экспозиция</string>
+    <string name="InuSendServerError">У Telegram проблемы с доставкой сообщения. Повторяем попытки…</string>
 </resources>

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -4192,7 +4192,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3209,7 +3209,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      }
  
      private boolean checkDateMotionEvent(MotionEvent event) {
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              return false;
          }
          int x = (int) getEventX(event);
-@@ -4210,7 +4210,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3227,7 +3227,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  if (timePressed) {
                      timePressed = false;
                      playSoundEffect(SoundEffectConstants.CLICK);
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
                      invalidate();
                      result = true;
                  }
-@@ -6927,6 +6929,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6364,6 +6366,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  currentMessageObject.richLayout.detach(this);
              }
              currentMessageObject = messageObject;
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
              currentMessagesGroup = groupedMessages;
              wasAllChats = isAllChats;
              lastTime = -2;
-@@ -28365,6 +28368,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -23745,6 +23748,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
      @Override
      public void setAlpha(float alpha) {

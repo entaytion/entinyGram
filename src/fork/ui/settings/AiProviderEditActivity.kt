@@ -146,7 +146,7 @@ class AiProviderEditActivity(private val existingId: String?, private val kind: 
         val first = !saved
         AiProviderStore.upsert(draft)
         saved = true
-        actionBar?.setTitle(draft.name)
+        simpleActionBar?.setTitle(draft.name)
         if (first) {
             // entiny: the first saved provider becomes active so it works immediately
             if (AiProviderStore.canChat(draft.kind) && InuConfig.AI_CHAT_PROVIDER_ID.value.isBlank()) InuConfig.AI_CHAT_PROVIDER_ID.value = draft.id

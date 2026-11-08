@@ -1152,9 +1152,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val TAB_INDICATOR_STROKE = BoolItem("tab_indicator_stroke", false)
 
     @JvmField
-    val FOLDERS_AT_BOTTOM = BoolItem("folders_at_bottom", false)
-
-    @JvmField
     val HIDE_ARCHIVE_FROM_CHAT_LIST = BoolItem("hide_archive_from_chat_list", false)
 
     @JvmField
@@ -1171,6 +1168,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val CHAT_PRESENCE_DOTS = BoolItem("chat_presence_dots", false)
+
+    @JvmField
+    val FOLDER_TABS_AT_BOTTOM = BoolItem("folder_tabs_at_bottom", false)
 
     class CommunityDisplayModeItem : IntItem("community_display_mode", REGULAR) {
         companion object {
@@ -1318,6 +1318,18 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val DISABLE_DRAFT_UPLOAD = BoolItem("disable_draft_upload", false)
 
+    @JvmField
+    val COMPACT_MODE_CHANNELS = BoolItem("compact_mode_channels", false)
+
+    @JvmField
+    val COMPACT_MODE_GROUPS = BoolItem("compact_mode_groups", false)
+
+    @JvmField
+    val COMPACT_MODE_DMS = BoolItem("compact_mode_dms", false)
+
+    @JvmField
+    val DONT_AUTOPLAY_WIDGETS = BoolItem("dont_autoplay_widgets", true)
+
     // entiny: 1=Front, 2=Rear, 3=Ask
     @JvmField
     val ROUND_DEFAULT_CAMERA = IntItem("round_default_camera", 1)
@@ -1387,6 +1399,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val NON_ISLAND_CHAT_ELEMENTS = BoolItem("non_island_chat_elements", false)
 
     @JvmField
+    val NON_ISLAND_HEADERS = BoolItem("non_island_headers", false)
+
+    @JvmField
     val HIDE_FADE_VIEW = BoolItem("hide_fade_view", false)
 
     @JvmField
@@ -1412,12 +1427,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val DISABLE_PROFILE_AVATAR_BLUR = BoolItem("disable_profile_avatar_blur", false)
-
-    @JvmField
-    val WIDE_CHANNEL_POSTS = BoolItem("wide_channel_posts", false)
-
-    @JvmField
-    val WIDE_CHANNEL_POSTS_INSET = FloatItem("wide_channel_posts_inset", 8.0f)
 
     @JvmField
     val REDUCE_MENU_MOTION = BoolItem("reduce_menu_motion", true)
@@ -1955,6 +1964,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val UPDATES_ENABLED = UpdatesEnabledItem()
 
     @JvmField
+    val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
+
+    @JvmField
     val UPDATES_INCLUDE_BETA = BoolItem("updates_include_beta", false)
 
     // entiny: push through a UnifiedPush distributor (ntfy etc.) instead of Firebase
@@ -2142,9 +2154,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val FASTER_DOWNLOADS = BoolItem("faster_downloads", true)
-
-    @JvmField
-    val FASTER_DOWNLOADS_ULTRA = BoolItem("faster_downloads_ultra", true)
 
     @JvmField
     val ALWAYS_SEND_VIDEOS_HD = BoolItem("always_send_videos_hd", false)

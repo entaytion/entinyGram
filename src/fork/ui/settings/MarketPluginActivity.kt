@@ -49,9 +49,9 @@ internal class MarketPluginActivity(
         hero = null
         grantRows.clear()
         return super.createView(context).also {
-            val menu = actionBar.createMenu()
+            val menu = simpleActionBar.createMenu()
             menu.addItem(MENU_SHARE, R.drawable.msg_share)
-            actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
+            simpleActionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
                 override fun onItemClick(id: Int) {
                     when (id) {
                         -1 -> finishFragment()

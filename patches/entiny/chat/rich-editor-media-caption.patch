@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorListView.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorListView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorListView.java
-@@ -4654,6 +4654,7 @@ public class RichEditorListView extends UniversalRecyclerView {
+@@ -4656,6 +4656,7 @@ public class RichEditorListView extends UniversalRecyclerView {
          final boolean convertToVideo = RichMediaConverter.hasAnimatedMediaEntities(entry);
          final boolean asVideo = entry.isVideo || convertToVideo;
          final TL_iv.PageBlock block = asVideo ? new TL_iv.pageBlockVideo() : new TL_iv.pageBlockPhoto();
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          final BlockRow row = new BlockRow(block);
          row.media = newUploadingMedia(entry, path);
  
-@@ -4678,6 +4679,7 @@ public class RichEditorListView extends UniversalRecyclerView {
+@@ -4680,6 +4681,7 @@ public class RichEditorListView extends UniversalRecyclerView {
          final boolean convertToVideo = RichMediaConverter.hasAnimatedMediaEntities(entry);
          final boolean asVideo = entry.isVideo || convertToVideo;
          final TL_iv.PageBlock itemBlock = asVideo ? new TL_iv.pageBlockVideo() : new TL_iv.pageBlockPhoto();

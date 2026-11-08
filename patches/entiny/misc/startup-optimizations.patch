@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoade
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -274,8 +274,10 @@ public class ApplicationLoader extends Application {
+@@ -276,8 +276,10 @@ public class ApplicationLoader extends Application {
  
          MediaController.getInstance();
          for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) { //TODO improve account
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
          }
          BillingController.getInstance().startConnection();
  
-@@ -288,6 +290,9 @@ public class ApplicationLoader extends Application {
+@@ -290,6 +292,9 @@ public class ApplicationLoader extends Application {
  
      private static void initAccount(int a) {
          UserConfig.getInstance(a).loadConfig();
@@ -40,10 +40,10 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -1214,6 +1214,12 @@ public class LocaleController {
-     }
- 
-     private HashMap<String, String> getLocaleFileStrings(File file, boolean preserveEscapes) {
+@@ -1220,17 +1220,23 @@ public class LocaleController {
+     // on a parse error returns the strings read so far, or null with nullOnError, so a partial file
+     // is never merged or saved over a good one; setReloadFlag is false off the UI thread
+     private HashMap<String, String> getLocaleFileStrings(File file, boolean preserveEscapes, boolean nullOnError, boolean setReloadFlag) {
 +        if (!preserveEscapes) {
 +            HashMap<String, String> cached = desu.inugram.helpers.translate.LocaleCacheHelper.readCache(file);
 +            if (cached != null) {
@@ -51,14 +51,13 @@ index 0000000..0000000 100644
 +            }
 +        }
          FileInputStream stream = null;
-         reloadLastFile = false;
-         FileLog.d("getLocaleFileStrings: reloadLastFile = false");
-@@ -1221,11 +1227,11 @@ public class LocaleController {
+         HashMap<String, String> stringMap = null;
+         try {
              if (!file.exists()) {
                  return new HashMap<>();
              }
--            HashMap<String, String> stringMap = new HashMap<>(10_000);
-+            HashMap<String, String> stringMap = new HashMap<>(16384);
+-            stringMap = new HashMap<>(10_000);
++            stringMap = new HashMap<>(16384);
              XmlPullParser parser = Xml.newPullParser();
              //AndroidUtilities.copyFile(file, new File(ApplicationLoader.applicationContext.getExternalFilesDir(null), "locale10.xml"));
              stream = new FileInputStream(file);
@@ -67,7 +66,7 @@ index 0000000..0000000 100644
              int eventType = parser.getEventType();
              String name = null;
              String value = null;
-@@ -1269,6 +1275,9 @@ public class LocaleController {
+@@ -1274,6 +1280,9 @@ public class LocaleController {
                  }
                  eventType = parser.next();
              }
@@ -77,7 +76,7 @@ index 0000000..0000000 100644
              return stringMap;
          } catch (Exception e) {
              try {
-@@ -2047,9 +2056,13 @@ public class LocaleController {
+@@ -2081,9 +2090,13 @@ public class LocaleController {
          is24HourFormat = DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
          systemDefaultLocale = newConfig.locale;
          if (languageOverride != null) {
@@ -98,7 +97,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -707,7 +707,7 @@ public class ConnectionsManager extends BaseController {
+@@ -731,7 +731,7 @@ public class ConnectionsManager extends BaseController {
              packageId = "";
          }
  

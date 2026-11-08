@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -3627,7 +3627,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3643,7 +3643,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (message != null) {
              req.message = message;
              req.flags |= 2048;
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          }
          if (messageObject.messageOwner != null && (messageObject.messageOwner.flags & 1073741824) != 0) {
              req.quick_reply_shortcut_id = messageObject.messageOwner.quick_reply_shortcut_id;
-@@ -4512,6 +4512,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4533,6 +4533,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          PollSendParams pollSendParams = sendMessageParams.pollSendParams;
          TL_iv.RichMessage richMessage = sendMessageParams.richMessage;
  
@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -14576,6 +14576,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -14919,6 +14919,9 @@ public class ChatActivity extends BaseFragment implements
      }
  
      public void searchLinks(final CharSequence charSequence, final boolean force, final boolean inu_force) {

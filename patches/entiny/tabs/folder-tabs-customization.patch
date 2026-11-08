@@ -4,16 +4,15 @@ Date: Mon, 26 Oct 2026 00:01:13 +0200
 Subject: Add folder tab customization: indicator stroke, bottom placement, hide archive from chat list
 
 ---
- .../messenger/MessagesController.java         |  3 ++
- .../ui/Components/FilterTabsView.java         | 11 ++++-
- .../java/org/telegram/ui/DialogsActivity.java | 45 ++++++++++++++-----
- 3 files changed, 45 insertions(+), 14 deletions(-)
+ .../org/telegram/messenger/MessagesController.java    |  3 +++
+ .../org/telegram/ui/Components/FilterTabsView.java    | 11 +++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -9873,6 +9873,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9843,6 +9843,9 @@ public class MessagesController extends BaseController implements NotificationCe
          if (dialogs == null) {
              return new ArrayList<>();
          }
@@ -27,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsVi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
-@@ -133,7 +133,7 @@ public class FilterTabsView extends FrameLayout {
+@@ -134,7 +134,7 @@ public class FilterTabsView extends FrameLayout {
              int width = titleWidth = FolderHelper.getContentWidth(title, textPaint);
              int c;
              if (store) {
@@ -36,7 +35,7 @@ index 0000000..0000000 100644
                  if (c < 0) {
                      c = 0;
                  }
-@@ -1534,6 +1534,13 @@ public class FilterTabsView extends FrameLayout {
+@@ -1535,6 +1535,13 @@ public class FilterTabsView extends FrameLayout {
                  counterVisible = tabView.tabCounterVisible;
              }
          }
@@ -50,7 +49,7 @@ index 0000000..0000000 100644
          if (indicatorWidth != 0) {
              canvas.save();
              canvas.translate(listView.getTranslationX(), 0);
-@@ -1546,7 +1553,7 @@ public class FilterTabsView extends FrameLayout {
+@@ -1547,7 +1554,7 @@ public class FilterTabsView extends FrameLayout {
              } else {
                  final int y = height / 2 - dp(14);
                  selectorDrawable.setBounds((int) (indicatorX - dp(FolderHelper.getTabInternalPadding()) - add), y, (int) (indicatorX + indicatorWidth + dp(FolderHelper.getTabInternalPadding()) + add), y + dp(28));
@@ -59,132 +58,3 @@ index 0000000..0000000 100644
              }
              selectorDrawable.draw(canvas);
              canvas.restore();
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -1046,7 +1046,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-                         drawBlurRect(canvas, 0, blurBounds, actionBarSearchPaint, true);
-                     }
-                     if (fragmentSearchField != null && !NonIslandHelper.globalSearch()) {
--                        fragmentSearchField.setTranslationY(top + actionBarHeight - (actionBar.getHeight() + (filterTabsView != null ? filterTabsView.getMeasuredHeight() : 0)) + getSearchFieldAdditionOffset());
-+                        fragmentSearchField.setTranslationY(top + actionBarHeight - (actionBar.getHeight() + (filterTabsView != null && !FolderHelper.atBottom() ? filterTabsView.getMeasuredHeight() : 0)) + getSearchFieldAdditionOffset());
-                     }
-                 }
-             } else if (!inPreviewMode) {
-@@ -1336,7 +1336,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-                     childTop = actionBar.getMeasuredHeight();
-                 } else if (child instanceof ViewPage) {
-                     childTop = 0;
--                } else if (child == topPanelLayout || child == topBubblesFadeView || child == filterTabsView) {
-+                } else if (child == topPanelLayout || child == topBubblesFadeView || (child == filterTabsView && !FolderHelper.atBottom())) {
-                     childTop += actionBar.getMeasuredHeight();
-                     childTop += NonIslandHelper.globalSearch() ? 0 : dp(SEARCH_FIELD_HEIGHT);
-                 } else if (dialogStoriesCell != null && dialogStoriesCell.getPremiumHint() == child) {
-@@ -2102,8 +2102,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-             final float filterTabsVisibility = getFilterTabsVisibilityFactor(false);
-             final float topPanelsVisibility = topPanelLayout != null ? topPanelLayout.getMetadata().getTotalVisibility() : 0f;
- 
--            t += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
--            additionalPadding += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
-+            if (!FolderHelper.atBottom()) {
-+                t += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
-+                additionalPadding += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
-+            }
- 
-             if (topPanelLayout != null) {
-                 final int h = (int) topPanelLayout.getAnimatedHeightWithPadding(NonIslandHelper.foldersBar() ? 0f : lerp((float) dp(14), dp(7), filterTabsVisibility));
-@@ -2111,9 +2113,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-                 additionalPadding += h;
-             }
- 
--            if (!NonIslandHelper.foldersBar()) {
--            t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
--            additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
-+            if (!NonIslandHelper.foldersBar() && !FolderHelper.atBottom()) {
-+                t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
-+                additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
-             }
- 
-             final int b = calculateListViewPaddingBottom();
-@@ -5265,7 +5267,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-             filterTabsViewBackground.setPadding(dp(6.666f));
-             filterTabsView.setPadding(0, dp(7), 0, dp(7));
-             filterTabsView.setBlurredBackground(filterTabsViewBackground);
--            contentView.addView(filterTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36 + 7 + 7, Gravity.TOP, 4, 0, 4, 0));
-+            if (FolderHelper.atBottom()) {
-+                contentView.addView(filterTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, FolderHelper.TAB_BAR_HEIGHT_DP, Gravity.BOTTOM, 4, 0, 4, FolderHelper.TAB_BAR_BOTTOM_MARGIN_DP));
-+            } else {
-+                contentView.addView(filterTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36 + 7 + 7, Gravity.TOP, 4, 0, 4, 0));
-+            }
-             NonIslandHelper.applyFilterTabBar(filterTabsView, contentView);
-         }
- 
-@@ -6712,7 +6718,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-         float topPanelsVisibility = 0;
-         float fadeViewT = totalOffset;
- 
--        if (filterTabsView != null) {
-+        if (filterTabsView != null && !FolderHelper.atBottom()) {
-             filterTabsView.setTranslationY(totalOffset - (NonIslandHelper.globalSearch() ? 0 : searchOffset) - (NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarOverlap() * getFilterTabsVisibilityFactor(false) : 0));
-             filtersTabVisibility = filterTabsView.getAlpha();
-             filtersTabHeight = (NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 7)) * filtersTabVisibility;
-@@ -9061,6 +9067,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-                 storyHint.setTranslationY(baseTranslationY - dp(52));
-             }
-         }
-+        if (filterTabsView != null && FolderHelper.atBottom()) {
-+            filterTabsView.setTranslationY(FolderHelper.bottomTabsTranslationY(navigationBarHeight, additionFloatingButtonOffset, additionalFloatingTranslation, floatingButtonPanOffset) - FolderHelper.shareBarLift(inu_shareBarHeight(), navigationBarHeight, animatorForwardButtonVisible.getFloatValue()));
-+        }
-+    }
-+
-+    private int inu_shareBarHeight() {
-+        return commentView == null || chatInputViewsContainer == null ? 0 : (int) (windowInsetsStateHolder.getAnimatedMaxBottomInset() + dp(16) + chatInputViewsContainer.getInputBubbleHeight());
-     }
- 
-     public boolean storiesEnabled = true;
-@@ -14277,6 +14290,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-             chatInputViewsContainer.getFadeView().setAlpha(factor);
-             chatInputViewsContainer.getFadeView().setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
-         }
-+        checkUi_chatListViewPaddingsBottom();
-     }
- 
-     private void checkUi_topPanelVisible() {
-@@ -14484,7 +14498,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-         final int actionBarHeight = actionBar.getMeasuredHeight()
-             + dp(DialogsActivity.SEARCH_FIELD_HEIGHT)
-             + dp(hasStories ? DialogStoriesCell.HEIGHT_IN_DP : 0)
--            + (filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE ? filterTabsView.getMeasuredHeight() : 0)
-+            + (filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE && !FolderHelper.atBottom() ? filterTabsView.getMeasuredHeight() : 0)
-             + (topPanelLayout != null && topPanelLayout.getVisibility() == View.VISIBLE ? topPanelLayout.getSumHeightOfAllVisibleChild() : 0)
-             + ((int) scrollYOffset);
- 
-@@ -14524,11 +14538,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
- 
-     private int calculateListViewPaddingBottom() {
-         if (commentView != null) {
--            return (int) (windowInsetsStateHolder.getAnimatedMaxBottomInset() + dp(9) + chatInputViewsContainer.getInputBubbleHeight() + dp(7) + dp(2));
-+            return (int) (windowInsetsStateHolder.getAnimatedMaxBottomInset() + dp(9) + chatInputViewsContainer.getInputBubbleHeight() + dp(7) + dp(2)) + (filterTabsView != null && FolderHelper.atBottom() ? dp(FolderHelper.bottomReservedHeightDp()) : 0);
-         } else if (communityId != 0) {
-             return navigationBarHeight + dp(12 + 48 + 12);
-         } else {
--            return navigationBarHeight + additionNavigationBarHeight;
-+            int bottom = navigationBarHeight + additionNavigationBarHeight;
-+            if (filterTabsView != null && FolderHelper.atBottom()) {
-+                bottom += dp(FolderHelper.bottomReservedHeightDp());
-+            }
-+            return bottom;
-         }
-     }
- 
-@@ -14591,6 +14609,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-                 }
-             }
-         }
-+        if (filterTabsView != null && FolderHelper.atBottom()) {
-+            updateFloatingButtonOffset();
-+        }
-     }
- 
-     private void drawHeaderShadow(Canvas canvas, int sy) {

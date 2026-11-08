@@ -30,7 +30,7 @@ index 0000000..0000000 100644
              RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
  
              if (sharedTools == null) {
-@@ -372,8 +377,10 @@ public class BitmapsCache {
+@@ -378,8 +383,10 @@ public class BitmapsCache {
              fileExist = true;
              checked = true;
          } catch (FileNotFoundException e) {
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
              e.printStackTrace();
          } finally {
              source.releaseForGenerateCache();
-@@ -572,7 +579,7 @@ public class BitmapsCache {
+@@ -578,7 +585,7 @@ public class BitmapsCache {
      }
  
      public boolean needGenCache() {

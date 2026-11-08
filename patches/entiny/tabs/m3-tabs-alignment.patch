@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassT
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
-@@ -683,9 +683,18 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+@@ -702,9 +702,18 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
          }
          avatarDrawable.setInfo(currentAccount, user);
          backupImageView.setForUserOrChat(user, avatarDrawable);
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
          backupImageView.setColorFilter(null);
          needUpdateBackupViewColor = false;
          invalidate();
-@@ -698,12 +707,17 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+@@ -717,12 +726,17 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
      public void inu_setMaterialTabs() {
          inu_materialTabs = true;
          final int iconSize = (int) M3MainTabsHelper.ICON_SIZE;
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
          }
          textView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, M3MainTabsHelper.LABEL_HEIGHT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, M3MainTabsHelper.LABEL_TOP_MARGIN, 0, 0));
          M3MainTabsHelper.applyTabRipple(this, colorSelected);
-@@ -722,11 +736,17 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+@@ -741,11 +755,17 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
              setContentDescription(null);
          }
  

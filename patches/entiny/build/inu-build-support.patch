@@ -13,15 +13,11 @@ Subject: build support stuff for fork-specific code: - added kotlin - bumped min
  .../org/telegram/ui/PaymentFormActivity.java  |  28 ++-
  .../org/telegram/ui/SettingsActivity.java     |  24 +--
  TMessagesProj_App/build.gradle                | 186 +++++++++++++-----
- TMessagesProj_App/jni/CMakeLists.txt          |  10 +
- TMessagesProj_App/jni/lsplant                 |   1 +
  TMessagesProj_AppTests/build.gradle           |   5 +-
  build.gradle                                  |  19 +-
  gradle.properties                             |   2 +-
  settings.gradle                               |  40 +++-
- 15 files changed, 359 insertions(+), 171 deletions(-)
- create mode 100644 TMessagesProj_App/jni/CMakeLists.txt
- create mode 160000 TMessagesProj_App/jni/lsplant
+ 13 files changed, 348 insertions(+), 171 deletions(-)
 
 diff --git a/.gitmodules b/.gitmodules
 index 0000000..0000000 100644
@@ -54,7 +50,7 @@ index 0000000..0000000 100644
      implementation 'androidx.core:core:1.16.0'
      implementation 'androidx.palette:palette:1.0.0'
      implementation 'androidx.exifinterface:exifinterface:1.3.6'
-@@ -72,7 +74,7 @@ dependencies {
+@@ -70,7 +72,7 @@ dependencies {
      implementation 'com.google.android.gms:play-services-location:21.0.1'
      implementation 'com.google.android.gms:play-services-wallet:19.1.0'
      implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
@@ -63,7 +59,7 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:8.0.0'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -102,11 +104,78 @@ dependencies {
+@@ -107,11 +109,78 @@ dependencies {
      api project(":TMessagesProj_Modules:media3:media-lib-session")
      api project(':jlatexmath')
  
@@ -143,7 +139,7 @@ index 0000000..0000000 100644
  }
  
  android {
-@@ -114,10 +183,20 @@ android {
+@@ -119,10 +188,20 @@ android {
      buildToolsVersion '36.0.0'
      ndkVersion "27.2.12479018"
  
@@ -164,7 +160,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -130,23 +209,31 @@ android {
+@@ -135,23 +214,31 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
@@ -201,7 +197,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -157,64 +244,13 @@ android {
+@@ -162,64 +249,13 @@ android {
              shrinkResources false
              multiDexEnabled true
              ndk.debugSymbolLevel = 'FULL'
@@ -270,7 +266,7 @@ index 0000000..0000000 100644
          }
  
          release {
-@@ -222,12 +258,13 @@ android {
+@@ -227,12 +263,13 @@ android {
              shrinkResources false
              multiDexEnabled true
              ndk.debugSymbolLevel = 'FULL'
@@ -287,7 +283,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -245,7 +282,6 @@ def getProps(String propName) {
+@@ -250,7 +287,6 @@ def getProps(String propName) {
          return "";
      }
  }
@@ -295,7 +291,7 @@ index 0000000..0000000 100644
  
  task checkVisibility {
      doFirst {
-@@ -267,4 +303,10 @@ task checkVisibility {
+@@ -272,4 +308,10 @@ task checkVisibility {
      }
  }
  
@@ -311,7 +307,7 @@ diff --git a/TMessagesProj/proguard-rules.pro b/TMessagesProj/proguard-rules.pro
 index 0000000..0000000 100644
 --- a/TMessagesProj/proguard-rules.pro
 +++ b/TMessagesProj/proguard-rules.pro
-@@ -55,6 +55,21 @@
+@@ -76,6 +76,21 @@
  -keep class ru.noties.jlatexmath.** { *; }
  -dontwarn org.scilab.forge.jlatexmath.**
  
@@ -395,7 +391,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -1068,7 +1068,7 @@ public class ConnectionsManager extends BaseController {
+@@ -1092,7 +1092,7 @@ public class ConnectionsManager extends BaseController {
          if (Build.VERSION.SDK_INT < 19) {
              return USE_IPV4_ONLY;
          }
@@ -424,7 +420,7 @@ index 0000000..0000000 100644
  
  import org.json.JSONArray;
  import org.json.JSONException;
-@@ -2982,7 +2980,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -2984,7 +2982,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
                              put("parameters", new JSONObject() {{
                                  put("gateway", "stripe");
                                  put("stripe:publishableKey", providerApiKey);
@@ -433,7 +429,7 @@ index 0000000..0000000 100644
                              }});
                          }
                      }});
-@@ -3417,7 +3415,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -3419,7 +3417,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
                                  cardName = "Android Pay";
                              }
                          } else {
@@ -442,7 +438,7 @@ index 0000000..0000000 100644
                              paymentJson = String.format(Locale.US, "{\"type\":\"%1$s\", \"id\":\"%2$s\"}", t.getType(), t.getId());
                              Card card = t.getCard();
                              cardName = card.getBrand() + " *" + card.getLast4();
-@@ -3906,16 +3904,16 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -3908,16 +3906,16 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
              month = null;
              year = null;
          }
@@ -466,7 +462,7 @@ index 0000000..0000000 100644
          cardName = card.getBrand() + " *" + card.getLast4();
  
          boolean skipDateCheck = false;
-@@ -3932,7 +3930,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -3934,7 +3932,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
          if (!card.validateNumber()) {
              shakeField(FIELD_CARD);
              return false;
@@ -475,7 +471,7 @@ index 0000000..0000000 100644
              shakeField(FIELD_EXPIRE_DATE);
              return false;
          } else if (need_card_name && inputFields[FIELD_CARDNAME].length() == 0) {
-@@ -3951,8 +3949,8 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -3953,8 +3951,8 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
          showEditDoneProgress(true, true);
          try {
              if ("stripe".equals(paymentForm.native_provider)) {
@@ -490,7 +486,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -954,29 +954,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1038,29 +1038,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
      }
  
      public String getVersionName() {
@@ -805,29 +801,6 @@ index 0000000..0000000 100644
 +    }
 +    into inuTestJniLibsDir
 +}
-diff --git a/TMessagesProj_App/jni/CMakeLists.txt b/TMessagesProj_App/jni/CMakeLists.txt
-new file mode 100644
-index 0000000..0000000
---- /dev/null
-+++ b/TMessagesProj_App/jni/CMakeLists.txt
-@@ -0,0 +1,10 @@
-+cmake_minimum_required(VERSION 3.22.1)
-+project(inu_jni CXX C)
-+
-+# There are no sources here on purpose. liblsplant.so is lsplant's own target; the C entry points
-+# the rust engine dlopens come from patches-native/lsplant-c-abi.patch, applied to the submodule.
-+
-+set(DEBUG_SYMBOLS_PATH ${CMAKE_BINARY_DIR}/symbols)
-+
-+set(LSPLANT_BUILD_SHARED ON CACHE BOOL "" FORCE)
-+add_subdirectory(lsplant/lsplant/src/main/jni)
-diff --git a/TMessagesProj_App/jni/lsplant b/TMessagesProj_App/jni/lsplant
-new file mode 160000
-index 0000000..0000000
---- /dev/null
-+++ b/TMessagesProj_App/jni/lsplant
-@@ -0,0 +1 @@
-+Subproject commit 61e10e51eb99dca00dd873f48c28a674dd2b4c4c
 diff --git a/TMessagesProj_AppTests/build.gradle b/TMessagesProj_AppTests/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_AppTests/build.gradle
@@ -853,9 +826,9 @@ index 0000000..0000000 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -10,7 +10,7 @@ buildscript {
-         classpath 'com.google.gms:google-services:4.3.15'
+         classpath 'com.google.gms:google-services:4.5.0'
          classpath 'com.huawei.agconnect:agcp:1.9.1.301'
-         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.0'
+         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.8'
 -        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0"
 +        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20"
      }

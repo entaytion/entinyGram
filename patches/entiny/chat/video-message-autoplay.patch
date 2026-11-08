@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -2635,6 +2635,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -2706,6 +2706,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                          voiceMessagesPlaylistMap = null;
                      }
                  }
@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -9389,7 +9389,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -8662,7 +8662,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      photoImage.setAllowStartAnimation(true);
                  } else if (messageObject.isRoundVideo()) {
                      MessageObject playingMessage = MediaController.getInstance().getPlayingMessageObject();
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
                  } else {
                      photoImage.setAllowStartAnimation(messageObject.gifState == 0);
                  }
-@@ -12200,7 +12200,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -10594,7 +10594,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          } else {
              if (allowStart) {
                  MessageObject playingMessage = MediaController.getInstance().getPlayingMessageObject();
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
              }
              photoImage.setAllowStartAnimation(allowStart);
              if (thumb != null) {
-@@ -18345,9 +18345,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15295,9 +15295,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (!currentMessageObject.needDrawBluredPreview() && !autoPlayingMedia && documentAttach != null && !desu.inugram.helpers.chat.LinkPreviewSpoilerHelper.isMediaCovered(currentMessageObject)) {
                  if (documentAttachType == DOCUMENT_ATTACH_TYPE_ROUND) {
                      photoImage.setImage(ImageLocation.getForDocument(documentAttach), ImageLoader.AUTOPLAY_FILTER, ImageLocation.getForObject(currentPhotoObject, photoParentObject), currentPhotoObject instanceof TLRPC.TL_photoStrippedSize || currentPhotoObject != null && "s".equals(currentPhotoObject.type) ? currentPhotoFilterThumb : currentPhotoFilter, ImageLocation.getForObject(currentPhotoObjectThumb, photoParentObject), currentPhotoFilterThumb, currentPhotoObjectThumbStripped, documentAttach.size, null, currentMessageObject, 0);
@@ -69,7 +69,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LiteModeSettingsActivit
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LiteModeSettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LiteModeSettingsActivity.java
-@@ -121,6 +121,12 @@ public class LiteModeSettingsActivity extends BaseFragment {
+@@ -130,6 +130,12 @@ public class LiteModeSettingsActivity extends BaseFragment {
              }
              final Item item = items.get(position);
  
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
              if (item.viewType == VIEW_TYPE_SWITCH || item.viewType == VIEW_TYPE_CHECKBOX) {
                  if (LiteMode.isPowerSaverApplied()) {
                      restrictBulletin = BulletinFactory.of(this).createSimpleBulletin(new BatteryDrawable(.1f, Color.WHITE, Theme.getColor(Theme.key_dialogSwipeRemove), 1.3f), LocaleController.getString(R.string.LiteBatteryRestricted)).show();
-@@ -288,6 +294,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
+@@ -303,6 +309,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
          items.add(Item.asSwitch(R.drawable.msg2_call_earpiece, LocaleController.getString(R.string.LiteOptionsCalls), LiteMode.FLAG_CALLS_ANIMATIONS));
          items.add(Item.asSwitch(R.drawable.msg2_videocall, LocaleController.getString(R.string.LiteOptionsAutoplayVideo), LiteMode.FLAG_AUTOPLAY_VIDEOS));
          items.add(Item.asSwitch(R.drawable.msg2_gif, LocaleController.getString(R.string.LiteOptionsAutoplayGifs), LiteMode.FLAG_AUTOPLAY_GIFS));
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
          items.add(Item.asSwitch(R.drawable.photo_star, LocaleController.getString(R.string.LiteOptionsParticles), LiteMode.FLAG_PARTICLES));
          items.add(Item.asInfo(""));
  
-@@ -353,6 +360,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
+@@ -368,6 +375,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
      public static final int SWITCH_TYPE_SMOOTH_TRANSITIONS = 1;
      private static final int inu_TYPE_ANIMATED_AVATARS = 2;
      private static final int inu_TYPE_CHAT_EFFECTS = 3;
@@ -98,7 +98,7 @@ index 0000000..0000000 100644
  
      private class Adapter extends AdapterWithDiffUtils {
  
-@@ -1056,6 +1064,9 @@ public class LiteModeSettingsActivity extends BaseFragment {
+@@ -1107,6 +1115,9 @@ public class LiteModeSettingsActivity extends BaseFragment {
          }
  
          private boolean inu_isChecked() {
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
              boolean animatedAvatars = LiteMode.isEnabled(LiteMode.FLAG_AUTOPLAY_VIDEOS) && !desu.inugram.InuConfig.DISABLE_ANIMATED_AVATARS.getValue();
              if (type == inu_TYPE_ANIMATED_AVATARS) {
                  return animatedAvatars;
-@@ -1064,7 +1075,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
+@@ -1115,7 +1126,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
          }
  
          private boolean inu_isDisabled() {
@@ -121,7 +121,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -15183,6 +15183,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -15134,6 +15134,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          f.presentFragment(set);
                          set.scrollToFlags(LiteMode.FLAG_AUTOPLAY_GIFS);
                      }).withLink("tg://settings/power-saving/gifs"),

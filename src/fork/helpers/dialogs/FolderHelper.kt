@@ -23,6 +23,13 @@ import org.telegram.ui.Stories.recorder.HintView2
 import kotlin.math.ceil
 
 object FolderHelper {
+    @JvmStatic
+    fun canShowTabsAtBottom(): Boolean =
+        !InuConfig.NON_ISLAND_FOLDERS_BAR.value || MainTabsHelper.isMaterial || MainTabsHelper.isHidden
+
+    @JvmStatic
+    fun shouldShowTabsAtBottom(): Boolean = InuConfig.FOLDER_TABS_AT_BOTTOM.value && canShowTabsAtBottom()
+
     private val folderIcons = mapOf(
         "\uD83D\uDC31" to R.drawable.filter_cat,
         "\uD83D\uDCD5" to R.drawable.filter_book,
@@ -315,7 +322,7 @@ object FolderHelper {
     const val TAB_BAR_BOTTOM_MARGIN_DP = 6
 
     @JvmStatic
-    fun atBottom(): Boolean = InuConfig.FOLDERS_AT_BOTTOM.value
+    fun atBottom(): Boolean = shouldShowTabsAtBottom()
 
     @JvmStatic
     fun bottomReservedHeightDp(): Int = getTabBarHeightDp() + TAB_BAR_BOTTOM_MARGIN_DP

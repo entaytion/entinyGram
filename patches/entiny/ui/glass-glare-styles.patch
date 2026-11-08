@@ -4,17 +4,16 @@ Date: Thu, 5 Nov 2026 12:48:54 +0200
 Subject: [+] glass glare styles
 
 ---
- .../org/telegram/ui/Components/blur3/StrokeDrawable.java   | 1 +
- .../blur3/drawable/BlurredBackgroundDrawable.java          | 7 ++++++-
- .../drawable/BlurredBackgroundDrawableRenderNode.java      | 1 +
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ .../java/org/telegram/ui/Components/blur3/StrokeDrawable.java  | 1 +
+ .../Components/blur3/drawable/BlurredBackgroundDrawable.java   | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/StrokeDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/StrokeDrawable.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/StrokeDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/StrokeDrawable.java
-@@ -18,6 +18,7 @@ import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
- import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProvider;
+@@ -21,6 +21,7 @@ import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorPro
+ import java.util.Arrays;
  
  public class StrokeDrawable extends Drawable {
 +    { desu.inugram.helpers.theme.GlassGlareHelper.register(this); }
@@ -25,64 +24,20 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawab
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java
-@@ -51,6 +51,7 @@ public abstract class BlurredBackgroundDrawable extends Drawable {
-         shadowLayerRadius = dpf2(1);
-         shadowLayerDx = 0;
-         shadowLayerDy = dpf2(1 / 3f);
+@@ -82,6 +82,7 @@ public class BlurredBackgroundDrawable extends GlassDrawable implements Theme.Co
+         this.frostedSource = frostedSource;
+         this.staticSource = staticSource;
+         source = pickSource();
 +        desu.inugram.helpers.theme.GlassGlareHelper.register(this);
-     }
  
-     protected float sourceOffsetX;
-@@ -412,6 +413,7 @@ public abstract class BlurredBackgroundDrawable extends Drawable {
-         Paint paint
-     ) {
-         if (desu.inugram.InuConfig.DISABLE_GLASS_GLARE.getValue()) return;
-+        if (desu.inugram.helpers.theme.GlassGlareHelper.drawStroke(canvas, left, top, right, bottom, radii, isTop, paint.getColor())) return;
- 
-         final boolean radiiAreSame = isTop ?
-             radii[0] == radii[1] && radii[1] == radii[2] && radii[2] == radii[3]:
-@@ -514,6 +516,7 @@ public abstract class BlurredBackgroundDrawable extends Drawable {
-     public static void drawStroke(Canvas canvas, float left, float top, float right, float bottom,
-                                      float radii, float strokeWidth, boolean isTop, Paint paint) {
-         if (desu.inugram.InuConfig.DISABLE_GLASS_GLARE.getValue()) return;
-+        if (desu.inugram.helpers.theme.GlassGlareHelper.drawStroke(canvas, left, top, right, bottom, radii, isTop, paint.getColor())) return;
-         final float strokeHalf = strokeWidth / 2f;
-         canvas.save();
-         if (isTop) {
-@@ -667,7 +670,7 @@ public abstract class BlurredBackgroundDrawable extends Drawable {
-             return;
+         boundProps.strokeWidthTop = dpf2(1);
+         boundProps.strokeWidthBottom = dpf2(2 / 3f);
+@@ -385,7 +386,7 @@ public class BlurredBackgroundDrawable extends GlassDrawable implements Theme.Co
+             return rim;
          }
- 
--        final NinePatchDrawable ninePatchDrawable = checkNinePatchDrawable(fillColor, !desu.inugram.InuConfig.DISABLE_GLASS_GLARE.getValue());
-+        final NinePatchDrawable ninePatchDrawable = checkNinePatchDrawable(fillColor, !desu.inugram.InuConfig.DISABLE_GLASS_GLARE.getValue() && !desu.inugram.InuConfig.GLASS_GLARE_SOLID.getValue());
-         ninePatchDrawable.setBounds(
-             boundProps.boundsWithPadding.left - ninePatchDrawablePadding.left,
-             boundProps.boundsWithPadding.top - ninePatchDrawablePadding.top,
-@@ -676,6 +679,7 @@ public abstract class BlurredBackgroundDrawable extends Drawable {
-         );
-         ninePatchDrawable.setAlpha(alpha);
-         ninePatchDrawable.draw(canvas);
-+        if (desu.inugram.InuConfig.GLASS_GLARE_SOLID.getValue()) drawStrokeInternalIfNeeded(canvas);
-     }
- 
-     private void drawSourceBitmap(Canvas canvas, BlurredBackgroundSourceBitmap source) {
-@@ -723,6 +727,7 @@ public abstract class BlurredBackgroundDrawable extends Drawable {
- 
-     private void drawStrokeInternalIfNeeded(Canvas canvas) {
-         if (desu.inugram.InuConfig.DISABLE_GLASS_GLARE.getValue()) return;
-+        if (desu.inugram.helpers.theme.GlassGlareHelper.drawOutline(canvas, boundProps.boundsWithPadding.left, boundProps.boundsWithPadding.top, boundProps.boundsWithPadding.right, boundProps.boundsWithPadding.bottom, boundProps.radii, Theme.multAlpha(strokeColorBottom, alpha / 255f))) return;
-         final int strokeColorTop = Theme.multAlpha(this.strokeColorTop, alpha / 255f);
-         final int strokeColorBottom = Theme.multAlpha(this.strokeColorBottom, alpha / 255f);
- 
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
-@@ -195,6 +195,7 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
- 
-     @Override
-     public void draw(@NonNull Canvas canvas) {
-+        desu.inugram.helpers.theme.GlassGlareHelper.syncMode(this);
-         if (boundProps.boundsWithPadding.isEmpty()) {
-             return;
-         }
+         if (rimFromColors == null) {
+-            rimFromColors = evenRim
++            rimFromColors = evenRim || desu.inugram.helpers.theme.GlassGlareHelper.isSolid()
+                 ? GlassRim.evenOf(
+                     boundProps.strokeWidthTop, strokeColorTop,
+                     boundProps.strokeWidthBottom, strokeColorBottom,

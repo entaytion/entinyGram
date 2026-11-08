@@ -4,21 +4,20 @@ Date: Sat, 15 Aug 2026 00:19:41 +0300
 Subject: Respect compact edited message display
 
 ---
- .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java   | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -18567,7 +18567,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
-         } else if (currentMessageObject.isRepostPreview) {
-             timeString = LocaleController.formatSmallDateChat(messageObject.messageOwner.date) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+@@ -15593,6 +15593,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         } else if (current.isRepostPreview) {
+             return LocaleController.formatSmallDateChat(message.messageOwner.date) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (message.messageOwner.date) * 1000);
          } else if (edited) {
--            if (AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get()) {
 +            if (desu.inugram.InuConfig.COMPACT_EDITED.getValue()) {
-+                timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
-+            } else if (AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get()) {
-                 int editDate = currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date;
-                 if (editDate == 0 && currentMessageObject.isEditing()) {
-                     editDate = ConnectionsManager.getInstance(currentAccount).getCurrentTime();
++                return LocaleController.getInstance().getFormatterDay().format((long) (message.messageOwner.date) * 1000);
++            }
+             if (AppGlobalConfig.getInstance(current.currentAccount).messagePrimaryEditedDate.get()) {
+                 if (editDate == 0 && current.isEditing()) {
+                     editDate = ConnectionsManager.getInstance(current.currentAccount).getCurrentTime();

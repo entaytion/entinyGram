@@ -1,13 +1,13 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
-Date: Wed, 21 Oct 2026 12:24:34 +0300
+Date: Tue, 25 Aug 2026 17:51:51 +0400
 Subject: md3-styled bottom navigation bar
 
 ---
  .../ui/Components/glass/GlassTabView.java     | 35 +++++++++++++++----
- .../org/telegram/ui/MainTabsActivity.java     | 24 ++++++++-----
+ .../org/telegram/ui/MainTabsActivity.java     | 23 +++++++-----
  .../java/org/telegram/ui/MainTabsLayout.java  | 15 +++++++-
- 3 files changed, 58 insertions(+), 16 deletions(-)
+ 3 files changed, 57 insertions(+), 16 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
 index 0000000..0000000 100644
@@ -70,15 +70,15 @@ index 0000000..0000000 100644
      }
  
      public boolean isTabSelected() {
-@@ -270,6 +277,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+@@ -287,6 +294,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
          colorSelected = Theme.getColor(Theme.key_glass_tabSelected, resourcesProvider);
          colorSelectedText = Theme.getColor(Theme.key_glass_tabSelectedText, resourcesProvider);
-         updateColors();
+         applyColors();
 +        M3MainTabsHelper.updateTabRipple(this, colorSelected);
          invalidate();
      }
  
-@@ -684,6 +692,20 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+@@ -703,6 +711,20 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
  
      }
  
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
      public void setMainTabsCompact(boolean compact) {
          if (textView.getVisibility() == (compact ? GONE : VISIBLE)) {
              return;
-@@ -698,9 +720,10 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+@@ -717,9 +739,10 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
          }
  
          if (backupImageView != null) {
@@ -116,7 +116,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -86,6 +86,7 @@ import java.util.ArrayList;
+@@ -91,6 +91,7 @@ import java.util.HashSet;
  import java.util.Collections;
  
  import desu.inugram.helpers.dialogs.MainTabsHelper;
@@ -124,7 +124,7 @@ index 0000000..0000000 100644
  import me.vkryl.android.animator.BoolAnimator;
  import me.vkryl.android.animator.FactorAnimator;
  
-@@ -324,6 +325,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -339,6 +340,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          final int paddingV = dp(mainTabsMargin + 4);
          tabsView.setPadding(paddingH, paddingV, paddingH, paddingV);
          tabsView.setMaxWidth(dp(tabsViewWidth));
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
  
          tabs = new GlassTabView[5];
          tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
-@@ -341,6 +343,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -356,6 +358,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsView.addTabToIgnoreClick(tabs[INDEX_PROFILE]);
          tabsView.addTabToIgnoreClick(tabs[INDEX_CALLS]);
          for (GlassTabView tab : tabs) {
@@ -140,7 +140,7 @@ index 0000000..0000000 100644
              tab.setMainTabsCompact(compact || !MainTabsHelper.getShowTitles());
          }
  
-@@ -388,6 +391,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -406,6 +409,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsViewBackground = iBlur3FactoryGlass.create(tabsView, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
          tabsViewBackground.setRadius(dp(MainTabsHelper.getMainTabsHeight() / 2f));
          tabsViewBackground.setPadding(dp(mainTabsMargin - 0.334f));
@@ -148,7 +148,7 @@ index 0000000..0000000 100644
          tabsView.setBackground(tabsViewBackground);
  
          BlurredBackgroundDrawableViewFactory iBlur3FactoryFade = new BlurredBackgroundDrawableViewFactory(iBlur3SourceColor);
-@@ -410,6 +414,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -428,6 +432,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsViewWrapper.setOnClickListener(v -> {});
          tabsViewWrapper.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
          tabsViewWrapper.setClipToPadding(false);
@@ -156,7 +156,7 @@ index 0000000..0000000 100644
          contentView.addView(tabsViewWrapper, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
  
          updateLayoutWrapper = new UpdateLayoutWrapper(context);
-@@ -453,8 +458,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -471,8 +476,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          o.setBlur(true);
          o.translate(0, -dp(4));
          o.setGravity(Gravity.LEFT);
@@ -166,17 +166,16 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
          o.show();
          return true;
-@@ -466,8 +470,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -484,8 +488,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          o.add(R.drawable.menu_call_create, getString(R.string.GroupCallCreate2), () -> CallLogActivity.openCreateCall(this));
          o.setBlur(true);
          o.translate(0, -dp(4));
 -        final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
 -        bg.getPaint().setShadowLayer(dp(6), 0, dp(1), Theme.multAlpha(0xFF000000, 0.15f));
-+        final android.graphics.drawable.Drawable bg = MainTabsHelper.createTabScrimBackground(anchor, getThemedColor(Theme.key_windowBackgroundWhite));
          o.setScrimViewBackground(bg);
          o.show();
          return true;
-@@ -526,8 +529,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -544,8 +546,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  //        o.setBlur(true);
          o.translate(-dp(8), -dp(4));
          o.setMaxHeight(dp(400));
@@ -186,7 +185,7 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
          o.setGravity(Gravity.LEFT);
          o.show();
-@@ -669,8 +671,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -687,8 +688,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          o.setBlur(true);
          o.translate(0, -dp(4));
@@ -196,7 +195,7 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
  
          HintsController.Hint.AccountSwitchHint.doNotShowAgain();
-@@ -956,7 +957,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -978,7 +978,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              }
          }
  
@@ -207,7 +206,7 @@ index 0000000..0000000 100644
  
          final WindowInsetsCompat consumed = isUpdateLayoutVisible ?
              insets.inset(0, 0, 0, navigationBarHeight) : insets;
-@@ -1227,6 +1230,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1298,6 +1300,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (tabsView != null) {
              tabsView.invalidate();
          }

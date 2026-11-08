@@ -4,10 +4,10 @@ Date: Thu, 13 Aug 2026 03:02:26 +0400
 Subject: Play call audio as media on Bluetooth to avoid the low-quality HFP profile
 
 ---
- .../telegram/messenger/voip/VoIPService.java  | 37 +++++++++++++++----
+ .../telegram/messenger/voip/VoIPService.java  | 41 +++++++++++++++----
  .../java/org/telegram/ui/VoIPFragment.java    |  4 +-
- .../webrtc/voiceengine/WebRtcAudioTrack.java  | 32 ++++++++++++++++
- 3 files changed, 63 insertions(+), 10 deletions(-)
+ .../webrtc/voiceengine/WebRtcAudioTrack.java  | 32 +++++++++++++++
+ 3 files changed, 67 insertions(+), 10 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
 index 0000000..0000000 100755
@@ -22,7 +22,7 @@ index 0000000..0000000 100755
  					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? VoipAudioManager.get().findBluetoothDevice() == null : (!btAdapter.isEnabled() || !PermissionRequest.hasPermission(Manifest.permission.BLUETOOTH_CONNECT) || btAdapter.getProfileConnectionState(BluetoothProfile.HEADSET) != BluetoothProfile.STATE_CONNECTED)) {
  						updateBluetoothHeadsetState(false);
  						return;
-@@ -3853,6 +3853,13 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -3959,6 +3959,13 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  					break;
  			}
  		} else if (audioConfigured && !USE_CONNECTION_SERVICE) {
@@ -36,7 +36,7 @@ index 0000000..0000000 100755
  			switch (which) {
  				case 2:
  					if (!bluetoothScoActive) {
-@@ -3918,6 +3925,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4024,6 +4031,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  			int route = systemCallConnection.getCallAudioState().getRoute();
  			return hasEarpiece() ? route == CallAudioState.ROUTE_SPEAKER : route == CallAudioState.ROUTE_BLUETOOTH;
  		} else if (audioConfigured && !USE_CONNECTION_SERVICE) {
@@ -46,7 +46,7 @@ index 0000000..0000000 100755
  			VoipAudioManager vam = VoipAudioManager.get();
  			return hasEarpiece() ? vam.isSpeakerphoneOn() : vam.isBluetoothOn();
  		}
-@@ -3940,6 +3950,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4046,6 +4056,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  			return audioRouteToSet;
  		}
  		if (audioConfigured) {
@@ -56,7 +56,15 @@ index 0000000..0000000 100755
  			VoipAudioManager vam = VoipAudioManager.get();
  			if (vam.isBluetoothOn()) {
  				return AUDIO_ROUTE_BLUETOOTH;
-@@ -4778,11 +4791,12 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4845,6 +4858,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 	}
+ 
+ 	private void checkUpdateBluetoothHeadset() {
++		desu.inugram.helpers.CallAudioHelper.onDevicesChanged(this);
+ 		if (!USE_CONNECTION_SERVICE && btAdapter != null && btAdapter.isEnabled()) {
+ 			try {
+ 				MediaRouter mr = (MediaRouter) getSystemService(Context.MEDIA_ROUTER_SERVICE);
+@@ -4883,11 +4897,12 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  	}
  
  	private void loadResources() {
@@ -70,7 +78,7 @@ index 0000000..0000000 100755
  			spConnectingId = soundPool.load(this, R.raw.voip_connecting, 1);
  			spRingbackID = soundPool.load(this, R.raw.voip_ringback, 1);
  			spFailedID = soundPool.load(this, R.raw.voip_failed, 1);
-@@ -4843,10 +4857,11 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4948,10 +4963,11 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  		if (BuildVars.LOGS_ENABLED) {
  			FileLog.d("configureDeviceForCall, route to set = " + audioRouteToSet);
  		}
@@ -84,7 +92,7 @@ index 0000000..0000000 100755
  		}
  
  		needPlayEndSound = true;
-@@ -4865,7 +4880,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4970,7 +4986,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  						return;
  					}
  
@@ -93,19 +101,29 @@ index 0000000..0000000 100755
  				} catch (Exception e) {
  					FileLog.e(e);
  				}
-@@ -4873,7 +4888,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4978,7 +4994,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  					int focusResult = am.requestAudioFocus(VoIPService.this, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
  					hasAudioFocus = focusResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
  					final VoipAudioManager vam = VoipAudioManager.get();
 -					if (isBluetoothHeadsetConnected() && hasEarpiece()) {
 +					if (inu_mediaAudio) {
-+						am.setBluetoothScoOn(false);
++						vam.setBluetoothOn(false);
 +						audioRouteToSet = AUDIO_ROUTE_BLUETOOTH;
 +					} else if (isBluetoothHeadsetConnected() && hasEarpiece()) {
  						switch (audioRouteToSet) {
  							case AUDIO_ROUTE_BLUETOOTH:
  								if (!bluetoothScoActive) {
-@@ -5023,7 +5041,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -5099,6 +5118,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 	}
+ 
+ 	public boolean isBluetoothHeadsetConnected() {
++		if (desu.inugram.helpers.CallAudioHelper.isActive()) {
++			return desu.inugram.helpers.CallAudioHelper.hasBluetoothMediaOutput(this);
++		}
+ 		if (USE_CONNECTION_SERVICE && systemCallConnection != null && systemCallConnection.getCallAudioState() != null) {
+ 			return (systemCallConnection.getCallAudioState().getSupportedRouteMask() & CallAudioState.ROUTE_BLUETOOTH) != 0;
+ 		}
+@@ -5128,7 +5150,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  				if (BuildVars.LOGS_ENABLED) {
  					FileLog.d("SCO already active, setting audio routing");
  				}
@@ -114,7 +132,7 @@ index 0000000..0000000 100755
  					am.setSpeakerphoneOn(false);
  					vam.setBluetoothOn(true);
  				}
-@@ -5031,7 +5049,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -5136,7 +5158,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  				if (BuildVars.LOGS_ENABLED) {
  					FileLog.d("startBluetoothSco");
  				}
@@ -123,7 +141,7 @@ index 0000000..0000000 100755
  					needSwitchToBluetoothAfterScoActivates = true;
  					AndroidUtilities.runOnUIThread(() -> {
  						try {
-@@ -5518,6 +5536,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -5623,6 +5645,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  	}
  
  	public boolean isBluetoothOn() {
@@ -137,7 +155,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java
-@@ -2768,7 +2768,7 @@ public class VoIPFragment implements
+@@ -2753,7 +2753,7 @@ public class VoIPFragment implements
          final int icon;
          if (service.isBluetoothOn()) {
              icon = R.drawable.calls_bluetooth;
@@ -146,7 +164,7 @@ index 0000000..0000000 100644
              icon = R.drawable.calls_speaker;
          } else {
              if (service.isHeadsetPlugged()) {
-@@ -2792,7 +2792,7 @@ public class VoIPFragment implements
+@@ -2777,7 +2777,7 @@ public class VoIPFragment implements
          if (service.isBluetoothOn()) {
              selectedSpeaker = 2;
              bottomButton.setType(VoIpSwitchLayout.Type.BLUETOOTH, false);

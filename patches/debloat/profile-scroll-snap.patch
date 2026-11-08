@@ -5,13 +5,14 @@ Subject: disable scroll snapping in profile
 
 ---
  .../src/main/java/org/telegram/ui/ProfileActivity.java | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ .../main/java/org/telegram/ui/SettingsActivity.java    |  2 +-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -4128,6 +4128,14 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -4082,6 +4082,14 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
              private VelocityTracker velocityTracker;
  
@@ -26,12 +27,25 @@ index 0000000..0000000 100644
              @Override
              protected boolean canHighlightChildAt(View child, float x, float y) {
                  return !(child instanceof AboutLinkCell);
-@@ -4231,7 +4239,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-                             } else {
-                                 listView.smoothScrollBy(0, view.getTop() - getHeaderExtraHeight(), CubicBezierInterpolator.EASE_OUT_QUINT);
-                             }
--                        } else {
-+                        } else if (!desu.inugram.InuConfig.DISABLE_PROFILE_SCROLL_SNAP.getValue()) {
-                             final boolean hasActions = getActionsExtraHeight() > 0;
-                             if (hasActions && extraHeight > 0 && (extraHeight < getHeaderExtraHeight() * 0.6f || listViewVelocityY < -1000f) && extraHeight > getActionsExtraHeight() * .6f) {
-                                 listView.smoothScrollBy(0, (int) (extraHeight - getActionsExtraHeight()), CubicBezierInterpolator.EASE_OUT_QUINT);
+@@ -6163,7 +6171,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             } else {
+                 listView.smoothScrollBy(0, firstRow.getTop() - getHeaderExtraHeight(), CubicBezierInterpolator.EASE_OUT_QUINT);
+             }
+-        } else {
++        } else if (!desu.inugram.InuConfig.DISABLE_PROFILE_SCROLL_SNAP.getValue()) {
+             final boolean hasActions = getActionsExtraHeight() > 0;
+             if (hasActions && extraHeight > 0 && (extraHeight < getHeaderExtraHeight() * 0.6f || velocityY < -1000f) && extraHeight > getActionsExtraHeight() * .6f) {
+                 listView.smoothScrollBy(0, (int) (extraHeight - getActionsExtraHeight()), CubicBezierInterpolator.EASE_OUT_QUINT);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -688,7 +688,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+ 
+     /** The list does not stop with the avatar half hidden: it scrolls on to the shown or the hidden avatar. */
+     private void snapAvatarHide() {
+-        if (avatarGooey == null || searchItem != null && searchItem.isSearchFieldVisible2() || avatarHideShown <= 0 || avatarHideShown >= 1) {
++        if (avatarGooey == null || searchItem != null && searchItem.isSearchFieldVisible2() || avatarHideShown <= 0 || avatarHideShown >= 1 || desu.inugram.InuConfig.DISABLE_PROFILE_SCROLL_SNAP.getValue()) {
+             return;
+         }
+         if (avatarHideShown >= 0.5f) {

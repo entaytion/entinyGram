@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6999,15 +6999,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6919,15 +6919,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          return index >= 0 && index < filters.size() ? filters.get(index) : null;
      }
  
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
          inu_applyDialogsTitle();
          if (dialogStoriesCell != null) {
              dialogStoriesCell.updateItems(true, false);
-@@ -7139,7 +7139,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7059,7 +7059,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      if (viewPages[a].selectedType >= filters.size()) {
                          viewPages[a].selectedType = filters.size() - 1;
                      }

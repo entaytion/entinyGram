@@ -49,7 +49,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -17631,8 +17631,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -17602,8 +17602,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  (messageObject.messageOwner != null && desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(messageObject.messageOwner))) || messageObject != null && messageObject.hasRevealedExtendedMedia() ||
                  isPageBlocksNoForwards(pageBlocksAdapter)
              ) {
@@ -83,7 +83,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SecretVoicePlayer.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SecretVoicePlayer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SecretVoicePlayer.java
-@@ -239,8 +239,10 @@ public class SecretVoicePlayer extends Dialog {
+@@ -240,8 +240,10 @@ public class SecretVoicePlayer extends Dialog {
              WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
              WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
          if (!BuildVars.DEBUG_PRIVATE_VERSION) {
@@ -100,7 +100,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
-@@ -7141,6 +7141,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -7155,6 +7155,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
          }
  
          public boolean allowScreenshots() {

@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -926,10 +926,13 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -925,10 +925,13 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isPremiumUser(TLRPC.User currentUser) {
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
          return transcribeButtonPressed >= 2;
      }
  
-@@ -2600,6 +2603,8 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2598,6 +2601,8 @@ public class MessagesController extends BaseController implements NotificationCe
              TLRPC.User user = getUserConfig().getCurrentUser();
              if (user != null) {
                  user.emoji_status = new_emoji_status;
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                  getNotificationCenter().postNotificationName(NotificationCenter.userEmojiStatusUpdated, user);
              }
          } else {
-@@ -6853,6 +6858,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6838,6 +6843,7 @@ public class MessagesController extends BaseController implements NotificationCe
          if (user == null) {
              return false;
          }
@@ -51,7 +51,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
-@@ -261,6 +261,7 @@ public class UserConfig extends BaseController {
+@@ -262,6 +262,7 @@ public class UserConfig extends BaseController {
      public void setCurrentUser(TLRPC.User user) {
          synchronized (sync) {
              TLRPC.User oldUser = currentUser;
@@ -59,7 +59,7 @@ index 0000000..0000000 100644
              currentUser = user;
              clientUserId = user.id;
              checkPremiumSelf(oldUser, user);
-@@ -572,6 +573,9 @@ public class UserConfig extends BaseController {
+@@ -573,6 +574,9 @@ public class UserConfig extends BaseController {
      }
  
      public boolean isPremium() {
@@ -86,7 +86,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
-@@ -2098,6 +2098,8 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+@@ -2054,6 +2054,8 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
                  }
                  getMessagesController().updateEmojiStatus(0, new_emoji_status, gift);
              }
@@ -95,8 +95,8 @@ index 0000000..0000000 100644
              getMessagesController().putUser(me, false);
              getUserConfig().saveConfig(true);
              finishFragment();
-@@ -4245,4 +4247,4 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
-             return 0;
+@@ -4207,4 +4209,4 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+             v.invalidate();
          }
      }
 -}
@@ -106,7 +106,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1088,7 +1088,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1200,7 +1200,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              emojiStatusDrawable.setColor(Theme.getColor(Theme.key_profile_verifiedBackground, resourcesProvider));
              if (emojiStatusId != null) {
                  emojiStatusDrawable.set(emojiStatusId, false);

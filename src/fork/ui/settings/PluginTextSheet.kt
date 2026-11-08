@@ -18,8 +18,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.core.plugins.JsLiterals
 import desu.inugram.core.plugins.PluginAssetsParser
+import desu.inugram.helpers.plugins.PluginFailure
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.utils.code.highlight.CodeHighlighting
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
@@ -28,32 +28,42 @@ import org.telegram.ui.Components.BottomSheetWithRecyclerListView
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
+import org.telegram.utils.code.highlight.CodeHighlighting
+import org.telegram.utils.code.highlight.PrismaTokenStyles
 
-class PluginSourceSheet(context: Context, private val name: String, private val source: String) :
-    BottomSheetWithRecyclerListView(context, null, false, false, false, null) {
+class PluginTextSheet private constructor(
+    context: Context,
+    private val sheetTitle: String,
+    private val subtitle: String,
+    private val copyText: String,
+    private val displayText: String,
+    highlightLanguage: String?,
+    private val wrapLines: Boolean,
+) : BottomSheetWithRecyclerListView(context, null, false, false, false, null) {
 
     init {
         fixNavigationBar()
+        // the base constructor reads the title before our fields are assigned
+        updateTitle()
     }
 
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuPluginSourceTitle)
+    override fun getTitle(): CharSequence? = sheetTitle
 
-    override fun createAdapter(listView: RecyclerListView): RecyclerListView.SelectionAdapter = Adapter()
+    private lateinit var adapter: Adapter
+
+    override fun createAdapter(listView: RecyclerListView): RecyclerListView.SelectionAdapter = Adapter().also { adapter = it }
 
     private fun buildHeader(context: Context): View {
         val title = TextView(context).apply {
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20f)
             typeface = AndroidUtilities.bold()
-            text = LocaleController.getString(R.string.InuPluginSourceTitle)
+            text = sheetTitle
         }
         val meta = TextView(context).apply {
             setTextColor(Theme.getColor(Theme.key_dialogTextGray3))
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
-            text = listOf(
-                name,
-                AndroidUtilities.formatFileSize(source.toByteArray().size.toLong()),
-            ).joinToString(" · ")
+            text = subtitle
         }
         val titleBlock = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -67,7 +77,7 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
             background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP)
             contentDescription = LocaleController.getString(R.string.Copy)
             setOnClickListener {
-                AndroidUtilities.addToClipboard(source)
+                AndroidUtilities.addToClipboard(copyText)
                 BulletinFactory.of(container, resourcesProvider)
                     .createCopyBulletin(LocaleController.getString(R.string.TextCopied))
                     .show()
@@ -82,34 +92,20 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
         }
     }
 
-    private val displaySource = buildString {
-        fun placeholder(size: Long) = "[…${AndroidUtilities.formatFileSize(size)}…]"
-        val footer = PluginAssetsParser.findFooter(source)
-        append(JsLiterals.collapseEncodedStrings(source.substring(0, footer), MAX_LINE_LENGTH) { placeholder(it.toLong()) })
-        var last = footer
-        val assets = runCatching { PluginAssetsParser.parse(source) }.getOrDefault(emptyList())
-        for (asset in assets) {
-            if (asset.start == asset.end) continue
-            append(source, last, asset.start).append(placeholder(asset.size))
-            last = asset.end
-        }
-        append(source, last, source.length)
-    }
-
     private val chunks: List<IntRange> = run {
         val result = ArrayList<IntRange>()
         var chunkStart = 0
         var lines = 0
         var lineStart = 0
         while (true) {
-            val newline = displaySource.indexOf('\n', lineStart)
-            val lineEnd = if (newline == -1) displaySource.length else newline
+            val newline = displayText.indexOf('\n', lineStart)
+            val lineEnd = if (newline == -1) displayText.length else newline
             if (lineEnd - lineStart > MAX_LINE_LENGTH) {
                 if (lineStart > chunkStart) result.add(chunkStart until lineStart - 1)
                 var rowStart = lineStart
                 while (rowStart < lineEnd) {
                     var rowEnd = minOf(rowStart + MAX_LINE_LENGTH, lineEnd)
-                    if (rowEnd < lineEnd && displaySource[rowEnd - 1].isHighSurrogate()) rowEnd--
+                    if (rowEnd < lineEnd && displayText[rowEnd - 1].isHighSurrogate()) rowEnd--
                     result.add(rowStart until rowEnd)
                     rowStart = rowEnd
                 }
@@ -123,7 +119,7 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
             if (newline == -1) break
             lineStart = newline + 1
         }
-        if (chunkStart < displaySource.length || result.isEmpty()) result.add(chunkStart until displaySource.length)
+        if (chunkStart < displayText.length || result.isEmpty()) result.add(chunkStart until displayText.length)
         result
     }
     private var highlightedChunks: List<CharSequence>? = null
@@ -131,31 +127,37 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
     private var codeScrollX = 0
 
     init {
-        if (displaySource.length <= HIGHLIGHT_MAX_LENGTH) {
-            CodeHighlighting.inu_computeSpans(displaySource, "javascript") { computed ->
-              Utilities.searchQueue.postRunnable {
-                val spans = computed.sortedBy { it.start }
-                var first = 0
-                val result = chunks.map { range ->
-                    val end = range.last + 1
-                    val text = SpannableString(displaySource.substring(range.first, end))
-                    while (first < spans.size && spans[first].end <= range.first) first++
-                    var i = first
-                    while (i < spans.size && spans[i].start < end) {
-                        val span = spans[i++]
-                        val spanStart = maxOf(span.start, range.first) - range.first
-                        val spanEnd = minOf(span.end, end) - range.first
-                        if (spanStart < spanEnd) {
-                            text.setSpan(CodeHighlighting.ColorSpan(span.group), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        if (highlightLanguage != null && displayText.length <= HIGHLIGHT_MAX_LENGTH) {
+            CodeHighlighting.SERVICE.request(displayText, highlightLanguage) { result ->
+                val ranges = result.tokens?.copyStyledRanges() ?: return@request
+                Utilities.searchQueue.postRunnable {
+                    var first = 0
+                    val highlighted = chunks.map { range ->
+                        val end = range.last + 1
+                        val text = SpannableString(displayText.substring(range.first, end))
+                        while (first < ranges.size && ranges[first + 1] <= range.first) first += 3
+                        var i = first
+                        while (i < ranges.size && ranges[i] < end) {
+                            val from = maxOf(ranges[i], range.first) - range.first
+                            val to = minOf(ranges[i + 1], end) - range.first
+                            val flags = ranges[i + 2]
+                            i += 3
+                            if (from >= to) continue
+                            val group = flags and PrismaTokenStyles.COLOR_MASK
+                            if (group != 0) {
+                                text.setSpan(CodeHighlighting.ColorSpan(group), from, to, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            }
+                            if (flags and (PrismaTokenStyles.BOLD or PrismaTokenStyles.ITALIC) != 0) {
+                                text.setSpan(CodeHighlighting.SyntaxFontSpan(flags), from, to, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            }
                         }
+                        text
                     }
-                    text
+                    AndroidUtilities.runOnUIThread {
+                        highlightedChunks = highlighted
+                        adapter.notifyItemRangeChanged(1, chunks.size)
+                    }
                 }
-                AndroidUtilities.runOnUIThread {
-                    highlightedChunks = result
-                    recyclerListView.adapter?.notifyItemRangeChanged(1, chunks.size)
-                }
-              }
             }
         }
     }
@@ -166,11 +168,12 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             setTextIsSelectable(true)
-            setHorizontallyScrolling(true)
         }
+        if (wrapLines) return code
+        code.setHorizontallyScrolling(true)
         if (codeWidth == 0) {
             codeWidth = chunks.maxOf { range ->
-                displaySource.subSequence(range.first, range.last + 1).lineSequence().maxOf { Layout.getDesiredWidth(it, code.paint) }
+                displayText.subSequence(range.first, range.last + 1).lineSequence().maxOf { Layout.getDesiredWidth(it, code.paint) }
             }.toInt() + AndroidUtilities.dp(44f)
         }
         code.minWidth = codeWidth
@@ -190,16 +193,16 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
         }
     }
 
-    private fun bindCode(view: HorizontalScrollView, index: Int) {
+    private fun bindCode(view: View, index: Int) {
         val range = chunks[index]
-        (view.getChildAt(0) as TextView).apply {
+        (if (view is HorizontalScrollView) view.getChildAt(0) as TextView else view as TextView).apply {
             setPadding(
                 AndroidUtilities.dp(22f),
                 if (index == 0) AndroidUtilities.dp(4f) else 0,
                 AndroidUtilities.dp(22f),
                 if (index == chunks.lastIndex) AndroidUtilities.dp(16f) else 0,
             )
-            text = highlightedChunks?.get(index) ?: displaySource.substring(range.first, range.last + 1)
+            text = highlightedChunks?.get(index) ?: displayText.substring(range.first, range.last + 1)
         }
         view.scrollX = codeScrollX
     }
@@ -214,7 +217,7 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            if (position > 0) bindCode(holder.itemView as HorizontalScrollView, position - 1)
+            if (position > 0) bindCode(holder.itemView, position - 1)
         }
 
         override fun getItemViewType(position: Int): Int = if (position == 0) 0 else 1
@@ -226,5 +229,39 @@ class PluginSourceSheet(context: Context, private val name: String, private val 
         private const val HIGHLIGHT_MAX_LENGTH = 200_000
         private const val CHUNK_LINES = 40
         private const val MAX_LINE_LENGTH = 1000
+
+        fun createForSource(context: Context, pluginName: String, source: String) = PluginTextSheet(
+            context,
+            LocaleController.getString(R.string.InuPluginSourceTitle),
+            "$pluginName · ${AndroidUtilities.formatFileSize(source.toByteArray().size.toLong())}",
+            source,
+            collapseSourceBlobs(source),
+            "javascript",
+            false,
+        )
+
+        fun createForFailure(context: Context, pluginName: String, failure: PluginFailure) = PluginTextSheet(
+            context,
+            LocaleController.getString(failure.at.labelRes ?: R.string.InuPluginsFailedAtLoad),
+            pluginName,
+            failure.detail,
+            failure.detail,
+            null,
+            true,
+        )
+
+        private fun collapseSourceBlobs(source: String) = buildString {
+            fun placeholder(size: Long) = "[…${AndroidUtilities.formatFileSize(size)}…]"
+            val footer = PluginAssetsParser.findFooter(source)
+            append(JsLiterals.collapseEncodedStrings(source.substring(0, footer), MAX_LINE_LENGTH) { placeholder(it.toLong()) })
+            var last = footer
+            val assets = runCatching { PluginAssetsParser.parse(source) }.getOrDefault(emptyList())
+            for (asset in assets) {
+                if (asset.start == asset.end) continue
+                append(source, last, asset.start).append(placeholder(asset.size))
+                last = asset.end
+            }
+            append(source, last, source.length)
+        }
     }
 }

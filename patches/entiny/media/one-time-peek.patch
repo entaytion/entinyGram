@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -14464,6 +14464,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14515,6 +14515,9 @@ public class MessagesController extends BaseController implements NotificationCe
          if (messageObject.scheduled) {
              return;
          }
@@ -20,13 +20,13 @@ index 0000000..0000000 100644
 +            return;
 +        }
          ArrayList<Integer> arrayList = new ArrayList<>();
-         if (messageObject.messageOwner.mentioned) {
-             getMessagesStorage().markMentionMessageAsRead(-messageObject.messageOwner.peer_id.channel_id, messageObject.getId(), messageObject.getDialogId());
+         if (desu.inugram.helpers.DebugLogUtils.isEnabled()) {
+             FileLog.d("InuMn mark content read did=" + messageObject.getDialogId() + " mid=" + messageObject.getId() + " mentioned=" + messageObject.messageOwner.mentioned + " from " + desu.inugram.helpers.DebugLogUtils.getCaller());
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -16098,6 +16098,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -16507,6 +16507,9 @@ public class ChatActivity extends BaseFragment implements
          if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() || messageObject.messageOwner.destroyTime != 0 || messageObject.messageOwner.ttl <= 0) {
              return null;
          }
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
          if (desu.inugram.helpers.security.SelfDestructHelper.shouldAllowMediaViewRead(dialog_id, messageObject)) {
              desu.inugram.helpers.security.GhostHelper.allowReadContents(messageObject.getId());
          }
-@@ -16131,7 +16134,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16540,7 +16543,7 @@ public class ChatActivity extends BaseFragment implements
              return null;
          }
          if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialog_id)) {

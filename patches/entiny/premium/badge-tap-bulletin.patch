@@ -11,35 +11,35 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11768,8 +11768,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-                 if (leftIcon == null && currentEncryptedChat == null && user.bot_verification_icon != 0 && !desu.inugram.InuConfig.HIDE_VERIFICATION_BADGE.getValue()) {
-                     nameTextView[a].setLeftDrawableOutside(true);
-                     leftIcon = getBotVerificationDrawable(user.bot_verification_icon, false, a);
+@@ -11898,8 +11898,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 if (leftIcon == null && currentEncryptedChat == null && user.bot_verification_icon != 0) {
+                     nameTextView.setLeftDrawableOutside(true);
+                     leftIcon = getBotVerificationDrawable(user.bot_verification_icon, false);
 +                    if (desu.inugram.helpers.badges.BadgeRegistry.hasBadge(user.id)) {
 +                        final long inu_userId = user.id;
-+                        nameTextView[a].setLeftDrawableOnClick(v -> desu.inugram.helpers.badges.BadgeRegistry.showInfoBulletin(ProfileActivity.this, inu_userId));
++                        nameTextView.setLeftDrawableOnClick(v -> desu.inugram.helpers.badges.BadgeRegistry.showInfoBulletin(ProfileActivity.this, inu_userId));
 +                    } else {
-+                        nameTextView[a].setLeftDrawableOnClick(null);
++                        nameTextView.setLeftDrawableOnClick(null);
 +                    }
                  } else {
-                     nameTextView[a].setLeftDrawableOutside(false);
-+                    nameTextView[a].setLeftDrawableOnClick(null);
+                     nameTextView.setLeftDrawableOutside(false);
++                    nameTextView.setLeftDrawableOnClick(null);
                  }
-                 nameTextView[a].setLeftDrawable(leftIcon);
-                 if (a == 1 && (rightIconIsStatus || rightIconIsPremium)) {
-@@ -12090,8 +12097,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-                 if (chat.bot_verification_icon != 0 && !desu.inugram.InuConfig.HIDE_VERIFICATION_BADGE.getValue()) {
-                     nameTextView[a].setLeftDrawableOutside(true);
-                     nameTextView[a].setLeftDrawable(getBotVerificationDrawable(chat.bot_verification_icon, false, a));
+                 nameTextView.setLeftDrawable(leftIcon);
+                 if (rightIconIsStatus || rightIconIsPremium) {
+@@ -12172,8 +12179,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 if (chat.bot_verification_icon != 0) {
+                     nameTextView.setLeftDrawableOutside(true);
+                     nameTextView.setLeftDrawable(getBotVerificationDrawable(chat.bot_verification_icon, false));
 +                    if (desu.inugram.helpers.badges.BadgeRegistry.hasBadge(-chat.id)) {
 +                        final long inu_chatId = -chat.id;
-+                        nameTextView[a].setLeftDrawableOnClick(v -> desu.inugram.helpers.badges.BadgeRegistry.showInfoBulletin(ProfileActivity.this, inu_chatId));
++                        nameTextView.setLeftDrawableOnClick(v -> desu.inugram.helpers.badges.BadgeRegistry.showInfoBulletin(ProfileActivity.this, inu_chatId));
 +                    } else {
-+                        nameTextView[a].setLeftDrawableOnClick(null);
++                        nameTextView.setLeftDrawableOnClick(null);
 +                    }
                  } else {
-                     nameTextView[a].setLeftDrawable(null);
-+                    nameTextView[a].setLeftDrawableOnClick(null);
+                     nameTextView.setLeftDrawable(null);
++                    nameTextView.setLeftDrawableOnClick(null);
                  }
-                 if (a == 0 && onlineTextOverride != null) {
-                     onlineTextView[a].setText(onlineTextOverride);
+                 profileStatusText = appendCommunityHiddenRow(profileStatusString);
+                 photoDescriptionText = null;

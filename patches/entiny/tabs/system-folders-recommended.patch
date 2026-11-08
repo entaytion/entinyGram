@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
-@@ -148,6 +148,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+@@ -187,6 +187,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
          private TextView valueTextView;
          private ProgressButton addButton;
          private boolean needDivider;
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          private TLRPC.TL_dialogFilterSuggested suggestedFilter;
  
          public SuggestedFilterCell(Context context) {
-@@ -183,7 +184,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+@@ -223,7 +224,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
  
          @Override
          protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
              measureChildWithMargins(addButton, widthMeasureSpec, 0, heightMeasureSpec, 0);
              measureChildWithMargins(textView, widthMeasureSpec, addButton.getMeasuredWidth(), heightMeasureSpec, 0);
              measureChildWithMargins(valueTextView, widthMeasureSpec, addButton.getMeasuredWidth(), heightMeasureSpec, 0);
-@@ -195,7 +196,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+@@ -235,7 +236,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
              setWillNotDraw(!needDivider);
  
              textView.setText(filter.filter.title.text);
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
          }
  
          public TLRPC.TL_dialogFilterSuggested getSuggestedFilter() {
-@@ -564,6 +567,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+@@ -652,6 +655,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
          oldItems.addAll(items);
          items.clear();
  
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
          ArrayList<TLRPC.TL_dialogFilterSuggested> suggestedFilters = getMessagesController().suggestedFilters;
          ArrayList<MessagesController.DialogFilter> dialogFilters = getMessagesController().getDialogFilters();
          items.add(ItemInner.asHint());
-@@ -987,6 +991,12 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+@@ -1100,6 +1104,12 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                      SuggestedFilterCell suggestedFilterCell = new SuggestedFilterCell(mContext);
                      suggestedFilterCell.setAddOnClickListener(v -> {
                          TLRPC.TL_dialogFilterSuggested suggested = suggestedFilterCell.getSuggestedFilter();

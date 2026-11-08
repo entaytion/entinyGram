@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -6409,7 +6409,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -6506,7 +6506,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  "<?xpacket end=\"w\"?>";
      }
  
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPa
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
-@@ -127,6 +127,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+@@ -128,6 +128,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
      public final static int forwardItemId = 201;
      public final static int deleteItemId = 202;
      public final static int speedItemId = 203;
@@ -35,8 +35,8 @@ index 0000000..0000000 100644
  
      private ActionBarMenuItem speedItem;
      private ActionBarMenuItem gotoItem;
-@@ -876,6 +877,9 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
-             speedItem.getIconView().setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon), PorterDuff.Mode.SRC_IN));
+@@ -879,6 +880,9 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+             }
              gotoItem = actionMode.addItemWithWidth(gotoItemId, R.drawable.msg_message, AndroidUtilities.dp(54), getString(R.string.AccDescrGoToMessage));
              forwardItem = actionMode.addItemWithWidth(forwardItemId, R.drawable.msg_forward, AndroidUtilities.dp(54), getString(R.string.Forward));
 +            if (desu.inugram.InuConfig.SAVE_SELECTED_FILES.getValue()) {
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
              deleteItem = actionMode.addItemWithWidth(deleteItemId, R.drawable.msg_delete, AndroidUtilities.dp(54), getString(R.string.Delete));
          }
          if (selectedMessagesCountTextView != null) {
-@@ -934,6 +938,11 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+@@ -937,6 +941,11 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
      }
  
      public void onActionBarItemClick(int id) {
@@ -61,27 +61,41 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -2278,6 +2278,15 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
-                 actionModeLayout.addView(forwardItem, new LinearLayout.LayoutParams(dp(54), ViewGroup.LayoutParams.MATCH_PARENT));
-                 actionModeViews.add(forwardItem);
-                 forwardItem.setOnClickListener(v -> onActionBarItemClick(v, forward));
-+
+@@ -1620,6 +1620,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+     private SharedMediaPreloader sharedMediaPreloader;
+ 
+     private final static int forward = 100;
++    private final static int inu_saveFiles = 1905;
+     private final static int delete = 101;
+     private final static int gotochat = 102;
+     private final static int pin = 103;
+@@ -2057,6 +2058,9 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+             if (!isStoriesView()) {
+                 gotoItem = createActionModeItem(context, gotochat, R.drawable.msg_message, getString(R.string.AccDescrGoToMessage));
+                 forwardItem = createActionModeItem(context, forward, R.drawable.msg_forward, getString(R.string.Forward));
 +                if (desu.inugram.InuConfig.SAVE_SELECTED_FILES.getValue()) {
-+                    ActionBarMenuItem saveItem = desu.inugram.helpers.chat.SaveSelectedFilesHelper.createItem(context, getThemedColor(Theme.key_actionBarActionModeDefaultSelector), getThemedColor(Theme.key_actionBarActionModeDefaultIcon), () -> {
-+                        desu.inugram.helpers.chat.SaveSelectedFilesHelper.save(profileActivity, selectedFiles);
-+                        closeActionMode(false);
-+                    });
-+                    actionModeLayout.addView(saveItem, new LinearLayout.LayoutParams(dp(54), ViewGroup.LayoutParams.MATCH_PARENT));
-+                    actionModeViews.add(saveItem);
++                    createActionModeItem(context, inu_saveFiles, R.drawable.msg_download, getString(R.string.SaveToDownloads));
 +                }
              }
  
-             pinItem = new ActionBarMenuItem(context, null, getThemedColor(Theme.key_actionBarActionModeDefaultSelector), getThemedColor(Theme.key_actionBarActionModeDefaultIcon), false);
+             pinItem = createActionModeItem(context, pin, R.drawable.msg_pin, getString(R.string.PinMessage));
+@@ -5017,6 +5021,11 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+     }
+ 
+     public void onActionBarItemClick(View v, int id) {
++        if (id == inu_saveFiles) {
++            desu.inugram.helpers.chat.SaveSelectedFilesHelper.save(profileActivity, selectedFiles);
++            closeActionMode(false);
++            return;
++        }
+         if (id == delete) {
+             if (isAnyStoryPageType(getSelectedTab()) || getSelectedTab() == TAB_BOT_PREVIEWS) {
+                 if (selectedFiles[0] != null) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3961,7 +3961,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3901,7 +3901,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
              @Override
              public void onItemClick(int id) {

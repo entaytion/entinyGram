@@ -25,6 +25,7 @@ import desu.inugram.helpers.chat.WebPreviewHelper
 import desu.inugram.helpers.dialogs.DialogPreviewHelper
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.dialogs.DrawerHelper
+import desu.inugram.helpers.dialogs.FolderHelper
 import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.dialogs.UnreadFirstHelper
 import desu.inugram.helpers.dialogs.RecentChatsHelper
@@ -41,6 +42,7 @@ import org.telegram.messenger.MediaDataController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
+import org.telegram.utils.twidget.WidgetMedia
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.AlertDialog
@@ -169,6 +171,19 @@ object Schemas {
             toggle(InuConfig.SHOW_ALL_RECENT_STICKERS, R.string.InuShowAllRecentStickers)
             toggle(InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER, R.string.InuSuggestCustomEmojiAfter, R.string.InuSuggestCustomEmojiAfterInfo)
             toggle(InuConfig.SORT_ALBUMS_BY_SIZE, R.string.InuSortAlbumsBySize, R.string.InuSortAlbumsBySizeInfo)
+        }
+        section(R.string.CompactMode) {
+            group("compact-mode-chat-types", R.string.CompactMode) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.CompactMode),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuCompactModeChannels, InuConfig.COMPACT_MODE_CHANNELS),
+                        ExpandableBoolGroup.Option(R.string.InuCompactModeGroups, InuConfig.COMPACT_MODE_GROUPS),
+                        ExpandableBoolGroup.Option(R.string.InuCompactModeDms, InuConfig.COMPACT_MODE_DMS),
+                    ),
+                    sectionId = id,
+                ).apply { expanded = true }
+            }
         }
         section(R.string.InuChatDecor) {
             toggle(InuConfig.CHAT_SNOWFLAKES, R.string.InuChatSnowflakes)
@@ -443,6 +458,10 @@ object Schemas {
             toggle(InuConfig.HIDE_MY_PHONE_NUMBER, R.string.InuHideMyPhoneNumber)
             toggle(InuConfig.DISABLE_DRAFT_UPLOAD, R.string.InuDisableDraftUpload, R.string.InuDisableDraftUploadInfo)
             toggle(InuConfig.DISABLE_SENSITIVE, R.string.InuDisableSensitive, R.string.InuDisableSensitiveInfo)
+            toggle(
+                InuConfig.DONT_AUTOPLAY_WIDGETS, R.string.InuDontAutoplayWidgets, R.string.InuDontAutoplayWidgetsInfo,
+                onChange = { _, new -> if (new) WidgetMedia.inu_onAutoplayDisabled() },
+            )
         }
         section(R.string.InuStripTrackingParams) {
             toggle(InuConfig.STRIP_TRACKING_PARAMS_ON_OPEN, R.string.InuStripTrackingParamsOnOpen, onChange = { page, _ -> page.refresh() })
@@ -600,9 +619,13 @@ object Schemas {
                     page.notifyAllAccounts(NotificationCenter.dialogFiltersUpdated)
                 },
             )
+            toggle(
+                InuConfig.FOLDER_TABS_AT_BOTTOM, R.string.InuFolderTabsAtBottom,
+                visible = { FolderHelper.canShowTabsAtBottom() },
+                onChange = { page, _ -> page.rebuildAll() },
+            )
             toggle(InuConfig.REMEMBER_SELECTED_FOLDER, R.string.InuRememberSelectedFolder, R.string.InuRememberSelectedFolderInfo)
             toggle(InuConfig.FOLDERS_INFINITE_SWIPE, R.string.InuFoldersInfiniteSwipe, R.string.InuFoldersInfiniteSwipeInfo)
-            toggle(InuConfig.FOLDERS_AT_BOTTOM, R.string.InuFoldersAtBottom, onChange = { page, _ -> page.showRestart() })
             toggle(InuConfig.HIDE_ARCHIVE_FROM_CHAT_LIST, R.string.InuHideArchive, onChange = { page, _ -> page.rebuildAll() })
             toggle(InuConfig.UNREAD_CHATS_FIRST, R.string.InuUnreadChatsFirst, onChange = { _, _ -> UnreadFirstHelper.refresh() })
             toggle(InuConfig.UNREAD_CHATS_FIRST_PINNED, R.string.InuUnreadChatsFirstPinned, onChange = { _, _ -> UnreadFirstHelper.refresh() })
@@ -955,7 +978,7 @@ object Schemas {
                 onChange = { _, _ -> NotificationsHelper.resetDefaultNotificationChannels() },
             )
         }
-        section(R.string.InuFasterDownloadsSection, R.string.InuFasterDownloadsUltraWarning) {
+        section(R.string.InuFasterDownloadsSection) {
             custom(
                 "faster-downloads", R.string.InuFasterDownloads,
                 build = { page, id ->
@@ -963,7 +986,7 @@ object Schemas {
                         SliderCell(
                             page.context,
                             min = 0f,
-                            max = 2f,
+                            max = 1f,
                             defaultValue = 1f,
                             initialValue = fasterDownloadsLevel().toFloat(),
                             step = 1f,
@@ -972,7 +995,6 @@ object Schemas {
                             onChanged = {
                                 val level = it.toInt()
                                 InuConfig.FASTER_DOWNLOADS.value = level >= 1
-                                InuConfig.FASTER_DOWNLOADS_ULTRA.value = level >= 2
                             },
                         )
                     }
@@ -1379,15 +1401,13 @@ object Schemas {
 
     private fun fasterDownloadsLevel(): Int = when {
         !InuConfig.FASTER_DOWNLOADS.value -> 0
-        InuConfig.FASTER_DOWNLOADS_ULTRA.value -> 2
         else -> 1
     }
 
     private fun fasterDownloadsLabel(level: Int): String = LocaleController.getString(
         when (level) {
             0 -> R.string.PasswordOff
-            1 -> R.string.InuFasterDownloadsFast
-            else -> R.string.InuFasterDownloadsUltra
+            else -> R.string.InuFasterDownloadsFast
         }
     )
 

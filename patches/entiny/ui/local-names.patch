@@ -37,7 +37,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6864,6 +6864,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6851,6 +6851,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
          desu.inugram.helpers.badges.BadgeRegistry.applyTo(user);
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
          fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
          TLRPC.User oldUser = users.get(user.id);
          if (oldUser == user && !force) {
-@@ -7000,6 +7001,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6987,6 +6988,7 @@ public class MessagesController extends BaseController implements NotificationCe
              return;
          }
          desu.inugram.helpers.badges.BadgeRegistry.applyTo(chat);
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
          TLRPC.Chat oldChat = chats.get(chat.id);
          if (oldChat == chat) {
              return;
-@@ -7731,6 +7733,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -7718,6 +7720,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      if (old != null) {
                          res.full_chat.inviterId = old.inviterId;
                      }
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                      fullChats.put(chatId, res.full_chat);
                      getTranslateController().updateDialogFull(-chatId);
  
-@@ -7845,6 +7848,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -7832,6 +7835,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
                          }
                      }
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
                      fullUsers.put(user.id, userFull);
                      final boolean contactBlockedChanged = syncUserContactBlocked(user.id, userFull);
                      getTranslateController().updateDialogFull(user.id);
-@@ -10472,6 +10476,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10511,6 +10515,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void putChatFull(TLRPC.ChatFull chatFull) {
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
          fullChats.put(chatFull.id, chatFull);
          getTranslateController().updateDialogFull(-chatFull.id);
      }
-@@ -10485,6 +10490,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10524,6 +10529,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
              }
              if (info != null) {
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                  if (fullChats.get(chatId) == null) {
                      fullChats.put(chatId, info);
                      getTranslateController().updateDialogFull(-chatId);
-@@ -10532,6 +10538,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10571,6 +10577,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
              }
              if (info != null) {
@@ -97,7 +97,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalle
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryView.java
-@@ -586,7 +586,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
+@@ -587,7 +587,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
          if (imageLocation == null || thumbLocation == null || settingMainPhoto != 0) {
              return false;
          }
@@ -106,7 +106,7 @@ index 0000000..0000000 100644
              if (!imagesLocations.isEmpty()) {
                  prevImageLocation = imageLocation;
                  if (reload && dialogPhotos != null) {
-@@ -744,7 +744,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
+@@ -745,7 +745,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
              ArrayList<ImageLocation> arrayList = b == 0 ? thumbsLocations : imagesLocations;
              for (int a = 0, N = arrayList.size(); a < N; a++) {
                  ImageLocation loc = arrayList.get(a);
@@ -115,7 +115,7 @@ index 0000000..0000000 100644
                      continue;
                  }
                  if (loc.dc_id == thumbLocation.dc_id && loc.location.local_id == thumbLocation.location.local_id && loc.location.volume_id == thumbLocation.location.volume_id ||
-@@ -970,7 +970,20 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
+@@ -971,7 +971,20 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
                          imagesUploadProgress.add(null);
                      }
                  }
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
                      TLRPC.Photo photo = arrayList.get(a);
                      if (photo == null || photo instanceof TLRPC.TL_photoEmpty || photo.sizes == null) {
                          photos.add(null);
-@@ -996,7 +1009,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
+@@ -997,7 +1010,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
                          boolean cont = false;
                          for (int b = 0, N = photo.sizes.size(); b < N; b++) {
                              TLRPC.PhotoSize size = photo.sizes.get(b);

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -1667,7 +1667,7 @@ public class Theme {
+@@ -1697,7 +1697,7 @@ public class Theme {
              if (isDark != UNKNOWN) {
                  return isDark == DARK;
              }
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                  isDark = DARK;
              } else if ("Blue".equals(name) || "Arctic Blue".equals(name) || "Day".equals(name) || "Monet Light".equals(name)) {
                  isDark = LIGHT;
-@@ -4044,6 +4044,32 @@ public class Theme {
+@@ -4127,6 +4127,32 @@ public class Theme {
          themes.add(themeInfo);
          themesDict.put("Night", themeInfo);
  

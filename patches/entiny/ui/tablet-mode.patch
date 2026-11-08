@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -2969,7 +2969,9 @@ public class AndroidUtilities {
+@@ -3078,7 +3078,9 @@ public class AndroidUtilities {
      }
  
      public static boolean isTabletForce() {
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
      }
  
      public static boolean isTabletInternal() {
-@@ -2979,6 +2981,10 @@ public class AndroidUtilities {
+@@ -3088,6 +3090,10 @@ public class AndroidUtilities {
          return isTablet;
      }
  

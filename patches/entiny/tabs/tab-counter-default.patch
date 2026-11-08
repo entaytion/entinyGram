@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -2810,7 +2810,8 @@ public class MessagesStorage extends BaseController {
+@@ -2928,7 +2928,8 @@ public class MessagesStorage extends BaseController {
                  /*if (BuildVars.DEBUG_VERSION) {
                      FileLog.d("unread chat " + did + " counters = " + unread + " and " + mentions);
                  }*/
@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3761,7 +3761,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3684,7 +3684,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      if (desu.inugram.InuConfig.FOLDERS_UNREAD_COUNTER_MODE.getValue() == desu.inugram.InuConfig.FoldersUnreadCounterModeItem.HIDE) {
                          return 0;
                      }

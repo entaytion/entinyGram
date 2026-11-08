@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -134,7 +134,7 @@
+@@ -132,7 +132,7 @@
              android:enabled="false"
              android:name="org.telegram.messenger.OldIcon"
              android:targetActivity="org.telegram.ui.LaunchActivity"
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
              android:icon="@mipmap/ic_launcher_old"
              android:roundIcon="@mipmap/ic_launcher_old"
              android:exported="true">
-@@ -180,6 +180,337 @@
+@@ -178,6 +178,337 @@
              <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
          </activity-alias>
  
@@ -364,7 +364,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorC
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java
-@@ -49,7 +49,7 @@ import java.util.Arrays;
+@@ -51,7 +51,7 @@ import java.util.Arrays;
  import java.util.List;
  
  public class AppIconsSelectorCell extends RecyclerListView implements NotificationCenter.NotificationCenterDelegate {

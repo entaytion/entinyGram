@@ -49,6 +49,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 ExpandableBoolGroup.Option(R.string.InuNonIslandSharedMediaTabs, InuConfig.NON_ISLAND_SHARED_MEDIA_TABS, TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS),
                 ExpandableBoolGroup.Option(R.string.InuNonIslandGlobalSearch, InuConfig.NON_ISLAND_GLOBAL_SEARCH, TOGGLE_NON_ISLAND_GLOBAL_SEARCH),
                 ExpandableBoolGroup.Option(R.string.InuNonIslandChatElements, InuConfig.NON_ISLAND_CHAT_ELEMENTS, TOGGLE_NON_ISLAND_CHAT_ELEMENTS),
+                ExpandableBoolGroup.Option(R.string.InuNonIslandHeaders, InuConfig.NON_ISLAND_HEADERS, TOGGLE_NON_ISLAND_HEADERS),
                 ExpandableBoolGroup.Option(R.string.InuHideFadeView, InuConfig.HIDE_FADE_VIEW, TOGGLE_HIDE_FADE_VIEW),
                 ExpandableBoolGroup.Option(R.string.InuDisableProfileAvatarBlur, InuConfig.DISABLE_PROFILE_AVATAR_BLUR, TOGGLE_DISABLE_PROFILE_AVATAR_BLUR),
             ),
@@ -59,7 +60,8 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     override val expandableGroups get() = listOf(nonIslandGroup)
 
     private fun applyNonIslandChanges(ids: Collection<Int>) {
-        if (TOGGLE_NON_ISLAND_FOLDERS_BAR in ids || TOGGLE_NON_ISLAND_GLOBAL_SEARCH in ids || TOGGLE_HIDE_FADE_VIEW in ids) softRebuild()
+        if (TOGGLE_NON_ISLAND_HEADERS in ids) rebuildAll()
+        else if (TOGGLE_NON_ISLAND_FOLDERS_BAR in ids || TOGGLE_NON_ISLAND_GLOBAL_SEARCH in ids || TOGGLE_HIDE_FADE_VIEW in ids) softRebuild()
         if (TOGGLE_NON_ISLAND_CHAT_ELEMENTS in ids) InuHooks.syncChatInputRowHeight()
         listView?.adapter?.update(true)
     }
@@ -204,7 +206,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             TOGGLE_HIDE_DIVIDERS -> {
                 val new = InuConfig.HIDE_DIVIDERS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-                inu_rebuildSelf()
+                rebuildAll()
                 softRebuild()
             }
 
@@ -270,6 +272,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_GLOBAL_SEARCH = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_CHAT_ELEMENTS = InuUtils.generateId()
+        private val TOGGLE_NON_ISLAND_HEADERS = InuUtils.generateId()
         private val BUTTON_FONTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_SCRIM_BLUR = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_AVATAR_BLUR = InuUtils.generateId()

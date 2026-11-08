@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapte
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
-@@ -447,7 +447,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
+@@ -474,7 +474,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
                  break;
              }
              case USER_CELL: {
@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
-@@ -77,6 +77,8 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -80,6 +80,8 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
      private final AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable emojiStatus;
      private ImageView closeView;
      protected Theme.ResourcesProvider resourcesProvider;
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
  
      protected AvatarDrawable avatarDrawable;
      private boolean storiable;
-@@ -134,8 +136,13 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -137,8 +139,13 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
      private final int padding;
  
      public UserCell(Context context, int padding, int checkbox, boolean admin, boolean needAddButton, Theme.ResourcesProvider resourcesProvider) {
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
  
          int additionalPadding;
          if (needAddButton) {
-@@ -231,6 +238,18 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -234,6 +241,18 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
              addView(adminTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP, LocaleController.isRTL ? 23 : 0, 10, LocaleController.isRTL ? 0 : 23, 0));
          }
  
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
          setFocusable(true);
      }
  
-@@ -238,6 +257,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -241,6 +260,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
          setAvatarPadding(padding, 0);
      }
      public void setAvatarPadding(int padding, int paddingText) {
@@ -75,7 +75,7 @@ index 0000000..0000000 100644
          LayoutParams layoutParams = (LayoutParams) avatarImageView.getLayoutParams();
          layoutParams.leftMargin = dp(LocaleController.isRTL ? 0 : 7 + padding);
          layoutParams.rightMargin = dp(LocaleController.isRTL ? 7 + padding : 0);
-@@ -256,6 +276,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -259,6 +279,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
              layoutParams.leftMargin = dp(LocaleController.isRTL ? 0 : (32 + padding + paddingText));
              layoutParams.rightMargin = dp(LocaleController.isRTL ? (32 + padding + paddingText) : 0);
          }
@@ -83,7 +83,7 @@ index 0000000..0000000 100644
      }
  
      public void setAddButtonVisible(boolean value) {
-@@ -310,6 +331,62 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -314,6 +335,62 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
          } else {
              setRightPadding(0, true, false);
          }
@@ -146,10 +146,10 @@ index 0000000..0000000 100644
      }
  
      public void setRightPadding(int pad, boolean top, boolean bottom) {
-@@ -741,6 +818,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -756,6 +833,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                  (currentChat != null && currentChat.forum ? dp(14) : dp(24)));
  
-         nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
+         ThemeBind.textColor(nameTextView, Theme.key_windowBackgroundWhiteBlackText, resourcesProvider);
 +        if (inu_mutualView != null) {
 +            boolean enabled = inu_isContactsList ? desu.inugram.InuConfig.SHOW_MUTUAL_CONTACT_ICON.getValue() : desu.inugram.InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.getValue();
 +            boolean visible = currentUser != null && !UserObject.isUserSelf(currentUser) && currentUser.mutual_contact && enabled;

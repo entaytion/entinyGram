@@ -30,7 +30,7 @@ class CurrencyPickerActivity : SettingsPageActivity() {
 
     override fun createView(context: Context): View {
         return super.createView(context).also {
-            val searchItem = actionBar.createMenu().addItem(0, R.drawable.outline_header_search)
+            val searchItem = simpleActionBar.createMenu().addItem(0, R.drawable.outline_header_search)
                 .setIsSearchField(true)
             searchItem.setSearchFieldHint(LocaleController.getString(R.string.Search))
             searchItem.setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {

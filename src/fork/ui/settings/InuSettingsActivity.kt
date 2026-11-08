@@ -33,7 +33,7 @@ class InuSettingsActivity : SettingsPageActivity() {
                 }
             }
             searchAdapter = sAdapter
-            val menu = actionBar.createMenu()
+            val menu = simpleActionBar.createMenu()
             val searchItem = menu.addItem(0, R.drawable.outline_header_search)
                 .setIsSearchField(true)
             searchItem.setSearchFieldHint(LocaleController.getString(R.string.Search))

@@ -5,7 +5,7 @@ Subject: build configuration: gradle 8 / AGP 8 like inugram, plugin build fixes
 
 ---
  .gitignore                                    |   3 +
- TMessagesProj/build.gradle                    |  63 +++++++---
+ TMessagesProj/build.gradle                    |  62 +++++++---
  TMessagesProj/jni/CMakeLists.txt              |   3 +
  TMessagesProj/jni/exports.map                 |   1 +
  TMessagesProj/proguard-rules.pro              |  17 ++-
@@ -16,7 +16,7 @@ Subject: build configuration: gradle 8 / AGP 8 like inugram, plugin build fixes
  build.gradle                                  |  49 +++++++-
  gradle.properties                             |   2 +-
  settings.gradle                               |   6 +-
- 12 files changed, 194 insertions(+), 118 deletions(-)
+ 12 files changed, 194 insertions(+), 117 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
 index 0000000..0000000 100644
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
      implementation 'androidx.palette:palette:1.0.0'
      implementation 'androidx.exifinterface:exifinterface:1.3.6'
      implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
-@@ -58,15 +59,12 @@ dependencies {
+@@ -58,12 +59,11 @@ dependencies {
      implementation 'com.google.zxing:core:3.5.4'
      implementation 'com.neovisionaries:nv-websocket-client:2.14'
  
@@ -58,13 +58,10 @@ index 0000000..0000000 100644
      compileOnly 'org.checkerframework:checker-qual:2.5.2'
      compileOnly 'org.checkerframework:checker-compat-qual:2.5.0'
 +    compileOnly 'com.google.j2objc:j2objc-annotations:2.8'
-     implementation 'com.google.firebase:firebase-messaging:22.0.0'
--    implementation 'com.google.firebase:firebase-datatransport:18.1.0'
--    implementation 'com.google.firebase:firebase-appindexing:20.0.0'
+ 
      implementation 'com.google.android.gms:play-services-maps:18.1.0'
      implementation 'com.google.android.gms:play-services-auth:20.4.0'
-     implementation 'com.google.android.gms:play-services-vision:20.1.3'
-@@ -74,11 +72,23 @@ dependencies {
+@@ -72,11 +72,23 @@ dependencies {
      implementation 'com.google.android.gms:play-services-location:21.0.1'
      implementation 'com.google.android.gms:play-services-wallet:19.1.0'
      implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
@@ -90,7 +87,15 @@ index 0000000..0000000 100644
  
      implementation 'com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1'
      implementation 'com.google.android.gms:play-services-mlkit-image-labeling:16.0.8'
-@@ -103,9 +113,8 @@ dependencies {
+@@ -88,7 +100,6 @@ dependencies {
+     // 34.19.0 is the last BoM for minSdk 23: BoM 35.x requires minSdk 24 (33.16.0 was the last for Android 5).
+     api platform('com.google.firebase:firebase-bom:34.19.0')
+     implementation 'com.google.firebase:firebase-messaging'
+-    implementation 'com.google.firebase:firebase-appindexing:20.0.0'
+ 
+     implementation "io.noties.markwon:core:4.6.2"
+     implementation "io.noties.markwon:ext-strikethrough:4.6.2"
+@@ -107,9 +118,8 @@ dependencies {
      api project(':jlatexmath')
  
      // inu
@@ -100,9 +105,9 @@ index 0000000..0000000 100644
 +    // pure-java osm renderer, no native libs (replaces maplibre, which cost ~12MB of .so per ABI)
 +    implementation 'org.osmdroid:osmdroid-android:6.1.20'
      implementation 'com.caverock:androidsvg-aar:1.4'
+     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
      androidTestImplementation 'androidx.test:runner:1.6.2'
-     androidTestImplementation 'junit:junit:4.13.2'
-@@ -178,7 +187,7 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
+@@ -183,7 +193,7 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
  }
  
  android {
@@ -111,7 +116,7 @@ index 0000000..0000000 100644
      buildToolsVersion '36.0.0'
      ndkVersion "27.2.12479018"
  
-@@ -193,9 +202,7 @@ android {
+@@ -198,9 +208,7 @@ android {
      }
  
      // inu
@@ -122,7 +127,7 @@ index 0000000..0000000 100644
      // end inu
  
      externalNativeBuild {
-@@ -205,6 +212,10 @@ android {
+@@ -210,6 +218,10 @@ android {
          }
      }
  
@@ -133,7 +138,7 @@ index 0000000..0000000 100644
      lintOptions {
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
-@@ -216,9 +227,6 @@ android {
+@@ -221,9 +233,6 @@ android {
          targetCompatibility JavaVersion.VERSION_1_8
      }
  
@@ -143,7 +148,7 @@ index 0000000..0000000 100644
  
      defaultConfig {
          buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
-@@ -228,7 +236,12 @@ android {
+@@ -233,7 +242,12 @@ android {
          targetSdkVersion 36
  
          ndk {
@@ -157,7 +162,7 @@ index 0000000..0000000 100644
          }
  
          externalNativeBuild {
-@@ -236,6 +249,9 @@ android {
+@@ -241,6 +255,9 @@ android {
                  version '3.22.1'
                  arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-26' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
                  targets 'tmessages.49'
@@ -167,7 +172,7 @@ index 0000000..0000000 100644
                  if (rootProject.ext.ccachePath) {
                      arguments += ["-DCMAKE_C_COMPILER_LAUNCHER=${rootProject.ext.ccachePath}", "-DCMAKE_CXX_COMPILER_LAUNCHER=${rootProject.ext.ccachePath}"]
                  }
-@@ -248,6 +264,7 @@ android {
+@@ -253,6 +270,7 @@ android {
              jniDebuggable true
              shrinkResources false
              multiDexEnabled true
@@ -175,7 +180,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
-@@ -260,9 +277,15 @@ android {
+@@ -265,9 +283,15 @@ android {
  
          release {
              jniDebuggable false
@@ -192,7 +197,7 @@ index 0000000..0000000 100644
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
              buildConfigField "String", "INU_BUILD_TYPE", "\"" + (System.getenv('INU_BUILD_TYPE') ?: 'debug') + "\""
-@@ -273,6 +296,10 @@ android {
+@@ -278,6 +302,10 @@ android {
          }
      }
  
@@ -207,7 +212,7 @@ diff --git a/TMessagesProj/jni/CMakeLists.txt b/TMessagesProj/jni/CMakeLists.txt
 index 0000000..0000000 100644
 --- a/TMessagesProj/jni/CMakeLists.txt
 +++ b/TMessagesProj/jni/CMakeLists.txt
-@@ -174,6 +174,9 @@ set_target_properties(sqlite PROPERTIES
+@@ -176,6 +176,9 @@ set_target_properties(sqlite PROPERTIES
          ANDROID_ARM_MODE arm)
  target_compile_definitions(sqlite PUBLIC
          NULL=0 SOCKLEN_T=socklen_t LOCALE_NOT_USED ANDROID_NDK DISABLE_IMPORTGL AVOID_TABLES ANDROID_TILE_BASED_DECODE HAVE_STRCHRNUL=0 ANDROID_ARMV6_IDCT)
@@ -251,7 +256,7 @@ index 0000000..0000000 100644
  -keep class org.webrtc.* { *; }
  -keep class org.webrtc.audio.* { *; }
  -keep class org.webrtc.voiceengine.* { *; }
-@@ -15,7 +19,6 @@
+@@ -32,7 +36,6 @@
  -keep class org.telegram.messenger.camera.* { *; }
  -keep class org.telegram.messenger.secretmedia.* { *; }
  -keep class org.telegram.messenger.support.* { *; }
@@ -259,7 +264,7 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -63,9 +66,19 @@
+@@ -84,9 +87,19 @@
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**
@@ -300,7 +305,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -90,9 +90,6 @@ import androidx.core.view.ViewCompat;
+@@ -94,9 +94,6 @@ import androidx.core.view.ViewCompat;
  
  import com.google.android.gms.common.api.Status;
  import com.google.common.primitives.Longs;
@@ -310,7 +315,7 @@ index 0000000..0000000 100644
  
  import org.telegram.PhoneFormat.PhoneFormat;
  import org.telegram.messenger.AccountInstance;
-@@ -1951,15 +1948,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1979,15 +1976,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
                      final LinkManager linkManager = new LinkManager(this, intentAccount[0], progress, openedTelegram);
                      if (linkManager.handle(data)) {
@@ -326,7 +331,7 @@ index 0000000..0000000 100644
                          return true;
                      }
  
-@@ -2878,15 +2866,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -2906,15 +2894,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                  }
                              }
                          }
@@ -362,7 +367,7 @@ index 0000000..0000000 100644
  
  import org.json.JSONArray;
  import org.json.JSONException;
-@@ -2980,7 +2982,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -2982,7 +2984,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
                              put("parameters", new JSONObject() {{
                                  put("gateway", "stripe");
                                  put("stripe:publishableKey", providerApiKey);
@@ -371,7 +376,7 @@ index 0000000..0000000 100644
                              }});
                          }
                      }});
-@@ -3415,7 +3417,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -3417,7 +3419,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
                                  cardName = "Android Pay";
                              }
                          } else {
@@ -380,7 +385,7 @@ index 0000000..0000000 100644
                              paymentJson = String.format(Locale.US, "{\"type\":\"%1$s\", \"id\":\"%2$s\"}", t.getType(), t.getId());
                              Card card = t.getCard();
                              cardName = card.getBrand() + " *" + card.getLast4();
-@@ -3904,16 +3906,16 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -3906,16 +3908,16 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
              month = null;
              year = null;
          }
@@ -404,7 +409,7 @@ index 0000000..0000000 100644
          cardName = card.getBrand() + " *" + card.getLast4();
  
          boolean skipDateCheck = false;
-@@ -3930,7 +3932,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -3932,7 +3934,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
          if (!card.validateNumber()) {
              shakeField(FIELD_CARD);
              return false;
@@ -413,7 +418,7 @@ index 0000000..0000000 100644
              shakeField(FIELD_EXPIRE_DATE);
              return false;
          } else if (need_card_name && inputFields[FIELD_CARDNAME].length() == 0) {
-@@ -3949,8 +3951,8 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
+@@ -3951,8 +3953,8 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
          showEditDoneProgress(true, true);
          try {
              if ("stripe".equals(paymentForm.native_provider)) {
@@ -628,10 +633,10 @@ index 0000000..0000000 100644
      }
      dependencies {
          classpath 'com.android.tools.build:gradle:8.13.2'
--        classpath 'com.google.gms:google-services:4.3.15'
+-        classpath 'com.google.gms:google-services:4.5.0'
 +        classpath 'com.google.gms:google-services:4.4.4'
          classpath 'com.huawei.agconnect:agcp:1.9.1.301'
-         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.0'
+         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.8'
          classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20"
 @@ -17,6 +17,13 @@ repositories {
      google()

@@ -13,7 +13,6 @@ import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
-import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawableRenderNode
 
 class IosStyleSettingsActivity : SettingsPageActivity() {
     private var angleSlider: SliderCell? = null
@@ -249,7 +248,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
 
     private fun refreshLiquidGlassEffects() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            BlurredBackgroundDrawableRenderNode.inu_invalidateLiquidGlassDrawables()
+            GlassGlareHelper.invalidateLiquidGlass()
         }
     }
 

@@ -67,7 +67,7 @@ class PluginInfoActivity(private val plugin: Plugin) : SettingsPageActivity() {
     override fun getTitle(): CharSequence = plugin.manifest.name
 
     private val onPluginChanged: () -> Unit = {
-        actionBar?.setTitle(plugin.manifest.name)
+        simpleActionBar?.setTitle(plugin.manifest.name)
         listView?.adapter?.update(true)
     }
 
@@ -183,7 +183,7 @@ class PluginInfoActivity(private val plugin: Plugin) : SettingsPageActivity() {
             }
             BUTTON_SETTINGS -> PluginUi.openRegisteredSettings(plugin)
             BUTTON_ASSETS -> PluginAssetsSheet(context, plugin.source, assets).show()
-            BUTTON_SOURCE -> showDialog(PluginSourceSheet(context, plugin.manifest.name, plugin.source))
+            BUTTON_SOURCE -> showDialog(PluginTextSheet.createForSource(context, plugin.manifest.name, plugin.source))
             BUTTON_SHARE -> sharePlugin(this, plugin)
             BUTTON_RELOAD -> PluginManager.reload(plugin)
             BUTTON_REMOVE -> confirmRemovePlugins(
@@ -594,6 +594,7 @@ class PluginInfoHeaderView(context: Context) : LinearLayout(context) {
         meta.visibility = if (metaText.isEmpty()) GONE else VISIBLE
         failureView.text = failure?.describe()
         failureView.visibility = if (failure == null) GONE else VISIBLE
+        failure?.let { failureView.setOnClickListener { _ -> PluginTextSheet.createForFailure(context, manifest.name, it).show() } }
     }
 }
 

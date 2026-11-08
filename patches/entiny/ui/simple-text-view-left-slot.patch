@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextVie
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
-@@ -101,6 +101,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -102,6 +102,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
      public int rightDrawableY;
      public int rightDrawable2X;
      public int rightDrawable2Y;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
      private boolean wasLayout;
  
      private boolean leftDrawableOutside, rightDrawableOutside;
-@@ -134,6 +136,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -135,6 +137,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
      private boolean maybeClick;
      private OnClickListener rightDrawable2OnClickListener;
      private boolean maybeClick2;
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
      private float touchDownX, touchDownY;
  
      private AnimatedEmojiSpan.EmojiGroupedSpans emojiStack;
-@@ -1134,6 +1138,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1139,6 +1143,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  y = getPaddingTop() + (textHeight - dh) / 2 + leftDrawableTopPadding;
              }
              leftDrawable.setBounds(x, y, x + dw, y + dh);
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
              leftDrawable.draw(canvas);
          }
          if (rightDrawable != null && rightDrawableOutside) {
-@@ -1370,6 +1376,12 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1375,6 +1381,12 @@ public class SimpleTextView extends View implements Drawable.Callback {
          rightDrawable2OnClickListener = onClickListener;
      }
  
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
      @Override
      public boolean onTouchEvent(MotionEvent event) {
          if (event.getAction() == MotionEvent.ACTION_DOWN) {
-@@ -1392,6 +1404,11 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1397,6 +1409,11 @@ public class SimpleTextView extends View implements Drawable.Callback {
                      in1 = false;
                  }
              }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              if (in1) {
                  maybeClick = true;
                  touchDownX = event.getX();
-@@ -1408,6 +1425,14 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1413,6 +1430,14 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  if (rightDrawable2 instanceof PressableDrawable) {
                      ((PressableDrawable) rightDrawable2).setPressed(true);
                  }
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
              }
          } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
              if (maybeClick && (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop)) {
-@@ -1424,6 +1449,13 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1429,6 +1454,13 @@ public class SimpleTextView extends View implements Drawable.Callback {
                      ((PressableDrawable) rightDrawable2).setPressed(false);
                  }
              }
@@ -92,7 +92,7 @@ index 0000000..0000000 100644
          } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
              if (maybeClick && event.getAction() == MotionEvent.ACTION_UP) {
                  rightDrawableOnClickListener.onClick(this);
-@@ -1431,17 +1463,24 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1436,17 +1468,24 @@ public class SimpleTextView extends View implements Drawable.Callback {
              if (maybeClick2 && event.getAction() == MotionEvent.ACTION_UP) {
                  rightDrawable2OnClickListener.onClick(this);
              }

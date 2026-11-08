@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsVi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
-@@ -1261,7 +1261,15 @@ public class FilterTabsView extends FrameLayout {
+@@ -1262,7 +1262,15 @@ public class FilterTabsView extends FrameLayout {
      }
  
      public int getNextPageId(boolean forward) {
@@ -33,7 +33,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14054,6 +14054,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13665,6 +13665,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              return true;
          }
  

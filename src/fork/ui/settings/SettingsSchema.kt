@@ -191,8 +191,6 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
     fun twoLineCheck(id: Int, titleRes: Int, infoRes: Int, checked: Boolean, experimental: Boolean): UItem =
         mkTwoLineCheckItem(id, titleRes, infoRes, checked, experimental)
 
-    fun rebuildAll() = softRebuild()
-
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> peek(key: Int): T? = remembered[key] as T?
 

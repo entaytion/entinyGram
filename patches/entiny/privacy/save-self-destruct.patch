@@ -56,7 +56,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -3749,7 +3749,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -3829,7 +3829,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  file = null;
              }
          }
@@ -76,7 +76,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -6748,7 +6748,7 @@ public class MessageObject {
+@@ -6957,7 +6957,7 @@ public class MessageObject {
                  }
              } else if (hasExtendedMediaPreview()) {
                  type = TYPE_EXTENDED_MEDIA_PREVIEW;
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                  contentType = 1;
                  type = TYPE_DATE;
              } else if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaGiveaway) {
-@@ -10122,6 +10122,7 @@ public class MessageObject {
+@@ -10405,6 +10405,7 @@ public class MessageObject {
      }
  
      public boolean needDrawBluredPreview() {
@@ -93,7 +93,7 @@ index 0000000..0000000 100644
          if (isRepostPreview) {
              return false;
          }
-@@ -11737,6 +11738,7 @@ public class MessageObject {
+@@ -12036,6 +12037,7 @@ public class MessageObject {
      }
  
      public boolean canForwardMessage() {
@@ -105,7 +105,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -8307,6 +8307,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8340,6 +8340,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  if (task != null) {
                      for (int a = 0, N = task.size(); a < N; a++) {
                          ArrayList<Integer> mids = task.valueAt(a);
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
                          deleteMessages(mids, null, null, task.keyAt(a), 0, true, 0, !mids.isEmpty() && mids.get(0) > 0);
                      }
                  }
-@@ -8316,7 +8317,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8349,7 +8350,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      for (int a = 0, N = taskMedia.size(); a < N; a++) {
                          long dialogId = taskMedia.keyAt(a);
                          ArrayList<Integer> mids = taskMedia.valueAt(a);
@@ -122,7 +122,7 @@ index 0000000..0000000 100644
                              final int id = viewerObject.getId();
                              mids.remove((Integer) id);
                              viewerObject.forceExpired = true;
-@@ -21549,6 +21550,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21364,6 +21365,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -134,7 +134,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -4358,6 +4358,7 @@ public class MessagesStorage extends BaseController {
+@@ -4476,6 +4476,7 @@ public class MessagesStorage extends BaseController {
          if (message == null) {
              return false;
          }
@@ -142,7 +142,7 @@ index 0000000..0000000 100644
          int type = 0;
          long id = 0;
          TLRPC.Document document = MessageObject.getDocument(message);
-@@ -4769,6 +4770,7 @@ public class MessagesStorage extends BaseController {
+@@ -4893,6 +4894,7 @@ public class MessagesStorage extends BaseController {
      }
  
      public void emptyMessagesMedia(long dialogId, ArrayList<Integer> mids) {
@@ -154,7 +154,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -1570,6 +1570,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -1599,6 +1599,7 @@ public class ChatActivity extends BaseFragment implements
  
      MessagePreviewView forwardingPreviewView;
  
@@ -162,7 +162,7 @@ index 0000000..0000000 100644
      private PhotoViewer.PhotoViewerProvider photoViewerProvider = new PhotoViewer.EmptyPhotoViewerProvider() {
  
          @Override
-@@ -1582,6 +1583,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -1611,6 +1612,14 @@ public class ChatActivity extends BaseFragment implements
              MessageObject.GroupedMessages groupedMessages = groupedMessagesMap.get(groupId);
              return groupedMessages != null && groupedMessages.messages.size() > 1;
          }
@@ -177,7 +177,7 @@ index 0000000..0000000 100644
      };
      private PhotoViewer.PhotoViewerProvider photoViewerPaidMediaProvider = new PhotoViewer.EmptyPhotoViewerProvider() {
  
-@@ -16060,10 +16069,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -16469,10 +16478,13 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -192,7 +192,7 @@ index 0000000..0000000 100644
          if (readNow) {
              final boolean delete = messageObject.messageOwner.ttl != 0x7FFFFFFF;
              final int ttl = messageObject.messageOwner.ttl == 0x7FFFFFFF ? 0 : messageObject.messageOwner.ttl;
-@@ -16089,10 +16101,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -16498,10 +16510,13 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -207,7 +207,7 @@ index 0000000..0000000 100644
          final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
          messageObject.forceExpired = true;
          if (messageObject.isOutOwner() || !messageObject.isRoundOnce() && !messageObject.isVoiceOnce()) {
-@@ -19588,6 +19603,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -20075,6 +20090,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -220,7 +220,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19595,7 +19616,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20082,7 +20103,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -229,7 +229,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33978,6 +33999,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -34564,6 +34585,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -242,7 +242,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -40168,7 +40195,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40761,7 +40788,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -251,7 +251,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -42342,6 +42369,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -42950,6 +42977,10 @@ public class ChatActivity extends BaseFragment implements
                      final int timestamp = message.getVideoStartsTimestamp();
                      message.forceSeekTo = (float) (timestamp / message.getDuration());
                  }
@@ -262,7 +262,7 @@ index 0000000..0000000 100644
                  openPhotoViewerForMessage(cell, message);
              } else if (message.type == MessageObject.TYPE_VIDEO) {
                  sendSecretMessageRead(message, true);
-@@ -46636,7 +46667,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46882,7 +46913,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

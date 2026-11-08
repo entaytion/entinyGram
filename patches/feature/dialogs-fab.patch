@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -280,6 +280,7 @@ import java.util.List;
+@@ -281,6 +281,7 @@ import java.util.List;
  import java.util.concurrent.ConcurrentHashMap;
  
  import desu.inugram.InuHooks;
@@ -19,16 +19,16 @@ index 0000000..0000000 100644
  import desu.inugram.helpers.dialogs.FolderHelper;
  import desu.inugram.helpers.dialogs.MainTabsHelper;
  import me.vkryl.android.animator.BoolAnimator;
-@@ -4554,7 +4555,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4478,7 +4479,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                  } else {
                                      goingDown = firstVisiblePosition > prevPosition;
                                  }
 -                                if (changed && scrollUpdated && (goingDown || scrollingManually)) {
-+                                if (changed && scrollUpdated && (goingDown || scrollingManually) && DialogsFabHelper.hideOnScroll()) {
++                                if (changed && scrollUpdated && (goingDown || scrollingManually) && DialogsFabHelper.hideOnScroll() && !disableActionBarScrolling) {
                                      hideFloatingButton(goingDown);
                                  }
                                  prevPosition = firstVisiblePosition;
-@@ -4745,14 +4746,21 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4665,14 +4666,21 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          });
          searchTabsAndFiltersLayout.addView(filtersView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP));
  
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          floatingButton3.setOnClickListener(v -> {
              if (parentLayout != null && parentLayout.isInPreviewMode()) {
                  finishPreviewFragment();
-@@ -4772,7 +4780,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4692,7 +4700,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      AccountFrozenAlert.show(currentAccount);
                      return;
                  }
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
              }
          });
  
-@@ -8868,12 +8876,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8809,12 +8817,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
      private void updateFloatingButtonVisibility(boolean animated) {
          final boolean isVisible = !(onlySelect && initialDialogsType != 10 || folderId != 0 || communityId != 0 || inPreviewMode || (searching && !onlySelect) || floatingButtonHidden);
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -8912,8 +8923,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8853,8 +8864,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              floatingButton3.setImageResource(R.drawable.floating_check);
              floatingButton3.setContentDescription(LocaleController.getString(R.string.Done));
          } else {
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -13572,13 +13584,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13199,13 +13211,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }, 0);
      }
  
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
          if (!storiesEnabled) {
              if (storyPremiumHint != null) {
                  if (storyPremiumHint.shown()) {
-@@ -13799,10 +13811,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13426,10 +13438,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              });
          });
          io.addGap();

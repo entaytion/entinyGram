@@ -4,34 +4,16 @@ Date: Thu, 24 Sep 2026 19:31:51 +0300
 Subject: Add angle and intensity controls for the Liquid Glass refraction effect
 
 ---
- .../ui/Components/blur3/LiquidGlassEffect.java   | 16 ++++++++++++----
- .../src/main/res/raw/liquid_glass_shader.agsl    |  6 +++++-
- 2 files changed, 17 insertions(+), 5 deletions(-)
+ .../telegram/ui/Components/blur3/LiquidGlassEffect.java  | 9 +++++++--
+ .../src/main/res/raw/liquid_glass_arrow_shader.agsl      | 6 +++++-
+ TMessagesProj/src/main/res/raw/liquid_glass_shader.agsl  | 6 +++++-
+ 3 files changed, 17 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/LiquidGlassEffect.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/LiquidGlassEffect.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/LiquidGlassEffect.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/LiquidGlassEffect.java
-@@ -13,14 +13,16 @@ import org.telegram.messenger.R;
- @RequiresApi(api = 33)
- public class LiquidGlassEffect {
- 
-+    private static String shaderCode;
-+
-     private final RenderNode node;
-     private final RuntimeShader shader;
-     private RenderEffect effect;
- 
-     public LiquidGlassEffect(RenderNode node) {
-         this.node = node;
--        final String code = AndroidUtilities.readRes(R.raw.liquid_glass_shader);
--        shader = new RuntimeShader(code);
-+        if (shaderCode == null) shaderCode = AndroidUtilities.readRes(R.raw.liquid_glass_shader);
-+        shader = new RuntimeShader(shaderCode);
-         node.setRenderEffect(effect = RenderEffect.createRuntimeShaderEffect(shader, "img"));
-     }
- 
-@@ -33,6 +35,7 @@ public class LiquidGlassEffect {
+@@ -42,6 +42,7 @@ public class LiquidGlassEffect {
      private float radiusLeftBottom;
      private float thickness;
      private float intensity;
@@ -39,17 +21,16 @@ index 0000000..0000000 100644
      private float index;
      private int foregroundColor;
  
-@@ -64,6 +67,9 @@ public class LiquidGlassEffect {
+@@ -102,6 +103,8 @@ public class LiquidGlassEffect {
              radiusRightBottom = height * (1.0f - a);
          }
  
-+        // entiny: user-tunable multiplier/rotation on top of the caller's baseline, identity at defaults (75, 0)
 +        final float configuredIntensity = intensity * desu.inugram.InuConfig.LIQUID_GLASS_INTENSITY.getValue() / 75f;
 +        final float configuredAngle = (float) Math.toRadians(desu.inugram.InuConfig.LIQUID_GLASS_ANGLE.getValue());
          if (
-             Math.abs(this.resolutionX - resolutionX) > 0.1f ||
-             Math.abs(this.resolutionY - resolutionY) > 0.1f ||
-@@ -76,7 +82,8 @@ public class LiquidGlassEffect {
+             this.downsample != downsample ||
+             Math.abs(this.width - width) > 0.1f ||
+@@ -111,7 +114,8 @@ public class LiquidGlassEffect {
              Math.abs(this.radiusRightBottom - radiusRightBottom) > 0.1f ||
              Math.abs(this.radiusLeftBottom - radiusLeftBottom) > 0.1f ||
              Math.abs(this.thickness - thickness) > 0.1f ||
@@ -57,23 +38,47 @@ index 0000000..0000000 100644
 +            Math.abs(this.intensity - configuredIntensity) > 0.001f ||
 +            Math.abs(this.angle - configuredAngle) > 0.001f ||
              Math.abs(this.index - index) > 0.1f ||
-             this.foregroundColor != foregroundColor
-         ) {
-@@ -92,7 +99,8 @@ public class LiquidGlassEffect {
-             shader.setFloatUniform("size", this.sizeX = sizeX, this.sizeY = sizeY);
-             shader.setFloatUniform("radius", this.radiusRightBottom = radiusRightBottom, this.radiusRightTop = radiusRightTop, this.radiusLeftBottom = radiusLeftBottom, this.radiusLeftTop = radiusLeftTop);
-             shader.setFloatUniform("thickness", this.thickness = thickness);
+             this.foregroundColor != foregroundColor ||
+             arrowChanged
+@@ -145,7 +149,8 @@ public class LiquidGlassEffect {
+             shader.setFloatUniform("size", width / 2 * scale, height / 2 * scale);
+             shader.setFloatUniform("radius", radiusRightBottom * scale, radiusRightTop * scale, radiusLeftBottom * scale, radiusLeftTop * scale);
+             shader.setFloatUniform("thickness", thickness * scale);
 -            shader.setFloatUniform("refract_intensity", this.intensity = intensity);
 +            shader.setFloatUniform("refract_intensity", this.intensity = configuredIntensity);
 +            shader.setFloatUniform("refract_angle", this.angle = configuredAngle);
              shader.setFloatUniform("refract_index", this.index = index);
              shader.setFloatUniform("foreground_color_premultiplied", r, g, b, a);
-             node.setRenderEffect(effect = RenderEffect.createRuntimeShaderEffect(shader, "img"));
+             if (shader == arrowShader) {
+diff --git a/TMessagesProj/src/main/res/raw/liquid_glass_arrow_shader.agsl b/TMessagesProj/src/main/res/raw/liquid_glass_arrow_shader.agsl
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/raw/liquid_glass_arrow_shader.agsl
++++ b/TMessagesProj/src/main/res/raw/liquid_glass_arrow_shader.agsl
+@@ -7,6 +7,7 @@ uniform float4 radius;
+ uniform float thickness;
+ uniform float refract_index;
+ uniform float refract_intensity;
++uniform float refract_angle;
+ uniform float4 foreground_color_premultiplied;
+ // the arrow: its height, the radius of its tip, of the fillets at the edge, the half width of the stripe it changes
+ uniform float4 arrow;
+@@ -82,7 +83,10 @@ half4 main(in float2 fragCoord) {
+   half n_cos = max(thickness + sd, 0.0) / thickness;
+   half n_cos2 = n_cos * n_cos;
+   half n_sin = sqrt(1.0 - n_cos2);
+-  half3 normal = normalize(half3((sdX - sdRaw) * n_cos, (sdY - sdRaw) * n_cos, n_sin));
++  half2 normal_xy = half2((sdX - sdRaw) * n_cos, (sdY - sdRaw) * n_cos);
++  half ca = cos(refract_angle), sa = sin(refract_angle);
++  normal_xy = half2(normal_xy.x * ca - normal_xy.y * sa, normal_xy.x * sa + normal_xy.y * ca);
++  half3 normal = normalize(half3(normal_xy, n_sin));
+ 
+   half3 refract_vec = refract(half3(0.0, 0.0, -1.0), normal, 1.0 / refract_index);
+   half h = sd < -thickness ? thickness : sqrt(sd * (-2.0 * thickness - sd));
 diff --git a/TMessagesProj/src/main/res/raw/liquid_glass_shader.agsl b/TMessagesProj/src/main/res/raw/liquid_glass_shader.agsl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/raw/liquid_glass_shader.agsl
 +++ b/TMessagesProj/src/main/res/raw/liquid_glass_shader.agsl
-@@ -7,6 +7,7 @@ uniform float4 radius;
+@@ -6,6 +6,7 @@ uniform float4 radius;
  uniform float thickness;
  uniform float refract_index;
  uniform float refract_intensity;
@@ -82,14 +87,14 @@ index 0000000..0000000 100644
  
  half sdfRect(half2 p, half4 r) {
 @@ -33,7 +34,10 @@ half4 main(in float2 fragCoord) {
-     half n_cos = max(thickness + sd, 0.0) / thickness;
-     half n_cos2 = n_cos * n_cos;
-     half n_sin = sqrt(1.0 - n_cos2);
--    half3 normal = normalize(half3((sdX - sd) * n_cos, (sdY - sd) * n_cos, n_sin));
-+    half2 normal_xy = half2((sdX - sd) * n_cos, (sdY - sd) * n_cos);
-+    half ca = cos(refract_angle), sa = sin(refract_angle);
-+    normal_xy = half2(normal_xy.x * ca - normal_xy.y * sa, normal_xy.x * sa + normal_xy.y * ca);
-+    half3 normal = normalize(half3(normal_xy, n_sin));
+   half n_cos = max(thickness + sd, 0.0) / thickness;
+   half n_cos2 = n_cos * n_cos;
+   half n_sin = sqrt(1.0 - n_cos2);
+-  half3 normal = normalize(half3((sdX - sdRaw) * n_cos, (sdY - sdRaw) * n_cos, n_sin));
++  half2 normal_xy = half2((sdX - sdRaw) * n_cos, (sdY - sdRaw) * n_cos);
++  half ca = cos(refract_angle), sa = sin(refract_angle);
++  normal_xy = half2(normal_xy.x * ca - normal_xy.y * sa, normal_xy.x * sa + normal_xy.y * ca);
++  half3 normal = normalize(half3(normal_xy, n_sin));
  
-     half3 refract_vec = refract(half3(0.0, 0.0, -1.0), normal, 1.0 / refract_index);
-     half h = sd < -thickness ? thickness : sqrt(sd * (-2.0 * thickness - sd));
+   half3 refract_vec = refract(half3(0.0, 0.0, -1.0), normal, 1.0 / refract_index);
+   half h = sd < -thickness ? thickness : sqrt(sd * (-2.0 * thickness - sd));

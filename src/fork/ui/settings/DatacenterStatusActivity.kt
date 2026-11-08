@@ -44,11 +44,11 @@ class DatacenterStatusActivity(private val dcToHighlight: Int = 0) : SettingsPag
             withHighlight(DC_ITEM_BASE + dcToHighlight)
         }
         return super.createView(context).also {
-            val menu = actionBar.createMenu()
+            val menu = simpleActionBar.createMenu()
             val item = menu.addItem(MENU_REFRESH, R.drawable.msg_retry)
             item.contentDescription = LocaleController.getString(R.string.Retry)
             refreshItem = item
-            actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
+            simpleActionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
                 override fun onItemClick(id: Int) {
                     if (id == -1) {
                         finishFragment()

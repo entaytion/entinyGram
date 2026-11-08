@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -882,7 +882,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -883,7 +883,7 @@ public class MessagesController extends BaseController implements NotificationCe
  
      public void lockFiltersInternal() {
          boolean changed = false;
@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -3289,6 +3289,9 @@ public class MessagesStorage extends BaseController {
+@@ -3407,6 +3407,9 @@ public class MessagesStorage extends BaseController {
                  SparseArray<MessagesController.DialogFilter> filtersToDelete = new SparseArray<>();
                  for (int a = 0, N = dialogFilters.size(); a < N; a++) {
                      MessagesController.DialogFilter filter = dialogFilters.get(a);
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                      filtersToDelete.put(filter.id, filter);
                  }
                  ArrayList<Integer> filtersOrder = new ArrayList<>();
-@@ -3633,6 +3636,9 @@ public class MessagesStorage extends BaseController {
+@@ -3751,6 +3754,9 @@ public class MessagesStorage extends BaseController {
          boolean orderChanged = false;
          for (int a = 0, N = dialogFilters.size(); a < N; a++) {
              MessagesController.DialogFilter filter = dialogFilters.get(a);
@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsVi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
-@@ -1743,6 +1743,9 @@ public class FilterTabsView extends FrameLayout {
+@@ -1745,6 +1745,9 @@ public class FilterTabsView extends FrameLayout {
              ArrayList<MessagesController.DialogFilter> filters = MessagesController.getInstance(UserConfig.selectedAccount).getDialogFilters();
              for (int a = 0, N = filters.size(); a < N; a++) {
                  MessagesController.DialogFilter filter = filters.get(a);
@@ -67,7 +67,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ViewPagerFix
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ViewPagerFixed.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ViewPagerFixed.java
-@@ -2253,7 +2253,9 @@ public class ViewPagerFixed extends FrameLayout {
+@@ -2303,7 +2303,9 @@ public class ViewPagerFixed extends FrameLayout {
                  TLRPC.TL_messages_updateDialogFiltersOrder req = new TLRPC.TL_messages_updateDialogFiltersOrder();
                  ArrayList<MessagesController.DialogFilter> filters = MessagesController.getInstance(UserConfig.selectedAccount).dialogFilters;
                  for (int a = 0, N = filters.size(); a < N; a++) {
@@ -82,7 +82,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
-@@ -196,6 +196,16 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -200,6 +200,16 @@ public class FilterCreateActivity extends BaseFragment {
              while (getMessagesController().dialogFiltersById.get(filter.id) != null) {
                  filter.id++;
              }
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
              filter.name = "";
              filter.color = (int) (Math.random() * 8);
              creatingNew = true;
-@@ -605,16 +615,28 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -616,16 +626,28 @@ public class FilterCreateActivity extends BaseFragment {
          itemAnimator.setDurations(350);
          listView.setItemAnimator(itemAnimator);
          listView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -135,7 +135,7 @@ index 0000000..0000000 100644
                  }
              }
          });
-@@ -819,7 +841,19 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -832,7 +854,19 @@ public class FilterCreateActivity extends BaseFragment {
                  final AlertDialog progressDialogFinal = progressDialog;
                  TLRPC.TL_messages_updateDialogFilter req = new TLRPC.TL_messages_updateDialogFilter();
                  req.id = filter.id;
@@ -156,7 +156,7 @@ index 0000000..0000000 100644
                      try {
                          if (progressDialogFinal != null) {
                              progressDialogFinal.dismiss();
-@@ -1133,6 +1167,10 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -1146,6 +1180,10 @@ public class FilterCreateActivity extends BaseFragment {
              TLRPC.TL_messages_updateDialogFiltersOrder req = new TLRPC.TL_messages_updateDialogFiltersOrder();
              ArrayList<MessagesController.DialogFilter> filters = fragment.getMessagesController().getDialogFilters();
              for (int a = 0, N = filters.size(); a < N; a++) {
@@ -167,7 +167,7 @@ index 0000000..0000000 100644
                  req.order.add(filters.get(a).id);
              }
              fragment.getConnectionsManager().sendRequest(req, null);
-@@ -1146,6 +1184,10 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -1159,6 +1197,10 @@ public class FilterCreateActivity extends BaseFragment {
          if (fragment == null || fragment.getParentActivity() == null) {
              return;
          }
@@ -182,17 +182,17 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
-@@ -623,6 +623,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
-             ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
-             for (int a = 0, N = filters.size(); a < N; a++) {
-                 MessagesController.DialogFilter filter = filters.get(a);
-+                if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filter.id)) {
-+                    continue;
-+                }
-                 req.order.add(filter.id);
-             }
-             getConnectionsManager().sendRequest(req, (response, error) -> {
-@@ -734,8 +737,10 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+@@ -722,6 +722,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+         ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
+         for (int a = 0, N = filters.size(); a < N; a++) {
+             MessagesController.DialogFilter filter = filters.get(a);
++            if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filter.id)) {
++                continue;
++            }
+             req.order.add(filter.id);
+         }
+         getConnectionsManager().sendRequest(req, (response, error) -> {
+@@ -848,8 +851,10 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
      public void createFolder(INavigationLayout navigationLayout) {
          final int count = getMessagesController().getDialogFilters().size();
          if (

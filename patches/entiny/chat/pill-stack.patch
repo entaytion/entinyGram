@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSear
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java
-@@ -67,6 +67,7 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
+@@ -68,6 +68,7 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
      public final EditTextBoldCursor editText;
      private BlurredBackgroundDrawable blurredBackgroundDrawable;
      public desu.inugram.ui.BlurBehindHelper inu_blurHelper;
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
  
      public FragmentSearchField(Context context, Theme.ResourcesProvider resourcesProvider) {
          super(context);
-@@ -308,6 +309,8 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
+@@ -309,6 +310,8 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
              }
          }
  
@@ -42,12 +42,12 @@ index 0000000..0000000 100644
 +
          invalidate();
      }
- 
+     @Override
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3364,6 +3364,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3285,6 +3285,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              fragmentSearchField.updateColors();
          }
  
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
          fragmentSearchField.setCloseButtonOnClickListener(() -> {
              if (searchViewPager != null && searchViewPager.actionModeShowing()) {
                  searchViewPager.hideActionMode();
-@@ -3384,6 +3388,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3305,6 +3309,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              @Override
              public void onSearchExpand() {
                  searching = true;
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                  if (switchItem != null) {
                      switchItem.setVisibility(View.GONE);
                  }
-@@ -3447,6 +3452,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3368,6 +3373,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
  
                  searching = false;
@@ -74,7 +74,7 @@ index 0000000..0000000 100644
                  searchWas = false;
                  if (viewPages[0] != null) {
                      viewPages[0].listView.setEmptyView(folderId == 0 ? viewPages[0].progressView : null);
-@@ -5573,6 +5579,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5484,6 +5490,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
              @Override
              public void openAnimationStarted(boolean open) {

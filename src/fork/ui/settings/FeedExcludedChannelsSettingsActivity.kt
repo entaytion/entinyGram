@@ -34,8 +34,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
 
     override fun createView(context: Context): View {
         val view = super.createView(context)
-        actionBar.setAllowOverlayTitle(false)
-        actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
+        simpleActionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
             override fun onItemClick(id: Int) {
                 when (id) {
                     -1 -> finishFragment()
@@ -44,7 +43,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
                 }
             }
         })
-        val menu = actionBar.createMenu()
+        val menu = simpleActionBar.createMenu()
         menu.addItem(MENU_SEARCH, R.drawable.outline_header_search)
             .setIsSearchField(true)
             .setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
@@ -91,7 +90,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
 
     override fun onBackPressed(invoked: Boolean): Boolean {
         if (!searching) return super.onBackPressed(invoked)
-        if (invoked) actionBar.closeSearchField()
+        if (invoked) simpleActionBar.closeSearchField()
         return false
     }
 

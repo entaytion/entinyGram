@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -15445,6 +15445,29 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -15396,6 +15396,29 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              MessagesController.getGlobalMainSettings().edit().putStringSet("settingsSearchRecent2", toSave).commit();
          }
  
@@ -46,7 +46,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -959,6 +959,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1045,6 +1045,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              return true;
          }
  

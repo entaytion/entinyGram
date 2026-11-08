@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1325,6 +1325,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1326,6 +1326,9 @@ public class MessagesController extends BaseController implements NotificationCe
              if (desu.inugram.helpers.dialogs.FolderMembershipHelper.isLocallyIncluded(accountInstance.getCurrentAccount(), id, dialogId)) {
                  return true;
              }
@@ -42,7 +42,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -2941,7 +2941,8 @@ public class MessagesStorage extends BaseController {
+@@ -3059,7 +3059,8 @@ public class MessagesStorage extends BaseController {
                      FileLog.d("bots = " + bots[b][0] + ", " + bots[b][1]);
                  }
              }*/
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
                  final boolean isFilter = a < N;
                  final boolean isMain = a == N;
                  final boolean isArchive = a == N + 1;
-@@ -2949,7 +2950,7 @@ public class MessagesStorage extends BaseController {
+@@ -3067,7 +3068,7 @@ public class MessagesStorage extends BaseController {
                  MessagesController.DialogFilter filter;
                  int flags;
                  if (a < N) {
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                      if (filter.pendingUnreadCount >= 0) {
                          continue;
                      }
-@@ -3682,7 +3683,16 @@ public class MessagesStorage extends BaseController {
+@@ -3800,7 +3801,16 @@ public class MessagesStorage extends BaseController {
          storageQueue.postRunnable(() -> deleteDialogFilterInternal(filter));
      }
  
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              saveDialogFilterInternal(filter, atBegin, peers);
              calcUnreadCounters(false);
-@@ -3722,6 +3732,7 @@ public class MessagesStorage extends BaseController {
+@@ -3840,6 +3850,7 @@ public class MessagesStorage extends BaseController {
      }
  
      public void saveDialogFiltersOrder() {
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
          ArrayList<MessagesController.DialogFilter> filtersFinal = new ArrayList<>(getMessagesController().dialogFilters);
          storageQueue.postRunnable(() -> {
              dialogFilters.clear();
-@@ -6336,7 +6347,8 @@ public class MessagesStorage extends BaseController {
+@@ -6503,7 +6514,8 @@ public class MessagesStorage extends BaseController {
              }
          }*/
  
@@ -96,7 +96,7 @@ index 0000000..0000000 100644
              final boolean isFilter = a < N;
              final boolean isMain = a == N;
              final boolean isArchive = a == N + 1;
-@@ -6345,7 +6357,7 @@ public class MessagesStorage extends BaseController {
+@@ -6512,7 +6524,7 @@ public class MessagesStorage extends BaseController {
              MessagesController.DialogFilter filter;
              int flags;
              if (a < N) {
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
                  if (filter.pendingUnreadCount < 0) {
                      continue;
                  }
-@@ -18038,8 +18050,9 @@ public class MessagesStorage extends BaseController {
+@@ -18230,8 +18242,9 @@ public class MessagesStorage extends BaseController {
  
      public void resetAllUnreadCounters(boolean muted) {
          if (muted && FolderHelper.isMuteFilteringActive()) muted = false;

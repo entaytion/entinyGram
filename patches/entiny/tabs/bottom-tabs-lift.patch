@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -287,7 +287,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -302,7 +302,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              @Override
              public int getBottomOffset(int tag) {
                  if (MainTabsHelper.isHidden()) return navigationBarHeight;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              }
          };
  
-@@ -497,7 +497,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -515,7 +515,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              tabsBarContainer.addView(searchTabContainer, searchParams);
          }
          tabsBarContainer.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
          tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
          tabsViewWrapper.setClipToPadding(false);
          M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
-@@ -859,7 +859,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -876,7 +876,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
      @Override
      protected int getStartPosition() {
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
      }
  
      private DialogsActivity dialogsActivity;
-@@ -1071,7 +1071,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1068,7 +1068,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {
              final int iosSidePadding = MainTabsHelper.getIosSidePaddingExtra();

@@ -75,7 +75,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawab
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
-@@ -588,7 +588,15 @@ public class AvatarDrawable extends Drawable {
+@@ -647,7 +647,15 @@ public class AvatarDrawable extends Drawable {
                  canvas.save();
                  canvas.rotate(-45, size / 2.0f, size / 2.0f);
              }
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
  import android.graphics.PorterDuff;
  import android.graphics.PorterDuffColorFilter;
  import android.graphics.Shader;
-@@ -371,14 +373,36 @@ public class FeaturesPageView extends BaseListPageView {
+@@ -372,14 +374,36 @@ public class FeaturesPageView extends BaseListPageView {
                  AndroidUtilities.rectTmp.inset(-dp(5), -dp(5));
                  gradientTools.setBounds(AndroidUtilities.rectTmp);
                  int storiesCount = 7;
@@ -154,7 +154,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -1088,6 +1088,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -1096,6 +1096,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  AndroidUtilities.rectTmp.set(inset, inset, thisWidth - inset, thisHeight - inset);
                  clipPath.addRoundRect(AndroidUtilities.rectTmp, r, r, Path.Direction.CW);
                  canvas.clipPath(clipPath);
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
              }
  
              canvas.save();
-@@ -5443,6 +5448,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5394,6 +5399,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          };
          avatarImage.createBlurEffect(getActionsExtraHeight());
@@ -174,7 +174,7 @@ index 0000000..0000000 100644
          avatarImage.getImageReceiver().setAllowDecodeSingleFrame(true);
          avatarImage.setRoundRadiusForExpand(getSmallAvatarRoundRadius());
          avatarImage.setPivotX(0);
-@@ -6537,6 +6543,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6648,6 +6654,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private int getSmallAvatarRoundRadius() {
@@ -197,7 +197,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java
-@@ -955,6 +955,7 @@ public class ProfileActivity2 extends BaseFragment implements
+@@ -972,6 +972,7 @@ public class ProfileActivity2 extends BaseFragment implements
          public AvatarImage(Context context, Theme.ResourcesProvider resourcesProvider) {
              super(context);
              this.resourcesProvider = resourcesProvider;
@@ -205,7 +205,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -991,7 +992,8 @@ public class ProfileActivity2 extends BaseFragment implements
+@@ -1008,7 +1009,8 @@ public class ProfileActivity2 extends BaseFragment implements
              final float avatarCy =     lerp3(dpf2(28), dpf2(59), expandedHeight / 2.0f, relativeTop);
              final float avatarW =      lerp3(dpf2(42), dpf2(90), getWidth(), relativeTop);
              final float avatarH =      lerp3(dpf2(42), dpf2(90), expandedHeight, relativeTop);
@@ -215,7 +215,7 @@ index 0000000..0000000 100644
  
              avatarRect.set(
                  avatarCx - avatarW / 2.0f,
-@@ -1000,6 +1002,7 @@ public class ProfileActivity2 extends BaseFragment implements
+@@ -1017,6 +1019,7 @@ public class ProfileActivity2 extends BaseFragment implements
                  avatarCy + avatarH / 2.0f
              );
  
@@ -255,7 +255,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilitie
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
-@@ -662,10 +662,12 @@ public class StoriesUtilities {
+@@ -664,10 +664,12 @@ public class StoriesUtilities {
      private static final RectF forumRect = new RectF();
  
      private static void drawCircleInternal(Canvas canvas, View view, AvatarStoryParams params, Paint paint, boolean isForum) {
@@ -270,7 +270,7 @@ index 0000000..0000000 100644
              return;
          }
          if (params.progressToArc == 0) {
-@@ -681,8 +683,9 @@ public class StoriesUtilities {
+@@ -683,8 +685,9 @@ public class StoriesUtilities {
      private static final Path forumSegmentPath = new Path();
  
      private static void drawSegment(Canvas canvas, RectF rectTmp, Paint paint, float startAngle, float endAngle, AvatarStoryParams params, boolean isForum) {
@@ -286,7 +286,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryR
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
-@@ -286,7 +286,8 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
+@@ -288,7 +288,8 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
              }
              float scale = ((View)avatarImage.getParent()).getScaleX();
              final float size = avatarImage.getImageReceiver().getImageWidth() * scale;

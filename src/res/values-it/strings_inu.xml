@@ -60,11 +60,6 @@
     <string name="InuDrawerShowBadgeInfo">Mostra il tuo badge accanto al nome nella testata del menu laterale</string>
     <string name="InuSettings">Impostazioni di entinyGram</string>
     <string name="InuSettingsInfo">Attraverso la terra e il vento ti seguo</string>
-    <string name="InuWideChannelPosts">Post larghi</string>
-    <string name="InuWideChannelPostsFooter">I post dei canali e gli inoltri usano tutta la larghezza disponibile.</string>
-    <string name="InuWideChannelPostsPreviewText">Notizie, foto e video</string>
-    <string name="InuWideChannelPostsPreviewReply">Post di canale inoltrato</string>
-    <string name="InuWideChannelPostsPreviewReplyLabel">Post dei canali</string>
     <string name="InuAutoUpdateCheck">Controlla aggiornamenti</string>
     <string name="InuAutoUpdateCheckInfo">Controlla periodicamente il canale CI di entinyGram per nuove versioni e propone di scaricarle.</string>
     <string name="InuUpdatesIncludeBeta">Ricevi aggiornamenti beta</string>
@@ -520,10 +515,6 @@ Sistema: %6$s
     <string name="InuDeleteForBothMessages">Messaggi</string>
     <string name="InuDeleteForBothDms">Chat private</string>
     <string name="InuDeleteForBothGroups">Chat di gruppo</string>
-    <string name="InuDeleteFailedProxies">Elimina i proxy non riusciti</string>
-    <string name="InuDeleteFailedProxiesConfirm">Sei sicuro di voler eliminare tutti i proxy non disponibili?</string>
-    <string name="InuPingAllProxies">Fai il ping a tutti i proxy</string>
-    <string name="InuConnectProxyImmediately">Connetti subito</string>
     <string name="InuSimpleAttachPopupAnimation">Animazione semplice del popup degli allegati</string>
     <string name="InuHidePaidReactionUpsell">Nascondi la promo delle reazioni a pagamento</string>
     <string name="InuHideHashtagSuggestions">Nascondi i suggerimenti di hashtag</string>
@@ -577,7 +568,6 @@ Sistema: %6$s
     <string name="InuRememberSelectedFolderInfo">Riapre l\'ultima cartella attiva quando torni all\'elenco chat.</string>
     <string name="InuFoldersInfiniteSwipe">Scorrimento infinito tra le cartelle</string>
     <string name="InuFoldersInfiniteSwipeInfo">Torna all\'inizio quando scorri tra le schede delle cartelle.</string>
-    <string name="InuFoldersAtBottom">Sposta le cartelle in basso</string>
     <string name="InuSystemFolderAdministrator">Amministratore</string>
     <string name="InuSystemFolderBots">Bot</string>
     <string name="InuSystemFolderUnread">Non letti</string>
@@ -1833,7 +1823,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuGhostModeLauncherShortcutInfo">Aggiunge una scorciatoia con tocco prolungato sull\'icona dell\'app per attivare o disattivare la Modalità Fantasma.</string>
     <string name="InuHideRecentChatsShortcuts">Nascondi le chat recenti dall\'icona dell\'app</string>
     <string name="InuHideRecentChatsShortcutsInfo">Rimuove le persone e le chat con cui parli dal menu a tocco prolungato dell\'icona dell\'app.</string>
-    <string name="InuWideChannelPostsInset">Margine laterale</string>
     <string name="InuRestartApp">Riavvia l\'app</string>
     <string name="InuDonateTitle">Vuoi aggiornamenti stabili?</string>
     <string name="InuDonateText">entinyGram è gratuito e open source, senza pubblicità. Tenerlo aggiornato a ogni nuova versione di Telegram richiede il mio tempo. Se la community lo desidera, puoi sostenerlo.</string>
@@ -2044,8 +2033,6 @@ Mentre è attivo:</string>
     <string name="InuPluginsFailedAtRuntime">Errore di runtime</string>
     <string name="InuPluginsFailedAtUnload">Errore di rimozione</string>
     <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
-    <string name="InuCopyAllProxies">Copia tutto</string>
-    <string name="InuShareAllProxies">Condividi tutto</string>
 
     <string name="InuAppIconsSelect">Applica icona</string>
     <string name="InuAppIconsKeep">Mantieni l\'icona attuale</string>

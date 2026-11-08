@@ -4,28 +4,26 @@ Date: Thu, 5 Nov 2026 20:32:32 +0200
 Subject: Fix icon pack crash on media menu overlay alpha
 
 ---
- .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java    | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -14835,7 +14835,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -13073,7 +13073,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          }
-         if (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF) {
+         if (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF && !isCompactMode()) {
              if (drawPhotoImage && !currentMessageObject.isRepostPreview && !currentMessageObject.isSponsored() && photoImage.getVisible() && !hasGamePreview && !currentMessageObject.needDrawBluredPreview() && !currentMessageObject.preview && !isSmallImage && !currentMessageObject.isSponsored() && !desu.inugram.helpers.chat.LinkPreviewSpoilerHelper.shouldHideMediaOverlays(this)) {
 -                int oldAlpha = ((BitmapDrawable) Theme.chat_msgMediaMenuDrawable).getPaint().getAlpha();
-+                int oldAlpha = Theme.chat_msgMediaMenuDrawable.getAlpha();
                  Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha));
                  setDrawableBounds(Theme.chat_msgMediaMenuDrawable, otherX = (int) (photoImage.getImageX() + photoImage.getImageWidth() - dp(14)), otherY = (int) (photoImage.getImageY() + dp(8.1f)));
                  Theme.chat_msgMediaMenuDrawable.draw(canvas);
-@@ -25294,7 +25294,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22494,7 +22493,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (photoImage.getVisible() && !currentMessageObject.isRepostPreview) {
                  if (!currentMessageObject.needDrawBluredPreview() && !currentMessageObject.isSponsored() && !currentMessageObject.isRepostPreview && !currentMessageObject.preview && !isSmallImage) {
-                     if (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO) {
+                     if (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO && !isCompactMode()) {
 -                        int oldAlpha = ((BitmapDrawable) Theme.chat_msgMediaMenuDrawable).getPaint().getAlpha();
-+                        int oldAlpha = Theme.chat_msgMediaMenuDrawable.getAlpha();
                          if (drawMediaCheckBox) {
                              Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha * (1.0f - checkBoxAnimationProgress)));
                          } else {

@@ -86,6 +86,10 @@ object MainTabsHelper {
         get() = InuConfig.BOTTOM_TABS_HIDE.value
 
     @JvmStatic
+    val isHideOnScroll: Boolean
+        get() = InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL.value && !isHidden
+
+    @JvmStatic
     val showTitles: Boolean
         get() = !isCompact && InuConfig.BOTTOM_TABS_SHOW_TITLES.value
 
@@ -199,8 +203,6 @@ object MainTabsHelper {
     val tabsViewWidth: Int
         get() = tabWidth * (fragmentsCount + if (hasSearchTab() && !isSearchTabSeparate()) 1 else 0) + (mainTabsMargin + TAB_PADDING) * 2
 
-    private const val TABS_HIDE_ANIMATION_MS = 380L
-    private var tabsInsetsAnimator: ValueAnimator? = null
 
     private const val MENU_ICON_SIZE_DP = 28
 
@@ -282,38 +284,6 @@ object MainTabsHelper {
         if (target == current) return false
         LaunchActivity.instance?.switchToAccount(target, true) ?: return false
         return true
-    }
-
-    @JvmStatic
-    fun tabsFollowScroll(fragment: DialogsActivity): Boolean =
-        InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL.value && fragment.hasMainTabs && !fragment.searchIsShowed
-
-    @JvmStatic
-    fun onDialogsScrolled(fragment: DialogsActivity, goingDown: Boolean, atTop: Boolean) {
-        if (!fragment.hasMainTabs || fragment.searchIsShowed) return
-        val hide = InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL.value && goingDown && !atTop
-        fragment.inu_setMainTabsVisible(!hide)
-        animateTabsInsets(fragment, hide)
-    }
-
-    @JvmStatic
-    fun onMainTabsVisibilityChecked(fragment: DialogsActivity, visible: Boolean) {
-        if (visible) animateTabsInsets(fragment, false)
-    }
-
-    private fun animateTabsInsets(fragment: DialogsActivity, hidden: Boolean) {
-        val target = if (hidden) 1f else 0f
-        val from = fragment.inu_getTabsHideFactor()
-        tabsInsetsAnimator?.cancel()
-        if (from == target) return
-        tabsInsetsAnimator = ValueAnimator.ofFloat(from, target).apply {
-            duration = TABS_HIDE_ANIMATION_MS
-            interpolator = CubicBezierInterpolator.EASE_OUT_QUINT
-            addUpdateListener {
-                if (fragment.parentLayout != null) fragment.inu_setTabsHideFactor(it.animatedValue as Float)
-            }
-            start()
-        }
     }
 
     @JvmStatic

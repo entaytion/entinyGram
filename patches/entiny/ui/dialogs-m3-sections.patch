@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
-@@ -1184,6 +1184,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
+@@ -1224,6 +1224,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
                  break;
              }
          }
@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2035,7 +2035,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2034,7 +2034,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                              canvas.save();
                          }
                          canvas.translate(view.getX(), view.getY());
@@ -33,11 +33,11 @@ index 0000000..0000000 100644
                          view.draw(canvas);
                          canvas.restore();
                      }
-@@ -4224,6 +4224,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4121,6 +4121,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPage.listView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
              viewPage.listView.setClipToPadding(false);
              viewPage.listView.setPivotY(0);
 +            desu.inugram.helpers.dialogs.DialogsM3SectionsHelper.attach(viewPage.listView);
              if (initialDialogsType == DIALOGS_TYPE_BOT_REQUEST_PEER) {
-                 viewPage.listView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+                 ThemeBind.backgroundColor(viewPage.listView, Theme.key_windowBackgroundGray, getResourceProvider());
              }

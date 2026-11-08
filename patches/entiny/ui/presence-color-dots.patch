@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -814,6 +814,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -860,6 +860,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              }
          }
          boolean isOnline = isOnline();
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
          onlineProgress = isOnline ? 1.0f : 0.0f;
      }
  
-@@ -5160,6 +5163,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -5206,6 +5209,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              }
              if (user != null && !MessagesController.isSupportUser(user) && !user.bot) {
                  boolean isOnline = isOnline();
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
                  wasDrawnOnline = isOnline;
                  if (isOnline || onlineProgress != 0) {
                      int top = (int) (storyParams.originalAvatarRect.bottom - dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 6 : 8));
-@@ -5172,7 +5177,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -5218,7 +5223,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
  
                      Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider));
                      canvas.drawCircle(left, top, dp(7) * onlineProgress, Theme.dialogs_onlineCirclePaint);
@@ -45,7 +45,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
-@@ -243,6 +243,11 @@ public class HintDialogCell extends FrameLayout {
+@@ -245,6 +245,11 @@ public class HintDialogCell extends FrameLayout implements Theme.Colorable {
          boolean result = super.drawChild(canvas, child, drawingTime);
          if (child == imageView) {
              boolean showOnline = !premiumBlocked && currentUser != null && !currentUser.bot && (currentUser.status != null && currentUser.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(currentUser.id));
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
              if (!wasDraw) {
                  showOnlineProgress = showOnline ? 1f : 0f;
              }
-@@ -293,7 +298,7 @@ public class HintDialogCell extends FrameLayout {
+@@ -295,7 +300,7 @@ public class HintDialogCell extends FrameLayout implements Theme.Colorable {
                  canvas.scale(showOnlineProgress, showOnlineProgress, left, top);
                  Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(backgroundColorKey));
                  canvas.drawCircle(left, top, AndroidUtilities.dp(7), Theme.dialogs_onlineCirclePaint);
@@ -70,7 +70,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
-@@ -410,12 +410,14 @@ public class ShareDialogCell extends FrameLayout implements NotificationCenter.N
+@@ -412,12 +412,14 @@ public class ShareDialogCell extends FrameLayout implements NotificationCenter.N
                  }
  
                  boolean isOnline = !premiumBlocked && !user.self && !user.bot && (user.status != null && user.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(user.id));

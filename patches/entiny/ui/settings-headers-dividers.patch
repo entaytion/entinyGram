@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAda
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
-@@ -590,6 +590,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
+@@ -608,6 +608,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
      }
  
      private boolean hasDivider(int position) {
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
          if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && listView != null && listView.hasSections()) return false;
          UItem item = getItem(position);
          UItem nextItem = getItem(position + 1);
-@@ -597,7 +598,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
+@@ -615,7 +616,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
      }
  
      public static boolean isShadow(int viewType) {
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
          if (viewType >= UItem.factoryViewTypeStartsWith) {
              UItem.UItemFactory<?> factory = UItem.findFactory(viewType);
              return factory != null && factory.isShadow();
-@@ -627,7 +628,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
+@@ -645,7 +646,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
              desu.inugram.helpers.theme.M3SectionsHelper.markMerged(
                  holder.itemView,
                  item.pad > 0,
@@ -42,7 +42,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalRec
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalRecyclerView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalRecyclerView.java
-@@ -438,7 +438,7 @@ public class UniversalRecyclerView extends RecyclerListView {
+@@ -432,7 +432,7 @@ public class UniversalRecyclerView extends RecyclerListView {
              view -> {
                  if (view.getParent() != this) return false;
                  final ViewHolder viewHolder = getChildViewHolder(view);

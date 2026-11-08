@@ -152,7 +152,7 @@ object StickerDownloadHelper {
         else -> FileLoader.getDocumentFileName(document).substringAfterLast('.', "").ifEmpty { "dat" }
     }
 
-    internal fun withDownloadedFile(
+    fun withDownloadedFile(
         accountId: Int,
         document: TLRPC.Document,
         parentObject: Any?,

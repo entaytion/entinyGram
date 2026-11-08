@@ -4,48 +4,15 @@ Date: Mon, 2 Nov 2026 15:53:02 +0200
 Subject: open GIFs fullscreen when autoplay is off
 
 ---
- .../telegram/ui/Cells/ChatMessageCell.java    | 43 ++++++++++++++-----
- .../java/org/telegram/ui/PhotoViewer.java     | 14 ++++--
- 2 files changed, 42 insertions(+), 15 deletions(-)
+ .../telegram/ui/Cells/ChatMessageCell.java    | 27 +++++++++++++++++--
+ .../java/org/telegram/ui/PhotoViewer.java     | 14 +++++++---
+ 2 files changed, 35 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -3260,7 +3260,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
-                     } else if (buttonPressed != 0) {
-                         buttonPressed = 0;
-                         playSoundEffect(SoundEffectConstants.CLICK);
--                        if (drawVideoImageButton || buttonState == -1 && documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || currentMessageObject.sponsoredMedia != null) {
-+                        if (inu_canOpenGifViewer() && desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() && !SharedConfig.isAutoplayGifs()) {
-+                            delegate.didPressImage(this, lastTouchX, lastTouchY, false);
-+                        } else if (drawVideoImageButton || buttonState == -1 && documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || currentMessageObject.sponsoredMedia != null) {
-                             didClickedImage();
-                         } else {
-                             didPressButton(true, false);
-@@ -3283,17 +3285,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
-                         resetPressedLink(2);
-                     } else {
-                         if (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF && drawImageButton) {
--                            if (buttonState == -1) {
-+                            if (inu_canOpenGifViewer() && desu.inugram.InuConfig.ALTERNATIVE_GIF_BEHAVIOR.getValue() && !SharedConfig.isAutoplayGifs()) {
-+                                delegate.didPressImage(this, lastTouchX, lastTouchY, false);
-+                            } else if (buttonState == -1) {
-                                 if (SharedConfig.isAutoplayGifs() && !currentMessageObject.isRepostPreview) {
-                                     delegate.didPressImage(this, lastTouchX, lastTouchY, false);
-                                 } else {
--                                    buttonState = 2;
--                                    currentMessageObject.gifState = 1;
--                                    photoImage.setAllowStartAnimation(false);
--                                    photoImage.stopAnimation();
--                                    radialProgress.setIcon(getIconForCurrentState(), false, true);
--                                    invalidate();
--                                    playSoundEffect(SoundEffectConstants.CLICK);
-+                                    inu_stopGifAnimation();
-                                 }
-                             } else if (buttonState == 2 || buttonState == 0) {
-                                 didPressButton(true, false);
-@@ -4372,7 +4370,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3389,7 +3389,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  } else if (buttonPressed == 1) {
                      buttonPressed = 0;
                      playSoundEffect(SoundEffectConstants.CLICK);
@@ -56,7 +23,7 @@ index 0000000..0000000 100644
                          didClickedImage();
                      } else {
                          didPressButton(true, false);
-@@ -4385,7 +4385,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3402,7 +3404,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      invalidate();
                  } else if (imagePressed) {
                      imagePressed = false;
@@ -68,9 +35,9 @@ index 0000000..0000000 100644
                          playSoundEffect(SoundEffectConstants.CLICK);
                          didClickedImage();
                      } else if (buttonState == 0) {
-@@ -29932,4 +29935,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24317,4 +24322,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             blurredPhotoImage.setImageBitmap((Bitmap) null);
          }
-         return text;
      }
 +
 +    private void inu_stopGifAnimation() {
@@ -95,7 +62,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -10989,7 +10989,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10950,7 +10950,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              setVideoPlayerControlVisible(!isCurrentVideo && !livePhoto, true);
          }
          if (!isCurrentVideo) {
@@ -104,7 +71,7 @@ index 0000000..0000000 100644
          }
          if (currentMessageObject != null) {
              videoPlayer.setPlaybackSpeed(currentVideoSpeed);
-@@ -14729,7 +14729,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14700,7 +14700,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              }
          }
          if (currentMessageObject != null && currentMessageObject.isVideo() || desu.inugram.helpers.media.PhotoViewerHelper.gifAsVideo(currentMessageObject) || currentBotInlineResult != null && (currentBotInlineResult.type.equals("video") || MessageObject.isVideoDocument(currentBotInlineResult.document)) || (pageBlocksAdapter != null && (pageBlocksAdapter.isVideo(index) || pageBlocksAdapter.isHardwarePlayer(index))) || (sendPhotoType == SELECT_TYPE_NO_SELECT && ((MediaController.PhotoEntry)imagesArrLocals.get(index)).isVideo)) {
@@ -113,7 +80,7 @@ index 0000000..0000000 100644
              onActionClick(false);
          } else if (!imagesArrLocals.isEmpty()) {
              final Object entry = imagesArrLocals.get(index);
-@@ -18584,8 +18584,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18555,8 +18555,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          animation.seekTo(seekTo, !FileLoader.getInstance(currentAccount).isLoadingVideo(document, true), true);
                      }
                      if (object != null && object.imageReceiver != null) {

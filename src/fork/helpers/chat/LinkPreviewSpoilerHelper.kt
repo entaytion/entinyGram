@@ -84,6 +84,11 @@ object LinkPreviewSpoilerHelper {
     }
 
     @JvmStatic
+    fun hasMediaOrLinkPreviewSpoiler(msg: MessageObject): Boolean {
+        return msg.hasMediaSpoilers() || hasLinkPreviewSpoiler(msg)
+    }
+
+    @JvmStatic
     fun isMediaCovered(msg: MessageObject?): Boolean {
         if (msg == null || msg.isSpoilersRevealed) return false
         return hasLinkPreviewSpoiler(msg)

@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -6763,7 +6763,7 @@ public class MessageObject {
+@@ -6916,7 +6916,7 @@ public class MessageObject {
          if (messageOwner == null || messageOwner.entities == null)
              return false;
          for (int i = 0; i < messageOwner.entities.size(); ++i)
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                  return true;
          return false;
      }
-@@ -8189,8 +8189,9 @@ public class MessageObject {
+@@ -8352,8 +8352,9 @@ public class MessageObject {
          for (int i = 0; i < entities.size(); ++i) {
              if (limitCount <= 0) break;
              TLRPC.MessageEntity messageEntity = entities.get(i);
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
                  for (int j = 0; j < emojiSpans.length; ++j) {
                      Emoji.EmojiSpan span = emojiSpans[j];
                      if (span != null) {
-@@ -8489,6 +8490,7 @@ public class MessageObject {
+@@ -8652,6 +8653,7 @@ public class MessageObject {
                  }
                  spannable.setSpan(new URLSpanNoUnderline("tel:" + tel, run), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
              } else if (run.urlEntity instanceof TLRPC.TL_messageEntityTextUrl) {
@@ -45,7 +45,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -3547,7 +3547,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3563,7 +3563,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          request.flags |= 2048;
                          request.no_webpage = !messageObject.editingMessageSearchWebPage;
                          if (messageObject.editingMessageEntities != null) {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                              request.flags |= 8;
                          } else {
                              CharSequence[] message = new CharSequence[]{messageObject.editingMessage};
-@@ -3633,7 +3633,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3649,7 +3649,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              req.flags |= 131072;
          }
          if (entities != null) {
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              req.flags |= 8;
          }
          if (scheduleDate != 0) {
-@@ -4482,7 +4482,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4503,7 +4503,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          TLRPC.TL_messageMediaWebPage mediaWebPage = sendMessageParams.mediaWebPage;
          boolean searchLinks = sendMessageParams.searchLinks;
          MessageObject retryMessageObject = sendMessageParams.retryMessageObject;
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
          TLRPC.ReplyMarkup replyMarkup = sendMessageParams.replyMarkup;
          HashMap<String, String> params = sendMessageParams.params;
          boolean notify = sendMessageParams.notify;
-@@ -5926,7 +5926,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -5947,7 +5947,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                              req.silent = newMsg.silent;
                              req.message = pollSendParams.caption;
                              if (pollSendParams.entities != null && !pollSendParams.entities.isEmpty()) {

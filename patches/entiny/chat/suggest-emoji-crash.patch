@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestEmoji
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestEmojiView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestEmojiView.java
-@@ -555,6 +555,9 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
+@@ -572,6 +572,9 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                          keywordResults = null;
                          clear = true;
                          forceClose();
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                      }
                  }, SharedConfig.suggestAnimatedEmoji && UserConfig.getInstance(currentAccount).isPremium());
  //            };
-@@ -793,7 +796,9 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
+@@ -810,7 +813,9 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
          if (listView.getPaddingLeft() != listViewPaddingLeft) {
              int dx = listView.getPaddingLeft() - listViewPaddingLeft;
              listView.setPadding(listViewPaddingLeft, 0, 0, 0);

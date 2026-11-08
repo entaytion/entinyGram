@@ -4,23 +4,14 @@ Date: Wed, 4 Nov 2026 01:08:20 +0400
 Subject: fix dialog list jumping when opening and closing forum topics
 
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 71 ++++++++++---------
- 1 file changed, 37 insertions(+), 34 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 59 +++++++++----------
+ 1 file changed, 29 insertions(+), 30 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -1086,7 +1086,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-                 float rightFragmentOffset = 0;
-                 if (rightFragmentTransitionInProgress) {
-                     float scrollOffset = rightFragmentTransitionIsOpen ? 0 : scrollYOffset;
--                    rightFragmentOffset = -AndroidUtilities.lerp(-scrollOffset + (dp(!rightFragmentTransitionIsOpen && canShowFilterTabsView ? 50 : 0)), scrollOffset, rightSlidingDialogContainer.openedProgress);
-+                    rightFragmentOffset = -AndroidUtilities.lerp(-scrollOffset, scrollOffset, rightSlidingDialogContainer.openedProgress);
-                 }
-                 float addH = 0;
-                 if (hasStories) {
-@@ -2103,37 +2103,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2102,35 +2102,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
  
              ignoreLayout = true;
@@ -36,10 +27,8 @@ index 0000000..0000000 100644
 -            final float filterTabsVisibility = getFilterTabsVisibilityFactor(false);
 -            final float topPanelsVisibility = topPanelLayout != null ? topPanelLayout.getMetadata().getTotalVisibility() : 0f;
 -
--            if (!FolderHelper.atBottom()) {
--                t += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
--                additionalPadding += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
--            }
+-            t += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
+-            additionalPadding += (int) ((NonIslandHelper.foldersBar() ? NonIslandHelper.getFoldersBarVisibleHeight() : dp(36 + 14)) * filterTabsVisibility);
 -
 -            if (topPanelLayout != null) {
 -                final int h = (int) topPanelLayout.getAnimatedHeightWithPadding(NonIslandHelper.foldersBar() ? 0f : lerp((float) dp(14), dp(7), filterTabsVisibility));
@@ -51,20 +40,19 @@ index 0000000..0000000 100644
 -            t += inu_strip;
 -            additionalPadding += inu_strip;
 -
--            if (!NonIslandHelper.foldersBar() && !FolderHelper.atBottom()) {
--                t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
--                additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+-            if (!NonIslandHelper.foldersBar()) {
+-            t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+-            additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
 -            }
 +            t = inu_calculatePaddingTop(getFilterTabsVisibilityFactor(false));
-+            additionalPadding = t - inu_basePaddingTop();
  
              final int b = calculateListViewPaddingBottom() + desu.inugram.helpers.dialogs.RecentChatsSidebar.stripBottomPush(DialogsActivity.this);
              if (t != topPadding || b != getPaddingBottom()) {
-@@ -2169,6 +2140,38 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2166,6 +2138,33 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          }
  
-+        private int inu_basePaddingTop() {
++        private int inu_calculatePaddingTop(float filterTabsVisibility) {
 +            int t = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
 +            if (hasStories && !actionModeFullyShowed) {
 +                t += dp(DialogStoriesCell.HEIGHT_IN_DP);
@@ -72,11 +60,6 @@ index 0000000..0000000 100644
 +            if (!actionModeFullyShowed && !NonIslandHelper.globalSearch() && !shouldSuppressSearchFieldSpace()) {
 +                t += dp(SEARCH_FIELD_HEIGHT);
 +            }
-+            return t;
-+        }
-+
-+        private int inu_calculatePaddingTop(float filterTabsVisibility) {
-+            int t = inu_basePaddingTop();
 +
 +            final float topPanelsVisibility = topPanelLayout != null ? topPanelLayout.getMetadata().getTotalVisibility() : 0f;
 +
@@ -99,7 +82,7 @@ index 0000000..0000000 100644
          @Override
          protected void onLayout(boolean changed, int l, int t, int r, int b) {
              super.onLayout(changed, l, t, r, b);
-@@ -2423,7 +2426,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2420,7 +2419,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
              if (anchorView != null) {
                  if (animationSupportListView != null) {
@@ -108,12 +91,3 @@ index 0000000..0000000 100644
                      animationSupportListView.setPadding(getPaddingLeft(), topPadding, getPaddingLeft(), getPaddingBottom());
                      if (anchorView != null) {
                          DialogsAdapter adapter = (DialogsAdapter) animationSupportListView.getAdapter();
-@@ -2439,7 +2442,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-                // if (!backward) {
-                     DialogsAdapter adapter = (DialogsAdapter) getAdapter();
-                     int p = adapter.findDialogPosition(anchorView.getDialogId());
--                    int offset = (int) (anchorView.getTop() - getPaddingTop());
-+                    int offset = (int) (anchorView.getTop() - anchorListView.getPaddingTop());
-                     if (backward && hasStories) {
-                         offset += dp(DialogStoriesCell.HEIGHT_IN_DP);
-                     }

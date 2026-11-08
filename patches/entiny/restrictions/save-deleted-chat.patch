@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -23140,6 +23140,19 @@ public class ChatActivity extends BaseFragment implements
+@@ -23517,6 +23517,19 @@ public class ChatActivity extends BaseFragment implements
              ArrayList<Integer> sentMessages = null;
              if (args.length > 6) sentMessages = (ArrayList<Integer>) args[6];
              boolean movedToScheduled = args.length > 4 && (boolean) args[4] || sentMessages != null && !sentMessages.isEmpty();
@@ -51,7 +51,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreato
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
-@@ -7849,7 +7849,7 @@ public class AlertsCreator {
+@@ -7835,7 +7835,7 @@ public class AlertsCreator {
                              if (mergeDialogId != 0 && selectedMessage.messageOwner.peer_id != null && selectedMessage.messageOwner.peer_id.chat_id == -mergeDialogId) {
                                  thisDialogId = mergeDialogId;
                              }
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
                          } else {
                              for (int a = 1; a >= 0; a--) {
                                  ids = new ArrayList<>();
-@@ -7866,7 +7866,7 @@ public class AlertsCreator {
+@@ -7852,7 +7852,7 @@ public class AlertsCreator {
                                          }
                                      }
                                  }
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
                                  selectedMessages[a].clear();
                              }
                          }
-@@ -8184,7 +8184,7 @@ public class AlertsCreator {
+@@ -8170,7 +8170,7 @@ public class AlertsCreator {
                      thisDialogId = mergeDialogId;
                  }
                  if (!ids.isEmpty()) {
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
                  }
                  for (MessageObject msg: ephemeralMessages) {
                      MessagesController.getInstance(currentAccount).deleteEphemeralMessage(thisDialogId, topicId, msg);
-@@ -8205,7 +8205,7 @@ public class AlertsCreator {
+@@ -8191,7 +8191,7 @@ public class AlertsCreator {
                              }
                          }
                      }
@@ -91,7 +91,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessag
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
-@@ -1118,10 +1118,10 @@ public class DeleteMessagesBottomSheet extends BottomSheetWithRecyclerListView {
+@@ -1126,10 +1126,10 @@ public class DeleteMessagesBottomSheet extends BottomSheetWithRecyclerListView {
              }
          } else {
              if (!supergroupMessageIds.isEmpty()) {

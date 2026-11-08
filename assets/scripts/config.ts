@@ -42,6 +42,14 @@ export const submodulePatches: SubmodulePatch[] = [
     submodule: 'TMessagesProj/jni/wallet-engine',
     patch: join(rootDir, 'patches-native/wallet-engine-private-key.patch'),
   },
+  {
+    submodule: 'TMessagesProj_Modules/media',
+    patch: join(rootDir, 'patches-native/media-auto-quality.patch'),
+  },
+  {
+    submodule: 'TMessagesProj_Modules/media',
+    patch: join(rootDir, 'patches-native/media-format-document-id.patch'),
+  },
 ]
 
 

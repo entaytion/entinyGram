@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -716,6 +716,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -665,6 +665,12 @@ public class ChatActivityEnterView extends FrameLayout implements
      protected View topView;
      private BotKeyboardView botKeyboardView;
      private ImageView notifyButton;
@@ -24,7 +24,7 @@ index 0000000..0000000 100644
      @Nullable
      private ImageView scheduledButton;
      @Nullable
-@@ -2893,7 +2899,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -2845,7 +2851,12 @@ public class ChatActivityEnterView extends FrameLayout implements
              attachLayout.setTranslationX(VoiceRecorderHelper.attachTranslationXOffset());
  
              if (chatMode != ChatActivity.MODE_WELCOME_MESSAGES) {

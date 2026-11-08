@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -838,7 +838,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -902,7 +902,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  }
              }
              if (fullPaintPath == null) {
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
                  imagePath = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(size, true).toString();
              } else {
                  Bitmap paintBitmap;
-@@ -859,7 +859,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -923,7 +923,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      canvas.drawBitmap(paintBitmap, 0, 0, bitmapPaint);
  
                      imagePath = getTempFileAbsolutePath();
@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -9445,7 +9445,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -9492,7 +9492,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              sizes.add(size);
          }
          if (highQuality) {
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          } else {
              size = ImageLoader.scaleAndSaveImage(bitmap, AndroidUtilities.getPhotoSize(highQuality), AndroidUtilities.getPhotoSize(highQuality), true, 80, false, 101, 101);
          }
-@@ -12140,7 +12140,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -12208,7 +12208,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
  
          int selectedCompression = Math.round(DownloadController.getInstance(UserConfig.selectedAccount).getMaxVideoBitrate() / (100f / compressionsCount));
  
@@ -57,7 +57,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -22195,6 +22195,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22173,6 +22173,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      private int selectCompression() {

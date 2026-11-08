@@ -4,28 +4,32 @@ Date: Fri, 9 Oct 2026 02:45:43 +0200
 Subject: customizable edit date mode (send date vs edit date)
 
 ---
- .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 2 +-
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 3 +--
  .../org/telegram/ui/Components/MessagePrivateSeenView.java    | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -18566,7 +18566,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
-         } else if (edited) {
+@@ -15595,11 +15595,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (desu.inugram.InuConfig.COMPACT_EDITED.getValue()) {
-                 timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
--            } else if (AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get()) {
-+            } else if (desu.inugram.helpers.chat.ChatHelper.shouldUseEditedDate(currentAccount)) {
-                 int editDate = currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date;
-                 if (editDate == 0 && currentMessageObject.isEditing()) {
-                     editDate = ConnectionsManager.getInstance(currentAccount).getCurrentTime();
+                 return LocaleController.getInstance().getFormatterDay().format((long) (message.messageOwner.date) * 1000);
+             }
+-            if (AppGlobalConfig.getInstance(current.currentAccount).messagePrimaryEditedDate.get()) {
++            if (desu.inugram.helpers.chat.ChatHelper.shouldUseEditedDate(current.currentAccount)) {
+                 if (editDate == 0 && current.isEditing()) {
+                     editDate = ConnectionsManager.getInstance(current.currentAccount).getCurrentTime();
+                 }
+-                return LocaleController.formatPmEditedDate(editDate);
+             }
+             return getString(R.string.EditedMessage) + " " + LocaleController.getInstance().getFormatterDay().format((long) (message.messageOwner.date) * 1000);
+         } else if (current.isSaved && current.messageOwner.fwd_from != null && (current.messageOwner.fwd_from.date != 0 || current.messageOwner.fwd_from.saved_date != 0)
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePrivateSeenView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePrivateSeenView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePrivateSeenView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePrivateSeenView.java
-@@ -88,7 +88,7 @@ public class MessagePrivateSeenView extends FrameLayout {
+@@ -90,7 +90,7 @@ public class MessagePrivateSeenView extends FrameLayout {
          addView(iconView, LayoutHelper.createFrame(24, 24, Gravity.LEFT | Gravity.CENTER_VERTICAL, 11, 0, 0, 0));
          int icon;
          if (type == TYPE_EDIT) {
@@ -34,7 +38,7 @@ index 0000000..0000000 100644
                  R.drawable.outline_message_time_24:
                  R.drawable.menu_edited_stamp;
          } else if (type == TYPE_FORWARD) {
-@@ -135,7 +135,7 @@ public class MessagePrivateSeenView extends FrameLayout {
+@@ -137,7 +137,7 @@ public class MessagePrivateSeenView extends FrameLayout {
              valueLayout.setAlpha(1f);
              loadingView.setAlpha(0f);
              premiumTextView.setVisibility(View.GONE);

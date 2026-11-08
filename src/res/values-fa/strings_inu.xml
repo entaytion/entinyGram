@@ -24,11 +24,6 @@
     <string name="InuDrawerShowBadgeInfo">نشان شما را کنار نامتان در سربرگ منوی کناری نشان می‌دهد</string>
     <string name="InuSettings">تنظیمات entinyGram</string>
     <string name="InuSettingsInfo">از میان خاک و باد، دنبال تو می‌آیم</string>
-    <string name="InuWideChannelPosts">پست‌های عریض</string>
-    <string name="InuWideChannelPostsFooter">پست‌ها و بازارسال‌های کانال از تمام عرض موجود استفاده می‌کنند.</string>
-    <string name="InuWideChannelPostsPreviewText">اخبار، عکس‌ها و ویدیوها</string>
-    <string name="InuWideChannelPostsPreviewReply">پست کانالِ بازارسال‌شده</string>
-    <string name="InuWideChannelPostsPreviewReplyLabel">پست‌های کانال</string>
     <string name="InuAutoUpdateCheck">بررسی به‌روزرسانی</string>
     <string name="InuAutoUpdateCheckInfo">کانال CI برنامه entinyGram را به‌طور دوره‌ای برای نسخه‌های جدید بررسی می‌کند و دانلود را پیشنهاد می‌دهد.</string>
     <string name="InuUpdatesIncludeBeta">دریافت به‌روزرسانی‌های آزمایشی</string>
@@ -410,10 +405,6 @@
     <string name="InuDeleteForBothMessages">پیام‌ها</string>
     <string name="InuDeleteForBothDms">گفتگوهای خصوصی</string>
     <string name="InuDeleteForBothGroups">گفتگوهای گروهی</string>
-    <string name="InuDeleteFailedProxies">حذف پروکسی‌های ناموفق</string>
-    <string name="InuDeleteFailedProxiesConfirm">مطمئن هستید که می‌خواهید همه پروکسی‌های در دسترس‌نبودنی را حذف کنید؟</string>
-    <string name="InuPingAllProxies">پینگ همه پروکسی‌ها</string>
-    <string name="InuConnectProxyImmediately">اتصال فوری</string>
     <string name="InuSimpleAttachPopupAnimation">انیمیشن ساده پنجره پیوست</string>
     <string name="InuHidePaidReactionUpsell">پنهان کردن تبلیغ واکنش پولی</string>
     <string name="InuHideHashtagSuggestions">پنهان کردن پیشنهاد هشتگ</string>
@@ -467,7 +458,6 @@
     <string name="InuRememberSelectedFolderInfo">باز کردن مجدد آخرین پوشه فعال هنگام بازگشت به فهرست گفتگوها.</string>
     <string name="InuFoldersInfiniteSwipe">ورق زدن بی‌پایان پوشه‌ها</string>
     <string name="InuFoldersInfiniteSwipeInfo">هنگام ورق زدن بین زبانه‌های پوشه، از ابتدا ادامه می‌یابد.</string>
-    <string name="InuFoldersAtBottom">انتقال پوشه‌ها به پایین</string>
     <string name="InuHideArchive">حذف «گفتگوهای بایگانی‌شده» از فهرست گفتگوها</string>
     <string name="InuUnreadChatsFirst">گفتگوهای نخوانده در ابتدا</string>
     <string name="InuUnreadChatsFirstPinned">خوانده‌نشده‌ها اول در میان سنجاق‌شده‌ها</string>
@@ -1638,7 +1628,6 @@
     <string name="InuGhostModeLauncherShortcutInfo">میان‌بری با نگه داشتن نماد برنامه برای روشن یا خاموش کردن حالت روح اضافه می‌کند.</string>
     <string name="InuHideRecentChatsShortcuts">پنهان کردن گفتگوهای اخیر از نماد برنامه</string>
     <string name="InuHideRecentChatsShortcutsInfo">افراد و گفتگوهایی را که با آن‌ها صحبت می‌کنید از منوی میان‌برِ نگه داشتن نماد برنامه حذف می‌کند.</string>
-    <string name="InuWideChannelPostsInset">فاصله کناری</string>
     <string name="InuRestartApp">راه‌اندازی مجدد برنامه</string>
     <string name="InuDonateTitle">به‌روزرسانی‌های پایدار می‌خواهید؟</string>
     <string name="InuDonateText">entinyGram رایگان و متن‌باز است و تبلیغات ندارد. به‌روز نگه داشتنش با هر نسخه جدید تلگرام وقت من را می‌گیرد. اگر جامعه این را می‌خواهد، می‌توانید از آن حمایت کنید.</string>
@@ -1926,7 +1915,6 @@
     <string name="InuContactFieldFirstName">نام</string>
     <string name="InuContactFieldLastName">نام خانوادگی</string>
     <string name="InuContactFieldUsername">نام کاربری</string>
-    <string name="InuCopyAllProxies">کپی همه</string>
     <string name="InuDrawerMenuAddDivider">افزودن جداکننده</string>
     <string name="InuEditedMessageDateMode">زمان پیام ویرایش‌شده</string>
     <string name="InuEditedMessageDateModeEdit">تاریخ ویرایش</string>
@@ -1994,7 +1982,6 @@
     <string name="InuSaveLastSeenInfo">زمان آخرین بازدید را به خاطر می‌سپارد تا پس از پنهان کردن وضعیت توسط مخاطب هم دیده شود</string>
     <string name="InuSaveReadTime">ذخیره زمان خواندن</string>
     <string name="InuSaveReadTimeInfo">نشان می‌دهد طرف مقابل چه زمانی پیام‌های شما را در گفتگوهای خصوصی خوانده است</string>
-    <string name="InuShareAllProxies">اشتراک‌گذاری همه</string>
     <string name="InuSystemFolderAdministrator">مدیر</string>
     <string name="InuSystemFolderBots">ربات‌ها</string>
     <string name="InuSystemFolderChannels">کانال‌ها</string>

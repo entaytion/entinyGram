@@ -24,11 +24,6 @@
     <string name="InuDrawerShowBadgeInfo">يعرض شارتك بجانب اسمك في ترويسة القائمة الجانبية</string>
     <string name="InuSettings">إعدادات entinyGram</string>
     <string name="InuSettingsInfo">عبر الأرض والرياح أتبعك</string>
-    <string name="InuWideChannelPosts">منشورات عريضة</string>
-    <string name="InuWideChannelPostsFooter">منشورات القنوات والرسائل المعاد توجيهها تستخدم العرض المتاح كاملاً.</string>
-    <string name="InuWideChannelPostsPreviewText">أخبار وصور وفيديوهات</string>
-    <string name="InuWideChannelPostsPreviewReply">منشور قناة معاد توجيهه</string>
-    <string name="InuWideChannelPostsPreviewReplyLabel">منشورات القنوات</string>
     <string name="InuAutoUpdateCheck">التحقق من التحديثات</string>
     <string name="InuAutoUpdateCheckInfo">التحقق دورياً من قناة entinyGram CI بحثاً عن إصدارات جديدة واقتراح تنزيلها.</string>
     <string name="InuUpdatesIncludeBeta">التقاط التحديثات التجريبية</string>
@@ -410,10 +405,6 @@
     <string name="InuDeleteForBothMessages">الرسائل</string>
     <string name="InuDeleteForBothDms">المحادثات الخاصة</string>
     <string name="InuDeleteForBothGroups">محادثات المجموعات</string>
-    <string name="InuDeleteFailedProxies">حذف البروكسيات الفاشلة</string>
-    <string name="InuDeleteFailedProxiesConfirm">هل أنت متأكد أنك تريد حذف جميع البروكسيات غير المتاحة؟</string>
-    <string name="InuPingAllProxies">فحص جميع البروكسيات</string>
-    <string name="InuConnectProxyImmediately">الاتصال فوراً</string>
     <string name="InuSimpleAttachPopupAnimation">حركة بسيطة لنافذة المرفقات</string>
     <string name="InuHidePaidReactionUpsell">إخفاء ترويج التفاعلات المدفوعة</string>
     <string name="InuHideHashtagSuggestions">إخفاء اقتراحات الوسوم</string>
@@ -467,7 +458,6 @@
     <string name="InuRememberSelectedFolderInfo">إعادة فتح آخر مجلد نشط عند العودة إلى قائمة المحادثات.</string>
     <string name="InuFoldersInfiniteSwipe">تمرير لا نهائي بين المجلدات</string>
     <string name="InuFoldersInfiniteSwipeInfo">العودة إلى البداية عند التمرير بين علامات تبويب المجلدات.</string>
-    <string name="InuFoldersAtBottom">نقل المجلدات إلى الأسفل</string>
     <string name="InuHideArchive">إزالة \"المحادثات المؤرشفة\" من قائمة المحادثات</string>
     <string name="InuUnreadChatsFirst">المحادثات غير المقروءة أولاً</string>
     <string name="InuUnreadChatsFirstPinned">غير المقروءة أولاً بين المثبتة</string>
@@ -1650,7 +1640,6 @@
     <string name="InuGhostModeLauncherShortcutInfo">إضافة اختصار بالضغط المطوّل على أيقونة التطبيق لتشغيل وضع الشبح أو إيقافه.</string>
     <string name="InuHideRecentChatsShortcuts">إخفاء المحادثات الأخيرة من أيقونة التطبيق</string>
     <string name="InuHideRecentChatsShortcutsInfo">إزالة الأشخاص والمحادثات التي تتحدث معها من قائمة الاختصارات بالضغط المطوّل على أيقونة التطبيق.</string>
-    <string name="InuWideChannelPostsInset">الحشوة الجانبية</string>
     <string name="InuRestartApp">إعادة تشغيل التطبيق</string>
     <string name="InuDonateTitle">هل تريد تحديثات مستقرة؟</string>
     <string name="InuDonateText">entinyGram مجاني ومفتوح المصدر، بلا إعلانات. إبقاؤه محدّثاً مع كل إصدار جديد من Telegram يستغرق وقتي. إذا كان المجتمع يريد ذلك، يمكنك دعمه.</string>
@@ -1941,7 +1930,6 @@
     <string name="InuContactFieldFirstName">الاسم الأول</string>
     <string name="InuContactFieldLastName">اسم العائلة</string>
     <string name="InuContactFieldUsername">اسم المستخدم</string>
-    <string name="InuCopyAllProxies">نسخ الكل</string>
     <string name="InuDrawerMenuAddDivider">إضافة فاصل</string>
     <string name="InuEditedMessageDateMode">توقيت الرسالة المعدلة</string>
     <string name="InuEditedMessageDateModeEdit">تاريخ التعديل</string>
@@ -2009,7 +1997,6 @@
     <string name="InuSaveLastSeenInfo">يتذكر وقت آخر ظهور ليبقى ظاهرًا بعد أن تخفي جهة الاتصال حالتها</string>
     <string name="InuSaveReadTime">حفظ وقت القراءة</string>
     <string name="InuSaveReadTimeInfo">يعرض متى قرأ الطرف الآخر رسائلك في المحادثات الخاصة</string>
-    <string name="InuShareAllProxies">مشاركة الكل</string>
     <string name="InuSystemFolderAdministrator">مسؤول</string>
     <string name="InuSystemFolderBots">البوتات</string>
     <string name="InuSystemFolderChannels">القنوات</string>

@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6863,6 +6863,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6850,6 +6850,7 @@ public class MessagesController extends BaseController implements NotificationCe
              return false;
          }
          desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
          TLRPC.User oldUser = users.get(user.id);
          if (oldUser == user && !force) {
-@@ -6998,6 +6999,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6985,6 +6986,7 @@ public class MessagesController extends BaseController implements NotificationCe
          if (chat == null) {
              return;
          }
@@ -33,7 +33,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmoj
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java
-@@ -1276,6 +1276,9 @@ public class AnimatedEmojiDrawable extends Drawable {
+@@ -1285,6 +1285,9 @@ public class AnimatedEmojiDrawable extends Drawable {
                      if (((AnimatedEmojiDrawable) drawables[0]).imageReceiver != null) {
                          ((AnimatedEmojiDrawable) drawables[0]).imageReceiver.setRoundRadius(dp(4));
                      }
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                      if (progress < 1) {
                          float scale = overshootInterpolator.getInterpolation(progress);
                          canvas.scale(scale, scale, bounds.centerX(), bounds.centerY());
-@@ -1555,4 +1558,4 @@ public class AnimatedEmojiDrawable extends Drawable {
+@@ -1564,4 +1567,4 @@ public class AnimatedEmojiDrawable extends Drawable {
              }
          }
      }
@@ -54,7 +54,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3071,7 +3071,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2986,7 +2986,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
          Long emojiStatusId = UserObject.getEmojiStatusDocumentId(user);
          statusDrawableGiftId = null;
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              final boolean isCollectible = user.emoji_status instanceof TLRPC.TL_emojiStatusCollectible;
              statusDrawable.set(emojiStatusId, animated);
              statusDrawable.setParticles(isCollectible, animated);
-@@ -3086,7 +3086,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3001,7 +3001,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  showSelectStatusDialog();
              });
              SelectAnimatedEmojiDialog.preload(currentAccount);

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -7302,6 +7302,7 @@ public class Theme {
+@@ -7401,6 +7401,7 @@ public class Theme {
      }
  
      public static File getAssetFile(String assetName) {

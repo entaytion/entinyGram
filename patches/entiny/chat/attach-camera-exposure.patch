@@ -80,7 +80,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
-@@ -177,6 +177,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -179,6 +179,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      private FrameLayout cameraPanel;
      private ShutterButton shutterButton;
      private ZoomControlView zoomControlView;
@@ -88,7 +88,7 @@ index 0000000..0000000 100644
      private AnimatorSet zoomControlAnimation;
      private Runnable zoomControlHideRunnable;
      private Runnable afterCameraInitRunnable;
-@@ -1312,6 +1313,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -1317,6 +1318,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                      AndroidUtilities.runOnUIThread(videoRecordRunnable, 1000);
                  };
                  AndroidUtilities.lockOrientation(baseFragment.getParentActivity());
@@ -96,7 +96,7 @@ index 0000000..0000000 100644
                  CameraController.getInstance().recordVideo(cameraView.getCameraSessionObject(), outputFile, parentAlert.avatarPicker != 0, (thumbPath, duration) -> {
                      if (outputFile == null || parentAlert.destroyed || cameraView == null) {
                          return;
-@@ -1444,6 +1446,8 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -1449,6 +1451,8 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
          });
          switchCameraButton.setContentDescription(LocaleController.getString(R.string.AccDescrSwitchCamera));
  
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
          for (int a = 0; a < 2; a++) {
              flashModeButton[a] = new ImageView(context);
              flashModeButton[a].setScaleType(ImageView.ScaleType.CENTER);
-@@ -2580,6 +2584,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -2585,6 +2589,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              }
          }
          cameraOpened = true;
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
          if (cameraView != null) {
              cameraView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
          }
-@@ -2670,6 +2675,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -2675,6 +2680,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                      }
                      switchCameraButton.setImageResource(cameraView.isFrontface() ? R.drawable.camera_revert1 : R.drawable.camera_revert2);
                      switchCameraButton.setVisibility(cameraView.hasFrontFaceCamera() ? View.VISIBLE : View.INVISIBLE);
@@ -121,7 +121,7 @@ index 0000000..0000000 100644
                      if (!cameraOpened) {
                          cameraInitAnimation = new AnimatorSet();
                          cameraInitAnimation.playTogether(
-@@ -2728,6 +2734,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -2733,6 +2739,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
          if (!deviceHasGoodCamera || cameraView == null) {
              return;
          }

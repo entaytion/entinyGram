@@ -28,7 +28,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawab
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
-@@ -56,6 +56,7 @@ public class AvatarDrawable extends Drawable {
+@@ -57,6 +57,7 @@ public class AvatarDrawable extends Drawable {
      private float textLeft;
      private boolean isProfile;
      private boolean drawDeleted;
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      private int avatarType;
      private float archivedAvatarProgress;
      private float scaleSize = 1f;
-@@ -146,6 +147,7 @@ public class AvatarDrawable extends Drawable {
+@@ -147,6 +148,7 @@ public class AvatarDrawable extends Drawable {
          if (user != null) {
              setInfo(user.id, user.first_name, user.last_name, null);
              drawDeleted = UserObject.isDeleted(user);
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -221,6 +223,7 @@ public class AvatarDrawable extends Drawable {
+@@ -222,6 +224,7 @@ public class AvatarDrawable extends Drawable {
          if (user != null) {
              setInfo(user.id, user.first_name, user.last_name, null, user != null && user.color != null ? UserObject.getColorId(user) : null, UserObject.getPeerColorForAvatar(currentAccount, user));
              drawDeleted = UserObject.isDeleted(user);
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -403,6 +406,7 @@ public class AvatarDrawable extends Drawable {
+@@ -444,6 +447,7 @@ public class AvatarDrawable extends Drawable {
          color2 = getThemedColor(Theme.keys_avatar_background2[getColorIndex(id)]);
          avatarType = AVATAR_TYPE_NORMAL;
          drawDeleted = false;
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
          getAvatarSymbols("", "", "", stringBuilder);
      }
  
-@@ -451,6 +455,7 @@ public class AvatarDrawable extends Drawable {
+@@ -497,6 +501,7 @@ public class AvatarDrawable extends Drawable {
  
          avatarType = AVATAR_TYPE_NORMAL;
          drawDeleted = false;
@@ -68,7 +68,7 @@ index 0000000..0000000 100644
  
          if (firstName == null || firstName.length() == 0) {
              firstName = lastName;
-@@ -499,10 +504,15 @@ public class AvatarDrawable extends Drawable {
+@@ -545,10 +550,15 @@ public class AvatarDrawable extends Drawable {
          }
      }
  
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
          getAvatarSymbols(text, null, null, stringBuilder);
      }
  
-@@ -703,6 +713,7 @@ public class AvatarDrawable extends Drawable {
+@@ -762,6 +772,7 @@ public class AvatarDrawable extends Drawable {
                      drawable.draw(canvas);
                  }
              }

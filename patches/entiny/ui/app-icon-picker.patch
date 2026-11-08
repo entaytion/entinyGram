@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java b/TM
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
-@@ -671,9 +671,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -778,9 +778,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
              chatListRow = rowCount++;
              chatListInfoRow = rowCount++;
  
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
  
              swipeGestureHeaderRow = rowCount++;
              swipeGestureRow = rowCount++;
-@@ -892,8 +892,12 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -999,8 +999,12 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                  listAdapter.notifyItemChanged(themeAccentListRow, new Object());
              }
          } else if (id == NotificationCenter.showBulletin) {
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
              }
          } else if (id == NotificationCenter.themeListUpdated) {
              updateRows(true);
-@@ -2464,7 +2468,8 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -2574,7 +2578,8 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                      view = new RadioButtonCell(mContext);
                      break;
                  case TYPE_APP_ICON:

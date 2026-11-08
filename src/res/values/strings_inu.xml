@@ -70,11 +70,6 @@
     <string name="InuDrawerShowBadgeInfo">Shows your badge next to your name in the side menu header</string>
     <string name="InuSettings">entinyGram Settings</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
-    <string name="InuWideChannelPosts">Wide posts</string>
-    <string name="InuWideChannelPostsFooter">Channel posts and forwards use the available width.</string>
-    <string name="InuWideChannelPostsPreviewText">News, photos and videos</string>
-    <string name="InuWideChannelPostsPreviewReply">Forwarded channel post</string>
-    <string name="InuWideChannelPostsPreviewReplyLabel">Channel posts</string>
     <string name="InuAutoUpdateCheck">Check for updates</string>
     <string name="InuAutoUpdateCheckInfo">Periodically check the entinyGram CI channel for new releases and offer to download them.</string>
     <string name="InuUpdatesIncludeBeta">Catch beta updates</string>
@@ -406,6 +401,8 @@
     <string name="InuIosBottomBar">iOS-style bottom bar</string>
     <string name="InuIosChatList">iOS-style chat list</string>
     <string name="InuIosMessageMenu">iOS-style message menu</string>
+    <string name="InuDialogsFabOffsetForBottomBar">Offset for bottom bar</string>
+    <string name="InuDialogsFabOffsetForBottomBarInfo">Disabling this might not work well for all screen sizes</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDesignStyle">Design style</string>
     <string name="InuMaterial3SettingsInfo">Switches, sliders, sections, avatars and more.</string>
@@ -421,8 +418,6 @@
     <string name="InuDialogsFabMainAction">Primary action</string>
     <string name="InuDialogsFabSecondaryAction">Secondary action</string>
     <string name="InuDialogsFabHideOnScroll">Hide when scrolling</string>
-    <string name="InuDialogsFabOffsetForBottomBar">Offset for bottom bar</string>
-    <string name="InuDialogsFabOffsetForBottomBarInfo">Disabling this might not work well for all screen sizes</string>
     <string name="InuDialogsFabLeftSide">Move to the left</string>
     <string name="InuDialogsFabRaise">Raise FAB buttons a bit</string>
     <string name="InuHideDialogPreview">Hide last message preview</string>
@@ -541,10 +536,6 @@
     <string name="InuDeleteForBothMessages">Messages</string>
     <string name="InuDeleteForBothDms">DM dialogs</string>
     <string name="InuDeleteForBothGroups">Group chats</string>
-    <string name="InuDeleteFailedProxies">Delete Failed Proxies</string>
-    <string name="InuDeleteFailedProxiesConfirm">Are you sure you want to delete all unavailable proxies?</string>
-    <string name="InuPingAllProxies">Ping All Proxies</string>
-    <string name="InuConnectProxyImmediately">Connect immediately</string>
     <string name="InuSimpleAttachPopupAnimation">Simple attach popup animation</string>
     <string name="InuHidePaidReactionUpsell">Hide paid reaction upsell</string>
     <string name="InuHideHashtagSuggestions">Hide hashtag suggestions</string>
@@ -598,7 +589,6 @@
     <string name="InuRememberSelectedFolderInfo">Reopen the last active folder when returning to the chat list.</string>
     <string name="InuFoldersInfiniteSwipe">Infinite Folder Swipe</string>
     <string name="InuFoldersInfiniteSwipeInfo">Wrap around when swiping between folder tabs.</string>
-    <string name="InuFoldersAtBottom">Move Folders to Bottom</string>
     <string name="InuSystemFolderAdministrator">Administrator</string>
     <string name="InuSystemFolderBots">Bots</string>
     <string name="InuSystemFolderUnread">Unread</string>
@@ -607,6 +597,7 @@
     <string name="InuHideArchive">Remove \"Archived Chats\" from Chat List</string>
     <string name="InuUnreadChatsFirst">Unread chats first</string>
     <string name="InuUnreadChatsFirstPinned">Unread first among pinned</string>
+    <string name="InuFolderTabsAtBottom">Show tabs at the bottom</string>
     <string name="InuCommunityDisplayMode">Communities</string>
     <string name="InuCommunityDisplayModeRegular">Regular</string>
     <string name="InuCommunityDisplayModeLongTap">Open on long tap</string>
@@ -619,6 +610,15 @@
     <string name="InuFrameCopied">Frame copied to clipboard</string>
     <string name="InuDisableDraftUpload">Disable uploading drafts</string>
     <string name="InuDisableDraftUploadInfo">Drafts will only be saved locally and not synced across devices</string>
+    <string name="InuCompactModeChannels">Channels</string>
+    <string name="InuCompactModeGroups">Groups</string>
+    <string name="InuCompactModeDms">Private chats</string>
+    <string name="InuDontAutoplayWidgets">Don\'t autoplay widgets</string>
+    <string name="InuDontAutoplayWidgetsInfo">Interactive widgets in messages only start after you tap them</string>
+    <string name="InuWidgetPlaceholderTitle">Interactive widget</string>
+    <string name="InuWidgetPlaceholderTap">Tap to load</string>
+    <string name="InuWidgetPlaceholderLoading">Loading…</string>
+    <string name="InuWidgetPlaceholderPreview">Preview disabled</string>
     <string name="InuHideCallActionButton">Hide call button in title</string>
     <string name="InuCallConfirmation">Ask before calling</string>
     <string name="InuCallConfirmationTitle">Confirm calling</string>
@@ -953,7 +953,7 @@
     <string name="InuLiquidGlassTint">Liquid Glass tint</string>
 
     <string name="InuReduceMenuMotion">Reduce menu motion</string>
-    <string name="InuReduceMenuMotionInfo">Skip context menu stagger and simplify message menu animations</string>
+    <string name="InuReduceMenuMotionInfo">Skip context menu stagger, simplify message menu animations and use plain popups for header menus</string>
 
     <string name="InuProfilePhotoGradientFade">Disable profile photo blur</string>
     <string name="InuNonIslandUI">Classic UI</string>
@@ -986,6 +986,7 @@
     <string name="InuNonIslandGlobalSearch">Global search</string>
     <string name="InuNonIslandChatElements">Chat elements</string>
     <string name="InuNonIslandHint">Classic UI reverts some of the new (>12.6) \"Liquid Glass\" UI changes back towards the older flat design (best-effort).\nThere are probably a bunch of visual bugs, so be advised.</string>
+    <string name="InuNonIslandHeaders">Headers</string>
 
     <string name="InuHideFadeView">Hide fade views</string>
 
@@ -1251,8 +1252,6 @@
     <string name="InuFasterUploads">Faster uploads</string>
     <string name="InuFasterDownloadsSection">Download speed</string>
     <string name="InuFasterDownloadsFast">Fast</string>
-    <string name="InuFasterDownloadsUltra">Ultra</string>
-    <string name="InuFasterDownloadsUltraWarning">Fast uses larger chunks. Ultra also lifts the Premium-only data and connection limits, which can hurt streaming on a weak connection.</string>
     <string name="InuKeepDownloadsInBackground">Don\'t kill downloads on scroll/exit</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Downloads keep running when you scroll away or leave the chat.</string>
     <string name="InuBlockSleepWhileDownloading">Block sleep while downloading</string>
@@ -1273,6 +1272,12 @@
     <string name="InuSaveFilenameDateInfo">Saved photos, videos and files get the date and time the message was sent, like IMG_2026-08-24_05-32-18.jpg</string>
     <string name="InuDownloadDirectoryApplied">Applies to newly downloaded files only</string>
     <string name="InuMentionInsertTitle">Insert mention</string>
+    <string name="InuSendWithoutVia">Send without via</string>
+    <string name="InuSendWithoutViaConfirm">Send this result as a regular message (without \"via\")?</string>
+    <string name="InuSendWithoutViaRestrictedConfirm">Inline bots are restricted in this chat. Send this result as a regular message instead?</string>
+    <string name="InuSendWithoutViaButtonsWarning">This result has inline buttons that won\'t be sent. Some bots rely on them for interactivity.</string>
+    <string name="InuSendWithoutViaButtonsLost">Inline buttons won\'t be sent</string>
+    <string name="InuSendWithoutPack">Send without pack</string>
     <string name="InuPasscode">Passcode</string>
     <string name="InuPasscodeNeeded">Set up a Telegram passcode first.</string>
     <string name="InuPasscodeShowInSettings">Show in entinyGram settings</string>
@@ -1920,7 +1925,6 @@
     <string name="InuGhostModeLauncherShortcutInfo">Add a long-press shortcut on the app icon to switch Ghost Mode on or off.</string>
     <string name="InuHideRecentChatsShortcuts">Hide recent chats from app icon</string>
     <string name="InuHideRecentChatsShortcutsInfo">Remove people and chats you talk to from the long-press shortcut menu on the app icon.</string>
-    <string name="InuWideChannelPostsInset">Side padding</string>
     <string name="InuRestartApp">Restart app</string>
     <string name="InuDonateTitle">Want stable updates?</string>
     <string name="InuDonateText">entinyGram is free and open source, with no ads. Keeping it up to date with every new Telegram version takes my time. If the community wants that, you can support it.</string>
@@ -2182,8 +2186,6 @@
     <string name="InuPluginsFailedAtRuntime">Runtime error</string>
     <string name="InuPluginsFailedAtUnload">Unload error</string>
     <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
-    <string name="InuCopyAllProxies">Copy all</string>
-    <string name="InuShareAllProxies">Share all</string>
 
     <string name="InuAppIconsSelect">Apply icon</string>
     <string name="InuAppIconsKeep">Keep current icon</string>
@@ -2290,4 +2292,5 @@
     <string name="InuWalletKeyReplacedInfo">Your address and the 12 new words now restore this wallet.</string>
     <string name="InuWalletPrivateKeyBackupUnavailable">Wallets imported from a private key can\'t be backed up to Telegram, since other apps can\'t restore them. Keep the key safe yourself.</string>
     <string name="InuRoundExposure">Exposure</string>
+    <string name="InuSendServerError">Telegram is having trouble delivering your message. Still retrying…</string>
 </resources>

@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/Round
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
-@@ -587,6 +587,7 @@ final class RoundVideoCameraController {
+@@ -595,6 +595,7 @@ final class RoundVideoCameraController {
              Handler handler = cameraHandler;
              if (handler != null) handler.post(this::startRecordingAfterFirstFrame);
          });
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
          recordingSurface = glProcessor.start();
          if (dualActiveMode) {
              CameraSelection secondarySelection = selectionForFacing(
-@@ -1407,7 +1408,10 @@ final class RoundVideoCameraController {
+@@ -1415,7 +1416,10 @@ final class RoundVideoCameraController {
                      try {
                          activeFacing = selectedFacing;
                          repeatingBuilder = createRepeatingRequestBuilder(true);
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
                          boolean pendingDualSwitch = dualActiveMode
                                  && pendingWarmSwitchFacing != null;
                          boolean wasSwitch = notifySwitchCompletion && !pendingDualSwitch;
-@@ -2518,7 +2522,12 @@ final class RoundVideoCameraController {
+@@ -2543,7 +2547,12 @@ final class RoundVideoCameraController {
          float centerX = previewView.getWidth() * 0.5f;
          float centerY = previewView.getHeight() * 0.5f;
          Matrix matrix = new Matrix();

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -1749,7 +1749,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -1793,7 +1793,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  if (target == listView && sharedMediaLayoutAttached) {
                      RecyclerListView innerListView = sharedMediaLayout.getCurrentListView();
                      int top = sharedMediaLayout.getTop();
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                          consumed[1] = dyUnconsumed;
                          innerListView.scrollBy(0, dyUnconsumed);
                      }
-@@ -4336,6 +4336,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -4278,6 +4278,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  return 0;
              }
  
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
              @Override
              protected void onMoveAnimationUpdate(RecyclerView.ViewHolder holder) {
                  super.onMoveAnimationUpdate(holder);
-@@ -11230,7 +11236,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11449,7 +11455,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarsViewPager.setPadding(0, 0, 0, getActionsExtraHeight());
          }
          if (isPulledDown && listView != null) {

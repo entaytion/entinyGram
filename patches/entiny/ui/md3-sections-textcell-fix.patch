@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
-@@ -192,18 +192,26 @@ public class TextCell extends FrameLayout {
+@@ -194,18 +194,26 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
          }
          lastWidth = width;
  
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          }
          if (imageView.getVisibility() == VISIBLE) {
              if (!forceStockColorfulIcon && desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled()) {
-@@ -229,9 +237,6 @@ public class TextCell extends FrameLayout {
+@@ -231,9 +239,6 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
                  imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
              }
          }
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          if (checkBox != null) {
              checkBox.measure(MeasureSpec.makeMeasureSpec(dp(37), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(desu.inugram.InuConfig.MATERIAL3_SWITCHES.getValue() ? 24 : 20), MeasureSpec.EXACTLY));
          }
-@@ -277,12 +282,25 @@ public class TextCell extends FrameLayout {
+@@ -279,12 +284,25 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
          int width = right - left;
  
          int viewTop = (height - Math.max(valueSpoilersTextView.getTextHeight(), valueTextView.getTextHeight())) / 2 + 1;
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
          valueSpoilersTextView.layout(viewLeft, viewTop, viewLeft + valueSpoilersTextView.getMeasuredWidth(), viewTop + valueSpoilersTextView.getMeasuredHeight());
  
          if (LocaleController.isRTL) {
-@@ -298,9 +316,6 @@ public class TextCell extends FrameLayout {
+@@ -300,9 +318,6 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
              subtitleView.layout(viewLeft, viewTop, viewLeft + subtitleView.getMeasuredWidth(), viewTop + subtitleView.getMeasuredHeight());
          } else {
              viewTop = (height - textView.getTextHeight()) / 2 + dp(1);

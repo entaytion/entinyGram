@@ -62,7 +62,6 @@ object DialogsFabHelper {
         } else {
             dp((MainTabsHelper.mainTabsHeight + MainTabsHelper.mainTabsMargin + MainTabsHelper.bottomLiftDp).toFloat())
         }
-        if (FolderHelper.atBottom()) offset += dp(FolderHelper.bottomReservedHeightDp().toFloat())
         if (InuConfig.DIALOGS_FAB_RAISE.value) offset += dp(FAB_RAISE_DP.toFloat())
         return offset
     }

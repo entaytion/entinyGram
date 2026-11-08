@@ -20,7 +20,7 @@ index 0000000..0000000 100644
      {
          map.put("wallet_available", walletAvailable.handler);
      }
-@@ -387,8 +387,15 @@ public class AppGlobalConfig {
+@@ -464,8 +464,15 @@ public class AppGlobalConfig {
              this.handler = new Internal(name, defaultValue);
          }
  

@@ -1,0 +1,251 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 6 Nov 2026 00:42:04 +0400
+Subject: add option to hide bottom tabs on scroll
+
+---
+ .../java/org/telegram/ui/DialogsActivity.java | 49 ++++++++++++++++---
+ .../org/telegram/ui/MainTabsActivity.java     | 25 ++++++++--
+ .../ui/MainTabsActivityController.java        |  1 +
+ 3 files changed, 64 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -313,7 +313,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     private static final int ANIMATOR_ID_FORWARD_BUTTON_VISIBLE = 7;
+     private static final int ANIMATOR_ID_FILTER_TABS_VISIBLE = 8;
+     private static final int ANIMATOR_ID_SEARCH_FILTER_TABS_VISIBLE = 9;
++    private static final int ANIMATOR_ID_INU_MAIN_TABS_SCROLL_HIDDEN = 100;
+ 
++    private final BoolAnimator inu_animatorMainTabsScrollHidden = new BoolAnimator(ANIMATOR_ID_INU_MAIN_TABS_SCROLL_HIDDEN,
++            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
+     private final BoolAnimator animatorSearchVisible = new BoolAnimator(ANIMATOR_ID_SEARCH_VISIBLE,
+             this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
+     private final BoolAnimator animatorDoneButtonVisible = new BoolAnimator(ANIMATOR_ID_DONE_BUTTON_VISIBLE,
+@@ -1148,7 +1151,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     blurredView.draw(canvas);
+                 }
+             }
+-            if (!hasMainTabs && communityId == 0) {
++            if ((!hasMainTabs || inu_getMainTabsScrollHiddenFactor() > 0) && communityId == 0) {
+                 AndroidUtilities.drawNavigationBarProtection(canvas, this, getThemedColor(Theme.key_windowBackgroundWhite), navigationBarHeight);
+             }
+             wasDrawn = true;
+@@ -3202,6 +3205,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         selectedDialogs.clear();
+ 
+         maximumVelocity = ViewConfiguration.get(context).getScaledMaximumFlingVelocity();
++        inu_animatorMainTabsScrollHidden.setValue(false, false);
+ 
+         AndroidUtilities.runOnUIThread(() -> Theme.createChatResources(context, false));
+ 
+@@ -4586,6 +4590,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         }
+                     }
+                     checkListLoad(viewPage);
++                    if (recyclerView == viewPages[0].listView && !recyclerView.canScrollVertically(-1)) {
++                        inu_setMainTabsScrollHidden(false);
++                    }
+                     invalidateScrollY = true;
+                     if (fragmentView != null) {
+                         fragmentView.invalidate();
+@@ -4610,6 +4617,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                                 if (changed && scrollUpdated && (goingDown || scrollingManually) && DialogsFabHelper.hideOnScroll() && !disableActionBarScrolling) {
+                                     hideFloatingButton(goingDown);
+                                 }
++                                if (changed && scrollUpdated && (goingDown || scrollingManually) && recyclerView == viewPages[0].listView && !disableActionBarScrolling) {
++                                    inu_setMainTabsScrollHidden(goingDown);
++                                }
+                                 prevPosition = firstVisiblePosition;
+                                 prevTop = firstViewTop;
+                                 scrollUpdated = true;
+@@ -5238,10 +5248,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             if (inu_filterTabsAtBottom) {
+                 NonIslandHelper.moveFilterTabBarToBottom(filterTabsView, inu_aboveMaterialTabs);
+             }
+-            if (inu_filterTabsAtBottom && !hasMainTabs && NonIslandHelper.foldersBar()) {
++            if (inu_filterTabsAtBottom && (!hasMainTabs || MainTabsHelper.isHideOnScroll()) && NonIslandHelper.foldersBar()) {
+                 inu_filterTabsBottomFill = new View(context);
+                 inu_filterTabsBottomFill.setClickable(true);
+-                inu_filterTabsBottomFill.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
++                inu_filterTabsBottomFill.setBackgroundColor(getThemedColor(filterTabsView.inu_blurHelper.getColorKey()));
+                 inu_filterTabsBottomFill.setVisibility(View.GONE);
+                 contentView.addView(inu_filterTabsBottomFill, contentView.indexOfChild(chatInputViewsContainer != null ? chatInputViewsContainer.getFadeView() : filterTabsView), LayoutHelper.createFrameMatchParent());
+             }
+@@ -6987,6 +6997,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     public void switchToCurrentSelectedMode(boolean animated) {
++        inu_setMainTabsScrollHidden(false);
+         for (int a = 0; a < viewPages.length; a++) {
+             viewPages[a].listView.stopScroll();
+         }
+@@ -9135,7 +9146,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     public void updateFloatingButtonOffset() {
+-        final float top = -navigationBarHeight - additionFloatingButtonOffset - inu_getBottomFilterTabsHeight() - Math.max(additionalFloatingTranslation, desu.inugram.helpers.player.Md3PlayerHelper.miniFabInset(this));
++        final float inu_scrollHiddenSlide = additionalFloatingTranslation > 0 ? 0 : additionFloatingButtonOffset * inu_getMainTabsScrollHiddenFactor();
++        final float top = -navigationBarHeight - additionFloatingButtonOffset - inu_getBottomFilterTabsHeight() - Math.max(additionalFloatingTranslation, desu.inugram.helpers.player.Md3PlayerHelper.miniFabInset(this)) + inu_scrollHiddenSlide;
+         final float baseTranslationY = top
+             - floatingButtonPanOffset;
+ 
+@@ -13955,7 +13967,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     private float inu_getBottomFilterTabsOffset() {
+         if (commentView == null) {
+-            return navigationBarHeight + additionNavigationBarHeight - (hasMainTabs && !MainTabsHelper.isMaterial() ? dp(4) : 0);
++            final int inu_mainTabsOffset = additionNavigationBarHeight - (hasMainTabs && !MainTabsHelper.isMaterial() ? dp(4) : 0);
++            return navigationBarHeight + inu_mainTabsOffset * (1f - inu_getMainTabsScrollHiddenFactor());
+         }
+         final float aboveInput = windowInsetsStateHolder.getAnimatedMaxBottomInset() + chatInputViewsContainer.getInputBubbleHeight() + (NonIslandHelper.chatElements() ? 0 : dp(9 + 4));
+         return lerp((float) navigationBarHeight, aboveInput, animatorForwardButtonVisible.getFloatValue());
+@@ -13975,6 +13988,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         return (int) lerp(inputPadding, inu_getBottomFilterTabsOffset(), getFilterTabsVisibilityFactor(false)) + inu_getBottomFilterTabsHeight();
+     }
+ 
++    public void inu_setMainTabsScrollHidden(boolean hidden) {
++        inu_animatorMainTabsScrollHidden.setValue(hidden && hasMainTabs && MainTabsHelper.isHideOnScroll(), true);
++    }
++
++    public float inu_getMainTabsScrollHiddenFactor() {
++        return inu_animatorMainTabsScrollHidden.getFloatValue();
++    }
++
+     public float inu_getClassicBottomFilterTabsVisibility() {
+         return inu_filterTabsAtBottom && NonIslandHelper.foldersBar() ? getFilterTabsVisibilityFactor(true) : 0f;
+     }
+@@ -13991,7 +14012,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     @Override
+     public void onFactorChanged(int id, float factor, float fraction, FactorAnimator callee) {
+-        if (id == ANIMATOR_ID_SEARCH_VISIBLE) {
++        if (id == ANIMATOR_ID_INU_MAIN_TABS_SCROLL_HIDDEN) {
++            if (mainTabsActivityController != null) {
++                mainTabsActivityController.inu_onTabsScrollHiddenChanged();
++            }
++            updateFloatingButtonOffset();
++            updateContextViewPosition();
++            if (fragmentView != null) {
++                fragmentView.invalidate();
++            }
++        } else if (id == ANIMATOR_ID_SEARCH_VISIBLE) {
+             checkUi_menuItems();
+             checkUi_searchFieldVisibility();
+             checkUi_topPanelVisible();
+@@ -14185,6 +14215,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     private void checkUi_mainTabsVisible() {
++        if (searching) {
++            inu_setMainTabsScrollHidden(false);
++        }
+         final boolean mainTabsVisible = !searching && (blurredView == null || blurredView.getBackground() == null || blurredView.getAlpha() < 0.01f || blurredView.getVisibility() == View.GONE);
+         if (mainTabsActivityController != null) {
+             mainTabsActivityController.setTabsVisible(mainTabsVisible);
+@@ -14351,7 +14384,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+             boolean hasBottomBlur = false;
+             if (hasMainTabs) {
+-                iBlur3PositionMainTabs.set(0, mainTabTop, fragmentView.getMeasuredWidth(), mainTabBottom);
++                iBlur3PositionMainTabs.set(0, mainTabTop, fragmentView.getMeasuredWidth(), inu_bottomTabsHeight > 0 ? Math.max(mainTabBottom, fragmentView.getMeasuredHeight() - navigationBarHeight) : mainTabBottom);
+                 iBlur3PositionMainTabs.inset(0, LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) ? 0 : -dp(48));
+ 
+                 hasBottomBlur = true;
+@@ -14738,7 +14771,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     }
+ 
+                     if (inu_filterTabsBottomFill != null) {
+-                        inu_filterTabsBottomFill.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
++                        inu_filterTabsBottomFill.setBackgroundColor(getThemedColor(filterTabsView.inu_blurHelper.getColorKey()));
+                     }
+ 
+                     if (filterTabsView != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -845,6 +845,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             if (currentPosition != profile) {
+                 dropFragmentAtPosition(profile);
+             }
++            if (currentPosition != POSITION_CHATS && dialogsActivity != null) {
++                dialogsActivity.inu_setMainTabsScrollHidden(false);
++            }
+             if (pendingFolderId != null && currentPosition == MainTabsHelper.chatsPosition() && dialogsActivity != null) {
+                 dialogsActivity.scrollToFolder(pendingFolderId);
+                 pendingFolderId = null;
+@@ -865,6 +868,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             }
+         }
+ 
++        if (MainTabsHelper.isHideOnScroll()) {
++            checkUi_tabsPosition();
++        }
+         checkUi_fadeView();
+         blur3_invalidateBlur();
+         contentView.invalidate();
+@@ -1183,12 +1189,20 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         }
+     }
+ 
++    private float inu_getTabsVisibleFactor() {
++        final float visible = animatorTabsVisible.getFloatValue();
++        if (dialogsActivity == null || viewPager == null) {
++            return visible;
++        }
++        return visible * (1f - dialogsActivity.inu_getMainTabsScrollHiddenFactor() * viewPager.getPositionVisibility(POSITION_CHATS));
++    }
++
+     private void inu_checkUi_tabsDivider() {
+         if (viewPager == null || tabsViewWrapper == null) {
+             return;
+         }
+         final float strip = dialogsActivity != null ? dialogsActivity.inu_getClassicBottomFilterTabsVisibility() : 0f;
+-        M3MainTabsHelper.setTabsDividerAlpha(tabsViewWrapper, 1f - strip * viewPager.getPositionVisibility(POSITION_CHATS));
++        M3MainTabsHelper.setTabsDividerAlpha(tabsViewWrapper, (1f - strip * viewPager.getPositionVisibility(POSITION_CHATS)) * inu_getTabsVisibleFactor());
+     }
+ 
+     private void checkUi_fadeView() {
+@@ -1205,7 +1219,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         final float animatedPosition = viewPager.getPositionAnimated();
+         final float isProfile = 1f - MathUtils.clamp(Math.abs(MainTabsHelper.indexToPosition(INDEX_PROFILE) - animatedPosition), 0, 1);
+         final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
+-        float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
+         if (tabletLayout) {
+             alpha = 0.0f;
+         }
+@@ -1228,7 +1241,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         final int normalY = -(updateLayoutHeight);
+         final int hiddenY = normalY + dp(MainTabsHelper.isCompact() ? 30 : 40);
+ 
+-        final float factor = animatorTabsVisible.getFloatValue();
++        final float factor = inu_getTabsVisibleFactor();
+         final float scale = lerp(0.85f, 1f, factor);
+ 
+         tabsViewWrapper.setTranslationY(lerp(hiddenY, normalY, factor));
+@@ -1299,6 +1312,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         public void inu_onBottomFilterTabsChanged() {
+             inu_checkUi_tabsDivider();
+         }
++
++        @Override
++        public void inu_onTabsScrollHiddenChanged() {
++            checkUi_tabsPosition();
++            checkUi_fadeView();
++        }
+     }
+ 
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivityController.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivityController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivityController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivityController.java
+@@ -3,4 +3,5 @@ package org.telegram.ui;
+ public interface MainTabsActivityController {
+     void setTabsVisible(boolean visible);
+     void inu_onBottomFilterTabsChanged();
++    void inu_onTabsScrollHiddenChanged();
+ }

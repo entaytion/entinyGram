@@ -39,6 +39,17 @@ object GlassGlareHelper {
     }
 
     @JvmStatic
+    fun isSolid(): Boolean = InuConfig.GLASS_GLARE_SOLID.value
+
+    @JvmStatic
+    fun invalidateLiquidGlass() {
+        for (drawable in drawables.keys.toList()) {
+            if (drawable is BlurredBackgroundDrawable) drawable.updateColors()
+            drawable.invalidateSelf()
+        }
+    }
+
+    @JvmStatic
     fun register(drawable: Drawable) {
         drawables[drawable] = mode
     }

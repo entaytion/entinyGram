@@ -23,8 +23,8 @@ import org.telegram.ui.Components.ChatAvatarContainer
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
-import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor
-import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceRenderNode
+import org.telegram.utils.glass.source.GlassSourceColor
+import org.telegram.utils.glass.source.GlassSourceRenderNode
 import org.telegram.ui.Components.chat.ViewPositionWatcher
 import org.telegram.ui.Stories.recorder.StoryEntry
 
@@ -33,9 +33,9 @@ class ChatHeaderPreviewCell(context: Context, private val fragment: BaseFragment
 
     private val resourcesProvider = fragment.resourceProvider
     private val positionWatcher = ViewPositionWatcher(this)
-    private val backgroundColorSource = BlurredBackgroundSourceColor()
+    private val backgroundColorSource = GlassSourceColor()
     private val wallpaperSource = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        BlurredBackgroundSourceRenderNode(backgroundColorSource).apply {
+        GlassSourceRenderNode(backgroundColorSource).apply {
             setUnderSource(backgroundColorSource)
             setBlur(dp(12f).toFloat())
         }

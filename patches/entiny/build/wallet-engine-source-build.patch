@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -187,6 +187,29 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
+@@ -193,6 +193,29 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
      }
  }
  
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  android {
      compileSdk 36
      buildToolsVersion '36.0.0'
-@@ -249,6 +272,7 @@ android {
+@@ -255,6 +278,7 @@ android {
              cmake {
                  version '3.22.1'
                  arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-26' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
@@ -56,7 +56,7 @@ diff --git a/TMessagesProj/jni/CMakeLists.txt b/TMessagesProj/jni/CMakeLists.txt
 index 0000000..0000000 100644
 --- a/TMessagesProj/jni/CMakeLists.txt
 +++ b/TMessagesProj/jni/CMakeLists.txt
-@@ -142,10 +142,10 @@ set_target_properties(tlottie PROPERTIES
+@@ -144,10 +144,10 @@ set_target_properties(tlottie PROPERTIES
          IMPORTED_LOCATION ${CMAKE_HOME_DIRECTORY}/prebuild/lib/${ANDROID_ABI}/libtlottie.a)
  
  # Wallet Engine: matching Rust archive and generated UniFFI C++20 wrapper.

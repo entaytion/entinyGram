@@ -1,18 +1,18 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Mon, 26 Oct 2026 00:09:25 +0200
+From: alina sireneva <alina@tei.pet>
+Date: Sat, 17 Oct 2026 22:26:33 +0200
 Subject: fix sqlite picking slow plans on some storage queries
 
 ---
  .../messenger/MediaDataController.java        |  2 +-
- .../telegram/messenger/MessagesStorage.java   | 25 +++++++++----------
- 2 files changed, 13 insertions(+), 14 deletions(-)
+ .../telegram/messenger/MessagesStorage.java   | 23 +++++++++----------
+ 2 files changed, 12 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5604,7 +5604,7 @@ public class MediaDataController extends BaseController {
+@@ -5606,7 +5606,7 @@ public class MediaDataController extends BaseController {
              try {
                  int lastTime = 0;
                  int lastMid = 0;
@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -4014,7 +4014,7 @@ public class MessagesStorage extends BaseController {
+@@ -4132,7 +4132,7 @@ public class MessagesStorage extends BaseController {
                              if (chat != null && (ChatObject.isNotInChat(chat) || chat.min || chat.migrated_to != null)) {
                                  long did = -chat.id;
                                  database.executeFast("UPDATE dialogs SET unread_count = 0 WHERE did = " + did).stepThis().dispose();
@@ -34,28 +34,19 @@ index 0000000..0000000 100644
                                  chats.remove(a);
                                  a--;
                                  pushDialogs.remove(did);
-@@ -8946,9 +8946,9 @@ public class MessagesStorage extends BaseController {
+@@ -9119,9 +9119,9 @@ public class MessagesStorage extends BaseController {
              try {
                  int result;
                  if (topicId != 0) {
--                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT MIN(mid) FROM messages_topics WHERE uid = %d AND topic_id = %d AND mention = 1 AND read_state IN(0, 1)", dialog_id, topicId));
-+                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT MIN(mid) FROM messages_topics INDEXED BY uid_mention_idx_messages_topics WHERE uid = %d AND topic_id = %d AND mention = 1 AND read_state IN(0, 1)", dialog_id, topicId));
+-                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT MIN(mid), COUNT(mid) FROM messages_topics WHERE uid = %d AND topic_id = %d AND mention = 1 AND read_state IN(0, 1)", dialog_id, topicId));
++                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT MIN(mid), COUNT(mid) FROM messages_topics INDEXED BY uid_mention_idx_messages_topics WHERE uid = %d AND topic_id = %d AND mention = 1 AND read_state IN(0, 1)", dialog_id, topicId));
                  } else {
--                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT MIN(mid) FROM messages_v2 WHERE uid = %d AND mention = 1 AND read_state IN(0, 1)", dialog_id));
-+                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT MIN(mid) FROM messages_v2 INDEXED BY uid_mention_idx_messages_v2 WHERE uid = %d AND mention = 1 AND read_state IN(0, 1)", dialog_id));
+-                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT MIN(mid), COUNT(mid) FROM messages_v2 WHERE uid = %d AND mention = 1 AND read_state IN(0, 1)", dialog_id));
++                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT MIN(mid), COUNT(mid) FROM messages_v2 INDEXED BY uid_mention_idx_messages_v2 WHERE uid = %d AND mention = 1 AND read_state IN(0, 1)", dialog_id));
                  }
-                 if (cursor.next()) {
+                 if (cursor.next() && cursor.intValue(1) == expectedCount) {
                      result = cursor.intValue(0);
-@@ -14424,7 +14424,7 @@ public class MessagesStorage extends BaseController {
-                     long key = inbox.keyAt(b);
-                     int messageId = inbox.get(key);
-                     database.executeFast(String.format(Locale.US, "UPDATE messages_v2 SET read_state = read_state | 1 WHERE uid = %d AND mid > 0 AND mid <= %d AND read_state IN(0,2) AND out = 0", key, messageId)).stepThis().dispose();
--                    database.executeFast(String.format(Locale.US, "UPDATE messages_v2 SET read_state = read_state | 2 WHERE uid = %d AND mid > 0 AND mid <= %d AND mention = 1 AND read_state IN(0,1) AND out = 0", key, messageId)).stepThis().dispose();
-+                    database.executeFast(String.format(Locale.US, "UPDATE messages_v2 INDEXED BY uid_mention_idx_messages_v2 SET read_state = read_state | 2 WHERE uid = %d AND mid > 0 AND mid <= %d AND mention = 1 AND read_state IN(0,1) AND out = 0", key, messageId)).stepThis().dispose();
-                     int newMentions = 0;
-                     cursor = database.queryFinalized(String.format(Locale.US, "SELECT count(mid) FROM messages_v2 WHERE uid = %d AND mention = 1 AND read_state IN(0,1) AND out = 0", key));
-                     if (cursor.next()) newMentions = cursor.intValue(0);
-@@ -14938,25 +14938,25 @@ public class MessagesStorage extends BaseController {
+@@ -15114,25 +15114,25 @@ public class MessagesStorage extends BaseController {
                  for (int i = 0; i < 5; i++) {
                      if (i == 0) {
                          if (dialogId != 0) {
@@ -88,7 +79,7 @@ index 0000000..0000000 100644
                      }
                      TLRPC.TL_messageEmpty emptyMessage = new TLRPC.TL_messageEmpty();
                      NativeByteBuffer data = new NativeByteBuffer(emptyMessage.getObjectSize());
-@@ -14964,9 +14964,8 @@ public class MessagesStorage extends BaseController {
+@@ -15140,9 +15140,8 @@ public class MessagesStorage extends BaseController {
  
                      state.requery();
                      state.bindByteBuffer(1, data);

@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -484,7 +484,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -555,7 +555,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                      }
                  }
  
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -4579,7 +4579,7 @@ public class Theme {
+@@ -4662,7 +4662,7 @@ public class Theme {
                  canStartHolidayAnimation = false;
              }
              if (dialogs_holidayDrawable == null) {
@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEf
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java
-@@ -176,7 +176,7 @@ public class SnowflakesEffect {
+@@ -177,7 +177,7 @@ public class SnowflakesEffect {
                  final float h = particle.type == 0 ? (texSize / 2f) : (texSize / 2f * particle.scale);
                  final float tx = particle.type == 0 ? texSize : 0;
  

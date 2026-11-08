@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/CheckBoxCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/CheckBoxCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/CheckBoxCell.java
-@@ -111,7 +111,7 @@ public class CheckBoxCell extends FrameLayout {
+@@ -112,7 +112,7 @@ public class CheckBoxCell extends FrameLayout {
                  }
              };
              NotificationCenter.listenEmojiLoading(animatedTextView);
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              animatedTextView.setRightPadding(dp(8));
              animatedTextView.getDrawable().setHacks(true, true, false);
              animatedTextView.setTag(getThemedColor(type == TYPE_CHECK_BOX_DEFAULT || type == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText));
-@@ -124,7 +124,7 @@ public class CheckBoxCell extends FrameLayout {
+@@ -125,7 +125,7 @@ public class CheckBoxCell extends FrameLayout {
                  addView(animatedTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL, 29, 0, 0, 0));
                  animatedTextView.setPadding(0, 0, 0, dp(3));
              } else {

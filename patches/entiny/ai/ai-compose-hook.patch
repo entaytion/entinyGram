@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -405,6 +405,9 @@ public class ConnectionsManager extends BaseController {
+@@ -429,6 +429,9 @@ public class ConnectionsManager extends BaseController {
          if (BuildVars.LOGS_ENABLED) {
              FileLog.d("send request " + object + " with token = " + requestToken);
          }
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          if (desu.inugram.helpers.security.GhostHelper.processSendRequest(object, currentAccount, onComplete, onCompleteTimestamp)) {
              return;
          }
-@@ -602,6 +605,12 @@ public class ConnectionsManager extends BaseController {
+@@ -625,6 +628,12 @@ public class ConnectionsManager extends BaseController {
  
      public void cancelRequest(int token, boolean notifyServer, Runnable onCancelled) {
          Utilities.stageQueue.postRunnable(() -> {

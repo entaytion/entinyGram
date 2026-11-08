@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -3056,14 +3056,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3114,14 +3114,12 @@ public class ChatActivityEnterView extends FrameLayout implements
                          if (!hasRecordVideo || calledRecordRunnable) {
                              startedDraggingX = -1;
                              if (hasRecordVideo && isInVideoMode()) {
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  delegate.needStartRecordVideo(1, true, 0, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId, 0);
-@@ -3072,7 +3070,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3130,7 +3128,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                                  if (recordingAudioVideo && isInScheduleMode()) {
                                      AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate, scheduleRepeatPeriod) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate, false, 0), () -> MediaController.getInstance().stopRecording(0, false, 0, false, 0), resourcesProvider);
                                  }
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                                      if (isInVideoMode()) {
                                          if (slideText != null) {
                                              slideText.setEnabled(false);
-@@ -3088,9 +3086,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3146,9 +3144,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                                              slideText.setEnabled(false);
                                          }
                                      }
@@ -50,7 +50,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0, voiceOnce, 0);
-@@ -3178,14 +3174,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3236,14 +3232,12 @@ public class ChatActivityEnterView extends FrameLayout implements
                          } else if (!hasRecordVideo || calledRecordRunnable) {
                              startedDraggingX = -1;
                              if (hasRecordVideo && isInVideoMode()) {
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-@@ -3194,7 +3188,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3252,7 +3246,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                              } else if (!sendVoiceEnabled) {
                                  delegate.needShowMediaBanHint();
                              } else {
@@ -76,7 +76,7 @@ index 0000000..0000000 100644
                                      if (sendButtonVisible) {
                                          calledRecordRunnable = true;
                                      }
-@@ -3203,9 +3197,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3261,9 +3255,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                                      if (slideText != null) {
                                          slideText.setEnabled(false);
                                      }
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  if (recordingAudioVideo && isInScheduleMode()) {
-@@ -12464,7 +12456,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12637,7 +12629,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                              }
                          };
                          if (!showConfirmAlert(runnable)) {
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
                          }
                      });
                  }
-@@ -12738,7 +12733,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12911,7 +12906,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                      MediaDataController.getInstance(currentAccount).addRecentSticker(MediaDataController.TYPE_IMAGE, parent, sticker, (int) (System.currentTimeMillis() / 1000), false);
                  };
                  if (!showConfirmAlert(runnable)) {
@@ -115,7 +115,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
-@@ -550,6 +550,8 @@ public class EmojiView extends FrameLayout implements
+@@ -553,6 +553,8 @@ public class EmojiView extends FrameLayout implements
          void onDrag(int offset);
      }
  
@@ -128,7 +128,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
-@@ -365,6 +365,8 @@ public class ContentPreviewViewer {
+@@ -366,6 +366,8 @@ public class ContentPreviewViewer {
      private ReactionsContainerLayout reactionsLayout;
      private FrameLayout reactionsLayoutContainer;
      private boolean closeOnDismiss;
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
      private boolean drawEffect;
      private TLRPC.TL_messages_stickerSet stickerSetForCustomSticker;
  
-@@ -474,10 +476,14 @@ public class ContentPreviewViewer {
+@@ -475,10 +477,14 @@ public class ContentPreviewViewer {
      private final Runnable showSheetRunnable = new Runnable() {
          @Override
          public void run() {
@@ -154,7 +154,7 @@ index 0000000..0000000 100644
  
  
              if (delegate != null) {
-@@ -504,6 +510,7 @@ public class ContentPreviewViewer {
+@@ -505,6 +511,7 @@ public class ContentPreviewViewer {
                      popupWindow.setDismissAnimationDuration(150);
                      popupWindow.setScaleOut(true);
                      popupWindow.setOutsideTouchable(true);
@@ -162,7 +162,7 @@ index 0000000..0000000 100644
                      popupWindow.setClippingEnabled(true);
                      popupWindow.setAnimationStyle(R.style.PopupContextAnimation);
                      popupWindow.setFocusable(true);
-@@ -804,7 +811,9 @@ public class ContentPreviewViewer {
+@@ -805,7 +812,9 @@ public class ContentPreviewViewer {
                          }
                          if (actions.get(which) == 0 || actions.get(which) == 6) {
                              if (delegate != null) {
@@ -172,7 +172,7 @@ index 0000000..0000000 100644
                              }
                          } else if (actions.get(which) == 1) {
                              if (delegate != null) {
-@@ -830,7 +839,11 @@ public class ContentPreviewViewer {
+@@ -831,7 +840,11 @@ public class ContentPreviewViewer {
                          } else if (actions.get(which) == 8) {
                              delegate.deleteSticker(currentDocument);
                          }
@@ -193,7 +193,7 @@ index 0000000..0000000 100644
                  popupWindow.setClippingEnabled(true);
                  popupWindow.setAnimationStyle(R.style.PopupContextAnimation);
                  popupWindow.setFocusable(true);
-@@ -1003,6 +1017,7 @@ public class ContentPreviewViewer {
+@@ -1002,6 +1016,7 @@ public class ContentPreviewViewer {
                  popupWindow.setDismissAnimationDuration(150);
                  popupWindow.setScaleOut(true);
                  popupWindow.setOutsideTouchable(true);
@@ -201,7 +201,7 @@ index 0000000..0000000 100644
                  popupWindow.setClippingEnabled(true);
                  popupWindow.setAnimationStyle(R.style.PopupContextAnimation);
                  popupWindow.setFocusable(true);
-@@ -1095,9 +1110,13 @@ public class ContentPreviewViewer {
+@@ -1094,9 +1109,13 @@ public class ContentPreviewViewer {
                      }
                      int which = (int) v.getTag();
                      if (actions.get(which) == 0) {
@@ -215,7 +215,7 @@ index 0000000..0000000 100644
                      } else if (actions.get(which) == 1) {
                          MediaDataController.getInstance(currentAccount).removeRecentGif(currentDocument);
                          delegate.gifAddedOrDeleted();
-@@ -1114,7 +1133,11 @@ public class ContentPreviewViewer {
+@@ -1113,7 +1132,11 @@ public class ContentPreviewViewer {
                      } else if (actions.get(which) == 11) {
                          delegate.addCaptionToGif(currentDocument != null ? currentDocument : inlineResult, parentObject, true, 0, 0);
                      }
@@ -228,7 +228,7 @@ index 0000000..0000000 100644
                  };
  
                  for (int i = 0; i < items.size(); i++) {
-@@ -1141,6 +1164,7 @@ public class ContentPreviewViewer {
+@@ -1140,6 +1163,7 @@ public class ContentPreviewViewer {
                  popupWindow.setDismissAnimationDuration(150);
                  popupWindow.setScaleOut(true);
                  popupWindow.setOutsideTouchable(true);
@@ -236,7 +236,7 @@ index 0000000..0000000 100644
                  popupWindow.setClippingEnabled(true);
                  popupWindow.setAnimationStyle(R.style.PopupContextAnimation);
                  popupWindow.setFocusable(true);
-@@ -1175,6 +1199,9 @@ public class ContentPreviewViewer {
+@@ -1174,6 +1198,9 @@ public class ContentPreviewViewer {
                      valueAnimator.setDuration(350);
                      valueAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
                      valueAnimator.start();
@@ -246,7 +246,7 @@ index 0000000..0000000 100644
                  }
              }
              for (int i = 0; i < previewMenu.getItemsCount(); ++i) {
-@@ -1915,7 +1942,7 @@ public class ContentPreviewViewer {
+@@ -1914,7 +1941,7 @@ public class ContentPreviewViewer {
                  return;
              }
              AndroidUtilities.cancelRunOnUIThread(showSheetRunnable);
@@ -255,7 +255,7 @@ index 0000000..0000000 100644
          }
  
          if (centerImage.getLottieAnimation() != null) {
-@@ -1964,6 +1991,19 @@ public class ContentPreviewViewer {
+@@ -1963,6 +1990,19 @@ public class ContentPreviewViewer {
          return isVisible;
      }
  
@@ -275,7 +275,7 @@ index 0000000..0000000 100644
      public void closeWithMenu() {
          if (reactionsLayout != null) {
              CustomEmojiReactionsWindow customEmojiReactionsWindow = reactionsLayout.getReactionsWindow();
-@@ -1990,6 +2030,8 @@ public class ContentPreviewViewer {
+@@ -1989,6 +2029,8 @@ public class ContentPreviewViewer {
          currentQuery = null;
          delegate = null;
          isVisible = false;
@@ -284,7 +284,7 @@ index 0000000..0000000 100644
          AndroidUtilities.runOnUIThread(() -> resourcesProvider = null, 200);
          if (unlockPremiumView != null) {
              unlockPremiumView.animate().alpha(0).translationY(AndroidUtilities.dp(56)).setDuration(150).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
-@@ -2140,7 +2182,7 @@ public class ContentPreviewViewer {
+@@ -2139,7 +2181,7 @@ public class ContentPreviewViewer {
              canvas.restore();
          }
  

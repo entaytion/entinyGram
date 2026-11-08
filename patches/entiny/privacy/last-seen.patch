@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -2975,6 +2975,10 @@ public class LocaleController {
+@@ -3009,6 +3009,10 @@ public class LocaleController {
                  }
                  return getString("Online", R.string.Online);
              } else {
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6867,6 +6867,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6854,6 +6854,7 @@ public class MessagesController extends BaseController implements NotificationCe
          desu.inugram.helpers.profile.LocalNameHelper.applyTo(user, currentAccount);
          fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
          TLRPC.User oldUser = users.get(user.id);

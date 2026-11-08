@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -24489,6 +24489,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -24550,6 +24550,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isSponsoredDisabled() {
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoAds.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoAds.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoAds.java
-@@ -195,7 +195,7 @@ public static VideoAds make(
+@@ -196,7 +196,7 @@ public static VideoAds make(
      private void load() {
          if (loading || loaded) return;
  
@@ -40,7 +40,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchA
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
-@@ -1142,7 +1142,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1143,7 +1143,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                  ConnectionsManager.getInstance(currentAccount).cancelRequest(sponsoredReqId, true);
                  sponsoredReqId = 0;
              }
@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -2672,6 +2672,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -2718,6 +2718,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              }
          }
  
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
          if (checkMessage) {
              if (messageString == null) {
                  messageString = "";
-@@ -5959,6 +5963,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -6005,6 +6009,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
      public SpannableStringBuilder getMessageStringFormatted(int messageFormatType, String restrictionReason, CharSequence messageNameString, boolean applyThumbs) {
          SpannableStringBuilder stringBuilder;
          MessageObject captionMessage = getCaptionMessage();
@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -25465,7 +25465,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26023,7 +26023,7 @@ public class ChatActivity extends BaseFragment implements
      private Pattern sponsoredUrlPattern;
      private MessageObject botSponsoredMessage;
      private void addSponsoredMessages(boolean animated) {

@@ -300,7 +300,7 @@ object RecentChatsSidebar {
                 val tabsLoc = IntArray(2)
                 tabs.getLocationOnScreen(tabsLoc)
                 val tabsTop = tabsLoc[1] - rootLoc[1]
-                y = if (InuConfig.FOLDERS_AT_BOTTOM.value) tabsTop - dp(STRIP_HEIGHT_DP.toFloat()) else tabsTop + tabs.height
+                y = if (FolderHelper.atBottom()) tabsTop - dp(STRIP_HEIGHT_DP.toFloat()) else tabsTop + tabs.height
             } else {
                 y = (fragment.actionBar?.bottom ?: 0) + dp(60f)
             }

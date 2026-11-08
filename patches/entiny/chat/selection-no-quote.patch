@@ -12,8 +12,8 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -8252,6 +8252,10 @@ public class ChatActivity extends BaseFragment implements
-         actionsButtonsLayout = new ChatActivityActionsButtonsLayout(context, resourceProvider, blurredBackgroundColorProvider, glassBackgroundDrawableFactory);
+@@ -8194,6 +8194,10 @@ public class ChatActivity extends BaseFragment implements
+         actionsButtonsLayout = new ChatActivityActionsButtonsLayout(context, resourceProvider, blurredBackgroundButtonsColorProvider, glassBackgroundDrawableFactory);
          actionsButtonsLayout.setForwardButtonOnClickListener(v -> openForward(false));
          actionsButtonsLayout.setReplyButtonOnClickListener(v -> {
 +            if (desu.inugram.InuConfig.SELECTION_BOTTOM_NO_QUOTE.getValue()) {
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
              MessageObject messageObject = null;
              for (int a = 1; a >= 0; a--) {
                  if (messageObject == null && selectedMessagesIds[a].size() != 0) {
-@@ -19681,6 +19685,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -20161,6 +20165,9 @@ public class ChatActivity extends BaseFragment implements
                      }
                      if (actionsButtonsLayout != null) {
                          actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, true);
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
                      }
                      forwardButtonAnimation.playTogether(animators);
                      forwardButtonAnimation.setDuration(100);
-@@ -19702,6 +19709,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -20182,6 +20189,9 @@ public class ChatActivity extends BaseFragment implements
                      }
                      if (actionsButtonsLayout != null) {
                          actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, false);
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (saveItem != null) {
-@@ -19788,7 +19798,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -20268,7 +20278,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          }
                      }
@@ -60,7 +60,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityActionsButtonsLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityActionsButtonsLayout.java
-@@ -58,7 +58,11 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
+@@ -59,7 +59,11 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
          forwardButton.button.setOnClickListener(v -> {});
          ScaleStateListAnimator.apply(forwardButton.button, .065f, 2f);
  

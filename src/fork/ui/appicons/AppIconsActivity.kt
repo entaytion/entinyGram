@@ -34,7 +34,7 @@ import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
-import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor
+import org.telegram.utils.glass.source.GlassSourceColor
 import org.telegram.ui.LauncherIconController.LauncherIcon
 import org.telegram.ui.PremiumPreviewFragment
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView
@@ -57,7 +57,7 @@ class AppIconsActivity : BaseFragment() {
 
     private var tint = 0
     private var tintAnimator: ValueAnimator? = null
-    private var glassSource: BlurredBackgroundSourceColor? = null
+    private var glassSource: GlassSourceColor? = null
     private var heroHeight = 0
     private var bottomInset = 0
     private var collapse = 0f
@@ -86,7 +86,7 @@ class AppIconsActivity : BaseFragment() {
 
         contentView = ContentView(context)
 
-        val source = BlurredBackgroundSourceColor()
+        val source = GlassSourceColor()
         source.setColor(topColor())
         glassSource = source
         actionBar.setupGlass(

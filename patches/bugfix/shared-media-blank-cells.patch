@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -2044,6 +2044,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -2036,6 +2036,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      private boolean currentVideoFinishedLoading;
      private TL_iv.PageBlock currentPageBlock;
      private ImageReceiver.BitmapHolder currentThumb;
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
      private boolean ignoreDidSetImage;
      private boolean dontAutoPlay;
      boolean fromCamera;
-@@ -2740,6 +2741,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -2732,6 +2733,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
      public static class PlaceProviderObject {
          public ImageReceiver imageReceiver;
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          public int viewX;
          public int viewY;
          public int viewY2;
-@@ -16117,6 +16119,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16088,6 +16090,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  currentPlaceObject.imageReceiver.setVisible(false, true);
              } else {
                  hideAfterAnimation = currentPlaceObject;
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -18032,7 +18035,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18003,7 +18006,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          if (showAfterAnimation != null) {
                              showAfterAnimation.imageReceiver.setVisible(true, true);
                          }
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
                              hideAfterAnimation.imageReceiver.setVisible(false, true);
                          }
                          if (photos != null && sendPhotoType != 3 && sendPhotoType != SELECT_TYPE_AVATAR) {
-@@ -18112,9 +18115,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18083,9 +18086,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                              photoCropView.setAlpha(1.0f);
                          }
                      }
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
                              object.imageReceiver.setVisible(false, true);
                          }
                      };
-@@ -18867,6 +18872,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18838,6 +18843,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
      }
  
@@ -106,7 +106,7 @@ index 0000000..0000000 100644
      private ClippingImageView[] getAnimatingImageViews(PlaceProviderObject object) {
          final boolean hasSecondAnimatingImageView = !AndroidUtilities.isTablet() && object != null && object.animatingImageView != null;
          final ClippingImageView[] animatingImageViews = new ClippingImageView[1 + (hasSecondAnimatingImageView ? 1 : 0)];
-@@ -19020,6 +19040,19 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18993,6 +19013,19 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          shownControlsByEnd = false;
          videoCutStart = 0;
          videoCutEnd = 1f;

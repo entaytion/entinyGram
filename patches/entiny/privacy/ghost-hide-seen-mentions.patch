@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1336,8 +1336,8 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1337,8 +1337,8 @@ public class MessagesController extends BaseController implements NotificationCe
              ContactsController contactsController = accountInstance.getContactsController();
              boolean skip = false;
  
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
                  return false;
              }
              if (dialogId > 0) {
-@@ -9864,7 +9864,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9906,7 +9906,7 @@ public class MessagesController extends BaseController implements NotificationCe
              }
  
              unreadCounts.unreadCount += dialog.unread_count;
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
              unreadCounts.reactionMentionCount += dialog.unread_reactions_count;
              unreadCounts.pollVotesMentionCount += dialog.unread_poll_votes_count;
              if (!unreadCounts.hasUnmutedUnreadDialogs && dialog.unread_count > 0) {
-@@ -15172,6 +15172,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14956,6 +14956,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              }
                          }
                          getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, UPDATE_MASK_READ_DIALOG_MESSAGE);
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                      }
                      if (!popup) {
                          getNotificationsController().processReadMessages(null, dialogId, 0, maxPositiveId, false);
-@@ -15226,6 +15227,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -15010,6 +15011,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              }
                          }
                          getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, UPDATE_MASK_READ_DIALOG_MESSAGE);
@@ -55,7 +55,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java
-@@ -655,7 +655,7 @@ public class TopicsController extends BaseController {
+@@ -709,7 +709,7 @@ public class TopicsController extends BaseController {
              for (int i = 0; i < topics.size(); i++) {
                  TLRPC.TL_forumTopic topic = topics.get(i);
                  countsTmp[0] += topic.unread_count > 0 ? 1 : 0;
@@ -68,7 +68,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -3318,7 +3318,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3364,7 +3364,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                              hasUnmutedCommunityDialogs = unreadCounts.hasUnmutedUnreadDialogs;
                          } else {
                              unreadCount = dialog.unread_count;
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
                              reactionMentionCount = dialog.unread_reactions_count;
                              pollVotesMentionCount = dialog.unread_poll_votes_count;
                          }
-@@ -3353,7 +3353,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3399,7 +3399,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              }
              if (forumTopic != null) {
                  unreadCount = forumTopic.unread_count;
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
                  reactionMentionCount = forumTopic.unread_reactions_count;
                  pollVotesMentionCount = forumTopic.unread_poll_votes_count;
              }
-@@ -3496,7 +3496,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3542,7 +3542,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                              hasUnmutedCommunityDialogs = unreadCounts.hasUnmutedUnreadDialogs;
                          } else if (dialog != null) {
                              newCount = dialog.unread_count;
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                              newReactionCout = dialog.unread_reactions_count;
                              newPollVotesCount = dialog.unread_poll_votes_count;
                          } else {
-@@ -6303,7 +6303,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -6349,7 +6349,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              Integer printingType = null;
              long readHash = dialog.read_inbox_max_id + ((long) dialog.read_outbox_max_id << 8) + ((long) (dialog.unread_count + (dialog.unread_mark ? -1 : 0)) << 16) +
                      (dialog.unread_reactions_count > 0 ? (1 << 18) : 0) +
@@ -108,7 +108,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17739,6 +17739,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -18109,6 +18109,9 @@ public class ChatActivity extends BaseFragment implements
          if (sideControlsButtonsLayout == null) {
              return;
          }
@@ -118,21 +118,21 @@ index 0000000..0000000 100644
  
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_MENTION, show && !ChatObject.isMonoForum(currentChat), animated);
          if (!show) {
-@@ -24993,6 +24996,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -25366,6 +25369,9 @@ public class ChatActivity extends BaseFragment implements
              long topicId = (Long) args[1];
              if (dialog_id == dialogId && this.getTopicId() == topicId) {
                  int count = (int) args[2];
 +                if (desu.inugram.helpers.security.GhostHelper.areMentionsSeen(currentAccount, dialog_id, getTopicId())) {
 +                    count = 0;
 +                }
-                 if (newMentionsCount > count) {
-                     newMentionsCount = count;
-                     if (newMentionsCount <= 0) {
+                 if (desu.inugram.helpers.DebugLogUtils.isEnabled()) {
+                     FileLog.d("InuMn[" + classGuid + "] counter notification did=" + dialogId + " " + newMentionsCount + " -> " + count);
+                 }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsTabsView.java
-@@ -1419,7 +1419,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
+@@ -1509,7 +1509,7 @@ public class TopicsTabsView extends FrameLayout implements NotificationCenter.No
              setCounter(
                  MessagesController.getInstance(currentAccount).isDialogMuted(dialogId, topic.id),
                  topic.unread_count,

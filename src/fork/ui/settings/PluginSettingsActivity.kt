@@ -119,7 +119,7 @@ class PluginSettingsActivity(
         }
         AndroidUtilities.runOnUIThread {
             model = parsed
-            actionBar?.setTitle(parsed.title)
+            simpleActionBar?.setTitle(parsed.title)
             maybeAttachBottomButton(parsed, fragmentView)
             listView?.adapter?.update(true)
         }

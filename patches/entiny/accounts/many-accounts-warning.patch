@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java b/TM
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
-@@ -913,6 +913,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+@@ -938,6 +938,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
          super.onResume();
          if (newAccount) {
              ConnectionsManager.getInstance(currentAccount).setAppPaused(false, false);

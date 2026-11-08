@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Mon, 26 Oct 2026 00:09:56 +0200
+From: Dubzer <me@dubzer.dev>
+Date: Wed, 14 Oct 2026 19:37:05 +0300
 Subject: match splash screen to the selected app icon and monet theme
 
 ---
@@ -12,23 +12,22 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -7540,6 +7540,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7667,6 +7667,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                  checkNavigationBarColor = (boolean) args[1];
              }
              checkSystemBarColors(args.length > 2 && (boolean) args[2], true, checkNavigationBarColor && !isNavigationBarColorFrozen && !actionBarLayout.isTransitionAnimationInProgress());
 +            desu.inugram.helpers.SplashScreenHelper.sync(this);
          } else if (id == NotificationCenter.needSetDayNightTheme) {
-             boolean instant = false;
-             if (args[2] != null) {
+             debugInstantThemeSwitch = false;
+             // theme colors never fade: a switch either plays the reveal from a point or recolors everything in one frame
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
-@@ -32,6 +32,7 @@ public class LauncherIconController {
-                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+@@ -99,5 +99,6 @@ public class LauncherIconController {
+             this.title = title;
+             this.premium = premium;
          }
-         desu.inugram.helpers.SplashThemeHelper.apply(LaunchActivity.instance);
 +        desu.inugram.helpers.SplashScreenHelper.sync(LaunchActivity.instance);
      }
- 
-     public enum LauncherIcon {
+ }

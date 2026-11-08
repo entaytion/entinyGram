@@ -31,7 +31,7 @@ import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LayoutHelper
-import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceRenderNode
+import org.telegram.utils.glass.source.GlassSourceRenderNode
 import org.telegram.ui.MainTabsActivity
 
 // entiny: feed as an embedded ChatActivity in search mode, ported from exteraless (https://github.com/exteraless/exteraless)
@@ -431,7 +431,9 @@ class FeedActivity @JvmOverloads constructor(
         chat?.onPageDownClicked()
     }
 
-    override fun getGlassSource(): BlurredBackgroundSourceRenderNode? = chat?.glassSource
+    override fun getGlassSource(): GlassSourceRenderNode? = chat?.glassSource
+
+    override fun getFrostedGlassSource(): GlassSourceRenderNode? = chat?.frostedGlassSource
 
     override fun onParentBecomeFullyVisible() {
         reattachCurrentFeedVideoTexture()

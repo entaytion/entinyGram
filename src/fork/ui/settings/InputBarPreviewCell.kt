@@ -20,8 +20,8 @@ import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
 import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable
 import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProviderThemed
-import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor
-import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceWrapped
+import org.telegram.utils.glass.source.GlassSourceColor
+import org.telegram.utils.glass.source.GlassSourceWrapped
 import org.telegram.ui.Components.chat.WallpaperBitmapProvider
 
 class InputBarPreviewCell(
@@ -93,9 +93,9 @@ class InputBarPreviewCell(
         val source = if (isBlurEnabled && wallpaper != null) {
             wallpaperBitmapProvider.updateSourceFromBackgroundViewDrawable(wallpaper)
         } else {
-            BlurredBackgroundSourceColor()
+            GlassSourceColor()
         }
-        val wrappedSource = BlurredBackgroundSourceWrapped()
+        val wrappedSource = GlassSourceWrapped()
         wrappedSource.setSource(source)
         val factory = BlurredBackgroundDrawableViewFactory(wrappedSource)
         glassFactory = factory

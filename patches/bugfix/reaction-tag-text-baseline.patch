@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/Re
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
-@@ -874,6 +874,7 @@ public class ReactionsLayoutInBubble {
+@@ -890,6 +890,7 @@ public class ReactionsLayoutInBubble {
                  textDrawable.ignoreRTL = true;
                  textDrawable.setAnimationProperties(.4f, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
                  textDrawable.setTextSize(dp(13));

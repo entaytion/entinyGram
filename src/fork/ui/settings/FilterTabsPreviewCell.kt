@@ -19,14 +19,14 @@ import org.telegram.ui.Components.FilterTabsView
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
-import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor
+import org.telegram.utils.glass.source.GlassSourceColor
 import java.util.HashMap
 
 @SuppressLint("ViewConstructor")
 class FilterTabsPreviewCell(context: Context) : FrameLayout(context), NotificationCenter.NotificationCenterDelegate {
 
     private val filterTabsView: FilterTabsView
-    private val blurSource: BlurredBackgroundSourceColor
+    private val blurSource: GlassSourceColor
     private val idsWithCounters = HashMap<Int, Int>()
     private val counterSeed = Utilities.random.nextInt(40) + 20
 
@@ -44,7 +44,7 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
             )
         }
 
-        blurSource = BlurredBackgroundSourceColor().apply {
+        blurSource = GlassSourceColor().apply {
             setColor(Theme.getColor(Theme.key_windowBackgroundWhite))
         }
         val factory = BlurredBackgroundDrawableViewFactory(blurSource)

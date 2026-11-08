@@ -56,6 +56,19 @@ object CallAudioHelper {
     fun getCurrentRoute(): Int = currentRoute
 
     @JvmStatic
+    fun onDevicesChanged(service: VoIPService) {
+        if (!isActive) return
+        val present = hasBluetoothMediaOutput(service)
+        if (present == bluetoothPresent) return
+        bluetoothPresent = present
+        if (present) {
+            service.setAudioOutput(2)
+        } else if (currentRoute == VoIPService.AUDIO_ROUTE_BLUETOOTH) {
+            service.setAudioOutput(if (service.hasEarpiece()) 1 else 0)
+        }
+    }
+
+    @JvmStatic
     fun handleSetAudioOutput(service: VoIPService, output: Int): Boolean {
         if (!isActive) return false
         val deviceType = when (output) {

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
-@@ -128,6 +128,7 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -132,6 +132,7 @@ public class FilterCreateActivity extends BaseFragment {
      private boolean newFilterAnimations = true;
      private int newFilterFlags;
      private int newFilterColor;
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
      private ArrayList<Long> newAlwaysShow;
      private ArrayList<Long> newNeverShow;
      private LongSparseIntArray newPinned;
-@@ -219,6 +220,7 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -223,6 +224,7 @@ public class FilterCreateActivity extends BaseFragment {
          AnimatedEmojiDrawable.toggleAnimations(currentAccount, newFilterAnimations);
          newFilterFlags = filter.flags;
          newFilterColor = filter.color;
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
          newAlwaysShow = new ArrayList<>(filter.alwaysShow);
          if (alwaysShow != null) {
              newAlwaysShow.addAll(alwaysShow);
-@@ -372,6 +374,19 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -376,6 +378,19 @@ public class FilterCreateActivity extends BaseFragment {
              items.add(ItemInner.asShadow(LocaleController.getString(R.string.FilterExcludeInfo)));
          }
  
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
          if (getMessagesController().folderTags || !getUserConfig().isPremium()) {
              items.add(new ItemInner(VIEW_TYPE_HEADER_COLOR_PREVIEW, false));
              items.add(new ItemInner(VIEW_TYPE_COLOR, false));
-@@ -1163,6 +1178,7 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -1176,6 +1191,7 @@ public class FilterCreateActivity extends BaseFragment {
              fragment.getMessagesController().onFilterUpdate(filter);
          }
          fragment.getMessagesStorage().saveDialogFilter(filter, atBegin, true);
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          if (atBegin) {
              TLRPC.TL_messages_updateDialogFiltersOrder req = new TLRPC.TL_messages_updateDialogFiltersOrder();
              ArrayList<MessagesController.DialogFilter> filters = fragment.getMessagesController().getDialogFilters();
-@@ -1325,6 +1341,9 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -1338,6 +1354,9 @@ public class FilterCreateActivity extends BaseFragment {
          if (filter.color != newFilterColor) {
              hasUserChanged = true;
          }

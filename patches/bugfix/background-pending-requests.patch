@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp b/TMessagesProj/jni/
 index 0000000..0000000 100644
 --- a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
 +++ b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
-@@ -248,10 +248,11 @@ void ConnectionsManager::select() {
+@@ -249,10 +249,11 @@ void ConnectionsManager::select() {
  
      if (lastPauseTime != 0 && llabs(now - lastPauseTime) >= nextSleepTimeout) {
          bool dontSleep = !requestingSaltsForDc.empty();
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
                      dontSleep = true;
                      break;
                  }
-@@ -260,7 +261,7 @@ void ConnectionsManager::select() {
+@@ -261,7 +262,7 @@ void ConnectionsManager::select() {
          if (!dontSleep) {
              for (auto & iter : requestsQueue) {
                  Request *request = iter.get();
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
                      dontSleep = true;
                      break;
                  }
-@@ -277,7 +278,7 @@ void ConnectionsManager::select() {
+@@ -278,7 +279,7 @@ void ConnectionsManager::select() {
              return;
          } else {
              lastPauseTime = now;
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          }
      }
      if (networkPaused) {
-@@ -3862,6 +3863,7 @@ void ConnectionsManager::resumeNetwork(bool partial) {
+@@ -3902,6 +3903,7 @@ void ConnectionsManager::resumeNetwork(bool partial) {
          } else {
              lastPauseTime = 0;
              lastMonotonicPauseTime = 0;
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
              lastSystemPauseTime = 0;
              networkPaused = false;
              if (LOGS_ENABLED) DEBUG_D("wakeup network account%u", instanceNum);
-@@ -3882,7 +3884,7 @@ void ConnectionsManager::pauseNetwork() {
+@@ -3922,7 +3924,7 @@ void ConnectionsManager::pauseNetwork() {
      if (lastPauseTime != 0) {
          return;
      }
@@ -65,7 +65,7 @@ diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.h b/TMessagesProj/jni/tg
 index 0000000..0000000 100644
 --- a/TMessagesProj/jni/tgnet/ConnectionsManager.h
 +++ b/TMessagesProj/jni/tgnet/ConnectionsManager.h
-@@ -175,6 +175,7 @@ private:
+@@ -176,6 +176,7 @@ private:
      int32_t nextSleepTimeout = CONNECTION_BACKGROUND_KEEP_TIME;
      int64_t lastPauseTime = 0;
      int64_t lastMonotonicPauseTime = 0;
@@ -77,9 +77,9 @@ diff --git a/TMessagesProj/jni/tgnet/Defines.h b/TMessagesProj/jni/tgnet/Defines
 index 0000000..0000000 100644
 --- a/TMessagesProj/jni/tgnet/Defines.h
 +++ b/TMessagesProj/jni/tgnet/Defines.h
-@@ -27,6 +27,7 @@
+@@ -28,6 +28,7 @@
  #define DOWNLOAD_CONNECTIONS_COUNT 8
- #define UPLOAD_CONNECTIONS_COUNT 4
+ #define UPLOAD_CONNECTIONS_COUNT 8
  #define CONNECTION_BACKGROUND_KEEP_TIME 10000
 +#define INU_CONNECTION_BACKGROUND_PENDING_KEEP_TIME 120000
  #define MAX_ACCOUNT_COUNT 16

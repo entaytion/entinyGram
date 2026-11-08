@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1315,6 +1315,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1314,6 +1314,9 @@ public class MessagesController extends BaseController implements NotificationCe
              if (alwaysShow.contains(dialogId)) {
                  return true;
              }
@@ -28,7 +28,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3993,7 +3993,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3922,7 +3922,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      FiltersListBottomSheet sheet = new FiltersListBottomSheet(DialogsActivity.this, selectedDialogs);
                      sheet.setDelegate((filter, checked) -> {
                          ArrayList<Long> alwaysShow = FiltersListBottomSheet.getDialogsCount(DialogsActivity.this, filter, selectedDialogs, true, false);
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                              int currentCount;
                              if (filter != null) {
                                  currentCount = filter.alwaysShow.size();
-@@ -4011,6 +4013,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3940,6 +3942,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                  for (int a = 0; a < selectedDialogs.size(); a++) {
                                      filter.neverShow.add(selectedDialogs.get(a));
                                      filter.alwaysShow.remove(selectedDialogs.get(a));
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
                                  }
                                  FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.entities, filter.title_noanimate, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
                                  long did;
-@@ -4028,7 +4031,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3957,7 +3960,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      for (int a = 0; a < alwaysShow.size(); a++) {
                                          filter.neverShow.remove(alwaysShow.get(a));
                                      }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
                                      FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.entities, filter.title_noanimate, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
                                  }
                                  long did;
-@@ -4068,6 +4078,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3997,6 +4007,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                              Long did = neverShow.get(a);
                              filter.alwaysShow.remove(did);
                              filter.pinnedDialogs.delete(did);
@@ -75,7 +75,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
-@@ -326,6 +326,11 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -330,6 +330,11 @@ public class FilterCreateActivity extends BaseFragment {
                  );
              }
          }
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
          items.add(ItemInner.asShadow(LocaleController.getString(R.string.FilterIncludeInfo)));
          if (!filter.isChatlist()) {
              items.add(ItemInner.asHeader(LocaleController.getString(R.string.FilterExclude)));
-@@ -866,7 +871,13 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -879,7 +884,13 @@ public class FilterCreateActivity extends BaseFragment {
      }
  
      private void selectChatsFor(boolean include) {
@@ -102,7 +102,7 @@ index 0000000..0000000 100644
          UsersSelectActivity fragment = new UsersSelectActivity(include, arrayList, newFilterFlags);
          fragment.noChatTypes = filter.isChatlist();
          fragment.setDelegate((ids, flags) -> {
-@@ -877,6 +888,22 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -890,6 +901,22 @@ public class FilterCreateActivity extends BaseFragment {
                  for (int a = 0; a < newAlwaysShow.size(); a++) {
                      newNeverShow.remove(newAlwaysShow.get(a));
                  }
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
                  ArrayList<Long> toRemove = new ArrayList<>();
                  for (int a = 0, N = newPinned.size(); a < N; a++) {
                      Long did = newPinned.keyAt(a);
-@@ -1025,6 +1052,9 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -1038,6 +1065,9 @@ public class FilterCreateActivity extends BaseFragment {
                  newFilterFlags &=~ item.flags;
              } else {
                  (include ? newAlwaysShow : newNeverShow).remove((Long) item.did);
@@ -139,7 +139,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/UsersSelectActivity.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/UsersSelectActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/UsersSelectActivity.java
-@@ -781,7 +781,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
+@@ -786,7 +786,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                      GroupCreateSpan span = selectedContacts.get(id);
                      spansContainer.removeSpan(span);
                  } else {

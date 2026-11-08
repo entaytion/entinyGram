@@ -11,15 +11,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
-@@ -1171,6 +1171,7 @@ public class ImageLoader {
+@@ -1183,6 +1183,7 @@ public class ImageLoader {
                  if (fistFrame) {
                      Bitmap bitmap = fileDrawable.getFrameAtTime(0, false);
  
 +                    Thread.interrupted();
-                     fileDrawable.recycle();
                      Thread.interrupted();
+                     fileDrawable.recycle();
                      if (bitmap == null) {
-@@ -1671,6 +1672,7 @@ public class ImageLoader {
+@@ -1683,6 +1684,7 @@ public class ImageLoader {
              try {
                  return fileDrawable.getFrameAtTime(0, true);
              } finally {

@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -822,6 +822,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -868,6 +868,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
      }
  
      private boolean isOnline() {
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
-@@ -242,7 +242,7 @@ public class HintDialogCell extends FrameLayout {
+@@ -244,7 +244,7 @@ public class HintDialogCell extends FrameLayout implements Theme.Colorable {
      protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
          boolean result = super.drawChild(canvas, child, drawingTime);
          if (child == imageView) {
@@ -40,7 +40,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
-@@ -409,7 +409,7 @@ public class ShareDialogCell extends FrameLayout implements NotificationCenter.N
+@@ -411,7 +411,7 @@ public class ShareDialogCell extends FrameLayout implements NotificationCenter.N
                      canvas.restore();
                  }
  

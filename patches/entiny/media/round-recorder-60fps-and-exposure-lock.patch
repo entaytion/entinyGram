@@ -385,7 +385,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCamer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
-@@ -384,14 +384,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -388,14 +388,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
          progressView.setProgress(0f);
          showInitialPlaceholder();
          upload = new TelegramRoundVideoUpload(currentAccount, secretChat);
@@ -408,7 +408,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/Round
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
-@@ -2772,6 +2772,7 @@ final class RoundVideoCameraController {
+@@ -2810,6 +2810,7 @@ final class RoundVideoCameraController {
          if (cameraResolution == RoundVideoSession.CameraResolution.LOW) {
              return outputResolution.getSize();
          }
@@ -420,7 +420,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/Round
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java
 +++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java
-@@ -274,7 +274,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
+@@ -329,7 +329,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
          int audioBufferSize = Math.max(minBufferSize * 4, 16_384);
          MediaFormat format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, AUDIO_SAMPLE_RATE, 1);
          format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
@@ -429,7 +429,7 @@ index 0000000..0000000 100644
          format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, audioBufferSize);
          audioCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
          diagnostics.log("audio encoder configure: codec=" + audioCodec.getName()
-@@ -282,7 +282,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
+@@ -337,7 +337,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
                  + ", minBufferSize=" + minBufferSize
                  + ", audioBufferSize=" + audioBufferSize);
          audioCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);

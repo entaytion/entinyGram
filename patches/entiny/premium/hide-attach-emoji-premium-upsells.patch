@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
-@@ -4371,6 +4371,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -4377,6 +4377,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
      }
  
      private void showCaptionLimitBulletin(BaseFragment parentFragment) {
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          if (!(parentFragment instanceof ChatActivity) || !ChatObject.isChannelAndNotMegaGroup(((ChatActivity) parentFragment).getCurrentChat())) {
              return;
          }
-@@ -6741,7 +6744,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -6802,7 +6805,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                          needPremium = !MessagesController.getInstance(currentAccount).storyEntitiesAllowed();
                      }
                      attachButton.glassTabView.setCounter(err ? "!" : null, err, false);
@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
-@@ -3933,7 +3933,8 @@ public class EmojiView extends FrameLayout implements
+@@ -3938,7 +3938,8 @@ public class EmojiView extends FrameLayout implements
          private float lockT;
          private Boolean lockShow;
          private ValueAnimator lockAnimator;
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
              if (lockAnimator != null) {
                  lockAnimator.cancel();
                  lockAnimator = null;
-@@ -4299,7 +4300,8 @@ public class EmojiView extends FrameLayout implements
+@@ -4325,7 +4326,8 @@ public class EmojiView extends FrameLayout implements
  
          private int currentButtonState;
          private AnimatorSet stateAnimator;
