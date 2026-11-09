@@ -1506,7 +1506,7 @@
     <string name="InuSaveReadTimeInfo">Shows when the other side read your messages in private chats</string>
     <string name="InuReadAt">read %1$s</string>
     <string name="InuSaveLastSeen">Save last seen</string>
-    <string name="InuSaveLastSeenInfo">Remembers the last seen time so it stays visible after the contact hides their status</string>
+    <string name="InuSaveLastSeenInfo">Remembers the last seen time, and for hidden statuses guesses it from the contact\'s messages, edits and typing, so it is only approximate</string>
     <string name="InuCacheTtl">Auto-clear message cache</string>
     <string name="InuCacheTtlInfo">Automatically deletes saved deleted/edited messages older than the chosen period</string>
     <string name="InuCacheTtlNever">Never (keep forever)</string>

@@ -157,6 +157,7 @@ object InuHooks {
     fun onNewMessage(message: MessageObject, account: Int) {
         if (message.messageOwner != null) UpdateHelper.onNewMessage(message.messageOwner)
         desu.inugram.helpers.dialogs.HiddenDialogsHelper.unhide(account, message.dialogId)
+        desu.inugram.helpers.security.LastSeenHelper.onMessage(account, message.messageOwner)
     }
 
     private fun systemAnimatorScale(): Float = try {
@@ -186,6 +187,7 @@ object InuHooks {
             desu.inugram.helpers.security.PresenceHelper.onStatusUpdate(update, account)
             desu.inugram.helpers.security.LastSeenHelper.onUserStatus(account, update.user_id, update.status)
         }
+        desu.inugram.helpers.security.LastSeenHelper.onUpdate(account, update)
         LoginHelper.onUpdate(update, account)
     }
 

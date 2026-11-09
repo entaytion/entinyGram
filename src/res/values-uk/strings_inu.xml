@@ -1208,7 +1208,7 @@
     <string name="InuSaveReadTimeInfo">Показує, коли співрозмовник прочитав твої повідомлення в приватних чатах</string>
     <string name="InuReadAt">прочитано %1$s</string>
     <string name="InuSaveLastSeen">Зберігати останній онлайн</string>
-    <string name="InuSaveLastSeenInfo">Пам\'ятає час останнього онлайну, щоб він лишався видимим, коли контакт приховав статус</string>
+    <string name="InuSaveLastSeenInfo">Пам\'ятає час останнього онлайну, а для прихованого статусу визначає його за повідомленнями, редагуваннями й набором тексту контакту, тож час лише приблизний</string>
     <string name="InuCacheTtl">Авто-очищення кешу повідомлень</string>
     <string name="InuCacheTtlInfo">Автоматично видаляє збережені видалені/відредаговані повідомлення, старші за обраний період</string>
     <string name="InuGhostReadOnSend">Читати при надсиланні</string>

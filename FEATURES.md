@@ -21,7 +21,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **anti-deletion & edit history** — messages the other side deletes stay in the chat under a 🗑️ mark, and deleted text, media and every real edit revision land in an archive with word and caption diffs; archives open as native chat lists with search, TTL, selective deletion, bulk clearing and JSON export, and both deleted and edited marks support custom text, you pick which chats to save and cap attachment size per network, replies to a saved message show the saved copy, missing media downloads on tap, edit revisions keep the author's avatar and name and jump to the message in its chat; history saved by older versions stays accessible after updating
 - 📡 **self-destructing media** — save view-once photos, videos, video notes and voice notes (optionally straight to the gallery), see locally saved timed photos and videos in private chat profiles, keep secret-chat media and timed text, expired voice notes and round videos stay playable
 - 📡 **save user info** — phone country, registration date and a change log of name, username, bio and photo
-- 📡 **read time and remembered last seen** — when the other side read your private messages, and the last online time that survives them hiding their status
+- 📡 **read time and remembered last seen** — when the other side read your private messages, and the last online time that survives them hiding their status, and an approximate one guessed from their activity
 - 📡 **presence logger** — per-contact online/offline history with notifications
 - 📡 **force relay calls** — route calls through Telegram servers to hide your IP
 - 📡 **datacenter status** — live ping for DC1–DC5
