@@ -16,7 +16,7 @@ import java.util.Date
 class LastSeenPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) : BasePill(context, resourcesProvider) {
 
     init {
-        setupPill(R.drawable.phosphor_eye)
+        setupPill(R.drawable.inu_tabler_eye)
         onUpdateData(false)
     }
 

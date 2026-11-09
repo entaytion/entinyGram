@@ -1812,11 +1812,6 @@
     <string name="InuHideRecentChatsShortcuts">Скрыть недавние чаты со значка приложения</string>
     <string name="InuHideRecentChatsShortcutsInfo">Убрать людей и чаты, с которыми вы общаетесь, из меню быстрого доступа по долгому нажатию на значок приложения.</string>
     <string name="InuRestartApp">Перезапустить приложение</string>
-    <string name="InuDonateTitle">Хотите стабильных обновлений?</string>
-    <string name="InuDonateText">entinyGram бесплатный и с открытым кодом, без рекламы. Обновления на каждую новую версию Telegram требуют моего времени. Если сообществу это нужно, можно поддержать.</string>
-    <string name="InuDonateButton">Поддержать</string>
-    <string name="InuDonateHide">Скрыть</string>
-    <string name="InuDonateHidden">Карточка поддержки скрыта</string>
     <string name="InuDonateRow">Поддержать проект</string>
     <string name="InuDonateSheetTitle">Поддержать entinyGram</string>
     <string name="InuDonateSheetInfo">Нажми, чтобы скопировать или открыть. Только по желанию.</string>
@@ -1825,6 +1820,11 @@
     <string name="InuDonateMonobankCard">Карта Monobank</string>
     <string name="InuDonateWebsite">Все способы на сайте</string>
     <string name="InuDonateCopied">Скопировано</string>
+    <string name="InuDonateRowInfo">Карты, крипто и другие способы</string>
+    <string name="InuDonateDirect">Отправить GRAM в Telegram</string>
+    <string name="InuDonateSectionCards">Карты</string>
+    <string name="InuDonateSectionCrypto">Крипто</string>
+    <string name="InuDonateSectionOther">Другое</string>
     <string name="InuShowMediaSize">Показывать размер медиа</string>
     <string name="InuPlugins">Плагины</string>
     <string name="InuPluginsInfo">Плагины — пользовательские скрипты, расширяющие приложение. Устанавливайте плагины только из доверенных источников.</string>

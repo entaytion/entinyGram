@@ -173,8 +173,8 @@ abstract class SettingsPageActivity : UniversalFragment() {
         LaunchActivity.instance?.rebuildAllFragments(false)
     }
 
-    protected fun mkTwoLineEntry(id: Int, iconRes: Int, title: CharSequence, subtitle: CharSequence): UItem =
-        TwoLineEntryCell.Factory.of(id, iconRes, title, subtitle)
+    protected fun mkTwoLineEntry(id: Int, iconRes: Int, title: CharSequence, subtitle: CharSequence, chevron: Boolean = false): UItem =
+        TwoLineEntryCell.Factory.of(id, iconRes, title, subtitle, chevron)
 
     protected fun setCellChecked(view: View, checked: Boolean) {
         when (view) {

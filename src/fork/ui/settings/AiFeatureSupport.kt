@@ -10,11 +10,11 @@ import org.telegram.ui.ActionBar.BaseFragment
 object AiFeatureSupport {
 
     fun iconFor(kind: Int): Int = when (kind) {
-        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> R.drawable.inu_ai_gemini
-        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> R.drawable.inu_ai_openai
-        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> R.drawable.inu_ai_groq
-        InuConfig.AI_PROVIDER_OPENROUTER -> R.drawable.inu_ai_openrouter
-        InuConfig.TRANSCRIBE_PROVIDER_CF -> R.drawable.inu_ai_cloudflare
+        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> R.drawable.inu_simple_icons_googlegemini
+        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> R.drawable.inu_bi_openai
+        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> R.drawable.inu_bxl_groq_ai
+        InuConfig.AI_PROVIDER_OPENROUTER -> R.drawable.inu_simple_icons_openrouter
+        InuConfig.TRANSCRIBE_PROVIDER_CF -> R.drawable.inu_simple_icons_cloudflare
         else -> R.drawable.inu_tabler_cpu
     }
 

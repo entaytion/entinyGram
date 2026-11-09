@@ -12,7 +12,7 @@ import org.telegram.ui.ActionBar.Theme
 // entiny: current network speed from the TrafficStats delta between reads; shows whichever direction dominates.
 @SuppressLint("ViewConstructor")
 class NetSpeedPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
-    TelemetryPill(context, resourcesProvider, R.drawable.pillstack_netspeed) {
+    TelemetryPill(context, resourcesProvider, R.drawable.inu_tabler_dashboard) {
 
     companion object {
         private var previousRx = -1L

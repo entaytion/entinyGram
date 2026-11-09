@@ -1894,11 +1894,6 @@
     <string name="InuHideRecentChatsShortcuts">Сховати нещодавні чати з іконки додатка</string>
     <string name="InuHideRecentChatsShortcutsInfo">Прибрати людей і чати, з якими ви спілкуєтесь, з меню за довгим натисканням на іконку додатка.</string>
     <string name="InuRestartApp">Перезапустити застосунок</string>
-    <string name="InuDonateTitle">Хочете стабільних оновлень?</string>
-    <string name="InuDonateText">entinyGram безкоштовний і з відкритим кодом, без реклами. Оновлення на кожну нову версію Telegram потребують мого часу. Якщо спільнота цього хоче, можна підтримати.</string>
-    <string name="InuDonateButton">Підтримати</string>
-    <string name="InuDonateHide">Сховати</string>
-    <string name="InuDonateHidden">Картку підтримки сховано</string>
     <string name="InuDonateRow">Підтримати проєкт</string>
     <string name="InuDonateSheetTitle">Підтримати entinyGram</string>
     <string name="InuDonateSheetInfo">Натисни, щоб скопіювати або відкрити. Суто за бажанням.</string>
@@ -1907,6 +1902,11 @@
     <string name="InuDonateMonobankCard">Картка Monobank</string>
     <string name="InuDonateWebsite">Усі способи на сайті</string>
     <string name="InuDonateCopied">Скопійовано</string>
+    <string name="InuDonateRowInfo">Картки, крипто та інші способи</string>
+    <string name="InuDonateDirect">Надіслати GRAM у Telegram</string>
+    <string name="InuDonateSectionCards">Картки</string>
+    <string name="InuDonateSectionCrypto">Крипто</string>
+    <string name="InuDonateSectionOther">Інше</string>
     <string name="InuShowMediaSize">Показувати розмір медіа</string>
     <string name="InuPlugins">Плагіни</string>
     <string name="InuPluginsInfo">Плагіни — це користувацькі скрипти, що розширюють застосунок. Встановлюйте плагіни лише з джерел, яким довіряєте.</string>

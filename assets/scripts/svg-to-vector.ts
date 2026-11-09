@@ -161,6 +161,9 @@ export function resolveStrokeColor(value: string | undefined): string | null {
   return normalizeSvgColor(value)
 }
 
+// every generated icon is drawn at the same physical size, whatever viewBox its set was drawn on
+const ICON_DP = 24
+
 export interface SvgToDrawableOptions {
   overrideStrokeWidth?: number
   paddingInset?: number
@@ -188,8 +191,8 @@ export function svgBodyToVectorDrawable(body: string, width: number, height: num
   })
   return `<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="${width}dp"
-    android:height="${height}dp"
+    android:width="${ICON_DP}dp"
+    android:height="${ICON_DP}dp"
     android:viewportWidth="${fmtNum(vpW)}"
     android:viewportHeight="${fmtNum(vpH)}">
     <group

@@ -1424,9 +1424,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val LIQUID_GLASS_TINT = IntItem("liquid_glass_tint", 100)
 
     @JvmField
-    val HIDE_DONATE_CARD = BoolItem("hide_donate_card", false, exportable = false)
-
-    @JvmField
     val DISABLE_PROFILE_AVATAR_BLUR = BoolItem("disable_profile_avatar_blur", false)
 
     @JvmField

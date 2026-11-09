@@ -447,7 +447,7 @@ object Schemas {
             link(R.string.InuGhostMode, R.drawable.inu_ghost_filled) { GhostModeSettingsActivity() }
             link(R.string.InuAntiDeletion, R.drawable.inu_tabler_trash_off) { AntiDeletionSettingsActivity() }
             link(R.string.InuRegexFilter, R.drawable.inu_tabler_filter) { RegexFilterSettingsActivity() }
-            link(R.string.InuDeviceSpoof, R.drawable.phosphor_device_mobile) { DeviceSpoofSettingsActivity() }
+            link(R.string.InuDeviceSpoof, R.drawable.inu_tabler_device_mobile) { DeviceSpoofSettingsActivity() }
         }
         section {
             link(R.string.InuPerAccountPasscode, R.drawable.inu_tabler_key, visible = { !PasscodeHelper.isSettingsHidden() }) { PasscodeSettingsActivity() }

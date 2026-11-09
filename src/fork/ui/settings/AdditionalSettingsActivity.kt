@@ -17,7 +17,6 @@ import desu.inugram.helpers.CrashReporter
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LogsHelper
 import desu.inugram.helpers.SystemInfo
-import desu.inugram.ui.DonateBottomSheet
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
@@ -49,25 +48,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
     private var updateLayout: IUpdateLayout? = null
     private var updateWrapper: UpdateLayoutWrapper? = null
 
-    private var donateCard: View? = null
-
-    private fun getOrCreateDonateCard(): View = donateCard ?: DonateCardCell(
-        context!!,
-        onSupport = { showDialog(DonateBottomSheet(this)) },
-        onHide = {
-            InuConfig.HIDE_DONATE_CARD.value = true
-            listView?.adapter?.update(true)
-            BulletinFactory.of(this).createSimpleBulletin(
-                R.raw.chats_infotip,
-                LocaleController.getString(R.string.InuDonateHidden),
-                LocaleController.getString(R.string.Undo),
-            ) {
-                InuConfig.HIDE_DONATE_CARD.value = false
-                listView?.adapter?.update(true)
-            }.show()
-        },
-    ).also { donateCard = it }
-
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(UItem.asCustomShadow(InuSettingsHeader(context)))
         items.add(UItem.asShadow(null))
@@ -87,12 +67,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 "Entaytion/entinyGram"
             )
         )
-        items.add(UItem.asShadow(null))
-        if (InuConfig.HIDE_DONATE_CARD.value) {
-            items.add(mkSubPageButton(BUTTON_DONATE, R.drawable.inu_tabler_heart, LocaleController.getString(R.string.InuDonateRow)))
-        } else {
-            items.add(UItem.asCustom(getOrCreateDonateCard()))
-        }
+        items.add(mkTwoLineEntry(BUTTON_DONATE, R.drawable.inu_tabler_heart, LocaleController.getString(R.string.InuDonateRow), LocaleController.getString(R.string.InuDonateRowInfo), chevron = true))
         items.add(UItem.asShadow(null))
         items.add(
             mkTwoLineCheckItem(
@@ -219,7 +194,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 ).show()
             }
 
-            BUTTON_DONATE -> showDialog(DonateBottomSheet(this))
+            BUTTON_DONATE -> presentFragment(DonateActivity())
 
             BUTTON_CHANNEL_LINK -> Browser.openUrl(context ?: return, "https://t.me/entinyGram")
 

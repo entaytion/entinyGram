@@ -7,25 +7,15 @@
                     android:name="circle"
                     android:pathData="M12,8.25 A3.75,3.75 0 1,0 12,15.75 A3.75,3.75 0 1,0 12,8.25"
                     android:fillAlpha="0"
-                    android:strokeWidth="1">
-                    <aapt:attr name="android:fillColor">
-                        <gradient
-                            android:type="linear"
-                            android:startX="12"
-                            android:startY="4.5"
-                            android:endX="12"
-                            android:endY="19.5">
-                            <item android:offset="0" android:color="@color/inu_splash_monet_1" />
-                            <item android:offset="1" android:color="@color/inu_splash_monet_2" />
-                        </gradient>
-                    </aapt:attr>
-                </path>
-            </group>
-            <group android:name="old_logo" android:pivotX="12" android:pivotY="12" android:scaleX="0.65" android:scaleY="0.65">
-                <path android:name="old_dot" android:fillColor="#FFFFFFFF" android:fillAlpha="0" android:pathData="M11,12a1,1 0,1 0,2,0a1,1 0,1 0,-2,0" />
-                <path android:name="old_arc_inner" android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1" android:trimPathEnd="0" android:pathData="M16.616,13.924a5,5 0,1 0,-9.23,0" />
-                <path android:name="old_arc_outer" android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1" android:trimPathEnd="0" android:pathData="M20.307,15.469a9,9 0,1 0,-16.615,0" />
-                <path android:name="old_stand" android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0" android:pathData="m9,21l3,-9l3,9m-5,-2h4" />
+                    android:fillColor="@color/inu_splash_circle"
+                    android:strokeWidth="1" />
+                    
+                </group>
+            <group android:name="old_logo" android:pivotX="12" android:pivotY="12" android:scaleX="0.28" android:scaleY="0.28">
+                <path android:name="old_dot" android:fillColor="@color/inu_splash_glyph" android:fillAlpha="0" android:pathData="M11,12a1,1 0,1 0,2,0a1,1 0,1 0,-2,0" />
+                <path android:name="old_arc_inner" android:fillColor="@android:color/transparent" android:strokeColor="@color/inu_splash_glyph" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1" android:trimPathEnd="0" android:pathData="M16.616,13.924a5,5 0,1 0,-9.23,0" />
+                <path android:name="old_arc_outer" android:fillColor="@android:color/transparent" android:strokeColor="@color/inu_splash_glyph" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1" android:trimPathEnd="0" android:pathData="M20.307,15.469a9,9 0,1 0,-16.615,0" />
+                <path android:name="old_stand" android:fillColor="@android:color/transparent" android:strokeColor="@color/inu_splash_glyph" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0" android:pathData="m9,21l3,-9l3,9m-5,-2h4" />
             </group>
         </vector>
     </aapt:attr>
@@ -53,7 +43,10 @@
     </target>
     <target android:name="old_logo">
         <aapt:attr name="android:animation" xmlns:aapt="http://schemas.android.com/aapt">
-            <objectAnimator android:propertyName="scaleX" android:duration="350" android:valueFrom="0.65" android:valueTo="1" android:valueType="floatType" android:interpolator="@android:anim/overshoot_interpolator" />
+            <set>
+                <objectAnimator android:propertyName="scaleX" android:startOffset="200" android:duration="300" android:valueFrom="0.28" android:valueTo="0.46" android:valueType="floatType" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="scaleY" android:startOffset="200" android:duration="300" android:valueFrom="0.28" android:valueTo="0.46" android:valueType="floatType" android:interpolator="@android:anim/overshoot_interpolator" />
+            </set>
         </aapt:attr>
     </target>
     <target android:name="old_dot">

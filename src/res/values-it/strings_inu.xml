@@ -1817,11 +1817,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuHideRecentChatsShortcuts">Nascondi le chat recenti dall\'icona dell\'app</string>
     <string name="InuHideRecentChatsShortcutsInfo">Rimuove le persone e le chat con cui parli dal menu a tocco prolungato dell\'icona dell\'app.</string>
     <string name="InuRestartApp">Riavvia l\'app</string>
-    <string name="InuDonateTitle">Vuoi aggiornamenti stabili?</string>
-    <string name="InuDonateText">entinyGram è gratuito e open source, senza pubblicità. Tenerlo aggiornato a ogni nuova versione di Telegram richiede il mio tempo. Se la community lo desidera, puoi sostenerlo.</string>
-    <string name="InuDonateButton">Sostieni</string>
-    <string name="InuDonateHide">Nascondi</string>
-    <string name="InuDonateHidden">Scheda di supporto nascosta</string>
     <string name="InuDonateRow">Sostieni il progetto</string>
     <string name="InuDonateSheetTitle">Sostieni entinyGram</string>
     <string name="InuDonateSheetInfo">Tocca per copiare o aprire. Completamente facoltativo.</string>

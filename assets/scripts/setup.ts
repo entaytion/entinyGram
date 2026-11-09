@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { $ } from 'zx'
-import { worktreeDir as defaultWorktreeDir, ICON_SELECTION, patchesDir, rootDir } from './config.js'
+import { worktreeDir as defaultWorktreeDir, ICON_SETS, loadIconPack, patchesDir, rootDir } from './config.js'
 import { generateGrants } from './generate-grants.js'
 import { generateTl } from './generate-tl.js'
 import {
@@ -135,13 +135,14 @@ async function generateIconDrawables(repoDir: string) {
   const outDir = join(repoDir, 'TMessagesProj/src/main/res/drawable')
   await ensureDir(outDir)
   let dirty = false
-  for (const { pack, icons, options } of ICON_SELECTION) {
+  for (const [prefix, { options, icons }] of Object.entries(ICON_SETS)) {
+    const pack = loadIconPack(prefix)
     for (const name of icons) {
       const icon = pack.icons[name]
-      if (!icon) throw new Error(`Icon not found: ${pack}/${name}`)
+      if (!icon) throw new Error(`Icon not found: ${prefix}:${name}`)
 
-      const xml = svgBodyToVectorDrawable(icon.body, pack.width!, pack.height!, options)
-      const fileName = `inu_${pack.prefix}_${name.replaceAll('-', '_')}.xml`
+      const xml = svgBodyToVectorDrawable(icon.body, icon.width ?? pack.width ?? 16, icon.height ?? pack.height ?? 16, options)
+      const fileName = `inu_${prefix.replaceAll('-', '_')}_${name.replaceAll('-', '_')}.xml`
       const absPath = join(outDir, fileName)
       const stat = await fs.lstat(absPath).catch(() => null)
 

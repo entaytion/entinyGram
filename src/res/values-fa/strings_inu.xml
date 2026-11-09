@@ -1626,11 +1626,6 @@
     <string name="InuHideRecentChatsShortcuts">پنهان کردن گفتگوهای اخیر از نماد برنامه</string>
     <string name="InuHideRecentChatsShortcutsInfo">افراد و گفتگوهایی را که با آن‌ها صحبت می‌کنید از منوی میان‌برِ نگه داشتن نماد برنامه حذف می‌کند.</string>
     <string name="InuRestartApp">راه‌اندازی مجدد برنامه</string>
-    <string name="InuDonateTitle">به‌روزرسانی‌های پایدار می‌خواهید؟</string>
-    <string name="InuDonateText">entinyGram رایگان و متن‌باز است و تبلیغات ندارد. به‌روز نگه داشتنش با هر نسخه جدید تلگرام وقت من را می‌گیرد. اگر جامعه این را می‌خواهد، می‌توانید از آن حمایت کنید.</string>
-    <string name="InuDonateButton">حمایت</string>
-    <string name="InuDonateHide">پنهان</string>
-    <string name="InuDonateHidden">کارت حمایت پنهان شد</string>
     <string name="InuDonateRow">حمایت از پروژه</string>
     <string name="InuDonateSheetTitle">حمایت از entinyGram</string>
     <string name="InuDonateSheetInfo">برای کپی یا باز کردن ضربه بزنید. کاملاً اختیاری.</string>

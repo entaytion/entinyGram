@@ -61,7 +61,7 @@ class RatePairEditActivity(private val instanceId: Int = -1) : SettingsPageActiv
         items.add(
             UItem.asButton(
                 BUTTON_TARGET,
-                R.drawable.pillstack_usd,
+                R.drawable.inu_bi_currency_dollar,
                 LocaleController.getString(R.string.InuPillStackRateTarget),
                 PillCurrencies.getTargetCurrencyLabel(target),
             )

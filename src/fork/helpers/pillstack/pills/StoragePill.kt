@@ -12,7 +12,7 @@ import org.telegram.ui.ActionBar.Theme
 // entiny: free space on the device's data partition -- distinct from CachePill, which shows Telegram's own cache size.
 @SuppressLint("ViewConstructor")
 class StoragePill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
-    TelemetryPill(context, resourcesProvider, R.drawable.phosphor_hard_drive) {
+    TelemetryPill(context, resourcesProvider, R.drawable.inu_tabler_server) {
 
     override fun getPillId(): Int = PillType.STORAGE.id
 

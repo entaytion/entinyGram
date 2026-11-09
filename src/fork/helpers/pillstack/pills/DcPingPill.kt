@@ -15,7 +15,7 @@ import org.telegram.ui.ActionBar.Theme
 // entiny: current MTProto ping for this account, straight off the native connection -- no sockets of our own.
 @SuppressLint("ViewConstructor")
 class DcPingPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
-    TelemetryPill(context, resourcesProvider, R.drawable.pillstack_ping) {
+    TelemetryPill(context, resourcesProvider, R.drawable.inu_tabler_radar) {
 
     override fun getPillId(): Int = PillType.DC_PING.id
 

@@ -1,6 +1,8 @@
 package desu.inugram.ui.settings
 
 import android.content.Context
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
@@ -9,6 +11,8 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.TextView
 import org.telegram.messenger.AndroidUtilities.dp
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
@@ -21,6 +25,7 @@ class TwoLineEntryCell(context: Context) : LinearLayout(context) {
     private val icon = ImageView(context)
     private val title = TextView(context)
     private val subtitle = TextView(context)
+    private val chevron = ImageView(context)
 
     init {
         orientation = HORIZONTAL
@@ -40,9 +45,15 @@ class TwoLineEntryCell(context: Context) : LinearLayout(context) {
         texts.addView(title)
         texts.addView(subtitle)
         addView(texts, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
+        chevron.setImageResource(R.drawable.msg_arrowright)
+        chevron.scaleX = if (LocaleController.isRTL) -1f else 1f // plain bitmap, never auto-mirrored
+        chevron.colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY)
+        chevron.visibility = GONE
+        addView(chevron, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 8f, 0f, 0f, 0f))
     }
 
-    fun set(iconRes: Int, titleText: CharSequence?, subtitleText: CharSequence?) {
+    fun set(iconRes: Int, titleText: CharSequence?, subtitleText: CharSequence?, showChevron: Boolean) {
+        chevron.visibility = if (showChevron) VISIBLE else GONE
         icon.setImageResource(iconRes)
         title.text = titleText
         subtitle.text = subtitleText
@@ -59,14 +70,14 @@ class TwoLineEntryCell(context: Context) : LinearLayout(context) {
 
         override fun bindView(view: View, item: UItem, divider: Boolean, adapter: UniversalAdapter?, listView: UniversalRecyclerView?) {
             view.id = item.id
-            (view as TwoLineEntryCell).set(item.iconResId, item.text, item.subtext)
+            (view as TwoLineEntryCell).set(item.iconResId, item.text, item.subtext, item.checked)
         }
 
         companion object {
             private var ready = false
 
             @JvmStatic
-            fun of(id: Int, iconRes: Int, title: CharSequence, subtitle: CharSequence): UItem {
+            fun of(id: Int, iconRes: Int, title: CharSequence, subtitle: CharSequence, chevron: Boolean = false): UItem {
                 if (!ready) {
                     UItem.UItemFactory.setup(Factory())
                     ready = true
@@ -76,6 +87,7 @@ class TwoLineEntryCell(context: Context) : LinearLayout(context) {
                     it.iconResId = iconRes
                     it.text = title
                     it.subtext = subtitle
+                    it.checked = chevron
                 }
             }
         }

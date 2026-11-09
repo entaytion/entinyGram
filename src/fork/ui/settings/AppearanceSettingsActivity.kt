@@ -75,7 +75,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         val ctx = context ?: return
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
         items.add(mkSubPageButton(BUTTON_FONTS, LocaleController.getString(R.string.InuFonts)))
-        items.add(mkTwoLineEntry(BUTTON_ICON_REPLACEMENT, R.drawable.phosphor_palette, LocaleController.getString(R.string.InuIconReplacement), IconPackHelper.getActivePacksSummary()))
+        items.add(mkTwoLineEntry(BUTTON_ICON_REPLACEMENT, R.drawable.inu_tabler_palette, LocaleController.getString(R.string.InuIconReplacement), IconPackHelper.getActivePacksSummary()))
         if (notificationIconCell == null) {
             notificationIconCell = NotificationIconCell(ctx) { showRestartBulletin() }
         }

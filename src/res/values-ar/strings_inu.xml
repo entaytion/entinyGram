@@ -1638,11 +1638,6 @@
     <string name="InuHideRecentChatsShortcuts">إخفاء المحادثات الأخيرة من أيقونة التطبيق</string>
     <string name="InuHideRecentChatsShortcutsInfo">إزالة الأشخاص والمحادثات التي تتحدث معها من قائمة الاختصارات بالضغط المطوّل على أيقونة التطبيق.</string>
     <string name="InuRestartApp">إعادة تشغيل التطبيق</string>
-    <string name="InuDonateTitle">هل تريد تحديثات مستقرة؟</string>
-    <string name="InuDonateText">entinyGram مجاني ومفتوح المصدر، بلا إعلانات. إبقاؤه محدّثاً مع كل إصدار جديد من Telegram يستغرق وقتي. إذا كان المجتمع يريد ذلك، يمكنك دعمه.</string>
-    <string name="InuDonateButton">دعم</string>
-    <string name="InuDonateHide">إخفاء</string>
-    <string name="InuDonateHidden">تم إخفاء بطاقة الدعم</string>
     <string name="InuDonateRow">دعم المشروع</string>
     <string name="InuDonateSheetTitle">دعم entinyGram</string>
     <string name="InuDonateSheetInfo">انقر للنسخ أو الفتح. اختياري تماماً.</string>
