@@ -998,6 +998,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val LOCK_MAX_REFRESH_RATE = BoolItem("lock_max_refresh_rate", false)
 
     @JvmField
+    val USE_SYSTEM_EMOJI = BoolItem("use_system_emoji", false)
+
+    @JvmField
     val OPTIMIZED_ATTACHMENT_MENU = BoolItem("optimized_attachment_menu", true)
 
     @JvmField

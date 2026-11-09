@@ -170,6 +170,8 @@
     <string name="InuDownloadsWaiting">Очікує</string>
     <string name="InuDownloadsFinished">Завершені</string>
     <string name="InuDownloadsEmpty">Нічого не завантажується</string>
+    <string name="InuUseSystemEmoji">Системні емодзі</string>
+    <string name="InuUseSystemEmojiInfo">Малює емодзі системним шрифтом замість набору Telegram. Щоб застосувалось усюди, перезапустіть застосунок.</string>
     <string name="InuLockMaxRefreshRate">Тримати найвищу частоту оновлення</string>
     <string name="InuLockMaxRefreshRateInfo">Просить систему тримати екран на найвищій частоті оновлення в застосунку, з поточною роздільною здатністю. Більше витрачає батарею.</string>
     <string name="InuMemoryTrim">Звільняти пам\'ять у фоні</string>

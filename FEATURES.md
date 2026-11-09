@@ -143,6 +143,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **faster cold start**, locale caching and a smaller APK without Android Auto integration
 - 📡 **memory** — free image caches shortly after the app is minimized, and closed chats and photo viewers no longer leak through the emoji panel
 - 📡 **highest refresh rate** — keep the screen at its highest refresh rate in the app, at the current resolution - *inspired by Graniton*
+- 📡 **system emoji** — draw emoji with the system font instead of the Telegram set
 - 📡 **download queue** — large files download one at a time in the order you asked, with a Downloads entry in the chats menu that lists running, waiting and finished files with a Cancel - *inspired by HushTelegram*
 - 📡 **cache management** — per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once
 - 📡 **stability fixes** — PhotoViewer close crash with an uninitialized media strip, crash when deleting a user's messages while their media is selected

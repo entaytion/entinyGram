@@ -407,6 +407,15 @@ object Schemas {
                 InuConfig.LOCK_MAX_REFRESH_RATE, R.string.InuLockMaxRefreshRate, R.string.InuLockMaxRefreshRateInfo,
                 onChange = { _, _ -> desu.inugram.helpers.RefreshRateHelper.sync(org.telegram.ui.LaunchActivity.instance) },
             )
+            toggle(
+                InuConfig.USE_SYSTEM_EMOJI, R.string.InuUseSystemEmoji, R.string.InuUseSystemEmojiInfo,
+                onChange = { _, value ->
+                    SharedConfig.useSystemEmoji = value
+                    MessagesController.getGlobalMainSettings().edit().putBoolean("useSystemEmoji", value).apply()
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded)
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+                },
+            )
             toggle(InuConfig.SAVE_SELECTED_FILES, R.string.InuSaveSelectedFiles, R.string.InuSaveSelectedFilesInfo)
             toggle(
                 InuConfig.HDR_IMAGES, R.string.InuHdrImages, R.string.InuHdrImagesInfo,
