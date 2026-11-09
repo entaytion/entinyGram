@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 15:20:47 +0200
+Subject: Follow Android font scaling for messages
+
+---
+ .../src/main/java/org/telegram/ui/ActionBar/Theme.java    | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -8233,7 +8233,7 @@ public class Theme {
+             chat_msgTextPaintOneEmoji.setTextSize(dp(28 + 18));
+             chat_msgTextPaintTwoEmoji.setTextSize(dp(24 + 14));
+             chat_msgTextPaintThreeEmoji.setTextSize(dp(20 + 10));
+-            chat_msgTextPaint.setTextSize(dp(SharedConfig.fontSize));
++            chat_msgTextPaint.setTextSize(desu.inugram.helpers.InuUtils.messageTextSize(ApplicationLoader.applicationContext, SharedConfig.fontSize));
+             chat_msgGameTextPaint.setTextSize(dp(14));
+             chat_msgBotButtonPaint.setTextSize(dp(15));
+             float smallerDp = (2 * SharedConfig.fontSize + 10) / 3f; // 6f + SharedConfig.fontSize / 2f;
+@@ -8247,9 +8247,9 @@ public class Theme {
+             chat_titleLabelTextPaint.setTextSize(dp(smallerDp - 2));
+             chat_forwardNamePaint.setTextSize(dp(smallerDp));
+             chat_adminPaint.setTextSize(dp(smallerDp - 1));
+-            chat_msgTextCodePaint.setTextSize(dp(Math.max(Math.min(10, SharedConfig.fontSize - 1), SharedConfig.fontSize - 2)));
+-            chat_msgTextCode2Paint.setTextSize(dp(Math.max(Math.min(10, SharedConfig.fontSize - 2), SharedConfig.fontSize - 3)));
+-            chat_msgTextCode3Paint.setTextSize(dp(Math.max(Math.min(10, SharedConfig.fontSize - 2), SharedConfig.fontSize - 5)));
++            chat_msgTextCodePaint.setTextSize(desu.inugram.helpers.InuUtils.messageTextSize(ApplicationLoader.applicationContext, Math.max(Math.min(10, SharedConfig.fontSize - 1), SharedConfig.fontSize - 2)));
++            chat_msgTextCode2Paint.setTextSize(desu.inugram.helpers.InuUtils.messageTextSize(ApplicationLoader.applicationContext, Math.max(Math.min(10, SharedConfig.fontSize - 2), SharedConfig.fontSize - 3)));
++            chat_msgTextCode3Paint.setTextSize(desu.inugram.helpers.InuUtils.messageTextSize(ApplicationLoader.applicationContext, Math.max(Math.min(10, SharedConfig.fontSize - 2), SharedConfig.fontSize - 5)));
+         }
+     }
+ 

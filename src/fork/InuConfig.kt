@@ -1462,6 +1462,8 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val CHAT_INPUT_TEXT_SIZE = IntItem("chat_input_text_size", 18)
 
+    val SYSTEM_MESSAGE_FONT_SCALE = BoolItem("system_message_font_scale", false)
+
     @JvmField
     val IOS_INPUT_BUTTON_PLACEMENT = BoolItem("ios_button_placement", false)
 
@@ -2282,6 +2284,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val DELETED_MARK_COLOR = IntItem("deleted_mark_color", 0)
+
+    val CUSTOM_DELETED_MARK = StringItem("custom_deleted_mark", "")
+    val CUSTOM_EDITED_MARK = StringItem("custom_edited_mark", "")
 
     class DeletedMarkStyleItem : IntItem("deleted_mark_style", TRASH_BIN) {
         companion object {

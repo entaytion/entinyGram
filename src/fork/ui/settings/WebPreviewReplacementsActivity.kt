@@ -3,7 +3,7 @@ package desu.inugram.ui.settings
 
 import android.text.InputType
 import android.view.View
-import android.widget.EditText
+import org.telegram.ui.Components.EditTextBoldCursor
 import android.widget.LinearLayout
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
@@ -122,9 +122,15 @@ class WebPreviewReplacementsActivity : SettingsPageActivity() {
             setPadding(dp(24), dp(8), dp(24), 0)
         }
 
-        val patternInput = EditText(ctx).apply {
-            setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
-            setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
+        val patternInput = EditTextBoldCursor(ctx).apply {
+            setCursorColor(getThemedColor(Theme.key_dialogTextBlack))
+            background = Theme.createEditTextDrawable(
+                ctx,
+                getThemedColor(Theme.key_dialogInputField),
+                getThemedColor(Theme.key_dialogInputFieldActivated),
+            )
+            setTextColor(getThemedColor(Theme.key_dialogTextBlack))
+            setHintTextColor(getThemedColor(Theme.key_dialogTextHint))
             hint = LocaleController.getString(R.string.InuWebPreviewPattern)
             setText(existing?.pattern ?: "")
             inputType = InputType.TYPE_CLASS_TEXT
@@ -135,9 +141,15 @@ class WebPreviewReplacementsActivity : SettingsPageActivity() {
             bottomMargin = dp(8)
         })
 
-        val replacementInput = EditText(ctx).apply {
-            setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
-            setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
+        val replacementInput = EditTextBoldCursor(ctx).apply {
+            setCursorColor(getThemedColor(Theme.key_dialogTextBlack))
+            background = Theme.createEditTextDrawable(
+                ctx,
+                getThemedColor(Theme.key_dialogInputField),
+                getThemedColor(Theme.key_dialogInputFieldActivated),
+            )
+            setTextColor(getThemedColor(Theme.key_dialogTextBlack))
+            setHintTextColor(getThemedColor(Theme.key_dialogTextHint))
             hint = LocaleController.getString(R.string.InuWebPreviewReplacement)
             setText(existing?.replacement ?: "")
             inputType = InputType.TYPE_CLASS_TEXT
@@ -151,7 +163,7 @@ class WebPreviewReplacementsActivity : SettingsPageActivity() {
         else
             LocaleController.getString(R.string.InuWebPreviewAdd)
 
-        val builder = AlertDialog.Builder(ctx)
+        val builder = AlertDialog.Builder(ctx, resourceProvider)
             .setTitle(title)
             .setView(container)
             .setPositiveButton(LocaleController.getString(R.string.OK)) { _, _ ->

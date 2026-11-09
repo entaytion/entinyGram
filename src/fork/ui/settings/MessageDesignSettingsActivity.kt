@@ -75,6 +75,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDisableChatBubbles),
             ).setChecked(InuConfig.DISABLE_CHAT_BUBBLES.value)
         )
+        items.add(UItem.asButton(BUTTON_CUSTOM_MARK, R.drawable.msg_edit, LocaleController.getString(R.string.InuCustomEditedMark), InuConfig.CUSTOM_EDITED_MARK.value))
         items.add(
             UItem.asCheck(
                 TOGGLE_COMPACT_EDITED,
@@ -175,6 +176,10 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
+            BUTTON_CUSTOM_MARK -> editMessageMark(R.string.InuCustomEditedMark, InuConfig.CUSTOM_EDITED_MARK) {
+                if (InuConfig.CUSTOM_EDITED_MARK.value.isNotEmpty()) InuConfig.COMPACT_EDITED.value = false
+                listView?.adapter?.update(true)
+            }
             BUTTON_STICKER_TIME_MODE -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -272,6 +277,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val BUTTON_CUSTOM_MARK = InuUtils.generateId()
         private val BUTTON_STICKER_TIME_MODE = InuUtils.generateId()
         private val TOGGLE_REACTION_BAR_BELOW = InuUtils.generateId()
         private val TOGGLE_CHAT_VIEWS_BOTTOM = InuUtils.generateId()
@@ -313,6 +319,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-forwards-count", R.string.InuShowForwardsCount, TOGGLE_SHOW_FORWARDS_COUNT),
                 SearchRegistry.Entry("show-media-size", R.string.InuShowMediaSize, TOGGLE_SHOW_MEDIA_SIZE),
                 SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
+                SearchRegistry.Entry("custom-edited-mark", R.string.InuCustomEditedMark, BUTTON_CUSTOM_MARK),
                 SearchRegistry.Entry("edited-message-date", R.string.InuEditedMessageDateMode, BUTTON_EDITED_MESSAGE_DATE_MODE),
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
                 SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),

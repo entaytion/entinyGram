@@ -1,0 +1,87 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 14:38:55 +0200
+Subject: Show locally saved timed media in profiles
+
+---
+ .../messenger/MediaDataController.java        | 21 +++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
+@@ -4294,7 +4294,7 @@ public class MediaDataController extends BaseController {
+                         topReached = res.messages.size() == 0;
+                     }
+ 
+-                    processLoadedMedia(res, dialogId, count, max_id, min_id, type, topicId, 0, classGuid, isChannel, topReached, requestIndex);
++                    processLoadedMedia(res, dialogId, count, max_id, min_id, type, topicId, 0, classGuid, isChannel, topReached, requestIndex, tag == null && TextUtils.isEmpty(query));
+                 }
+             });
+             getConnectionsManager().bindRequestToGuid(reqId, classGuid);
+@@ -4336,6 +4336,7 @@ public class MediaDataController extends BaseController {
+                     }
+                     AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.mediaCountsDidLoad, dialogId, topicId, counts));
+                 } else {
++                    final int[] inuTimedCounts = desu.inugram.helpers.security.TimedProfileMedia.counts(currentAccount, dialogId, topicId);
+                     boolean missing = false;
+                     TLRPC.TL_messages_getSearchCounters req = new TLRPC.TL_messages_getSearchCounters();
+                     req.peer = getMessagesController().getInputPeer(dialogId);
+@@ -4417,12 +4418,12 @@ public class MediaDataController extends BaseController {
+                                     putMediaCountDatabase(dialogId, topicId, type, counts[type]);
+                                 }
+                             }
+-                            AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.mediaCountsDidLoad, dialogId, topicId, counts));
++                            AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.mediaCountsDidLoad, dialogId, topicId, desu.inugram.helpers.security.TimedProfileMedia.addCounts(counts, inuTimedCounts)));
+                         });
+                         getConnectionsManager().bindRequestToGuid(reqId, classGuid);
+                     }
+                     if (!missing || getConnectionsManager().getConnectionState() != ConnectionsManager.ConnectionStateConnected) {
+-                        AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.mediaCountsDidLoad, dialogId, topicId, countsFinal));
++                        AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.mediaCountsDidLoad, dialogId, topicId, desu.inugram.helpers.security.TimedProfileMedia.addCounts(countsFinal, inuTimedCounts)));
+                     }
+                 }
+             } catch (Exception e) {
+@@ -4547,7 +4548,7 @@ public class MediaDataController extends BaseController {
+         }
+     }
+ 
+-    private void processLoadedMedia(TLRPC.messages_Messages res, long dialogId, int count, int max_id, int min_id, int type, long topicId, int fromCache, int classGuid, boolean isChannel, boolean topReached, int requestIndex) {
++    private void processLoadedMedia(TLRPC.messages_Messages res, long dialogId, int count, int max_id, int min_id, int type, long topicId, int fromCache, int classGuid, boolean isChannel, boolean topReached, int requestIndex, boolean includeTimed) {
+         if (BuildVars.LOGS_ENABLED) {
+             int messagesCount = 0;
+             if (res != null && res.messages != null) {
+@@ -4567,7 +4568,7 @@ public class MediaDataController extends BaseController {
+                 putMediaDatabase(dialogId, topicId, type, res.messages, max_id, min_id, topReached);
+             }
+ 
+-            Utilities.searchQueue.postRunnable(() -> {
++            Runnable dispatch = () -> Utilities.searchQueue.postRunnable(() -> {
+                 LongSparseArray<TLRPC.User> usersDict = new LongSparseArray<>();
+                 for (int a = 0; a < res.users.size(); a++) {
+                     TLRPC.User u = res.users.get(a);
+@@ -4606,6 +4607,14 @@ public class MediaDataController extends BaseController {
+                     notify.run();
+                 }
+             });
++            if (includeTimed && (type == MEDIA_PHOTOVIDEO || type == MEDIA_PHOTOS_ONLY || type == MEDIA_VIDEOS_ONLY) && desu.inugram.helpers.security.TimedProfileMedia.enabled(dialogId, topicId)) {
++                getMessagesStorage().getStorageQueue().postRunnable(() -> {
++                    desu.inugram.helpers.security.TimedProfileMedia.merge(currentAccount, dialogId, type, max_id, min_id, topReached, res.messages);
++                    dispatch.run();
++                });
++            } else {
++                dispatch.run();
++            }
+         }
+     }
+ 
+@@ -4942,7 +4951,7 @@ public class MediaDataController extends BaseController {
+                 } finally {
+                     Runnable task = this;
+                     AndroidUtilities.runOnUIThread(() -> getMessagesStorage().completeTaskForGuid(task, classGuid));
+-                    processLoadedMedia(res, uid, count, max_id, min_id, type, topicId, fromCache, classGuid, isChannel, topReached, requestIndex);
++                    processLoadedMedia(res, uid, count, max_id, min_id, type, topicId, fromCache, classGuid, isChannel, topReached, requestIndex, tag == null);
+                 }
+             }
+         };

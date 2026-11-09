@@ -1149,7 +1149,7 @@
     <string name="InuSaveAnyStoryInfo">Дозволяє завантажувати будь-які історії в галерею без вимог Premium та обмежень автора.</string>
     <string name="InuAutoSaveStories">Автозбереження переглянутих історій</string>
     <string name="InuAutoSaveStoriesInfo">Зберігає в галерею кожну історію, яку ви відкриваєте, один раз. Власні історії пропускаються.</string>
-    <string name="InuCenterTitleChats">Центрувати в чатах/каналах</string>
+    <string name="InuCenterTitleChats">Центрувати заголовки</string>
     <string name="InuCenterTitleRightAvatar">Показувати аватарку праворуч</string>
     <string name="InuChatTitleMarquee">Біжучий рядок для довгих назв</string>
     <string name="InuChatTitleMarqueeInfo">Назви та підписи в шапці чату, заголовки екранів і імʼя в профілі прокручуються біжучим рядком, якщо не вміщуються</string>
@@ -1790,7 +1790,7 @@
     <string name="InuDownloadDirectoryApplied">Застосовується лише до нових завантажень</string>
     <string name="InuPreviewMessage">Попередній перегляд</string>
     <string name="InuMinimize">Згорнути</string>
-    <string name="InuCenterTitleChatsInfo">Центрує назву та підпис чату; аватарка лишається ліворуч. Працює окремо.</string>
+    <string name="InuCenterTitleChatsInfo">Центрує заголовки в головному списку чатів, у чатах і каналах.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туди, де меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватар замість кнопки меню: натискання відкриває профіль, довге натискання — меню чату.</string>
     <string name="InuIosChatHeaderAvatarSwap">Поміняти тап і утримання місцями</string>
@@ -2305,4 +2305,8 @@
     <string name="InuSendServerError">Telegram має проблеми з доставкою повідомлення. Повторюємо спроби…</string>
     <string name="InuForceNoVibration">Вимкнути всю вібрацію</string>
     <string name="InuForceNoVibrationInfo">Вимикає вібровідгук, вібрацію в застосунку та сповіщень, навіть якщо вона ввімкнена в налаштуваннях Telegram.</string>
+    <string name="InuCustomDeletedMark">Власна мітка видалення</string>
+    <string name="InuCustomEditedMark">Власна мітка редагування</string>
+    <string name="InuSystemMessageFontScale">Системний розмір шрифту</string>
+    <string name="InuSystemMessageFontScaleInfo">Застосовує масштаб шрифту Android до тексту повідомлень. Після зміни відкрийте застосунок знову.</string>
 </resources>

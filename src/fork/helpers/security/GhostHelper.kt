@@ -331,6 +331,29 @@ object GhostHelper {
     fun shouldSuppressRead(dialogId: Long): Boolean = shouldSuppress(dialogId, SuppressKind.READ)
 
     @JvmStatic
+    fun rememberTopicRead(account: Int, dialogId: Long, topicId: Long, maxId: Int) {
+        if (topicId <= 0 || maxId <= 0 || maxId == Int.MAX_VALUE || !InuConfig.GHOST_MARK_READ_LOCALLY.value ||
+            !shouldSuppressRead(dialogId) || !ChatObject.isForum(account, dialogId) || ChatObject.isMonoForum(account, dialogId)) return
+        val prefs = UserConfig.getInstance(account).preferences
+        val key = "inu_ghost_topic_read_${dialogId}_${topicId}"
+        if (maxId > prefs.getInt(key, 0)) prefs.edit().putInt(key, maxId).apply()
+        val topics = MessagesController.getInstance(account).topicsController
+        val topic = topics.findTopic(-dialogId, topicId) ?: return
+        if (topic.top_message in 1..maxId) topics.updateMaxReadId(-dialogId, topicId, maxId, 0, 0)
+    }
+
+    @JvmStatic
+    fun preserveTopicRead(account: Int, dialogId: Long, topic: TLRPC.TL_forumTopic) {
+        if (!InuConfig.GHOST_MARK_READ_LOCALLY.value || !shouldSuppressRead(dialogId)) return
+        val key = "inu_ghost_topic_read_${dialogId}_${topic.id}"
+        val maxId = UserConfig.getInstance(account).preferences.getInt(key, 0)
+        if (topic.top_message <= 0 || topic.top_message > maxId) return
+        topic.unread_count = 0
+        topic.unread_mentions_count = 0
+        topic.read_inbox_max_id = maxOf(topic.read_inbox_max_id, maxId)
+    }
+
+    @JvmStatic
     fun shouldSuppressLocalRead(dialogId: Long): Boolean {
         return !InuConfig.GHOST_MARK_READ_LOCALLY.value && shouldSuppress(dialogId, SuppressKind.READ)
     }

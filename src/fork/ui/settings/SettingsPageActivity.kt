@@ -38,6 +38,7 @@ import org.telegram.ui.Cells.TextCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
@@ -55,6 +56,38 @@ abstract class SettingsPageActivity : UniversalFragment() {
     private var highlightItemId: Int = -1
 
     protected open val expandableGroups: List<ExpandableBoolGroup> get() = emptyList()
+
+    protected fun editMessageMark(title: Int, setting: InuConfig.StringItem, onSave: () -> Unit) {
+        val ctx = context ?: return
+        val input = EditTextBoldCursor(ctx).apply {
+            val textColor = getThemedColor(Theme.key_dialogTextBlack)
+            setTextColor(textColor)
+            setCursorColor(textColor)
+            background = Theme.createEditTextDrawable(
+                ctx,
+                getThemedColor(Theme.key_dialogInputField),
+                getThemedColor(Theme.key_dialogInputFieldActivated),
+            )
+            isSingleLine = true
+            filters = arrayOf(android.text.InputFilter.LengthFilter(32))
+            setText(setting.value)
+            setSelection(length())
+        }
+        val container = FrameLayout(ctx).apply {
+            val inset = AndroidUtilities.dp(24f)
+            setPadding(inset, 0, inset, 0)
+            addView(input, FrameLayout.LayoutParams(-1, -2))
+        }
+        showDialog(org.telegram.ui.ActionBar.AlertDialog.Builder(ctx, resourceProvider)
+            .setTitle(LocaleController.getString(title))
+            .setView(container)
+            .setPositiveButton(LocaleController.getString(R.string.OK)) { _, _ ->
+                setting.value = input.text.toString().trim()
+                onSave()
+            }
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .create())
+    }
 
     open fun withHighlight(itemId: Int): SettingsPageActivity = apply {
         highlightItemId = itemId

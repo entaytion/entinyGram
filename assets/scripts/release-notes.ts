@@ -37,8 +37,8 @@ interface SiteNotes {
 const artifactDir = resolve(process.argv[2] ?? 'out')
 const info: BuildInfo = JSON.parse(await fs.readFile(join(artifactDir, 'build-info.json'), 'utf8'))
 
-/** Header, site link and tags take about 330 of the 4096 characters a Telegram text message may hold. */
-const POST_CHARS = Number(process.env.RELEASE_NOTES_CHARS ?? 3700)
+/** Header, site link, donate line and tags take about 400 of the 4096 characters a Telegram text message may hold. */
+const POST_CHARS = Number(process.env.RELEASE_NOTES_CHARS ?? 3600)
 
 const META = /FEATURES\.md|AGENTS\.md|CLAUDE\.md|README|CHANGELOG|release[- ]notes|patches?\/|\bseries\b|\bstgit\b|stg (?:refresh|export|float)|lint-patches|entinychecker|\.github|\bworkflow\b|\bCI\b|maintainability/i
 

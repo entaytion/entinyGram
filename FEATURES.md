@@ -17,8 +17,9 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 ### privacy & protection
 
 - 📡 **ghost mode** — hide read receipts, story views, online status, typing, recording and upload indicators; read-on-send, mark-as-read locally, hide seen mentions, per-chat overrides and per chat-type scope, with a quick toggle in the drawer, chats menu and a launcher shortcut
-- 📡 **anti-deletion & edit history** — messages the other side deletes stay in the chat under a 🗑️ mark, and deleted text, media and every real edit revision land in an archive with word and caption diffs; archives open as native chat lists with search, TTL, bulk clearing and JSON export, you pick which chats to save and cap attachment size per network, replies to a saved message show the saved copy, missing media downloads on tap, edit revisions keep the author's avatar and name and jump to the message in its chat; history saved by older versions stays accessible after updating
-- 📡 **self-destructing media** — save view-once photos, videos, video notes and voice notes (optionally straight to the gallery), keep secret-chat media and timed text, expired voice notes and round videos stay playable
+- forum topics keep their local read state in ghost mode when an older unread count arrives
+- 📡 **anti-deletion & edit history** — messages the other side deletes stay in the chat under a 🗑️ mark, and deleted text, media and every real edit revision land in an archive with word and caption diffs; archives open as native chat lists with search, TTL, selective deletion, bulk clearing and JSON export, and both deleted and edited marks support custom text, you pick which chats to save and cap attachment size per network, replies to a saved message show the saved copy, missing media downloads on tap, edit revisions keep the author's avatar and name and jump to the message in its chat; history saved by older versions stays accessible after updating
+- 📡 **self-destructing media** — save view-once photos, videos, video notes and voice notes (optionally straight to the gallery), see locally saved timed photos and videos in private chat profiles, keep secret-chat media and timed text, expired voice notes and round videos stay playable
 - 📡 **save user info** — phone country, registration date and a change log of name, username, bio and photo
 - 📡 **read time and remembered last seen** — when the other side read your private messages, and the last online time that survives them hiding their status
 - 📡 **presence logger** — per-contact online/offline history with notifications
@@ -44,6 +45,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 ### translation & ai
 
 - 📡 **whole-chat translation without Premium** via Google, DeepL, Bing, Azure, MyMemory or any OpenAI-compatible LLM, with auto-translate for every chat and per-chat exceptions
+- MyMemory no longer marks unchanged foreign text as translated when it reports a different source language.
 - 📡 **translate before sending** — in the send preview, as you send, and of a draft from the input menu
 - 📡 **LLM translation with conversation context**, auto-detected endpoints and models picked from the provider's list
 - 📡 **AI providers as cards** — add any number of Gemini, OpenAI, Groq, OpenRouter, Cloudflare or custom OpenAI-compatible endpoints and choose which one serves chat and voice
@@ -56,9 +58,9 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 - 📡 **hide FAB** — hide the chat-list buttons with a separate toggle and keep your chosen actions
 - 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar, chat list with larger avatars, message menu as a card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
-- 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size
+- 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size, and optional Android font scaling for messages
 - 📡 **glass glare** — disabled, default or solid outline — *inspired by Cherrygram (@arsLan4k1390)*
-- 📡 **chat headers** — live header preview, centered chat titles without gradient, and auto marquee for long names
+- 📡 **chat headers** — live header preview, centered titles in the main chat list and inside chats, and auto marquee for long names
 - 📡 **bottom tabs** — custom layout with an optional separate Search button, any tab first, hide on scroll, sliders to raise the bar and the FABs
 - 📡 **profile swipe** — disable swiping up on Profile to open the account menu, while keeping long press
 - 📡 **system folders** — Administrator, Bots, Unread, Groups and Channels tabs in the folder bar, each switchable and removable on this device
@@ -97,7 +99,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **link previews** — never generate or send them, or send the photo, video or file of a preview straight from its menu
 - 📡 **message menu** — message details & JSON view, hide a message until you leave the chat, copy photo as its own item (also on captions, and in the quick actions row), optionally collapse our items into one "entinyGram" submenu
 - 📡 **export chat** as JSON or HTML with media, including your own voice and video messages; the options sheet remembers your defaults
-- 📡 **bookmarks** — bookmark from the message menu (up to 500 per chat), star next to the time, browsable by chat in its own screen
+- 📡 **bookmarks** — bookmark from the message menu (up to 500 per chat), star next to the time, and tap a saved bookmark to jump to the message in its chat
 - 📡 **silent broadcast bell** — move the channel's broadcast bell out of the input field into the chat menu
 - 📡 **reactions** — hide them on messages, disable setting them, hide chat-list badges, mark them read instantly, and stale unread badges stop sticking
 - 📡 **chat menu** — personal privacy and local-data actions grouped under entinyGram, with a separate order section
@@ -108,6 +110,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 ### media, camera & player
 
 - 📡 **save what you see** — background downloads with progress and cancel, download button for selected files in profile media and search, "Save to Downloads" for regular voice messages, optional file-size badge on photos, message date in saved file names
+- outgoing media shows conversion percentage while processing and byte progress during upload - *inspired by NagramXTurbo (@temporaryna)*
 - 📡 **photos, GIFs and stickers** — HD photos at q87 with no double compression, small GIFs in chat bubbles, whole sticker or emoji pack downloaded as a ZIP
 - 📡 **square camera tile** — the attach gallery camera takes one cell instead of two
 - 📡 **camera, player and gesture pack** — mirrored front camera in the gallery and round videos, original-quality video playback and autoplay, tap-to-fullscreen GIFs when autoplay is off, music sleep timer, Lite Mode round-autoplay toggle, halved swipe distances, dimmed voice icon when both voice and rounds are banned, no pull-down-to-stories, fixes for looping-video and fast-GIF-scroll crashes

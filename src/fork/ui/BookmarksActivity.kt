@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Bundle
-import android.text.style.CharacterStyle
-import android.text.style.URLSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -30,7 +28,6 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ActionBar.ThemeDescription
 import org.telegram.ui.Cells.ChatMessageCell
-import org.telegram.ui.PhotoViewer
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
@@ -183,9 +180,6 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
             adapter = BookmarksAdapter(context)
         }
         listView = recycler
-        recycler.setOnItemClickListener { _, position, _, _ ->
-            messages.getOrNull(position)?.let { showInChat(it) }
-        }
         frameLayout.addView(recycler, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat()))
 
         val empty = object : TextView(context) {
@@ -290,21 +284,10 @@ class BookmarksActivity(private val dialogId: Long) : BaseFragment() {
     private inner class BookmarkCell(context: Context) : ChatMessageCell(context, currentAccount) {
         init {
             setFullyDraw(true)
-            // entiny: empty delegate keeps canPerformActions false so the row long click handles touches
-            setDelegate(object : ChatMessageCellDelegate {
-                override fun didPressImage(cell: ChatMessageCell, x: Float, y: Float, fullPreview: Boolean) {
-                    val msg = cell.messageObject ?: return
-                    if (!msg.isPhoto && !msg.isVideo && !msg.isGif) return
-                    PhotoViewer.getInstance().setParentActivity(this@BookmarksActivity)
-                    PhotoViewer.getInstance().openPhoto(msg, null, dialogId, 0L, 0L, PhotoViewer.EmptyPhotoViewerProvider())
-                }
-
-                override fun didPressUrl(cell: ChatMessageCell, url: CharacterStyle?, longPress: Boolean) {
-                    if (longPress) return
-                    val link = (url as? URLSpan)?.url ?: return
-                    parentActivity?.let { Browser.openUrl(it, link) }
-                }
-            })
+            setDelegate(object : ChatMessageCellDelegate {})
+            setOnClickListener {
+                messageObject?.let { showInChat(it) }
+            }
             setOnLongClickListener {
                 showMenu(this)
                 true

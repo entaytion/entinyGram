@@ -232,7 +232,7 @@ object ChatHelper {
     @JvmStatic
     fun timeAdditionsHash(msg: MessageObject?): Int {
         if (msg == null) return 0
-        var hash = 0
+        var hash = InuConfig.CUSTOM_EDITED_MARK.value.hashCode()
         if (TranslateHelper.hasTimeAddition(msg)) {
             hash = hash * 31 + 1
             hash = hash * 31 + TranslateHelper.timeAdditionsHash(msg)
@@ -244,6 +244,7 @@ object ChatHelper {
             hash = hash * 31 + 3
             hash = hash * 31 + InuConfig.DELETED_MARK_COLOR.value
             hash = hash * 31 + InuConfig.DELETED_MARK_STYLE.value
+            hash = hash * 31 + InuConfig.CUSTOM_DELETED_MARK.value.hashCode()
         }
         val forwards = getForwardsCount(msg)
         if (forwards > 0) {
@@ -324,7 +325,12 @@ object ChatHelper {
             sb.append(LocaleController.formatString(R.string.InuReadAt, LocaleController.formatDateTime(it.toLong(), true)))
             sb.append(" ")
         }
-        val result = if (sb.isEmpty()) time else sb.append(time)
+        val editedLabel = if (edited && !InuConfig.COMPACT_EDITED.value) InuConfig.CUSTOM_EDITED_MARK.value else ""
+        val defaultEditedLabel = if (editedLabel.isNotEmpty()) LocaleController.getString(R.string.EditedMessage) + " " else ""
+        val displayTime = if (defaultEditedLabel.isNotEmpty() && time.startsWith(defaultEditedLabel)) {
+            SpannableStringBuilder(time).replace(0, defaultEditedLabel.length, "$editedLabel ")
+        } else time
+        val result = if (sb.isEmpty()) displayTime else sb.append(displayTime)
         timePrefixCache[msg] = CachedTimePrefix(key, result)
         return result
     }
@@ -344,7 +350,7 @@ object ChatHelper {
 
     @JvmStatic
     fun appendDeletedMarkText(sb: SpannableStringBuilder) {
-        val text = LocaleController.getString(R.string.InuDeletedMarkText)
+        val text = InuConfig.CUSTOM_DELETED_MARK.value.ifEmpty { LocaleController.getString(R.string.InuDeletedMarkText) }
         val markColor = InuConfig.DELETED_MARK_COLOR.value
         if (markColor == 0) {
             sb.append(text)
@@ -569,11 +575,12 @@ object ChatHelper {
             icons.add(R.drawable.msg_fave)
         }
 
-        if (isMenuItemEnabled(MessageMenuConfig.Item.LOCAL_EDIT) && LocalEditHelper.canEdit(selectedObject)) {
+        val localEditTarget = LocalEditHelper.target(selectedObject, selectedObjectGroup)
+        if (isMenuItemEnabled(MessageMenuConfig.Item.LOCAL_EDIT) && localEditTarget != null) {
             items.add(LocaleController.getString(R.string.InuLocalEditMessage))
             options.add(OPTION_LOCAL_EDIT)
             icons.add(R.drawable.msg_edit)
-            if (LocalEditHelper.has(selectedObject)) {
+            if (LocalEditHelper.has(localEditTarget)) {
                 items.add(LocaleController.getString(R.string.InuLocalEditReset))
                 options.add(OPTION_LOCAL_EDIT_RESET)
                 icons.add(R.drawable.msg_retry)
@@ -1165,9 +1172,9 @@ object ChatHelper {
                 for (m in messages) activity.chatAdapter?.updateRowWithMessageObject(m, false, false)
             }
 
-            OPTION_LOCAL_EDIT -> LocalEditHelper.edit(activity, selectedObject)
+            OPTION_LOCAL_EDIT -> LocalEditHelper.target(selectedObject, selectedObjectGroup)?.let { LocalEditHelper.edit(activity, it) }
 
-            OPTION_LOCAL_EDIT_RESET -> LocalEditHelper.reset(activity, selectedObject)
+            OPTION_LOCAL_EDIT_RESET -> LocalEditHelper.target(selectedObject, selectedObjectGroup)?.let { LocalEditHelper.reset(activity, it) }
 
             OPTION_HIDE_MESSAGE -> {
                 val messages = selectedObjectGroup?.messages ?: listOf(selectedObject)

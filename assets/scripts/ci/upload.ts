@@ -249,6 +249,7 @@ try {
     const mainHeader = html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — <a href="${postUrl(firstPostId)}">Завантажити/Download</a>`
     const siteUrl = process.env.SITE_CHANGELOG_URL ?? 'https://entaytion.is-a.dev/entinygram/changelog'
     const siteHtml = html`🌐 <a href="${siteUrl}">Усі нові функції на сайті / See all new features on the website</a>`
+    const donateHtml = html`💝 Підтримати / Donate: <a href="https://t.me/sendgrams?to=entaytion&amp;amount=0.1&amp;text=thx+for+entiny">Telegram</a> • <a href="https://send.monobank.ua/jar/RGYa8zo8y">monobank 🇺🇦</a> • <a href="https://entaytion.is-a.dev/donate">Website</a>`
     // Discrete blocks joined by a blank line each — no stray empty paragraphs.
     const blocks = [
       mainHeader,
@@ -256,6 +257,7 @@ try {
       ukHtml,
       enHtml ? html`🇬🇧:\n<blockquote expandable>${enHtml}</blockquote>` : null,
       siteHtml,
+      donateHtml,
       html`🏷️ #release • @entinyGram • @entinyGramChat`,
     ].filter((b): b is NonNullable<typeof b> => b !== null)
 
@@ -271,6 +273,7 @@ try {
         extra ? html`${extra}` : null,
         ukHtml,
         siteHtml,
+        donateHtml,
         html`🏷️ #release • @entinyGram • @entinyGramChat`,
       ].filter((b): b is NonNullable<typeof b> => b !== null)
 

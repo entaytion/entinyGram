@@ -188,6 +188,7 @@ object DialogsSettingsHelper {
     private fun showCustomTitleTextDialog(page: SchemaPageActivity) {
         val ctx = page.context ?: return
         val input = EditTextBoldCursor(ctx).apply {
+            background = Theme.createEditTextDrawable(ctx, true)
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
             setCursorColor(Theme.getColor(Theme.key_dialogTextBlack))

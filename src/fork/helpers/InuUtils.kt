@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
+import android.util.TypedValue
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextPaint
@@ -13,12 +14,14 @@ import android.text.style.URLSpan
 import android.view.View
 import androidx.core.content.FileProvider
 import org.telegram.messenger.ApplicationLoader
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.MessageObject
 import org.telegram.tgnet.NativeByteBuffer
 import org.telegram.tgnet.SerializedData
 import org.telegram.tgnet.TLObject
 import org.telegram.ui.ActionBar.BaseFragment
+import org.telegram.ui.DialogsActivity
 import desu.inugram.ui.feed.FeedActivity
 import java.io.File
 import kotlin.system.exitProcess
@@ -168,6 +171,7 @@ public object InuUtils {
 
     @JvmStatic
     fun shouldCenterTitle(fragment: Any?): Boolean {
+        if (fragment is DialogsActivity) return centerChatTitle() && fragment.inu_isMainDialogsScreen()
         if (fragment == null) return false
         if (fragment.javaClass.name == "org.telegram.ui.ChatActivity") {
             return centerChatTitle()
@@ -177,4 +181,10 @@ public object InuUtils {
 
     @JvmStatic
     fun isFeedHeader(fragment: BaseFragment?): Boolean = fragment is FeedActivity
+
+    @JvmStatic
+    fun messageTextSize(context: Context, size: Float): Int {
+        if (!desu.inugram.InuConfig.SYSTEM_MESSAGE_FONT_SCALE.value) return AndroidUtilities.dp(size)
+        return kotlin.math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, context.resources.displayMetrics)).toInt()
+    }
 }

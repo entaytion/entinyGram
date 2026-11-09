@@ -86,6 +86,7 @@ object PushSettingsHelper {
             setPadding(dp(24f), dp(8f), dp(24f), 0)
         }
         val input = EditTextBoldCursor(ctx).apply {
+            background = Theme.createEditTextDrawable(ctx, true)
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
             setCursorColor(Theme.getColor(Theme.key_dialogTextBlack))

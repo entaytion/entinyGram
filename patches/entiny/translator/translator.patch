@@ -7,7 +7,7 @@ Subject: translator logic
  .../telegram/messenger/LanguageDetector.java  |  54 ++++
  .../messenger/MediaDataController.java        |   2 +-
  .../org/telegram/messenger/MessageObject.java |  13 +-
- .../messenger/TranslateController.java        | 249 ++++++++++++++----
+ .../messenger/TranslateController.java        | 249 +++++++++++++----
  .../telegram/tgnet/ConnectionsManager.java    |   9 +
  .../java/org/telegram/ui/ArticleViewer.java   |  17 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |  36 ++-
@@ -18,10 +18,10 @@ Subject: translator logic
  .../ui/Components/TranslateAlert2.java        |  42 ++-
  .../ui/Components/TranslateAlert3.java        |  63 ++++-
  .../ui/Components/TranslateButton.java        |  32 ++-
- .../telegram/ui/LanguageSelectActivity.java   | 248 ++---------------
+ .../telegram/ui/LanguageSelectActivity.java   | 252 +-----------------
  .../ui/RestrictedLanguagesSelectActivity.java |  45 ++--
  .../org/telegram/ui/web/WebActionBar.java     |   3 +
- 17 files changed, 485 insertions(+), 551 deletions(-)
+ 17 files changed, 477 insertions(+), 563 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
 index 0000000..0000000 100644
@@ -1713,7 +1713,7 @@ index 0000000..0000000 100644
  import org.telegram.ui.Cells.TextCheckCell;
  import org.telegram.ui.Cells.TextInfoPrivacyCell;
  import org.telegram.ui.Cells.TextRadioCell;
-@@ -217,91 +218,17 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -217,91 +218,13 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
  
          listView.setOnItemClickListener((view, position) -> {
              try {
@@ -1753,8 +1753,7 @@ index 0000000..0000000 100644
 -                            listAdapter.notifyItemRemoved(start + 1);
 -                        }
 -                    }
-+                if (getParentActivity() == null || parentLayout == null) {
-                     return;
+-                    return;
 -                } else if (view instanceof TextSettingsCell) {
 -//                    if (listAdapter.getItemViewType(position) == VIEW_TYPE_SETTINGS_2) {
 -//                        final ArrayList<String> languages = new ArrayList<>();
@@ -1797,13 +1796,11 @@ index 0000000..0000000 100644
 -//                            return;
 -//                    }
 -                    presentFragment(new RestrictedLanguagesSelectActivity());
-+                }
-+                boolean search = listView.getAdapter() == searchListViewAdapter;
-+                if (!search && view instanceof TextCell) {
-+                    presentFragment(new desu.inugram.ui.settings.TranslatorSettingsActivity());
++                if (getParentActivity() == null || parentLayout == null) {
                      return;
                  }
 -                if (getParentActivity() == null || parentLayout == null || !(view instanceof TextRadioCell)) {
++                boolean search = listView.getAdapter() == searchListViewAdapter;
 +                if (!(view instanceof TextRadioCell)) {
                      return;
                  }
@@ -1811,7 +1808,7 @@ index 0000000..0000000 100644
                  if (!search) {
                      position -= languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
                  }
-@@ -580,6 +507,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -580,6 +503,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
      public static final int VIEW_TYPE_SETTINGS = 4;
      public static final int VIEW_TYPE_SETTINGS_2 = 5;
      public static final int VIEW_TYPE_INFO = 6;
@@ -1819,16 +1816,16 @@ index 0000000..0000000 100644
  
      private int settingsFromPosition = -1;
      private int settingsToPosition = -1;
-@@ -605,7 +533,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -605,7 +529,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
          @Override
          public boolean isEnabled(RecyclerView.ViewHolder holder) {
              final int viewType = holder.getItemViewType();
 -            return viewType == VIEW_TYPE_LANGUAGE || viewType == VIEW_TYPE_SETTINGS || viewType == VIEW_TYPE_SETTINGS_2 || viewType == VIEW_TYPE_SWITCH;
-+            return viewType == VIEW_TYPE_LANGUAGE || viewType == VIEW_TYPE_TRANSLATOR;
++            return viewType == VIEW_TYPE_LANGUAGE;
          }
  
          @Override
-@@ -616,24 +544,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -616,25 +540,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                  }
                  return searchResult.size();
              } else {
@@ -1850,11 +1847,12 @@ index 0000000..0000000 100644
 -                    //    count++;
 -                    //}
 -                }
-+                int count = 1; // translator row
-                 count++;
+-                count++;
++                int count = 1;
                  count += sortedLanguages.size();
                  if (!unofficialLanguages.isEmpty()) {
-@@ -651,23 +562,15 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+                     count += unofficialLanguages.size() + 1;
+@@ -651,23 +557,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                      view = new TextRadioCell(mContext);
                      break;
                  }
@@ -1866,15 +1864,11 @@ index 0000000..0000000 100644
 -                case VIEW_TYPE_SETTINGS_2:
 -                    TextSettingsCell settingsCell = new TextSettingsCell(mContext);
 -                    view = settingsCell;
-+                case VIEW_TYPE_TRANSLATOR: {
-+                    // entinyGram: "Translator" row at the top of the language picker
-+                    view = new TextCell(mContext);
-                     break;
-+                }
-                 case VIEW_TYPE_HEADER:
-                     HeaderCell header = new HeaderCell(mContext);
-                     view = header;
-                     break;
+-                    break;
+-                case VIEW_TYPE_HEADER:
+-                    HeaderCell header = new HeaderCell(mContext);
+-                    view = header;
+-                    break;
 -                case VIEW_TYPE_INFO:
 -                    TextInfoPrivacyCell infoCell = new TextInfoPrivacyCell(mContext);
 -                    view = infoCell;
@@ -1882,7 +1876,7 @@ index 0000000..0000000 100644
                  case VIEW_TYPE_SHADOW:
                  default: {
                      view = new ShadowSectionCell(mContext);
-@@ -727,85 +630,8 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -727,87 +616,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                          position--;
                      break;
                  }
@@ -1962,13 +1956,15 @@ index 0000000..0000000 100644
 -                    }
 -                    break;
 -                }
-                 case VIEW_TYPE_HEADER: {
-                     HeaderCell header = (HeaderCell) holder.itemView;
+-                case VIEW_TYPE_HEADER: {
+-                    HeaderCell header = (HeaderCell) holder.itemView;
 -                    header.setText(position == 0 && (getMessagesController().isTranslationsManualEnabled() || getMessagesController().isTranslationsAutoEnabled()) ? LocaleController.getString(R.string.TranslateMessages) : LocaleController.getString(R.string.Language));
-                     break;
-                 }
+-                    break;
+-                }
              }
-@@ -817,49 +643,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+         }
+ 
+@@ -817,50 +625,8 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
              if (search) {
                  return VIEW_TYPE_LANGUAGE;
              } else {
@@ -2015,12 +2011,12 @@ index 0000000..0000000 100644
 -                    settingsFromPosition = -1;
 -                    settingsToPosition = -1;
 -                }
+-                if (i-- == 0) return VIEW_TYPE_HEADER;
 +                settingsFromPosition = -1;
 +                settingsToPosition = -1;
-+                if (i-- == 0) return VIEW_TYPE_TRANSLATOR;
-                 if (i-- == 0) return VIEW_TYPE_HEADER;
                  if (!unofficialLanguages.isEmpty() && (i == unofficialLanguages.size() || i == unofficialLanguages.size() + sortedLanguages.size() + 1) || unofficialLanguages.isEmpty() && i == sortedLanguages.size()) {
                      return VIEW_TYPE_SHADOW;
+                 }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/RestrictedLanguagesSelectActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/RestrictedLanguagesSelectActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/RestrictedLanguagesSelectActivity.java

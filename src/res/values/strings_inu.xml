@@ -1448,8 +1448,8 @@
     <string name="InuAutoSaveStoriesInfo">Saves every story you open to the gallery, once. Your own stories are skipped.</string>
     <string name="InuChatHeaderSettings">Chat header</string>
     <string name="InuChatHeaderSettingsInfo">Live preview above updates instantly as you change the options below.</string>
-    <string name="InuCenterTitleChats">Center in chats/channels</string>
-    <string name="InuCenterTitleChatsInfo">Centers the chat title and subtitle; the avatar stays left. Works on its own.</string>
+    <string name="InuCenterTitleChats">Center titles</string>
+    <string name="InuCenterTitleChatsInfo">Centers titles in the main chat list and inside chats and channels.</string>
     <string name="InuCenterTitleRightAvatar">Show avatar on the right</string>
     <string name="InuIosChatHeader">Compact pill</string>
     <string name="InuIosChatHeaderInfo">iOS-style compact chat header pill floating in the middle.</string>
@@ -2289,4 +2289,8 @@
     <string name="InuSendServerError">Telegram is having trouble delivering your message. Still retrying…</string>
     <string name="InuForceNoVibration">Disable all vibration</string>
     <string name="InuForceNoVibrationInfo">Turn off haptics, in-app and notification vibration, even if enabled in Telegram settings.</string>
+    <string name="InuCustomDeletedMark">Custom deleted mark</string>
+    <string name="InuCustomEditedMark">Custom edited mark</string>
+    <string name="InuSystemMessageFontScale">Follow system font size</string>
+    <string name="InuSystemMessageFontScaleInfo">Applies Android font scaling to message text. Reopen the app after changing this setting.</string>
 </resources>

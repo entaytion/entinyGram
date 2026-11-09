@@ -33,7 +33,7 @@ class BookmarksManagerActivity : SettingsPageActivity() {
 
     override fun createView(context: Context): View {
         return super.createView(context).also {
-            val menu = actionBar.createMenu()
+            val menu = simpleActionBar.createMenu()
             val searchItem = menu.addItem(MENU_SEARCH, R.drawable.outline_header_search).setIsSearchField(true)
             searchItem.setSearchFieldHint(getString(R.string.Search))
             searchItem.setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
@@ -43,7 +43,7 @@ class BookmarksManagerActivity : SettingsPageActivity() {
                 }
             })
             menu.addItem(MENU_CLEAR, R.drawable.msg_delete)
-            actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
+            simpleActionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
                 override fun onItemClick(id: Int) {
                     when (id) {
                         -1 -> finishFragment()

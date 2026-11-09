@@ -1,0 +1,155 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 15:20:46 +0200
+Subject: Show live media conversion and upload progress
+
+---
+ .../org/telegram/messenger/MessageObject.java |  1 +
+ .../telegram/ui/Cells/ChatMessageCell.java    | 38 ++++++++++++++-----
+ .../java/org/telegram/ui/ChatActivity.java    | 23 +++++++++--
+ 3 files changed, 49 insertions(+), 13 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -262,6 +262,7 @@ public class MessageObject {
+     public StringBuilder botButtonsLayout;
+     public boolean isRestrictedMessage;
+     public long loadedFileSize;
++    public int inu_conversionPercent = -1;
+     public boolean forceExpired;
+     public long actionDeleteGroupEventId = -1;
+     public HashSet<Integer> expandedQuotes;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -1283,6 +1283,24 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+     AnimatedTextView.AnimatedTextDrawable animatedInfoLayout;
+     AnimatedTextView.AnimatedTextDrawable animatedInfoLayout2;
+     StaticLayout loadingProgressLayout;
++    private StaticLayout inu_conversionProgressLayout;
++    private int inu_drawnConversionPercent = -1;
++
++    private StaticLayout inu_mediaProgressLayout() {
++        if (currentMessageObject != null && (currentMessageObject.isSending() || currentMessageObject.isEditing()) &&
++                currentMessageObject.inu_conversionPercent >= 0 && currentMessageObject.videoEditedInfo != null &&
++                currentMessageObject.videoEditedInfo.needConvert()) {
++            int percent = currentMessageObject.inu_conversionPercent;
++            if (inu_conversionProgressLayout == null || inu_drawnConversionPercent != percent) {
++                String text = percent + "%";
++                int width = (int) Math.ceil(Theme.chat_infoPaint.measureText(text));
++                inu_conversionProgressLayout = new StaticLayout(text, Theme.chat_infoPaint, Math.max(1, width), Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
++                inu_drawnConversionPercent = percent;
++            }
++            return inu_conversionProgressLayout;
++        }
++        return loadingProgressLayout;
++    }
+     private long loadingProgressLayoutHash;
+     private int infoX;
+     int infoWidth;
+@@ -15516,6 +15534,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             lastLoadingSizeTotal = totalSize;
+         }
+         createLoadingProgressLayout(uploadedSize, totalSize);
++        invalidate();
+     }
+ 
+     private void createLoadingProgressLayout(TLRPC.Document document) {
+@@ -22533,7 +22552,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         updatePlayingMessageProgress();
+                     }
+ 
+-                    if ((infoLayout != null || loadingProgressLayout != null) && (!forceNotDrawTime || autoPlayingMedia || drawVideoImageButton || animatingLoadingProgressProgress != 0 || (fullWidth && docTitleLayout != null) || (loadingProgressLayout != null && currentPosition != null && (buttonState == 1 || (buttonState == 3 && miniButtonState == 1)))) && (currentMessageObject != null && !currentMessageObject.sendPreview)) {
++                    StaticLayout inu_progressLayout = inu_mediaProgressLayout();
++                    if ((infoLayout != null || inu_progressLayout != null) && (!forceNotDrawTime || autoPlayingMedia || drawVideoImageButton || animatingLoadingProgressProgress != 0 || (fullWidth && docTitleLayout != null) || (inu_progressLayout != null && currentPosition != null && (buttonState == 1 || (buttonState == 3 && miniButtonState == 1)))) && (currentMessageObject != null && !currentMessageObject.sendPreview)) {
+                         boolean drawLoadingProgress;
+                         float alpha = 0;
+                         boolean drawDocTitleLayout;
+@@ -22575,10 +22595,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                             } else {
+                                 imageW = 0;
+                             }
+-                            if (drawLoadingProgress && loadingProgressLayout != null) {
++                            if (drawLoadingProgress && inu_progressLayout != null) {
+                                 imageW = 0;
+-                                infoW = (int) loadingProgressLayout.getLineWidth(0);
+-//                            infoW = loadingProgressLayout.getCurrentWidth();
++                                infoW = (int) inu_progressLayout.getLineWidth(0);
++//                            infoW = inu_progressLayout.getCurrentWidth();
+                             } else {
+                                 infoW = infoWidth;
+                             }
+@@ -22606,7 +22626,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                                 photoImage.setAlpha(wasAlpha);
+                                 canvas.restore();
+                                 canvas.drawRoundRect(rect, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
+-                            } else if (drawDocTitleLayout || (drawLoadingProgress && loadingProgressLayout != null) || (!drawLoadingProgress && infoLayout != null)) {
++                            } else if (drawDocTitleLayout || (drawLoadingProgress && inu_progressLayout != null) || (!drawLoadingProgress && infoLayout != null)) {
+                                 canvas.scale(loadingProgressAlpha, loadingProgressAlpha, x1, y1);
+                                 canvas.drawRoundRect(rect, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
+                             } else {
+@@ -22632,14 +22652,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                                 noSoundCenterX += offset + size / 2;
+                                 canvas.restore();
+                             }
+-                            if (drawLoadingProgress && loadingProgressLayout != null) {
++                            if (drawLoadingProgress && inu_progressLayout != null) {
+                                 canvas.save();
+                                 if (drawDocTitleLayout) {
+                                     Theme.chat_infoPaint.setAlpha((int) (255 * controlsAlpha * alpha));
+                                     canvas.translate(0, dp(14.3f * alpha));
+                                 }
+-//                            loadingProgressLayout.copyStylesFrom(Theme.chat_infoPaint);
+-                                loadingProgressLayout.draw(canvas);
++//                            inu_progressLayout.copyStylesFrom(Theme.chat_infoPaint);
++                                inu_progressLayout.draw(canvas);
+                                 canvas.restore();
+                             } else if (drawDocTitleLayout) {
+                                 Theme.chat_infoPaint.setAlpha((int) (255 * controlsAlpha * alpha));
+@@ -22683,7 +22703,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     invalidate();
+                 }
+ 
+-                float animatingToLoadingProgress = (buttonState == 1 || miniButtonState == 1) && loadingProgressLayout != null ? 1f : 0f;
++                float animatingToLoadingProgress = (buttonState == 1 || miniButtonState == 1) && inu_mediaProgressLayout() != null ? 1f : 0f;
+                 if (animatingToLoadingProgress == 0f && infoLayout != null && fullWidth) {
+                     animatingLoadingProgressProgress = 0f;
+                 }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -24362,11 +24362,26 @@ public class ChatActivity extends BaseFragment implements
+         } else if (id == NotificationCenter.fileNewChunkAvailable) {
+             MessageObject messageObject = (MessageObject) args[0];
+             long finalSize = (Long) args[3];
+-            if (finalSize != 0 && dialog_id == messageObject.getDialogId()) {
++            if (dialog_id == messageObject.getDialogId()) {
++                int percent = finalSize == 0 ? Math.max(0, Math.min(99, (int) ((Float) args[4] * 100))) : -1;
+                 MessageObject currentObject = messagesDict[0].get(messageObject.getId());
+-                if (currentObject != null && currentObject.messageOwner.media.document != null) {
+-                    currentObject.messageOwner.media.document.size = (int) finalSize;
+-                    updateVisibleRows();
++                messageObject.inu_conversionPercent = percent;
++                if (currentObject != null) {
++                    currentObject.inu_conversionPercent = percent;
++                    if (finalSize != 0 && currentObject.getDocument() != null) {
++                        currentObject.getDocument().size = finalSize;
++                        updateVisibleRows();
++                    }
++                }
++                if (chatListView != null) {
++                    for (int i = 0; i < chatListView.getChildCount(); i++) {
++                        if (chatListView.getChildAt(i) instanceof ChatMessageCell) {
++                            ChatMessageCell cell = (ChatMessageCell) chatListView.getChildAt(i);
++                            if (cell.getMessageObject() == currentObject || cell.getMessageObject() == messageObject) {
++                                cell.invalidate();
++                            }
++                        }
++                    }
+                 }
+             }
+         } else if (id == NotificationCenter.didCreatedNewDeleteTask) {

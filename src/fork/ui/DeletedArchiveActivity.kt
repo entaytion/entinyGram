@@ -18,6 +18,7 @@ import org.telegram.ui.Components.ItemOptions
 class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment(dialogId, account) {
 
     private val entries = ArrayList<EditEntry>()
+    private val selected = HashSet<Int>()
     private var loadingPage = false
     private var hasMore = false
     private var offset = 0
@@ -32,6 +33,7 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
     override fun hasContent(): Boolean = entries.isNotEmpty()
 
     override fun onCleared() {
+        selected.clear()
         entries.clear()
         hasMore = false
     }
@@ -79,7 +81,7 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
     }
 
     override fun load() {
-        if (loadingPage) return
+        if (loadingPage || clearing) return
         loadingPage = true
         val pageOffset = offset
         val storage = MessagesStorage.getInstance(currentAccount)
@@ -173,6 +175,9 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
         val entry = entries.getOrNull(row.index) ?: return
         val message = messageOf(entry)
         cell.show(entry, row, message, groupOf(message), showSenders)
+        cell.setCheckBoxVisible(selected.isNotEmpty(), false)
+        val checked = entry.originalMessageId in selected
+        cell.setChecked(checked, checked, false)
     }
 
     private fun groupOf(message: MessageObject): MessageObject.GroupedMessages? {
@@ -194,6 +199,21 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
         val message = cell.messageObject ?: return
         val index = cell.row?.index ?: return
         ItemOptions.makeOptions(this, cell)
+            .addIf(entry.originalMessageId != 0, R.drawable.msg_select, LocaleController.getString(
+                if (entry.originalMessageId in selected) R.string.Deselect else R.string.Select
+            )) {
+                if (!selected.add(entry.originalMessageId)) selected.remove(entry.originalMessageId)
+                refresh()
+            }
+            .addIf(selected.isNotEmpty(), R.drawable.msg_delete, LocaleController.getString(R.string.Delete) + " (${selected.size})", true) {
+                val ids = selected.toList()
+                val context = parentActivity ?: return@addIf
+                showDialog(org.telegram.ui.ActionBar.AlertDialog.Builder(context, resourceProvider)
+                    .setTitle(LocaleController.getString(R.string.Delete) + " (${ids.size})")
+                    .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+                    .setPositiveButton(LocaleController.getString(R.string.Delete)) { _, _ -> deleteArchivedIds(ids) }
+                    .create())
+            }
             .add(R.drawable.msg_openin, LocaleController.getString(R.string.InuShowInChat)) { showInChat(message) }
             .addIf(entry.text.isNotEmpty(), R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) { copyText(entry.text) }
             .addIf(entry.originalMessageId != 0, R.drawable.msg_delete, LocaleController.getString(R.string.Delete), true) { deleteArchived(index) }
@@ -209,11 +229,21 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
         } else {
             listOf(entry.originalMessageId)
         }
+        deleteArchivedIds(ids)
+    }
+
+    private fun deleteArchivedIds(ids: List<Int>) {
+        if (loadingPage || clearing) return
         val idSet = ids.toHashSet()
-        entries.removeAll { it.originalMessageId in idSet }
-        offset = maxOf(0, offset - ids.size)
-        refresh()
-        DeletedMessagesHelper.purge(currentAccount, dialogId, ids)
+        clearing = true
+        DeletedMessagesHelper.purge(currentAccount, dialogId, ids) {
+            clearing = false
+            val oldSize = entries.size
+            entries.removeAll { it.originalMessageId in idSet }
+            selected.removeAll(idSet)
+            offset = maxOf(0, offset - (oldSize - entries.size))
+            if (!isFinished) refresh()
+        }
     }
 
     companion object {

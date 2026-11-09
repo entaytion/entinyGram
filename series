@@ -666,3 +666,12 @@ bugfix/reaction-read-sync.patch
 entiny/feed/feed-chatactivity.patch
 entiny/chat/ios-input-bar.patch
 entiny/notifications/no-vibration.patch
+entiny/ui/profile-centered-title-transition.patch
+entiny/chat/avatar-delete-draw.patch
+entiny/media/timed-profile-media.patch
+entiny/translator/translation-banner-opt-out.patch
+entiny/ui/chat-send-restriction-background.patch
+entiny/media/live-media-upload-progress.patch
+entiny/ui/system-message-font-scale.patch
+entiny/privacy/ghost-topic-local-read.patch
+entiny/chat/ai-button-spacing.patch

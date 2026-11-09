@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 15:28:46 +0200
+Subject: Separate the AI and emoji buttons
+
+---
+ .../java/org/telegram/ui/Components/ChatActivityEnterView.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -3006,7 +3006,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         aiButton.setScaleType(ImageView.ScaleType.CENTER);
+         ThemeBind.colorFilter(aiButton, Theme.key_glass_defaultIcon, resourcesProvider, PorterDuff.Mode.MULTIPLY);
+         ThemeBind.selectorBackground(aiButton, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(16)), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
+-        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, 0, isIosInputAppearance() && !isIosButtonPlacement() ? 1 - Math.min(iosGapDp, 2) : 1, aiButtonRightMarginDp, 0));
++        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, 0, isIosInputAppearance() && !isIosButtonPlacement() ? -1 - Math.min(iosGapDp, 2) : 1, aiButtonRightMarginDp, 0));
+         aiButton.setContentDescription(getString(R.string.AIEditor));
+         ScaleStateListAnimator.apply(aiButton);
+         aiButton.setOnClickListener(v -> {

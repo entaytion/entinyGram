@@ -913,7 +913,8 @@ object Schemas {
 
     val SYSTEM = schema("system", R.string.InuRootSystem, R.drawable.inu_tabler_device_desktop_cog) {
         section {
-            link(R.string.InuCloudSync, R.drawable.inu_tabler_cloud) { BackupSettingsActivity() }
+            link(R.string.InuBackupSettings, R.drawable.inu_tabler_cloud) { BackupSettingsActivity() }
+            toggle(InuConfig.SYSTEM_MESSAGE_FONT_SCALE, R.string.InuSystemMessageFontScale, R.string.InuSystemMessageFontScaleInfo)
             link(R.string.InuCacheManagement, R.drawable.inu_tabler_trash_x, slug = "additional-cache-management") { CacheManagementSettingsActivity() }
             link(R.string.InuDatacenterStatus, R.drawable.inu_tabler_server, slug = "additional-datacenter-status") { DatacenterStatusActivity() }
         }

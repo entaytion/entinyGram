@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 14:27:15 +0200
+Subject: Prevent deleted message avatars from overlapping
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -6625,8 +6625,10 @@ public class ChatActivity extends BaseFragment implements
+                             canvas.scale(1f - getSideMenuAlpha(), 1f - getSideMenuAlpha(), imageReceiver.getImageX2(), imageReceiver.getImageY2());
+                             canvas.translate(dp(24) * getSideMenuAlpha(), 0f);
+                         }
+-                        imageReceiver.draw(canvas);
+-                        desu.inugram.helpers.chat.ChatAvatarPresenceHelper.draw(canvas, imageReceiver, mcell);
++                        if (updateVisibility) {
++                            imageReceiver.draw(canvas);
++                            desu.inugram.helpers.chat.ChatAvatarPresenceHelper.draw(canvas, imageReceiver, mcell);
++                        }
+                         canvas.restore();
+ 
+                         if (!replaceAnimation && child.getTranslationY() != 0) {

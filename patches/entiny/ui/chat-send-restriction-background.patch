@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 14:38:58 +0200
+Subject: Theme the send restriction background
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -8650,6 +8650,7 @@ public class ChatActivity extends BaseFragment implements
+         bottomOverlay.setFocusable(true);
+         bottomOverlay.setFocusableInTouchMode(true);
+         bottomOverlay.setClickable(true);
++        ThemeBind.backgroundColor(bottomOverlay, Theme.key_chat_messagePanelBackground, getResourceProvider());
+         chatInputBubbleContainer.addView(bottomOverlay, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, ChatActivityEnterView.DEFAULT_HEIGHT, Gravity.BOTTOM, NonIslandHelper.chatElements() ? 0 : 7, 0, NonIslandHelper.chatElements() ? 0 : 7, NonIslandHelper.chatElements() ? -9 : 0));
+ 
+         bottomOverlayText = new TextView(context);

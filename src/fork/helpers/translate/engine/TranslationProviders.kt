@@ -528,18 +528,26 @@ object MyMemoryProvider : TranslationProvider {
 
     override fun translate(text: String, toLang: String): String {
         val lang = normalizeToLang(toLang)
-        if (text.length <= MAX_CHUNK_CHARS) {
-            return translateChunk(text, lang)
-        }
+        val chunks = if (text.length <= MAX_CHUNK_CHARS) listOf(text to "") else splitForProvider(text, MAX_CHUNK_CHARS)
         val sb = StringBuilder(text.length + 32)
-        for ((chunk, tail) in splitForProvider(text, MAX_CHUNK_CHARS)) {
-            sb.append(translateChunk(chunk, lang)).append(tail)
+        var foreignSource = false
+        for ((chunk, tail) in chunks) {
+            val (translated, detected) = translateChunk(chunk, lang)
+            if (detected.isNotBlank() && detected != "und" &&
+                !detected.substringBefore('-').equals(lang.substringBefore('-'), ignoreCase = true)) {
+                foreignSource = true
+            }
+            sb.append(translated).append(tail)
         }
-        return sb.toString()
+        val result = sb.toString()
+        if (foreignSource && result.trim() == text.trim() && text.any { it.isLetter() }) {
+            throw IOException("MyMemory returned the source text unchanged")
+        }
+        return result
     }
 
-    private fun translateChunk(text: String, lang: String): String {
-        if (text.isBlank()) return text
+    private fun translateChunk(text: String, lang: String): Pair<String, String> {
+        if (text.isBlank()) return text to ""
         val url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) +
             "&langpair=autodetect%7C" + encodeURIComponent(lang)
         val resp = httpJson(url)
@@ -548,9 +556,10 @@ object MyMemoryProvider : TranslationProvider {
         if (status != 200) {
             throw ProviderConfigException("MyMemory status $status: " + json.optString("responseDetails"))
         }
-        val translated = json.optJSONObject("responseData")?.optString("translatedText", "").orEmpty()
-        if (translated.isEmpty()) throw IOException("MyMemory returned an empty result")
-        return translated
+        val data = json.optJSONObject("responseData")
+        val translated = data?.optString("translatedText", "").orEmpty()
+        if (translated.isBlank()) throw IOException("MyMemory returned an empty result")
+        return translated to data?.optString("detectedLanguage").orEmpty()
     }
 
     private fun normalizeToLang(code: String): String = when (code.lowercase()) {

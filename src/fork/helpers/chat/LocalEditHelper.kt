@@ -100,6 +100,11 @@ object LocalEditHelper {
         return !owner.message.isNullOrEmpty() || has(message)
     }
 
+    fun target(message: MessageObject, group: MessageObject.GroupedMessages?): MessageObject? =
+        group?.captionMessage?.takeIf(::canEdit)
+            ?: group?.messages?.firstOrNull(::canEdit)
+            ?: message.takeIf(::canEdit)
+
     fun count(): Int = entries.size
 
     fun clearAll() {
