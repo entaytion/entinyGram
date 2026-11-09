@@ -254,5 +254,6 @@
   "chat-dialog-state": "chat",
   "privacy-contacts": "privacy",
   "dialogs-tweaks": "ui",
-  "download-queue": "media"
+  "download-queue": "media",
+  "quiet-voice-locked": "media"
 }

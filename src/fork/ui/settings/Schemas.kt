@@ -407,6 +407,7 @@ object Schemas {
                 InuConfig.LOCK_MAX_REFRESH_RATE, R.string.InuLockMaxRefreshRate, R.string.InuLockMaxRefreshRateInfo,
                 onChange = { _, _ -> desu.inugram.helpers.RefreshRateHelper.sync(org.telegram.ui.LaunchActivity.instance) },
             )
+            toggle(InuConfig.QUIET_VOICE_WHEN_LOCKED, R.string.InuQuietVoiceWhenLocked, R.string.InuQuietVoiceWhenLockedInfo)
             toggle(
                 InuConfig.USE_SYSTEM_EMOJI, R.string.InuUseSystemEmoji, R.string.InuUseSystemEmojiInfo,
                 onChange = { _, value ->

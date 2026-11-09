@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 10 Nov 2026 00:59:40 +0200
+Subject: Keep voice and round video messages from starting while the phone is locked.
+
+---
+ .../src/main/java/org/telegram/messenger/MediaController.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -3796,7 +3796,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+     }
+ 
+     public boolean playMessage(final MessageObject messageObject, boolean silent) {
+-        if (messageObject == null) {
++        if (messageObject == null || desu.inugram.helpers.chat.VoiceLockHelper.blocks(messageObject)) {
+             return false;
+         }
+         isSilent = silent;

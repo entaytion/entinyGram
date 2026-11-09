@@ -263,6 +263,8 @@
     <string name="InuDownloadsEmpty">Nothing is downloading</string>
     <string name="InuUseSystemEmoji">Use system emoji</string>
     <string name="InuUseSystemEmojiInfo">Draws emoji with the system font instead of the Telegram set. Restart the app to apply it everywhere.</string>
+    <string name="InuQuietVoiceWhenLocked">Quiet voice messages when locked</string>
+    <string name="InuQuietVoiceWhenLockedInfo">While the phone is locked, a headset button, car or lock screen control cannot start, resume or advance a voice or round video message. A message already playing finishes.</string>
     <string name="InuLockMaxRefreshRate">Lock the highest refresh rate</string>
     <string name="InuLockMaxRefreshRateInfo">Asks the system to keep the screen at its highest refresh rate in this app, at the current resolution. Uses more battery.</string>
     <string name="InuMemoryTrim">Free memory in background</string>

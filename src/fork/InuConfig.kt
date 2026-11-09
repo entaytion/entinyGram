@@ -1001,6 +1001,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val USE_SYSTEM_EMOJI = BoolItem("use_system_emoji", false)
 
     @JvmField
+    val QUIET_VOICE_WHEN_LOCKED = BoolItem("quiet_voice_when_locked", false)
+
+    @JvmField
     val OPTIMIZED_ATTACHMENT_MENU = BoolItem("optimized_attachment_menu", true)
 
     @JvmField
