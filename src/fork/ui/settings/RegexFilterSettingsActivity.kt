@@ -82,6 +82,14 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
                 InuConfig.REGEX_FILTER_HIDE_REPLIES.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_REGEX_FILTER_BUTTONS,
+                R.string.InuRegexFilterButtons,
+                R.string.InuRegexFilterButtonsInfo,
+                InuConfig.REGEX_FILTER_BUTTONS.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuRegexFiltersList)))
@@ -133,6 +141,12 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
 
             item.id == TOGGLE_REGEX_FILTER_HIDE_REPLIES -> {
                 val new = InuConfig.REGEX_FILTER_HIDE_REPLIES.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                refreshDialogs()
+            }
+
+            item.id == TOGGLE_REGEX_FILTER_BUTTONS -> {
+                val new = InuConfig.REGEX_FILTER_BUTTONS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
                 refreshDialogs()
             }
@@ -220,6 +234,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
         private val TOGGLE_REGEX_FILTER_ENABLED = InuUtils.generateId()
         private val BUTTON_REGEX_FILTER_MODE = InuUtils.generateId()
         private val TOGGLE_REGEX_FILTER_HIDE_REPLIES = InuUtils.generateId()
+        private val TOGGLE_REGEX_FILTER_BUTTONS = InuUtils.generateId()
         private val BUTTON_ADD_FILTER = InuUtils.generateId()
         private val BUTTON_EXPORT_FILTERS = InuUtils.generateId()
         private val BUTTON_IMPORT_FILTERS = InuUtils.generateId()
@@ -238,6 +253,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
                 SearchRegistry.Entry("regex-filter-enabled", R.string.InuRegexFilterEnabled, TOGGLE_REGEX_FILTER_ENABLED),
                 SearchRegistry.Entry("regex-filter-mode", R.string.InuRegexFilterMode, BUTTON_REGEX_FILTER_MODE),
                 SearchRegistry.Entry("regex-filter-hide-replies", R.string.InuRegexFilterHideReplies, TOGGLE_REGEX_FILTER_HIDE_REPLIES),
+                SearchRegistry.Entry("regex-filter-buttons", R.string.InuRegexFilterButtons, TOGGLE_REGEX_FILTER_BUTTONS),
                 SearchRegistry.Entry("regex-filter-add", R.string.InuRegexFilterAdd, BUTTON_ADD_FILTER),
                 SearchRegistry.Entry("regex-filter-export", R.string.InuRegexFilterExport, BUTTON_EXPORT_FILTERS),
                 SearchRegistry.Entry("regex-filter-import", R.string.InuRegexFilterImport, BUTTON_IMPORT_FILTERS),

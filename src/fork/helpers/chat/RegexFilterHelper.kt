@@ -58,7 +58,8 @@ object RegexFilterHelper {
         val hasCaption = !caption.isNullOrEmpty()
 
         // entiny: cheap hash check before entity scan — cache miss pays the extractLinkUrls cost
-        val quickHash = 31 * (if (hasText) msgText.hashCode() else 0) + (if (hasCaption) caption.hashCode() else 0)
+        val quickHash = 31 * (if (hasText) msgText.hashCode() else 0) + (if (hasCaption) caption.hashCode() else 0) +
+            (if (InuConfig.REGEX_FILTER_BUTTONS.value) 17 else 0)
         val dialogId = messageObject.dialogId
         synchronized(lock) {
             matchCache[dialogId]?.get(messageObject.id)?.let {
@@ -67,8 +68,9 @@ object RegexFilterHelper {
         }
 
         val linkUrls = extractLinkUrls(messageObject.messageOwner)
+        val buttonText = extractButtonText(messageObject.messageOwner)
         val hasLinks = !linkUrls.isNullOrEmpty()
-        if (!hasText && !hasCaption && !hasLinks) {
+        if (!hasText && !hasCaption && !hasLinks && buttonText == null) {
             synchronized(lock) { matchCache.getOrPut(dialogId) { BoundedCache(MATCH_CACHE_PER_DIALOG) }[messageObject.id] = MatchCacheEntry(quickHash, false) }
             return false
         }
@@ -76,6 +78,7 @@ object RegexFilterHelper {
             if (hasText) append(msgText).append('\n')
             if (hasCaption) append(caption).append('\n')
             if (hasLinks) append(linkUrls)
+            if (buttonText != null) append(buttonText)
         }
         val result = matches(text, dialogId)
         synchronized(lock) {
@@ -96,6 +99,18 @@ object RegexFilterHelper {
             if (it.isNotEmpty()) urls.add(it)
         }
         return if (urls.isEmpty()) null else urls.joinToString("\n")
+    }
+
+    private fun extractButtonText(message: TLRPC.Message): String? {
+        if (!InuConfig.REGEX_FILTER_BUTTONS.value) return null
+        val rows = (message.reply_markup as? TLRPC.TL_replyInlineMarkup)?.rows ?: return null
+        val out = StringBuilder()
+        for (row in rows) for (button in row.buttons) {
+            button.text?.let { out.append(it).append('\n') }
+            @Suppress("DEPRECATION")
+            button.url?.let { out.append(it).append('\n') }
+        }
+        return if (out.isEmpty()) null else out.toString()
     }
 
     private fun matches(text: CharSequence, dialogId: Long?): Boolean {

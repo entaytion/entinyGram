@@ -24,7 +24,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **presence logger** — per-contact online/offline history with notifications
 - 📡 **force relay calls** — route calls through Telegram servers to hide your IP
 - 📡 **datacenter status** — live ping for DC1–DC5
-- 📡 **adblock & content filtering** — hide sponsored messages, the proxy sponsor chat and the business bot banner (start or stop the bot from the chat menu), spoiler or hide messages matching regex rules and optionally their replies
+- 📡 **adblock & content filtering** — hide sponsored messages, the proxy sponsor chat and the business bot banner (start or stop the bot from the chat menu), spoiler or hide messages matching regex rules, also checked against inline buttons, and optionally their replies
 - 📡 **redact logs** — phone numbers, IDs, tokens, IPs and usernames are replaced with stable placeholders as logs are written
 - 📡 **hide last message preview** — last messages in the chats list show under a spoiler
 

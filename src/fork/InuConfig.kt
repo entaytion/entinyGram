@@ -1902,6 +1902,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val REGEX_FILTER_HIDE_REPLIES = BoolItem("regex_filter_hide_replies", false)
 
+    @JvmField
+    val REGEX_FILTER_BUTTONS = BoolItem("regex_filter_buttons", false)
+
     class RegexFilterModeItem : IntItem("regex_filter_mode", HIDE) {
         companion object {
             const val HIDE = 0
