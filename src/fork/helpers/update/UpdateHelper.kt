@@ -4,7 +4,6 @@ import android.os.Build
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.security.ParanoiaHelper
-import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BetaUpdate
@@ -29,7 +28,7 @@ import kotlin.math.min
 
 object UpdateHelper {
     const val USERNAME = "entinyGramCI"
-    private const val CHANGELOG_JSON_URL = "https://raw.githubusercontent.com/entaytion/entinyGram/main/assets/changelog.json"
+    private const val CHANGELOG_URL = "https://raw.githubusercontent.com/entaytion/entinyGram/main/changelogs/"
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
     private const val RESOLVE_BACKOFF_MS = 30L * 60 * 1000
@@ -390,7 +389,7 @@ object UpdateHelper {
         val isBeta = msg.message?.contains("#prerelease") == true
         val updateObj = applyUpdate(msg, info, currentVerCode, isBeta)
         if (!isBeta) {
-            fetchChangelogJson(info, updateObj) {
+            fetchChangelog(info, updateObj) {
                 finish(callback, CheckResult.Updated(updateObj))
             }
         } else {
@@ -442,7 +441,7 @@ object UpdateHelper {
         AndroidUtilities.runOnUIThread {
             val updateObj = applyUpdate(targetMsg, info, currentVerCode, isBeta)
             if (!isBeta) {
-                fetchChangelogJson(info, updateObj) {
+                fetchChangelog(info, updateObj) {
                     revealPendingUpdate()
                     InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
                 }
@@ -491,43 +490,18 @@ object UpdateHelper {
         return updateObj
     }
 
-    private fun fetchChangelogJson(info: ApkInfo, updateObj: TLRPC.TL_help_appUpdate, onDone: () -> Unit) {
+    // the versionCode is YYYYMMDD * 100 + counter * 10, so the day's changelog file is changelogs/<YYYYMMDD>.md
+    private fun fetchChangelog(info: ApkInfo, updateObj: TLRPC.TL_help_appUpdate, onDone: () -> Unit) {
         Utilities.globalQueue.postRunnable {
             var fetchedText: String? = null
             try {
-                val conn = (URL(CHANGELOG_JSON_URL).openConnection() as HttpURLConnection).apply {
+                val conn = (URL("$CHANGELOG_URL${info.verCode / 100}.md").openConnection() as HttpURLConnection).apply {
                     connectTimeout = 3500
                     readTimeout = 3500
                     requestMethod = "GET"
                 }
                 if (conn.responseCode == 200) {
-                    val body = conn.inputStream.bufferedReader().use { it.readText() }
-                    val root = JSONObject(body)
-                    val exactKey = "entinyGram ${info.appVerName} (${info.verCode})"
-                    var entry = root.optJSONObject(exactKey)
-                    if (entry == null) {
-                        val keys = root.keys()
-                        while (keys.hasNext()) {
-                            val k = keys.next()
-                            if (k.contains("(${info.verCode})")) {
-                                entry = root.optJSONObject(k)
-                                break
-                            }
-                        }
-                    }
-                    if (entry != null) {
-                        val ua = entry.optString("ua").trim()
-                        val en = entry.optString("en").trim()
-                        if (ua.isNotEmpty() || en.isNotEmpty()) {
-                            fetchedText = buildString {
-                                if (ua.isNotEmpty()) append("🇺🇦 UK:\n").append(ua)
-                                if (en.isNotEmpty()) {
-                                    if (isNotEmpty()) append("\n\n")
-                                    append("🇺🇸 EN:\n").append(en)
-                                }
-                            }
-                        }
-                    }
+                    fetchedText = parseChangelog(conn.inputStream.bufferedReader().use { it.readText() })
                 }
                 conn.disconnect()
             } catch (_: Throwable) {
@@ -540,6 +514,36 @@ object UpdateHelper {
                     pendingBetaUpdate = BetaUpdate(info.appVerName, info.verCode, updateObj.text)
                 }
                 onDone()
+            }
+        }
+    }
+
+    private val CHANGELOG_COMMENT = Regex("""<!--[\s\S]*?-->""")
+    private val CHANGELOG_SECTION = Regex("""^##\s+(uk|en)\s*$""", RegexOption.IGNORE_CASE)
+    private val CHANGELOG_BULLET = Regex("""^\s*[-*•–]\s+(.*\S)\s*$""")
+    private val CHANGELOG_LINK = Regex("""\[([^\]]+)]\([^)]*\)""")
+
+    // `## uk` and `## en` bullet lists; a [label](url) link keeps only its label
+    private fun parseChangelog(raw: String): String? {
+        val sections = mapOf("uk" to mutableListOf<String>(), "en" to mutableListOf<String>())
+        var current: MutableList<String>? = null
+        for (line in raw.replace(CHANGELOG_COMMENT, "").lines()) {
+            val section = CHANGELOG_SECTION.find(line)
+            if (section != null) {
+                current = sections[section.groupValues[1].lowercase()]
+                continue
+            }
+            val bullet = CHANGELOG_BULLET.find(line)?.groupValues?.get(1) ?: continue
+            current?.add("• " + bullet.replace(CHANGELOG_LINK, "\$1"))
+        }
+        val uk = sections.getValue("uk")
+        val en = sections.getValue("en")
+        if (uk.isEmpty() && en.isEmpty()) return null
+        return buildString {
+            if (uk.isNotEmpty()) append("🇺🇦 UK:\n").append(uk.joinToString("\n"))
+            if (en.isNotEmpty()) {
+                if (isNotEmpty()) append("\n\n")
+                append("🇺🇸 EN:\n").append(en.joinToString("\n"))
             }
         }
     }

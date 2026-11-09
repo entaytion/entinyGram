@@ -9,6 +9,7 @@ build/
 !patches/entiny/build/
 !patches/entiny/build/*.patch
 CLAUDE.local.md
+changelogs/unreleased.md
 desktop.ini
 entinyBot/
 entinyTodo/

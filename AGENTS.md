@@ -114,13 +114,24 @@ Before writing code or hunting a bug, always load and follow the entinygram-craf
   - `[-] <subject>` — Removing dead code, providers, or old patches
   - `[*] <subject>` — Bugfixes, refactoring, or logic updates
   - `[=] <subject>` — Chores, formatting, maintenance, upstream syncs
+- **Body:** a short lowercase subject, then one `- ` bullet per change, each a terse fragment (what changed, not why), no trailing period. Dashes, never `*`, no long sentences:
+  ```
+  [*] performance pass
+  - cache forwards label and blank compact-forward layout per width/textsize
+  - reuse scratch list in m3 own-sections draw, compare spoiler label source before uppercase
+  ```
 
-### `FEATURES.md` & Changelogs (`changelogs/<build>.md`)
+### `FEATURES.md` & Changelogs (`changelogs/<YYYYMMDD>.md`)
+- **How the changelog is assembled:** release notes are hand-written, never generated from commits or by a model.
+  - `changelogs/unreleased.md` is the gitignored working draft. When a user-facing change is finished, append one bullet under both `## uk` and `## en`; if it is reverted later, delete its bullet. Ukrainian and English only, never Russian.
+  - At release run `bun run changelog:release`: it moves the draft into `changelogs/<YYYYMMDD>.md` (UTC build date, `versionCode / 100`), appends to it on a same-day second release, and resets the draft. Commit and push that file to `main` before the build workflow. CI and the in-app updater read it by date; with none, CI falls back to commit subjects.
+  - A setting link is written in the Ukrainian bullet as `[label](tg://entinySettings/<slug>)` (slug from `SearchRegistry`). English bullets carry the plain label only, so the settings list lives in Ukrainian and English stays short.
+  - GitHub release notes use the English text. The Telegram main post is one text message with a hard limit of **4096 visible characters** (link URLs not counted); header, site link and tags take about 330, so uk and en bullets together stay under about 3700. `upload.ts` splits the post into a Ukrainian message and an English reply above 3800. The CI-channel caption under an APK is limited to about 1000.
 - Place our features under `## entinyGram additions` in the matching topical subsection.
 - **Crisp Inugram Style:** One short sentence describing ONLY **what** the user gets. No implementation mechanics, no option walks, no `(beta)`/`(wip)`/`experimental` labels.
 - **Attribution:** Always credit ported/inspired features at the end: `- *ported from <Fork>*` or `- *inspired by <Fork> (@author)*`.
-- **WIP in Changelogs:** If a commit mentions `wip` anywhere, the release note MUST warn: `⚠️ work in progress: untested and may be unstable — please report any bugs`.
-- **Telegram Base Bumps in Changelogs:** One plain line (no `[+]`/`[*]` markers), keeping the parenthetical tag in English in both `tg_en` and `tg_uk`:
+- **WIP in Changelogs:** If a change is work in progress, its bullet MUST end with: `⚠️ work in progress: untested and may be unstable — please report any bugs`.
+- **Telegram Base Bumps in Changelogs:** One plain line (no `[+]`/`[*]` markers), keeping the parenthetical tag in English in both `## uk` and `## en`:
   - Our own rebase onto DrKLO: `Rebase to 12.10.4 (ported by entinyGram)`
   - Via inugram merge: `Updated to Telegram X.Y.Z (via inugram)`
 

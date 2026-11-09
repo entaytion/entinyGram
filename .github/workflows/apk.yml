@@ -436,24 +436,10 @@ jobs:
       - name: Dump settings registry
         run: bun run tsx assets/scripts/dump-registry.ts out
 
-      - name: Fetch release notes draft
-        continue-on-error: true
-        run: |
-          mkdir -p draft
-          git fetch --depth=1 origin release-notes-draft
-          git show FETCH_HEAD:release-notes.json > draft/release-notes.json
-          git show FETCH_HEAD:meta.json > draft/meta.json
-
       - name: Generate release notes
         env:
-          GEMINI_API_KEY:  ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
-          GEMINI_BASE_URL: ${{ vars.GEMINI_BASE_URL }}
-          GEMINI_MODEL:    ${{ vars.GEMINI_MODEL }}
           # Boolean input quirk: `== 'true'` never matches a real boolean, so accept both shapes.
           PRE_RELEASE:     ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
-          DRAFT_DIR:       draft
-          DRAFT_BASE:      ${{ vars.LAST_RELEASE_SHA }}
         run: bun run tsx assets/scripts/release-notes.ts out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
@@ -498,7 +484,7 @@ jobs:
         run: |
           tag='${{ needs.meta.outputs.tag }}'
 
-          # AI-generated English notes for GitHub (full markdown).
+          # English notes for GitHub, from changelogs/<buildDate>.md (full markdown).
           notes_en=''
           if [ -f "out/release-notes.json" ]; then
             notes_en=$(jq -r '.en // empty' out/release-notes.json)
@@ -529,22 +515,6 @@ jobs:
           gh release upload "$tag" \
             --clobber \
             out/*.apk
-
-      - name: Update assets/changelog.json
-        continue-on-error: true
-        if: ${{ inputs.prerelease != true && inputs.prerelease != 'true' }}
-        run: |
-          if [ -f "out/changelog.json" ]; then
-            git config user.email ci@entinygram
-            git config user.name 'entinygram ci'
-            git pull --rebase origin main || true
-            cp out/changelog.json assets/changelog.json
-            git add assets/changelog.json
-            if ! git diff --cached --quiet; then
-              HUSKY=0 git commit -m "[=] update changelog.json for ${{ needs.meta.outputs.tag }}"
-              git push origin HEAD:main
-            fi
-          fi
 
       - name: Upload to Telegram (CI channel + optional main channel)
         env:

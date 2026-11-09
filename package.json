@@ -22,7 +22,8 @@
     "check-plugin-syntax": "for f in src/test/plugins/*.js $(find src/native/src -name '*.js'); do node --check \"$f\" || exit 1; done",
     "typecheck-plugins": "bun run check-plugin-syntax && bun assets/scripts/generate-tl.ts && bun assets/scripts/generate-grants.ts && tsc -p sdk/types/tsconfig.self.json --noEmit && tsc -p src/test/plugins --noEmit",
     "prepare": "husky",
-    "generate-grants": "bun assets/scripts/generate-grants.ts"
+    "generate-grants": "bun assets/scripts/generate-grants.ts",
+    "changelog:release": "bun assets/scripts/changelog-release.ts"
   },
   "dependencies": {
     "@antfu/eslint-config": "^8.1.0",

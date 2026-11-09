@@ -8,7 +8,7 @@
  * Writes `<artifactDir>/settings-registry.json`:
  *   [{ "slug": "appearance", "label": "Appearance", "labelUk": "Вигляд" }, ...]
  *
- * Used by release-notes.ts to give the AI a mapping of feature slugs → English labels
+ * Used by release-notes.ts to flag unknown tg://entinySettings/<slug> links in a changelog
  * so it can embed tg://entinySettings/<slug> deep links in changelog bullets.
  *
  * Usage:  bun run tsx assets/scripts/dump-registry.ts [artifactDir=out]
@@ -77,9 +77,6 @@ const rawEntries: RawEntry[] = []
 // Match:  slug = "some-slug",  titleRes = R.string.SomeName
 // across all SettingsActivity files.  PAGE and Entry blocks share the same
 // named-argument format, so one regex covers both.
-const SLUG_RE = /slug\s*=\s*"([^"]+)"/g
-const TITLE_RE = /titleRes\s*=\s*R\.string\.(\w+)/g
-
 for (const file of ktFiles) {
   const src = await fs.readFile(file, 'utf8')
 

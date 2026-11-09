@@ -1,8 +1,7 @@
-import type { InputRichMessageMedia } from '@mtcute/node'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { html, InputMedia, MemoryStorage, TelegramClient } from '@mtcute/node'
+import { html, MemoryStorage, TelegramClient } from '@mtcute/node'
 import { joinTextWithEntities } from '@mtcute/node/utils.js'
 
 interface ApkFile {
@@ -142,7 +141,6 @@ try {
   const enHtml = postEn ? notesToEntities(postEn) : null
   const ciHtml = tgCi ? notesToEntities(tgCi) : (enHtml ?? ukHtml)
   const isPreRelease = process.env.PRE_RELEASE === 'true'
-  const appLabel = isPreRelease ? 'entinyGram Beta' : 'entinyGram'
 
   const PRERELEASE_WARNING = html`<i>‼️ Pre-release build — for testing new features and bug fixes. This version is unstable and may crash or misbehave.</i>`
 
