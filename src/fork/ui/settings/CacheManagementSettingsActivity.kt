@@ -155,7 +155,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             AndroidUtilities.formatFileSize(totalSize),
             LocaleController.formatString(R.string.InuCacheSummarySubtitle, stats.sumOf { it.count }),
             rows,
-            clearEnabled = totalSize > 0,
+            clearEnabled = totalSize > 0 || stats.any { it.count > 0 },
         )
     }
 

@@ -99,7 +99,7 @@ object ArchiveCache {
         fun add(id: Int, date: Long): Boolean {
             val pos = indexOf(id)
             if (pos >= 0) {
-                if (date > 0) dates[pos] = date
+                dates[pos] = firstDeletionDate(dates[pos], date)
                 return false
             }
             val at = -(pos + 1)
@@ -154,7 +154,7 @@ object ArchiveCache {
                     }
                     else -> {
                         mergedIds[k] = a
-                        mergedDates[k] = if (dates[i] > 0) dates[i] else other.dates[j]
+                        mergedDates[k] = firstDeletionDate(dates[i], other.dates[j])
                         i++
                         j++
                     }
@@ -176,6 +176,12 @@ object ArchiveCache {
             ids = mergedIds
             dates = mergedDates
             count = k
+        }
+
+        private fun firstDeletionDate(previous: Long, incoming: Long): Long = when {
+            previous <= 0 -> incoming
+            incoming <= 0 -> previous
+            else -> minOf(previous, incoming)
         }
 
         private fun ensure(capacity: Int) {

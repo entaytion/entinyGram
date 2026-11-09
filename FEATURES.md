@@ -421,6 +421,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - hide hashtag suggestions in chat input
 - hide rich text editor button in chat input
 - hide repost to story
+- reposting a story retries once when its media reference expires
 - 🐶 hide bot commands and webview buttons
 - hide intro greeting + non-clickable custom intro sticker
 - 🐶 hide server-pushed suggestions
