@@ -627,9 +627,14 @@ object Schemas {
             )
             toggle(
                 InuConfig.HIDE_ALL_CHATS_TAB, R.string.InuHideAllChatsTab, R.string.InuHideAllChatsTabInfo,
-                onChange = { page, _ ->
+                onChange = { page, enabled ->
                     DialogsSettingsHelper.filterPreview(page)?.refresh()
                     page.notifyAllAccounts(NotificationCenter.dialogFiltersUpdated)
+                    if (enabled && !FolderHelper.shouldSkipDefaultTab(MessagesController.getInstance(UserConfig.selectedAccount).dialogFilters.size)) {
+                        BulletinFactory.of(page)
+                            .createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.InuHideAllChatsTabKept))
+                            .show()
+                    }
                 },
             )
             toggle(

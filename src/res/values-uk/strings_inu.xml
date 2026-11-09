@@ -445,6 +445,7 @@
     <string name="InuFoldersUnreadCounterExcludeMuted">Без беззвучних</string>
     <string name="InuFoldersUnreadCounterExcludeMutedNonDms">Без беззвучних каналів/груп</string>
     <string name="InuHideAllChatsTab">Приховати вкладку «Усі чати»</string>
+    <string name="InuHideAllChatsTabKept">«Усі чати» лишаються видимими, доки ви не додасте іншу папку.</string>
     <string name="InuHideAllChatsTabInfo">Довге натискання на назву в списку чатів покаже «Усі чати».</string>
     <string name="InuRememberSelectedFolder">Запам\'ятовувати обрану папку</string>
     <string name="InuRememberSelectedFolderInfo">Відкривати останню активну папку при поверненні до списку чатів.</string>

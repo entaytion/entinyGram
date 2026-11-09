@@ -217,7 +217,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - long-tap "chats" tab to pick folder from menu
 - folder tabs: display mode (titles / titles+icons / icons-only), optional indicator stroke style, move to bottom of the screen
 - folder unread counter modes: hide / regular / exclude muted / 🐶 exclude muted non-dms
-- hide "all chats" folder tab
+- hide "all chats" folder tab, with a note when it stays because there is no other folder
 - remove "Archived Chats" from the chat list entirely
 - move folder tabs to the bottom of the chat list and forward picker
 - custom title text: Inugram / @username / first name / "Chats" / active folder name / custom text

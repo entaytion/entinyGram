@@ -595,6 +595,7 @@
     <string name="InuFoldersUnreadCounterExcludeMuted">Exclude muted</string>
     <string name="InuFoldersUnreadCounterExcludeMutedNonDms">Exclude muted non-DMs</string>
     <string name="InuHideAllChatsTab">Hide \"All Chats\" Tab</string>
+    <string name="InuHideAllChatsTabKept">All Chats stays visible until you add another folder.</string>
     <string name="InuHideAllChatsTabInfo">Long press the title in the chat list to show All Chats.</string>
     <string name="InuRememberSelectedFolder">Remember Selected Folder</string>
     <string name="InuRememberSelectedFolderInfo">Reopen the last active folder when returning to the chat list.</string>
