@@ -28,6 +28,7 @@
     <string name="InuDrawerKeepOptionsMenu">Залишити меню з трьома крапками</string>
     <string name="InuDrawerKeepOptionsMenuInfo">Показувати кнопку меню списку чатів разом із бічним меню</string>
     <string name="InuSettings">Налаштування entinyGram</string>
+    <string name="InuSettingNotFound">Це налаштування недоступне в цій версії entinyGram</string>
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
     <string name="InuAutoUpdateCheck">Перевіряти оновлення</string>
     <string name="InuAutoUpdateCheckInfo">Періодично перевіряти канал entinyGram CI на наявність нових релізів і пропонувати їх завантаження.</string>

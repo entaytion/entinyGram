@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  
  @SuppressWarnings("unchecked")
  public class ChatActivity extends BaseFragment implements
-@@ -7486,7 +7487,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -7489,7 +7490,7 @@ public class ChatActivity extends BaseFragment implements
                  } else {
                      String username = ChatObject.getPublicUsername(chat);
                      if (username != null) {
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
                      }
                  }
              } else if (object instanceof TLRPC.User) {
-@@ -7495,11 +7496,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -7498,11 +7499,13 @@ public class ChatActivity extends BaseFragment implements
                      searchUserMessages(user, null);
                  } else {
                      if (UserObject.getPublicUsername(user) != null) {
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                          chatActivityEnterView.replaceWithText(start, len, spannable, false);
                      }
                  }
-@@ -41231,7 +41234,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -41237,7 +41240,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  String username = ChatObject.getPublicUsername(chat);
                  if (username != null) {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                  } else {
                      return;
                  }
-@@ -41257,11 +41260,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -41263,11 +41266,12 @@ public class ChatActivity extends BaseFragment implements
                  }
                  String username = UserObject.getPublicUsername(user);
                  if (username != null) {

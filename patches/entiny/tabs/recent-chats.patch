@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9029,6 +9029,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -9032,6 +9032,10 @@ public class ChatActivity extends BaseFragment implements
              FileLog.d("InuRx[" + classGuid + "] init did=" + dialog_id + " topic=" + getTopicId() + " reactions=" + reactionsMentionCount);
          }
  
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
              savedMessagesHint.setMultilineText(true);
-@@ -9172,6 +9176,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9175,6 +9179,7 @@ public class ChatActivity extends BaseFragment implements
              });
          }
  
@@ -49,7 +49,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2114,12 +2114,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2121,12 +2121,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  additionalPadding += h;
              }
  
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
              if (t != topPadding || b != getPaddingBottom()) {
                  setTopGlowOffset(t);
                  setPadding(0, t, 0, b);
-@@ -5689,6 +5693,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5699,6 +5703,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          glassEngine.setPositionsMerger(new GlassPositionsMerger(Float.POSITIVE_INFINITY, dp(48)));
  
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);

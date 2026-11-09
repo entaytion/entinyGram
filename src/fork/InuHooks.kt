@@ -25,6 +25,7 @@ import desu.inugram.helpers.update.ApkInstaller
 import desu.inugram.helpers.update.UpdateHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
+import org.telegram.messenger.BuildConfig
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
@@ -84,6 +85,7 @@ object InuHooks {
             ProxyVpnHelper.init(context)
             UrlCleanerHelper.preload()
         }
+        if (BuildConfig.INU_BUILD_TYPE == "debug") SearchRegistry.verifySlugs()
         // #if PLUGINS
         PluginManager.init(context)
         // #endif

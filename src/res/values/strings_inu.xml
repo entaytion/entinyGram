@@ -69,6 +69,7 @@
     <string name="InuDrawerShowBadge">Show badge in the side menu</string>
     <string name="InuDrawerShowBadgeInfo">Shows your badge next to your name in the side menu header</string>
     <string name="InuSettings">entinyGram Settings</string>
+    <string name="InuSettingNotFound">This setting is not available in this version of entinyGram</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuAutoUpdateCheck">Check for updates</string>
     <string name="InuAutoUpdateCheckInfo">Periodically check the entinyGram CI channel for new releases and offer to download them.</string>

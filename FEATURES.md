@@ -391,7 +391,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - 🐶 prefer "Media" tab in profile over Gifts/Posts
 - "Send a gift" in profile menu (stock hides it without billing), optional "Gift" header action button
 - 🐶 recyclerlistview instant-tap
-- open bottom-tab menus early by swiping up; flat highlight (not ripple) on menu hover
+- open bottom-tab menus early by swiping up; open header menus by dragging down from the button and release on an item; flat highlight (not ripple) on menu hover
 - faster downloads/uploads: off / fast slider - *inspired by [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
 - always send videos in HD, no matter the data saver setting - *inspired by [Niagram](https://github.com/HSSkyBoy/Niagram) (@HSSkyBoy)*
 - thicken bold text toggle: turn off to draw bold text with the font's own weight instead of faking it - *inspired by [NagramXTurbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
@@ -480,6 +480,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - own channel posts with author profiles enabled no longer show the text signature (the optimistic message lacked the `from_id` flag the cell checks, and the server's `post_author` was copied onto it)
 - shared media player visual glitches
 - profile pinned-music sheet bugfixes
+- profile rows right above shared media (e.g. business hours, location) no longer vanish for a few frames when scrolling back up quickly after the media docked (the media pages kept drawing over them until the header animation ended)
 - shared media pager: fling mid-animation to chain tabs or reverse (was ignored until settled); at the edge tab the fling falls through to swipe-to-close
 - shared media grid cells (the opened one's neighbour especially) going blank after opening a photo — the viewer hides the source cell's image receiver a frame or more after resolving it, and restores it by re-resolving by message id; if the grid recycled that cell onto another message in between, the wrong cell was blanked and the restore landed elsewhere, so it never came back. deferred hides now verify the cell still shows what they were resolved for, and a cell rebound to a different message drops any inherited hidden flag
 - second copy of the photo showing over the shared media grid during the open/close transition (our own regression: stock's transition draws a list-space copy through a hole in the viewer's background, which is invisible while the main content is hidden — our keyboard fix keeps that content drawn, so the shared media provider now opts out of the second copy like ChatActivity does)

@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12945,6 +12945,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -12948,6 +12948,10 @@ public class ChatActivity extends BaseFragment implements
          if (selectionReactionsOverlay != null && selectionReactionsOverlay.isVisible()) {
              selectionReactionsOverlay.setHiddenByScroll(true);
          }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          Bundle args = new Bundle();
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-@@ -34680,6 +34684,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -34686,6 +34690,12 @@ public class ChatActivity extends BaseFragment implements
                      selectedObjectGroup = null;
                      return;
                  }
@@ -397,7 +397,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -5169,6 +5169,10 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -5154,6 +5154,10 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                  return;
              }
  

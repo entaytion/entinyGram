@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -1573,6 +1573,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -1580,6 +1580,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      viewPages[0].dialogsAdapter.resume();
                                      viewPages[1].dialogsAdapter.pause();
                                  }
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
                                  viewPages[1].setVisibility(View.GONE);
                                  showScrollbars(true);
                                  tabsAnimationInProgress = false;
-@@ -2972,6 +2976,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2979,6 +2983,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private Drawable premiumStar;
  
      public void updateStatus(TLRPC.User user, boolean animated) {
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
          if (dialogStoriesCell != null) {
              dialogStoriesCell.updateStatus(user, animated);
          }
-@@ -3498,7 +3503,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3505,7 +3510,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  statusDrawable.center = true;
                  if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
                  } else {
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
                  }
                  logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
                  logoDrawable.setBounds(0, dp(2), logoDrawable.getIntrinsicWidth(), dp(2) + logoDrawable.getIntrinsicHeight());
-@@ -3652,6 +3657,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3659,6 +3664,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          checkListLoad(viewPages[0]);
                          viewPages[0].dialogsAdapter.resume();
                          viewPages[1].dialogsAdapter.pause();
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
                      }
                  }
  
-@@ -6866,6 +6872,45 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6876,6 +6882,45 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6892,6 +6937,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6902,6 +6947,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
          viewPages[a].dialogsAdapter.setDialogsType(viewPages[a].dialogsType);
          viewPages[a].layoutManager.scrollToPositionWithOffset(viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0, (int) scrollYOffset);
          checkListLoad(viewPages[a]);
-@@ -6983,6 +7032,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6993,6 +7042,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  FolderHelper.refreshSelectedTab(filterTabsView, viewPages[0].selectedType, filters.size());
                  if (updateCurrentTab) {
                      switchToCurrentSelectedMode(false);

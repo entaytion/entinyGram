@@ -3,6 +3,7 @@
     <string name="InuOpenInDiscussion">ディスカッションで開く</string>
     <string name="InuBanUserConfirm">%1$s をこのグループから BAN しますか？</string>
     <string name="InuSettings">entinyGram 設定</string>
+    <string name="InuSettingNotFound">このバージョンの entinyGram ではこの設定は利用できません</string>
     <string name="InuSettingsInfo">犬は何してるの？</string>
     <string name="InuAutoUpdateCheck">アップデートを確認</string>
     <string name="InuAutoUpdateCheckInfo">entinyGram CI チャンネルを定期的に確認し、新しいリリースがあればダウンロードを提案します。</string>
@@ -277,6 +278,7 @@
     <string name="InuWidgetPlaceholderTitle">インタラクティブウィジェット</string>
     <string name="InuWidgetPlaceholderTap">タップして読み込む</string>
     <string name="InuWidgetPlaceholderLoading">読み込み中…</string>
+    <string name="InuWidgetPlaceholderPreview">プレビュー無効</string>
     <string name="InuCallConfirmation">通話前に確認</string>
     <string name="InuCallConfirmationTitle">通話の確認</string>
     <string name="InuCallConfirmationText">**%1$s** に発信しますか？</string>
@@ -2198,7 +2200,6 @@
     <string name="InuSleepTimerStatusOff">タイマーはオフです</string>
     <string name="InuSleepTimerStatusOn">タイマー作動中 · 残り %1$s</string>
     <string name="InuTabletMode">タブレットモード</string>
-    <string name="InuWidgetPlaceholderPreview">プレビューは無効です</string>
     <string name="InuArchiveLimitInfo">上限を超えるファイルはアーカイブにコピーされません。デフォルトは50 MBです。</string>
     <string name="InuArchiveScopeInfoAll">以下で除外したチャット以外のすべてに保存します。</string>
     <string name="InuArchiveScopeInfoOnly">以下のチャットにのみ保存します。少なくとも1件選ぶまで何も保存されません。</string>

@@ -3,6 +3,7 @@
     <string name="InuOpenInDiscussion">在讨论中打开</string>
     <string name="InuBanUserConfirm">将 %1$s 从本群封禁？</string>
     <string name="InuSettings">entinyGram 设置</string>
+    <string name="InuSettingNotFound">此版本的 entinyGram 不支持该设置</string>
     <string name="InuSettingsInfo">汪汪在干啥？</string>
     <string name="InuAutoUpdateCheck">检查更新</string>
     <string name="InuAutoUpdateCheckInfo">定期检查 entinyGram CI 频道的新版本并提示下载。</string>
@@ -277,6 +278,7 @@
     <string name="InuWidgetPlaceholderTitle">交互式小组件</string>
     <string name="InuWidgetPlaceholderTap">点击加载</string>
     <string name="InuWidgetPlaceholderLoading">加载中…</string>
+    <string name="InuWidgetPlaceholderPreview">预览已禁用</string>
     <string name="InuCallConfirmation">通话前询问</string>
     <string name="InuCallConfirmationTitle">确认通话</string>
     <string name="InuCallConfirmationText">呼叫 **%1$s**？</string>
@@ -2200,7 +2202,6 @@
     <string name="InuSleepTimerStatusOff">定时器已关闭</string>
     <string name="InuSleepTimerStatusOn">定时器已开启 · 剩余 %1$s</string>
     <string name="InuTabletMode">平板模式</string>
-    <string name="InuWidgetPlaceholderPreview">预览已禁用</string>
     <string name="InuArchiveLimitInfo">超过限制的文件不会复制到归档中。默认限制为 50 MB。</string>
     <string name="InuArchiveScopeInfoAll">保存所有聊天，但下方排除的聊天除外。</string>
     <string name="InuArchiveScopeInfoOnly">仅保存下方的聊天。选择至少一个聊天后才会开始保存。</string>

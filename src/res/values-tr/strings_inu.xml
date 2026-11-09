@@ -14,6 +14,7 @@
     <string name="InuDrawerKeepOptionsMenu">Üç nokta menüsünü koru</string>
     <string name="InuDrawerKeepOptionsMenuInfo">Yan menüyle birlikte sohbet listesi menü düğmesini göster</string>
     <string name="InuSettings">entinyGram Ayarları</string>
+    <string name="InuSettingNotFound">Bu ayar entinyGram\'ın bu sürümünde mevcut değil</string>
     <string name="InuSettingsInfo">ne yapıyor bu köpek?</string>
     <string name="InuAutoUpdateCheck">Güncellemeleri kontrol et</string>
     <string name="InuAutoUpdateCheckInfo">Yeni sürümler için periyodik olarak entinyGram CI kanalını kontrol edin ve indirme teklifi alın.</string>

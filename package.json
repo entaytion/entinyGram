@@ -15,9 +15,10 @@
     "entinychecker": "bun assets/scripts/entinychecker.ts",
     "push-theme": "bun assets/scripts/push-theme.ts",
     "check-translations": "bun assets/scripts/check-translations.ts",
-    "build-debug": "bun assets/scripts/generate-grants.ts && cd worktree && ./gradlew TMessagesProj_App:assembleDebug",
-    "run-debug": "cd worktree && ./gradlew TMessagesProj_App:installDebug && adb shell am start ua.entaytion.entinygram/org.telegram.ui.LaunchActivity",
-    "build-debug-pluginless": "cd worktree-pluginless && ./gradlew TMessagesProj_App:assembleDebug",
+    "gradle": "bun assets/scripts/gradle.ts",
+    "build-debug": "bun assets/scripts/generate-grants.ts && bun assets/scripts/gradle.ts TMessagesProj_App:assembleDebug",
+    "run-debug": "bun assets/scripts/gradle.ts TMessagesProj_App:installDebug && adb shell am start ua.entaytion.entinygram/org.telegram.ui.LaunchActivity",
+    "build-debug-pluginless": "bun assets/scripts/gradle.ts --pluginless TMessagesProj_App:assembleDebug",
     "check-plugin-syntax": "for f in src/test/plugins/*.js $(find src/native/src -name '*.js'); do node --check \"$f\" || exit 1; done",
     "typecheck-plugins": "bun run check-plugin-syntax && bun assets/scripts/generate-tl.ts && bun assets/scripts/generate-grants.ts && tsc -p sdk/types/tsconfig.self.json --noEmit && tsc -p src/test/plugins --noEmit",
     "prepare": "husky",
@@ -35,7 +36,9 @@
   },
   "devDependencies": {
     "@types/node": "^24.6.1",
+    "@types/proper-lockfile": "^4.1.4",
     "husky": "^9.1.7",
+    "proper-lockfile": "^4.1.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },

@@ -439,8 +439,8 @@ index 0000000..0000000 100644
  import org.telegram.messenger.Utilities;
  
  public class BackDrawable extends Drawable {
-@@ -122,19 +127,63 @@ public class BackDrawable extends Drawable {
-         paint.setColor(ColorUtils.blendARGB(color, rotatedColor, currentRotation));
+@@ -128,19 +133,63 @@ public class BackDrawable extends Drawable {
+         }
  
          canvas.save();
 -        canvas.translate(getIntrinsicWidth() / 2f, getIntrinsicHeight() / 2f);
@@ -506,7 +506,7 @@ index 0000000..0000000 100644
          float startYDiff = AndroidUtilities.dp(-0.25f);
          float endYDiff = AndroidUtilities.dp(AndroidUtilities.lerp(7f, 8f, rotation)) - (paint.getStrokeWidth() / 4f) * (1f - rotation);
          float startXDiff = AndroidUtilities.dp(AndroidUtilities.lerp(-7f - 0.25f, 0f, rotation));
-@@ -168,4 +217,61 @@ public class BackDrawable extends Drawable {
+@@ -174,4 +223,61 @@ public class BackDrawable extends Drawable {
      public int getIntrinsicHeight() {
          return AndroidUtilities.dp(24);
      }
@@ -595,7 +595,7 @@ index 0000000..0000000 100644
          }
  
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-@@ -21819,6 +21826,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -21825,6 +21832,8 @@ public class ChatActivity extends BaseFragment implements
      public void didReceivedNotification(int id, int account, final Object... args) {
          if (id == NotificationCenter.messagesDidLoad) {
              didReceivedNotification_messagesDidLoad(id, account, args);
@@ -604,7 +604,7 @@ index 0000000..0000000 100644
          } else {
              didReceivedNotification2(id, account, args);
              didReceivedNotification3(id, account, args);
-@@ -48199,6 +48208,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48205,6 +48214,7 @@ public class ChatActivity extends BaseFragment implements
              avatarContainer.setScaleY(scale);
              avatarContainer.setAlpha(factor);
              avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);

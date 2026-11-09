@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13667,60 +13667,64 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13677,60 +13677,64 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              isCurrentThemeDark = Theme.isCurrentThemeDark();
          }
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
                  presentFragment(new WalletActivity());
              });
          } else {
-@@ -13749,7 +13753,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13759,7 +13763,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          }

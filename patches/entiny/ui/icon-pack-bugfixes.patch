@@ -1,0 +1,74 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 5 Nov 2026 20:32:32 +0200
+Subject: Fix icon pack crashes
+
+---
+ .../java/org/telegram/ui/Cells/ChatMessageCell.java    |  2 --
+ .../org/telegram/ui/Components/SearchViewPager.java    |  2 +-
+ .../src/main/java/org/telegram/ui/DialogsActivity.java | 10 ++++++----
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -13073,7 +13073,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         }
+         if (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF && !isCompactMode()) {
+             if (drawPhotoImage && !currentMessageObject.isRepostPreview && !currentMessageObject.isSponsored() && photoImage.getVisible() && !hasGamePreview && !currentMessageObject.needDrawBluredPreview() && !currentMessageObject.preview && !isSmallImage && !currentMessageObject.isSponsored() && !desu.inugram.helpers.chat.LinkPreviewSpoilerHelper.shouldHideMediaOverlays(this)) {
+-                int oldAlpha = ((BitmapDrawable) Theme.chat_msgMediaMenuDrawable).getPaint().getAlpha();
+                 Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha));
+                 setDrawableBounds(Theme.chat_msgMediaMenuDrawable, otherX = (int) (photoImage.getImageX() + photoImage.getImageWidth() - dp(14)), otherY = (int) (photoImage.getImageY() + dp(8.1f)));
+                 Theme.chat_msgMediaMenuDrawable.draw(canvas);
+@@ -22494,7 +22493,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             if (photoImage.getVisible() && !currentMessageObject.isRepostPreview) {
+                 if (!currentMessageObject.needDrawBluredPreview() && !currentMessageObject.isSponsored() && !currentMessageObject.isRepostPreview && !currentMessageObject.preview && !isSmallImage) {
+                     if (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO && !isCompactMode()) {
+-                        int oldAlpha = ((BitmapDrawable) Theme.chat_msgMediaMenuDrawable).getPaint().getAlpha();
+                         if (drawMediaCheckBox) {
+                             Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha * (1.0f - checkBoxAnimationProgress)));
+                         } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
+@@ -1086,7 +1086,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+                 if (speedItem.getVisibility() != v) {
+                     speedItem.setVisibility(v);
+ 
+-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
++                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && speedItem.getIconView().getDrawable() instanceof AnimatedVectorDrawable) {
+                         AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) speedItem.getIconView().getDrawable();
+                         ThemeBind.drawableColorFilter(this, drawable, Theme.key_actionBarActionModeDefaultIcon, PorterDuff.Mode.SRC_IN);
+                         if (visible) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -13974,9 +13974,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     @Override
+     public void onFactorChangeFinished(int id, float finalFactor, FactorAnimator callee) {
+         if (id == ANIMATOR_ID_SPEED_BUTTON_VISIBLE && speedItem != null) {
+-            final AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) speedItem.getIconView().getDrawable();
++            final Drawable drawable = speedItem.getIconView().getDrawable();
+             if (animatorSpeedButtonVisible.getValue()) {
+-                drawable.start();
++                if (drawable instanceof AnimatedVectorDrawable) {
++                    ((AnimatedVectorDrawable) drawable).start();
++                }
+                 if (SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_LOW) {
+                     TLRPC.TL_help_premiumPromo premiumPromo = MediaDataController.getInstance(currentAccount).getPremiumPromo();
+                     String typeString = PremiumPreviewFragment.featureTypeToServerString(PremiumPreviewFragment.PREMIUM_FEATURE_DOWNLOAD_SPEED);
+@@ -13993,9 +13995,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         }
+                     }
+                 }
+-            } else {
++            } else if (drawable instanceof AnimatedVectorDrawable) {
+                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+-                    drawable.reset();
++                    ((AnimatedVectorDrawable) drawable).reset();
+                 } else {
+                     drawable.setVisible(false, true);
+                 }

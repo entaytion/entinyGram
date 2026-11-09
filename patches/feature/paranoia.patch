@@ -482,7 +482,7 @@ index 0000000..0000000 100644
              this.initialTab = getInitialTab();
          } else if (!inuPreferMediaTab && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
              this.initialTab = TAB_GIFTS;
-@@ -6595,10 +6595,10 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -6580,10 +6580,10 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
      }
  
      public void setUserInfo(TLRPC.UserFull userInfo) {
@@ -495,7 +495,7 @@ index 0000000..0000000 100644
              scrollToPage(TAB_STORIES);
          }
      }
-@@ -6720,7 +6720,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -6705,7 +6705,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
          final TLRPC.User user = dialog_id <= 0 || profileActivity == null ? null : profileActivity.getMessagesController().getUser(dialog_id);
          boolean hasEditBotPreviews = user != null && user.bot && user.bot_has_main_app && user.bot_can_edit;
          boolean hasBotPreviews = user != null && user.bot && !user.bot_can_edit && (userInfo != null && userInfo.bot_info != null && userInfo.bot_info.has_preview_medias) && !hasEditBotPreviews;
@@ -504,7 +504,7 @@ index 0000000..0000000 100644
          boolean hasGifts = giftsContainer != null && (userInfo != null && userInfo.stargifts_count > 0 || info != null && info.stargifts_count > 0);
          final TLRPC.ProfileTab main_tab = info != null ? info.main_tab : userInfo != null ? userInfo.main_tab : null;
          int changed = 0;
-@@ -6834,7 +6834,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -6819,7 +6819,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
              }
              if (hasBotPreviews) {
                  tabs.add(new Pair(TAB_STORIES, getString(R.string.ProfileBotPreviewTab)));
@@ -517,7 +517,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6901,7 +6901,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6911,7 +6911,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterOptions = null;
          }
          final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
@@ -526,7 +526,7 @@ index 0000000..0000000 100644
              if (force || filterTabsView.getVisibility() != View.VISIBLE) {
                  boolean animatedUpdateItems = animated;
                  if (filterTabsView.getVisibility() != View.VISIBLE) {
-@@ -8570,7 +8570,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8580,7 +8580,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              getMessagesController().filtersEnabled &&
              getMessagesController().dialogFiltersLoaded &&
              getMessagesController().dialogFilters != null &&
@@ -618,7 +618,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -10909,7 +10909,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10923,7 +10923,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          }
          if (!hasMedia && userInfo != null) {

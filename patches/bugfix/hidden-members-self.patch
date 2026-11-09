@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  
      private long banFromGroup;
      private float backwardTransitionFromExtraHeight;
-@@ -7961,10 +7962,56 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -7963,10 +7964,56 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              loadingUsers = false;
              saveScrollPosition();
              updateListAnimated(true);
@@ -76,7 +76,7 @@ index 0000000..0000000 100644
      private AnimatorSet headerAnimatorSet;
      private AnimatorSet headerShadowAnimatorSet;
      private float mediaHeaderAnimationProgress;
-@@ -9561,6 +9608,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9573,6 +9620,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  if (currentChat.megagroup && (loadChannelParticipants || !byChannelUsers)) {
                      getChannelParticipants(true);
                  }

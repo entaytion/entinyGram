@@ -622,7 +622,7 @@ entiny/ui/dialogs-m3-sections.patch
 entiny/build/wallet-engine-source-build.patch
 entiny/ui/tablet-mode.patch
 entiny/ui/hide-story-avatars.patch
-entiny/ui/icon-pack-alpha-cast.patch
+entiny/ui/icon-pack-bugfixes.patch
 entiny/ai/ai-compose-hook.patch
 entiny/media/round-video-exposure.patch
 entiny/chat/attach-camera-exposure.patch
@@ -650,6 +650,9 @@ feature/compact-mode-per-chat-type.patch
 bugfix/ipv6-proxy.patch
 feature/folder-tabs-bottom.patch
 feature/bottom-tabs-hide-on-scroll.patch
+bugfix/bitmaps-cache-recycled-shared-bitmaps.patch
+bugfix/profile-media-undock-rows-hidden.patch
+bugfix/widget-resize-at-chat-bottom.patch
 entiny/premium/hide-gift-elements.patch
 entiny/media/save-selected-files.patch
 entiny/ui/auto-marquee.patch

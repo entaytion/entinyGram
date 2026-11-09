@@ -35,6 +35,7 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.Components.UItem
+import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.ProfileActivity
 
@@ -107,6 +108,10 @@ object SearchRegistry {
                 }
             }
         }
+    }
+
+    fun verifySlugs() {
+        targetBySlug
     }
 
     private val slugByItemId: Map<Int, String> by lazy {
@@ -212,7 +217,11 @@ object SearchRegistry {
             2 -> if (!segs[0].equals("inu", ignoreCase = true) && !segs[0].equals("entiny", ignoreCase = true)) return false
             else -> return false
         }
-        val target = targetBySlug[segs.last()] ?: collectedTargets[segs.last()] ?: return false
+        val target = targetBySlug[segs.last()] ?: collectedTargets[segs.last()]
+        if (target == null) {
+            BulletinFactory.global().createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuSettingNotFound)).show()
+            return true
+        }
         val fragment = target.page.factory()
         target.entry?.let { fragment.withHighlight(it.itemId) }
         activity.actionBarLayout.presentFragment(fragment)

@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsVi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
-@@ -1745,6 +1745,9 @@ public class FilterTabsView extends FrameLayout {
+@@ -1746,6 +1746,9 @@ public class FilterTabsView extends FrameLayout {
              ArrayList<MessagesController.DialogFilter> filters = MessagesController.getInstance(UserConfig.selectedAccount).getDialogFilters();
              for (int a = 0, N = filters.size(); a < N; a++) {
                  MessagesController.DialogFilter filter = filters.get(a);

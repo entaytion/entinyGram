@@ -28,7 +28,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3922,7 +3922,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3929,7 +3929,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      FiltersListBottomSheet sheet = new FiltersListBottomSheet(DialogsActivity.this, selectedDialogs);
                      sheet.setDelegate((filter, checked) -> {
                          ArrayList<Long> alwaysShow = FiltersListBottomSheet.getDialogsCount(DialogsActivity.this, filter, selectedDialogs, true, false);
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                              int currentCount;
                              if (filter != null) {
                                  currentCount = filter.alwaysShow.size();
-@@ -3940,6 +3942,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3947,6 +3949,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                  for (int a = 0; a < selectedDialogs.size(); a++) {
                                      filter.neverShow.add(selectedDialogs.get(a));
                                      filter.alwaysShow.remove(selectedDialogs.get(a));
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
                                  }
                                  FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.entities, filter.title_noanimate, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
                                  long did;
-@@ -3957,7 +3960,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3964,7 +3967,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      for (int a = 0; a < alwaysShow.size(); a++) {
                                          filter.neverShow.remove(alwaysShow.get(a));
                                      }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
                                      FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.entities, filter.title_noanimate, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
                                  }
                                  long did;
-@@ -3997,6 +4007,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4004,6 +4014,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                              Long did = neverShow.get(a);
                              filter.alwaysShow.remove(did);
                              filter.pinnedDialogs.delete(did);

@@ -19,12 +19,13 @@ Base strings: `src/res/values/strings_inu.xml`. Each locale is a sibling
 Always start here:
 
 ```bash
-bun tsx assets/scripts/find-missing-translations.ts <iso>
+bun assets/scripts/check-translations.ts <iso>
 ```
 
 Outputs three sections:
 
-- **Missing** — keys in base, absent in locale. Add them.
+- **Missing** — keys in base, absent in locale. Add them (`--fill` appends them with base text).
+- **Untranslated** — value is a byte-identical copy of the English base. Translate it.
 - **Extra** — keys in locale, absent in base. Remove them (stale, base key was
   renamed or dropped).
 - **Stale** — base line touched after the locale line (git blame). Re-check —
@@ -32,9 +33,9 @@ Outputs three sections:
   translation. False positives happen when the base was edited cosmetically;
   use judgement.
 
-The script requires the locale file to be tracked in git HEAD for the stale
-check. Brand-new untracked locale files will make it crash before printing —
-do parity check inline with the base file in that case.
+The stale check needs the locale file tracked in git HEAD; do parity inline for a
+brand-new untracked locale. Skip `values-v31`/`values-night-v31` and similar dirs:
+only dirs containing `strings_inu.xml` are locales.
 
 ## Filling in missing strings
 
@@ -42,6 +43,7 @@ do parity check inline with the base file in that case.
   reviewers diff locales against base.
 - Preserve placeholders verbatim: `%1$s`, `%1$d`, `%s`, `\n`, `**bold**`,
   `[link](url)`, escaped quotes `\"`. Do not localize them.
+- Escape apostrophes as `'` (Android XML), e.g. Turkish suffixes `entinyGram'ın`.
 - Preserve plural suffixes: `_one`, `_few`, `_many`, `_other`, `_zero`, `_two`.
   Russian needs `_one/_few/_many/_other` (sometimes drop `_many` if identical
   to `_other`). Languages without plurals (ja, zh) only need `_other`.
@@ -87,7 +89,7 @@ The stale heuristic also fires for lines you just edited in the same session
 Default loop when asked to actualize translations:
 
 1. List all `src/res/values-*/` dirs.
-2. Run `find-missing-translations.ts <iso>` for each.
+2. Run `check-translations.ts <iso>` for each.
 3. For each locale, apply missing + drop extras + review stale in the
    locale file directly (Edit, not Write — preserve formatting).
 4. Re-run the script; report final counts.

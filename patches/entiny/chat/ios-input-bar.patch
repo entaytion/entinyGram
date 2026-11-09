@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  
          if (textSelectionHelper == null) {
              Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
-@@ -7131,6 +7145,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -7134,6 +7148,9 @@ public class ChatActivity extends BaseFragment implements
                  if (!inu_localMediaSearch || inu_scrollingToOlderMessages) {
                      checkScrollForLoad(true);
                  }
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                      int totalItemCount = chatAdapter.getItemCount();
                      if (firstVisibleItem == 0 && forwardEndReached[0]) {
                          if (dy >= 0) {
-@@ -8117,6 +8134,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8120,6 +8137,10 @@ public class ChatActivity extends BaseFragment implements
              public void setVisibility(int visibility) {
                  super.setVisibility(visibility);
                  bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -8329,7 +8350,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8332,7 +8353,10 @@ public class ChatActivity extends BaseFragment implements
          chatActivityEnterView.setViewParentForEmoji(chatInputInAppContainer);
          checkSendButtonBlockedByTyping(false);
  
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -49770,6 +49794,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -49776,6 +49800,12 @@ public class ChatActivity extends BaseFragment implements
          if (blurredBackgroundColorProviderWhite != null) {
              blurredBackgroundColorProviderWhite.updateColors();
          }

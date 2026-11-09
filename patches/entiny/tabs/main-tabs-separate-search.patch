@@ -43,7 +43,7 @@ index 0000000..0000000 100644
  
              return (int) h;
          }
-@@ -1060,7 +1061,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -1067,7 +1068,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              tabsYOffset = 0;
              storiesYOffset = 0;
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
              tabsYOffset -= Math.min(
                  dp(hasStories ? DialogStoriesCell.HEIGHT_IN_DP : 0) + inu_searchFieldH + scrollYOffset,
                  progressToActionMode * (dp(hasStories ? DialogStoriesCell.HEIGHT_IN_DP : 0) + inu_searchFieldH)
-@@ -1198,7 +1199,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -1205,7 +1206,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          if (hasStories) {
                              h += dp(DialogStoriesCell.HEIGHT_IN_DP);
                          }
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                      }
                      h += actionModeAdditionalHeight;
                      if (actionBarColorAnimator == null) {
-@@ -1337,7 +1338,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -1344,7 +1345,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      childTop = 0;
                  } else if (child == topPanelLayout || child == topBubblesFadeView || child == filterTabsView) {
                      childTop += actionBar.getMeasuredHeight();
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
                  } else if (dialogStoriesCell != null && dialogStoriesCell.getPremiumHint() == child) {
                      continue;
                  }
-@@ -2097,7 +2098,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2104,7 +2105,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              if (hasStories && !actionModeFullyShowed) {
                  t += dp(DialogStoriesCell.HEIGHT_IN_DP);
              }
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
                  t += dp(SEARCH_FIELD_HEIGHT);
              }
              additionalPadding = 0;
-@@ -4247,13 +4248,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4256,13 +4257,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      viewsH += viewPage.dialogsAdapter.getItemHeight(i);
                                  }
                                  int canScrollDy = -(view.getTop() - pTop) + viewsH;
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                                      canScrollDy += dp(SEARCH_FIELD_HEIGHT);
                                  }
                                  int positiveDy = Math.abs(dy);
-@@ -4628,7 +4629,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4637,7 +4638,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          }
                          if (applyScrollY) {
                              int maxScrollYOffset = getMaxScrollYOffset();
@@ -104,7 +104,7 @@ index 0000000..0000000 100644
                                  maxScrollYOffset = dp(SEARCH_FIELD_HEIGHT);
                              }
                              if (newTranslation < -maxScrollYOffset) {
-@@ -5824,7 +5825,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5834,7 +5835,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      }
  
      private int getMaxScrollYOffset() {
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
              return getMaxScrollYOffsetWithoutSearch();
          }
          if (hasStories) {
-@@ -5834,6 +5835,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5844,6 +5845,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
      public boolean isStarsSubscriptionHintVisible() {
          if (folderId != 0 || communityId != 0) {
              return false;
-@@ -7355,7 +7364,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7365,7 +7374,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      (filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE ? filterTabsView.getMeasuredHeight() : 0) +
                      (topPanelLayout != null ? topPanelLayout.getHeight() : 0) +
                      (dialogStoriesCell != null && dialogStoriesCellVisible ? (int) ((1f - dialogStoriesCell.getCollapsedProgress()) * dp(DialogStoriesCell.HEIGHT_IN_DP)) : 0) +
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
                  );
              }
  
-@@ -9266,7 +9275,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9276,7 +9285,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  viewPages[i].listView.cancelClickRunnables(true);
              }
          }
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
          float finalTranslateListHeight = translateListHeight;
          actionBarColorAnimator = ValueAnimator.ofFloat(progressToActionMode, 0);
          actionBarColorAnimator.addUpdateListener(valueAnimator -> {
-@@ -9293,7 +9302,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9303,7 +9312,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  if (actionModeFullyShowed) {
                      actionModeFullyShowed = false;
                      fixScrollYAfterArchiveOpened = true;
@@ -155,7 +155,7 @@ index 0000000..0000000 100644
                  } else {
                      scrollAdditionalOffset = 0;
                  }
-@@ -10308,7 +10317,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10318,7 +10327,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      viewPages[i].listView.cancelClickRunnables(true);
                  }
              }
@@ -164,7 +164,7 @@ index 0000000..0000000 100644
              if (translateListHeight != 0) {
                  actionModeAdditionalHeight = (int) translateListHeight;
                  fragmentView.requestLayout();
-@@ -10334,9 +10343,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10344,9 +10353,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      super.onAnimationEnd(animation);
                      actionBarColorAnimator = null;
                      actionModeAdditionalHeight = 0;
@@ -176,7 +176,7 @@ index 0000000..0000000 100644
                      } else {
                          scrollAdditionalOffset = 0;
                      }
-@@ -14062,7 +14071,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14072,7 +14081,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
  
          final int maxScrollWithoutSearch = getMaxScrollYOffsetWithoutSearch();
@@ -186,7 +186,7 @@ index 0000000..0000000 100644
  
          final float actionModeVisible = Math.max(progressToActionMode, animatorActionModeVisible.getFloatValue());
          final float searchFieldVisible = animatorSearchVisible.getFloatValue();
-@@ -14152,7 +14162,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14162,7 +14172,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          final float factor2 = 1f - getRightSlidingProgress();
          final float factor3 = 1f - animatorDoneButtonVisible.getFloatValue();
          final float factor = factor0 * factor1 * factor2 * factor3;

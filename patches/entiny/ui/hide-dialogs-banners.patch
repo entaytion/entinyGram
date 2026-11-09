@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -5879,6 +5879,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5889,6 +5889,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      }
  
      private boolean isCacheHintVisible() {
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          if (cacheSize == null || deviceSize == null) {
              return false;
          }
-@@ -6422,6 +6425,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6432,6 +6435,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
          final boolean isVisible = !isInPreviewMode()
              && folderId == 0 && communityId == 0 && initialDialogsType == DIALOGS_TYPE_DEFAULT
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
              && getGiftAuctionsController().hasActiveAuctions()
              && (rightSlidingDialogContainer == null || !rightSlidingDialogContainer.hasFragment())
              && (!animatorSearchVisible.getValue() || NonIslandHelper.globalSearch());
-@@ -7217,7 +7221,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7227,7 +7231,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      }));
                                  }
                              });
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
                              AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
                                  askAboutContacts = param != 0;
                                  MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
-@@ -7239,7 +7243,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7249,7 +7253,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              if (getParentActivity() == null) {
                  return;
              }
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
                  showDialog(new AlertDialog.Builder(getParentActivity())
                      .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
                      .setTopBackgroundColorKey(Theme.key_dialogTopBackground, getResourceProvider())
-@@ -7263,11 +7267,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7273,11 +7277,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      .setNegativeButton(getString(R.string.ContactsPermissionAlertNotNow), (dialog, which) -> MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askedAboutMiuiLockscreen", true).commit())
                      .create());
              }
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                  showDialog(new AlertDialog.Builder(getParentActivity())
                      .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
                      .setTopBackgroundColorKey(Theme.key_dialogTopBackground, getResourceProvider())
-@@ -10590,7 +10595,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10600,7 +10605,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              permissons.add(Manifest.permission.POST_NOTIFICATIONS);
          }

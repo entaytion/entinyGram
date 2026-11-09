@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -9933,6 +9933,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9945,6 +9945,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          if (listAdapter != null) {
              // saveScrollPosition();
              firstLayout = true;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              listAdapter.notifyDataSetChanged();
          }
          if (!parentLayout.isInPreviewMode() && blurredView != null && blurredView.getVisibility() == View.VISIBLE) {
-@@ -11115,6 +11116,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11129,6 +11130,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      }
                  }
                  infoStartRow = rowCount;
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                  if (!isBot && (hasPhone || !hasInfo)) {
                      phoneRow = rowCount++;
                  }
-@@ -11126,6 +11146,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11140,6 +11160,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
                  if (ProfileHelper.shouldShowIdRow()) inu_idRow = rowCount++;
                  if (ProfileHelper.shouldShowRegDateRow(userId, currentChat)) inu_regDateRow = rowCount++;

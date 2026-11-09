@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          communityItem.setImageDrawable(communityArrowDrawable = new CommunityArrowDrawable().withCircle());
          frameLayout.addView(communityItem, LayoutHelper.createFrame(16, 16, Gravity.TOP | Gravity.LEFT));
  
-@@ -9841,6 +9842,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9853,6 +9854,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
          if (visible) {
              communityItem.setTag(1);
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
              communityItem.setVisibility(View.VISIBLE);
          } else {
              communityItem.setTag(null);
-@@ -10277,6 +10279,27 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10291,6 +10293,27 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
      private float prevAvatarTranslation;
  
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
      @Override
      public AnimatorSet onCustomTransitionAnimation(final boolean isOpen, final Runnable callback) {
          if (hasMainTabs) {
-@@ -10289,9 +10312,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10303,9 +10326,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return null;
          }
  
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
          if (timeItem != null) {
              timeItem.setAlpha(1.0f);
          }
-@@ -10306,18 +10326,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10320,18 +10340,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              starBgItem.setScaleY(1.0f);
          }
          previousTransitionMainFragment = null;
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
          }
  
          final ActionBar previousActionBar;
-@@ -10329,8 +10340,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10343,8 +10354,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          final boolean fromChat = previousTransitionFragment instanceof ChatActivity && ((ChatActivity) previousTransitionFragment).getCurrentChat() != null;
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
              updateTimeItem();
              updateStar();
          }
-@@ -10459,7 +10470,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10473,7 +10484,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              if (previousTransitionFragment != null) {
                  ChatAvatarContainer avatarContainer = previousTransitionFragment.getAvatarContainer();
                  if (avatarContainer != null) {
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
                  }
                  if (avatarContainer != null && avatarContainer.getSubtitleTextView() instanceof SimpleTextView && ((SimpleTextView) avatarContainer.getSubtitleTextView()).getLeftDrawable() != null || avatarContainer.statusMadeShorter[0]) {
                      transitionOnlineText = avatarContainer.getSubtitleTextView();
-@@ -11691,20 +11705,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11705,20 +11719,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          if (avatarContainer == null || nameTextView == null || getParentActivity() == null) {
              return;
          }

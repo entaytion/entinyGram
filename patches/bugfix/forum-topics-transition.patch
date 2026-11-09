@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2102,35 +2102,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2109,35 +2109,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
  
              ignoreLayout = true;
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
  
              final int b = calculateListViewPaddingBottom() + desu.inugram.helpers.dialogs.RecentChatsSidebar.stripBottomPush(DialogsActivity.this);
              if (t != topPadding || b != getPaddingBottom()) {
-@@ -2166,6 +2138,33 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2173,6 +2145,33 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          }
  
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
          @Override
          protected void onLayout(boolean changed, int l, int t, int r, int b) {
              super.onLayout(changed, l, t, r, b);
-@@ -2420,7 +2419,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2427,7 +2426,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
              if (anchorView != null) {
                  if (animationSupportListView != null) {

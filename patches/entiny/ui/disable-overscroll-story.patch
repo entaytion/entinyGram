@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -4281,7 +4281,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4290,7 +4290,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                              if (undoView[0] != null && undoView[0].getVisibility() == View.VISIBLE) {
                                  undoView[0].hide(true, 1);
                              }
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                              if (scrollYOffset == 0) {
                                  viewPage.listView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
                              } else {
-@@ -4373,7 +4373,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4382,7 +4382,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          if (firstView != null) {
                              firstView.invalidate();
                          }
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
                              float newOverScroll = storiesOverscroll - dy * AndroidUtilities.lerp( 0.2f, 0.5f, dialogStoriesCell.overscrollProgress());
                              setStoriesOvercroll(viewPage, newOverScroll);
                          }
-@@ -4381,7 +4381,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4390,7 +4390,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      }
  
                      int scrolled = super.scrollVerticallyBy(measuredDy, recycler, state);

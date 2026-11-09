@@ -174,7 +174,7 @@ index 0000000..0000000 100644
          avatarImage.getImageReceiver().setAllowDecodeSingleFrame(true);
          avatarImage.setRoundRadiusForExpand(getSmallAvatarRoundRadius());
          avatarImage.setPivotX(0);
-@@ -6648,6 +6654,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6650,6 +6656,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private int getSmallAvatarRoundRadius() {

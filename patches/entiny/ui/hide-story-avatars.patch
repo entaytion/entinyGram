@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -3669,7 +3669,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -3654,7 +3654,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
      }
  
      protected boolean includeStories() {
@@ -28,7 +28,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -10801,7 +10801,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10815,7 +10815,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private boolean needInsetForStories() {
