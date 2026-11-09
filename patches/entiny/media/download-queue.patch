@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 10 Nov 2026 00:34:09 +0200
+Subject: Let large file downloads run one at a time through a single queue.
+
+---
+ .../src/main/java/org/telegram/messenger/FileLoader.java        | 2 +-
+ .../java/org/telegram/messenger/FileLoaderPriorityQueue.java    | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+@@ -958,7 +958,7 @@ public class FileLoader extends BaseController {
+         int index = Utilities.clamp(operation.getDatacenterId() - 1, 4, 0);
+         boolean isStory = parentObject instanceof TL_stories.StoryItem;
+         if (operation.totalBytesCount > 20 * 1024 * 1024 || isStory) {
+-            loaderQueue = largeFilesQueue[index];
++            loaderQueue = largeFilesQueue[isStory ? index : desu.inugram.helpers.network.DownloadQueueHelper.largeQueueIndex(index)];
+         } else {
+             loaderQueue = smallFilesQueue[index];
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoaderPriorityQueue.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoaderPriorityQueue.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoaderPriorityQueue.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoaderPriorityQueue.java
+@@ -92,6 +92,7 @@ public class FileLoaderPriorityQueue {
+         int lastPriority = 0;
+         boolean pauseAllNextOperations = false;
+         int max = type == TYPE_LARGE ? MessagesController.getInstance(currentAccount).largeQueueMaxActiveOperations : MessagesController.getInstance(currentAccount).smallQueueMaxActiveOperations;
++        max = desu.inugram.helpers.network.DownloadQueueHelper.limit(type == TYPE_LARGE, max);
+         tmpListOperations.clear();
+         // Until the visible story can be shown, other large downloads wait, as they would share its bandwidth.
+         FileLoadOperation visibleStory = null;

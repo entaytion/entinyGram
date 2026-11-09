@@ -1003,6 +1003,7 @@ object Schemas {
                 },
             )
             toggle(InuConfig.FASTER_UPLOADS, R.string.InuFasterUploads)
+            toggle(InuConfig.DOWNLOAD_QUEUE, R.string.InuDownloadQueue, R.string.InuDownloadQueueInfo)
         }
         section(R.string.InuDownloadsAndNetwork) {
             toggle(

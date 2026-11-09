@@ -2169,6 +2169,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val FASTER_UPLOADS = BoolItem("faster_uploads", true)
 
     @JvmField
+    val DOWNLOAD_QUEUE = BoolItem("download_queue", false)
+
+    @JvmField
     val KEEP_DOWNLOADS_IN_BACKGROUND = BoolItem("keep_downloads_in_background", false)
 
     @JvmField

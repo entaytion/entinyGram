@@ -641,3 +641,4 @@ entiny/media/live-media-upload-progress.patch
 entiny/ui/system-message-font-scale.patch
 entiny/chat/menu-backdrop-blur-strength.patch
 entiny/ui/stories-premium-badge-overlap.patch
+entiny/media/download-queue.patch

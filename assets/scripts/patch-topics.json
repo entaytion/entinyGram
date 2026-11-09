@@ -253,5 +253,6 @@
   "chat-media-fixes": "media",
   "chat-dialog-state": "chat",
   "privacy-contacts": "privacy",
-  "dialogs-tweaks": "ui"
+  "dialogs-tweaks": "ui",
+  "download-queue": "media"
 }

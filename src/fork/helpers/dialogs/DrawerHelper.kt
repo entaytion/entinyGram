@@ -815,6 +815,9 @@ object DrawerHelper {
                 DialogsMenuConfig.Item.CLEAR_CACHE -> io.add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearCache)) {
                     showClearCacheOptions(instance)
                 }
+                DialogsMenuConfig.Item.DOWNLOADS -> io.add(R.drawable.inu_download_arrow, getString(R.string.InuDownloadsManager)) {
+                    desu.inugram.helpers.network.DownloadQueueHelper.show(instance)
+                }
                 DialogsMenuConfig.Item.FEED -> io.add(R.drawable.msg_channel, getString(R.string.InuFeed)) {
                     instance.presentFragment(desu.inugram.ui.feed.FeedActivity())
                 }

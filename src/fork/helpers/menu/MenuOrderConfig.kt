@@ -338,6 +338,7 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
         RECENT_CHATS("recent_chats", R.string.InuRecentChats, R.drawable.msg_recent_solar),
         BOOKMARKS("bookmarks", R.string.InuBookmarks, R.drawable.msg_fave),
         CLEAR_CACHE("clear_cache", R.string.InuClearCache, R.drawable.inu_tabler_trash_x),
+        DOWNLOADS("downloads", R.string.InuDownloadsManager, R.drawable.inu_download_arrow),
         FEED("feed", R.string.InuFeed, R.drawable.msg_channel),
         MY_PROFILE("my_profile", R.string.MyProfile, R.drawable.left_status_profile),
         CONTACTS("contacts", R.string.Contacts, R.drawable.msg_contacts),
@@ -363,6 +364,7 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
             Item.FEED,
             Item.RECENT_CHATS,
             Item.CLEAR_CACHE,
+            Item.DOWNLOADS,
             Item.RESTART_APP,
         )
     }
