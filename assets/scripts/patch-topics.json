@@ -271,5 +271,6 @@
   "wide-channel-posts": "ui",
   "tablet-mode": "ui",
   "emoji-view-observer-leak": "chat",
-  "forward-messages-copy": "chat"
+  "forward-messages-copy": "chat",
+  "menu-backdrop-blur-strength": "chat"
 }

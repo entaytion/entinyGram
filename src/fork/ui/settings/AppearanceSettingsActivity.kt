@@ -24,6 +24,7 @@ import org.telegram.ui.Components.UniversalAdapter
 class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
+    private var scrimBlurSlider: SliderCell? = null
     private var avatarCornerPreview: AvatarCornerPreviewCell? = null
     private var notificationIconCell: NotificationIconCell? = null
     private var nonIslandInfo: TextView? = null
@@ -151,6 +152,19 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuConfig.DISABLE_SCRIM_BLUR.value
             )
         )
+        if (!InuConfig.DISABLE_SCRIM_BLUR.value) {
+            val slider = scrimBlurSlider ?: SliderCell(
+                this.context, min = 20f, max = 150f,
+                defaultValue = InuConfig.SCRIM_BLUR_STRENGTH.default.toFloat(),
+                initialValue = InuConfig.SCRIM_BLUR_STRENGTH.value.toFloat(),
+                step = 5f,
+                title = LocaleController.getString(R.string.InuScrimBlurStrength),
+                format = { "${it.toInt()}%" },
+                onChanged = { InuConfig.SCRIM_BLUR_STRENGTH.value = it.toInt() },
+            ).also { scrimBlurSlider = it }
+            slider.updateColors()
+            items.add(UItem.asCustom(slider).apply { id = SLIDER_SCRIM_BLUR })
+        }
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_REDUCE_MENU_MOTION,
@@ -216,6 +230,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             TOGGLE_DISABLE_SCRIM_BLUR -> {
                 val new = InuConfig.DISABLE_SCRIM_BLUR.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                listView?.adapter?.update(true)
             }
 
             TOGGLE_REDUCE_MENU_MOTION -> {
@@ -275,6 +290,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_NON_ISLAND_HEADERS = InuUtils.generateId()
         private val BUTTON_FONTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_SCRIM_BLUR = InuUtils.generateId()
+        private val SLIDER_SCRIM_BLUR = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_AVATAR_BLUR = InuUtils.generateId()
         private val TOGGLE_REDUCE_MENU_MOTION = InuUtils.generateId()
         private val TOGGLE_UNIFIED_CORNER_RADIUS = InuUtils.generateId()
@@ -311,6 +327,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             factory = ::AppearanceSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("disable-scrim-blur", R.string.InuDisableScrimBlur, TOGGLE_DISABLE_SCRIM_BLUR),
+                SearchRegistry.Entry("scrim-blur-strength", R.string.InuScrimBlurStrength, SLIDER_SCRIM_BLUR),
                 SearchRegistry.Entry("disable-profile-avatar-blur", R.string.InuDisableProfileAvatarBlur, TOGGLE_DISABLE_PROFILE_AVATAR_BLUR),
                 SearchRegistry.Entry("reduce-menu-motion", R.string.InuReduceMenuMotion, TOGGLE_REDUCE_MENU_MOTION),
                 SearchRegistry.Entry("unified-corner-radius", R.string.InuUnifiedCornerRadius, TOGGLE_UNIFIED_CORNER_RADIUS),

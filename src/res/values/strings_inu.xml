@@ -930,6 +930,7 @@
     <string name="InuVoiceMessages">Voice messages</string>
 
     <string name="InuDisableScrimBlur">Disable scrim blur</string>
+    <string name="InuScrimBlurStrength">Menu backdrop blur</string>
     <string name="InuDisableScrimBlurInfo">Flat dim instead of blurred backdrop behind menus and previews. May reduce lag.</string>
 
     <string name="InuGlassGlare">Glass glare</string>

@@ -2309,4 +2309,5 @@
     <string name="InuCustomEditedMark">Власна мітка редагування</string>
     <string name="InuSystemMessageFontScale">Системний розмір шрифту</string>
     <string name="InuSystemMessageFontScaleInfo">Застосовує масштаб шрифту Android до тексту повідомлень. Після зміни відкрийте застосунок знову.</string>
+    <string name="InuScrimBlurStrength">Розмиття фону під меню</string>
 </resources>

@@ -58,6 +58,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 - 📡 **hide FAB** — hide the chat-list buttons with a separate toggle and keep your chosen actions
 - 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar, chat list with larger avatars, message menu as a card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
+- adjustable backdrop blur behind message menus - *inspired by NagramXF*
 - 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size, and optional Android font scaling for messages
 - 📡 **glass glare** — disabled, default or solid outline — *inspired by Cherrygram (@arsLan4k1390)*
 - 📡 **chat headers** — live header preview, centered titles in the main chat list and inside chats, and auto marquee for long names

@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 22:16:06 +0200
+Subject: Adjust blur behind message menus
+
+---
+ .../java/org/telegram/ui/Components/ScrimOptions.java     | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java
+@@ -373,7 +373,7 @@ public class ScrimOptions extends Dialog {
+ 
+             bitmap.recycle();
+             bitmaps.run(bitmapBg, bitmapOptions);
+-        }, 15);
++        }, 15, inu_backdropBlurRadius(), null, null);
+     }
+ 
+     public static void makeGlobalBlurBitmaps(View cutToContainer, Utilities.Callback2<Bitmap, Bitmap> bitmaps) {
+@@ -408,7 +408,11 @@ public class ScrimOptions extends Dialog {
+ 
+             bitmap.recycle();
+             bitmaps.run(bitmapBg, bitmapOptions);
+-        }, 15);
++        }, 15, inu_backdropBlurRadius(), null, null);
++    }
++
++    private static int inu_backdropBlurRadius() {
++        return Math.round(15 * Utilities.clamp(desu.inugram.InuConfig.SCRIM_BLUR_STRENGTH.getValue(), 150, 20) / 100f);
+     }
+ 
+     private void checkBitmapMatrix() {

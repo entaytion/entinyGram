@@ -1409,6 +1409,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val DISABLE_SCRIM_BLUR = BoolItem("disable_scrim_blur", false)
 
     @JvmField
+    val SCRIM_BLUR_STRENGTH = IntItem("scrim_blur_strength", 100)
+
+    @JvmField
     val DISABLE_GLASS_GLARE = BoolItem("disable_glass_glare", false)
 
     @JvmField
