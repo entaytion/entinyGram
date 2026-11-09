@@ -403,6 +403,10 @@ object Schemas {
             toggle(InuConfig.DISABLE_VOLUME_PLAY_VIDEO, R.string.InuDisableVolumePlayVideo, R.string.InuDisableVolumePlayVideoInfo)
             toggle(InuConfig.DISABLE_QUICK_SHARE, R.string.InuDisableQuickShare, R.string.InuDisableQuickShareInfo)
             toggle(InuConfig.MEMORY_TRIM, R.string.InuMemoryTrim, R.string.InuMemoryTrimInfo)
+            toggle(
+                InuConfig.LOCK_MAX_REFRESH_RATE, R.string.InuLockMaxRefreshRate, R.string.InuLockMaxRefreshRateInfo,
+                onChange = { _, _ -> desu.inugram.helpers.RefreshRateHelper.sync(org.telegram.ui.LaunchActivity.instance) },
+            )
             toggle(InuConfig.SAVE_SELECTED_FILES, R.string.InuSaveSelectedFiles, R.string.InuSaveSelectedFilesInfo)
             toggle(
                 InuConfig.HDR_IMAGES, R.string.InuHdrImages, R.string.InuHdrImagesInfo,

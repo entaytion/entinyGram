@@ -253,6 +253,8 @@
     <string name="InuDisablePullToNext">Disable pull to next channel</string>
     <string name="InuDisableSensitive">Disable sensitive filter</string>
     <string name="InuDisableSensitiveInfo">Removes the blur and warning screens on sensitive content and client-side restrictions. Channels banned by Telegram itself stay closed, because the server does not send them.</string>
+    <string name="InuLockMaxRefreshRate">Lock the highest refresh rate</string>
+    <string name="InuLockMaxRefreshRateInfo">Asks the system to keep the screen at its highest refresh rate in this app, at the current resolution. Uses more battery.</string>
     <string name="InuMemoryTrim">Free memory in background</string>
     <string name="InuMemoryTrimInfo">Clears image caches and compacts memory shortly after the app goes to background</string>
     <string name="InuDisableQuickShare">Disable quick share</string>

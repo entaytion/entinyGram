@@ -242,6 +242,7 @@ object InuHooks {
     @JvmStatic
     fun onResume(launchActivity: LaunchActivity) {
         SplashScreenHelper.sync(launchActivity)
+        desu.inugram.helpers.RefreshRateHelper.sync(launchActivity)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MonetHelper.refreshMonetThemeIfChanged()
         }

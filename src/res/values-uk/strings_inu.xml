@@ -162,6 +162,8 @@
     <string name="InuDisablePullToNext">Вимкнути потягування до наступного каналу</string>
     <string name="InuDisableSensitive">Вимкнути фільтр делікатного контенту</string>
     <string name="InuDisableSensitiveInfo">Прибирає розмиття та заглушки на делікатному контенті й клієнтські обмеження. Канали, забанені самим Telegram, лишаються закритими, бо сервер їх не віддає.</string>
+    <string name="InuLockMaxRefreshRate">Тримати найвищу частоту оновлення</string>
+    <string name="InuLockMaxRefreshRateInfo">Просить систему тримати екран на найвищій частоті оновлення в застосунку, з поточною роздільною здатністю. Більше витрачає батарею.</string>
     <string name="InuMemoryTrim">Звільняти пам\'ять у фоні</string>
     <string name="InuMemoryTrimInfo">Очищає кеші зображень і стискає пам\'ять невдовзі після згортання застосунку</string>
     <string name="InuDisableQuickShare">Вимкнути швидке поширення</string>

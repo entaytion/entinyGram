@@ -142,6 +142,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **osmdroid map view** — pure-Java OpenStreetMap renderer with no native libraries, replacing MapLibre to cut ~12MB of native code from the APK
 - 📡 **faster cold start**, locale caching and a smaller APK without Android Auto integration
 - 📡 **memory** — free image caches shortly after the app is minimized, and closed chats and photo viewers no longer leak through the emoji panel
+- 📡 **highest refresh rate** — keep the screen at its highest refresh rate in the app, at the current resolution - *inspired by Graniton*
 - 📡 **cache management** — per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once
 - 📡 **stability fixes** — PhotoViewer close crash with an uninitialized media strip, crash when deleting a user's messages while their media is selected
 - 📡 **UI fixes** — topics side panel stops flickering after search, interrupted theme switches and stale Monet palettes recover, compact pill and profile transitions behave, rtl text truncated in the chat header keeps its beginning visible, settings pages and their search open correctly
