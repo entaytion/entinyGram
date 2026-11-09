@@ -288,7 +288,7 @@ index 0000000..0000000 100644
          ThemeBind.colorFilter(aiButton, Theme.key_glass_defaultIcon, resourcesProvider, PorterDuff.Mode.MULTIPLY);
          ThemeBind.selectorBackground(aiButton, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(16)), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
 -        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.TOP | Gravity.LEFT, 0, 1, 0, 0));
-+        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, 0, isIosInputAppearance() && !isIosButtonPlacement() ? 1 - Math.min(iosGapDp, 2) : 1, aiButtonRightMarginDp, 0));
++        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, 0, isIosInputAppearance() && !isIosButtonPlacement() ? -1 - Math.min(iosGapDp, 2) : 1, aiButtonRightMarginDp, 0));
          aiButton.setContentDescription(getString(R.string.AIEditor));
          ScaleStateListAnimator.apply(aiButton);
          aiButton.setOnClickListener(v -> {

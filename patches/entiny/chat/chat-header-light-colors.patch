@@ -328,7 +328,7 @@ index 0000000..0000000 100644
      // entiny: avatar stays at its non-centered (post-back-button) position while title/subtitle center; action bar reserves its room instead.
      public boolean inu_isStaticAvatar() {
          return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarStatic() && hasVisibleAvatar();
-@@ -1150,7 +1159,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1152,7 +1161,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      public void setRightAvatarPadding(int value) {
          rightAvatarPadding = value;
@@ -336,7 +336,7 @@ index 0000000..0000000 100644
      }
  
      public void setCommunityItemVisible(boolean visible) {
-@@ -1273,7 +1281,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1275,7 +1283,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          }
          boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
          titleTextView.setScrollNonFitText(marquee);
@@ -345,7 +345,7 @@ index 0000000..0000000 100644
          titleTextView.setRightDrawableOutside(inu_titleRightDrawableOutside(marquee));
          titleTextView.setText(value);
          rightDrawableIsScam = false;
-@@ -2028,7 +2036,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2030,7 +2038,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private int getThemedColor(int key) {
@@ -359,7 +359,7 @@ index 0000000..0000000 100644
      }
  
      // updateColors runs on every theme frame: reuse the filters while their color is unchanged
-@@ -2046,6 +2059,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2048,6 +2061,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      /** also called on every theme update (Theme.Colorable) */
      @Override
      public void updateColors() {
@@ -375,7 +375,7 @@ index 0000000..0000000 100644
          if (currentTypingDrawable != null) {
              currentTypingDrawable.setColor(getThemedColor(Theme.key_chat_status));
          }
-@@ -2085,7 +2107,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2087,7 +2109,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private void checkActionBar(boolean animated) {

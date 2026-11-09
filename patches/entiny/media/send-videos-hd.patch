@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -9492,7 +9492,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -9494,7 +9494,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              sizes.add(size);
          }
          if (highQuality) {
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          } else {
              size = ImageLoader.scaleAndSaveImage(bitmap, AndroidUtilities.getPhotoSize(highQuality), AndroidUtilities.getPhotoSize(highQuality), true, 80, false, 101, 101);
          }
-@@ -12208,7 +12208,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -12210,7 +12210,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
  
          int selectedCompression = Math.round(DownloadController.getInstance(UserConfig.selectedAccount).getMaxVideoBitrate() / (100f / compressionsCount));
  

@@ -1,17 +1,26 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sat, 10 Oct 2026 11:46:02 +0300
-Subject: fix folders opening empty
+Date: Wed, 7 Oct 2026 12:57:59 +0300
+Subject: Folder tabs: keep drawer options menu, empty folder on switch, iOS chats tab first folder and remember selected folder.
 
 ---
- .../main/java/org/telegram/ui/DialogsActivity.java   | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ .../main/java/org/telegram/ui/DialogsActivity.java | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6979,6 +6979,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3421,7 +3421,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         });
+         fragmentSearchFieldWatcher.setDoNotCloseAfterFieldEmpty();
+ 
+-        if (initialDialogsType == DIALOGS_TYPE_DEFAULT && !(desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue() && !isArchive() && communityId == 0)) {
++        if (initialDialogsType == DIALOGS_TYPE_DEFAULT && !(desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue() && !desu.inugram.InuConfig.DRAWER_KEEP_OPTIONS_MENU.getValue() && !isArchive() && communityId == 0)) {
+             optionsItem = menu.addItem(4, R.drawable.ic_ab_other);
+             optionsItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
+             optionsItem.setOnClickListener(v -> {
+@@ -6896,6 +6896,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              viewPages[a].listView.setScrollEnabled(true);
              getMessagesController().selectDialogFilter(filter, viewPages[a].dialogsType == 8 ? 1 : 0);
@@ -19,7 +28,7 @@ index 0000000..0000000 100644
          }
  
          if (viewPages.length > 1) {
-@@ -11227,10 +11228,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -11135,10 +11136,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          dialogsListFrozen = frozen;
          viewPages[0].dialogsAdapter.setDialogsListFrozen(frozen);
          if (!frozen && notify) {

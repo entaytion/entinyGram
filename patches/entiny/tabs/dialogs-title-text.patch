@@ -94,7 +94,7 @@ index 0000000..0000000 100644
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6902,6 +6947,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6903,6 +6948,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
          viewPages[a].dialogsAdapter.setDialogsType(viewPages[a].dialogsType);
          viewPages[a].layoutManager.scrollToPositionWithOffset(viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0, (int) scrollYOffset);
          checkListLoad(viewPages[a]);
-@@ -6993,6 +7042,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6994,6 +7043,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  FolderHelper.refreshSelectedTab(filterTabsView, viewPages[0].selectedType, filters.size());
                  if (updateCurrentTab) {
                      switchToCurrentSelectedMode(false);

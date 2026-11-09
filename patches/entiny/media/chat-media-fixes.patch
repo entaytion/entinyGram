@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 21 Sep 2026 13:47:44 +0300
-Subject: burn one-time voice and round videos
+Subject: Chat media: burn voice and round messages, refresh expired media.
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -16542,7 +16542,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16518,7 +16518,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      public Runnable sendSecretMediaDelete(MessageObject messageObject) {

@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 8 Oct 2026 20:37:48 +0300
-Subject: Log name, username, bio and photo changes of contacts
+Subject: Contact changes and user info saver.
 
 ---
- .../main/java/org/telegram/messenger/MessagesController.java    | 2 ++
- 1 file changed, 2 insertions(+)
+ .../java/org/telegram/messenger/MessagesController.java    | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -27,3 +27,23 @@ index 0000000..0000000 100644
                      fullUsers.put(user.id, userFull);
                      final boolean contactBlockedChanged = syncUserContactBlocked(user.id, userFull);
                      getTranslateController().updateDialogFull(user.id);
+@@ -8110,6 +8112,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             settings.business_bot_manage_url = "https://telegram.org/";
+         }
+         editor.apply();
++        desu.inugram.helpers.chat.UserInfoSaverHelper.onSavePeerSettings(currentAccount, dialogId, settings);
+         userPeerSettings.put(dialogId, settings);
+         getNotificationCenter().postNotificationName(NotificationCenter.peerSettingsDidLoad, dialogId);
+     }
+@@ -8163,9 +8166,9 @@ public class MessagesController extends BaseController implements NotificationCe
+     public TLRPC.PeerSettings getPeerSettings(long dialogId) {
+         TLRPC.UserFull userFull = getUserFull(dialogId);
+         if (userFull != null && userFull.settings != null) {
+-            return userFull.settings;
++            return desu.inugram.helpers.chat.UserInfoSaverHelper.onGetPeerSettings(currentAccount, dialogId, userFull.settings);
+         }
+-        return userPeerSettings.get(dialogId);
++        return desu.inugram.helpers.chat.UserInfoSaverHelper.onGetPeerSettings(currentAccount, dialogId, userPeerSettings.get(dialogId));
+     }
+ 
+     public void loadPeerSettings(TLRPC.User currentUser, TLRPC.Chat currentChat) {

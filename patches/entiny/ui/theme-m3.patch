@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 1 Sep 2026 23:23:01 +0300
-Subject: Add a standalone true-black AMOLED theme (independent of Monet)
+Subject: Theme: AMOLED theme and Monet M3 style.
 
 ---
- .../java/org/telegram/ui/ActionBar/Theme.java | 28 ++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ .../java/org/telegram/ui/ActionBar/Theme.java | 29 ++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 index 0000000..0000000 100644
@@ -53,3 +53,11 @@ index 0000000..0000000 100644
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
              themeInfo = new ThemeInfo();
              themeInfo.name = "Monet Light";
+@@ -7375,6 +7401,7 @@ public class Theme {
+     }
+ 
+     public static File getAssetFile(String assetName) {
++        assetName = desu.inugram.helpers.theme.MonetStyle.asset(assetName);
+         File file = new File(ApplicationLoader.getFilesDirFixed(), assetName);
+         long size;
+         try {

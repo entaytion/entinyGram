@@ -1,17 +1,25 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Wed, 28 Oct 2026 22:35:58 +0200
-Subject: iOS-style chat list
+Date: Fri, 16 Oct 2026 11:50:54 +0300
+Subject: Dialog cell: hide message preview and iOS chat list.
 
 ---
- .../org/telegram/ui/Cells/DialogCell.java     | 52 ++++++++++++++-----
- 1 file changed, 40 insertions(+), 12 deletions(-)
+ .../org/telegram/ui/Cells/DialogCell.java     | 59 +++++++++++++++----
+ 1 file changed, 47 insertions(+), 12 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -1081,8 +1081,19 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -273,6 +273,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+     private boolean drawForwardIcon, drawGiftIcon;
+     private boolean visibleOnScreen = true;
+     private boolean updateLayout;
++    private int inu_previewRev;
+     private boolean wasDrawnOnline;
+ 
+     public void setMoving(boolean moving) {
+@@ -1080,8 +1081,19 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
          return height;
      }
  
@@ -31,7 +39,7 @@ index 0000000..0000000 100644
          if (useSeparator || true) {
              height += 1;
          }
-@@ -2511,6 +2522,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -2512,6 +2524,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              }
          } else {
              avatarTop = dp(9);
@@ -39,7 +47,7 @@ index 0000000..0000000 100644
              messageNameTop = dp(31);
              timeTop = dp(16);
              errorTop = dp(38);
-@@ -2521,14 +2533,14 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -2522,14 +2535,14 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
  
              if (LocaleController.isRTL) {
                  buttonLeft = typingLeft = messageLeft = messageNameLeft = dp(22);
@@ -57,7 +65,23 @@ index 0000000..0000000 100644
              for (int i = 0; i < thumbImage.length; ++i) {
                  thumbImage[i].setImageCoords(thumbLeft + (thumbSize + 2) * i, avatarTop + dp(30) + (twoLinesForName ? dp(20) : 0) - (!(useForceThreeLines || SharedConfig.useThreeLinesLayout) && tags != null && !tags.isEmpty() ? dp(9) : 0), dp(thumbSize), dp(thumbSize));
              }
-@@ -3043,6 +3055,22 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -2797,6 +2810,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+         try {
+             buttonCreated = false;
+             if (!TextUtils.isEmpty(buttonString)) {
++                if (message != null) buttonString = desu.inugram.helpers.dialogs.DialogPreviewHelper.spoil(buttonString);
+                 buttonString = Emoji.replaceEmoji(buttonString, currentMessagePaint.getFontMetricsInt(), false);
+                 CharSequence buttonStringFinal = TextUtils.ellipsize(buttonString, currentMessagePaint, messageWidth - dp(26), TextUtils.TruncateAt.END);
+                 buttonLayout = new StaticLayout(buttonStringFinal, currentMessagePaint, messageWidth - dp(20), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+@@ -2835,6 +2849,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                     }
+                 }
+             }
++            if (message != null) messageString = desu.inugram.helpers.dialogs.DialogPreviewHelper.spoil(messageString);
+             if ((useForceThreeLines || SharedConfig.useThreeLinesLayout) && !hasTags() && currentDialogFolderId != 0 && currentDialogFolderDialogsCount > 1) {
+                 messageStringFinal = messageNameString;
+                 messageNameString = null;
+@@ -3042,6 +3057,22 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  statusDrawableLeft = (int) (typingLeft + x2 + dp(3));
              }
          }
@@ -80,7 +104,7 @@ index 0000000..0000000 100644
          updateThumbsPosition();
      }
  
-@@ -3212,9 +3240,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3212,9 +3243,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
  
      public boolean isPointInsideAvatar(float x, float y) {
          if (!LocaleController.isRTL) {
@@ -92,7 +116,18 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -4182,7 +4210,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3803,6 +3834,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+         if (isForumCell() != oldIsForumCell) {
+             requestLayout = true;
+         }
++        if (inu_previewRev != desu.inugram.helpers.dialogs.DialogPreviewHelper.getRev()) {
++            inu_previewRev = desu.inugram.helpers.dialogs.DialogPreviewHelper.getRev();
++            rebuildLayout = true;
++        }
+         if (rebuildLayout) {
+             if (attachedToWindow) {
+                 buildLayout();
+@@ -4178,7 +4213,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  Theme.dialogs_lockDrawable.draw(canvas);
              }
  
@@ -101,7 +136,7 @@ index 0000000..0000000 100644
              if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                  nameTop -= dp(isForumCell() ? 8 : 9);
              }
-@@ -4496,7 +4524,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -4492,7 +4527,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              }
  
              if (drawBotVerified) {
@@ -110,7 +145,7 @@ index 0000000..0000000 100644
                  if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                      y -= dp(9);
                  }
-@@ -4530,7 +4558,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -4526,7 +4561,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  }
                  int muteAnchor = drawPremium ? nameMutedIconLeft : nameMuteLeft;
                  float muteX = muteAnchor - dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 0 : 1);
@@ -119,7 +154,7 @@ index 0000000..0000000 100644
                  if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                      muteY -= dp(isForumCell() ? 8 : 9);
                  }
-@@ -4569,7 +4597,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -4565,7 +4600,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
  
              }
              if (drawVerified) {
@@ -128,7 +163,7 @@ index 0000000..0000000 100644
                  if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                      y -= dp(9);
                  }
-@@ -4578,7 +4606,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -4574,7 +4609,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  Theme.dialogs_verifiedDrawable.draw(canvas);
                  Theme.dialogs_verifiedCheckDrawable.draw(canvas);
              } else if (drawPremium) {
@@ -137,7 +172,7 @@ index 0000000..0000000 100644
                  if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                      y -= dp(9);
                  }
-@@ -4599,11 +4627,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -4595,11 +4630,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                      emojiStatus.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
                  } else {
                      Drawable premiumDrawable = PremiumGradient.getInstance().premiumStarDrawableMini;

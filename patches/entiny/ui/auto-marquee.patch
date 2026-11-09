@@ -8,11 +8,11 @@ Subject: Auto-scrolling titles and centered chat header
  .../telegram/ui/ActionBar/SimpleTextView.java | 129 +++---
  .../java/org/telegram/ui/ChatActivity.java    |  94 +++-
  .../BottomSheetWithRecyclerListView.java      |   1 +
- .../ui/Components/ChatAvatarContainer.java    | 406 ++++++++++++++++--
+ .../ui/Components/ChatAvatarContainer.java    | 408 ++++++++++++++++--
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
- .../java/org/telegram/ui/ProfileActivity.java |  27 +-
+ .../java/org/telegram/ui/ProfileActivity.java |  43 +-
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 8 files changed, 893 insertions(+), 132 deletions(-)
+ 8 files changed, 911 insertions(+), 132 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -1063,7 +1063,7 @@ index 0000000..0000000 100644
                      setClipChildren(true);
                  }
              }
-@@ -770,55 +806,337 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -770,55 +806,339 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          glassMode = true;
      }
  
@@ -1324,7 +1324,9 @@ index 0000000..0000000 100644
 +            } else {
 +                avatarLeft = actionBar.inu_titlePillLeft - inu_containerLeft() + dp(9);
 +            }
-+            avatarImageView.layout(avatarLeft, avatarTop, avatarLeft + avatarW, avatarTop + avatarH);
++            // entiny: topic icons fill the whole box, inset them so they do not touch the pill edge
++            final int topicInset = parentFragment != null && parentFragment.isTopic ? dp(4) : 0;
++            avatarImageView.layout(avatarLeft + topicInset, avatarTop + topicInset, avatarLeft + avatarW - topicInset, avatarTop + avatarH - topicInset);
 +        } else {
 +            avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarW, 1 + viewTop + avatarH);
 +            int inset = avatarImageView.getVisibility() == VISIBLE ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 20 : 16);
@@ -1416,7 +1418,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -832,6 +1150,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -832,6 +1152,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      public void setRightAvatarPadding(int value) {
          rightAvatarPadding = value;
@@ -1424,7 +1426,7 @@ index 0000000..0000000 100644
      }
  
      public void setCommunityItemVisible(boolean visible) {
-@@ -925,10 +1244,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -925,10 +1246,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -1437,7 +1439,7 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -951,6 +1271,10 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -951,6 +1273,10 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (value != null) {
              value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
          }
@@ -1448,7 +1450,7 @@ index 0000000..0000000 100644
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -1545,6 +1869,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1545,6 +1871,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -1456,7 +1458,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.emojiLoaded);
-@@ -1619,6 +1944,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1619,6 +1946,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (title == null) {
              if (lastSubtitle != null) {
                  if (subtitleTextView != null) {
@@ -1466,7 +1468,7 @@ index 0000000..0000000 100644
                      subtitleTextView.setText(lastSubtitle);
                      lastSubtitle = null;
                      if (overrideSubtitleColor != null) {
-@@ -1757,8 +2085,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1757,8 +2087,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private void checkActionBar(boolean animated) {
@@ -1479,7 +1481,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -1778,7 +2110,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1778,7 +2112,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (hasVisibleAvatar()) {
              width += dp(52 + 18);
          } else {
@@ -1560,12 +1562,28 @@ index 0000000..0000000 100644
  
      private BaseFragment findPreviousChatFragment() {
          if (parentLayout == null || parentLayout.getFragmentStack().size() < 2) {
-@@ -10426,6 +10443,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10426,6 +10443,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
          if (isOpen) {
              prevAvatarTranslation = 0;
 +            prevTitleTranslation = 0;
 +            prevSubtitleTranslation = 0;
++            if (desu.inugram.InuConfig.CENTER_TITLE_CHATS.getValue() && previousTransitionFragment instanceof ChatActivity) {
++                ChatAvatarContainer chatHeader = ((ChatActivity) previousTransitionFragment).getAvatarContainer();
++                if (chatHeader != null && chatHeader.getTitleTextView() != null) {
++                    int[] location = new int[2];
++                    int[] origin = new int[2];
++                    fragmentView.getLocationInWindow(origin);
++                    SimpleTextView title = chatHeader.getTitleTextView();
++                    title.getLocationInWindow(location);
++                    prevTitleTranslation = location[0] - origin[0] + title.getTextStartX() - title.getX();
++                    View subtitle = chatHeader.getSubtitleTextView();
++                    if (subtitle instanceof SimpleTextView) {
++                        subtitle.getLocationInWindow(location);
++                        prevSubtitleTranslation = location[0] - origin[0] + ((SimpleTextView) subtitle).getTextStartX() - subtitle.getX();
++                    }
++                }
++            }
              final FrameLayout.LayoutParams onlineLayoutParams = (FrameLayout.LayoutParams) onlineTextView.getLayoutParams();
              onlineLayoutParams.rightMargin = (int) (-21 * AndroidUtilities.density + AndroidUtilities.dp(8));
              onlineTextView.setLayoutParams(onlineLayoutParams);

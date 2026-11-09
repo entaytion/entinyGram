@@ -1,17 +1,17 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sat, 17 Oct 2026 15:29:51 +0300
-Subject: keep undeletable dialogs hidden
+Date: Wed, 14 Oct 2026 21:32:04 +0300
+Subject: Local pins order, read time and hidden undeletable dialogs.
 
 ---
- .../main/java/org/telegram/messenger/MessagesController.java   | 3 +++
- 1 file changed, 3 insertions(+)
+ .../main/java/org/telegram/messenger/MessagesController.java  | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -10377,6 +10377,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -10369,6 +10369,9 @@ public class MessagesController extends BaseController implements NotificationCe
                      if (newTaskId != 0) {
                          getMessagesStorage().removePendingTask(newTaskId);
                      }
@@ -21,3 +21,11 @@ index 0000000..0000000 100644
                      if (error == null) {
                          TLRPC.TL_messages_affectedHistory res = (TLRPC.TL_messages_affectedHistory) response;
                          if (res.offset > 0) {
+@@ -22490,6 +22493,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         try {
+             Collections.sort(allDialogs, dialogComparator);
+         } catch (Exception e) {}
++        desu.inugram.helpers.dialogs.PinHelper.reorderLocalPins(this, currentAccount);
+     }
+ 
+     public boolean canAddToForward(TLRPC.Dialog d) {

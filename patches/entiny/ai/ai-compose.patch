@@ -1,12 +1,40 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 1 Aug 2026 17:52:54 +0300
-Subject: Add client-side AI compose with custom endpoints
+Subject: Client-side AI compose with custom endpoints
 
 ---
+ .../telegram/tgnet/ConnectionsManager.java    |  9 ++++++++
  .../ui/Components/ChatActivityEnterView.java  | 21 ++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -417,6 +417,9 @@ public class ConnectionsManager extends BaseController {
+         if (BuildVars.LOGS_ENABLED) {
+             FileLog.d("send request " + object + " with token = " + requestToken);
+         }
++        if (desu.inugram.helpers.ai.AiComposeHelper.maybeCompose(currentAccount, requestToken, object, onComplete, onCompleteTimestamp)) {
++            return;
++        }
+         try {
+             NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
+             object.serializeToStream(buffer);
+@@ -609,6 +612,12 @@ public class ConnectionsManager extends BaseController {
+ 
+     public void cancelRequest(int token, boolean notifyServer, Runnable onCancelled) {
+         Utilities.stageQueue.postRunnable(() -> {
++            if (desu.inugram.helpers.ai.AiComposeHelper.cancelCompose(currentAccount, token)) {
++                if (onCancelled != null) {
++                    onCancelled.run();
++                }
++                return;
++            }
+             if (onCancelled != null) {
+                 listenCancel(token, () -> {
+                     Utilities.stageQueue.postRunnable(onCancelled);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java

@@ -1,17 +1,17 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Mon, 2 Nov 2026 15:23:53 +0200
-Subject: add a toggle to disable pull down to open stories
+Date: Mon, 5 Oct 2026 20:17:44 +0300
+Subject: Dialogs list: forum search back, avatar tap opens profile, hidden banners and no story overscroll.
 
 ---
- .../src/main/java/org/telegram/ui/DialogsActivity.java      | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../src/main/java/org/telegram/ui/DialogsActivity.java    | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -4290,7 +4290,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4273,7 +4273,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                              if (undoView[0] != null && undoView[0].getVisibility() == View.VISIBLE) {
                                  undoView[0].hide(true, 1);
                              }
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                              if (scrollYOffset == 0) {
                                  viewPage.listView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
                              } else {
-@@ -4382,7 +4382,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4365,7 +4365,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          if (firstView != null) {
                              firstView.invalidate();
                          }
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
                              float newOverScroll = storiesOverscroll - dy * AndroidUtilities.lerp( 0.2f, 0.5f, dialogStoriesCell.overscrollProgress());
                              setStoriesOvercroll(viewPage, newOverScroll);
                          }
-@@ -4390,7 +4390,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4373,7 +4373,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      }
  
                      int scrolled = super.scrollVerticallyBy(measuredDy, recycler, state);
@@ -38,3 +38,12 @@ index 0000000..0000000 100644
                          float newOverScroll = storiesOverscroll - dy * dialogStoriesCell.getOverScrollCoef();
                          setStoriesOvercroll(viewPage, newOverScroll);
                      }
+@@ -7420,7 +7420,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         if (hasShownSheet()) {
+             if (invoked) closeSheet();
+             return false;
+-        } else if (rightSlidingDialogContainer.hasFragment() && rightSlidingDialogContainer.getFragment().onBackPressed(invoked)) {
++        } else if (!animatorSearchVisible.getValue() && rightSlidingDialogContainer.hasFragment() && rightSlidingDialogContainer.getFragment().onBackPressed(invoked)) {
+             if (invoked) {
+                 rightSlidingDialogContainer.finishPreview();
+                 if (searchViewPager != null) {

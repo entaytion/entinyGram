@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.pet>
-Date: Sun, 26 Jul 2026 18:39:42 +0400
-Subject: fix attach caption handling when reordering photos in preview
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 23:03:02 +0200
+Subject: Attach photo layout: square camera and preview caption reorder.
 
 ---
- .../ChatAttachAlertPhotoLayout.java           | 40 +++++++++++++++----
- 1 file changed, 33 insertions(+), 7 deletions(-)
+ .../ChatAttachAlertPhotoLayout.java           | 54 ++++++++++++++-----
+ 1 file changed, 40 insertions(+), 14 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 index 0000000..0000000 100644
@@ -19,6 +19,33 @@ index 0000000..0000000 100644
          counterTextView.setVisibility(View.GONE);
          counterTextView.setTextColor(0xffffffff);
          counterTextView.setGravity(Gravity.CENTER);
+@@ -2511,7 +2512,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         cameraPanel.setTag(null);
+         animateCameraValues[0] = 0;
+         animateCameraValues[1] = itemSize;
+-        animateCameraValues[2] = itemSize * 2 + dp(GAP);
++        animateCameraValues[2] = desu.inugram.helpers.chat.AttachCameraHelper.cameraTileHeight(itemSize, dp(GAP));
+         additionCloseCameraY = 0;
+         cameraExpanded = true;
+         if (cameraView != null) {
+@@ -2892,7 +2893,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         }
+         if (inu_cameraOutsideGrid) animated = false;
+         animateCameraValues[1] = itemSize;
+-        animateCameraValues[2] = itemSize * 2 + dp(GAP);
++        animateCameraValues[2] = desu.inugram.helpers.chat.AttachCameraHelper.cameraTileHeight(itemSize, dp(GAP));
+         if (zoomControlHideRunnable != null) {
+             AndroidUtilities.cancelRunOnUIThread(zoomControlHideRunnable);
+             zoomControlHideRunnable = null;
+@@ -3184,7 +3185,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+                 // cameraView.setTranslationY(cameraViewLocation[1] + currentPanTranslationY);
+             }
+             int finalWidth = itemSize;
+-            int finalHeight = itemSize * 2 + dp(GAP);
++            int finalHeight = desu.inugram.helpers.chat.AttachCameraHelper.cameraTileHeight(itemSize, dp(GAP));
+ 
+             LayoutParams layoutParams;
+             if (!cameraOpened) {
 @@ -3215,10 +3216,24 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      }
  
@@ -86,3 +113,39 @@ index 0000000..0000000 100644
                      o = photoEntry1;
                  }
                  selectedPhotos.put(key, o);
+@@ -4666,7 +4692,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+             }
+             photosEndRow = count;
+ 
+-            if (hasCamera && count > itemsPerRow && !noCameraPermissions) {
++            if (hasCamera && count > itemsPerRow && !noCameraPermissions && !desu.inugram.helpers.chat.AttachCameraHelper.isSquareTile()) {
+                 hasCameraSpaceRow = true;
+                 count++;
+             }
+@@ -4826,7 +4852,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+             if (viewHolder != null) {
+                 top = viewHolder.itemView.getTop();
+             } else {
+-                viewHolder = parent.findViewHolderForAdapterPosition(itemsPerRow);
++                viewHolder = desu.inugram.helpers.chat.AttachCameraHelper.isSquareTile() ? null : parent.findViewHolderForAdapterPosition(itemsPerRow);
+                 if (viewHolder != null) {
+                     top = viewHolder.itemView.getTop() - dp(GAP) - itemSize;
+                 } else {
+@@ -4839,7 +4865,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+ 
+             final int left = viewHolder.itemView.getLeft();
+             final int right = left + itemSize;
+-            final int bottom = top + itemSize * 2 + dp(GAP);
++            final int bottom = top + desu.inugram.helpers.chat.AttachCameraHelper.cameraTileHeight(itemSize, dp(GAP));
+ 
+             if (builder != null) {
+                 builder.add(left);
+@@ -4910,7 +4936,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+             if (bitmap != null) {
+                 placeholderDrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+             } else {
+-                placeholderDrawable = getContext().getResources().getDrawable(R.drawable.icplaceholder).mutate();
++                placeholderDrawable = desu.inugram.helpers.chat.AttachCameraHelper.isSquareTile() ? new android.graphics.drawable.ColorDrawable(0xFF000000) : getContext().getResources().getDrawable(R.drawable.icplaceholder).mutate();
+             }
+ 
+             if (gridView != null) {

@@ -430,7 +430,7 @@ index 0000000..0000000 100644
          int sendResult = 0;
          long myId = getUserConfig().getClientUserId();
          boolean isChannel = false;
-@@ -4038,7 +4041,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4040,7 +4043,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              req.msg_id = messageObject.messageOwner.fwd_from.saved_from_msg_id;
          } else {
              req.peer = getMessagesController().getInputPeer(messageObject.getDialogId());
@@ -439,7 +439,7 @@ index 0000000..0000000 100644
          }
          req.add_to_recent = addToRecent;
          if (addToRecent && addedReaction != null) {
-@@ -4476,6 +4479,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4478,6 +4481,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      public void sendMessage(SendMessageParams sendMessageParams) {
@@ -447,7 +447,7 @@ index 0000000..0000000 100644
          desu.inugram.helpers.UrlCleanerHelper.markPendingRedirects(sendMessageParams);
          final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
                  sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
-@@ -5022,7 +5026,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -5024,7 +5028,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  if (newMsg.attachPath == null) {
                      newMsg.attachPath = "";
                  }
@@ -457,7 +457,7 @@ index 0000000..0000000 100644
                  newMsg.out = true;
                  TLRPC.Chat chat = sendToPeer != null ? getMessagesController().getChat(sendToPeer.channel_id) : null;
                  if (isChannel && sendToPeer != null && (chat == null || !chat.signatures)) {
-@@ -7660,7 +7665,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -7662,7 +7667,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          }
      }
  
@@ -466,7 +466,7 @@ index 0000000..0000000 100644
          TLRPC.Message message;
          if (mid > 0) {
              message = editingMessages.get(mid);
-@@ -7794,6 +7799,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -7796,6 +7801,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return;
          }
  
@@ -474,7 +474,7 @@ index 0000000..0000000 100644
          int reqId = getConnectionsManager().sendRequest(request, (response, error) -> {
              if (error != null && FileRefController.isFileRefError(error.text)) {
                  final int fileRefIndex = FileRefController.getFileRefErrorIndex(error.text);
-@@ -8064,6 +8070,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8066,6 +8072,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                      }
                      Utilities.stageQueue.postRunnable(() -> getMessagesController().processUpdates(updates, false));
                  } else {
@@ -484,7 +484,7 @@ index 0000000..0000000 100644
                      AlertsCreator.processError(currentAccount, error, null, request);
                      isSentError = true;
                  }
-@@ -8178,6 +8187,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8180,6 +8189,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          }
          final TLRPC.Message newMsgObj = msgObj.messageOwner;
          putToSendingMessages(newMsgObj, scheduled);
@@ -494,7 +494,7 @@ index 0000000..0000000 100644
          if (desu.inugram.helpers.UrlCleanerHelper.holdSend(currentAccount, req, Collections.singletonList(msgObj), scheduled, () -> performSendMessageRequest(req, msgObj, originalPath, parentMessage, check, delayedMessage, parentObject, params, scheduled))) {
              return;
          }
-@@ -8191,6 +8203,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8193,6 +8205,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return;
          }
  
@@ -502,7 +502,7 @@ index 0000000..0000000 100644
          newMsgObj.reqId = getConnectionsManager().sendRequest(req, (response, error) -> {
              if (error != null && (req instanceof TLRPC.TL_messages_sendMedia || req instanceof TL_ephemeral.TL_sendMessage || req instanceof TLRPC.TL_messages_editMessage || req instanceof TLRPC.TL_messages_addPollAnswer) && FileRefController.isFileRefError(error.text)) {
                  if (FileRefController.isFileRefErrorCover(error.text)) {
-@@ -8612,6 +8625,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8614,6 +8627,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                              }
                          }
                      } else {
@@ -512,7 +512,7 @@ index 0000000..0000000 100644
                          AlertsCreator.processError(currentAccount, error, null, req);
                          isSentError = true;
                      }
-@@ -8720,7 +8736,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8722,7 +8738,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          return false;
      }
  
@@ -521,7 +521,7 @@ index 0000000..0000000 100644
          updateMediaPaths(newMsgObj, sentMessage, newMsgId, Collections.singletonList(originalPath), post, -1, params);
      }
  
-@@ -10200,6 +10216,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10202,6 +10218,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (paths == null && originalPaths == null && uris == null || paths != null && originalPaths != null && paths.size() != originalPaths.size()) {
              return;
          }
@@ -533,7 +533,7 @@ index 0000000..0000000 100644
          Utilities.globalQueue.postRunnable(() -> {
              int error = 0;
              long[] groupId = new long[1];
-@@ -10962,6 +10983,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10964,6 +10985,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (media.isEmpty()) {
              return;
          }
@@ -546,7 +546,7 @@ index 0000000..0000000 100644
          if (media.size() == 1 && media.get(0).videoEditedInfo != null && media.get(0).videoEditedInfo.roundVideo) {
              // The grouped/document dispatch below (and prepareSendingPhoto's video branch) never
              // preserve VideoEditedInfo.roundVideo, so a video sent this way always lands as a
-@@ -12401,6 +12428,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -12403,6 +12430,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      public static class SendMessageParams {
@@ -573,7 +573,7 @@ index 0000000..0000000 100644
          if (BuildVars.LOGS_ENABLED) {
              FileLog.d("send request " + object + " with token = " + requestToken);
          }
-@@ -618,6 +621,7 @@ public class ConnectionsManager extends BaseController {
+@@ -627,6 +630,7 @@ public class ConnectionsManager extends BaseController {
                  }
                  return;
              }
@@ -581,7 +581,7 @@ index 0000000..0000000 100644
              if (onCancelled != null) {
                  listenCancel(token, () -> {
                      Utilities.stageQueue.postRunnable(onCancelled);
-@@ -633,6 +637,7 @@ public class ConnectionsManager extends BaseController {
+@@ -642,6 +646,7 @@ public class ConnectionsManager extends BaseController {
  
      public void cancelRequestsForGuid(int guid) {
          Utilities.stageQueue.postRunnable(() -> {
@@ -589,7 +589,7 @@ index 0000000..0000000 100644
              native_cancelRequestsForGuid(currentAccount, guid);
          });
      }
-@@ -641,6 +646,7 @@ public class ConnectionsManager extends BaseController {
+@@ -650,6 +655,7 @@ public class ConnectionsManager extends BaseController {
          if (guid == 0) {
              return;
          }

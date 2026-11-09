@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 9 Nov 2026 22:19:09 +0200
+Subject: Hide the overlapping premium badge in stories
+
+---
+ .../main/java/org/telegram/ui/Stories/DialogStoriesCell.java  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+@@ -2238,8 +2238,8 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+             telegramLogoView.setVisibility(inu_disguised && logoAlpha > 0 ? VISIBLE : GONE);
+         }
+         if (emojiStatusView != null) {
+-            emojiStatusView.setAlpha(inu_disguised ? logoAlpha : progress);
+-            emojiStatusView.setVisibility((inu_disguised ? logoAlpha > 0 : progress > 0) ? VISIBLE : GONE);
++            emojiStatusView.setAlpha(inu_disguised ? logoAlpha : 0f);
++            emojiStatusView.setVisibility(inu_disguised && logoAlpha > 0 ? VISIBLE : GONE);
+         }
+         if (subtitleOverlayContainer != null) {
+             subtitleOverlayContainer.setAlpha(progress);

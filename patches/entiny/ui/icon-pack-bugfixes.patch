@@ -46,7 +46,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13974,9 +13974,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13957,9 +13957,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      @Override
      public void onFactorChangeFinished(int id, float finalFactor, FactorAnimator callee) {
          if (id == ANIMATOR_ID_SPEED_BUTTON_VISIBLE && speedItem != null) {
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
                  if (SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_LOW) {
                      TLRPC.TL_help_premiumPromo premiumPromo = MediaDataController.getInstance(currentAccount).getPremiumPromo();
                      String typeString = PremiumPreviewFragment.featureTypeToServerString(PremiumPreviewFragment.PREMIUM_FEATURE_DOWNLOAD_SPEED);
-@@ -13993,9 +13995,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13976,9 +13978,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          }
                      }
                  }

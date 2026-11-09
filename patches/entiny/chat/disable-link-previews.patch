@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -3643,7 +3643,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3645,7 +3645,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (message != null) {
              req.message = message;
              req.flags |= 2048;
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          }
          if (messageObject.messageOwner != null && (messageObject.messageOwner.flags & 1073741824) != 0) {
              req.quick_reply_shortcut_id = messageObject.messageOwner.quick_reply_shortcut_id;
-@@ -4533,6 +4533,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4535,6 +4535,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          PollSendParams pollSendParams = sendMessageParams.pollSendParams;
          TL_iv.RichMessage richMessage = sendMessageParams.richMessage;
  

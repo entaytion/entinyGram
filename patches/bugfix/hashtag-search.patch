@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -2089,9 +2089,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -2100,9 +2100,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                                          }
                                          messageString = AndroidUtilities.replaceNewLines(messageString);
                                      }
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
                                      checkMessage = false;
                                      SpannableStringBuilder builder = (SpannableStringBuilder) messageString;
                                      builder.insert(0, " ");
-@@ -3114,14 +3112,13 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3142,14 +3140,13 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
          }
      }
  
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
      }
  
      int topMessageTopicStartIndex;
-@@ -6050,7 +6047,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -6078,7 +6075,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  stringBuilder = SpannableStringBuilder.valueOf(mess);
              }
              if (applyThumbs) {
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              paddingBottom = AndroidUtilities.navigationBarHeight;
          } else {
              paddingBottom = blurredViewBottomOffset + dp(NonIslandHelper.chatElements() ? 3 : 9 + 7)
-@@ -46710,7 +46710,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46716,7 +46716,7 @@ public class ChatActivity extends BaseFragment implements
                  removeTag.setColorKeys(Theme.key_color_red, Theme.key_color_red);
                  popupLayout.addView(removeTag);
                  scrimPopupContainerLayout.addView(popupLayout);
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
                  final boolean canDeleteReactions = ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES)
                      && (reaction.count > 1 || !reaction.chosen);
  
-@@ -47854,7 +47854,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47860,7 +47860,7 @@ public class ChatActivity extends BaseFragment implements
              return;
          }
  
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
          fadeHeight += dp(7 - 6);
          fadeHeight += getTopPanelHeightWithPadding(dp(7));
          if (topicsTabs != null) {
-@@ -47873,7 +47873,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47879,7 +47879,7 @@ public class ChatActivity extends BaseFragment implements
              parentChatActivity.checkUi_messagesSearchListPadding();
          }
  

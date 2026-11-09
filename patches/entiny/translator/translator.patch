@@ -1,13 +1,13 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 8 Oct 2026 15:09:30 +0300
-Subject: translator logic
+Subject: Translation providers, language controls and banner preferences
 
 ---
  .../telegram/messenger/LanguageDetector.java  |  54 ++++
  .../messenger/MediaDataController.java        |   2 +-
  .../org/telegram/messenger/MessageObject.java |  13 +-
- .../messenger/TranslateController.java        | 249 +++++++++++++----
+ .../messenger/TranslateController.java        | 251 +++++++++++++----
  .../telegram/tgnet/ConnectionsManager.java    |   9 +
  .../java/org/telegram/ui/ArticleViewer.java   |  17 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |  36 ++-
@@ -21,7 +21,7 @@ Subject: translator logic
  .../telegram/ui/LanguageSelectActivity.java   | 252 +-----------------
  .../ui/RestrictedLanguagesSelectActivity.java |  45 ++--
  .../org/telegram/ui/web/WebActionBar.java     |   3 +
- 17 files changed, 477 insertions(+), 563 deletions(-)
+ 17 files changed, 478 insertions(+), 564 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
 index 0000000..0000000 100644
@@ -323,6 +323,15 @@ index 0000000..0000000 100644
      }
  
      public void updateDialogFull(long dialogId) {
+@@ -550,7 +578,7 @@ public class TranslateController extends BaseController {
+             ArrayList<Long> toNotify = new ArrayList<>();
+             for (long dialogId : translatableDialogs) {
+                 String language = detectedDialogLanguage.get(dialogId);
+-                if (language != null && isLanguageRestricted(language)) {
++                if (language != null && isLanguageRestricted(language, null, false)) {
+                     cancelTranslations(dialogId);
+                     translatingDialogs.remove(dialogId);
+                     toNotify.add(dialogId);
 @@ -721,6 +749,10 @@ public class TranslateController extends BaseController {
                          }
                      });
@@ -800,10 +809,10 @@ index 0000000..0000000 100644
          if (BuildVars.LOGS_ENABLED) {
              FileLog.d("send request " + object + " with token = " + requestToken);
          }
-@@ -609,6 +612,12 @@ public class ConnectionsManager extends BaseController {
- 
-     public void cancelRequest(int token, boolean notifyServer, Runnable onCancelled) {
-         Utilities.stageQueue.postRunnable(() -> {
+@@ -618,6 +621,12 @@ public class ConnectionsManager extends BaseController {
+                 }
+                 return;
+             }
 +            if (desu.inugram.helpers.translate.TranslationProviderHelper.cancelRequest(currentAccount, token)) {
 +                if (onCancelled != null) {
 +                    onCancelled.run();
@@ -1136,7 +1145,7 @@ index 0000000..0000000 100644
 -                getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) :
 -                !getMessagesController().premiumFeaturesBlocked() && preferences.getInt("dialog_show_translate_count" + did, 5) <= 0
 -        ) || DEBUG_TOP_PANELS;
-+        boolean showTranslate = getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) || getMessagesController().getTranslateController().isTranslatingDialog(getDialogId()) || DEBUG_TOP_PANELS;
++        boolean showTranslate = !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) && (getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) || getMessagesController().getTranslateController().isTranslatingDialog(getDialogId())) || DEBUG_TOP_PANELS;
          boolean showAddProfilePicture = UserObject.isBot(currentUser) && currentUser.bot_can_edit && currentUser.photo == null;
          boolean showBizBot = currentEncryptedChat == null && preferences.getLong("dialog_botid" + did, 0) != 0 || DEBUG_TOP_PANELS;
          boolean showBotAd = currentUser != null && currentUser.bot && messages.size() >= 2 && botSponsoredMessage != null;

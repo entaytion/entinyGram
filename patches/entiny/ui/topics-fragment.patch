@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 17 Oct 2026 18:13:51 +0300
-Subject: forum topic card sections
+Subject: Forum topics: M3 sections and lazy view creation.
 
 ---
  .../src/main/java/org/telegram/ui/TopicsFragment.java       | 6 ++++--
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
-@@ -1256,6 +1256,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -1254,6 +1254,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
          });
          scrollHelper = new RecyclerAnimationScrollHelper(recyclerListView, layoutManager);
          recyclerListView.setAdapter(adapter);
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          recyclerListView.setClipToPadding(false);
          recyclerListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
  
-@@ -3079,6 +3080,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -3061,6 +3062,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
                  dialogCell.setChecked(selectedTopics.contains(newId), animated);
                  dialogCell.setDialogSelected(selectedTopicForTablet == newId);
                  dialogCell.onReorderStateChanged(reordering, true);
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
              } else if (holder.getItemViewType() == VIEW_TYPE_TOPIC_CREATE) {
                  TopicDialogCell dialogCell = (TopicDialogCell) holder.itemView;
                  dialogCell.setCurrentDialogId(-chatId);
-@@ -3148,12 +3150,12 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -3130,12 +3132,12 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
              xOffset = inPreviewMode && checkBox != null ? checkBox.getProgress() * AndroidUtilities.dp(30) : 0;
              canvas.save();
              canvas.translate(xOffset, translateY = -AndroidUtilities.dp(4));

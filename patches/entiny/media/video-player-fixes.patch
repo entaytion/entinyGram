@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Mon, 2 Nov 2026 15:07:36 +0200
-Subject: fix looping videos freezing when seeking near the end
+Date: Fri, 25 Sep 2026 23:46:37 +0300
+Subject: Video player fixes: audiotrack playback params and near-end freeze.
 
 ---
- .../java/org/telegram/ui/Components/VideoPlayer.java  | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ .../org/telegram/ui/Components/VideoPlayer.java     | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
 index 0000000..0000000 100644
@@ -37,3 +37,12 @@ index 0000000..0000000 100644
              };
  
      public VideoPlayer() {
+@@ -280,7 +283,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+             }
+             factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+             // factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+-            factory.setEnableAudioTrackPlaybackParams(true);
++            factory.setEnableAudioTrackPlaybackParams(false); // entiny: playback-params path leaves audio playing after pause near stream end on MIUI (HAL drains deep buffer)
+             ExoPlayer.Builder builder = new ExoPlayer.Builder(ApplicationLoader.applicationContext).setRenderersFactory(factory)
+                     .setTrackSelector(trackSelector)
+                     .setLoadControl(loadControl);

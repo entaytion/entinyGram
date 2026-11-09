@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 7 Oct 2026 12:57:41 +0300
-Subject: keep keyboard while typing
+Subject: Chat keyboard: scroll on typing and quote keyboard.
 
 ---
- TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../src/main/java/org/telegram/ui/ChatActivity.java        | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -20,3 +20,15 @@ index 0000000..0000000 100644
                              if (isKeyboardVisible()) {
                                  AndroidUtilities.hideKeyboard(getParentActivity().getCurrentFocus());
                              } else if (chatActivityEnterView != null) {
+@@ -35990,6 +35990,11 @@ public class ChatActivity extends BaseFragment implements
+                             }
+                         };
+                         chatActivity.showFieldPanelForReplyQuote(replyingMessageObject, replyingQuote);
++                        AndroidUtilities.runOnUIThread(() -> {
++                            if (chatActivity.chatActivityEnterView != null) {
++                                chatActivity.chatActivityEnterView.openKeyboard();
++                            }
++                        }, 350);
+                     } else {
+                         chatActivity.showFieldPanelForForward(true, fmessages);
+                     }

@@ -5,8 +5,7 @@ Subject: Handle tg://settings deeplinks in chat messages and enlarge the AI star
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java      | 9 +++++++++
- TMessagesProj/src/main/res/drawable/input_ai_star.xml    | 4 ++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ 1 file changed, 9 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -35,17 +34,3 @@ index 0000000..0000000 100644
          if (currentChat == null || urlFinal == null || chatMode != 0) {
              return false;
          }
-diff --git a/TMessagesProj/src/main/res/drawable/input_ai_star.xml b/TMessagesProj/src/main/res/drawable/input_ai_star.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/res/drawable/input_ai_star.xml
-+++ b/TMessagesProj/src/main/res/drawable/input_ai_star.xml
-@@ -1,7 +1,7 @@
- <?xml version="1.0" encoding="utf-8"?>
- <vector xmlns:android="http://schemas.android.com/apk/res/android"
--    android:width="5.3dp"
--    android:height="5.3dp"
-+    android:width="24dp"
-+    android:height="24dp"
-     android:viewportWidth="16"
-     android:viewportHeight="16">
- 

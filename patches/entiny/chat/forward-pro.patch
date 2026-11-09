@@ -31,7 +31,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2613,7 +2613,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2615,7 +2615,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          newMsg.flags &=~ 64;
                      }
                  }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          Bundle args = new Bundle();
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-@@ -34686,6 +34690,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -34692,6 +34696,12 @@ public class ChatActivity extends BaseFragment implements
                      selectedObjectGroup = null;
                      return;
                  }

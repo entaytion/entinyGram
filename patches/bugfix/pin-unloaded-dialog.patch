@@ -22,7 +22,7 @@ index 0000000..0000000 100644
      private LongSparseArray<Boolean> checkingLastMessagesDialogs = new LongSparseArray<>();
  
      private ArrayList<TLRPC.Updates> updatesQueueSeq = new ArrayList<>();
-@@ -12914,6 +12915,85 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -12915,6 +12916,85 @@ public class MessagesController extends BaseController implements NotificationCe
          });
      }
  
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
      private void fetchFolderInLoadedPinnedDialogs(TLRPC.TL_messages_peerDialogs res) {
          for (int a = 0, N = res.dialogs.size(); a < N; a++) {
              TLRPC.Dialog dialog = res.dialogs.get(a);
-@@ -17518,6 +17598,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17522,6 +17602,9 @@ public class MessagesController extends BaseController implements NotificationCe
              }
          }
          getMessagesStorage().setDialogPinned(dialogId, dialog.pinnedNum);
@@ -118,7 +118,7 @@ index 0000000..0000000 100644
          return true;
      }
  
-@@ -22744,7 +22827,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22747,7 +22830,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          }
                      }
                      if (maxDate > Integer.MIN_VALUE) {
@@ -192,7 +192,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9965,6 +9965,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9948,6 +9948,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (filter != null) {
              if (pin) {
                  filter.pinnedDialogs.put(selectedDialog, minPinnedNum);
@@ -202,7 +202,7 @@ index 0000000..0000000 100644
              } else {
                  filter.pinnedDialogs.delete(selectedDialog);
              }
-@@ -10299,6 +10302,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10282,6 +10285,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
      private void showOrUpdateActionMode(long dialogId, View cell) {
          addOrRemoveSelectedDialog(dialogId, cell);

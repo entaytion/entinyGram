@@ -1,19 +1,19 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 1 Aug 2026 14:16:29 +0300
-Subject: allow opted-in access to protected content
+Subject: Bypass content protection and safely forward restricted messages
 
 ---
  .../org/telegram/messenger/FileLoader.java    |  4 +--
  .../org/telegram/messenger/MessageObject.java |  8 +++---
  .../messenger/MessagesController.java         |  2 ++
- .../messenger/SendMessagesHelper.java         |  9 +++++++
+ .../messenger/SendMessagesHelper.java         | 13 +++++++++-
  .../telegram/ui/Cells/ChatMessageCell.java    |  2 +-
  .../java/org/telegram/ui/ChatActivity.java    | 25 ++++++++++---------
  .../ui/Components/AudioPlayerAlert.java       |  2 +-
  .../ui/Components/SharedMediaLayout.java      |  2 +-
  .../java/org/telegram/ui/PhotoViewer.java     |  8 +++---
- 9 files changed, 37 insertions(+), 25 deletions(-)
+ 9 files changed, 40 insertions(+), 26 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -98,11 +98,19 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2277,6 +2277,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2272,11 +2272,22 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 currentPayStars = DialogObject.getMessagesStarsPrice(getMessagesController().isUserContactBlocked(peer));
+             }
+             if (currentPayStars != payStars) {
++                final ArrayList<MessageObject> inu_forwardMessages = messages;
+                 AlertsCreator.ensurePaidMessageConfirmation(currentAccount, peer, Math.max(1, messages.size()), newPayStars -> {
+-                    sendMessage(messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, newPayStars, monoForumPeerId, suggestionParams);
++                    sendMessage(inu_forwardMessages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, newPayStars, monoForumPeerId, suggestionParams);
                  });
                  return 0;
              }
 +            if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue()) {
++                messages = new ArrayList<>(messages);
 +                ArrayList<MessageObject> inu_restricted = desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.splitRestrictedForward(messages, getMessagesController());
 +                if (inu_restricted != null) {
 +                    desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.sendRestrictedForward(this, currentAccount, inu_restricted, peer, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, monoForumPeerId, suggestionParams, hideCaption, payStars);

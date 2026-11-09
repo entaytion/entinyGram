@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 26 Oct 2026 00:05:22 +0200
-Subject: Add 60 FPS round video, exposure lock, and exposure compensation buttons
+Subject: Round recorder frame rate and exposure lock
 
 ---
  .../messenger/camera/Camera2Session.java      | 74 +++++++++++++-
@@ -83,7 +83,7 @@ index 0000000..0000000 100644
              if (recordingVideo) {
 -                captureRequestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<Integer>(30, 60));
 +                Range<Integer> fpsRange;
-+                if (desu.inugram.InuConfig.ROUND_RECORDER_60FPS.getValue()) {
++                if (org.telegram.utils.settings.SharedSettings.roundVideoFrameRate.get().getValue() == 60) {
 +                    fpsRange = desu.inugram.helpers.chat.RoundRecorderHelper.selectFpsRange(cameraCharacteristics, true);
 +                } else {
 +                    fpsRange = new Range<Integer>(30, 30);
@@ -326,7 +326,7 @@ index 0000000..0000000 100644
                  format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
 -                format.setInteger(MediaFormat.KEY_BIT_RATE, videoBitrate);
 -                format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-+                format.setInteger(MediaFormat.KEY_BIT_RATE, RoundRecorderHelper.getVideoBitrate(videoBitrate, camera2SessionCurrent));
++                format.setInteger(MediaFormat.KEY_BIT_RATE, RoundRecorderHelper.sharedVideoBitrate());
 +                format.setInteger(MediaFormat.KEY_FRAME_RATE, RoundRecorderHelper.getTargetFps(camera2SessionCurrent));
                  format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
  

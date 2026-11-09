@@ -1,17 +1,17 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 13 Sep 2026 09:51:24 +0300
-Subject: Allow hiding individual items from the chats screen options menu
+Subject: Customize the dialogs menu entries
 
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 95 ++++++++++---------
- 1 file changed, 50 insertions(+), 45 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 97 ++++++++++---------
+ 1 file changed, 51 insertions(+), 46 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13677,60 +13677,64 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13676,60 +13676,64 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              isCurrentThemeDark = Theme.isCurrentThemeDark();
          }
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
                  presentFragment(new WalletActivity());
              });
          } else {
-@@ -13759,7 +13763,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13758,7 +13762,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          }
@@ -130,3 +130,12 @@ index 0000000..0000000 100644
              io.add(R.drawable.msg_settings_old, getString(R.string.Settings), () -> {
                  presentFragment(new SettingsActivity());
              });
+@@ -13779,7 +13784,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             final boolean proxyVisible = proxyEnabled && !TextUtils.isEmpty(proxyAddress)
+                     || getMessagesController().blockedCountry && !SharedConfig.proxyList.isEmpty();
+ 
+-            if (proxyVisible) {
++            if (proxyVisible && desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.PROXY)) {
+                 io.addGap();
+                 io.add(proxyMenuSubItem);
+             }

@@ -5,9 +5,9 @@ Subject: Input message translation and enter view actions
 
 ---
  .../java/org/telegram/ui/ChatActivity.java    | 22 +++++++++++--
- .../ui/Components/ChatActivityEnterView.java  | 23 +++++++++++++-
+ .../ui/Components/ChatActivityEnterView.java  | 26 +++++++++++++++-
  .../ui/Components/TranslateAlert3.java        | 31 ++++++++++++++-----
- 3 files changed, 64 insertions(+), 12 deletions(-)
+ 3 files changed, 67 insertions(+), 12 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      private void requestLinkPreview(TL_account.getWebPagePreview req, Utilities.Callback2<Boolean, TLRPC.WebPage> done) {
          cancelSearchLinks();
          linkSearchRequestId = getConnectionsManager().sendRequestTyped(req, AndroidUtilities::runOnUIThread, (response, error) -> {
-@@ -28942,9 +28958,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28948,9 +28964,9 @@ public class ChatActivity extends BaseFragment implements
          if (chat && encryptedChat == null) {
              menu.add(R.id.menu_groupbolditalic, R.id.menu_date, order++, LocaleController.getString(R.string.FormattedDate));
          }
@@ -82,9 +82,13 @@ index 0000000..0000000 100644
      }
  
      private void setSlowModeButtonVisible(boolean visible) {
-@@ -8993,7 +9001,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8992,8 +9000,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+             } else {
                  layoutParams.rightMargin = dp(50);
              }
++            if (desu.inugram.helpers.chat.ChatInputMenuHelper.isMenuButtonVisible(this)) {
++                layoutParams.rightMargin += dp(48);
++            }
          } else {
 -            if (scheduledButton != null && scheduledButton.getTag() != null) {
 +            if (scheduledButton != null && scheduledButton.getTag() != null && desu.inugram.helpers.chat.ChatInputMenuHelper.isMenuButtonVisible(this)) {
@@ -95,7 +99,7 @@ index 0000000..0000000 100644
                  layoutParams.rightMargin = dp(50);
              } else {
                  layoutParams.rightMargin = dp(2);
-@@ -9011,6 +9023,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -9011,6 +9026,15 @@ public class ChatActivityEnterView extends FrameLayout implements
              layoutParams2.rightMargin = editingMessageObject == null ? Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT)) : 0;
              recordedAudioPanel.setLayoutParams(layoutParams2);
          }
