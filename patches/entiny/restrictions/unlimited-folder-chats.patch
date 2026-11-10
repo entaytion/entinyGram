@@ -34,7 +34,7 @@ index 0000000..0000000 100644
                          ArrayList<Long> alwaysShow = FiltersListBottomSheet.getDialogsCount(DialogsActivity.this, filter, selectedDialogs, true, false);
 -                        if (!checked) {
 +                        boolean unlimitedFolderChats = filter != null && desu.inugram.InuConfig.UNLIMITED_FOLDER_CHATS.getValue();
-+                        int folderChatsLimit = getUserConfig().isPremium() ? getMessagesController().dialogFiltersChatsLimitPremium : getMessagesController().dialogFiltersChatsLimitDefault;
++                        int folderChatsLimit = desu.inugram.helpers.dialogs.FolderMembershipHelper.serverLimit(currentAccount);
 +                        if (!checked && !unlimitedFolderChats) {
                              int currentCount;
                              if (filter != null) {
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
 +                            desu.inugram.helpers.dialogs.FolderMembershipHelper.removeLocal(currentAccount, filter.id, localId);
 +                        }
 +                    }
-+                    int limit = getUserConfig().isPremium() ? getMessagesController().dialogFiltersChatsLimitPremium : getMessagesController().dialogFiltersChatsLimitDefault;
++                    int limit = desu.inugram.helpers.dialogs.FolderMembershipHelper.serverLimit(currentAccount);
 +                    if (desu.inugram.InuConfig.UNLIMITED_FOLDER_CHATS.getValue() && newAlwaysShow.size() > limit) {
 +                        ArrayList<Long> overflow = new ArrayList<>(newAlwaysShow.subList(limit, newAlwaysShow.size()));
 +                        newAlwaysShow = new ArrayList<>(newAlwaysShow.subList(0, limit));

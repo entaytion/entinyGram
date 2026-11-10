@@ -6,8 +6,8 @@ Subject: Allow pinning chats beyond Telegram's server limit locally
 ---
  .../messenger/MessagesController.java         |  1 +
  .../org/telegram/ui/Cells/DialogCell.java     |  4 +-
- .../java/org/telegram/ui/DialogsActivity.java | 51 +++++++++++++------
- 3 files changed, 39 insertions(+), 17 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 53 +++++++++++++------
+ 3 files changed, 41 insertions(+), 17 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -49,7 +49,11 @@ index 0000000..0000000 100644
          TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(dialogId);
          boolean containsFilter;
          final MessagesController.DialogFilter filter = (
-@@ -8811,7 +8812,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8808,10 +8809,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     maxPinnedCount = getMessagesController().maxPinnedDialogsCountDefault;
+                 }
+             }
++            maxPinnedCount = desu.inugram.helpers.dialogs.PinHelper.serverLimit(currentAccount, maxPinnedCount, containsFilter && filter != null, folderId != 0 || filter != null, false);
              int newFilterAlwaysShowCount = newPinnedCount + newPinnedSecretCount - alreadyAdded;
              boolean secretLimitReached = containsFilter && filter != null ? false : newPinnedSecretCount + pinnedSecretCount > maxPinnedCount;
              boolean dialogsLimitReached = containsFilter && filter != null ? newFilterAlwaysShowCount > 0 && filter.alwaysShow.size() + newFilterAlwaysShowCount > maxPinnedCount : newPinnedCount + pinnedCount - alreadyAdded > maxPinnedCount;
@@ -63,7 +67,7 @@ index 0000000..0000000 100644
          }
  
          if (hasPinAction[0]) {
-@@ -8841,20 +8847,25 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8841,20 +8848,25 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          return;
                      }
                      if (!isDialogPinned(dialog)) {
@@ -99,7 +103,7 @@ index 0000000..0000000 100644
                          pinDialog(dialogId, false, filter, minPinnedNum, true);
                          undoView.showWithAction(0, UndoView.ACTION_UNPIN_DIALOGS, 1, 1600, null, null);
                      }
-@@ -9263,9 +9274,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9263,9 +9275,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filter = null;
          }
          if (filter != null) {
@@ -111,7 +115,7 @@ index 0000000..0000000 100644
      }
  
      private boolean filterAlwaysShowsDialog(MessagesController.DialogFilter filter, long dialogId) {
-@@ -9296,6 +9307,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9296,6 +9308,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
          int count = selectedDialogs.size();
          int pinnedActionCount = 0;
@@ -119,7 +123,12 @@ index 0000000..0000000 100644
          if (action == archive || action == archive2) {
              ArrayList<Long> copy = new ArrayList<>(selectedDialogs);
              getMessagesController().addDialogToFolder(copy, canUnarchiveCount == 0 ? 1 : 0, -1, null, 0);
-@@ -9378,13 +9390,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9374,17 +9387,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             } else {
+                 maxPinnedCount = getUserConfig().isPremium() ? getMessagesController().dialogFiltersPinnedLimitPremium : getMessagesController().dialogFiltersPinnedLimitDefault;
+             }
++            maxPinnedCount = desu.inugram.helpers.dialogs.PinHelper.serverLimit(currentAccount, maxPinnedCount, containsFilter && filter != null, folderId != 0 || filter != null, true);
+             int newFilterAlwaysShowCount = newPinnedCount + newPinnedSecretCount - alreadyAdded;
              boolean secretLimitReached = containsFilter && filter != null ? false : newPinnedSecretCount + pinnedSecretCount > maxPinnedCount;
              boolean dialogsLimitReached = containsFilter && filter != null ? newFilterAlwaysShowCount > 0 && filter.alwaysShow.size() + newFilterAlwaysShowCount > maxPinnedCount : newPinnedCount + pinnedCount - alreadyAdded > maxPinnedCount;
              if (secretLimitReached || dialogsLimitReached) {
@@ -139,7 +148,7 @@ index 0000000..0000000 100644
              }
          } else if (action == community_ungroup) {
              if (alert) {
-@@ -9521,6 +9537,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9521,6 +9539,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          continue;
                      }
                      pinnedActionCount++;
@@ -150,7 +159,7 @@ index 0000000..0000000 100644
                      pinDialog(selectedDialog, true, filter, minPinnedNum, count == 1);
                      if (filter != null) {
                          minPinnedNum++;
-@@ -9539,6 +9559,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9539,6 +9561,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          continue;
                      }
                      pinnedActionCount++;

@@ -40,7 +40,7 @@ index 0000000..0000000 100644
              hasPoll = arguments.getInt("hasPoll", 0);
              hasInvoice = arguments.getBoolean("hasInvoice", false);
              showSetPasswordConfirm = arguments.getBoolean("showSetPasswordConfirm", showSetPasswordConfirm);
-@@ -10269,7 +10271,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10271,7 +10273,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      }
  
      private boolean validateSlowModeDialog(long dialogId) {

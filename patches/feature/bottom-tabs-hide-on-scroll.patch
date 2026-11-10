@@ -78,7 +78,7 @@ index 0000000..0000000 100644
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
          }
-@@ -9135,7 +9146,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9136,7 +9147,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      }
  
      public void updateFloatingButtonOffset() {
@@ -88,7 +88,7 @@ index 0000000..0000000 100644
          final float baseTranslationY = top
              - floatingButtonPanOffset;
  
-@@ -13955,7 +13967,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13957,7 +13969,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
      private float inu_getBottomFilterTabsOffset() {
          if (commentView == null) {
@@ -98,7 +98,7 @@ index 0000000..0000000 100644
          }
          final float aboveInput = windowInsetsStateHolder.getAnimatedMaxBottomInset() + chatInputViewsContainer.getInputBubbleHeight() + (NonIslandHelper.chatElements() ? 0 : dp(9 + 4));
          return lerp((float) navigationBarHeight, aboveInput, animatorForwardButtonVisible.getFloatValue());
-@@ -13980,6 +13993,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13982,6 +13995,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              && filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE;
      }
  
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
      public float inu_getClassicBottomFilterTabsVisibility() {
          return inu_filterTabsAtBottom && NonIslandHelper.foldersBar() ? getFilterTabsVisibilityFactor(true) : 0f;
      }
-@@ -13996,7 +14017,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13998,7 +14019,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
      @Override
      public void onFactorChanged(int id, float factor, float fraction, FactorAnimator callee) {
@@ -131,7 +131,7 @@ index 0000000..0000000 100644
              checkUi_menuItems();
              checkUi_searchFieldVisibility();
              checkUi_topPanelVisible();
-@@ -14192,6 +14222,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14194,6 +14224,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      }
  
      private void checkUi_mainTabsVisible() {
@@ -141,7 +141,7 @@ index 0000000..0000000 100644
          final boolean mainTabsVisible = !searching && (blurredView == null || blurredView.getBackground() == null || blurredView.getAlpha() < 0.01f || blurredView.getVisibility() == View.GONE);
          if (mainTabsActivityController != null) {
              mainTabsActivityController.setTabsVisible(mainTabsVisible);
-@@ -14358,7 +14391,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14360,7 +14393,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
              boolean hasBottomBlur = false;
              if (hasMainTabs) {

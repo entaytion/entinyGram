@@ -23,6 +23,14 @@ object FolderMembershipHelper {
         }
     }
 
+    // entiny: local premium raises the client limit only, the server still counts folder chats as a regular account
+    @JvmStatic
+    fun serverLimit(account: Int): Int {
+        val controller = MessagesController.getInstance(account)
+        val premium = org.telegram.messenger.UserConfig.getInstance(account).isPremium && !InuConfig.LOCAL_PREMIUM.value
+        return if (premium) controller.dialogFiltersChatsLimitPremium else controller.dialogFiltersChatsLimitDefault
+    }
+
     @JvmStatic
     fun isLocallyIncluded(account: Int, filterId: Int, dialogId: Long): Boolean {
         if (!InuConfig.UNLIMITED_FOLDER_CHATS.value) return false

@@ -49,6 +49,19 @@ object PinHelper {
         }
     }
 
+    // entiny: local premium raises the client limit only, the server still counts pins as a regular account
+    @JvmStatic
+    fun serverLimit(account: Int, limit: Int, inFilter: Boolean, inFolder: Boolean, bulk: Boolean): Int {
+        if (!InuConfig.LOCAL_PREMIUM.value) return limit
+        val controller = MessagesController.getInstance(account)
+        return when {
+            inFilter -> controller.dialogFiltersChatsLimitDefault
+            inFolder -> controller.maxFolderPinnedDialogsCountDefault
+            bulk -> controller.dialogFiltersPinnedLimitDefault
+            else -> controller.maxPinnedDialogsCountDefault
+        }
+    }
+
     @JvmStatic
     fun isLocallyPinned(account: Int, folderId: Int, filter: MessagesController.DialogFilter?, dialogId: Long): Boolean {
         if (!InuConfig.UNLIMITED_PINNED_CHATS.value) return false
