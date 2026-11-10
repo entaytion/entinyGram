@@ -56,6 +56,7 @@ import org.telegram.ui.GroupCreateActivity
 object Schemas {
     // entiny: pre-schema deeplink slugs (tg://entinySettings/<slug>) that must keep resolving
     val LEGACY_ENTRY_SLUGS: Map<String, List<String>> = mapOf(
+        "always-show-downloads" to listOf("hide-downloads-button"),
         "allow-screenshots" to listOf("disable-flag-secure"),
         "blocked-messages-hide-replies" to listOf("blocked-messages-replies"),
         "chat-presence-dots" to listOf("chat-online-dots"),
@@ -680,12 +681,20 @@ object Schemas {
             toggle(InuConfig.DIALOG_AVATAR_OPENS_PROFILE, R.string.InuDialogAvatarOpensProfile, R.string.InuDialogAvatarOpensProfileInfo)
             custom(
                 "always-show-downloads", R.string.InuAlwaysShowDownloads,
-                build = { page, id ->
-                    page.iconCheck(id, R.drawable.inu_download_arrow, R.string.InuAlwaysShowDownloads, R.string.InuAlwaysShowDownloadsInfo, InuConfig.ALWAYS_SHOW_DOWNLOADS.value)
+                build = { _, id ->
+                    val mode = if (InuConfig.HIDE_DOWNLOADS_BUTTON.value) 2 else if (InuConfig.ALWAYS_SHOW_DOWNLOADS.value) 1 else 0
+                    val labels = listOf(R.string.InuMonetThemeAuto, R.string.InuAlwaysShowDownloadsInfo, R.string.InuHideDownloadsButtonInfo)
+                    UItem.asButton(id, R.drawable.inu_download_arrow, LocaleController.getString(R.string.InuAlwaysShowDownloads), LocaleController.getString(labels[mode]))
                 },
-                click = { _, view -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ALWAYS_SHOW_DOWNLOADS.toggle() },
+                click = { page, view ->
+                    val mode = if (InuConfig.HIDE_DOWNLOADS_BUTTON.value) 2 else if (InuConfig.ALWAYS_SHOW_DOWNLOADS.value) 1 else 0
+                    RadioItemOptions.show(page, view, listOf(R.string.InuMonetThemeAuto, R.string.InuAlwaysShowDownloadsInfo, R.string.InuHideDownloadsButtonInfo).map { LocaleController.getString(it) }, mode) { which ->
+                        InuConfig.ALWAYS_SHOW_DOWNLOADS.value = which == 1
+                        InuConfig.HIDE_DOWNLOADS_BUTTON.value = which == 2
+                        page.refresh()
+                    }
+                },
             )
-            toggle(InuConfig.HIDE_DOWNLOADS_BUTTON, R.string.InuHideDownloadsButton, R.string.InuHideDownloadsButtonInfo)
             toggle(
                 InuConfig.HIDE_DIALOG_PREVIEW, R.string.InuHideDialogPreview, R.string.InuHideDialogPreviewInfo,
                 onChange = { _, _ -> DialogPreviewHelper.refresh() },

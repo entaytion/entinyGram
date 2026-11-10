@@ -28,29 +28,21 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatHeaderSettings)))
         items.add(
             mkTwoLineCheckItem(
-                TOGGLE_CENTER_TITLE_CHATS,
-                R.string.InuCenterTitleChats,
-                R.string.InuCenterTitleChatsInfo,
-                InuConfig.CENTER_TITLE_CHATS.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
                 TOGGLE_HIDE_CHAT_AVATAR,
                 R.string.InuHideChatAvatar,
                 R.string.InuHideChatAvatarInfo,
                 InuConfig.HIDE_CHAT_AVATAR.value,
             )
         )
-        if (InuConfig.CENTER_TITLE_CHATS.value) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_IOS_CHAT_HEADER,
-                    R.string.InuIosChatHeader,
-                    R.string.InuIosChatHeaderInfo,
-                    InuConfig.IOS_CHAT_HEADER.value,
-                )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_IOS_CHAT_HEADER,
+                R.string.InuIosChatHeader,
+                R.string.InuIosChatHeaderInfo,
+                InuConfig.IOS_CHAT_HEADER.value,
             )
+        )
+        if (InuUtils.centerChatTitle()) {
             if (InuUtils.compactChatPill() && !InuUtils.hideChatAvatar()) {
                 items.add(
                     mkTwoLineCheckItem(
@@ -91,14 +83,16 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 )
             }
         }
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_CHAT_HEADER_NO_PILL,
-                R.string.InuChatHeaderNoPill,
-                R.string.InuChatHeaderNoPillInfo,
-                InuConfig.CHAT_HEADER_NO_PILL.value,
+        if (!InuConfig.NON_ISLAND_CHAT_ELEMENTS.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_CHAT_HEADER_NO_PILL,
+                    R.string.InuChatHeaderNoPill,
+                    R.string.InuChatHeaderNoPillInfo,
+                    InuConfig.CHAT_HEADER_NO_PILL.value,
+                )
             )
-        )
+        }
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTitleText)))
@@ -139,18 +133,15 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            TOGGLE_CENTER_TITLE_CHATS -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.CENTER_TITLE_CHATS.toggle()
-                refreshAll()
-            }
-
             TOGGLE_HIDE_CHAT_AVATAR -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_CHAT_AVATAR.toggle()
                 refreshAll()
             }
 
             TOGGLE_IOS_CHAT_HEADER -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.IOS_CHAT_HEADER.toggle()
+                val enabled = InuConfig.IOS_CHAT_HEADER.toggle()
+                if (enabled) InuConfig.CENTER_TITLE_CHATS.value = true
+                (view as? NotificationsCheckCell)?.isChecked = enabled
                 refreshAll()
             }
 
@@ -202,7 +193,6 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
-        private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
         private val TOGGLE_HIDE_CHAT_AVATAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
@@ -222,7 +212,6 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
             factory = ::ChatHeaderSettingsActivity,
             entries = listOf(
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
-                SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("hide-chat-avatar", R.string.InuHideChatAvatar, TOGGLE_HIDE_CHAT_AVATAR),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),

@@ -584,7 +584,6 @@
     <string name="InuDialogAvatarOpensProfileInfo">النقر على الصورة الرمزية لمحادثة في القائمة يفتح ملفها الشخصي مباشرة بدلاً من المحادثة.</string>
     <string name="InuAlwaysShowDownloads">زر التنزيلات</string>
     <string name="InuAlwaysShowDownloadsInfo">إظهار زر التنزيلات دائمًا في رأس المحادثات</string>
-    <string name="InuHideDownloadsButton">إخفاء زر التنزيلات</string>
     <string name="InuHideDownloadsButtonInfo">عدم إظهار زر التنزيلات في رأس الدردشات أبدًا</string>
     <string name="InuHideMyPhoneNumber">إخفاء رقم هاتفي</string>
     <string name="InuFonts">الخطوط</string>
@@ -770,7 +769,6 @@
     <string name="InuLiquidGlass">الزجاج السائل</string>
     <string name="InuLiquidGlassAngle">زاوية الزجاج السائل</string>
     <string name="InuLiquidGlassIntensity">شدة الزجاج السائل</string>
-    <string name="InuLiquidGlassTint">تظليل الزجاج السائل</string>
 
     <string name="InuReduceMenuMotion">تقليل حركة القوائم</string>
     <string name="InuReduceMenuMotionInfo">تخطي التتابع في قائمة السياق وتبسيط حركات قائمة الرسالة</string>
@@ -856,7 +854,6 @@
     <string name="InuForwardWithoutAuthor">بدون المرسل</string>
     <string name="InuForwardWithoutCaption">بدون تعليق</string>
     <string name="InuForwardLongTapOff">إيقاف</string>
-    <string name="InuLongTapChooseMode">السؤال في كل مرة</string>
     <string name="InuForwardNoQuote">إعادة توجيه بدون اقتباس</string>
     <string name="InuSelectionBottomNoQuote">زر بدون اقتباس في شريط التحديد</string>
     <string name="InuSelectionBottomNoQuoteInfo">يستبدل زر الرد بإعادة التوجيه بدون اقتباس عند تحديد الرسائل</string>
@@ -1103,8 +1100,6 @@
     <string name="InuMessageMenuOrderInfo">أعد ترتيب عناصر قائمة سياق الرسالة أو أخفِها. اسحب للنقل، وانقر للإخفاء.</string>
     <string name="InuMessageMenuOrderInfoBottom">اضغط مطولاً على عنصر لنقله إلى صف الإجراءات السريعة</string>
     <string name="InuMessageMenuReset">إعادة إلى الافتراضي</string>
-    <string name="InuEntinyMenu">entinyGram</string>
-    <string name="InuGroupEntinyMenu">تجميع ميزات entinyGram</string>
     <string name="InuMenuSlotDelete">حذف / نسخ الرابط</string>
     <string name="InuMenuSlotEditForward">تعديل / إعادة توجيه</string>
     <string name="InuMenuMoveToBottomRow">نقل إلى صف الإجراءات السريعة</string>
@@ -1225,8 +1220,10 @@
     <string name="InuAutoSaveStoriesInfo">يحفظ كل قصة تفتحها في المعرض، مرة واحدة. تُتخطى قصصك.</string>
     <string name="InuChatHeaderSettings">ترويسة المحادثة</string>
     <string name="InuChatHeaderSettingsInfo">المعاينة الحية أعلاه تتحدث فوراً عند تغيير الخيارات أدناه.</string>
-    <string name="InuCenterTitleChats">التوسيط في المحادثات/القنوات</string>
-    <string name="InuCenterTitleChatsInfo">يوسّط عنوان المحادثة وعنوانها الفرعي؛ وتبقى الصورة الرمزية في جهتها. يعمل بمفرده.</string>
+    <string name="InuCenterTitles">توسيط العناوين</string>
+    <string name="InuCenterTitleChats">العنوان داخل المحادثات</string>
+    <string name="InuCenterTitleDialogs">عنوان قائمة المحادثات</string>
+    <string name="InuCenterTitlePages">عناوين الصفحات الأخرى</string>
     <string name="InuCenterTitleRightAvatar">إظهار الصورة الرمزية على الجانب الآخر</string>
     <string name="InuIosChatHeader">كبسولة مضغوطة</string>
     <string name="InuIosChatHeaderInfo">كبسولة ترويسة محادثة مضغوطة بنمط iOS تطفو في المنتصف.</string>

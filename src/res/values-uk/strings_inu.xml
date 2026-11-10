@@ -747,7 +747,6 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>
-    <string name="InuLiquidGlassTint">Тонування рідкого скла</string>
 
     <string name="InuReduceMenuMotion">Зменшити анімації меню</string>
     <string name="InuReduceMenuMotionInfo">Спрощує анімацію виклику меню повідомлень</string>
@@ -839,7 +838,6 @@
     <string name="InuForwardWithoutAuthor">Без автора</string>
     <string name="InuForwardWithoutCaption">Без підпису</string>
     <string name="InuForwardLongTapOff">Вимкнено</string>
-    <string name="InuLongTapChooseMode">Запитувати щоразу</string>
     <string name="InuForwardNoQuote">Пересилка без цитування</string>
     <string name="InuSelectionBottomNoQuote">Кнопка «Без цитати» в панелі вибору</string>
     <string name="InuSelectionBottomNoQuoteInfo">Замінює кнопку «Відповісти» на пересилку без цитування при виборі повідомлень</string>
@@ -1165,7 +1163,10 @@
     <string name="InuSaveAnyStoryInfo">Дозволяє завантажувати будь-які історії в галерею без вимог Premium та обмежень автора.</string>
     <string name="InuAutoSaveStories">Автозбереження переглянутих історій</string>
     <string name="InuAutoSaveStoriesInfo">Зберігає в галерею кожну історію, яку ви відкриваєте, один раз. Власні історії пропускаються.</string>
-    <string name="InuCenterTitleChats">Центрувати заголовки</string>
+    <string name="InuCenterTitles">Центрувати заголовки</string>
+    <string name="InuCenterTitleChats">Заголовок у чатах</string>
+    <string name="InuCenterTitleDialogs">Заголовок списку чатів</string>
+    <string name="InuCenterTitlePages">Заголовки інших сторінок</string>
     <string name="InuCenterTitleRightAvatar">Показувати аватарку праворуч</string>
     <string name="InuChatTitleMarquee">Біжучий рядок для довгих назв</string>
     <string name="InuChatTitleMarqueeInfo">Назви та підписи в шапці чату, заголовки екранів і імʼя в профілі прокручуються біжучим рядком, якщо не вміщуються</string>
@@ -1256,8 +1257,6 @@
     <string name="InuBusinessBotStarted">Бізнес-бота запущено</string>
 
     <string name="InuMaterialProfileActions">Кнопки дій у профілі</string>
-    <string name="InuEntinyMenu">entinyGram</string>
-    <string name="InuGroupEntinyMenu">Згрупувати функції entinyGram</string>
     <string name="InuDialogsMenuOrder">Меню опцій</string>
     <string name="InuDialogsMenuItems">Пункти</string>
     <string name="InuDialogsMenuOrderInfo">Змінюйте порядок або приховуйте пункти меню ☰ екрана чатів. Перетягніть, щоб рухати, перемикач — щоб приховати.</string>
@@ -1806,7 +1805,6 @@
     <string name="InuDownloadDirectoryApplied">Застосовується лише до нових завантажень</string>
     <string name="InuPreviewMessage">Попередній перегляд</string>
     <string name="InuMinimize">Згорнути</string>
-    <string name="InuCenterTitleChatsInfo">Центрує заголовки в головному списку чатів, у чатах і каналах.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туди, де меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватар замість кнопки меню: натискання відкриває профіль, довге натискання — меню чату.</string>
     <string name="InuIosChatHeaderAvatarSwap">Поміняти тап і утримання місцями</string>
@@ -1861,7 +1859,6 @@
     <string name="InuDialogAvatarOpensProfileInfo">Тап по аватарці чату в списку чатів відкриває профіль замість самого чату.</string>
     <string name="InuAlwaysShowDownloads">Кнопка завантажень</string>
     <string name="InuAlwaysShowDownloadsInfo">Завжди показувати кнопку завантажень у шапці чатів</string>
-    <string name="InuHideDownloadsButton">Сховати кнопку завантажень</string>
     <string name="InuHideDownloadsButtonInfo">Ніколи не показувати кнопку завантажень у шапці чатів</string>
     <string name="InuIosStyle">Стиль iOS</string>
     <string name="InuIosSettings">Налаштування iOS</string>
@@ -2321,8 +2318,6 @@
     <string name="InuSendServerError">Telegram має проблеми з доставкою повідомлення. Повторюємо спроби…</string>
     <string name="InuForceNoVibration">Вимкнути всю вібрацію</string>
     <string name="InuForceNoVibrationInfo">Вимикає вібровідгук, вібрацію в застосунку та сповіщень, навіть якщо вона ввімкнена в налаштуваннях Telegram.</string>
-    <string name="InuCustomDeletedMark">Власна мітка видалення</string>
-    <string name="InuCustomEditedMark">Власна мітка редагування</string>
     <string name="InuSystemMessageFontScale">Системний розмір шрифту</string>
     <string name="InuSystemMessageFontScaleInfo">Застосовує масштаб шрифту Android до тексту повідомлень. Після зміни відкрийте застосунок знову.</string>
     <string name="InuScrimBlurStrength">Розмиття фону під меню</string>

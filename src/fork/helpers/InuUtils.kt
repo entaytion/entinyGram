@@ -138,11 +138,11 @@ public object InuUtils {
     }
 
     @JvmStatic
-    fun centerChatTitle(): Boolean = desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
+    fun centerChatTitle(): Boolean =
+        desu.inugram.InuConfig.CENTER_TITLE_CHATS.value || desu.inugram.InuConfig.IOS_CHAT_HEADER.value
 
     @JvmStatic
-    fun compactChatPill(): Boolean =
-        centerChatTitle() && desu.inugram.InuConfig.IOS_CHAT_HEADER.value
+    fun compactChatPill(): Boolean = desu.inugram.InuConfig.IOS_CHAT_HEADER.value
 
     @JvmStatic
     fun hideChatAvatar(): Boolean = desu.inugram.InuConfig.HIDE_CHAT_AVATAR.value
@@ -171,7 +171,7 @@ public object InuUtils {
 
     @JvmStatic
     fun shouldCenterTitle(fragment: Any?): Boolean {
-        if (fragment is DialogsActivity) return centerChatTitle() && fragment.inu_isMainDialogsScreen()
+        if (fragment is DialogsActivity) return desu.inugram.InuConfig.CENTER_TITLE_DIALOGS.value && fragment.inu_isMainDialogsScreen()
         if (fragment == null) return false
         if (fragment.javaClass.name == "org.telegram.ui.ChatActivity") {
             return centerChatTitle()

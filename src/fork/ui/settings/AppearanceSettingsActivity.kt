@@ -58,12 +58,34 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
     }
 
-    override val expandableGroups get() = listOf(nonIslandGroup)
+    private val centerTitleGroup by lazy {
+        ExpandableBoolGroup(
+            LocaleController.getString(R.string.InuCenterTitles),
+            listOf(
+                ExpandableBoolGroup.Option(R.string.InuCenterTitleDialogs, InuConfig.CENTER_TITLE_DIALOGS, TOGGLE_CENTER_TITLE_DIALOGS),
+                ExpandableBoolGroup.Option(R.string.InuCenterTitleChats, InuConfig.CENTER_TITLE_CHATS, TOGGLE_CENTER_TITLE_CHATS),
+                ExpandableBoolGroup.Option(R.string.InuCenterTitlePages, InuConfig.CENTER_TITLE_PAGES, TOGGLE_CENTER_TITLE_PAGES),
+            ),
+            sectionId = SECTION_CENTER_TITLE,
+        )
+    }
+
+    override val expandableGroups get() = listOf(nonIslandGroup, centerTitleGroup)
+
+    private fun applyCenterTitleChanges(ids: Collection<Int>) {
+        if (TOGGLE_CENTER_TITLE_CHATS in ids && !InuConfig.CENTER_TITLE_CHATS.value) InuConfig.IOS_CHAT_HEADER.value = false
+        if (TOGGLE_CENTER_TITLE_PAGES in ids) rebuildAll()
+        else if (TOGGLE_CENTER_TITLE_DIALOGS in ids) softRebuild()
+        listView?.adapter?.update(true)
+    }
 
     private fun applyNonIslandChanges(ids: Collection<Int>) {
         if (TOGGLE_NON_ISLAND_HEADERS in ids) rebuildAll()
         else if (TOGGLE_NON_ISLAND_FOLDERS_BAR in ids || TOGGLE_NON_ISLAND_GLOBAL_SEARCH in ids || TOGGLE_HIDE_FADE_VIEW in ids) softRebuild()
-        if (TOGGLE_NON_ISLAND_CHAT_ELEMENTS in ids) InuHooks.syncChatInputRowHeight()
+        if (TOGGLE_NON_ISLAND_CHAT_ELEMENTS in ids) {
+            if (InuConfig.NON_ISLAND_CHAT_ELEMENTS.value) InuConfig.IOS_INPUT_APPEARANCE.value = false
+            InuHooks.syncChatInputRowHeight()
+        }
         listView?.adapter?.update(true)
     }
 
@@ -86,6 +108,8 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDesignStyle)))
         items.add(mkTwoLineEntry(BUTTON_IOS_STYLE, R.drawable.msg_newphone, LocaleController.getString(R.string.InuIosSettings), LocaleController.getString(R.string.InuIosSettingsInfo)))
         items.add(mkTwoLineEntry(BUTTON_MATERIAL3, R.drawable.inu_tabler_layout_cards, LocaleController.getString(R.string.InuMaterial3), LocaleController.getString(R.string.InuMaterial3SettingsInfo)))
+        items.add(mkSubPageButton(BUTTON_CHAT_HEADER, R.drawable.inu_tabler_app_window, LocaleController.getString(R.string.InuChatHeaderSettings)))
+        centerTitleGroup.addTo(items) { changed -> applyCenterTitleChanges(changed.map { it.id }) }
         nonIslandGroup.addTo(items, nonIslandInfoItem(ctx)) { changed -> applyNonIslandChanges(changed.map { it.id }) }
         items.add(UItem.asShadow(null))
 
@@ -208,6 +232,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (nonIslandGroup.handleClick(item, view) { changed -> applyNonIslandChanges(listOfNotNull(changed?.id)) }) return
+        if (centerTitleGroup.handleClick(item, view) { changed -> applyCenterTitleChanges(listOfNotNull(changed?.id)) }) return
 
         when (item.id) {
 
@@ -274,6 +299,8 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             }
 
             BUTTON_IOS_STYLE -> presentFragment(IosStyleSettingsActivity())
+            BUTTON_CHAT_HEADER -> presentFragment(ChatHeaderSettingsActivity())
+
             BUTTON_MATERIAL3 -> presentFragment(Material3SettingsActivity())
 
         }
@@ -301,6 +328,11 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val BUTTON_TABLET_MODE = InuUtils.generateId()
         private val BUTTON_IOS_STYLE = InuUtils.generateId()
         private val BUTTON_MATERIAL3 = InuUtils.generateId()
+        private val BUTTON_CHAT_HEADER = InuUtils.generateId()
+        private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
+        private val TOGGLE_CENTER_TITLE_DIALOGS = InuUtils.generateId()
+        private val TOGGLE_CENTER_TITLE_PAGES = InuUtils.generateId()
+        private val SECTION_CENTER_TITLE = InuUtils.generateId()
         private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
         private val TOGGLE_OPTIMIZED_ATTACHMENT_MENU = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_BACKGROUNDS = InuUtils.generateId()
@@ -337,6 +369,10 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),
                 SearchRegistry.Entry("tablet-mode", R.string.InuTabletMode, BUTTON_TABLET_MODE),
+                SearchRegistry.Entry("chat-header-settings", R.string.InuChatHeaderSettings, BUTTON_CHAT_HEADER),
+                SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
+                SearchRegistry.Entry("center-title-dialogs", R.string.InuCenterTitleDialogs, TOGGLE_CENTER_TITLE_DIALOGS),
+                SearchRegistry.Entry("center-title-pages", R.string.InuCenterTitlePages, TOGGLE_CENTER_TITLE_PAGES),
                 SearchRegistry.Entry("non-island-folders-bar", R.string.InuNonIslandFoldersBar, TOGGLE_NON_ISLAND_FOLDERS_BAR),
                 SearchRegistry.Entry("non-island-shared-media-tabs", R.string.InuNonIslandSharedMediaTabs, TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS),
                 SearchRegistry.Entry("non-island-global-search", R.string.InuNonIslandGlobalSearch, TOGGLE_NON_ISLAND_GLOBAL_SEARCH),

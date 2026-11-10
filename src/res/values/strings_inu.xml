@@ -748,7 +748,6 @@
     <string name="InuDialogAvatarOpensProfileInfo">Tapping a chat\'s avatar in the chat list opens their profile directly instead of the chat.</string>
     <string name="InuAlwaysShowDownloads">Downloads button</string>
     <string name="InuAlwaysShowDownloadsInfo">Always show the downloads button in the chats header</string>
-    <string name="InuHideDownloadsButton">Hide downloads button</string>
     <string name="InuHideDownloadsButtonInfo">Never show the downloads button in the chats header</string>
     <string name="InuHideMyPhoneNumber">Hide my phone number</string>
     <string name="InuFonts">Fonts</string>
@@ -964,7 +963,6 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass angle</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass intensity</string>
-    <string name="InuLiquidGlassTint">Liquid Glass tint</string>
 
     <string name="InuReduceMenuMotion">Reduce menu motion</string>
     <string name="InuReduceMenuMotionInfo">Skip context menu stagger, simplify message menu animations and use plain popups for header menus</string>
@@ -1064,7 +1062,6 @@
     <string name="InuForwardWithoutAuthor">Without author</string>
     <string name="InuForwardWithoutCaption">Without caption</string>
     <string name="InuForwardLongTapOff">Off</string>
-    <string name="InuLongTapChooseMode">Ask every time</string>
     <string name="InuForwardNoQuote">No-Quote forward</string>
     <string name="InuSelectionBottomNoQuote">No-Quote button in selection bar</string>
     <string name="InuSelectionBottomNoQuoteInfo">Replaces the Reply button with No-Quote forward when selecting messages</string>
@@ -1326,8 +1323,6 @@
     <string name="InuMessageMenuOrderInfo">Reorder or hide message context menu items. Drag to move, tap to hide.</string>
     <string name="InuMessageMenuOrderInfoBottom">Long-tap an item to move it to the quick actions row</string>
     <string name="InuMessageMenuReset">Reset to default</string>
-    <string name="InuEntinyMenu">entinyGram</string>
-    <string name="InuGroupEntinyMenu">Group entinyGram features</string>
     <string name="InuMenuSlotDelete">Delete / Copy link</string>
     <string name="InuMenuSlotEditForward">Edit / Forward</string>
     <string name="InuMenuMoveToBottomRow">Move to quick actions row</string>
@@ -1465,8 +1460,10 @@
     <string name="InuAutoSaveStoriesInfo">Saves every story you open to the gallery, once. Your own stories are skipped.</string>
     <string name="InuChatHeaderSettings">Chat header</string>
     <string name="InuChatHeaderSettingsInfo">Live preview above updates instantly as you change the options below.</string>
-    <string name="InuCenterTitleChats">Center titles</string>
-    <string name="InuCenterTitleChatsInfo">Centers titles in the main chat list and inside chats and channels.</string>
+    <string name="InuCenterTitles">Center titles</string>
+    <string name="InuCenterTitleChats">Title in chats</string>
+    <string name="InuCenterTitleDialogs">Chat list title</string>
+    <string name="InuCenterTitlePages">Titles on other pages</string>
     <string name="InuCenterTitleRightAvatar">Show avatar on the right</string>
     <string name="InuIosChatHeader">Compact pill</string>
     <string name="InuIosChatHeaderInfo">iOS-style compact chat header pill floating in the middle.</string>
@@ -2306,8 +2303,6 @@
     <string name="InuSendServerError">Telegram is having trouble delivering your message. Still retrying…</string>
     <string name="InuForceNoVibration">Disable all vibration</string>
     <string name="InuForceNoVibrationInfo">Turn off haptics, in-app and notification vibration, even if enabled in Telegram settings.</string>
-    <string name="InuCustomDeletedMark">Custom deleted mark</string>
-    <string name="InuCustomEditedMark">Custom edited mark</string>
     <string name="InuSystemMessageFontScale">Follow system font size</string>
     <string name="InuSystemMessageFontScaleInfo">Applies Android font scaling to message text. Reopen the app after changing this setting.</string>
 </resources>

@@ -584,7 +584,6 @@
     <string name="InuDialogAvatarOpensProfileInfo">ضربه روی آواتار یک گفتگو در فهرست، به‌جای گفتگو مستقیماً نمایه او را باز می‌کند.</string>
     <string name="InuAlwaysShowDownloads">دکمه دانلودها</string>
     <string name="InuAlwaysShowDownloadsInfo">همیشه دکمه دانلودها را در سربرگ چت‌ها نشان بده</string>
-    <string name="InuHideDownloadsButton">پنهان کردن دکمه دانلودها</string>
     <string name="InuHideDownloadsButtonInfo">دکمه دانلودها هرگز در سربرگ گفتگوها نمایش داده نشود</string>
     <string name="InuHideMyPhoneNumber">پنهان کردن شماره تلفن من</string>
     <string name="InuFonts">فونت‌ها</string>
@@ -770,7 +769,6 @@
     <string name="InuLiquidGlass">شیشه مایع</string>
     <string name="InuLiquidGlassAngle">زاویه شیشه مایع</string>
     <string name="InuLiquidGlassIntensity">شدت شیشه مایع</string>
-    <string name="InuLiquidGlassTint">رنگ‌مایه شیشه مایع</string>
 
     <string name="InuReduceMenuMotion">کاهش حرکت منوها</string>
     <string name="InuReduceMenuMotionInfo">رد کردن نوبت‌بندی منوی زمینه و ساده‌سازی انیمیشن‌های منوی پیام</string>
@@ -856,7 +854,6 @@
     <string name="InuForwardWithoutAuthor">بدون فرستنده</string>
     <string name="InuForwardWithoutCaption">بدون توضیح</string>
     <string name="InuForwardLongTapOff">خاموش</string>
-    <string name="InuLongTapChooseMode">هر بار بپرس</string>
     <string name="InuForwardNoQuote">بازارسال بدون نقل‌قول</string>
     <string name="InuSelectionBottomNoQuote">دکمه بدون نقل‌قول در نوار انتخاب</string>
     <string name="InuSelectionBottomNoQuoteInfo">هنگام انتخاب پیام‌ها، دکمه پاسخ را با بازارسال بدون نقل‌قول جایگزین می‌کند</string>
@@ -1095,8 +1092,6 @@
     <string name="InuMessageMenuOrderInfo">موارد منوی زمینه پیام را مرتب یا پنهان کنید. برای جابه‌جایی بکشید، برای پنهان کردن ضربه بزنید.</string>
     <string name="InuMessageMenuOrderInfoBottom">برای انتقال یک مورد به ردیف کنش‌های سریع، روی آن نگه دارید</string>
     <string name="InuMessageMenuReset">بازنشانی به پیش‌فرض</string>
-    <string name="InuEntinyMenu">entinyGram</string>
-    <string name="InuGroupEntinyMenu">گروه‌بندی ویژگی‌های entinyGram</string>
     <string name="InuMenuSlotDelete">حذف / کپی پیوند</string>
     <string name="InuMenuSlotEditForward">ویرایش / بازارسال</string>
     <string name="InuMenuMoveToBottomRow">انتقال به ردیف کنش‌های سریع</string>
@@ -1213,8 +1208,10 @@
     <string name="InuAutoSaveStoriesInfo">هر استوری‌ای را که باز می‌کنید یک‌بار در گالری ذخیره می‌کند. استوری‌های خودتان رد می‌شوند.</string>
     <string name="InuChatHeaderSettings">سرصفحه گفتگو</string>
     <string name="InuChatHeaderSettingsInfo">پیش‌نمایش زنده بالا با تغییر گزینه‌های پایین بی‌درنگ به‌روز می‌شود.</string>
-    <string name="InuCenterTitleChats">وسط‌چین در گفتگوها/کانال‌ها</string>
-    <string name="InuCenterTitleChatsInfo">عنوان و زیرعنوان گفتگو را وسط‌چین می‌کند؛ آواتار در جای خود می‌ماند. به‌تنهایی کار می‌کند.</string>
+    <string name="InuCenterTitles">وسط‌چین کردن عنوان‌ها</string>
+    <string name="InuCenterTitleChats">عنوان در گفتگوها</string>
+    <string name="InuCenterTitleDialogs">عنوان فهرست گفتگوها</string>
+    <string name="InuCenterTitlePages">عنوان صفحه‌های دیگر</string>
     <string name="InuCenterTitleRightAvatar">نمایش آواتار در طرف دیگر</string>
     <string name="InuIosChatHeader">قرص فشرده</string>
     <string name="InuIosChatHeaderInfo">قرص فشرده سرصفحه گفتگو به سبک iOS که در وسط شناور است.</string>

@@ -45,7 +45,6 @@ import desu.inugram.helpers.plugins.ui.PluginActions
 import desu.inugram.helpers.plugins.ui.PluginChatHistory
 import desu.inugram.helpers.plugins.ui.PluginIcons
 import desu.inugram.helpers.plugins.ui.RegisteredActionRow
-import desu.inugram.helpers.plugins.telegram.PluginTranslation
 import desu.inugram.ui.settings.PluginsActivity
 // #else
 import desu.inugram.ui.settings.InuSettingsActivity
@@ -117,7 +116,6 @@ import org.telegram.ui.Components.EditTextCaption
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.PopupSwipeBackLayout
-import org.telegram.ui.Components.RLottieDrawable
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble
 import org.telegram.ui.Components.ReactionsContainerLayout
 import org.telegram.ui.Components.ScaleStateListAnimator
@@ -192,9 +190,7 @@ object ChatHelper {
     const val OPTION_LOCAL_EDIT_RESET = 535
     const val OPTION_SAVE_VOICE_TO_DOWNLOADS = 536
     const val OPTION_BOOKMARK = 537
-    const val OPTION_ENTINY_GROUP = 538
 
-    val groupedMenuEntries = ArrayList<Triple<CharSequence, Int, Int>>()
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -232,7 +228,7 @@ object ChatHelper {
     @JvmStatic
     fun timeAdditionsHash(msg: MessageObject?): Int {
         if (msg == null) return 0
-        var hash = InuConfig.CUSTOM_EDITED_MARK.value.hashCode()
+        var hash = 0
         if (TranslateHelper.hasTimeAddition(msg)) {
             hash = hash * 31 + 1
             hash = hash * 31 + TranslateHelper.timeAdditionsHash(msg)
@@ -244,7 +240,6 @@ object ChatHelper {
             hash = hash * 31 + 3
             hash = hash * 31 + InuConfig.DELETED_MARK_COLOR.value
             hash = hash * 31 + InuConfig.DELETED_MARK_STYLE.value
-            hash = hash * 31 + InuConfig.CUSTOM_DELETED_MARK.value.hashCode()
         }
         val forwards = getForwardsCount(msg)
         if (forwards > 0) {
@@ -325,12 +320,7 @@ object ChatHelper {
             sb.append(LocaleController.formatString(R.string.InuReadAt, LocaleController.formatDateTime(it.toLong(), true)))
             sb.append(" ")
         }
-        val editedLabel = if (edited && !InuConfig.COMPACT_EDITED.value) InuConfig.CUSTOM_EDITED_MARK.value else ""
-        val defaultEditedLabel = if (editedLabel.isNotEmpty()) LocaleController.getString(R.string.EditedMessage) + " " else ""
-        val displayTime = if (defaultEditedLabel.isNotEmpty() && time.startsWith(defaultEditedLabel)) {
-            SpannableStringBuilder(time).replace(0, defaultEditedLabel.length, "$editedLabel ")
-        } else time
-        val result = if (sb.isEmpty()) displayTime else sb.append(displayTime)
+        val result = if (sb.isEmpty()) time else sb.append(time)
         timePrefixCache[msg] = CachedTimePrefix(key, result)
         return result
     }
@@ -350,7 +340,7 @@ object ChatHelper {
 
     @JvmStatic
     fun appendDeletedMarkText(sb: SpannableStringBuilder) {
-        val text = InuConfig.CUSTOM_DELETED_MARK.value.ifEmpty { LocaleController.getString(R.string.InuDeletedMarkText) }
+        val text = LocaleController.getString(R.string.InuDeletedMarkText)
         val markColor = InuConfig.DELETED_MARK_COLOR.value
         if (markColor == 0) {
             sb.append(text)
@@ -516,7 +506,6 @@ object ChatHelper {
         noforwards: Boolean,
         allowSendActions: Boolean
     ) {
-        groupedMenuEntries.clear()
         if (allowSendActions && !noforwards && activity.currentChat != null && !ChatObject.isChannelAndNotMegaGroup(activity.currentChat)
             // #if PLUGINS
             || PluginChatHistory.showsInChat(activity, selectedObject)
@@ -760,7 +749,6 @@ object ChatHelper {
 
         reservePluginItems(items, options, icons, activity, selectedObject, selectedObjectGroup)
         // #endif
-        groupEntinyMenuItems(items, options, icons)
         applyMessageMenuOrder(items, options, icons)
     }
 
@@ -843,10 +831,6 @@ object ChatHelper {
             val menu = messageMenu ?: return
             cell.setRightIcon(R.drawable.msg_arrowright)
             if (menu.done) bindActionsCell(menu, cell) else menu.actionsCell = cell
-            return
-        }
-        if (option == OPTION_ENTINY_GROUP) {
-            cell.setRightIcon(R.drawable.msg_arrowright)
             return
         }
         if (option < PluginActions.OPTION_BASE) return
@@ -1015,20 +999,33 @@ object ChatHelper {
         selectedObjectGroup: MessageObject.GroupedMessages?,
     ): Boolean {
         val rowAtTop = bottom.isNotEmpty() && InuConfig.MESSAGE_MENU_QUICK_ACTIONS_TOP.value
+        bottomQuickRow = null
         if ((bottom.isEmpty() || rowAtTop) && viewsAdder == null) return false
 
-        popupLayout.addView(
-            ActionBarPopupWindow.GapView(context, resourcesProvider),
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8)
-        )
+        val gap = ActionBarPopupWindow.GapView(context, resourcesProvider)
+        popupLayout.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8))
         if (bottom.isNotEmpty() && !rowAtTop) {
-            popupLayout.addView(
-                buildQuickRow(activity, popupLayout, context, resourcesProvider, bottom, selectedObject, selectedObjectGroup),
-                LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT)
-            )
+            val row = buildQuickRow(activity, popupLayout, context, resourcesProvider, bottom, selectedObject, selectedObjectGroup)
+            popupLayout.addView(row, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+            if (viewsAdder == null) bottomQuickRow = java.lang.ref.WeakReference(gap to row)
         }
         viewsAdder?.run()
         return true
+    }
+
+    private var bottomQuickRow: java.lang.ref.WeakReference<Pair<View, View>>? = null
+
+    // entiny: a height-capped menu scrolls inside, so the quick row moves up where it stays in view
+    @JvmStatic
+    fun moveQuickRowToTop() {
+        val (gap, row) = bottomQuickRow?.get() ?: return
+        bottomQuickRow = null
+        val list = row.parent as? LinearLayout ?: return
+        if (gap.parent !== list) return
+        list.removeView(row)
+        list.removeView(gap)
+        list.addView(gap, 0)
+        list.addView(row, 0)
     }
 
     @JvmStatic
@@ -2464,27 +2461,6 @@ object ChatHelper {
     }
 
     @JvmStatic
-    private fun groupEntinyMenuItems(items: ArrayList<CharSequence>, options: ArrayList<Int>, icons: ArrayList<Int>) {
-        if (!InuConfig.GROUP_ENTINY_MENU.value) return
-        groupedMenuEntries.clear()
-        val toGroup = ArrayList<Int>()
-        for (i in options.indices) {
-            val opt = options[i]
-            if (opt in 500..999 && opt != OPTION_ENTINY_GROUP) toGroup.add(i)
-        }
-        if (toGroup.isEmpty()) return
-        val collected = ArrayList<Triple<CharSequence, Int, Int>>()
-        for (i in toGroup.sortedDescending()) {
-            collected.add(0, Triple(items[i], options[i], icons[i]))
-            items.removeAt(i); options.removeAt(i); icons.removeAt(i)
-        }
-        groupedMenuEntries.addAll(collected)
-        items.add(LocaleController.getString(R.string.InuEntinyMenu))
-        options.add(OPTION_ENTINY_GROUP)
-        icons.add(R.drawable.msg_settings_old)
-    }
-
-    @JvmStatic
     fun onMenuOptionClick(
         activity: ChatActivity,
         popupLayout: ActionBarPopupWindow.ActionBarPopupWindowLayout,
@@ -2496,17 +2472,6 @@ object ChatHelper {
         if (message == null) return false
         if (option == OPTION_DETAILS) {
             return MessageDetailsHelper.openDetailsSubmenu(activity, popupLayout, cell, message, group)
-        }
-        if (option == OPTION_ENTINY_GROUP) {
-            if (groupedMenuEntries.isEmpty()) return true
-            return openLongTapSubmenu(activity, popupLayout, cell) { submenu ->
-                for ((label, opt, icon) in groupedMenuEntries) {
-                    submenu.add(icon, label) {
-                        processMenuOption(opt, activity, message, group)
-                        activity.closeMenu()
-                    }
-                }
-            }
         }
         // #if PLUGINS
         if (option == OPTION_PLUGIN_ACTIONS) {
@@ -2537,17 +2502,7 @@ object ChatHelper {
             }
         }
         // #endif
-        if (option != OPTION_REPEAT) return false
-        if (InuConfig.REPEAT_MODE.value != InuConfig.RepeatModeItem.ASK) return false
-        if (availableRepeatModes(activity, message, group).size < 2) return false
-        return openLongTapSubmenu(activity, popupLayout, cell) { swb ->
-            swb.add(R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) {
-                activity.processSelectedOption(OPTION_REPEAT_COPY)
-            }
-            swb.add(R.drawable.msg_forward, LocaleController.getString(R.string.Forward)) {
-                activity.processSelectedOption(OPTION_REPEAT_FORWARD)
-            }
-        }
+        return false
     }
 
     @JvmStatic
@@ -2574,21 +2529,6 @@ object ChatHelper {
         return when (option) {
             ChatActivity.OPTION_FORWARD -> when (InuConfig.FORWARD_LONG_TAP_ACTION.value) {
                 InuConfig.ForwardLongTapItem.OFF -> false
-                InuConfig.ForwardLongTapItem.CHOOSE_MODE -> openLongTapSubmenu(activity, popupLayout, cell) { swb ->
-                    swb.add(R.drawable.msg_forward, LocaleController.getString(R.string.Forward)) {
-                        activity.processSelectedOption(ChatActivity.OPTION_FORWARD)
-                    }
-                    swb.add(lottieIcon(R.raw.name_hide), LocaleController.getString(R.string.InuForwardWithoutAuthor)) {
-                        activity.processSelectedOption(ChatActivity.OPTION_FORWARD)
-                        pendingHideAuthor = true
-                    }
-                    if (hasCaption(message, group)) {
-                        swb.add(lottieIcon(R.raw.caption_hide), LocaleController.getString(R.string.InuForwardWithoutCaption)) {
-                            activity.processSelectedOption(ChatActivity.OPTION_FORWARD)
-                            pendingHideCaption = true
-                        }
-                    }
-                }
 
                 InuConfig.ForwardLongTapItem.WITHOUT_AUTHOR -> {
                     activity.processSelectedOption(ChatActivity.OPTION_FORWARD)
@@ -2607,7 +2547,6 @@ object ChatHelper {
 
             OPTION_REPEAT -> {
                 val preferred = InuConfig.REPEAT_MODE.value
-                if (preferred == InuConfig.RepeatModeItem.ASK) return false
                 val opposite = if (preferred == InuConfig.RepeatModeItem.COPY) {
                     InuConfig.RepeatModeItem.FORWARD
                 } else {
@@ -2625,41 +2564,11 @@ object ChatHelper {
                 true
             }
 
-            // #if PLUGINS
-            ChatActivity.OPTION_TRANSLATE -> {
-                val providers = PluginTranslation.providers.filter { it.session.canDispatch() }
-                if (!InuConfig.PLUGINS_ENABLED.value || providers.isEmpty()) return false
-                openLongTapSubmenu(activity, popupLayout, cell) { swb ->
-                    val names = listOf("" to LocaleController.getString(R.string.InuTranslateProviderTelegram)) +
-                        providers.map { it.key to it.name }
-                    for ((key, name) in names) {
-                        swb.add(R.drawable.msg_translate, name) {
-                            TranslateHelper.triggerTranslate(activity, message, group, key)
-                            activity.closeMenu()
-                        }
-                    }
-                }
-            }
-            // #endif
-
             ChatActivity.OPTION_REPLY -> {
                 val noforwards = activity.isPeerNoForwards || RestrictedFeaturesHelper.noforwards(message.messageOwner)
                 if (noforwards) return false
                 when (InuConfig.REPLY_LONG_TAP_ACTION.value) {
                     InuConfig.ReplyLongTapItem.OFF -> false
-                    InuConfig.ReplyLongTapItem.CHOOSE_MODE -> openLongTapSubmenu(activity, popupLayout, cell) { swb ->
-                        swb.add(R.drawable.menu_reply, LocaleController.getString(R.string.Reply)) {
-                            activity.processSelectedOption(ChatActivity.OPTION_REPLY)
-                        }
-                        swb.add(R.drawable.menu_reply, LocaleController.getString(R.string.InuReplyIn)) {
-                            activity.processSelectedOption(OPTION_REPLY_IN)
-                        }
-                        if (canReplyInDms(activity, message)) {
-                            swb.add(R.drawable.msg_mention, LocaleController.getString(R.string.InuReplyInDms)) {
-                                activity.processSelectedOption(OPTION_REPLY_IN_DMS)
-                            }
-                        }
-                    }
 
                     InuConfig.ReplyLongTapItem.REPLY_IN -> {
                         activity.processSelectedOption(OPTION_REPLY_IN)
@@ -2702,7 +2611,6 @@ object ChatHelper {
         val menuWidthPx = popupLayout.measuredWidth - popupLayout.paddingLeft - popupLayout.paddingRight
         swb.setMinWidth((menuWidthPx / AndroidUtilities.density).roundToInt())
         swb.add(R.drawable.ic_ab_back, LocaleController.getString(R.string.Back)) { swipeBack.closeForeground() }
-        swb.addGap()
         fill(swb)
 
         val overlapBelow = reserveSubmenuRoom(popupLayout, swipeBack, swb.linearLayout)
@@ -2785,10 +2693,7 @@ object ChatHelper {
         val spec = MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000f), MeasureSpec.AT_MOST)
         submenu.measure(spec, spec)
         val slack = (swipeBack.measuredHeight - submenu.measuredHeight).coerceAtLeast(0)
-        var headerHeight = 0
-        for (i in 0 until 2.coerceAtMost(submenu.childCount)) {
-            headerHeight += submenu.getChildAt(i).measuredHeight
-        }
+        val headerHeight = submenu.getChildAt(0)?.measuredHeight ?: 0
         val menuTop = (swipeBack.getChildAt(0).layoutParams as ViewGroup.MarginLayoutParams).topMargin
         return (anchorY.toInt() - headerHeight).coerceIn(minOf(menuTop, slack), slack)
     }
@@ -2821,13 +2726,6 @@ object ChatHelper {
         chat.replyingMessageObject = replyTarget
         chat.showFieldPanelForReply(replyTarget)
         return true
-    }
-
-    private fun lottieIcon(rawRes: Int): RLottieDrawable {
-        val size = AndroidUtilities.dp(24f)
-        return RLottieDrawable(rawRes, size, size).apply {
-            setCurrentFrame(0)
-        }
     }
 
     @JvmStatic

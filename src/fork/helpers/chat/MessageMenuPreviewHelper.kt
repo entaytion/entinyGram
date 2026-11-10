@@ -1,5 +1,7 @@
 package desu.inugram.helpers.chat
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +21,7 @@ object MessageMenuPreviewHelper {
         reactions: ReactionsContainerLayout?,
         dismiss: Runnable,
     ): Column? {
-        if (!InuConfig.IOS_MESSAGE_MENU.value || InuConfig.DISABLE_SCRIM_BLUR.value) return null
+        if (!InuConfig.IOS_MESSAGE_MENU.value) return null
         if (cell.messageObject == null) return null
         return Column(context, cell, menu, reactions?.takeIf { it.parent != null }, dismiss)
     }
@@ -66,7 +68,7 @@ object MessageMenuPreviewHelper {
             }
         }
 
-        val view =MessageMenuOverlay(context, menu, reactions, object : MessageMenuOverlay.Listener {
+        val view = MessageMenuOverlay(context, menu, reactions, object : MessageMenuOverlay.Listener {
             private val location = IntArray(2)
 
             override fun contains(screenX: Float, screenY: Float): Boolean {
@@ -84,6 +86,17 @@ object MessageMenuPreviewHelper {
 
             override fun dismiss() = dismiss.run()
         })
+
+        private var closing = false
+
+        fun close(done: Runnable): Boolean {
+            if (closing) return true
+            closing = true
+            view.animate().alpha(0f).setDuration(150).setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) = done.run()
+            }).start()
+            return true
+        }
 
         private fun scrollBy(delta: Float) {
             if (minScroll >= 0f) return
@@ -146,14 +159,13 @@ object MessageMenuPreviewHelper {
                 }
             }
 
-            menu.setMaxHeight(0)
-            val width = (list.width - dp(12f)).coerceAtLeast(1)
-            menu.measure(
-                View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.AT_MOST),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            )
-            val menuWidth = menu.measuredWidth
-            val menuHeight = menu.measuredHeight
+            menu.setMaxHeight(Math.round(viewportBottom - viewportTop))
+            menu.inu_setMaxHeight(0)
+            val widthSpec = View.MeasureSpec.makeMeasureSpec((list.width - dp(12f)).coerceAtLeast(1), View.MeasureSpec.AT_MOST)
+            val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            menu.measure(widthSpec, heightSpec)
+            var menuWidth = menu.measuredWidth
+            var menuHeight = menu.measuredHeight
 
             val reactionsHeight = if (reactions != null) {
                 view.measureReactions(Math.round(list.width - dp(12f).toFloat()))
@@ -181,9 +193,17 @@ object MessageMenuPreviewHelper {
                 viewTop = columnTop
                 scroll = 0f
             } else {
-                minScroll = -(total - available)
-                clipTop = viewTop
                 val visiblePost = minOf(postHeight, maxOf(available * 0.25f, dp(120f).toFloat()))
+                val room = Math.round(available - visiblePost)
+                if (menuHeight > room) {
+                    ChatHelper.moveQuickRowToTop()
+                    menu.setMaxHeight(room)
+                    menu.measure(widthSpec, heightSpec)
+                    menuWidth = menu.measuredWidth
+                    menuHeight = menu.measuredHeight
+                }
+                minScroll = -(postHeight + menuHeight - available)
+                clipTop = viewTop
                 scroll = maxOf(minScroll, -(postHeight - visiblePost))
             }
             shift = viewTop + scroll - originalTop

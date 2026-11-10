@@ -85,14 +85,13 @@ class MessageMenuOverlay(
 
     fun setMenuTranslation(value: Float) {
         menu.translationY = value
-        reactions?.translationY = value
     }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         setMeasuredDimension(MeasureSpec.getSize(widthSpec), MeasureSpec.getSize(heightSpec))
         menu.measure(
             MeasureSpec.makeMeasureSpec(menuWidth, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(menuHeight, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightSpec), MeasureSpec.AT_MOST),
         )
         reactions?.measure(
             MeasureSpec.makeMeasureSpec(reactionsWidth, MeasureSpec.EXACTLY),

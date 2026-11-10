@@ -570,7 +570,6 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass açısı</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass yoğunluğu</string>
-    <string name="InuLiquidGlassTint">Liquid Glass renk tonu</string>
     <string name="InuReduceMenuMotion">Menü hareketlerini azalt</string>
     <string name="InuReduceMenuMotionInfo">Bağlam menüsü kademeli açılışını atlar ve mesaj menüsü animasyonlarını sadeleştirir</string>
     <string name="InuProfilePhotoGradientFade">Profil fotoğrafı bulanıklığını devre dışı bırak</string>
@@ -647,7 +646,6 @@
     <string name="InuForwardWithoutAuthor">Yazar olmadan</string>
     <string name="InuForwardWithoutCaption">Açıklama olmadan</string>
     <string name="InuForwardLongTapOff">Kapalı</string>
-    <string name="InuLongTapChooseMode">Her seferinde sor</string>
     <string name="InuForwardNoQuote">Alıntısız ilet</string>
     <string name="InuRepeat">Tekrarla</string>
     <string name="InuRepeatLongTapCopy">Kopya olarak tekrarlamak için uzun basın</string>
@@ -856,8 +854,6 @@
     <string name="InuMessageMenuOrderInfo">Mesaj bağlam menüsündeki ögeleri yeniden sıralayın veya gizleyin. Yeniden düzenlemek için tutamağı sürükleyin, göstermek/gizlemek için dokunun</string>
     <string name="InuMessageMenuOrderInfoBottom">Hızlı eylemler satırına taşımak için bir ögeye uzun basın</string>
     <string name="InuMessageMenuReset">Varsayılana sıfırla</string>
-    <string name="InuEntinyMenu">entinyGram</string>
-    <string name="InuGroupEntinyMenu">entinyGram özelliklerini grupla</string>
     <string name="InuMenuSlotDelete">Sil / Bağlantıyı kopyala</string>
     <string name="InuMenuSlotEditForward">Düzenle / İlet</string>
     <string name="InuMenuMoveToBottomRow">Hızlı eylemler satırına taşı</string>
@@ -963,7 +959,10 @@
     <string name="InuCacheTtlMonth">1 aydan eski</string>
     <string name="InuCacheTtlNever">Asla (sürekli tut)</string>
     <string name="InuCacheTtlWeek">1 haftadan eski</string>
-    <string name="InuCenterTitleChats">Sohbetlerde/kanallarda da ortala</string>
+    <string name="InuCenterTitles">Başlıkları ortala</string>
+    <string name="InuCenterTitleChats">Sohbetlerdeki başlık</string>
+    <string name="InuCenterTitleDialogs">Sohbet listesi başlığı</string>
+    <string name="InuCenterTitlePages">Diğer sayfaların başlıkları</string>
     <string name="InuClearCache">Önbelleği temizle</string>
     <string name="InuClearDeletedCache">Silinen mesaj önbelleğini temizle</string>
     <string name="InuClearDeletedCacheAlert">Bu, kaydedilen silinmiş mesajların ve medyalarının yerel arşivini kalıcı olarak siler. Bu işlem geri alınamaz.</string>
@@ -1426,7 +1425,6 @@
     <string name="InuDownloadDirectoryApplied">Yalnızca yeni indirilen dosyalara uygulanır</string>
     <string name="InuPreviewMessage">Önizle</string>
     <string name="InuMinimize">Küçült</string>
-    <string name="InuCenterTitleChatsInfo">Sohbet başlığını ve alt başlığı ortalar; profil resmi solda kalır. Tek başına çalışır.</string>
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Avatarı menü yerine koy: dokununca profil, uzun basınca sohbet menüsü.</string>
     <string name="InuIosChatHeaderAvatarSwap">Dokunma ile uzun basmayı değiştir</string>
@@ -1613,7 +1611,6 @@
     <string name="InuDialogAvatarOpensProfileInfo">Sohbet listesinde bir sohbetin avatarına dokunmak sohbet yerine doğrudan profili açar.</string>
     <string name="InuAlwaysShowDownloads">İndirmeler düğmesi</string>
     <string name="InuAlwaysShowDownloadsInfo">Sohbetler başlığında indirmeler düğmesini her zaman göster</string>
-    <string name="InuHideDownloadsButton">İndirmeler düğmesini gizle</string>
     <string name="InuHideDownloadsButtonInfo">Sohbet başlığında indirmeler düğmesini asla gösterme</string>
     <string name="InuGhostModeDisabled">Hayalet Modu kapatıldı</string>
     <string name="InuGhostModeEnabled">Hayalet Modu açıldı</string>

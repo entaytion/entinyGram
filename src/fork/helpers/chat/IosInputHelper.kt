@@ -22,7 +22,7 @@ object IosInputHelper {
     fun isButtonPlacement(): Boolean = InuConfig.IOS_INPUT_BUTTON_PLACEMENT.value
 
     @JvmStatic
-    fun isAppearance(): Boolean = InuConfig.IOS_INPUT_APPEARANCE.value
+    fun isAppearance(): Boolean = InuConfig.IOS_INPUT_APPEARANCE.value && !InuConfig.NON_ISLAND_CHAT_ELEMENTS.value
 
     @JvmStatic
     fun isCommandsNearStickers(): Boolean = InuConfig.IOS_INPUT_COMMANDS_NEAR_STICKERS.value && isButtonPlacement() && isAppearance()

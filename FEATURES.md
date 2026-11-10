@@ -17,7 +17,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 ### privacy & protection
 
 - 📡 **ghost mode** — hide read receipts, story views, online status, typing, recording and upload indicators; read-on-send, mark-as-read locally with topic read state preserved across unread counter refreshes, hide seen mentions, per-chat overrides and per chat-type scope, with a quick toggle in the drawer, chats menu and a launcher shortcut
-- 📡 **anti-deletion & edit history** — messages the other side deletes stay in the chat under a 🗑️ mark, and deleted text, media and every real edit revision land in an archive with word and caption diffs; archives open as native chat lists with search, TTL, selective deletion, bulk clearing and JSON export, and both deleted and edited marks support custom text, you pick which chats to save and cap attachment size per network, saved attachments live in one hidden Download/entinyGram/Saved Attachments folder, replies to a saved message show the saved copy, missing media downloads on tap, edit revisions keep the author's avatar and name and jump to the message in its chat; history saved by older versions stays accessible after updating
+- 📡 **anti-deletion & edit history** — messages the other side deletes stay in the chat under a 🗑️ mark, and deleted text, media and every real edit revision land in an archive with word and caption diffs; archives open as native chat lists with search, TTL, selective deletion, bulk clearing and JSON export, and you pick which chats to save and cap attachment size per network, saved attachments live in one hidden Download/entinyGram/Saved Attachments folder, replies to a saved message show the saved copy, missing media downloads on tap, edit revisions keep the author's avatar and name and jump to the message in its chat; history saved by older versions stays accessible after updating
 - 📡 **self-destructing media** — save view-once photos, videos, video notes and voice notes (optionally straight to the gallery), see locally saved timed photos and videos in private chat profiles, keep secret-chat media and timed text, expired voice notes and round videos stay playable
 - 📡 **save user info** — phone country, registration date and a change log of name, username, bio and photo
 - 📡 **read time and remembered last seen** — when the other side read your private messages, and the last online time that survives them hiding their status, and an approximate one guessed from their activity
@@ -56,11 +56,11 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 ### appearance & customization
 
 - 📡 **hide FAB** — hide the chat-list buttons with a separate toggle and keep your chosen actions
-- 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar, chat list with larger avatars, message menu as a card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
+- 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar with spaced AI and emoji buttons, chat list with larger avatars, message menu as a properly positioned card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
 - 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size, and optional Android font scaling for messages
 - adjustable backdrop blur behind message menus - *inspired by NagramXF*
 - 📡 **glass glare** — disabled, default or solid outline — *inspired by Cherrygram (@arsLan4k1390)*
-- 📡 **chat headers** — live header preview, centered titles in the main chat list and inside chats, and auto marquee for long names
+- 📡 **chat headers** — live header preview, a choice of which titles to center (chat list, chats, other pages), and auto marquee for long names
 - 📡 **bottom tabs** — custom layout with an optional separate Search button, any tab first, hide on scroll, sliders to raise the bar and the FABs
 - 📡 **profile swipe** — disable swiping up on Profile to open the account menu, while keeping long press
 - 📡 **system folders** — Administrator, Bots, Unread, Groups and Channels tabs in the folder bar, each switchable and removable on this device
@@ -72,7 +72,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **clown avatars** — blocked users show 🤡 (or 💩 / 💀), users who blocked you are guessed from a missing photo and last seen, so it can be wrong
 - 📡 **messages appearance** — hide reply background, custom reply colors and pattern emoji, show spoilers directly, forum topics as Material 3 cards, snowflakes over the chat or the header
 - 📡 **tablet mode** — force the tablet layout on or off, or leave it to the screen size
-- 📡 **settings screen** — reorder and hide rows (new Telegram rows are picked up automatically), hide the accounts list, custom My Profile rows, disable dividers, hide the support card, downloads button always or never, full-screen app icon picker, clock format (auto follows the system 12/24h setting, not the Telegram language), branded first-run intro
+- 📡 **settings screen** — reorder and hide rows (new Telegram rows are picked up automatically), hide the accounts list, custom My Profile rows, disable dividers, hide the support card, downloads button visibility with automatic, always and never modes, full-screen app icon picker, clock format (auto follows the system 12/24h setting, not the Telegram language), branded first-run intro
 - 📡 **settings link status** — on/off values stay clear of their chevrons in either layout direction
 - 📡 **side drawer** — Material 3 menu sections with aligned icons and labels
 - 📡 **menu shortcuts** — clear cache and restart app in the chats menu, restart app and plugin settings in the side menu
@@ -97,7 +97,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **typing status spoof** — fake "typing…", "recording…" or "uploading…" in any chat
 - 📡 **input actions** — link preview toggle, find & replace and the attachment picker from the input menu
 - 📡 **link previews** — never generate or send them, or send the photo, video or file of a preview straight from its menu
-- 📡 **message menu** — message details & JSON view, hide a message until you leave the chat, copy photo as its own item (also on captions, and in the quick actions row), optionally collapse our items into one "entinyGram" submenu
+- 📡 **message menu** — message details & JSON view, hide a message until you leave the chat, copy photo as its own item (also on captions, and in the quick actions row)
 - 📡 **export chat** as JSON or HTML with media, including your own voice and video messages; the options sheet remembers your defaults
 - 📡 **bookmarks** — bookmark from the message menu (up to 500 per chat), star next to the time, and tap a saved bookmark to jump to the message in its chat
 - 📡 **silent broadcast bell** — move the channel's broadcast bell out of the input field into the chat menu

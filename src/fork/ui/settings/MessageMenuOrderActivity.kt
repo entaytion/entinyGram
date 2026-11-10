@@ -71,7 +71,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
         fillPluginSection(items, adapter)
         // #endif
         items.add(UItem.asShadow(null))
-        items.add(UItem.asCheck(TOGGLE_GROUP_ENTINY, LocaleController.getString(R.string.InuGroupEntinyMenu)).setChecked(InuConfig.GROUP_ENTINY_MENU.value))
         fillResetSection(items, adapter)
     }
 
@@ -82,11 +81,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
         }
         if (item.id == PLACEMENT_ID) {
             showPlacementPicker(view)
-            return
-        }
-        if (item.id == TOGGLE_GROUP_ENTINY) {
-            InuConfig.GROUP_ENTINY_MENU.toggle()
-            listView.adapter.update(true)
             return
         }
         super.onClick(item, view, position, x, y)
@@ -204,7 +198,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
     companion object {
         private val MASTER_TOGGLE_ID = InuUtils.generateId()
         private val PLACEMENT_ID = InuUtils.generateId()
-        private val TOGGLE_GROUP_ENTINY = InuUtils.generateId()
         // entiny: distinct from base SHADOW_END so DiffUtil does not alias shadows on structural change
         private val SHADOW_MID = InuUtils.generateId()
         private val HEADER_BOTTOM = InuUtils.generateId()
@@ -223,7 +216,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
                 R.string.InuLongTapAction,
                 listOf(
                     InuConfig.ForwardLongTapItem.OFF to R.string.InuForwardLongTapOff,
-                    InuConfig.ForwardLongTapItem.CHOOSE_MODE to R.string.InuLongTapChooseMode,
                     InuConfig.ForwardLongTapItem.WITHOUT_AUTHOR to R.string.InuForwardWithoutAuthor,
                     InuConfig.ForwardLongTapItem.WITHOUT_CAPTION to R.string.InuForwardWithoutCaption,
                 ),
@@ -234,7 +226,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
                 R.string.InuLongTapAction,
                 listOf(
                     InuConfig.ReplyLongTapItem.OFF to R.string.InuForwardLongTapOff,
-                    InuConfig.ReplyLongTapItem.CHOOSE_MODE to R.string.InuLongTapChooseMode,
                     InuConfig.ReplyLongTapItem.REPLY_IN to R.string.InuReplyIn,
                     InuConfig.ReplyLongTapItem.REPLY_IN_DMS to R.string.InuReplyInDms,
                 ),
@@ -246,7 +237,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
                 listOf(
                     InuConfig.RepeatModeItem.COPY to R.string.Copy,
                     InuConfig.RepeatModeItem.FORWARD to R.string.Forward,
-                    InuConfig.RepeatModeItem.ASK to R.string.InuLongTapChooseMode,
                 ),
                 { InuConfig.REPEAT_MODE.value },
                 { InuConfig.REPEAT_MODE.value = it },

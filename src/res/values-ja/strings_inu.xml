@@ -488,7 +488,6 @@
     <string name="InuForwardWithoutAuthor">投稿者なし</string>
     <string name="InuForwardWithoutCaption">キャプションなし</string>
     <string name="InuForwardLongTapOff">オフ</string>
-    <string name="InuLongTapChooseMode">毎回確認</string>
     <string name="InuForwardNoQuote">引用なしで転送</string>
     <string name="InuRepeat">繰り返し</string>
     <string name="InuRepeatLongTapCopy">長押しでコピーとして繰り返し</string>
@@ -694,8 +693,6 @@
     <string name="InuMessageMenuOrderInfo">メッセージのコンテキストメニューの項目を並べ替えたり非表示にできます。ハンドルをドラッグして並べ替え、タップで表示/非表示を切り替えます。</string>
     <string name="InuMessageMenuOrderInfoBottom">項目を長押しするとクイックアクション行に移動します</string>
     <string name="InuMessageMenuReset">デフォルトに戻す</string>
-    <string name="InuEntinyMenu">entinyGram</string>
-    <string name="InuGroupEntinyMenu">entinyGram の機能をまとめる</string>
     <string name="InuMenuSlotDelete">削除 / リンクをコピー</string>
     <string name="InuMenuSlotEditForward">編集 / 転送</string>
     <string name="InuMenuMoveToBottomRow">クイックアクション行に移動</string>
@@ -930,7 +927,6 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glassの角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glassの強度</string>
-    <string name="InuLiquidGlassTint">リキッドグラスの色味</string>
     <string name="InuStripTrackingParamsOnOpen">リンクを開くとき</string>
     <string name="InuStripTrackingParamsOnPaste">貼り付け時</string>
     <string name="InuResolveTrackableRedirects">追跡可能なリダイレクトを展開</string>
@@ -968,7 +964,10 @@
     <string name="InuCacheTtlMonth">1ヶ月以上前</string>
     <string name="InuCacheTtlNever">無効（永久保持）</string>
     <string name="InuCacheTtlWeek">1週間以上前</string>
-    <string name="InuCenterTitleChats">チャット/チャンネルでも中央揃え</string>
+    <string name="InuCenterTitles">タイトルを中央揃え</string>
+    <string name="InuCenterTitleChats">チャット内のタイトル</string>
+    <string name="InuCenterTitleDialogs">チャット一覧のタイトル</string>
+    <string name="InuCenterTitlePages">その他のページのタイトル</string>
     <string name="InuClearCache">キャッシュを消去</string>
     <string name="InuClearDeletedCache">削除済みメッセージのキャッシュを消去</string>
     <string name="InuClearDeletedCacheAlert">保存された削除済みメッセージとそのメディアのローカルアーカイブが完全に削除されます。元に戻すことはできません。</string>
@@ -1414,7 +1413,6 @@
     <string name="InuDownloadDirectoryApplied">新しくダウンロードするファイルにのみ適用されます</string>
     <string name="InuPreviewMessage">プレビュー</string>
     <string name="InuMinimize">最小化</string>
-    <string name="InuCenterTitleChatsInfo">チャットのタイトルとサブタイトルを中央に、アバターは左のまま表示します。単独で動作します。</string>
     <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">アバターをメニュー位置に配置：タップでプロフィール、長押しでチャットメニュー。</string>
     <string name="InuIosChatHeaderAvatarSwap">タップと長押しを入れ替える</string>
@@ -1599,7 +1597,6 @@
     <string name="InuDialogAvatarOpensProfileInfo">チャット一覧でアバターをタップすると、チャットではなくプロフィールを直接開きます。</string>
     <string name="InuAlwaysShowDownloads">ダウンロードボタン</string>
     <string name="InuAlwaysShowDownloadsInfo">チャット一覧のヘッダーにダウンロードボタンを常に表示します</string>
-    <string name="InuHideDownloadsButton">ダウンロードボタンを隠す</string>
     <string name="InuHideDownloadsButtonInfo">チャットのヘッダーにダウンロードボタンを表示しない</string>
     <string name="InuDisableLinkPreview">リンクプレビューを無効化</string>
     <string name="InuEnableLinkPreview">リンクプレビューを有効化</string>

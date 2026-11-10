@@ -696,7 +696,6 @@ Sistema: %6$s
     <string name="InuDialogAvatarOpensProfileInfo">Toccare l\'avatar di una chat nell\'elenco apre direttamente il profilo invece della chat.</string>
     <string name="InuAlwaysShowDownloads">Pulsante download</string>
     <string name="InuAlwaysShowDownloadsInfo">Mostra sempre il pulsante dei download nell\'intestazione delle chat</string>
-    <string name="InuHideDownloadsButton">Nascondi pulsante download</string>
     <string name="InuHideDownloadsButtonInfo">Non mostrare mai il pulsante download nell\'intestazione delle chat</string>
     <string name="InuHideMyPhoneNumber">Nascondi il mio numero di telefono</string>
     <string name="InuFonts">Font</string>
@@ -895,7 +894,6 @@ Sistema: %6$s
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Angolo del Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Intensità del Liquid Glass</string>
-    <string name="InuLiquidGlassTint">Tinta del Liquid Glass</string>
 
     <string name="InuReduceMenuMotion">Riduci il movimento dei menu</string>
     <string name="InuReduceMenuMotionInfo">Salta lo scaglionamento dei menu contestuali e semplifica le animazioni del menu dei messaggi</string>
@@ -995,7 +993,6 @@ Probabilmente ci sono diversi difetti grafici, quindi tienilo presente.</string>
     <string name="InuForwardWithoutAuthor">Senza autore</string>
     <string name="InuForwardWithoutCaption">Senza didascalia</string>
     <string name="InuForwardLongTapOff">Disattivato</string>
-    <string name="InuLongTapChooseMode">Chiedi ogni volta</string>
     <string name="InuForwardNoQuote">Inoltro senza citazione</string>
     <string name="InuSelectionBottomNoQuote">Pulsante senza citazione nella barra di selezione</string>
     <string name="InuSelectionBottomNoQuoteInfo">Sostituisce il pulsante Rispondi con l\'inoltro senza citazione quando si selezionano i messaggi</string>
@@ -1244,8 +1241,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuMessageMenuOrderInfo">Riordina o nascondi le voci del menu contestuale del messaggio. Trascina per spostare, tocca per nascondere.</string>
     <string name="InuMessageMenuOrderInfoBottom">Tieni premuta una voce per spostarla nella riga delle azioni rapide</string>
     <string name="InuMessageMenuReset">Ripristina predefiniti</string>
-    <string name="InuEntinyMenu">entinyGram</string>
-    <string name="InuGroupEntinyMenu">Raggruppa le funzioni di entinyGram</string>
     <string name="InuMenuSlotDelete">Elimina / Copia link</string>
     <string name="InuMenuSlotEditForward">Modifica / Inoltra</string>
     <string name="InuMenuMoveToBottomRow">Sposta nella riga delle azioni rapide</string>
@@ -1372,8 +1367,10 @@ Questa azione non può essere annullata.</string>
     <string name="InuAutoSaveStoriesInfo">Salva nella galleria ogni storia che apri, una sola volta. Le tue storie vengono saltate.</string>
     <string name="InuChatHeaderSettings">Intestazione della chat</string>
     <string name="InuChatHeaderSettingsInfo">L\'anteprima dal vivo qui sopra si aggiorna subito quando cambi le opzioni sotto.</string>
-    <string name="InuCenterTitleChats">Centra in chat/canali</string>
-    <string name="InuCenterTitleChatsInfo">Centra titolo e sottotitolo della chat; l\'avatar resta a sinistra. Funziona da solo.</string>
+    <string name="InuCenterTitles">Centra i titoli</string>
+    <string name="InuCenterTitleChats">Titolo nelle chat</string>
+    <string name="InuCenterTitleDialogs">Titolo dell\'elenco chat</string>
+    <string name="InuCenterTitlePages">Titoli delle altre pagine</string>
     <string name="InuCenterTitleRightAvatar">Mostra l\'avatar a destra</string>
     <string name="InuIosChatHeader">Pillola compatta</string>
     <string name="InuIosChatHeaderInfo">Pillola compatta dell\'intestazione chat in stile iOS, fluttuante al centro.</string>

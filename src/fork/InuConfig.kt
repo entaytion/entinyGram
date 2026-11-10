@@ -37,6 +37,7 @@ object InuConfig {
         migrateSelfDestructCategories()
         migrateDialogsFab()
         migrateFeedEnabled(context)
+        migrateCenterTitleDialogs()
         desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
     }
 
@@ -46,6 +47,12 @@ object InuConfig {
             DIALOGS_FAB_HIDE.unsafeSet(true, this)
             DIALOGS_FAB_MAIN_ACTION.unsafeSet(DIALOGS_FAB_MAIN_ACTION.default, this)
         }
+    }
+
+    // entiny: the chat list title used to follow the chats toggle
+    private fun migrateCenterTitleDialogs() {
+        if (!prefs.contains(CENTER_TITLE_DIALOGS.key)) CENTER_TITLE_DIALOGS.value = CENTER_TITLE_CHATS.value
+        if (IOS_CHAT_HEADER.value && !CENTER_TITLE_CHATS.value) CENTER_TITLE_CHATS.value = true
     }
 
     // entiny: the feed became opt-in; anyone who ever touched it keeps it on
@@ -1433,9 +1440,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val LIQUID_GLASS_INTENSITY = IntItem("liquid_glass_intensity", 75)
 
     @JvmField
-    val LIQUID_GLASS_TINT = IntItem("liquid_glass_tint", 100)
-
-    @JvmField
     val DISABLE_PROFILE_AVATAR_BLUR = BoolItem("disable_profile_avatar_blur", false)
 
     @JvmField
@@ -1602,9 +1606,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val MESSAGE_MENU_QUICK_ACTIONS_TOP = BoolItem("message_menu_quick_actions_top", false)
 
     @JvmField
-    val GROUP_ENTINY_MENU = BoolItem("group_entiny_menu", false)
-
-    @JvmField
     val CHAT_MENU_ITEMS = ChatMenuConfig("chat_menu_items")
 
     @JvmField
@@ -1622,10 +1623,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val HIDE_PROFILE_MENU_ARCHIVED_STORIES = BoolItem("hide_profile_menu_archived_stories", false)
 
-    class ForwardLongTapItem : IntItem("forward_long_tap_action", CHOOSE_MODE) {
+    class ForwardLongTapItem : IntItem("forward_long_tap_action", OFF) {
         companion object {
             const val OFF = 0
-            const val CHOOSE_MODE = 1
             const val WITHOUT_AUTHOR = 2
             const val WITHOUT_CAPTION = 3
         }
@@ -1637,7 +1637,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     class ReplyLongTapItem : IntItem("reply_long_tap_action", OFF) {
         companion object {
             const val OFF = 0
-            const val CHOOSE_MODE = 1
             const val REPLY_IN = 2
             const val REPLY_IN_DMS = 3
         }
@@ -1650,7 +1649,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
         companion object {
             const val COPY = 0
             const val FORWARD = 1
-            const val ASK = 2
         }
     }
 
@@ -1668,6 +1666,12 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
+
+    @JvmField
+    val CENTER_TITLE_DIALOGS = BoolItem("center_title_dialogs", false)
+
+    @JvmField
+    val CENTER_TITLE_PAGES = BoolItem("center_title_pages", true)
 
     @JvmField
     val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
@@ -2299,9 +2303,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val DELETED_MARK_COLOR = IntItem("deleted_mark_color", 0)
-
-    val CUSTOM_DELETED_MARK = StringItem("custom_deleted_mark", "")
-    val CUSTOM_EDITED_MARK = StringItem("custom_edited_mark", "")
 
     class DeletedMarkStyleItem : IntItem("deleted_mark_style", TRASH_BIN) {
         companion object {

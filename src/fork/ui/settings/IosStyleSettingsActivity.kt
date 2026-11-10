@@ -17,14 +17,13 @@ import org.telegram.ui.Components.UniversalAdapter
 class IosStyleSettingsActivity : SettingsPageActivity() {
     private var angleSlider: SliderCell? = null
     private var intensitySlider: SliderCell? = null
-    private var tintSlider: SliderCell? = null
 
     private var inputBarPreviewCell: InputBarPreviewCell? = null
 
     private val iosGroup = ExpandableBoolGroup(
         LocaleController.getString(R.string.InuIosStyle),
         listOf(
-            ExpandableBoolGroup.Option(R.string.InuChatHeaderSettings, InuConfig.IOS_CHAT_HEADER, TOGGLE_IOS_CHAT_HEADER),
+            ExpandableBoolGroup.Option(R.string.InuIosChatHeader, InuConfig.IOS_CHAT_HEADER, TOGGLE_IOS_CHAT_HEADER),
             ExpandableBoolGroup.Option(R.string.InuIosBottomBar, InuConfig.IOS_BOTTOM_NAVIGATION_BAR, TOGGLE_IOS_BOTTOM_BAR),
             ExpandableBoolGroup.Option(R.string.InuIosChatList, InuConfig.IOS_CHAT_LIST, TOGGLE_IOS_CHAT_LIST),
             ExpandableBoolGroup.Option(R.string.InuIosMessageMenu, InuConfig.IOS_MESSAGE_MENU, TOGGLE_IOS_MESSAGE_MENU),
@@ -40,13 +39,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val context = context ?: return
         iosGroup.addTo(items) { onIosOptionsChanged(it) }
-        items.add(
-            mkSubPageButton(
-                BUTTON_CHAT_HEADER,
-                R.drawable.inu_tabler_app_window,
-                LocaleController.getString(R.string.InuChatHeaderSettings),
-            )
-        )
         if (InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
             items.add(
                 mkTwoLineCheckItem(
@@ -138,23 +130,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             intensitySlider?.updateColors()
         }
         items.add(UItem.asCustom(intensitySlider))
-        if (tintSlider == null) {
-            tintSlider = SliderCell(
-                context, min = 0f, max = 100f,
-                defaultValue = InuConfig.LIQUID_GLASS_TINT.default.toFloat(),
-                initialValue = InuConfig.LIQUID_GLASS_TINT.value.toFloat(),
-                step = 1f,
-                title = LocaleController.getString(R.string.InuLiquidGlassTint),
-                format = { "${it.toInt()}%" },
-                onChanged = {
-                    InuConfig.LIQUID_GLASS_TINT.value = it.toInt()
-                    refreshLiquidGlassEffects()
-                },
-            )
-        } else {
-            tintSlider?.updateColors()
-        }
-        items.add(UItem.asCustom(tintSlider))
         items.add(UItem.asShadow(null))
     }
 
@@ -166,7 +141,11 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             softRebuild()
             showRestartBulletin()
         }
+        if (changed.any { it.id == TOGGLE_IOS_CHAT_HEADER } && InuConfig.IOS_CHAT_HEADER.value) {
+            InuConfig.CENTER_TITLE_CHATS.value = true
+        }
         if (changed.any { it.id == TOGGLE_IOS_INPUT_APPEARANCE }) {
+            if (InuConfig.IOS_INPUT_APPEARANCE.value) InuConfig.NON_ISLAND_CHAT_ELEMENTS.value = false
             InuHooks.syncChatInputRowHeight()
         }
         if (changed.any { it.id == TOGGLE_IOS_BUTTON_PLACEMENT || it.id == TOGGLE_IOS_INPUT_APPEARANCE }) {
@@ -203,8 +182,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
                 inputBarPreviewCell?.updateInputBarState()
             }
-
-            BUTTON_CHAT_HEADER -> presentFragment(ChatHeaderSettingsActivity())
 
             BUTTON_GLASS_GLARE -> {
                 val ctx = context ?: return
@@ -251,7 +228,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
-        private val BUTTON_CHAT_HEADER = InuUtils.generateId()
         private val BUTTON_GLASS_GLARE = InuUtils.generateId()
         private val GLASS_GLARE_MODES = intArrayOf(R.string.Disable, R.string.Default, R.string.InuGlassGlareSolid)
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
@@ -283,7 +259,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("compact-input-size", R.string.InuCompactInputSize, TOGGLE_COMPACT_INPUT_SIZE),
                 SearchRegistry.Entry("commands-near-stickers", R.string.InuCommandsNearStickers, TOGGLE_COMMANDS_NEAR_STICKERS),
                 SearchRegistry.Entry("action-button-style", R.string.InuActionButtonStyle, BUTTON_ACTION_BUTTON_STYLE),
-                SearchRegistry.Entry("chat-header-settings", R.string.InuChatHeaderSettings, BUTTON_CHAT_HEADER),
             ),
         )
     }

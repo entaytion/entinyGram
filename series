@@ -643,3 +643,4 @@ entiny/chat/menu-backdrop-blur-strength.patch
 entiny/ui/stories-premium-badge-overlap.patch
 entiny/media/download-queue.patch
 entiny/media/quiet-voice-locked.patch
+entiny/ui/ios-design-fixes.patch
