@@ -46,6 +46,7 @@
     <string name="InuDeviceSpoofInfo">Змініть, як цей застосунок відображається в Налаштування → Пристрої.</string>
     <string name="InuDeviceSpoofPreset">Пристрій</string>
     <string name="InuDeviceSpoofPresetCustom">Власний</string>
+    <string name="InuDeviceSpoofPresetRandom">Випадковий при кожному запуску</string>
     <string name="InuDeviceSpoofPresetReal">Справжній пристрій</string>
     <string name="InuDeviceSpoofModel">Модель пристрою</string>
     <string name="InuDeviceSpoofSystem">Версія системи</string>

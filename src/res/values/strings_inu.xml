@@ -87,6 +87,7 @@
     <string name="InuDeviceSpoofInfo">Change how this app appears in Settings → Devices.</string>
     <string name="InuDeviceSpoofPreset">Device</string>
     <string name="InuDeviceSpoofPresetCustom">Custom</string>
+    <string name="InuDeviceSpoofPresetRandom">Random on each launch</string>
     <string name="InuDeviceSpoofPresetReal">Real device</string>
     <string name="InuDeviceSpoofModel">Device model</string>
     <string name="InuDeviceSpoofSystem">System version</string>

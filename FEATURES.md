@@ -30,7 +30,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 ### unlocks & restrictions
 
-- 📡 **device spoof** — choose the device name, system and app version shown in Settings → Devices, hide time zone and install source, and check what Telegram sees
+- 📡 **device spoof** — choose the device name (or a random one on each launch), system and app version shown in Settings → Devices, hide time zone and install source, and check what Telegram sees
 - 📡 **screenshots anywhere** — disable FLAG_SECURE in protected windows, secret chats, expiring media and protected stories, and hide secret-chat screenshot notifications
 - 📡 **protected content** — copy text and select messages in protected chats, save any story or auto-save the ones you view, copy and forward from protected channels to multiple chats with a background bulk download, forward as your own without the "Forwarded from" header, re-send saved view-once media
 - 📡 **quote protected posts** into another chat as a bold title and a blockquote

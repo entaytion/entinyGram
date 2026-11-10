@@ -56,7 +56,8 @@ class DeviceSpoofSettingsActivity : SettingsPageActivity() {
     }
 
     private fun presetLabel(): String =
-        DevicePresets.find(InuConfig.DEVICE_SPOOF_PRESET.value)?.name ?: getString(R.string.InuDeviceSpoofPresetCustom)
+        if (InuConfig.DEVICE_SPOOF_PRESET.value == DevicePresets.RANDOM_ID) getString(R.string.InuDeviceSpoofPresetRandom)
+        else DevicePresets.find(InuConfig.DEVICE_SPOOF_PRESET.value)?.name ?: getString(R.string.InuDeviceSpoofPresetCustom)
 
     private fun valueOrNotSet(value: String): String =
         value.ifBlank { getString(R.string.InuDeviceSpoofNotSet) }
@@ -77,12 +78,15 @@ class DeviceSpoofSettingsActivity : SettingsPageActivity() {
 
             BUTTON_PRESET -> {
                 val presets = DevicePresets.all
-                val labels = presets.map { it.name } + getString(R.string.InuDeviceSpoofPresetCustom) + getString(R.string.InuDeviceSpoofPresetReal)
-                val current = presets.indexOfFirst { it.id == InuConfig.DEVICE_SPOOF_PRESET.value }.let { if (it < 0) presets.size else it }
+                val labels = presets.map { it.name } + getString(R.string.InuDeviceSpoofPresetRandom) + getString(R.string.InuDeviceSpoofPresetCustom) + getString(R.string.InuDeviceSpoofPresetReal)
+                val saved = InuConfig.DEVICE_SPOOF_PRESET.value
+                val current = if (saved == DevicePresets.RANDOM_ID) presets.size
+                else presets.indexOfFirst { it.id == saved }.let { if (it < 0) presets.size + 1 else it }
                 RadioItemOptions.show(this, view, labels, current) { which ->
                     when {
                         which < presets.size -> InuConfig.DEVICE_SPOOF_PRESET.value = presets[which].id
-                        which == presets.size -> InuConfig.DEVICE_SPOOF_PRESET.value = DevicePresets.CUSTOM_ID
+                        which == presets.size -> InuConfig.DEVICE_SPOOF_PRESET.value = DevicePresets.RANDOM_ID
+                        which == presets.size + 1 -> InuConfig.DEVICE_SPOOF_PRESET.value = DevicePresets.CUSTOM_ID
                         else -> InuConfig.DEVICE_SPOOF.value = false
                     }
                     listView?.adapter?.update(true)

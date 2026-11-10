@@ -18,5 +18,10 @@ object DevicePresets {
         DevicePreset("nothing_phone_2a", "Nothing Phone (2a)", "NothingA142", "SDK 35"),
     )
 
-    fun find(id: String): DevicePreset? = all.firstOrNull { it.id == id }
+    const val RANDOM_ID = "random"
+
+    private val sessionPick: DevicePreset by lazy { all.random() }
+
+    fun find(id: String): DevicePreset? =
+        if (id == RANDOM_ID) sessionPick else all.firstOrNull { it.id == id }
 }
