@@ -4,8 +4,9 @@ Date: Tue, 13 Oct 2026 10:43:08 +0300
 Subject: Edit message text locally
 
 ---
- .../src/main/java/org/telegram/messenger/MessageObject.java      | 1 +
- 1 file changed, 1 insertion(+)
+ .../src/main/java/org/telegram/messenger/MessageObject.java     | 1 +
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java   | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
@@ -19,3 +20,16 @@ index 0000000..0000000 100644
          replyMessageObject = replyToMessage;
          eventId = eid;
          wasUnread = !messageOwner.out && messageOwner.unread;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -491,7 +491,7 @@ public class ChatActivity extends BaseFragment implements
+     public ChatListRecyclerView chatListView;
+     private ChatListItemAnimator chatListItemAnimator;
+     private GridLayoutManagerFixed chatLayoutManager;
+-    private ChatActivityAdapter chatAdapter;
++    public ChatActivityAdapter chatAdapter;
+     public UnreadCounterTextView bottomOverlayChatText;
+     private boolean bottomOverlayLinks;
+     private LinkSpanDrawable.LinksTextView bottomOverlayLinksText;
