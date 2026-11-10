@@ -130,7 +130,7 @@ Before writing code or hunting a bug, always load and follow the entinygram-craf
 - Place our features under `## entinyGram additions` in the matching topical subsection.
 - **Crisp Inugram Style:** One short sentence describing ONLY **what** the user gets. No implementation mechanics, no option walks, no `(beta)`/`(wip)`/`experimental` labels.
 - **Attribution:** Always credit ported/inspired features at the end: `- *ported from <Fork>*` or `- *inspired by <Fork> (@author)*`.
-- **WIP in Changelogs:** If a change is work in progress, its bullet MUST end with: `⚠️ work in progress: untested and may be unstable — please report any bugs`.
+- **WIP in Changelogs:** If a change is work in progress, its bullet MUST end with `⚠️` and a short note in your own words, in the bullet's language (uk bullet in Ukrainian, en bullet in English): it is not finished or tested, may misbehave, bug reports welcome. Never copy a fixed template; word it differently each time and keep it under ~60 characters.
 - **Telegram Base Bumps in Changelogs:** One plain line (no `[+]`/`[*]` markers), keeping the parenthetical tag in English in both `## uk` and `## en`:
   - Our own rebase onto DrKLO: `Rebase to 12.10.4 (ported by entinyGram)`
   - Via inugram merge: `Updated to Telegram X.Y.Z (via inugram)`

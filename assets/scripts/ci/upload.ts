@@ -144,6 +144,8 @@ try {
 
   const PRERELEASE_WARNING = html`<i>‼️ Pre-release build — for testing new features and bug fixes. This version is unstable and may crash or misbehave.</i>`
 
+  const donateHtml = html`💝 Підтримати / Donate: <a href="https://t.me/sendgrams?to=entaytion&amp;amount=0.1&amp;text=thx+for+entiny">Telegram</a> • <a href="https://send.monobank.ua/jar/RGYa8zo8y">monobank 🇺🇦</a> • <a href="https://entaytion.is-a.dev/donate">Website</a>`
+
   const releaseTagName = process.env.RELEASE_TAG ?? ''
   const prevReleaseTag = process.env.PREV_RELEASE_TAG ?? ''
   const compareHtml = releaseTagName && prevReleaseTag && prevReleaseTag !== releaseTagName
@@ -161,6 +163,7 @@ try {
   function getFooter() {
     const lines = [
       compareHtml,
+      donateHtml,
       html`🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`,
     ].filter((p): p is NonNullable<typeof p> => p !== null)
 
@@ -197,14 +200,9 @@ try {
   const postCi = tgCi || postEn || postUk
   const rawLines = postCi.split('\n').map(l => l.trim()).filter(Boolean)
 
-  if (rawLines.length > 20) {
-    const trimmed = [...rawLines.slice(0, 10), '...', ...rawLines.slice(-10)]
-    caption = buildCaption(notesToEntities(trimmed.join('\n')))
-  }
-
-  // Max caption length for Telegram media is 1024 characters; shrink N (first N, ..., last N) until it fits.
+  // Max caption length for Telegram media is 1024 characters; keep every line that fits, else shrink N (first N, ..., last N) until it fits.
   if (caption.text.length > 1000) {
-    const maxN = Math.min(10, Math.floor(rawLines.length / 2))
+    const maxN = Math.floor(rawLines.length / 2)
     let fitted = false
     for (let n = maxN; n >= 1; n--) {
       const candidateLines = [...rawLines.slice(0, n), '...', ...rawLines.slice(-n)]
@@ -249,7 +247,6 @@ try {
     const mainHeader = html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — <a href="${postUrl(firstPostId)}">Завантажити/Download</a>`
     const siteUrl = process.env.SITE_CHANGELOG_URL ?? 'https://entaytion.is-a.dev/entinygram/changelog'
     const siteHtml = html`🌐 <a href="${siteUrl}">Усі нові функції на сайті / See all new features on the website</a>`
-    const donateHtml = html`💝 Підтримати / Donate: <a href="https://t.me/sendgrams?to=entaytion&amp;amount=0.1&amp;text=thx+for+entiny">Telegram</a> • <a href="https://send.monobank.ua/jar/RGYa8zo8y">monobank 🇺🇦</a> • <a href="https://entaytion.is-a.dev/donate">Website</a>`
     // Discrete blocks joined by a blank line each — no stray empty paragraphs.
     const blocks = [
       mainHeader,

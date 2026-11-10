@@ -72,7 +72,7 @@ function ciList(commits: Commit[], repo: string): string {
     const subject = first.replace(/^\[[+*\-=]\]\s*/, '')
     return noise.test(subject) ? [] : [`[${c.sha.slice(0, 7)}](https://github.com/${repo}/commit/${c.sha}): ${subject}`]
   })
-  return (all.length > 20 ? [...all.slice(0, 10), '...', ...all.slice(-10)] : all).join('\n')
+  return all.join('\n')
 }
 
 /** Reads `## uk` / `## en` bullet lists; comments and anything that is not a bullet are ignored. */
