@@ -4,14 +4,14 @@ Date: Tue, 27 Oct 2026 13:42:41 +0200
 Subject: Preserve deleted messages in storage and chats
 
 ---
- .../messenger/MessagesController.java         | 15 +++-
- .../telegram/messenger/MessagesStorage.java   | 81 ++++++++++++++-----
+ .../messenger/MessagesController.java         | 15 ++++-
+ .../telegram/messenger/MessagesStorage.java   | 61 +++++++++++++------
  .../messenger/SendMessagesHelper.java         |  2 +-
- .../telegram/ui/Cells/ChatMessageCell.java    |  8 +-
- .../java/org/telegram/ui/ChatActivity.java    | 13 +++
- .../telegram/ui/Components/AlertsCreator.java |  8 +-
+ .../telegram/ui/Cells/ChatMessageCell.java    |  8 ++-
+ .../java/org/telegram/ui/ChatActivity.java    | 13 ++++
+ .../telegram/ui/Components/AlertsCreator.java |  8 +--
  .../Components/DeleteMessagesBottomSheet.java |  4 +-
- 7 files changed, 101 insertions(+), 30 deletions(-)
+ 7 files changed, 81 insertions(+), 30 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
  
                  if (dialogId != 0) {
                      cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, data, read_state, out, mention, mid FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, dialogId));
-@@ -14999,18 +15005,35 @@ public class MessagesStorage extends BaseController {
+@@ -14999,18 +15005,21 @@ public class MessagesStorage extends BaseController {
                                  }
                              }
                          }
@@ -99,21 +99,7 @@ index 0000000..0000000 100644
                              message.readAttachPath(data, currentUser);
 +                            message.id = mid;
 +                            message.dialog_id = did;
-+                            boolean inuArchived = false;
-+                            boolean inuWas = desu.inugram.helpers.archive.DeletedMessagesHelper.wasArchived(database, did, mid);
-+                            if (inuWas && userInitiated) {
-+                                desu.inugram.helpers.archive.DeletedMessagesHelper.removeArchived(database, did, mid);
-+                            } else {
-+                                inuArchived = inuWas || desu.inugram.helpers.archive.DeletedMessagesHelper.archiveMessage(database, currentAccount, did, message);
-+                                if (desu.inugram.helpers.archive.DeletedMessagesHelper.keepInChat(currentAccount, did, message, userInitiated)) {
-+                                    ArrayList<Integer> inuKept = inuKeptMids.get(did);
-+                                    if (inuKept == null) {
-+                                        inuKept = new ArrayList<>();
-+                                        inuKeptMids.put(did, inuKept);
-+                                    }
-+                                    inuKept.add(mid);
-+                                }
-+                            }
++                            boolean inuArchived = desu.inugram.helpers.archive.DeletedMessagesHelper.onStorageDelete(database, currentAccount, did, message, userInitiated, inuKeptMids);
                              if (deletedMessages != null) {
                                  deletedMessages.add(message);
                              }
@@ -123,7 +109,7 @@ index 0000000..0000000 100644
                                  addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
                              }
  
-@@ -15257,13 +15280,20 @@ public class MessagesStorage extends BaseController {
+@@ -15257,13 +15266,14 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
                      }
@@ -134,13 +120,7 @@ index 0000000..0000000 100644
 -                    database.executeFast(String.format(Locale.US, "DELETE FROM widget_heights WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
 -                    database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
 -                    database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-+                    String inuDeleteIds = ids;
-+                    ArrayList<Integer> inuKept = inuKeptMids.get(did, null);
-+                    if (inuKept != null && !inuKept.isEmpty()) {
-+                        ArrayList<Integer> rest = new ArrayList<>(messages);
-+                        rest.removeAll(inuKept);
-+                        inuDeleteIds = rest.isEmpty() ? "0" : TextUtils.join(",", rest);
-+                    }
++                    String inuDeleteIds = desu.inugram.helpers.archive.DeletedMessagesHelper.idsToDelete(ids, messages, inuKeptMids.get(did));
 +                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE mid IN(%s) AND uid = %d", inuDeleteIds, did)).stepThis().dispose();
 +                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE mid IN(%s) AND uid = %d", inuDeleteIds, did)).stepThis().dispose();
 +                    database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", inuDeleteIds, did)).stepThis().dispose();
@@ -151,7 +131,7 @@ index 0000000..0000000 100644
                      if (unknownMessages.isEmpty()) {
                          cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, type FROM media_v4 WHERE mid IN(%s) AND uid = %d", ids, did));
                          SparseArray<LongSparseArray<Integer>> mediaCounts = null;
-@@ -15686,13 +15716,17 @@ public class MessagesStorage extends BaseController {
+@@ -15686,13 +15696,17 @@ public class MessagesStorage extends BaseController {
      }
  
      public ArrayList<Long> markMessagesAsDeleted(long dialogId, ArrayList<Integer> messages, boolean useQueue, boolean deleteFiles, int mode, int topicId) {
@@ -171,7 +151,7 @@ index 0000000..0000000 100644
          }
          return null;
      }
-@@ -15708,8 +15742,9 @@ public class MessagesStorage extends BaseController {
+@@ -15708,8 +15722,9 @@ public class MessagesStorage extends BaseController {
              ArrayList<String> namesToDelete = new ArrayList<>();
              ArrayList<Pair<Long, Integer>> idsToDelete = new ArrayList<>();
              long currentUser = getUserConfig().getClientUserId();
@@ -182,7 +162,7 @@ index 0000000..0000000 100644
  
              try {
                  while (cursor.next()) {
-@@ -15730,15 +15765,24 @@ public class MessagesStorage extends BaseController {
+@@ -15730,15 +15745,24 @@ public class MessagesStorage extends BaseController {
                              }
                          }
                      }
@@ -209,7 +189,7 @@ index 0000000..0000000 100644
                      }
                  }
              } catch (Exception e) {
-@@ -15805,10 +15849,11 @@ public class MessagesStorage extends BaseController {
+@@ -15805,10 +15829,11 @@ public class MessagesStorage extends BaseController {
                  cursor = null;
              }
  

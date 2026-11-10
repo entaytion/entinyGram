@@ -1541,8 +1541,6 @@
     <string name="InuDisableFlagSecure">Disable FLAG_SECURE</string>
     <string name="InuDisableFlagSecureInfo">Turns off the screenshot block: allows screenshots and screen recording in secret chats, view-once media, and protected channels.</string>
     <string name="InuSaveDeletedOwn">My own messages</string>
-    <string name="InuArchiveMediaPublic">Mirror archive media to a folder</string>
-    <string name="InuArchiveMediaPublicInfo">Copies saved deleted/edited photos and videos into Downloads/entinyGram/Ghosts, hidden from the gallery. Turn off to keep them only inside the app.</string>
     <string name="InuHideSponsoredMessages">Hide sponsored messages (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Disables channel sponsored ads and prevents loading promotional messages</string>
     <string name="InuHideProxySponsorChat">Hide proxy sponsor chat</string>

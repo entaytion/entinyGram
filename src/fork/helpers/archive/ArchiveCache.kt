@@ -33,26 +33,6 @@ object ArchiveCache {
         }
     }
 
-    // entiny: storage dropped the kept row, so a stale UI filter must not keep the message again
-    private val purgedIds = HashMap<Triple<Int, Long, Int>, Long>()
-    private const val PURGED_TTL_MS = 120_000L
-
-    internal fun markPurged(account: Int, dialogId: Long, msgId: Int) {
-        val now = android.os.SystemClock.elapsedRealtime()
-        synchronized(cacheLock) {
-            forgetKept(account, dialogId, msgId)
-            if (purgedIds.size > 512) purgedIds.entries.removeAll { now - it.value > PURGED_TTL_MS }
-            purgedIds[Triple(account, dialogId, msgId)] = now
-        }
-    }
-
-    internal fun consumePurged(account: Int, dialogId: Long, msgId: Int): Boolean {
-        synchronized(cacheLock) {
-            val ts = purgedIds.remove(Triple(account, dialogId, msgId)) ?: return false
-            return android.os.SystemClock.elapsedRealtime() - ts < PURGED_TTL_MS
-        }
-    }
-
     internal val deletedMessageIds = LongSparseArray<LongSparseArray<DeletedIdSet>>()
     // entiny: keep in-memory media paths for synchronous fallback in FileLoader without SQLite queries
     internal val deletedMessageMediaPaths = LongSparseArray<LongSparseArray<LongSparseArray<String>>>()
@@ -224,8 +204,6 @@ object ArchiveCache {
         var lastDeletedRow = 0L
         var lastEditRow = 0L
         var deletedDone = false
-        var rows = 0
-        var busyMs = 0L
     }
 
     @JvmStatic
@@ -258,7 +236,6 @@ object ArchiveCache {
     // entiny: one page per runnable so dialog and message loads can run between pages
     private fun loadIndexPage(account: Int, storage: MessagesStorage, index: ArchiveIndex) {
         if (synchronized(cacheLock) { (cacheGeneration[account] ?: 0L) != index.generation }) return
-        val started = android.os.SystemClock.elapsedRealtime()
         try {
             val db = storage.database ?: throw IllegalStateException("database closed")
             val finished: Boolean
@@ -269,7 +246,6 @@ object ArchiveCache {
                     if (mediaPath != null) (index.media.get(dialogId) ?: LongSparseArray<String>().also { index.media.put(dialogId, it) }).put(msgId.toLong(), mediaPath)
                 }
                 mergePageSets(index.pageDeleted, index.deleted)
-                index.rows += count
                 if (count < LOAD_PAGE_ROWS) index.deletedDone = true
                 finished = false
             } else {
@@ -278,10 +254,8 @@ object ArchiveCache {
                     (index.pageEdits.get(dialogId) ?: DeletedIdSet().also { index.pageEdits.put(dialogId, it) }).add(msgId, 0L)
                 }
                 mergePageSets(index.pageEdits, index.edits)
-                index.rows += count
                 finished = count < LOAD_PAGE_ROWS
             }
-            index.busyMs += android.os.SystemClock.elapsedRealtime() - started
             if (finished) finishIndex(account, index) else storage.storageQueue.postRunnable { loadIndexPage(account, storage, index) }
         } catch (e: Throwable) {
             synchronized(cacheLock) {
@@ -292,63 +266,53 @@ object ArchiveCache {
         }
     }
 
+    private fun mergeSets(all: LongSparseArray<LongSparseArray<DeletedIdSet>>, account: Int, loaded: LongSparseArray<DeletedIdSet>) {
+        val existing = all.get(account.toLong())
+        if (existing == null) {
+            all.put(account.toLong(), loaded)
+            return
+        }
+        for (i in 0 until loaded.size()) {
+            val target = existing.get(loaded.keyAt(i))
+            if (target == null) existing.put(loaded.keyAt(i), loaded.valueAt(i)) else target.addAll(loaded.valueAt(i))
+        }
+    }
+
     private fun finishIndex(account: Int, index: ArchiveIndex) {
-        val generation = index.generation
-        val deletedArray = index.deleted
-        val editArray = index.edits
-        val mediaPathArray = index.media
-        android.util.Log.d(TAG, "archive index: ${index.rows} rows, ${index.busyMs} ms on storage queue")
         ArchiveMediaHelper.scheduleMediaMigration(account)
         org.telegram.messenger.AndroidUtilities.runOnUIThread {
             synchronized(cacheLock) {
-                if ((cacheGeneration[account] ?: 0L) != generation) return@runOnUIThread
-                var existingEdits = editHistoryIds.get(account.toLong())
-                if (existingEdits == null) {
-                    editHistoryIds.put(account.toLong(), editArray)
+                if ((cacheGeneration[account] ?: 0L) != index.generation) return@runOnUIThread
+                mergeSets(editHistoryIds, account, index.edits)
+                mergeSets(deletedMessageIds, account, index.deleted)
+                val paths = deletedMessageMediaPaths.get(account.toLong())
+                if (paths == null) {
+                    deletedMessageMediaPaths.put(account.toLong(), index.media)
                 } else {
-                    for (i in 0 until editArray.size()) {
-                        val k = editArray.keyAt(i)
-                        val v = editArray.valueAt(i)
-                        val target = existingEdits.get(k)
-                        if (target == null) existingEdits.put(k, v) else target.addAll(v)
-                    }
-                }
-                var existingDialogs = deletedMessageIds.get(account.toLong())
-                if (existingDialogs == null) {
-                    deletedMessageIds.put(account.toLong(), deletedArray)
-                } else {
-                    for (i in 0 until deletedArray.size()) {
-                        val k = deletedArray.keyAt(i)
-                        val v = deletedArray.valueAt(i)
-                        val targetSet = existingDialogs.get(k)
-                        if (targetSet == null) {
-                            existingDialogs.put(k, v)
-                        } else {
-                            targetSet.addAll(v)
-                        }
-                    }
-                }
-
-                var existingMediaPaths = deletedMessageMediaPaths.get(account.toLong())
-                if (existingMediaPaths == null) {
-                    deletedMessageMediaPaths.put(account.toLong(), mediaPathArray)
-                } else {
-                    for (i in 0 until mediaPathArray.size()) {
-                        val k = mediaPathArray.keyAt(i)
-                        val v = mediaPathArray.valueAt(i)
-                        val targetPaths = existingMediaPaths.get(k)
-                        if (targetPaths == null) {
-                            existingMediaPaths.put(k, v)
-                        } else {
-                            for (j in 0 until v.size()) {
-                                targetPaths.put(v.keyAt(j), v.valueAt(j))
-                            }
-                        }
+                    for (i in 0 until index.media.size()) {
+                        val loaded = index.media.valueAt(i)
+                        val target = paths.get(index.media.keyAt(i))
+                        if (target == null) paths.put(index.media.keyAt(i), loaded) else for (j in 0 until loaded.size()) target.put(loaded.keyAt(j), loaded.valueAt(j))
                     }
                 }
                 loadedAccounts.add(account)
                 loadingAccounts.remove(account)
                 loadFailedAt.remove(account)
+            }
+        }
+    }
+
+    private fun resetAccount(account: Int, deleted: Boolean) {
+        synchronized(cacheLock) {
+            cacheGeneration[account] = (cacheGeneration[account] ?: 0L) + 1L
+            loadedAccounts.remove(account)
+            loadingAccounts.remove(account)
+            editHistoryCache.remove(account.toLong())
+            editHistoryIds.remove(account.toLong())
+            if (deleted) {
+                deletedMessageIds.remove(account.toLong())
+                deletedMessageMediaPaths.remove(account.toLong())
+                shadowMessageCache.remove(account.toLong())
             }
         }
     }
@@ -367,7 +331,6 @@ object ArchiveCache {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            val started = android.os.SystemClock.elapsedRealtime()
             val expired = try {
                 ArchiveStore.expiredDeletedMessageIds(db, cutoff)
             } catch (e: Throwable) {
@@ -384,18 +347,8 @@ object ArchiveCache {
             for ((dialogId, mids) in expired) {
                 DeletedMessagesHelper.purgeInStorage(account, storage, db, dialogId, mids)
             }
-            android.util.Log.d(TAG, "archive prune: ${expired.values.sumOf { it.size }} deleted, $editsPruned edits in ${android.os.SystemClock.elapsedRealtime() - started} ms")
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
-                synchronized(cacheLock) {
-                    cacheGeneration[account] = (cacheGeneration[account] ?: 0L) + 1L
-                    loadingAccounts.remove(account)
-                    deletedMessageIds.remove(account.toLong())
-                    deletedMessageMediaPaths.remove(account.toLong())
-                    editHistoryCache.remove(account.toLong())
-                    editHistoryIds.remove(account.toLong())
-                    shadowMessageCache.remove(account.toLong())
-                    loadedAccounts.remove(account)
-                }
+                resetAccount(account, true)
                 ensureAccountLoaded(account)
             }
         }
@@ -415,7 +368,6 @@ object ArchiveCache {
 
     @JvmStatic
     fun clearEditHistory(account: Int, dialogIds: Collection<Long>?, onDone: Runnable?) {
-        ArchiveMediaHelper.resetArchiveUsage(account)
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             try {
@@ -424,13 +376,7 @@ object ArchiveCache {
                 android.util.Log.d(TAG, "clear edit history failed", e)
             }
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
-                synchronized(cacheLock) {
-                    cacheGeneration[account] = (cacheGeneration[account] ?: 0L) + 1L
-                    loadedAccounts.remove(account)
-                    loadingAccounts.remove(account)
-                    editHistoryCache.remove(account.toLong())
-                    editHistoryIds.remove(account.toLong())
-                }
+                resetAccount(account, false)
                 ensureAccountLoaded(account)
                 onDone?.run()
             }
@@ -439,7 +385,6 @@ object ArchiveCache {
 
     @JvmStatic
     fun clearCache(account: Int, dialogIds: Collection<Long>? = null, deletedOnly: Boolean = false, onDone: Runnable? = null) {
-        ArchiveMediaHelper.resetArchiveUsage(account)
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database
@@ -451,16 +396,7 @@ object ArchiveCache {
                 ArchiveStore.clearDeletedMessages(db, dialogIds, !deletedOnly)
             }
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
-                synchronized(cacheLock) {
-                    cacheGeneration[account] = (cacheGeneration[account] ?: 0L) + 1L
-                    loadingAccounts.remove(account)
-                    deletedMessageIds.remove(account.toLong())
-                    deletedMessageMediaPaths.remove(account.toLong())
-                    editHistoryCache.remove(account.toLong())
-                    editHistoryIds.remove(account.toLong())
-                    shadowMessageCache.remove(account.toLong())
-                    loadedAccounts.remove(account)
-                }
+                resetAccount(account, true)
                 onDone?.run()
             }
         }
@@ -507,7 +443,6 @@ object ArchiveCache {
     }
 
     fun invalidateMediaCache(account: Int) {
-        ArchiveMediaHelper.resetArchiveUsage(account)
         synchronized(cacheLock) {
             deletedMessageMediaPaths.remove(account.toLong())
             editHistoryCache.remove(account.toLong())

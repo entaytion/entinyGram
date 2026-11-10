@@ -100,27 +100,26 @@ object EditHistoryHelper {
         val mediaCopy = if (copyMedia) ArchiveMediaHelper.planNewMediaCopy(account, source) else null
         val storage = MessagesStorage.getInstance(account) ?: return
         val persist = Runnable {
-            val db = storage.database ?: run { ArchiveMediaHelper.releaseCopyReservation(account, mediaCopy); return@Runnable }
+            val db = storage.database ?: return@Runnable
             try {
                 val date = kept.timestamp.toInt()
                 val inserted = ArchiveStore.saveEditHistory(db, dialogId, msgId, kept.text, date, null, kept.entities, kept.media, kept.fromId)
                 synchronized(ArchiveCache.cacheLock) {
                     ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
                 }
-                if (!inserted || mediaCopy == null) {
-                    if (!inserted) ArchiveMediaHelper.releaseCopyReservation(account, mediaCopy)
+                if (!inserted || !copyMedia || source == null) return@Runnable
+                val rowId = ArchiveMediaHelper.latestEditRowId(db, dialogId, msgId, date)
+                if (rowId <= 0) return@Runnable
+                if (mediaCopy == null) {
+                    ArchiveMediaHelper.fetchNewMedia(account, source, rowId, false)
                     return@Runnable
                 }
-                val rowId = ArchiveMediaHelper.latestEditRowId(db, dialogId, msgId, date)
-                if (rowId > 0) ArchiveMediaHelper.copyThenStore(account, "e:$account:$rowId", mediaCopy) { copyDb, copied ->
+                ArchiveMediaHelper.copyThenStore(account, "e:$account:$rowId", mediaCopy) { copyDb, copied ->
                     val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_edit_history", "rowid = $rowId", copied)
                     if (stored) synchronized(ArchiveCache.cacheLock) { ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong()) }
                     stored
-                } else {
-                    ArchiveMediaHelper.releaseCopyReservation(account, mediaCopy)
                 }
             } catch (e: Throwable) {
-                ArchiveMediaHelper.releaseCopyReservation(account, mediaCopy)
                 android.util.Log.d(TAG, "edit history save failed", e)
             }
         }

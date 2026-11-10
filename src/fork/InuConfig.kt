@@ -1785,9 +1785,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val SAVE_DELETED_OWN = BoolItem("save_deleted_own", false)
 
     @JvmField
-    val ARCHIVE_MEDIA_PUBLIC = BoolItem("archive_media_public", false)
-
-    @JvmField
     val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)
 
     @JvmField

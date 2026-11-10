@@ -1413,8 +1413,6 @@
     <string name="InuSelectionBottomNoQuote">Seçim çubuğunda Alıntısız düğmesi</string>
     <string name="InuSelectionBottomNoQuoteInfo">Mesaj seçerken Yanıtla düğmesini Alıntısız ilet düğmesiyle değiştirir</string>
     <string name="InuSaveDeletedOwn">Kendi mesajlarım</string>
-    <string name="InuArchiveMediaPublic">Arşiv medyasını klasöre yansıt</string>
-    <string name="InuArchiveMediaPublicInfo">Silinmiş/düzenlenmiş fotoğraf ve videoları galeride görünmeyecek şekilde Downloads/entinyGram/Ghosts klasörüne kopyalar. Yalnızca uygulama içinde tutmak için kapat.</string>
     <string name="InuAttachCameraSquare">Kare kamera karosu</string>
     <string name="InuAttachCameraSquareInfo">Galerideki kamera iki yerine tek hücre kaplar</string>
     <string name="InuAttachCameraResolution">Video çözünürlüğü</string>

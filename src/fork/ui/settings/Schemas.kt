@@ -1046,7 +1046,6 @@ object Schemas {
                         DOWNLOAD_DIRECTORIES.indexOf(InuConfig.DOWNLOAD_DIRECTORY.value),
                     ) { which ->
                         InuConfig.DOWNLOAD_DIRECTORY.value = DOWNLOAD_DIRECTORIES[which]
-                        desu.inugram.helpers.archive.ArchiveMediaHelper.moveMirror(DOWNLOAD_DIRECTORIES[which])
                         org.telegram.messenger.ImageLoader.getInstance().checkMediaPaths()
                         BulletinFactory.of(page)
                             .createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.InuDownloadDirectoryApplied))

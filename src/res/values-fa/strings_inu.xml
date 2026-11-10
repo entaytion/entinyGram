@@ -1255,8 +1255,6 @@
     <string name="InuDisableFlagSecure">غیرفعال کردن FLAG_SECURE</string>
     <string name="InuDisableFlagSecureInfo">مسدودسازی اسکرین‌شات را خاموش می‌کند: اسکرین‌شات و ضبط صفحه در گفتگوهای مخفی، رسانه یک‌بار مشاهده و کانال‌های محافظت‌شده مجاز می‌شود.</string>
     <string name="InuSaveDeletedOwn">پیام‌های خودم</string>
-    <string name="InuArchiveMediaPublic">کپی رسانه‌های آرشیو در یک پوشه</string>
-    <string name="InuArchiveMediaPublicInfo">عکس‌ها و ویدیوهای حذف‌شده/ویرایش‌شده را در Downloads/entinyGram/Ghosts کپی می‌کند و در گالری نشان داده نمی‌شوند. برای نگه‌داشتن فقط داخل برنامه خاموش کنید.</string>
     <string name="InuHideSponsoredMessages">پنهان کردن پیام‌های حمایت‌شده (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">تبلیغات حمایت‌شده کانال‌ها را غیرفعال می‌کند و از بارگیری پیام‌های تبلیغاتی جلوگیری می‌کند</string>
     <string name="InuHideProxySponsorChat">پنهان کردن گفتگوی حامی پروکسی</string>

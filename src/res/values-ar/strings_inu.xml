@@ -1267,8 +1267,6 @@
     <string name="InuDisableFlagSecure">تعطيل FLAG_SECURE</string>
     <string name="InuDisableFlagSecureInfo">يوقف حظر لقطات الشاشة: يسمح بلقطات الشاشة وتسجيلها في المحادثات السرية ووسائط المشاهدة لمرة واحدة والقنوات المحمية.</string>
     <string name="InuSaveDeletedOwn">رسائلي أنا</string>
-    <string name="InuArchiveMediaPublic">نسخ وسائط الأرشيف إلى مجلد</string>
-    <string name="InuArchiveMediaPublicInfo">ينسخ الصور ومقاطع الفيديو المحذوفة/المعدّلة إلى Downloads/entinyGram/Ghosts دون إظهارها في المعرض. أوقفه لإبقائها داخل التطبيق فقط.</string>
     <string name="InuHideSponsoredMessages">إخفاء الرسائل الممولة (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">يعطّل إعلانات القنوات الممولة ويمنع تحميل الرسائل الترويجية</string>
     <string name="InuHideProxySponsorChat">إخفاء محادثة راعي البروكسي</string>

@@ -1243,8 +1243,6 @@
     <string name="InuDisableFlagSecure">Вимкнути FLAG_SECURE</string>
     <string name="InuDisableFlagSecureInfo">Знімає заборону на скріншоти: дозволяє знімки екрана та запис відео в секретних чатах, одноразових медіа та захищених каналах.</string>
     <string name="InuSaveDeletedOwn">Моїх власних повідомленнях</string>
-    <string name="InuArchiveMediaPublic">Дзеркалити медіа архіву в папку</string>
-    <string name="InuArchiveMediaPublicInfo">Копіює збережені видалені/редаговані фото й відео в Downloads/entinyGram/Ghosts, галерея їх не показує. Вимкни, щоб тримати їх лише всередині застосунку.</string>
     <string name="InuSuppressScreenshotNotification">Приховувати сповіщення про скриншоти</string>
     <string name="InuSuppressScreenshotNotificationInfo">Не сповіщати співрозмовника, коли ви робите скриншот секретного чату.</string>
     <string name="InuHideSponsoredMessages">Приховати спонсорську рекламу (Адблок)</string>

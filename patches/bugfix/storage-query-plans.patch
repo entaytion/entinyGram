@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                  }
                  if (cursor.next() && cursor.intValue(1) == expectedCount) {
                      result = cursor.intValue(0);
-@@ -15114,25 +15114,25 @@ public class MessagesStorage extends BaseController {
+@@ -15100,25 +15100,25 @@ public class MessagesStorage extends BaseController {
                  for (int i = 0; i < 5; i++) {
                      if (i == 0) {
                          if (dialogId != 0) {
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
                      }
                      TLRPC.TL_messageEmpty emptyMessage = new TLRPC.TL_messageEmpty();
                      NativeByteBuffer data = new NativeByteBuffer(emptyMessage.getObjectSize());
-@@ -15140,9 +15140,8 @@ public class MessagesStorage extends BaseController {
+@@ -15126,9 +15126,8 @@ public class MessagesStorage extends BaseController {
  
                      state.requery();
                      state.bindByteBuffer(1, data);

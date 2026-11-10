@@ -61,7 +61,7 @@ object DeletedMessagesHelper {
         for (id in ids) {
             val owner = lookup(id)?.messageOwner
             if (userInitiated) synchronized(ArchiveCache.cacheLock) { ArchiveCache.forgetKept(account, dialogId, id) }
-            if (!userInitiated && !ArchiveCache.consumePurged(account, dialogId, id) && keepInChat(account, dialogId, owner, false)) {
+            if (!userInitiated && keepInChat(account, dialogId, owner, false)) {
                 rememberKept(account, dialogId, id, now)
                 keptAny = true
                 continue
@@ -139,12 +139,23 @@ object DeletedMessagesHelper {
     }
 
     @JvmStatic
-    fun wasArchived(db: SQLiteDatabase, dialogId: Long, msgId: Int): Boolean =
-        ArchiveStore.isDeletedMessageArchived(db, dialogId, msgId)
+    fun onStorageDelete(db: SQLiteDatabase, account: Int, dialogId: Long, message: TLRPC.Message, userInitiated: Boolean, kept: androidx.collection.LongSparseArray<ArrayList<Int>>): Boolean {
+        val was = ArchiveStore.isDeletedMessageArchived(db, dialogId, message.id)
+        if (was && userInitiated) {
+            ArchiveStore.deleteDeletedMessageEntries(db, dialogId, listOf(message.id))
+            return false
+        }
+        val archived = was || archiveMessage(db, account, dialogId, message)
+        if (keepInChat(account, dialogId, message, userInitiated)) (kept.get(dialogId) ?: ArrayList<Int>().also { kept.put(dialogId, it) }).add(message.id)
+        return archived
+    }
 
     @JvmStatic
-    fun markPurged(account: Int, dialogId: Long, msgId: Int) =
-        ArchiveCache.markPurged(account, dialogId, msgId)
+    fun idsToDelete(ids: String, messages: ArrayList<Int>, kept: ArrayList<Int>?): String {
+        if (kept.isNullOrEmpty()) return ids
+        val rest = messages.filter { it !in kept }
+        return if (rest.isEmpty()) "0" else rest.joinToString(",")
+    }
 
     // entiny: timed, self-destructing and view-once messages are saved to the archive without staying in the chat
     @JvmStatic
@@ -167,21 +178,17 @@ object DeletedMessagesHelper {
         val deletedAt = (System.currentTimeMillis() / 1000L).toInt()
         val savedPath = ArchiveStore.deletedMessageMediaPath(db, dialogId, msgId)?.takeIf { File(it).isFile }
         ArchiveStore.saveDeletedMessage(db, dialogId, msgId, fromId, text, date, deletedAt, savedPath, message)
+        ArchiveCache.rememberKept(account, dialogId, msgId, deletedAt.toLong())
         if (savedPath != null) {
             ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, savedPath)
             return
         }
-        val mediaCopy = ArchiveMediaHelper.planNewMediaCopy(account, message) ?: return
+        val mediaCopy = ArchiveMediaHelper.planNewMediaCopy(account, message) ?: return ArchiveMediaHelper.fetchNewMedia(account, message)
         ArchiveMediaHelper.copyThenStore(account, "d:$account:$dialogId:$msgId", mediaCopy) { copyDb, copied ->
             val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id = $msgId", copied)
             if (stored) ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, copied)
             stored
         }
-    }
-
-    @JvmStatic
-    fun removeArchived(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
-        ArchiveStore.deleteDeletedMessageEntries(db, dialogId, listOf(msgId))
     }
 
     @JvmStatic

@@ -1427,8 +1427,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuDisableFlagSecure">Disattiva FLAG_SECURE</string>
     <string name="InuDisableFlagSecureInfo">Disattiva il blocco degli screenshot: consente screenshot e registrazione dello schermo nelle chat segrete, nei media visualizzabili una volta e nei canali protetti.</string>
     <string name="InuSaveDeletedOwn">I miei messaggi</string>
-    <string name="InuArchiveMediaPublic">Duplica i media dell\'archivio in una cartella</string>
-    <string name="InuArchiveMediaPublicInfo">Copia le foto e i video eliminati/modificati in Downloads/entinyGram/Ghosts, nascosti dalla galleria. Disattivalo per tenerli solo nell\'app.</string>
     <string name="InuHideSponsoredMessages">Nascondi i messaggi sponsorizzati (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Disattiva gli annunci sponsorizzati nei canali e impedisce il caricamento di messaggi promozionali</string>
     <string name="InuHideProxySponsorChat">Nascondi la chat sponsor del proxy</string>

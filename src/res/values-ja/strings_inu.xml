@@ -1401,8 +1401,6 @@
     <string name="InuSelectionBottomNoQuote">選択バーの引用なし転送ボタン</string>
     <string name="InuSelectionBottomNoQuoteInfo">メッセージ選択時に「返信」ボタンを「引用なし転送」に置き換えます</string>
     <string name="InuSaveDeletedOwn">自分のメッセージ</string>
-    <string name="InuArchiveMediaPublic">アーカイブのメディアをフォルダにコピー</string>
-    <string name="InuArchiveMediaPublicInfo">削除/編集済みの写真と動画を、ギャラリーに表示されない Downloads/entinyGram/Ghosts にコピーします。アプリ内だけに残すにはオフにします。</string>
     <string name="InuAttachCameraSquare">正方形のカメラタイル</string>
     <string name="InuAttachCameraSquareInfo">ギャラリーのカメラが2マスではなく1マスになります</string>
     <string name="InuAttachCameraResolution">動画の解像度</string>

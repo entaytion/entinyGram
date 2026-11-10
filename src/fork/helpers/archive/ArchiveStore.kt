@@ -8,16 +8,9 @@ import org.telegram.tgnet.TLRPC
 
 object ArchiveStore {
     fun clearEditHistory(db: SQLiteDatabase, dialogIds: Collection<Long>? = null) {
-        if (dialogIds != null && dialogIds.isEmpty()) return
-        val where = if (dialogIds == null) "" else " WHERE dialog_id IN (${dialogIds.joinToString(",")})"
-        val paths = ArrayList<String>()
-        val cursor = db.queryFinalized("SELECT media_path FROM inu_edit_history$where")
-        try {
-            while (cursor.next()) cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
-        } finally {
-            cursor.dispose()
-        }
-        db.executeFast("DELETE FROM inu_edit_history$where").stepThis().dispose()
+        val where = dialogFilter(dialogIds)
+        val paths = collectMediaPaths(db, "inu_edit_history", where)
+        db.executeFast("DELETE FROM inu_edit_history WHERE $where").stepThis().dispose()
         deleteUnreferencedMediaFiles(db, paths)
     }
 
@@ -458,13 +451,13 @@ object ArchiveStore {
     }
 
     fun deleteEditHistoryEntry(db: SQLiteDatabase, dialogId: Long, msgId: Int, date: Long) {
-        val mediaPaths = getMediaPaths(db, "inu_edit_history", "dialog_id = $dialogId AND msg_id = $msgId AND date = ?", date)
+        val mediaPaths = collectMediaPaths(db, "inu_edit_history", "dialog_id = $dialogId AND msg_id = $msgId AND date = $date")
         db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id = $msgId AND date = $date").stepThis().dispose()
         deleteUnreferencedMediaFiles(db, mediaPaths)
     }
 
     fun deleteEditHistoryRevision(db: SQLiteDatabase, dialogId: Long, msgId: Int, rowId: Long) {
-        val mediaPaths = getMediaPaths(db, "inu_edit_history", "dialog_id = $dialogId AND msg_id = $msgId AND id = ?", rowId)
+        val mediaPaths = collectMediaPaths(db, "inu_edit_history", "dialog_id = $dialogId AND msg_id = $msgId AND id = $rowId")
         val query = db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? AND id = ?")
         try {
             query.bindLong(1, dialogId)
@@ -494,7 +487,7 @@ object ArchiveStore {
         val countCursor = db.queryFinalized("SELECT COUNT(*) FROM inu_edit_history WHERE archived_at > 0 AND archived_at < ?", cutoffUnixSec)
         val count = try { if (countCursor.next()) countCursor.intValue(0) else 0 } finally { countCursor.dispose() }
         if (count == 0) return 0
-        val mediaPaths = getMediaPaths(db, "inu_edit_history", "archived_at > 0 AND archived_at < ?", cutoffUnixSec)
+        val mediaPaths = collectMediaPaths(db, "inu_edit_history", "archived_at > 0 AND archived_at < $cutoffUnixSec")
         db.executeFast("DELETE FROM inu_edit_history WHERE archived_at > 0 AND archived_at < ?")
             .also {
                 it.bindLong(1, cutoffUnixSec)
@@ -572,55 +565,30 @@ object ArchiveStore {
     }
 
     fun clearDeletedMessages(db: SQLiteDatabase, dialogIds: Collection<Long>? = null, includeHistory: Boolean = true) {
-        val mediaPaths = try { getMediaPathsForTables(db, dialogIds) } catch (_: Throwable) { emptyList() }
-
-        if (dialogIds == null) {
-            db.executeFast("DELETE FROM inu_deleted_messages").stepThis().dispose()
-            if (includeHistory) {
-                db.executeFast("DELETE FROM inu_edit_history").stepThis().dispose()
-                db.executeFast("DELETE FROM inu_deleted_reactions").stepThis().dispose()
-            }
-        } else if (dialogIds.isNotEmpty()) {
-            val idsStr = dialogIds.joinToString(",")
-            db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id IN ($idsStr)").stepThis().dispose()
-            if (includeHistory) {
-                db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id IN ($idsStr)").stepThis().dispose()
-                db.executeFast("DELETE FROM inu_deleted_reactions WHERE dialog_id IN ($idsStr)").stepThis().dispose()
-            }
+        val where = dialogFilter(dialogIds)
+        val mediaPaths = collectMediaPaths(db, "inu_deleted_messages", where) + collectMediaPaths(db, "inu_edit_history", where)
+        db.executeFast("DELETE FROM inu_deleted_messages WHERE $where").stepThis().dispose()
+        if (includeHistory) {
+            db.executeFast("DELETE FROM inu_edit_history WHERE $where").stepThis().dispose()
+            db.executeFast("DELETE FROM inu_deleted_reactions WHERE $where").stepThis().dispose()
         }
         deleteUnreferencedMediaFiles(db, mediaPaths)
     }
 
-    private fun getMediaPathsForTables(db: SQLiteDatabase, dialogIds: Collection<Long>?): List<String> {
+    private fun dialogFilter(dialogIds: Collection<Long>?): String =
+        if (dialogIds == null) "1" else if (dialogIds.isEmpty()) "0" else "dialog_id IN (${dialogIds.joinToString(",")})"
+
+    private fun collectMediaPaths(db: SQLiteDatabase, table: String, where: String): List<String> {
         val paths = ArrayList<String>()
-        if (dialogIds != null && dialogIds.isEmpty()) return paths
-        for (table in arrayOf("inu_deleted_messages", "inu_edit_history")) {
-            val where = if (dialogIds == null) {
-                "media_path IS NOT NULL"
-            } else {
-                "media_path IS NOT NULL AND dialog_id IN (${dialogIds.joinToString(",")})"
-            }
-            val cursor = db.queryFinalized("SELECT media_path FROM $table WHERE $where")
+        try {
+            val cursor = db.queryFinalized("SELECT media_path FROM $table WHERE media_path IS NOT NULL AND ($where)")
             try {
-                while (cursor.next()) {
-                    cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
-                }
+                while (cursor.next()) cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
             } finally {
                 cursor.dispose()
             }
-        }
-        return paths
-    }
-
-    private fun getMediaPaths(db: SQLiteDatabase, table: String, condition: String, value: Long): List<String> {
-        val paths = ArrayList<String>()
-        val cursor = db.queryFinalized("SELECT media_path FROM $table WHERE media_path IS NOT NULL AND $condition", value)
-        try {
-            while (cursor.next()) {
-                cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
-            }
-        } finally {
-            cursor.dispose()
+        } catch (e: Throwable) {
+            Log.e("InuDatabaseHelper", "mediaPaths failed", e)
         }
         return paths
     }
@@ -653,19 +621,11 @@ object ArchiveStore {
     private val ACCOUNT_DIR_REGEX = Regex("account_[1-9][0-9]*")
 
     private fun deleteUnreferencedMediaFiles(db: SQLiteDatabase, paths: Collection<String>) {
-        val archiveRoot = try {
-            java.io.File(org.telegram.messenger.ApplicationLoader.applicationContext.filesDir, "entinyGram/media").canonicalFile
-        } catch (_: Throwable) {
-            return
-        }
+        val roots = ArchiveMediaHelper.archiveRoots().mapNotNull { runCatching { it.canonicalFile.path + java.io.File.separator }.getOrNull() }
         for (path in paths.distinct()) {
             val file = try { java.io.File(path).canonicalFile } catch (_: Throwable) { continue }
-            val relativePath = file.path.removePrefix(archiveRoot.path + java.io.File.separator)
-            if (relativePath == file.path) continue
-            val accountDirectory = relativePath.substringBefore(java.io.File.separator)
-            if (!accountDirectory.matches(ACCOUNT_DIR_REGEX)) continue
-            val accountRoot = java.io.File(archiveRoot, accountDirectory)
-            if (!file.path.startsWith(accountRoot.path + java.io.File.separator) || !file.isFile) continue
+            val root = roots.firstOrNull { file.path.startsWith(it) } ?: continue
+            if (!file.path.removePrefix(root).substringBefore(java.io.File.separator).matches(ACCOUNT_DIR_REGEX) || !file.isFile) continue
             val cursor = db.queryFinalized(
                 "SELECT 1 FROM inu_deleted_messages WHERE media_path = ? UNION ALL SELECT 1 FROM inu_edit_history WHERE media_path = ? LIMIT 1",
                 path,
@@ -698,20 +658,7 @@ object ArchiveStore {
     fun deleteDeletedMessageEntries(db: SQLiteDatabase, dialogId: Long, mids: List<Int>) {
         if (mids.isEmpty()) return
         val idsStr = mids.joinToString(",")
-        val mediaPaths = try {
-            val paths = ArrayList<String>()
-            val cursor = db.queryFinalized("SELECT media_path FROM inu_deleted_messages WHERE dialog_id = $dialogId AND msg_id IN ($idsStr) AND media_path IS NOT NULL")
-            try {
-                while (cursor.next()) {
-                    cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
-                }
-            } finally {
-                cursor.dispose()
-            }
-            paths
-        } catch (_: Throwable) {
-            emptyList()
-        }
+        val mediaPaths = collectMediaPaths(db, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id IN ($idsStr)")
         db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
         deleteUnreferencedMediaFiles(db, mediaPaths)
     }

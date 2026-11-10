@@ -1413,8 +1413,6 @@
     <string name="InuSelectionBottomNoQuote">多选栏中的无引用转发按钮</string>
     <string name="InuSelectionBottomNoQuoteInfo">在选择消息时将“回复”按钮替换为“无引用转发”</string>
     <string name="InuSaveDeletedOwn">我自己的消息</string>
-    <string name="InuArchiveMediaPublic">将归档媒体镜像到文件夹</string>
-    <string name="InuArchiveMediaPublicInfo">将已删除/已编辑的照片和视频复制到 Downloads/entinyGram/Ghosts，图库中不显示。关闭后仅保存在应用内。</string>
     <string name="InuAttachCameraSquare">方形相机磁贴</string>
     <string name="InuAttachCameraSquareInfo">图库中的相机占一格而不是两格</string>
     <string name="InuAttachCameraResolution">视频分辨率</string>

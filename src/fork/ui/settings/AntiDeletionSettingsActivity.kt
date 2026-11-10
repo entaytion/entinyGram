@@ -112,14 +112,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             )
             if (InuConfig.ARCHIVE_MEDIA_ENABLED.value) {
                 items.add(UItem.asButton(BUTTON_SCOPE_MEDIA, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuArchiveScope), ArchiveScopeActivity.summary(ArchiveScope.Kind.MEDIA)))
-                items.add(
-                    mkTwoLineCheckItem(
-                        TOGGLE_ARCHIVE_MEDIA_PUBLIC,
-                        R.string.InuArchiveMediaPublic,
-                        R.string.InuArchiveMediaPublicInfo,
-                        InuConfig.ARCHIVE_MEDIA_PUBLIC.value,
-                    )
-                )
             }
         }
 
@@ -168,11 +160,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
                 listView?.adapter?.update(true)
             }
-            TOGGLE_ARCHIVE_MEDIA_PUBLIC -> {
-                val new = InuConfig.ARCHIVE_MEDIA_PUBLIC.toggle()
-                if (new) ArchiveMediaHelper.exportExistingArchive(currentAccount) else ArchiveMediaHelper.removeMirror()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
             TOGGLE_SAVE_EDITED_MESSAGES -> {
                 val new = InuConfig.SAVE_EDITED_MESSAGES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -207,7 +194,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_CUSTOM_MARK = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
-        private val TOGGLE_ARCHIVE_MEDIA_PUBLIC = InuUtils.generateId()
         private val TOGGLE_DELETED_MESSAGES_TRANSPARENT = InuUtils.generateId()
         private val CELL_DELETED_MARK = InuUtils.generateId()
         private val BUTTON_ARCHIVE_SCOPE = InuUtils.generateId()
@@ -240,7 +226,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("archive-scope-media", R.string.InuArchiveScope, BUTTON_SCOPE_MEDIA),
                 SearchRegistry.Entry("archive-media-enabled", R.string.InuArchiveAttachmentsSave, TOGGLE_ARCHIVE_MEDIA_ENABLED),
                 SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),
-                SearchRegistry.Entry("archive-media-public", R.string.InuArchiveMediaPublic, TOGGLE_ARCHIVE_MEDIA_PUBLIC),
                 SearchRegistry.Entry("deleted-transparent", R.string.InuDeletedMessagesTransparent, TOGGLE_DELETED_MESSAGES_TRANSPARENT),
                 SearchRegistry.Entry("deleted-mark", R.string.InuDeletedMark, CELL_DELETED_MARK),
                 SearchRegistry.Entry("custom-deleted-mark", R.string.InuCustomDeletedMark, BUTTON_CUSTOM_MARK),

@@ -1389,8 +1389,6 @@
     <string name="InuDisableFlagSecure">Отключить FLAG_SECURE</string>
     <string name="InuDisableFlagSecureInfo">Снимает запрет на скриншоты: разрешает скриншоты и запись экрана в секретных чатах, исчезающих медиа и защищённых каналах.</string>
     <string name="InuSaveDeletedOwn">Моих собственных сообщениях</string>
-    <string name="InuArchiveMediaPublic">Дублировать медиа архива в папку</string>
-    <string name="InuArchiveMediaPublicInfo">Копирует сохранённые удалённые/изменённые фото и видео в Downloads/entinyGram/Ghosts, галерея их не показывает. Выключи, чтобы хранить их только внутри приложения.</string>
     <string name="InuAiTranscribe">Распознавание речи (Voice-to-Text)</string>
     <string name="InuAiTranscribeInfo">Расшифровывать голосовые и видеосообщения через своего AI-провайдера вместо телеграмовского — с Premium или без него.</string>
     <string name="InuAiTranscribeModel">Модель</string>
