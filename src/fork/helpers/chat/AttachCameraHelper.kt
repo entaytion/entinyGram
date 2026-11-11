@@ -23,9 +23,9 @@ import desu.inugram.InuConfig.AttachCameraModeItem.Companion.FAB
 import desu.inugram.InuConfig.AttachCameraModeItem.Companion.INSTANT
 import desu.inugram.InuConfig.AttachCameraModeItem.Companion.STATIC
 import desu.inugram.InuConfig.AttachCameraModeItem.Companion.TAB
-import desu.inugram.core.camera.CamSize
 import desu.inugram.core.camera.ExposureEv
-import desu.inugram.core.camera.VideoSizes
+import desu.inugram.core.camera.FrameSize
+import desu.inugram.core.camera.RecordingSizePicker
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ImageLoader
 import org.telegram.messenger.LocaleController
@@ -244,7 +244,8 @@ object AttachCameraHelper {
             else -> return null
         }
         if (sizes.isNullOrEmpty()) return null
-        val chosen = VideoSizes.choose(sizes.map { CamSize(it.width, it.height) }, (target * 1.5f).toInt(), 480, target, 16f / 9f) ?: return null
+        val picker = RecordingSizePicker(16f / 9f, floor = 480, ceiling = target * 3 / 2, target = target)
+        val chosen = picker.pick(sizes.map { FrameSize(it.width, it.height) }) ?: return null
         return sizes.firstOrNull { it.width == chosen.width && it.height == chosen.height }
     }
 }

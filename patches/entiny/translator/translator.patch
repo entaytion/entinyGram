@@ -7,7 +7,7 @@ Subject: Translation providers, language controls and banner preferences
  .../telegram/messenger/LanguageDetector.java  |  54 ++++
  .../messenger/MediaDataController.java        |   2 +-
  .../org/telegram/messenger/MessageObject.java |  13 +-
- .../messenger/TranslateController.java        | 251 +++++++++++++----
+ .../messenger/TranslateController.java        | 240 +++++++++++++----
  .../telegram/tgnet/ConnectionsManager.java    |   9 +
  .../java/org/telegram/ui/ArticleViewer.java   |  17 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |  36 ++-
@@ -21,7 +21,7 @@ Subject: Translation providers, language controls and banner preferences
  .../telegram/ui/LanguageSelectActivity.java   | 252 +-----------------
  .../ui/RestrictedLanguagesSelectActivity.java |  45 ++--
  .../org/telegram/ui/web/WebActionBar.java     |   3 +
- 17 files changed, 478 insertions(+), 564 deletions(-)
+ 17 files changed, 467 insertions(+), 564 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
 index 0000000..0000000 100644
@@ -174,30 +174,19 @@ index 0000000..0000000 100644
  
  import java.util.ArrayList;
  import java.util.Arrays;
-@@ -65,6 +66,22 @@ public class TranslateController extends BaseController {
+@@ -65,6 +66,11 @@ public class TranslateController extends BaseController {
  
      private static final int MAX_SYMBOLS_PER_REQUEST = 25000;
      private static final int MAX_MESSAGES_PER_REQUEST = 20;
 +
-+    // inu: Telegram's translate endpoint only accepts a BATCH of texts from a Premium account; a
-+    // free account has to send them one at a time or the whole request comes back refused. That is
-+    // the actual reason the chat translate bar translated nothing without Premium while the
-+    // single-message menu worked fine - the bar batches, the menu does not. Cherrygram handles it
-+    // the same way (TelegramTranslator: `int maxSize = isPremium() ? 20 : 1`). No toggle: there is
-+    // no sane reason to want a batch size that the server will reject.
-+    // Compared as `size() + 1 >= limit`, exactly like stock, so the Premium path stays
-+    // byte-for-byte stock behaviour and only the free path changes.
-+    // entiny: for text, EntinyTranslate.handle() now intercepts every non-premium (and every
-+    // third-party-provider) account before this batching code even runs, so the free/size-1 branch
-+    // below is only ever reached here by a premium account still on the native Telegram provider.
-+    // It stays live for polls, rich messages, and the unconfigured-provider fallback.
++    // entiny: the server accepts batched texts only from Premium accounts, so free accounts send one per request
 +    private int inu_maxMessagesPerRequest() {
 +        return getUserConfig().isPremium() ? MAX_MESSAGES_PER_REQUEST : 1;
 +    }
      private static final int GROUPING_TRANSLATIONS_TIMEOUT = 80;
  
      private final LongSparseArray<Boolean> translatingDialogs = new LongSparseArray<>();
-@@ -91,27 +108,17 @@ public class TranslateController extends BaseController {
+@@ -91,27 +97,17 @@ public class TranslateController extends BaseController {
      }
  
      public boolean isFeatureAvailable() {
@@ -227,7 +216,7 @@ index 0000000..0000000 100644
          if (chatTranslateEnabled == null) {
              chatTranslateEnabled = messagesController.getMainSettings().getBoolean("translate_chat_button", true);
          }
-@@ -119,7 +126,7 @@ public class TranslateController extends BaseController {
+@@ -119,7 +115,7 @@ public class TranslateController extends BaseController {
      }
  
      public boolean isContextTranslateEnabled() {
@@ -236,7 +225,7 @@ index 0000000..0000000 100644
              return false;
          }
          if (contextTranslateEnabled == null) {
-@@ -164,7 +171,7 @@ public class TranslateController extends BaseController {
+@@ -164,7 +160,7 @@ public class TranslateController extends BaseController {
          return (
              messageObject != null &&
              messageObject.messageOwner != null &&
@@ -245,7 +234,7 @@ index 0000000..0000000 100644
              !messageObject.isRestrictedMessage &&
              !messageObject.isSponsored() &&
              !(MessageObject.getMedia(messageObject) instanceof TLRPC.TL_messageMediaWidget) &&
-@@ -197,7 +204,6 @@ public class TranslateController extends BaseController {
+@@ -197,7 +193,6 @@ public class TranslateController extends BaseController {
              isFeatureAvailable(dialogId) &&
              !DialogObject.isEncryptedDialog(dialogId) &&
              getUserConfig().getClientUserId() != dialogId
@@ -253,7 +242,7 @@ index 0000000..0000000 100644
          );
      }
  
-@@ -205,6 +211,9 @@ public class TranslateController extends BaseController {
+@@ -205,6 +200,9 @@ public class TranslateController extends BaseController {
          if (hideTranslateDialogs.contains(dialogId)) {
              return true;
          }
@@ -263,7 +252,7 @@ index 0000000..0000000 100644
          TLRPC.ChatFull chatFull = getMessagesController().getChatFull(-dialogId);
          if (chatFull != null) {
              return chatFull.translations_disabled;
-@@ -225,7 +234,19 @@ public class TranslateController extends BaseController {
+@@ -225,7 +223,19 @@ public class TranslateController extends BaseController {
      }
  
      public boolean isTranslatingDialog(long dialogId) {
@@ -284,7 +273,7 @@ index 0000000..0000000 100644
      }
  
      public void toggleTranslatingDialog(long dialogId) {
-@@ -237,6 +258,7 @@ public class TranslateController extends BaseController {
+@@ -237,6 +247,7 @@ public class TranslateController extends BaseController {
          if (value && !currentValue) {
              translatingDialogs.put(dialogId, true);
              NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogTranslate, dialogId, true);
@@ -292,7 +281,7 @@ index 0000000..0000000 100644
              notified = true;
          } else if (!value && currentValue) {
              translatingDialogs.put((Long) dialogId, false);
-@@ -266,8 +288,8 @@ public class TranslateController extends BaseController {
+@@ -266,8 +277,8 @@ public class TranslateController extends BaseController {
      public String getDialogTranslateTo(long dialogId) {
          String lang = translateDialogLanguage.get(dialogId);
          if (lang == null) {
@@ -303,7 +292,7 @@ index 0000000..0000000 100644
                  lang = currentLanguage();
              }
          }
-@@ -300,12 +322,18 @@ public class TranslateController extends BaseController {
+@@ -300,12 +311,18 @@ public class TranslateController extends BaseController {
          }
  
          cancelTranslations(dialogId);
@@ -323,7 +312,7 @@ index 0000000..0000000 100644
      }
  
      public void updateDialogFull(long dialogId) {
-@@ -550,7 +578,7 @@ public class TranslateController extends BaseController {
+@@ -550,7 +567,7 @@ public class TranslateController extends BaseController {
              ArrayList<Long> toNotify = new ArrayList<>();
              for (long dialogId : translatableDialogs) {
                  String language = detectedDialogLanguage.get(dialogId);
@@ -332,7 +321,7 @@ index 0000000..0000000 100644
                      cancelTranslations(dialogId);
                      translatingDialogs.remove(dialogId);
                      toNotify.add(dialogId);
-@@ -721,6 +749,10 @@ public class TranslateController extends BaseController {
+@@ -721,6 +738,10 @@ public class TranslateController extends BaseController {
                          }
                      });
                  } else {
@@ -343,7 +332,7 @@ index 0000000..0000000 100644
                      pushToTranslate(finalMessageObject, language, (isTranscription, id, text, lang) -> {
                          if (finalMessageObject.getId() != id) {
                              FileLog.e("wtf, asked to translate " + finalMessageObject.getId() + " but got " + id + "!");
-@@ -730,6 +762,8 @@ public class TranslateController extends BaseController {
+@@ -730,6 +751,8 @@ public class TranslateController extends BaseController {
                              finalMessageObject.messageOwner.translatedVoiceTranscription = text;
                          } else {
                              finalMessageObject.messageOwner.translatedText = text;
@@ -352,7 +341,7 @@ index 0000000..0000000 100644
                          }
                          finalMessageObject.messageOwner.translatedPoll = null;
                          if (keepReply) {
-@@ -770,6 +804,9 @@ public class TranslateController extends BaseController {
+@@ -770,6 +793,9 @@ public class TranslateController extends BaseController {
          if (messageObject == null || messageObject.messageOwner == null) {
              return;
          }
@@ -362,7 +351,7 @@ index 0000000..0000000 100644
          final long dialogId = messageObject.getDialogId();
          if (!isFeatureAvailable(dialogId)) {
              return;
-@@ -781,6 +818,12 @@ public class TranslateController extends BaseController {
+@@ -781,6 +807,12 @@ public class TranslateController extends BaseController {
          messageObject.messageOwner.summaryText = null;
          messageObject.messageOwner.translatedSummaryText = null;
          messageObject.messageOwner.translatedSummaryLanguage = null;
@@ -375,7 +364,7 @@ index 0000000..0000000 100644
          getMessagesStorage().updateMessageCustomParams(dialogId, messageObject.messageOwner);
          AndroidUtilities.runOnUIThread(() -> {
              NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.messageTranslated, messageObject, false, isTranslatingDialog(dialogId));
-@@ -794,7 +837,7 @@ public class TranslateController extends BaseController {
+@@ -794,7 +826,7 @@ public class TranslateController extends BaseController {
      }
  
      public void checkDialogMessageSure(long dialogId) {
@@ -384,7 +373,7 @@ index 0000000..0000000 100644
              return;
          }
          getMessagesStorage().getStorageQueue().postRunnable(() -> {
-@@ -836,6 +879,7 @@ public class TranslateController extends BaseController {
+@@ -836,6 +868,7 @@ public class TranslateController extends BaseController {
  
      public void cleanup() {
          cancelAllTranslations();
@@ -392,7 +381,7 @@ index 0000000..0000000 100644
          resetTranslatingDialogsCache();
  
          translatingDialogs.clear();
-@@ -929,7 +973,7 @@ public class TranslateController extends BaseController {
+@@ -929,7 +962,7 @@ public class TranslateController extends BaseController {
              isTranslatable(messageObject) &&
              messageObject.messageOwner.originalLanguage != null &&
              !UNKNOWN_LANGUAGE.equals(messageObject.messageOwner.originalLanguage) &&
@@ -401,7 +390,7 @@ index 0000000..0000000 100644
          );
  
          if (isUnknown) {
-@@ -947,14 +991,16 @@ public class TranslateController extends BaseController {
+@@ -947,14 +980,16 @@ public class TranslateController extends BaseController {
          final int notTranslatableCount = translatableMessages.certainlyNotTranslatable.size();
          final int totalCount = translatableCount + unknownCount + notTranslatableCount;
          final boolean autotranslation = isChatAutoTranslated(dialogId);
@@ -420,7 +409,7 @@ index 0000000..0000000 100644
              translatableDialogs.add(dialogId);
              translatableDialogMessages.remove((Long) dialogId);
              AndroidUtilities.runOnUIThread(() -> {
-@@ -1015,6 +1061,7 @@ public class TranslateController extends BaseController {
+@@ -1015,6 +1050,7 @@ public class TranslateController extends BaseController {
          ArrayList<TLRPC.TL_textWithEntities> messageTexts = new ArrayList<>();
          ArrayList<Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String>> callbacks = new ArrayList<>();
          String language;
@@ -428,7 +417,7 @@ index 0000000..0000000 100644
  
          int delay = GROUPING_TRANSLATIONS_TIMEOUT;
          int symbolsCount;
-@@ -1022,9 +1069,18 @@ public class TranslateController extends BaseController {
+@@ -1022,9 +1058,18 @@ public class TranslateController extends BaseController {
          int reqId = -1;
      }
  
@@ -448,7 +437,7 @@ index 0000000..0000000 100644
          Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String> callback
      ) {
          if (message == null || message.messageOwner == null || message.getId() < 0 || callback == null) {
-@@ -1044,6 +1100,13 @@ public class TranslateController extends BaseController {
+@@ -1044,6 +1089,13 @@ public class TranslateController extends BaseController {
          } else {
              source.text = message.messageOwner.message;
              source.entities = message.messageOwner.entities;
@@ -462,7 +451,7 @@ index 0000000..0000000 100644
          }
  
          PendingTranslation pendingTranslation;
-@@ -1053,7 +1116,7 @@ public class TranslateController extends BaseController {
+@@ -1053,7 +1105,7 @@ public class TranslateController extends BaseController {
                  pendingTranslations.put(dialogId, dialogPendingTranslations = new ArrayList<>());
              }
  
@@ -471,7 +460,7 @@ index 0000000..0000000 100644
                  dialogPendingTranslations.add(pendingTranslation = new PendingTranslation());
              } else {
                  pendingTranslation = dialogPendingTranslations.get(dialogPendingTranslations.size() - 1);
-@@ -1074,8 +1137,12 @@ public class TranslateController extends BaseController {
+@@ -1074,8 +1126,12 @@ public class TranslateController extends BaseController {
                  messageSymbolsCount = message.messageText.length();
              }
  
@@ -486,7 +475,7 @@ index 0000000..0000000 100644
                  AndroidUtilities.cancelRunOnUIThread(pendingTranslation.runnable);
                  AndroidUtilities.runOnUIThread(pendingTranslation.runnable); // without timeout
                  dialogPendingTranslations.add(pendingTranslation = new PendingTranslation());
-@@ -1090,6 +1157,7 @@ public class TranslateController extends BaseController {
+@@ -1090,6 +1146,7 @@ public class TranslateController extends BaseController {
              pendingTranslation.messageTexts.add(source);
              pendingTranslation.callbacks.add(callback);
              pendingTranslation.language = language;
@@ -494,7 +483,7 @@ index 0000000..0000000 100644
              pendingTranslation.symbolsCount += messageSymbolsCount;
              final PendingTranslation pendingTranslation1 = pendingTranslation;
              pendingTranslation.runnable = () -> {
-@@ -1104,7 +1172,7 @@ public class TranslateController extends BaseController {
+@@ -1104,7 +1161,7 @@ public class TranslateController extends BaseController {
                  }
  
                  final String method = getMessagesController().translationsAutoEnabled;
@@ -503,7 +492,7 @@ index 0000000..0000000 100644
                      final String toLanguage = pendingTranslation1.language;
                      for (int i = 0; i < pendingTranslation1.messageIds.size(); ++i) {
                          final int id = pendingTranslation1.messageIds.get(i);
-@@ -1117,7 +1185,7 @@ public class TranslateController extends BaseController {
+@@ -1117,7 +1174,7 @@ public class TranslateController extends BaseController {
                                  _callback.run(isTranscription, id, resultWithEntities, toLanguage);
                              } else {
                                  toggleTranslatingDialog(dialogId, false);
@@ -512,7 +501,7 @@ index 0000000..0000000 100644
                              }
                          });
                      }
-@@ -1143,7 +1211,7 @@ public class TranslateController extends BaseController {
+@@ -1143,7 +1200,7 @@ public class TranslateController extends BaseController {
                  }*/
  
                  final TLRPC.TL_messages_translateText req = new TLRPC.TL_messages_translateText();
@@ -521,7 +510,7 @@ index 0000000..0000000 100644
                      req.flags |= 2;
                      req.text.addAll(pendingTranslation1.messageTexts);
                  } else {
-@@ -1152,6 +1220,7 @@ public class TranslateController extends BaseController {
+@@ -1152,6 +1209,7 @@ public class TranslateController extends BaseController {
                      req.id = pendingTranslation1.messageIds;
                  }
                  req.to_lang = normalizeLanguage(pendingTranslation1.language);
@@ -529,7 +518,7 @@ index 0000000..0000000 100644
  
                  final int reqId = getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
                      final ArrayList<Integer> ids;
-@@ -1170,7 +1239,18 @@ public class TranslateController extends BaseController {
+@@ -1170,7 +1228,18 @@ public class TranslateController extends BaseController {
                          for (int i = 0; i < count; ++i) {
                              callbacks.get(i).run(isTranscription, ids.get(i), TranslateAlert2.preprocess(texts.get(i), translated.get(i)), toLanguage);
                          }
@@ -549,7 +538,7 @@ index 0000000..0000000 100644
                          for (int i = 0; i < ids.size(); ++i) {
                              final int id = ids.get(i);
                              final Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String> _callback = callbacks.get(i);
-@@ -1181,18 +1261,12 @@ public class TranslateController extends BaseController {
+@@ -1181,18 +1250,12 @@ public class TranslateController extends BaseController {
                                      resultWithEntities.text = result;
                                      _callback.run(isTranscription, id, resultWithEntities, toLanguage);
                                  } else {
@@ -570,7 +559,7 @@ index 0000000..0000000 100644
                          for (int i = 0; i < callbacks.size(); ++i) {
                              callbacks.get(i).run(isTranscription, ids.get(i), null, pendingTranslation1.language);
                          }
-@@ -1358,11 +1432,17 @@ public class TranslateController extends BaseController {
+@@ -1358,11 +1421,17 @@ public class TranslateController extends BaseController {
              }
              final TLRPC.TL_messageMediaPoll mediaPoll = (TLRPC.TL_messageMediaPoll) media;
              final PollText pollText = PollText.fromPoll(mediaPoll);
@@ -590,7 +579,7 @@ index 0000000..0000000 100644
                  AndroidUtilities.cancelRunOnUIThread(pendingTranslation.runnable);
                  AndroidUtilities.runOnUIThread(pendingTranslation.runnable); // without timeout
                  dialogPendingTranslations.add(pendingTranslation = new PendingPollTranslation());
-@@ -1487,18 +1567,29 @@ public class TranslateController extends BaseController {
+@@ -1487,18 +1556,29 @@ public class TranslateController extends BaseController {
      private static class PendingRichTranslation {
          Runnable runnable;
          ArrayList<Integer> messageIds = new ArrayList<>();
@@ -621,7 +610,7 @@ index 0000000..0000000 100644
      ) {
          if (message == null || message.messageOwner == null || message.getId() < 0 || callback == null) {
              return;
-@@ -1516,7 +1607,7 @@ public class TranslateController extends BaseController {
+@@ -1516,7 +1596,7 @@ public class TranslateController extends BaseController {
                  pendingRichTranslations.put(dialogId, dialogPendingTranslations = new ArrayList<>());
              }
  
@@ -630,7 +619,7 @@ index 0000000..0000000 100644
                  dialogPendingTranslations.add(pendingTranslation = new PendingRichTranslation());
              } else {
                  pendingTranslation = dialogPendingTranslations.get(dialogPendingTranslations.size() - 1);
-@@ -1526,7 +1617,8 @@ public class TranslateController extends BaseController {
+@@ -1526,7 +1606,8 @@ public class TranslateController extends BaseController {
                  return;
              }
  
@@ -640,7 +629,7 @@ index 0000000..0000000 100644
                  AndroidUtilities.cancelRunOnUIThread(pendingTranslation.runnable);
                  AndroidUtilities.runOnUIThread(pendingTranslation.runnable); // without timeout
                  dialogPendingTranslations.add(pendingTranslation = new PendingRichTranslation());
-@@ -1537,9 +1629,11 @@ public class TranslateController extends BaseController {
+@@ -1537,9 +1618,11 @@ public class TranslateController extends BaseController {
              }
              loadingTranslations.add(message.getId());
              pendingTranslation.messageIds.add(message.getId());
@@ -652,7 +641,7 @@ index 0000000..0000000 100644
              final PendingRichTranslation pendingTranslation1 = pendingTranslation;
              pendingTranslation.runnable = () -> {
                  synchronized (TranslateController.this) {
-@@ -1552,11 +1646,18 @@ public class TranslateController extends BaseController {
+@@ -1552,11 +1635,18 @@ public class TranslateController extends BaseController {
                      }
                  }
  
@@ -676,7 +665,7 @@ index 0000000..0000000 100644
  
                  final int reqId = getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
                      final ArrayList<Integer> ids;
-@@ -1600,6 +1701,13 @@ public class TranslateController extends BaseController {
+@@ -1600,6 +1690,13 @@ public class TranslateController extends BaseController {
      public boolean isTranslating(MessageObject messageObject) {
          if (messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.summarizedOpen)
              return loadingSummarizations.contains(Objects.hash(messageObject.getDialogId(), messageObject.getId(), isTranslatingDialog(messageObject.getDialogId()) ? 1 : 0));
@@ -690,7 +679,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              return (
                  messageObject != null &&
-@@ -1607,7 +1715,7 @@ public class TranslateController extends BaseController {
+@@ -1607,7 +1704,7 @@ public class TranslateController extends BaseController {
                  (messageObject.messageOwner.voiceTranscriptionOpen && messageObject.messageOwner.voiceTranscriptionFinal ?
                      loadingTranscriptionTranslations : loadingTranslations
                  ).contains(messageObject.getId()) &&
@@ -699,7 +688,7 @@ index 0000000..0000000 100644
              );
          }
      }
-@@ -1616,10 +1724,13 @@ public class TranslateController extends BaseController {
+@@ -1616,10 +1713,13 @@ public class TranslateController extends BaseController {
          if (messageObject == null) {
              return false;
          }
@@ -714,7 +703,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              if ((isTranscription ? loadingTranscriptionTranslations : loadingTranslations).contains(messageObject.getId())) {
                  return true;
-@@ -1636,6 +1747,7 @@ public class TranslateController extends BaseController {
+@@ -1636,6 +1736,7 @@ public class TranslateController extends BaseController {
      }
  
      public void cancelAllTranslations() {
@@ -722,7 +711,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              for (ArrayList<PendingTranslation> translations : pendingTranslations.values()) {
                  if (translations != null) {
-@@ -1693,6 +1805,7 @@ public class TranslateController extends BaseController {
+@@ -1693,6 +1794,7 @@ public class TranslateController extends BaseController {
      }
  
      public void cancelTranslations(long dialogId) {
@@ -730,7 +719,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              ArrayList<PendingTranslation> translations = pendingTranslations.get(dialogId);
              if (translations != null) {
-@@ -1775,14 +1888,34 @@ public class TranslateController extends BaseController {
+@@ -1775,14 +1877,34 @@ public class TranslateController extends BaseController {
      }
  
      private boolean isLanguageRestricted(String lng) {
@@ -770,7 +759,7 @@ index 0000000..0000000 100644
      }
  
      private void loadTranslatingDialogsCached() {
-@@ -1941,6 +2074,7 @@ public class TranslateController extends BaseController {
+@@ -1941,6 +2063,7 @@ public class TranslateController extends BaseController {
          final TLRPC.TL_textWithEntities text = new TLRPC.TL_textWithEntities();
          text.text = storyItem.caption;
          text.entities = storyItem.entities;
@@ -778,7 +767,7 @@ index 0000000..0000000 100644
          req.text.add(text);
          req.to_lang = normalizeLanguage(toLang);
          getConnectionsManager().sendRequest(req, (res, err) -> {
-@@ -2042,7 +2176,7 @@ public class TranslateController extends BaseController {
+@@ -2042,7 +2165,7 @@ public class TranslateController extends BaseController {
          }
          return messageObject != null && messageObject.messageOwner != null && !TextUtils.isEmpty(messageObject.messageOwner.message) && (
              detectedLanguage == null && messageObject.messageOwner.translatedText != null && TextUtils.equals(messageObject.messageOwner.translatedToLanguage, TranslateAlert2.getToLanguage()) ||
@@ -787,7 +776,7 @@ index 0000000..0000000 100644
          ) && !messageObject.translated;
      }
  
-@@ -2078,6 +2212,7 @@ public class TranslateController extends BaseController {
+@@ -2078,6 +2201,7 @@ public class TranslateController extends BaseController {
          if (text.entities == null) {
              text.entities = new ArrayList<>();
          }

@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -233,7 +233,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -232,7 +232,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
      // entiny: absorbs the Paint#measureText vs StaticLayout#getLineWidth gap so subtitles don't false-trigger the ellipsis fade.
      private static final int INU_PILL_TEXT_SLACK_DP = 4;
  
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
      private int inu_pillAvatarRoom() {
          return chatAvatarContainer != null ? chatAvatarContainer.inu_getPillAvatarRoom() : 0;
      }
-@@ -253,8 +252,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -252,8 +251,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (room == 0) {
              return dp(INU_PILL_TEXT_PADDING_DP);
          }
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
      }
  
      public int inu_getPillTextInsetRight() {
-@@ -262,8 +260,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -261,8 +259,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (room == 0) {
              return dp(INU_PILL_TEXT_PADDING_DP);
          }
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
      }
  
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
-@@ -791,15 +788,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -790,15 +787,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (titleTextView != null) {
              for (int a = 0; a < titleTextView.length; a++) {
                  if (titleTextView[a] != null) {
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -2255,7 +2252,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2254,7 +2251,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                      contains |= glassDrawableMenu != null && glassDrawableMenu.getBounds().contains(x, y);
                  }
  
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
                      return false;
                  }
              }
-@@ -2653,21 +2650,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2652,21 +2649,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              if (chatAvatarContainer.getTranslationX() != 0) {
                  chatAvatarContainer.setTranslationX(0);
              }
@@ -100,7 +100,7 @@ index 0000000..0000000 100644
              target = Math.min(target, roomRight - Math.max(roomLeft, leftLimit));
  
              // entiny: snap on the first pass so the header doesn't unfold from nothing on chat open; animate afterwards.
-@@ -2767,6 +2762,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2766,6 +2761,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
      }
  
@@ -115,7 +115,7 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          if (inu_needsUpdateGlassBounds()) {
-@@ -2815,7 +2818,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2814,7 +2817,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int t = getHeight() - extraHeight - (getCurrentActionBarHeight() + s) / 2 - p;
          final int b = t + s + p * 2;
  

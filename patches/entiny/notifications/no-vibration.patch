@@ -75,7 +75,6 @@ Subject: Disable vibration across the app
  .../telegram/ui/Components/ReactionsContainerLayout.java | 2 +-
  .../org/telegram/ui/Components/RecyclerListView.java     | 2 +-
  .../java/org/telegram/ui/Components/RichWidgetBlock.java | 2 +-
- .../org/telegram/ui/Components/RoundZoomSliderView.java  | 2 +-
  .../telegram/ui/Components/ScrollSlidingTabStrip.java    | 2 +-
  .../org/telegram/ui/Components/SenderSelectPopup.java    | 2 +-
  .../main/java/org/telegram/ui/Components/ShareAlert.java | 2 +-
@@ -142,7 +141,7 @@ Subject: Disable vibration across the app
  .../main/java/org/telegram/ui/iv/RichEditorListView.java | 6 +++---
  .../src/main/java/org/telegram/ui/web/WebActionBar.java  | 2 +-
  .../java/org/telegram/utils/twidget/WidgetMedia.java     | 2 +-
- 138 files changed, 158 insertions(+), 139 deletions(-)
+ 137 files changed, 157 insertions(+), 138 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/androidx/recyclerview/widget/ItemTouchHelper.java b/TMessagesProj/src/main/java/androidx/recyclerview/widget/ItemTouchHelper.java
 index 0000000..0000000 100644
@@ -1106,19 +1105,6 @@ index 0000000..0000000 100644
          onAttachedToWindow();
          if (view != null) view.invalidate();
      }
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RoundZoomSliderView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/RoundZoomSliderView.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RoundZoomSliderView.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RoundZoomSliderView.java
-@@ -28,7 +28,7 @@ import android.graphics.Shader;
- import android.graphics.drawable.Drawable;
- import android.os.SystemClock;
- import android.util.SparseArray;
--import android.view.HapticFeedbackConstants;
-+import desu.inugram.helpers.vibration.HapticFeedbackConstants;
- import android.view.MotionEvent;
- import android.view.VelocityTracker;
- import android.view.View;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrollSlidingTabStrip.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrollSlidingTabStrip.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrollSlidingTabStrip.java

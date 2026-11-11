@@ -26,7 +26,7 @@ index 0000000..0000000 100644
      private long timelineOffsetUs;
      private volatile float zoomProgress;
      private float maximumZoomRatio = 1f;
-+    // entiny: zoom-ratio API для CG-слайдера; ниже 1 — ультраширик через CONTROL_ZOOM_RATIO_RANGE
++    // entiny: zoom-ratio API для слайдера зуму; нижче 1 — ультраширик через CONTROL_ZOOM_RATIO_RANGE
 +    private volatile float minimumZoomRatio = 1f;
 +    private volatile float requestedZoomRatio = Float.NaN;
      private boolean torchEnabled;
@@ -160,7 +160,7 @@ index 0000000..0000000 100644
          return cameraController.setZoom(zoomProgress);
      }
  
-+    // entiny: zoom-ratio API для CG-слайдера; ratio ниже 1 попадает в ультраширик, если камера позволяет
++    // entiny: zoom-ratio API для слайдера зуму; ratio нижче 1 потрапляє в ультраширик, якщо камера дозволяє
 +
 +    /** Applies an absolute zoom ratio clamped to the camera's zoom-ratio range. */
 +    @MainThread

@@ -603,7 +603,7 @@ entiny/media/round-video-exposure.patch
 entiny/chat/attach-camera-exposure.patch
 entiny/media/round-video-512p.patch
 entiny/media/round-video-zoom-ratio.patch
-entiny/media/round-video-cg-ui.patch
+entiny/media/round-video-controls.patch
 bugfix/paint-density-scale.patch
 bugfix/file-ref-stale-cache-stall.patch
 bugfix/inline-restriction-check.patch

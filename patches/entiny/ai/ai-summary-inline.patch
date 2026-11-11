@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
-@@ -147,7 +147,7 @@ public class TranslateController extends BaseController {
+@@ -136,7 +136,7 @@ public class TranslateController extends BaseController {
          return (
              messageObject != null &&
              messageObject.messageOwner != null &&

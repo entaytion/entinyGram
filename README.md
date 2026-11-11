@@ -101,7 +101,6 @@ entinyGram stands on the shoulders of the Telegram modding community. Special th
 
 - **[AyuGram](https://github.com/AyuGram)** - ghost mode concepts, quick-toggle locks, archive exclusion UI.
 - **[gettele/android](https://github.com/gettele/android)** ([@nitreojs](https://github.com/nitreojs)) - keep-in-chat model for deleted messages and the chat-style archive.
-- **[Cherrygram](https://github.com/arsLan4k1390/Cherrygram)** ([@arsLan4k1390](https://github.com/arsLan4k1390)) - iOS layout patterns, camera AE lock, biometric guards.
 - **[exteraGram / exteraless](https://github.com/exteraless/exteraless)** - pill stack, wide channel posts, recent chats switcher, instant reaction reads, Material 3 music player.
 - **[Nekogram](https://github.com/Nekogram/Nekogram)** - in-app updater, hidden accounts behind a passcode, sticker sizing, datacenter ping.
 - **[NagramX](https://github.com/risin42/NagramX)** ([@risin42](https://github.com/risin42)) - icon pack switcher, Solar pack wiring.

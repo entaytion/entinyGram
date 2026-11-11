@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.chat.UnreadBackBadgeHelper
 import desu.inugram.helpers.theme.NonIslandHelper
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ContactsController
@@ -93,9 +94,7 @@ class ChatHeaderPreviewCell(context: Context, private val fragment: BaseFragment
         factory.setLiquidGlassEffectAllowed(LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS))
         bar.setupGlass(factory, BlurredBackgroundProviderImpl.topPanelChatActivity(resourcesProvider))
         header.setGlassMode()
-        bar.setIOSUnreadBadgeAvailable(true)
-        bar.backButtonImageView.checkUnreadView(12)
-        bar.updateBackPillWidth(false)
+        UnreadBackBadgeHelper.preview(bar, 12)
         bar.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
         addView(bar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 70, Gravity.CENTER))
         requestLayout()

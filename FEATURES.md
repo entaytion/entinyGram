@@ -59,7 +59,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar with spaced AI and emoji buttons, chat list with larger avatars, message menu as a properly positioned card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
 - 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size, and optional Android font scaling for messages
 - adjustable backdrop blur behind message menus - *inspired by NagramXF*
-- 📡 **glass glare** — disabled, default or solid outline — *inspired by Cherrygram (@arsLan4k1390)*
+- 📡 **glass glare** — disabled, default or solid outline
 - 📡 **chat headers** — live header preview, a choice of which titles to center (chat list, chats, other pages), and auto marquee for long names
 - 📡 **bottom tabs** — custom layout with an optional separate Search button, any tab first, hide on scroll, sliders to raise the bar and the FABs
 - 📡 **profile swipe** — disable swiping up on Profile to open the account menu, while keeping long press
@@ -90,7 +90,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 ### messages & sending
 
 - 📡 **Forward Pro** — full-screen editor over your chat wallpaper with a real bubble preview, albums kept grouped, comment before or after the forwarded message, formatted comment text; Forward can open it from chats and shared media instead of the stock picker
-- 📡 **round videos** — send from the gallery, bottom zoom slider with presets and visible +/- buttons, pinch zoom, exposure slider starting at neutral (50%) and AE lock, up to 720p with shared 60 FPS and video bitrate settings up to 2 Mbps, chosen audio bitrate and microphone source; 512p stays round, 720p is delivered as regular video — *controls ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+- 📡 **round videos** — send from the gallery, bottom zoom slider with presets and visible +/- buttons, pinch zoom, exposure slider starting at neutral (50%) and AE lock, up to 720p with shared 60 FPS and video bitrate settings up to 2 Mbps, chosen audio bitrate and microphone source; 512p stays round, 720p is delivered as regular video
   - Searchable zoom and exposure settings for both round recorders.
 - 📡 **send as sticker** — long-press the send button on selected photos to send them as 512 px stickers
 - 📡 **confirm before sending** voice and video messages, stickers and GIFs, and keep the screen on while recording
@@ -368,7 +368,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
   - optionally show Telegram Stars balance as 0 with no transactions or stats while enabled
   - optionally hide the Money wallet and show Gram Earnings as 0 with no transactions or stats while enabled
   - optional launcher long-press shortcut to enter it quickly (hidden while active)
-- biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+- biometric confirmation before deleting/clearing a chat or logging out
 - optional biometric lock on Archived Chats — ask once per app session or every time you open the archive
 - session list in Settings > Devices shows the real app name (entinyGram) instead of the registered api_id title ("Inugram")
 - import the Money wallet from raw ed25519 private key (+ support for 12 words rotation) - *engine patch from [gettele/money](https://github.com/gettele/money)*

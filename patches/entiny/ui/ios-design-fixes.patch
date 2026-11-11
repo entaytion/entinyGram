@@ -17,8 +17,8 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -233,6 +233,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-     // entiny: centered chat header pill geometry (CherryGram-style) -- see entinyProto/comment-cleanup-notes.md.
+@@ -231,6 +231,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
      public int inu_titlePillLeft;
      public int inu_titlePillRight;
 +    public int inu_textBandLeft;
@@ -26,16 +26,16 @@ index 0000000..0000000 100644
      // entiny: the centered decision latched for the geometry currently in place -- ChatAvatarContainer reads this instead of re-deriving it, so its text can never be laid out for a different pill than the one drawn.
      public boolean inu_centeredPill;
      private boolean inu_prevCentered;
-@@ -254,7 +256,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -252,7 +254,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
      // entiny: non-centered header's avatar x, in this action bar's own coords -- see entinyProto/comment-cleanup-notes.md.
      public int inu_getStaticAvatarLeft() {
          final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
 -        return (hasBackButton ? dp(46) + dp(6) : 0) + dp(6) + dp(3);
-+        return (hasBackButton ? Math.max(dp(46) + dp(6), inu_getBackPillWidth() - dp(6)) : 0) + dp(6) + dp(3);
++        return (hasBackButton ? dp(46) + dp(6) + inu_backPillExtra() : 0) + dp(6) + dp(3);
      }
  
      public int inu_getPillTextInsetLeft() {
-@@ -2676,6 +2678,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2653,6 +2655,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final int prevPillLeft = inu_titlePillLeft;
          final int prevPillRight = inu_titlePillRight;
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  
          final boolean centered = inu_centeredPill;
          if (centered) {
-@@ -2713,6 +2717,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2690,6 +2694,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
              leftDefault = inu_placePill(centerX, drawn, pillLeftLimit, roomRight);
              rightDefault = leftDefault + drawn;
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
          } else {
              // entiny: not centered -- pill spans the full back-button-to-menu room, container stays at its own margins (left-aligned), unlike stock's shrink-then-recenter.
              final int stockRightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
-@@ -2730,6 +2743,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2707,6 +2720,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              inu_titlePillLeft = leftDefault;
              inu_titlePillRight = rightDefault;
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
              inu_animatorPillWidth.forceFactor(0);
          }
  
-@@ -2747,7 +2762,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2724,7 +2739,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          // pill, and the container would keep drawing its old geometry until some unrelated layout pass.
          final boolean centeredChanged = centered != inu_prevCentered;
          inu_prevCentered = centered;
@@ -116,7 +116,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -34188,7 +34188,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -34183,7 +34183,8 @@ public class ChatActivity extends BaseFragment implements
  
                  @Override
                  public void dismiss(boolean animated) {
@@ -126,7 +126,7 @@ index 0000000..0000000 100644
                      if (finalReactionsLayout1 != null) {
                          finalReactionsLayout1.dismissParent(animated);
                      }
-@@ -34252,7 +34253,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34247,7 +34248,7 @@ public class ChatActivity extends BaseFragment implements
              } else {
                  popupY = inBubbleMode ? 0 : AndroidUtilities.statusBarHeight;
              }
@@ -135,7 +135,7 @@ index 0000000..0000000 100644
                  popupY = ChatHelper.reserveMenuRoomAbove(scrimPopupContainerLayout, popupY);
              }
              final int finalPopupX = scrimPopupX = popupX;
-@@ -34293,7 +34294,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34288,7 +34289,7 @@ public class ChatActivity extends BaseFragment implements
              }
              chatListView.stopScroll();
              chatLayoutManager.setCanScrollVertically(false);
