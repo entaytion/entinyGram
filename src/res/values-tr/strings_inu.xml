@@ -951,7 +951,6 @@
     <string name="InuBiometricLockArchiveInfo">Arşivlenmiş Sohbetleri açmadan önce biyometrik doğrulama isteyin.</string>
     <string name="InuBiometricLockArchiveEveryTime">Her seferinde sor</string>
     <string name="InuBiometricLockArchiveEveryTimeInfo">Kapalıyken uygulama oturumu başına bir kez sorar; açıkken arşivi her açtığınızda sorar.</string>
-    <string name="InuAiCompose">AI Compose</string>
     <string name="InuAiEndpointUrl">Uç nokta URL\'si</string>
     <string name="InuAiOpenSettings">Ayarları aç</string>
     <string name="InuAllowForwardRestricted">Korumalı sohbetlerden iletmeye izin ver</string>
@@ -1041,8 +1040,6 @@
     <string name="InuAiRolesAssistant">Asistan</string>
     <string name="InuAiSectionGeneration">Yanıtlar</string>
     <string name="InuAiSectionTemperature">Sıcaklık (Temperature)</string>
-    <string name="InuAiStream">Akışlı yanıt</string>
-    <string name="InuAiStreamInfo">Yanıtın tamamını beklemek yerine, üretilirken kelime kelime gösterir.</string>
     <string name="InuAiSummary">AI Özetleri</string>
     <string name="InuAiSummaryInfo">100 karakterden uzun gelen mesajların menüsüne «Yapay zekayla özetle» ekler.</string>
     <string name="InuAiTemperatureInfo">Düşük değerler daha kesin ve öngörülebilir, yüksek değerler daha yaratıcı yanıtlar verir. 1.0 varsayılandır ve sağlayıcıya gönderilmez.</string>
@@ -1206,7 +1203,6 @@
     <string name="InuFolderIconDefault">Varsayılan</string>
     <string name="InuStalkerSaved">Kaydedilen veriler</string>
     <string name="InuStalkerPresence">Çevrimiçi durumu</string>
-    <string name="InuStalkerTools">Araçlar</string>
     <string name="InuPresenceLoggerNotify">Çevrim İçi Bildirimleri</string>
     <string name="InuPresenceLoggerNotifyInfo">İzlenen bir kişi çevrimiçi veya çevrimdışı olduğunda açılır bildirim, yalnızca uygulama açıkken; değişiklikler her zaman yerelde kaydedilir.</string>
     <string name="InuForceRelayCalls">Aramaları Zorla Röleden Geçir</string>

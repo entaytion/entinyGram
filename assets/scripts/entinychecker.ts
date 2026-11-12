@@ -142,6 +142,25 @@ async function checkResourceFiles(): Promise<number> {
   return problems
 }
 
+const CONFIG_ITEM_RE = /val ([A-Z][A-Z0-9_]+)\s*=\s*\w*Item\(/g
+const CONSTANT_RE = /[A-Z][A-Z0-9_]+/g
+
+async function findUnreadConfigItems(): Promise<{ unread: string[], total: number }> {
+  const forkDir = join(rootDir, 'src', 'fork')
+  const config = await fs.readFile(join(forkDir, 'InuConfig.kt'), 'utf8')
+  const names = [...config.matchAll(CONFIG_ITEM_RE)].map(m => m[1])
+  const files: string[] = []
+  await walk(forkDir, files, ['.kt', '.java'])
+  await walk(join(worktreeDir, 'TMessagesProj', 'src'), files, ['.java'])
+  const used = new Set<string>()
+  for (const file of files) {
+    const rel = relative(forkDir, file).replace(/\\/g, '/')
+    if (rel === 'InuConfig.kt' || rel.startsWith('ui/settings/')) continue
+    for (const token of (await fs.readFile(file, 'utf8')).match(CONSTANT_RE) ?? []) used.add(token)
+  }
+  return { unread: names.filter(n => !used.has(n)), total: names.length }
+}
+
 async function main() {
   if (process.argv.includes('--res-only')) {
     process.exitCode = (await checkResourceFiles()) === 0 ? 0 : 1
@@ -217,6 +236,16 @@ async function main() {
     }
     console.log(`\n  Remove from values/strings_inu.xml and every values-<locale>/strings_inu.xml.`)
     process.exitCode = 1
+  }
+
+  const { unread, total: configTotal } = await findUnreadConfigItems()
+  if (unread.length === 0) {
+    success(`Every InuConfig item (${configTotal}) is read outside InuConfig and the settings pages`)
+  } else {
+    warn(`Found ${unread.length} InuConfig item(s) that nothing outside InuConfig and ui/settings reads (a toggle without a hook, or an inugram leftover):`)
+    for (const name of unread) {
+      console.log(`  ${name}`)
+    }
   }
 }
 

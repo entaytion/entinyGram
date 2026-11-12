@@ -1,0 +1,152 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 12 Nov 2026 23:08:21 +0200
+Subject: Restore chat-list banner hiding, read time saving, remembered folder, first-folder return, forever-hidden pins and expired media refresh hooks lost in the topic merge.
+
+---
+ .../messenger/MessagesController.java         |  1 +
+ .../java/org/telegram/ui/ChatActivity.java    |  4 +--
+ .../java/org/telegram/ui/DialogsActivity.java | 31 +++++++++++++------
+ 3 files changed, 25 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -19539,6 +19539,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     dialogId = -update.peer.chat_id;
+                 } else {
+                     markAsReadMessagesOutbox.put(update.peer.user_id, update.max_id);
++                    desu.inugram.helpers.chat.ReadTimeHelper.onReadOutbox(currentAccount, update.peer.user_id, update.max_id, date);
+                     dialogId = update.peer.user_id;
+                     TLRPC.User user = getUser(update.peer.user_id);
+                     if (user != null && user.status != null && user.status.expires <= 0 && Math.abs(getConnectionsManager().getCurrentTime() - date) < 30) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -24845,7 +24845,7 @@ public class ChatActivity extends BaseFragment implements
+                         }
+                     }
+                 }
+-                if (message.media.ttl_seconds != 0 && (message.media.photo instanceof TLRPC.TL_photoEmpty || message.media.document instanceof TLRPC.TL_documentEmpty)) {
++                if (existMessageObject.forceExpired || message.media.ttl_seconds != 0 && (message.media.photo instanceof TLRPC.TL_photoEmpty || message.media.document instanceof TLRPC.TL_documentEmpty)) {
+                     existMessageObject.setType();
+                     if (chatAdapter != null) {
+                         chatAdapter.updateRowWithMessageObject(existMessageObject, false, false);
+@@ -30142,7 +30142,7 @@ public class ChatActivity extends BaseFragment implements
+         String callLink = callLink(pinnedMessageObject);
+         pinnedMessageButtonShown = botButton != null || !TextUtils.isEmpty(callLink);
+         SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
+-        if ((threadMessageObject == null || isTopic) && (chatInfo == null && userInfo == null || pinned_msg_id == 0 || !pinnedMessageIds.isEmpty() && pinnedMessageIds.get(0) == preferences.getInt("pin_" + dialog_id, 0)) || isReport() || actionBar != null && (actionBar.isActionModeShowed() || actionBar.isSearchFieldVisible())) {
++        if ((threadMessageObject == null || isTopic) && (chatInfo == null && userInfo == null || pinned_msg_id == 0 || !pinnedMessageIds.isEmpty() && pinnedMessageIds.get(0) == preferences.getInt("pin_" + dialog_id, 0) || desu.inugram.helpers.chat.ChatActionsHelper.isPinnedHiddenForever(currentAccount, dialog_id)) || isReport() || actionBar != null && (actionBar.isActionModeShowed() || actionBar.isSearchFieldVisible())) {
+             changed = hidePinnedMessageView(animated);
+         } else {
+             if (pinnedMessageView == null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -5986,6 +5986,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     private boolean isCacheHintVisible() {
++        if (desu.inugram.InuConfig.HIDE_CACHE_HINT.getValue()) {
++            return false;
++        }
+         if (cacheSize == null || deviceSize == null) {
+             return false;
+         }
+@@ -6529,6 +6532,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+         final boolean isVisible = !isInPreviewMode()
+             && folderId == 0 && communityId == 0 && initialDialogsType == DIALOGS_TYPE_DEFAULT
++            && !desu.inugram.InuConfig.HIDE_GIFT_AUCTIONS_HINT.getValue()
+             && getGiftAuctionsController().hasActiveAuctions()
+             && (rightSlidingDialogContainer == null || !rightSlidingDialogContainer.hasFragment())
+             && (!animatorSearchVisible.getValue() || NonIslandHelper.globalSearch());
+@@ -6994,15 +6998,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         return index >= 0 && index < filters.size() ? filters.get(index) : null;
+     }
+ 
+-    // Settled page only: the tabs animation end, the swipe progress==1 callback, and
+-    // switchToCurrentSelectedMode when nothing is in flight. Never mid-swipe -- the drag-reversal
+-    // reset and the touch-interrupt path both abandon a transition without notifying us, so
+-    // committing a title early would leave the target folder's name on a page the user left.
++    // entiny: settle-time only — a swipe can be abandoned without notifying us mid-transition
+     private void inu_updateSettledFolderTitle() {
+         MessagesController.DialogFilter filter = inu_getCurrentFilter();
+         if (filter == null) {
+             return;
+         }
++        if (folderId == 0 && communityId == 0) {
++            FolderHelper.saveSelectedFolder(currentAccount, filter.id);
++        }
+         inu_applyDialogsTitle();
+         if (dialogStoriesCell != null) {
+             dialogStoriesCell.updateItems(true, false);
+@@ -7136,7 +7140,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     if (viewPages[a].selectedType >= filters.size()) {
+                         viewPages[a].selectedType = filters.size() - 1;
+                     }
+-                    int snapped = FolderHelper.snapOffDefault(filters, viewPages[a].selectedType);
++                    int snapped = FolderHelper.resolveInitialFolder(filters, viewPages[a].selectedType, currentAccount, stableId);
+                     if (snapped != viewPages[a].selectedType) {
+                         viewPages[a].selectedType = snapped;
+                         if (a == 0) updateCurrentTab = true;
+@@ -7333,7 +7337,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                                     }));
+                                 }
+                             });
+-                        } else if (hasNotContactsPermission && askAboutContacts && getUserConfig().syncContacts && activity.shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
++                        } else if (hasNotContactsPermission && askAboutContacts && !desu.inugram.InuConfig.DISABLE_CONTACTS_PERMISSION_NAG.getValue() && getUserConfig().syncContacts && activity.shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
+                             AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
+                                 askAboutContacts = param != 0;
+                                 MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
+@@ -7355,7 +7359,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             if (getParentActivity() == null) {
+                 return;
+             }
+-            if (!MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutMiuiLockscreen", false)) {
++            if (!desu.inugram.InuConfig.DISABLE_LOCKSCREEN_PERMISSION_NAG.getValue() && !MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutMiuiLockscreen", false)) {
+                 showDialog(new AlertDialog.Builder(getParentActivity())
+                     .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
+                     .setTopBackgroundColorKey(Theme.key_dialogTopBackground, getResourceProvider())
+@@ -7379,11 +7383,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     .setNegativeButton(getString(R.string.ContactsPermissionAlertNotNow), (dialog, which) -> MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askedAboutMiuiLockscreen", true).commit())
+                     .create());
+             }
++
+         } else if (folderId == 0 && communityId == 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && !notificationManager.canUseFullScreenIntent()) {
+             if (getParentActivity() == null) {
+                 return;
+             }
+-            if (!MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutFSILockscreen", false)) {
++            if (!desu.inugram.InuConfig.DISABLE_LOCKSCREEN_PERMISSION_NAG.getValue() && !MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutFSILockscreen", false)) {
+                 showDialog(new AlertDialog.Builder(getParentActivity())
+                     .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
+                     .setTopBackgroundColorKey(Theme.key_dialogTopBackground, getResourceProvider())
+@@ -10753,7 +10758,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             }
+             permissons.add(Manifest.permission.POST_NOTIFICATIONS);
+         }
+-        if (getUserConfig().syncContacts && askAboutContacts && activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
++        if (getUserConfig().syncContacts && askAboutContacts && !desu.inugram.InuConfig.DISABLE_CONTACTS_PERMISSION_NAG.getValue() && activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+             if (alert) {
+                 AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
+                     askAboutContacts = param != 0;
+@@ -14506,6 +14511,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     @Override
+     public void onParentScrollToTop() {
++        if (desu.inugram.InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.getValue()
++                && filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE
++                && !tabsAnimationInProgress && !filterTabsView.isAnimatingIndicator() && !startedTracking
++                && !filterTabsView.isFirstTabSelected()
++                && (rightSlidingDialogContainer == null || !rightSlidingDialogContainer.hasFragment())) {
++            filterTabsView.selectFirstTab();
++            return;
++        }
+         scrollToTop(true, true);
+     }
+ 

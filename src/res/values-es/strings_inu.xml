@@ -1467,15 +1467,12 @@ Esta acción no se puede deshacer.</string>
     <string name="InuRefreshStickerSet">Actualizar</string>
     <string name="InuStickerSetRefreshed">Paquete actualizado</string>
     <string name="InuStickerSetRefreshFailed">No se pudo actualizar el paquete</string>
-    <string name="InuAiCompose">Inteligencia artificial (IA)</string>
     <string name="InuAiEndpointUrl">URL del endpoint</string>
     <string name="InuAiOpenSettings">Abrir ajustes</string>
     <string name="InuAiChatTitle">Chat con IA</string>
     <string name="InuAiRoles">Roles</string>
     <string name="InuAiRolesAssistant">Asistente</string>
     <string name="InuAiSectionGeneration">Respuestas</string>
-    <string name="InuAiStream">Respuesta en streaming</string>
-    <string name="InuAiStreamInfo">Muestra la respuesta palabra por palabra mientras se genera, en lugar de esperar a la respuesta completa.</string>
     <string name="InuAiOnlyAnswer">Mostrar solo la respuesta</string>
     <string name="InuAiOnlyAnswerInfo">Para modelos de razonamiento: oculta el razonamiento y deja solo la respuesta final. Si está desactivado, el razonamiento se muestra sobre la respuesta tras la burbuja de pensamiento.</string>
     <string name="InuAiAllowInsecure">Permitir endpoints de IA inseguros</string>
@@ -1697,7 +1694,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuFolderIconDefault">Predeterminado</string>
     <string name="InuStalkerSaved">Datos guardados</string>
     <string name="InuStalkerPresence">Presencia</string>
-    <string name="InuStalkerTools">Herramientas</string>
     <string name="InuPresenceLoggerNotify">Notificaciones de presencia</string>
     <string name="InuPresenceLoggerNotifyInfo">Aviso emergente cuando un contacto vigilado se conecta o desconecta, solo con la app abierta; los cambios siempre se registran localmente.</string>
     <string name="InuForceRelayCalls">Forzar llamadas por servidor</string>

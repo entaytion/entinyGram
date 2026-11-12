@@ -652,3 +652,4 @@ hooks/fragment-lifecycle.patch
 feature/cross-account-chats.patch
 bugfix/bottom-bar-ripple-origin.patch
 entiny/wide-channel-posts.patch
+entiny/restore-lost-hooks.patch

@@ -70,6 +70,8 @@ object SearchRegistry {
             Schemas.CHATS.page,
             Schemas.MEDIA.page,
             Schemas.PRIVACY.page,
+            Schemas.RESTRICTED.page,
+            Schemas.NETWORK.page,
             Schemas.PROFILE.page,
             Schemas.HOME.page,
             Schemas.SYSTEM.page,

@@ -78,11 +78,13 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_MEDIA, R.drawable.msg_calls, LocaleController.getString(R.string.InuMediaAndCalls)))
         items.add(mkSubPageButton(CAT_PROFILE_ACCOUNTS, R.drawable.msg_contacts, LocaleController.getString(R.string.InuProfileAndAccounts)))
         items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.inu_tabler_shield_check, LocaleController.getString(R.string.InuPrivacyAndFreedom)))
+        items.add(mkSubPageButton(CAT_RESTRICTED, R.drawable.inu_ghost_filled, LocaleController.getString(R.string.InuRestrictedFeatures)))
         items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_mood_annoyed, LocaleController.getString(R.string.InuAnnoyances)))
-        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_desktop_cog, LocaleController.getString(R.string.InuRootSystem)))
+        items.add(mkSubPageButton(CAT_NETWORK, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuNetworkAndNotifications)))
         items.add(mkSubPageButton(BUTTON_AI, R.drawable.inu_tabler_sparkles, LocaleController.getString(R.string.InuAiAndTranslator)))
         items.add(UItem.asShadow(null))
 
+        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_desktop_cog, LocaleController.getString(R.string.InuRootSystem)))
         // #if PLUGINS
         items.add(mkSubPageButton(BUTTON_PLUGINS, R.drawable.inu_tabler_code, addExperimentalSpan(LocaleController.getString(R.string.InuPlugins))))
         // #endif
@@ -108,6 +110,8 @@ class InuSettingsActivity : SettingsPageActivity() {
             BUTTON_AI -> presentFragment(AiSettingsActivity())
             CAT_PROFILE_ACCOUNTS -> presentFragment(SchemaPageActivity(Schemas.PROFILE))
             CAT_PRIVACY -> presentFragment(SchemaPageActivity(Schemas.PRIVACY))
+            CAT_RESTRICTED -> presentFragment(SchemaPageActivity(Schemas.RESTRICTED))
+            CAT_NETWORK -> presentFragment(SchemaPageActivity(Schemas.NETWORK))
             CAT_ANNOYANCES -> presentFragment(SchemaPageActivity(Schemas.ANNOYANCES))
             CAT_SYSTEM -> presentFragment(SchemaPageActivity(Schemas.SYSTEM))
             CAT_ABOUT -> presentFragment(AdditionalSettingsActivity())
@@ -125,6 +129,8 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val CAT_PROFILE_ACCOUNTS = InuUtils.generateId()
         private val CAT_PRIVACY = InuUtils.generateId()
         private val CAT_ANNOYANCES = InuUtils.generateId()
+        private val CAT_RESTRICTED = InuUtils.generateId()
+        private val CAT_NETWORK = InuUtils.generateId()
         private val CAT_HOME = InuUtils.generateId()
         private val CAT_SYSTEM = InuUtils.generateId()
         private val BUTTON_PLUGINS = InuUtils.generateId()

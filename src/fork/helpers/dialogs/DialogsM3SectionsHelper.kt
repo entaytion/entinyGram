@@ -56,9 +56,6 @@ object DialogsM3SectionsHelper {
     }
 
     @JvmStatic
-    fun sideMarginPx(): Int = AndroidUtilities.dp(sideMarginDp())
-
-    @JvmStatic
     fun cardBackground(first: Boolean, last: Boolean): InsetDrawable {
         val gap = AndroidUtilities.dp(GAP_DP)
         val card = GradientDrawable().apply {

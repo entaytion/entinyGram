@@ -1309,15 +1309,12 @@
     <string name="InuRefreshStickerSet">تحديث</string>
     <string name="InuStickerSetRefreshed">تم تحديث الحزمة</string>
     <string name="InuStickerSetRefreshFailed">تعذّر تحديث الحزمة</string>
-    <string name="InuAiCompose">الذكاء الاصطناعي (AI)</string>
     <string name="InuAiEndpointUrl">عنوان نقطة النهاية</string>
     <string name="InuAiOpenSettings">فتح الإعدادات</string>
     <string name="InuAiChatTitle">دردشة الذكاء الاصطناعي</string>
     <string name="InuAiRoles">الأدوار</string>
     <string name="InuAiRolesAssistant">المساعد</string>
     <string name="InuAiSectionGeneration">الردود</string>
-    <string name="InuAiStream">استجابة متدفقة</string>
-    <string name="InuAiStreamInfo">عرض الرد كلمة بكلمة أثناء توليده بدلاً من انتظار الرد الكامل.</string>
     <string name="InuAiOnlyAnswer">إظهار الإجابة فقط</string>
     <string name="InuAiOnlyAnswerInfo">للنماذج المفكّرة: يخفي التفكير ويُبقي الإجابة النهائية فقط. عند الإيقاف يظهر التفكير فوق الإجابة بعد فقاعة الفكر.</string>
     <string name="InuAiAllowInsecure">السماح بنقاط نهاية الذكاء الاصطناعي غير الآمنة</string>
@@ -1525,7 +1522,6 @@
     <string name="InuFolderIconDefault">الافتراضية</string>
     <string name="InuStalkerSaved">البيانات المحفوظة</string>
     <string name="InuStalkerPresence">الحضور</string>
-    <string name="InuStalkerTools">الأدوات</string>
     <string name="InuPresenceLoggerNotify">إشعارات التواجد</string>
     <string name="InuPresenceLoggerNotifyInfo">نافذة منبثقة عندما يتصل جهة اتصال مراقَبة أو ينقطع اتصالها، فقط أثناء فتح التطبيق؛ تُسجَّل التغييرات محليًا دائمًا.</string>
     <string name="InuForceRelayCalls">فرض ترحيل المكالمات</string>

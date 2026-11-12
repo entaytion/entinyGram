@@ -57,16 +57,6 @@ object TranscribeHelper {
     }
 
     @JvmStatic
-    fun cancel(messageObject: MessageObject?) {
-        if (messageObject == null) return
-        val key = reqKey(messageObject)
-        cancelled.add(key)
-        if (inFlight.remove(key) != null) {
-            notifyStateChange(messageObject.currentAccount, messageObject)
-        }
-    }
-
-    @JvmStatic
     fun shouldUseCustomTranscribe(account: Int): Boolean = InuConfig.AI_TRANSCRIBE_ENABLED.value
 
     private fun isProviderConfigured(): Boolean {

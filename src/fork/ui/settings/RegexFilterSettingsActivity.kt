@@ -31,33 +31,6 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asHeader("AdBlock"))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_SPONSORED_MESSAGES,
-                R.string.InuHideSponsoredMessages,
-                R.string.InuHideSponsoredMessagesInfo,
-                InuConfig.HIDE_SPONSORED_MESSAGES.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_PROXY_SPONSOR_CHAT,
-                R.string.InuHideProxySponsorChat,
-                R.string.InuHideProxySponsorChatInfo,
-                InuConfig.HIDE_PROXY_SPONSOR_CHAT.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_BUSINESS_BOT_BANNER,
-                R.string.InuHideBusinessBotBanner,
-                R.string.InuHideBusinessBotBannerInfo,
-                InuConfig.HIDE_BUSINESS_BOT_BANNER.value,
-            )
-        )
-        items.add(UItem.asShadow(null))
-
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuRegexFilter)))
         items.add(
             mkTwoLineCheckItem(
@@ -118,21 +91,6 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when {
-            item.id == TOGGLE_HIDE_SPONSORED_MESSAGES -> {
-                val new = InuConfig.HIDE_SPONSORED_MESSAGES.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            item.id == TOGGLE_HIDE_PROXY_SPONSOR_CHAT -> {
-                val new = InuConfig.HIDE_PROXY_SPONSOR_CHAT.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            item.id == TOGGLE_HIDE_BUSINESS_BOT_BANNER -> {
-                val new = InuConfig.HIDE_BUSINESS_BOT_BANNER.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
             item.id == TOGGLE_REGEX_FILTER_ENABLED -> {
                 val new = InuConfig.REGEX_FILTER_ENABLED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -228,9 +186,6 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
     }
 
     companion object {
-        private val TOGGLE_HIDE_SPONSORED_MESSAGES = InuUtils.generateId()
-        private val TOGGLE_HIDE_PROXY_SPONSOR_CHAT = InuUtils.generateId()
-        private val TOGGLE_HIDE_BUSINESS_BOT_BANNER = InuUtils.generateId()
         private val TOGGLE_REGEX_FILTER_ENABLED = InuUtils.generateId()
         private val BUTTON_REGEX_FILTER_MODE = InuUtils.generateId()
         private val TOGGLE_REGEX_FILTER_HIDE_REPLIES = InuUtils.generateId()
@@ -247,9 +202,6 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
             iconRes = R.drawable.inu_tabler_filter,
             factory = ::RegexFilterSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("hide-sponsored-messages", R.string.InuHideSponsoredMessages, TOGGLE_HIDE_SPONSORED_MESSAGES),
-                SearchRegistry.Entry("hide-proxy-sponsor-chat", R.string.InuHideProxySponsorChat, TOGGLE_HIDE_PROXY_SPONSOR_CHAT),
-                SearchRegistry.Entry("hide-business-bot-banner", R.string.InuHideBusinessBotBanner, TOGGLE_HIDE_BUSINESS_BOT_BANNER),
                 SearchRegistry.Entry("regex-filter-enabled", R.string.InuRegexFilterEnabled, TOGGLE_REGEX_FILTER_ENABLED),
                 SearchRegistry.Entry("regex-filter-mode", R.string.InuRegexFilterMode, BUTTON_REGEX_FILTER_MODE),
                 SearchRegistry.Entry("regex-filter-hide-replies", R.string.InuRegexFilterHideReplies, TOGGLE_REGEX_FILTER_HIDE_REPLIES),

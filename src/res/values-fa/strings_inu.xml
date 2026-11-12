@@ -1297,15 +1297,12 @@
     <string name="InuRefreshStickerSet">تازه‌سازی</string>
     <string name="InuStickerSetRefreshed">بسته به‌روز شد</string>
     <string name="InuStickerSetRefreshFailed">تازه‌سازی بسته ممکن نشد</string>
-    <string name="InuAiCompose">هوش مصنوعی (AI)</string>
     <string name="InuAiEndpointUrl">نشانی نقطه پایانی</string>
     <string name="InuAiOpenSettings">باز کردن تنظیمات</string>
     <string name="InuAiChatTitle">گفتگوی هوش مصنوعی</string>
     <string name="InuAiRoles">نقش‌ها</string>
     <string name="InuAiRolesAssistant">دستیار</string>
     <string name="InuAiSectionGeneration">پاسخ‌ها</string>
-    <string name="InuAiStream">پاسخ جریانی</string>
-    <string name="InuAiStreamInfo">پاسخ را هنگام تولید کلمه‌به‌کلمه نشان بده، به‌جای انتظار برای پاسخ کامل.</string>
     <string name="InuAiOnlyAnswer">فقط پاسخ نمایش داده شود</string>
     <string name="InuAiOnlyAnswerInfo">برای مدل‌های استدلالی: تفکر را پنهان می‌کند و فقط پاسخ نهایی را نگه می‌دارد. اگر خاموش باشد، تفکر بالای پاسخ بعد از حباب فکر نمایش داده می‌شود.</string>
     <string name="InuAiAllowInsecure">اجازه نقاط پایانی ناامن هوش مصنوعی</string>
@@ -1513,7 +1510,6 @@
     <string name="InuFolderIconDefault">پیش‌فرض</string>
     <string name="InuStalkerSaved">داده‌های ذخیره‌شده</string>
     <string name="InuStalkerPresence">حضور</string>
-    <string name="InuStalkerTools">ابزارها</string>
     <string name="InuPresenceLoggerNotify">اعلان حضور</string>
     <string name="InuPresenceLoggerNotifyInfo">پنجره بازشو وقتی مخاطب تحت نظر آنلاین یا آفلاین می‌شود، فقط هنگام باز بودن برنامه؛ تغییرات همیشه به‌صورت محلی ثبت می‌شوند.</string>
     <string name="InuForceRelayCalls">اجبار تماس از طریق رله</string>

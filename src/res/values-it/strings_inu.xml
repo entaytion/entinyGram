@@ -1468,15 +1468,12 @@ Questa azione non può essere annullata.</string>
     <string name="InuRefreshStickerSet">Aggiorna</string>
     <string name="InuStickerSetRefreshed">Pacchetto aggiornato</string>
     <string name="InuStickerSetRefreshFailed">Impossibile aggiornare il pacchetto</string>
-    <string name="InuAiCompose">Intelligenza artificiale (IA)</string>
     <string name="InuAiEndpointUrl">URL dell\'endpoint</string>
     <string name="InuAiOpenSettings">Apri impostazioni</string>
     <string name="InuAiChatTitle">Chat IA</string>
     <string name="InuAiRoles">Ruoli</string>
     <string name="InuAiRolesAssistant">Assistente</string>
     <string name="InuAiSectionGeneration">Risposte</string>
-    <string name="InuAiStream">Risposta in streaming</string>
-    <string name="InuAiStreamInfo">Mostra la risposta parola per parola mentre viene generata, invece di attendere la risposta completa.</string>
     <string name="InuAiOnlyAnswer">Mostra solo la risposta</string>
     <string name="InuAiOnlyAnswerInfo">Per i modelli di ragionamento: nasconde il ragionamento e lascia solo la risposta finale. Se disattivato, il ragionamento viene mostrato sopra la risposta dopo la nuvoletta del pensiero.</string>
     <string name="InuAiAllowInsecure">Consenti endpoint AI non sicuri</string>
@@ -1698,7 +1695,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuFolderIconDefault">Predefinito</string>
     <string name="InuStalkerSaved">Dati salvati</string>
     <string name="InuStalkerPresence">Presenza</string>
-    <string name="InuStalkerTools">Strumenti</string>
     <string name="InuPresenceLoggerNotify">Notifiche di presenza</string>
     <string name="InuPresenceLoggerNotifyInfo">Popup quando un contatto monitorato va online o offline, solo con l\'app aperta; le modifiche vengono sempre registrate localmente.</string>
     <string name="InuForceRelayCalls">Forza le chiamate tramite relay</string>

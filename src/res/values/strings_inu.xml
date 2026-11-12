@@ -33,7 +33,14 @@
     <string name="InuDownloadsAndNetwork">Downloads and network</string>
     <string name="InuConfirmationsSection">Confirmations</string>
     <string name="InuBlockedMessagesSection">Blocked users</string>
-    <string name="InuRootSystem">System</string>
+    <string name="InuRootSystem">App management</string>
+    <string name="InuRestrictedFeatures">Restricted features</string>
+    <string name="InuNetworkAndNotifications">Network and notifications</string>
+    <string name="InuBypassGifRestrictions">Bypass GIF restrictions</string>
+    <string name="InuBypassGifRestrictionsInfo">Allow saving and sending GIFs that the server marks as restricted</string>
+    <string name="InuMaskServerAppName">Mask app name on the server</string>
+    <string name="InuMaskServerAppNameInfo">Hide the entinyGram name in the sessions list and show the stock client name instead</string>
+    <string name="InuAdBlockSection">Ads</string>
     <string name="InuHomeAndChatList">Chat list and home screen</string>
     <string name="InuChatNavigation">Navigation and selection</string>
     <string name="InuMentionsAndSearch">Mentions and search</string>
@@ -1585,15 +1592,12 @@
     <string name="InuRefreshStickerSet">Refresh</string>
     <string name="InuStickerSetRefreshed">Pack updated</string>
     <string name="InuStickerSetRefreshFailed">Couldn\'t refresh the pack</string>
-    <string name="InuAiCompose">Artificial intelligence (AI)</string>
     <string name="InuAiEndpointUrl">Endpoint URL</string>
     <string name="InuAiOpenSettings">Open settings</string>
     <string name="InuAiChatTitle">AI Chat</string>
     <string name="InuAiRoles">Roles</string>
     <string name="InuAiRolesAssistant">Assistant</string>
     <string name="InuAiSectionGeneration">Answers</string>
-    <string name="InuAiStream">Streaming response</string>
-    <string name="InuAiStreamInfo">Show the answer word by word while it is generated, instead of waiting for the full reply.</string>
     <string name="InuAiOnlyAnswer">Show only answer</string>
     <string name="InuAiOnlyAnswerInfo">For reasoning models: hide the thinking and keep just the final answer. When off, the thinking is shown above the answer after the thought bubble.</string>
     <string name="InuAiAllowInsecure">Allow insecure AI endpoints</string>
@@ -1818,7 +1822,6 @@
     <string name="InuFolderIconDefault">Default</string>
     <string name="InuStalkerSaved">Saved data</string>
     <string name="InuStalkerPresence">Presence</string>
-    <string name="InuStalkerTools">Tools</string>
     <string name="InuPresenceLoggerNotify">Presence Notifications</string>
     <string name="InuPresenceLoggerNotifyInfo">Popup when a watched contact goes online or offline, only while the app is open; changes are always logged locally.</string>
     <string name="InuForceRelayCalls">Force Relay Calls</string>
@@ -1952,6 +1955,7 @@
     <string name="InuPlugins">Plugins</string>
     <string name="InuPluginsEnableEngine">Enable plugins</string>
     <string name="InuPluginsEnableEngineInfo">Run installed plugins on startup</string>
+    <string name="InuPluginsInfo">Plugins are user-made scripts that extend the app. Only install plugins from sources you trust.</string>
     <string name="InuPluginsEngineDisabled">Plugins are currently disabled\n\nEnable them in settings to install this plugin</string>
     <string name="InuPluginsPluginlessBuild">This build does not include support for plugins\n\nGo to About to switch to the Full build</string>
     <string name="InuPluginsOpenSettings">Open settings</string>

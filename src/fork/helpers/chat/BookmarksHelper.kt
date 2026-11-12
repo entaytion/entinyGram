@@ -75,7 +75,4 @@ object BookmarksHelper {
         synchronized(cache) { cache.get(account)?.clear() }
         storage.storageQueue.postRunnable { storage.database?.let { InuDatabaseHelper.clearBookmarks(it) } }
     }
-
-    @JvmStatic
-    fun timeAdditionsHash(account: Int, dialogId: Long, msgId: Int): Int = if (isBookmarked(account, dialogId, msgId)) 1 else 0
 }

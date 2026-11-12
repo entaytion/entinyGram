@@ -23,9 +23,6 @@ object SleepTimerHelper {
     fun isActive(): Boolean = deadlineMs != 0L
 
     @JvmStatic
-    fun isWaitingForTrackEnd(): Boolean = waitingForTrackEnd
-
-    @JvmStatic
     fun remainingMs(): Long =
         if (deadlineMs == 0L) 0L else (deadlineMs - SystemClock.elapsedRealtime()).coerceAtLeast(0L)
 

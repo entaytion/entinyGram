@@ -68,7 +68,6 @@ class AiEditorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionGeneration)))
-        items.add(mkTwoLineCheckItem(TOGGLE_STREAM, R.string.InuAiStream, R.string.InuAiStreamInfo, InuConfig.AI_STREAM_ENABLED.value))
         items.add(mkTwoLineCheckItem(TOGGLE_ONLY_ANSWER, R.string.InuAiOnlyAnswer, R.string.InuAiOnlyAnswerInfo, InuConfig.AI_ONLY_ANSWER.value))
         items.add(mkTwoLineCheckItem(TOGGLE_QUOTE, R.string.InuAiInsertQuote, R.string.InuAiInsertQuoteInfo, InuConfig.AI_INSERT_QUOTE.value))
         items.add(UItem.asButton(BUTTON_REASONING, LocaleController.getString(R.string.InuAiReasoning), reasoningLabel()))
@@ -112,7 +111,6 @@ class AiEditorSettingsActivity : SettingsPageActivity() {
                 InuConfig.AI_EDITOR_MODEL.value = it
             }
             BUTTON_ROLE -> presentFragment(AiRolesSettingsActivity())
-            TOGGLE_STREAM -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_STREAM_ENABLED.toggle()
             TOGGLE_ONLY_ANSWER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_ONLY_ANSWER.toggle()
             TOGGLE_QUOTE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_INSERT_QUOTE.toggle()
             BUTTON_REASONING -> {
@@ -149,7 +147,6 @@ class AiEditorSettingsActivity : SettingsPageActivity() {
         private val BUTTON_PROVIDER = InuUtils.generateId()
         private val BUTTON_MODEL = InuUtils.generateId()
         private val BUTTON_ROLE = InuUtils.generateId()
-        private val TOGGLE_STREAM = InuUtils.generateId()
         private val TOGGLE_ONLY_ANSWER = InuUtils.generateId()
         private val TOGGLE_QUOTE = InuUtils.generateId()
         private val BUTTON_REASONING = InuUtils.generateId()
@@ -165,7 +162,6 @@ class AiEditorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ai-editor-provider", R.string.InuAiFeatureProvider, BUTTON_PROVIDER),
                 SearchRegistry.Entry("ai-editor-model", R.string.InuAiTranscribeModel, BUTTON_MODEL),
                 SearchRegistry.Entry("ai-role", R.string.InuAiRoles, BUTTON_ROLE),
-                SearchRegistry.Entry("ai-stream", R.string.InuAiStream, TOGGLE_STREAM),
                 SearchRegistry.Entry("ai-only-answer", R.string.InuAiOnlyAnswer, TOGGLE_ONLY_ANSWER),
                 SearchRegistry.Entry("ai-insert-quote", R.string.InuAiInsertQuote, TOGGLE_QUOTE),
                 SearchRegistry.Entry("ai-reasoning", R.string.InuAiReasoning, BUTTON_REASONING),

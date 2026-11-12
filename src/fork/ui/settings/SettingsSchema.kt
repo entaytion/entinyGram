@@ -194,9 +194,6 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> peek(key: Int): T? = remembered[key] as T?
 
-    fun iconCheck(id: Int, iconRes: Int, titleRes: Int, infoRes: Int, checked: Boolean): UItem =
-        mkIconCheckItem(id, iconRes, titleRes, infoRes, checked)
-
     fun splitCheck(id: Int, titleRes: Int, infoRes: Int, checked: Boolean): UItem = mkSplitCheckItem(id, titleRes, infoRes, checked)
 
     private val sliders = HashMap<Int, SliderCell>()

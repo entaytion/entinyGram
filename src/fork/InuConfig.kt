@@ -784,9 +784,6 @@ object InuConfig {
     val AI_ROLES_SEEDED = BoolItem("ai_roles_seeded", false, exportable = false)
 
     @JvmField
-    val AI_STREAM_ENABLED = BoolItem("ai_stream_enabled", true)
-
-    @JvmField
     val AI_ONLY_ANSWER = BoolItem("ai_only_answer", false)
 
     @JvmField

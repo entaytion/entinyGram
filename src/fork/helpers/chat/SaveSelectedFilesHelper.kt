@@ -19,16 +19,6 @@ object SaveSelectedFilesHelper {
     private const val DOWNLOAD_TIMEOUT_MS = 15 * 60 * 1000L
 
     @JvmStatic
-    fun createItem(context: Context, selectorColor: Int, iconColor: Int, onClick: Runnable): ActionBarMenuItem {
-        val item = ActionBarMenuItem(context, null, selectorColor, iconColor, false)
-        item.setIcon(R.drawable.msg_download)
-        item.contentDescription = LocaleController.getString(R.string.SaveToDownloads)
-        item.isDuplicateParentStateEnabled = false
-        item.setOnClickListener { onClick.run() }
-        return item
-    }
-
-    @JvmStatic
     fun save(fragment: BaseFragment, files: Array<SparseArray<MessageObject>>) {
         val messages = ArrayList<MessageObject>()
         for (array in files) for (i in 0 until array.size()) messages.add(array.valueAt(i))

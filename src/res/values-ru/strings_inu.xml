@@ -1152,7 +1152,6 @@
     <string name="InuBiometricLockArchiveInfo">Запрашивать биометрическое подтверждение перед открытием архива.</string>
     <string name="InuBiometricLockArchiveEveryTime">Запрашивать каждый раз</string>
     <string name="InuBiometricLockArchiveEveryTimeInfo">Выключено — запрашивает один раз за сессию; включено — каждый раз при открытии архива.</string>
-    <string name="InuAiCompose">Искусственный интеллект (AI)</string>
     <string name="InuAiEndpointUrl">URL эндпоинта</string>
     <string name="InuAiOpenSettings">Открыть настройки</string>
     <string name="InuSelfDestructMedia">Самоуничтожающиеся медиа</string>
@@ -1458,7 +1457,6 @@
     <string name="InuFolderIconDefault">По умолчанию</string>
     <string name="InuStalkerSaved">Сохранённые данные</string>
     <string name="InuStalkerPresence">Присутствие</string>
-    <string name="InuStalkerTools">Инструменты</string>
     <string name="InuPresenceLoggerNotify">Уведомления о присутствии</string>
     <string name="InuPresenceLoggerNotifyInfo">Всплывающее уведомление, когда отслеживаемый контакт входит или выходит из сети, только пока приложение открыто; изменения всегда сохраняются локально.</string>
     <string name="InuForceRelayCalls">Принудительный релей звонков</string>
@@ -1528,8 +1526,6 @@
     <string name="InuAiRolesAssistant">Ассистент</string>
     <string name="InuAiSectionGeneration">Ответы</string>
     <string name="InuAiSectionTemperature">Температура</string>
-    <string name="InuAiStream">Потоковый ответ</string>
-    <string name="InuAiStreamInfo">Показывать ответ по словам во время генерации, а не ждать полного ответа.</string>
     <string name="InuAiSummary">AI Суммаризация</string>
     <string name="InuAiSummaryInfo">Добавляет «Суммаризировать через AI» в меню входящих сообщений длиннее 100 символов.</string>
     <string name="InuAiTemperatureInfo">Меньшие значения дают более точные и предсказуемые ответы, большие — более креативные. 1.0 — значение по умолчанию, оно не отправляется провайдеру.</string>
@@ -1784,7 +1780,14 @@
     <string name="InuDownloadsAndNetwork">Загрузки и сеть</string>
     <string name="InuConfirmationsSection">Подтверждения</string>
     <string name="InuBlockedMessagesSection">Заблокированные</string>
-    <string name="InuRootSystem">Система</string>
+    <string name="InuRootSystem">Управление приложением</string>
+    <string name="InuRestrictedFeatures">Ограниченные функции</string>
+    <string name="InuNetworkAndNotifications">Сеть и уведомления</string>
+    <string name="InuBypassGifRestrictions">Обход запрета GIF</string>
+    <string name="InuBypassGifRestrictionsInfo">Разрешает сохранять и отправлять GIF, которые сервер помечает как ограниченные</string>
+    <string name="InuMaskServerAppName">Маскировать название приложения на сервере</string>
+    <string name="InuMaskServerAppNameInfo">Скрывает название entinyGram в списке сеансов и показывает стандартное название клиента</string>
+    <string name="InuAdBlockSection">Реклама</string>
     <string name="InuHomeAndChatList">Список чатов и главный экран</string>
     <string name="InuChatNavigation">Навигация и выделение</string>
     <string name="InuMentionsAndSearch">Упоминания и поиск</string>

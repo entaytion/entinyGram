@@ -42,8 +42,8 @@ object MediaSizeHelper {
 
     // entiny: formatFileSize is String.format, so cache per message rather than per frame
     private fun labelOf(msg: MessageObject): Label? {
-        labels[msg]?.let { if (it.size == sizeOf(msg)) return it }
         val size = sizeOf(msg)
+        labels[msg]?.let { if (it.size == size) return it }
         if (size <= 0) return null
         val text = AndroidUtilities.formatFileSize(size)
         val label = Label(text, textPaint.measureText(text), size)

@@ -109,6 +109,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         items.add(mkTwoLineEntry(BUTTON_IOS_STYLE, R.drawable.msg_newphone, LocaleController.getString(R.string.InuIosSettings), LocaleController.getString(R.string.InuIosSettingsInfo)))
         items.add(mkTwoLineEntry(BUTTON_MATERIAL3, R.drawable.inu_tabler_layout_cards, LocaleController.getString(R.string.InuMaterial3), LocaleController.getString(R.string.InuMaterial3SettingsInfo)))
         items.add(mkSubPageButton(BUTTON_CHAT_HEADER, R.drawable.inu_tabler_app_window, LocaleController.getString(R.string.InuChatHeaderSettings)))
+        items.add(mkSubPageButton(BUTTON_MESSAGE_DESIGN, R.drawable.msg_palette, LocaleController.getString(R.string.InuMessageDesign)))
         centerTitleGroup.addTo(items) { changed -> applyCenterTitleChanges(changed.map { it.id }) }
         nonIslandGroup.addTo(items, nonIslandInfoItem(ctx)) { changed -> applyNonIslandChanges(changed.map { it.id }) }
         items.add(UItem.asShadow(null))
@@ -300,6 +301,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
             BUTTON_IOS_STYLE -> presentFragment(IosStyleSettingsActivity())
             BUTTON_CHAT_HEADER -> presentFragment(ChatHeaderSettingsActivity())
+            BUTTON_MESSAGE_DESIGN -> presentFragment(MessageDesignSettingsActivity())
 
             BUTTON_MATERIAL3 -> presentFragment(Material3SettingsActivity())
 
@@ -329,6 +331,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val BUTTON_IOS_STYLE = InuUtils.generateId()
         private val BUTTON_MATERIAL3 = InuUtils.generateId()
         private val BUTTON_CHAT_HEADER = InuUtils.generateId()
+        private val BUTTON_MESSAGE_DESIGN = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_DIALOGS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_PAGES = InuUtils.generateId()

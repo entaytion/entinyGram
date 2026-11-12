@@ -43,6 +43,9 @@ class AiSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiRoles)))
         items.add(UItem.asButton(BUTTON_ROLE, LocaleController.getString(R.string.InuAiRoles), roleSummary()))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiRolesSubtitle)))
+
+        items.add(mkSubPageButton(BUTTON_TRANSLATOR, R.drawable.msg_translate, LocaleController.getString(R.string.InuTranslator)))
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -53,6 +56,7 @@ class AiSettingsActivity : SettingsPageActivity() {
             ENTRY_SUMMARY -> presentFragment(AiSummarySettingsActivity())
             TOGGLE_INSECURE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_ALLOW_INSECURE.toggle()
             BUTTON_ROLE -> presentFragment(AiRolesSettingsActivity())
+            BUTTON_TRANSLATOR -> presentFragment(TranslatorSettingsActivity())
         }
     }
 
@@ -101,6 +105,7 @@ class AiSettingsActivity : SettingsPageActivity() {
         private val ENTRY_SUMMARY = InuUtils.generateId()
         private val TOGGLE_INSECURE = InuUtils.generateId()
         private val BUTTON_ROLE = InuUtils.generateId()
+        private val BUTTON_TRANSLATOR = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -114,6 +119,7 @@ class AiSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ai-feature-editor", R.string.InuAiEditorTitle, ENTRY_EDITOR),
                 SearchRegistry.Entry("ai-feature-summary", R.string.InuAiSummary, ENTRY_SUMMARY),
                 SearchRegistry.Entry("ai-allow-insecure", R.string.InuAiAllowInsecure, TOGGLE_INSECURE),
+                SearchRegistry.Entry("open-translator", R.string.InuTranslator, BUTTON_TRANSLATOR),
             ),
         )
     }

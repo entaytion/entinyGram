@@ -951,7 +951,6 @@
     <string name="InuBiometricLockArchiveInfo">在打开归档聊天前要求生物识别确认。</string>
     <string name="InuBiometricLockArchiveEveryTime">每次都询问</string>
     <string name="InuBiometricLockArchiveEveryTimeInfo">关闭时每个应用会话询问一次；开启时每次打开归档都会询问。</string>
-    <string name="InuAiCompose">AI Compose</string>
     <string name="InuAiEndpointUrl">终端 URL</string>
     <string name="InuAiOpenSettings">打开设置</string>
     <string name="InuAllowForwardRestricted">允许从受保护的聊天转发</string>
@@ -1041,8 +1040,6 @@
     <string name="InuAiRolesAssistant">助手</string>
     <string name="InuAiSectionGeneration">回复</string>
     <string name="InuAiSectionTemperature">温度</string>
-    <string name="InuAiStream">流式传输回答</string>
-    <string name="InuAiStreamInfo">生成时逐字显示回答，而不是等待完整回复。</string>
     <string name="InuAiSummary">AI 总结</string>
     <string name="InuAiSummaryInfo">在超过 100 个字符的收到消息菜单中添加“用 AI 总结”。</string>
     <string name="InuAiTemperatureInfo">数值越低回答越精确、可预测，越高越有创意。1.0 为默认值，不会发送给提供商。</string>
@@ -1206,7 +1203,6 @@
     <string name="InuFolderIconDefault">默认</string>
     <string name="InuStalkerSaved">已保存数据</string>
     <string name="InuStalkerPresence">在线状态</string>
-    <string name="InuStalkerTools">工具</string>
     <string name="InuPresenceLoggerNotify">在线通知</string>
     <string name="InuPresenceLoggerNotifyInfo">被监视的联系人上线或下线时弹出提示(仅在应用打开时);变更始终记录在本地。</string>
     <string name="InuForceRelayCalls">强制中继通话</string>

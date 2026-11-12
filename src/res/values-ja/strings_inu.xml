@@ -956,7 +956,6 @@
     <string name="InuBiometricLockArchiveInfo">アーカイブされたチャットを開く前に生体認証を要求します。</string>
     <string name="InuBiometricLockArchiveEveryTime">毎回確認する</string>
     <string name="InuBiometricLockArchiveEveryTimeInfo">オフの場合はアプリセッションごとに1回、オンの場合はアーカイブを開くたびに確認します。</string>
-    <string name="InuAiCompose">AI Compose</string>
     <string name="InuAiEndpointUrl">エンドポイントURL</string>
     <string name="InuAiOpenSettings">設定を開く</string>
     <string name="InuAllowForwardRestricted">保護されたチャットからの転送を許可</string>
@@ -1045,8 +1044,6 @@
     <string name="InuAiRolesAssistant">アシスタント</string>
     <string name="InuAiSectionGeneration">回答</string>
     <string name="InuAiSectionTemperature">温度 (Temperature)</string>
-    <string name="InuAiStream">ストリーミング応答</string>
-    <string name="InuAiStreamInfo">完全な返信を待たず、生成中の回答を単語ごとに表示します。</string>
     <string name="InuAiSummary">AI 要約</string>
     <string name="InuAiSummaryInfo">100文字を超える受信メッセージのメニューに「AIで要約」を追加します。</string>
     <string name="InuAiTemperatureInfo">低い値ほど正確で予測しやすく、高い値ほど創造的な回答になります。1.0 が既定値で、プロバイダーには送信されません。</string>
@@ -1205,7 +1202,6 @@
     <string name="InuFolderIconDefault">デフォルト</string>
     <string name="InuStalkerSaved">保存データ</string>
     <string name="InuStalkerPresence">プレゼンス</string>
-    <string name="InuStalkerTools">ツール</string>
     <string name="InuPresenceLoggerNotify">在席通知</string>
     <string name="InuPresenceLoggerNotifyInfo">監視中の連絡先がオンライン/オフラインになるとポップアップを表示します(アプリを開いている間のみ)。変更は常にローカルに記録されます。</string>
     <string name="InuForceRelayCalls">通話を強制リレー化</string>

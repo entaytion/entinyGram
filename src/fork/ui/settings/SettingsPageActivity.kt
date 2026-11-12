@@ -315,23 +315,6 @@ abstract class SettingsPageActivity : UniversalFragment() {
         }
     }
 
-    protected fun mkIconSubPageButton(id: Int, iconRes: Int, text: CharSequence, subtext: CharSequence): UItem {
-        return UItem.asButton(id, text, subtext).also {
-            it.bind = Utilities.Callback { view ->
-                val cell = view as? TextCell ?: return@Callback
-                cell.setTextAndValueAndIcon(text, subtext, iconRes, false)
-                val iv = cell.valueImageView
-                iv.setImageResource(R.drawable.msg_arrowright)
-                iv.scaleX = if (LocaleController.isRTL) -1f else 1f
-                iv.colorFilter = PorterDuffColorFilter(
-                    Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
-                    PorterDuff.Mode.MULTIPLY,
-                )
-                iv.visibility = View.VISIBLE
-            }
-        }
-    }
-
     protected fun mkSplitCheckItem(
         id: Int,
         textRes: Int,

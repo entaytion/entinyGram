@@ -89,11 +89,6 @@ object Schemas {
     private val DOWNLOAD_DIRECTORIES = listOf("entinyGram", "Telegram")
 
     val CHATS = schema("chats-messages", R.string.InuChatsAndMessages, R.drawable.msg_discussion) {
-        section {
-            link(R.string.InuAiCompose, R.drawable.inu_tabler_sparkles) { AiSettingsActivity() }
-            link(R.string.InuTranslator, R.drawable.msg_translate, slug = "open-translator") { TranslatorSettingsActivity() }
-            link(R.string.InuMessageDesign, R.drawable.msg_palette) { MessageDesignSettingsActivity() }
-        }
         section(R.string.InuMessageInput) {
             custom(
                 "formatting-popup", R.string.InuFormattingPopup,
@@ -398,6 +393,10 @@ object Schemas {
             toggle(InuConfig.SHOW_SECONDS, R.string.InuShowSeconds)
             toggle(InuConfig.DISABLE_ROUNDING, R.string.InuDisableRounding, R.string.InuDisableRoundingInfo)
         }
+        section(R.string.InuMenus) {
+            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_arrows_sort, slug = "chat-menu-order") { ChatMenuOrderActivity() }
+            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_message_dots, slug = "message-menu-order") { MessageMenuOrderActivity() }
+        }
     }
 
     val MEDIA = schema("media-calls", R.string.InuMediaAndCalls, R.drawable.msg_calls) {
@@ -454,6 +453,18 @@ object Schemas {
             toggle(InuConfig.SHOW_PROFILE_REG_DATE, R.string.InuShowProfileRegDate)
             toggle(InuConfig.DISABLE_CHAT_TITLE_PHONE, R.string.InuDisableChatTitlePhone)
             toggle(InuConfig.OPEN_BY_USER_ID, R.string.InuOpenByUserId, R.string.InuOpenByUserIdInfo)
+            link(
+                R.string.InuLocalNames,
+                badge = {
+                    if (InuConfig.LOCAL_NAMES.value) LocalNameHelper.count(UserConfig.selectedAccount).toString()
+                    else null
+                },
+                value = {
+                    if (InuConfig.LOCAL_NAMES.value) null
+                    else LocaleController.getString(R.string.PasswordOff)
+                },
+                slug = "local-names",
+            ) { LocalNamesSettingsActivity() }
         }
         section(R.string.InuAccountsSection) {
             toggle(InuConfig.SETTINGS_SHOW_ACCOUNTS, R.string.InuSettingsShowAccounts)
@@ -463,15 +474,13 @@ object Schemas {
                 onChange = { page, _ -> page.parentActivity?.let { ShortcutHelper.sync(it) } },
             )
         }
+        section(R.string.InuMenus) {
+            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-settings-rows-order") { ProfileSettingsMenuOrderActivity() }
+            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-info-rows-order") { ProfileInfoMenuOrderActivity() }
+        }
     }
 
     val PRIVACY = schema("privacy-freedom", R.string.InuPrivacyAndFreedom, R.drawable.inu_tabler_shield_check) {
-        section {
-            link(R.string.InuGhostMode, R.drawable.inu_ghost_filled) { GhostModeSettingsActivity() }
-            link(R.string.InuAntiDeletion, R.drawable.inu_tabler_trash_off) { AntiDeletionSettingsActivity() }
-            link(R.string.InuRegexFilter, R.drawable.inu_tabler_filter) { RegexFilterSettingsActivity() }
-            link(R.string.InuDeviceSpoof, R.drawable.inu_tabler_device_mobile) { DeviceSpoofSettingsActivity() }
-        }
         section {
             link(R.string.InuPerAccountPasscode, R.drawable.inu_tabler_key, visible = { !PasscodeHelper.isSettingsHidden() }) { PasscodeSettingsActivity() }
             link(R.string.InuParanoiaMode, R.drawable.inu_tabler_spy, visible = { !ParanoiaHelper.isParanoia() }) { ParanoiaActivity() }
@@ -484,6 +493,7 @@ object Schemas {
                 InuConfig.DONT_AUTOPLAY_WIDGETS, R.string.InuDontAutoplayWidgets, R.string.InuDontAutoplayWidgetsInfo,
                 onChange = { _, new -> if (new) WidgetMedia.inu_onAutoplayDisabled() },
             )
+            toggle(InuConfig.FORCE_RELAY_CALLS, R.string.InuForceRelayCalls, R.string.InuForceRelayCallsInfo)
         }
         section(R.string.InuStripTrackingParams) {
             toggle(InuConfig.STRIP_TRACKING_PARAMS_ON_OPEN, R.string.InuStripTrackingParamsOnOpen, onChange = { page, _ -> page.refresh() })
@@ -523,47 +533,15 @@ object Schemas {
                 )
             }
         }
-        section(R.string.InuStalkerSaved) {
-            toggle(InuConfig.SAVE_USER_INFO, R.string.InuSaveUserInfo, R.string.InuSaveUserInfoInfo, experimental = true)
-            toggle(InuConfig.SAVE_READ_TIME, R.string.InuSaveReadTime, R.string.InuSaveReadTimeInfo, experimental = true)
-            toggle(InuConfig.SAVE_LAST_SEEN, R.string.InuSaveLastSeen, R.string.InuSaveLastSeenInfo, experimental = true)
-        }
-        section(R.string.InuStalkerPresence) {
-            link(R.string.InuPresenceWatchList, R.drawable.inu_tabler_user_search) { PresenceWatchListSettingsActivity() }
-            toggle(InuConfig.PRESENCE_LOGGER_NOTIFY, R.string.InuPresenceLoggerNotify, R.string.InuPresenceLoggerNotifyInfo)
-        }
-        section(R.string.InuStalkerTools) {
-            toggle(InuConfig.FORCE_RELAY_CALLS, R.string.InuForceRelayCalls, R.string.InuForceRelayCallsInfo)
+    }
+
+    val RESTRICTED = schema("restricted-features", R.string.InuRestrictedFeatures, R.drawable.inu_ghost_filled) {
+        section {
+            link(R.string.InuGhostMode, R.drawable.inu_ghost_filled) { GhostModeSettingsActivity() }
+            link(R.string.InuAntiDeletion, R.drawable.inu_tabler_trash_off) { AntiDeletionSettingsActivity() }
+            link(R.string.InuRegexFilter, R.drawable.inu_tabler_filter) { RegexFilterSettingsActivity() }
+            link(R.string.InuDeviceSpoof, R.drawable.inu_tabler_device_mobile) { DeviceSpoofSettingsActivity() }
             link(R.string.InuTypingSpoof, R.drawable.inu_tabler_keyboard) { TypingSpoofQuickListSettingsActivity() }
-        }
-        section(R.string.InuPremiumUnlock) {
-            toggle(
-                InuConfig.LOCAL_PREMIUM, R.string.InuLocalPremium, R.string.InuLocalPremiumInfo,
-                onChange = { page, on ->
-                    val account = page.currentAccount
-                    val userConfig = UserConfig.getInstance(account)
-                    if (on) {
-                        LocalPremiumHelper.applyToSelfUser(userConfig.getCurrentUser(), account)
-                    } else {
-                        LocalPremiumHelper.clearSelfUser(userConfig.getCurrentUser())
-                    }
-                    NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.currentUserPremiumStatusChanged)
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal)
-                },
-            )
-            toggle(InuConfig.LOCAL_CUSTOM_EMOJI, R.string.InuLocalCustomEmoji, R.string.InuLocalCustomEmojiInfo)
-            link(
-                R.string.InuLocalNames,
-                badge = {
-                    if (InuConfig.LOCAL_NAMES.value) LocalNameHelper.count(UserConfig.selectedAccount).toString()
-                    else null
-                },
-                value = {
-                    if (InuConfig.LOCAL_NAMES.value) null
-                    else LocaleController.getString(R.string.PasswordOff)
-                },
-                slug = "local-names",
-            ) { LocalNamesSettingsActivity() }
         }
         section(R.string.InuContentProtectionBypass) {
             toggle(InuConfig.SAVE_ANY_STORY, R.string.InuSaveAnyStory, R.string.InuSaveAnyStoryInfo)
@@ -585,6 +563,33 @@ object Schemas {
             )
             toggle(InuConfig.ALLOW_SCREENSHOTS, R.string.InuDisableFlagSecure, R.string.InuDisableFlagSecureInfo)
             toggle(InuConfig.SUPPRESS_SCREENSHOT_NOTIFICATION, R.string.InuSuppressScreenshotNotification, R.string.InuSuppressScreenshotNotificationInfo)
+            toggle(InuConfig.BYPASS_GIF_RESTRICTIONS, R.string.InuBypassGifRestrictions, R.string.InuBypassGifRestrictionsInfo)
+        }
+        section(R.string.InuStalkerSaved) {
+            toggle(InuConfig.SAVE_USER_INFO, R.string.InuSaveUserInfo, R.string.InuSaveUserInfoInfo, experimental = true)
+            toggle(InuConfig.SAVE_READ_TIME, R.string.InuSaveReadTime, R.string.InuSaveReadTimeInfo, experimental = true)
+            toggle(InuConfig.SAVE_LAST_SEEN, R.string.InuSaveLastSeen, R.string.InuSaveLastSeenInfo, experimental = true)
+        }
+        section(R.string.InuStalkerPresence) {
+            link(R.string.InuPresenceWatchList, R.drawable.inu_tabler_user_search) { PresenceWatchListSettingsActivity() }
+            toggle(InuConfig.PRESENCE_LOGGER_NOTIFY, R.string.InuPresenceLoggerNotify, R.string.InuPresenceLoggerNotifyInfo)
+        }
+        section(R.string.InuPremiumUnlock) {
+            toggle(
+                InuConfig.LOCAL_PREMIUM, R.string.InuLocalPremium, R.string.InuLocalPremiumInfo,
+                onChange = { page, on ->
+                    val account = page.currentAccount
+                    val userConfig = UserConfig.getInstance(account)
+                    if (on) {
+                        LocalPremiumHelper.applyToSelfUser(userConfig.getCurrentUser(), account)
+                    } else {
+                        LocalPremiumHelper.clearSelfUser(userConfig.getCurrentUser())
+                    }
+                    NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.currentUserPremiumStatusChanged)
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal)
+                },
+            )
+            toggle(InuConfig.LOCAL_CUSTOM_EMOJI, R.string.InuLocalCustomEmoji, R.string.InuLocalCustomEmojiInfo)
         }
         section(R.string.InuUnlimitedLimits) {
             toggle(
@@ -598,6 +603,11 @@ object Schemas {
             toggle(InuConfig.UNLIMITED_FAVORITE_STICKERS, R.string.InuUnlimitedFavoriteStickers, R.string.InuUnlimitedFavoriteStickersInfo)
             toggle(InuConfig.UNLIMITED_FOLDER_CHATS, R.string.InuUnlimitedFolderChats, R.string.InuUnlimitedFolderChatsInfo)
             toggle(InuConfig.LOCAL_FOLDERS, R.string.InuLocalFolders, R.string.InuLocalFoldersInfo)
+        }
+        section(R.string.InuAdBlockSection) {
+            toggle(InuConfig.HIDE_SPONSORED_MESSAGES, R.string.InuHideSponsoredMessages, R.string.InuHideSponsoredMessagesInfo)
+            toggle(InuConfig.HIDE_PROXY_SPONSOR_CHAT, R.string.InuHideProxySponsorChat, R.string.InuHideProxySponsorChatInfo)
+            toggle(InuConfig.HIDE_BUSINESS_BOT_BANNER, R.string.InuHideBusinessBotBanner, R.string.InuHideBusinessBotBannerInfo)
         }
     }
 
@@ -941,10 +951,6 @@ object Schemas {
         section(R.string.InuMenus) {
             link(R.string.InuSideMenu, R.drawable.inu_tabler_layout_sidebar) { DrawerMenuOrderActivity() }
             link(R.string.InuDialogsMenuOrder, R.drawable.inu_tabler_list_details, slug = "dialogs-menu-order") { DialogsMenuOrderActivity() }
-            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_arrows_sort, slug = "chat-menu-order") { ChatMenuOrderActivity() }
-            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_message_dots, slug = "message-menu-order") { MessageMenuOrderActivity() }
-            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-settings-rows-order") { ProfileSettingsMenuOrderActivity() }
-            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-info-rows-order") { ProfileInfoMenuOrderActivity() }
         }
     }
 
@@ -954,6 +960,56 @@ object Schemas {
             toggle(InuConfig.SYSTEM_MESSAGE_FONT_SCALE, R.string.InuSystemMessageFontScale, R.string.InuSystemMessageFontScaleInfo)
             link(R.string.InuCacheManagement, R.drawable.inu_tabler_trash_x, slug = "additional-cache-management") { CacheManagementSettingsActivity() }
         }
+        section(R.string.InuDeviceSection) {
+            toggle(InuConfig.MASK_SERVER_APP_NAME, R.string.InuMaskServerAppName, R.string.InuMaskServerAppNameInfo)
+            toggle(InuConfig.FORCE_NO_VIBRATION, R.string.InuForceNoVibration, R.string.InuForceNoVibrationInfo)
+            toggle(InuConfig.MEMORY_TRIM, R.string.InuMemoryTrim, R.string.InuMemoryTrimInfo)
+            toggle(
+                InuConfig.LOCK_MAX_REFRESH_RATE, R.string.InuLockMaxRefreshRate, R.string.InuLockMaxRefreshRateInfo,
+                onChange = { _, _ -> desu.inugram.helpers.RefreshRateHelper.sync(org.telegram.ui.LaunchActivity.instance) },
+            )
+            custom(
+                "performance-class", R.string.InuPerformanceClass,
+                build = { _, id ->
+                    UItem.asButton(
+                        id,
+                        LocaleController.getString(R.string.InuPerformanceClass),
+                        performanceClassLabel(SharedConfig.getDevicePerformanceClass()),
+                    )
+                },
+                click = { page, _ -> showPerformanceClassSelector(page) },
+            )
+            custom(
+                "text-classifier-mode", R.string.InuTextClassifierMode,
+                visible = { Build.VERSION.SDK_INT >= Build.VERSION_CODES.P },
+                build = { _, id ->
+                    UItem.asButton(
+                        id,
+                        LocaleController.getString(R.string.InuTextClassifierMode),
+                        textClassifierModeLabel(InuConfig.TEXT_CLASSIFIER_MODE.value),
+                    )
+                },
+                click = { page, _ -> showTextClassifierModeSelector(page) },
+            )
+            custom(
+                "selection-process-text", R.string.InuSelectionProcessText,
+                build = { page, id ->
+                    page.splitCheck(id, R.string.InuSelectionProcessText, R.string.InuSelectionProcessTextInfo, InuConfig.SELECTION_PROCESS_TEXT.value)
+                },
+                clickAt = { page, view, x ->
+                    val isSwitch = if (LocaleController.isRTL) x < AndroidUtilities.dp(76f) else x > view.measuredWidth - AndroidUtilities.dp(76f)
+                    if (isSwitch) {
+                        val new = InuConfig.SELECTION_PROCESS_TEXT.toggle()
+                        (view as? NotificationsCheckCell)?.isChecked = new
+                    } else {
+                        page.presentFragment(ProcessTextActivity())
+                    }
+                },
+            )
+        }
+    }
+
+    val NETWORK = schema("network-notifications", R.string.InuNetworkAndNotifications, R.drawable.inu_tabler_cloud) {
         section(R.string.InuPushHeader) {
             custom(
                 "additional-unified-push", R.string.InuUnifiedPush,
@@ -1072,54 +1128,7 @@ object Schemas {
             )
             toggle(InuConfig.SAVE_FILENAME_DATE, R.string.InuSaveFilenameDate, R.string.InuSaveFilenameDateInfo)
         }
-        section(R.string.InuDeviceSection) {
-            toggle(InuConfig.FORCE_NO_VIBRATION, R.string.InuForceNoVibration, R.string.InuForceNoVibrationInfo)
-            toggle(InuConfig.MEMORY_TRIM, R.string.InuMemoryTrim, R.string.InuMemoryTrimInfo)
-            toggle(
-                InuConfig.LOCK_MAX_REFRESH_RATE, R.string.InuLockMaxRefreshRate, R.string.InuLockMaxRefreshRateInfo,
-                onChange = { _, _ -> desu.inugram.helpers.RefreshRateHelper.sync(org.telegram.ui.LaunchActivity.instance) },
-            )
-            custom(
-                "performance-class", R.string.InuPerformanceClass,
-                build = { _, id ->
-                    UItem.asButton(
-                        id,
-                        LocaleController.getString(R.string.InuPerformanceClass),
-                        performanceClassLabel(SharedConfig.getDevicePerformanceClass()),
-                    )
-                },
-                click = { page, _ -> showPerformanceClassSelector(page) },
-            )
-            custom(
-                "text-classifier-mode", R.string.InuTextClassifierMode,
-                visible = { Build.VERSION.SDK_INT >= Build.VERSION_CODES.P },
-                build = { _, id ->
-                    UItem.asButton(
-                        id,
-                        LocaleController.getString(R.string.InuTextClassifierMode),
-                        textClassifierModeLabel(InuConfig.TEXT_CLASSIFIER_MODE.value),
-                    )
-                },
-                click = { page, _ -> showTextClassifierModeSelector(page) },
-            )
-            custom(
-                "selection-process-text", R.string.InuSelectionProcessText,
-                build = { page, id ->
-                    page.splitCheck(id, R.string.InuSelectionProcessText, R.string.InuSelectionProcessTextInfo, InuConfig.SELECTION_PROCESS_TEXT.value)
-                },
-                clickAt = { page, view, x ->
-                    val isSwitch = if (LocaleController.isRTL) x < AndroidUtilities.dp(76f) else x > view.measuredWidth - AndroidUtilities.dp(76f)
-                    if (isSwitch) {
-                        val new = InuConfig.SELECTION_PROCESS_TEXT.toggle()
-                        (view as? NotificationsCheckCell)?.isChecked = new
-                    } else {
-                        page.presentFragment(ProcessTextActivity())
-                    }
-                },
-            )
-        }
     }
-
 
     val ANNOYANCES = schema("annoyances", R.string.InuAnnoyances, R.drawable.inu_tabler_mood_annoyed) {
         section(R.string.InuAnnoyancesChats) {
