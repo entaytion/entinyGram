@@ -11,7 +11,6 @@
     "generate-tl": "bun assets/scripts/generate-tl.ts",
     "export": "bun assets/scripts/export.ts",
     "rebase": "bun assets/scripts/rebase.ts",
-    "find-patches": "bun assets/scripts/find-patches.ts",
     "lint-patches": "bun assets/scripts/lint-patches.ts",
     "entinychecker": "bun assets/scripts/entinychecker.ts",
     "push-theme": "bun assets/scripts/push-theme.ts",
@@ -19,12 +18,11 @@
     "gradle": "bun assets/scripts/gradle.ts",
     "build-debug": "bun assets/scripts/generate-grants.ts && bun assets/scripts/gradle.ts TMessagesProj_App:assembleDebug",
     "run-debug": "bun assets/scripts/gradle.ts TMessagesProj_App:installDebug && adb shell am start ua.entaytion.entinygram/org.telegram.ui.LaunchActivity",
-    "build-debug-pluginless": "bun assets/scripts/gradle.ts --pluginless TMessagesProj_App:assembleDebug",
     "check-plugin-syntax": "for f in src/test/plugins/*.js $(find src/native/src -name '*.js'); do node --check \"$f\" || exit 1; done",
     "typecheck-plugins": "bun run check-plugin-syntax && bun assets/scripts/generate-tl.ts && bun assets/scripts/generate-grants.ts && tsc -p sdk/types/tsconfig.self.json --noEmit && tsc -p src/test/plugins --noEmit",
     "prepare": "husky",
     "generate-grants": "bun assets/scripts/generate-grants.ts",
-    "changelog:release": "bun assets/scripts/changelog-release.ts"
+    "changelog:release": "bun assets/release/changelog.ts"
   },
   "dependencies": {
     "@antfu/eslint-config": "^8.1.0",

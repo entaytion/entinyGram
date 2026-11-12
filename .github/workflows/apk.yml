@@ -15,7 +15,7 @@ on:
           - release
           - release+tg
       prerelease:
-        description: 'Mark as a pre-release build (CI-channel-only, no GitHub release, adds a "‼️ PRE RELEASE" banner)'
+        description: 'Mark as a pre-release build (CI-channel-only, no GitHub release, adds a pre-release warning to the post)'
         required: false
         default: false
         type: boolean
@@ -154,8 +154,9 @@ jobs:
         id: info
         env:
           INU_DAY_STATE: ${{ vars.INU_DAY_STATE || '' }}
+          INU_TRACK_STATE: ${{ vars.INU_TRACK_STATE || '' }}
           PRERELEASE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
-        run: bun run tsx assets/scripts/ci/version.ts
+        run: bun run tsx assets/release/version.ts
 
       - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
         with:
@@ -365,6 +366,7 @@ jobs:
       tag:         ${{ steps.info.outputs.tag }}
       day-counter: ${{ steps.info.outputs.day-counter }}
       date:        ${{ steps.info.outputs.date }}
+      track-state: ${{ steps.info.outputs.track-state }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -417,30 +419,30 @@ jobs:
           if [ -z "$base" ]; then
             base=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
           fi
-          commits_json=$(bun run tsx assets/scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
+          commits_json=$(bun run tsx assets/release/commits.ts "$base" "$GITHUB_SHA")
 
           jq -n \
             --arg     verName      '${{ steps.info.outputs.ver-name }}'      \
             --argjson verCode      '${{ steps.info.outputs.ver-code }}'      \
             --argjson appVerCode   '${{ steps.info.outputs.app-ver-code }}'  \
             --arg     buildDate    '${{ steps.info.outputs.date }}'          \
+            --arg     base         '${{ steps.info.outputs.app-ver-name }}'  \
+            --arg     label        '${{ steps.info.outputs.label }}'         \
+            --arg     track        '${{ steps.info.outputs.track }}'         \
             --argjson apkFiles     "$apk_files_json"                        \
             --arg     commitSha    "$GITHUB_SHA"                            \
             --argjson commits      "$commits_json"                          \
             --arg     repo         "$GITHUB_REPOSITORY"                     \
             --arg     plugins      "$plugins"                               \
             --arg     pluginsArm7  "$plugins_arm7"                          \
-            '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildDate:$buildDate,apkFiles:$apkFiles,pluginsApk:(if $plugins == "" then null else {file:$plugins} end),pluginsArm7Apk:(if $pluginsArm7 == "" then null else {file:$pluginsArm7} end),commitSha:$commitSha,commits:$commits,repo:$repo}' \
+            '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildDate:$buildDate,base:$base,label:$label,track:$track,apkFiles:$apkFiles,pluginsApk:(if $plugins == "" then null else {file:$plugins} end),pluginsArm7Apk:(if $pluginsArm7 == "" then null else {file:$pluginsArm7} end),commitSha:$commitSha,commits:$commits,repo:$repo}' \
             > out/build-info.json
-
-      - name: Dump settings registry
-        run: bun run tsx assets/scripts/dump-registry.ts out
 
       - name: Generate release notes
         env:
           # Boolean input quirk: `== 'true'` never matches a real boolean, so accept both shapes.
-          PRE_RELEASE:     ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
-        run: bun run tsx assets/scripts/release-notes.ts out
+          PRERELEASE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
+        run: bun run tsx assets/release/notes.ts out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
@@ -487,7 +489,7 @@ jobs:
           # English notes for GitHub, from changelogs/<buildDate>.md (full markdown).
           notes_en=''
           if [ -f "out/release-notes.json" ]; then
-            notes_en=$(jq -r '.en // empty' out/release-notes.json)
+            notes_en=$(jq -r '.md.en // empty' out/release-notes.json)
           fi
           if [ -n "$notes_en" ]; then
             printf '%s' "$notes_en" > release_body.md
@@ -540,9 +542,9 @@ jobs:
           fi
           # CI channel always. Main channel only for stable release+tg.
           if [ '${{ inputs.mode }}' = 'release+tg' ] && [ '${{ inputs.prerelease }}' != 'true' ]; then
-            bun run tsx assets/scripts/ci/upload.ts out
+            bun run tsx assets/release/send.ts out
           else
-            bun run tsx assets/scripts/ci/upload.ts out --ci-only
+            bun run tsx assets/release/send.ts out --ci-only
           fi
 
       - name: Publish changelog to website
@@ -550,7 +552,7 @@ jobs:
         if: ${{ inputs.prerelease != true && inputs.prerelease != 'true' }}
         env:
           CHANGELOG_TOKEN: ${{ secrets.CHANGELOG_TOKEN }}
-        run: bun run tsx assets/scripts/ci/publish-site.ts out
+        run: bun run tsx assets/release/site.ts out
 
       - name: Bump build variables
         continue-on-error: true
@@ -560,6 +562,7 @@ jobs:
         run: |
           next_day_counter=$((${{ needs.meta.outputs.day-counter }} + 1))
           gh variable set INU_DAY_STATE --body "${{ needs.meta.outputs.date }}:$next_day_counter"
+          gh variable set INU_TRACK_STATE --body "${{ needs.meta.outputs.track-state }}"
           head_sha=$(git rev-parse HEAD)
           # LAST_BUILD_SHA moves on every build; LAST_RELEASE_SHA only on stable.
           gh variable set LAST_BUILD_SHA --body "$head_sha"
