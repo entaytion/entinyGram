@@ -289,7 +289,7 @@ diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -636,12 +636,6 @@
+@@ -640,12 +640,6 @@
              </intent-filter>
          </receiver>
  

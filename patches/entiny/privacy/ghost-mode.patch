@@ -208,7 +208,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -18038,6 +18038,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -18047,6 +18047,9 @@ public class ChatActivity extends BaseFragment implements
          if (sideControlsButtonsLayout == null) {
              return;
          }
@@ -218,7 +218,7 @@ index 0000000..0000000 100644
  
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_MENTION, show && !ChatObject.isMonoForum(currentChat), animated);
          if (!show) {
-@@ -25242,6 +25245,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -25251,6 +25254,9 @@ public class ChatActivity extends BaseFragment implements
              long topicId = (Long) args[1];
              if (dialog_id == dialogId && this.getTopicId() == topicId) {
                  int count = (int) args[2];
@@ -284,7 +284,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11830,7 +11830,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11837,7 +11837,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      if (userInfo != null && userInfo.stars_rating != null && userInfo.stars_rating.stars < 0) {
                          newString2 = getString(R.string.StarRatingLevelNegative).toLowerCase(Locale.ROOT);
                      } else {

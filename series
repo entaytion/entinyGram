@@ -645,3 +645,9 @@ entiny/media/download-queue.patch
 entiny/media/quiet-voice-locked.patch
 entiny/ui/ios-design-fixes.patch
 entiny/ui/chat-list-and-glass-fixes.patch
+bugfix/stale-wallpaper-load.patch
+feature/wallet_explorer_links.patch
+bugfix/non-selected-account-media.patch
+hooks/fragment-lifecycle.patch
+feature/cross-account-chats.patch
+bugfix/bottom-bar-ripple-origin.patch

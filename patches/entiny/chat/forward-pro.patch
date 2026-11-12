@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12948,6 +12948,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -12957,6 +12957,10 @@ public class ChatActivity extends BaseFragment implements
          if (selectionReactionsOverlay != null && selectionReactionsOverlay.isVisible()) {
              selectionReactionsOverlay.setHiddenByScroll(true);
          }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          Bundle args = new Bundle();
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-@@ -34692,6 +34696,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -34701,6 +34705,12 @@ public class ChatActivity extends BaseFragment implements
                      selectedObjectGroup = null;
                      return;
                  }

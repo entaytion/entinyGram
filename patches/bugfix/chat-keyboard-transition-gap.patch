@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -18246,9 +18246,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -18255,9 +18255,6 @@ public class ChatActivity extends BaseFragment implements
          ArrayList<ChatMessageCell> drawCaptionAfter = new ArrayList<>();
          ArrayList<ChatMessageCell> drawReactionsAfter = new ArrayList<>();
  
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          @Override
          protected boolean invalidateOptimized() {
              return true;
-@@ -19214,16 +19211,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -19223,16 +19220,6 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
  

@@ -678,6 +678,7 @@ object Schemas {
                 },
                 click = { page, _ -> DialogsSettingsHelper.showCommunityDisplayMode(page) },
             )
+            toggle(InuConfig.LINKED_CHATS, R.string.InuLinkedChats, R.string.InuLinkedChatsInfo, experimental = true, onChange = { page, _ -> page.rebuildAll() })
             toggle(InuConfig.DIALOG_AVATAR_OPENS_PROFILE, R.string.InuDialogAvatarOpensProfile, R.string.InuDialogAvatarOpensProfileInfo)
             custom(
                 "always-show-downloads", R.string.InuAlwaysShowDownloads,

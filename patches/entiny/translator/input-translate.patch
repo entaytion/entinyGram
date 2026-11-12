@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -15128,6 +15128,22 @@ public class ChatActivity extends BaseFragment implements
+@@ -15137,6 +15137,22 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      private void requestLinkPreview(TL_account.getWebPagePreview req, Utilities.Callback2<Boolean, TLRPC.WebPage> done) {
          cancelSearchLinks();
          linkSearchRequestId = getConnectionsManager().sendRequestTyped(req, AndroidUtilities::runOnUIThread, (response, error) -> {
-@@ -28948,9 +28964,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28957,9 +28973,9 @@ public class ChatActivity extends BaseFragment implements
          if (chat && encryptedChat == null) {
              menu.add(R.id.menu_groupbolditalic, R.id.menu_date, order++, LocaleController.getString(R.string.FormattedDate));
          }

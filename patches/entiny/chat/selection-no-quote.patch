@@ -23,7 +23,7 @@ index 0000000..0000000 100644
              MessageObject messageObject = null;
              for (int a = 1; a >= 0; a--) {
                  if (messageObject == null && selectedMessagesIds[a].size() != 0) {
-@@ -20167,6 +20171,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -20176,6 +20180,9 @@ public class ChatActivity extends BaseFragment implements
                      }
                      if (actionsButtonsLayout != null) {
                          actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, true);
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
                      }
                      forwardButtonAnimation.playTogether(animators);
                      forwardButtonAnimation.setDuration(100);
-@@ -20188,6 +20195,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -20197,6 +20204,9 @@ public class ChatActivity extends BaseFragment implements
                      }
                      if (actionsButtonsLayout != null) {
                          actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, false);
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (saveItem != null) {
-@@ -20274,7 +20284,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -20283,7 +20293,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          }
                      }
@@ -60,7 +60,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityActionsButtonsLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityActionsButtonsLayout.java
-@@ -59,7 +59,11 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
+@@ -62,7 +62,11 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
          forwardButton.button.setOnClickListener(v -> {});
          ScaleStateListAnimator.apply(forwardButton.button, .065f, 2f);
  

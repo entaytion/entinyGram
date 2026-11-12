@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9032,6 +9032,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -9038,6 +9038,10 @@ public class ChatActivity extends BaseFragment implements
              FileLog.d("InuRx[" + classGuid + "] init did=" + dialog_id + " topic=" + getTopicId() + " reactions=" + reactionsMentionCount);
          }
  
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
              savedMessagesHint.setMultilineText(true);
-@@ -9175,6 +9179,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9181,6 +9185,7 @@ public class ChatActivity extends BaseFragment implements
              });
          }
  

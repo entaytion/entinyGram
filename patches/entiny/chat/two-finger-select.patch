@@ -26,7 +26,7 @@ index 0000000..0000000 100644
              @Override
              public boolean onTouchEvent(MotionEvent e) {
                  textSelectionHelper.checkSelectionCancel(e);
-@@ -10828,6 +10836,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -10834,6 +10842,14 @@ public class ChatActivity extends BaseFragment implements
          return INavigationLayout.BackButtonState.BACK;
      }
  

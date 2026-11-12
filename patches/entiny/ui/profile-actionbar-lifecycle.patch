@@ -33,7 +33,7 @@ index 0000000..0000000 100644
              @Override
              protected void onMoveAnimationUpdate(RecyclerView.ViewHolder holder) {
                  super.onMoveAnimationUpdate(holder);
-@@ -11463,7 +11469,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11470,7 +11476,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarsViewPager.setPadding(0, 0, 0, getActionsExtraHeight());
          }
          if (isPulledDown && listView != null) {

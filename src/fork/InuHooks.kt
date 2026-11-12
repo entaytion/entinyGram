@@ -12,10 +12,12 @@ import desu.inugram.helpers.TabletModeHelper
 import desu.inugram.helpers.UrlCleanerHelper
 import desu.inugram.helpers.cloud.CloudSettingsHelper
 import desu.inugram.helpers.dialogs.DrawerHelper
+import desu.inugram.helpers.dialogs.LinkedChatsHelper
 import desu.inugram.helpers.font.FontHelper
 import desu.inugram.helpers.maps.MapsHelper
 // #if PLUGINS
 import desu.inugram.helpers.plugins.PluginManager
+import desu.inugram.helpers.plugins.platform.PluginNotifications
 import desu.inugram.ui.settings.PluginReposActivity
 // #endif
 import desu.inugram.helpers.security.PasscodeHelper
@@ -35,6 +37,7 @@ import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.tl.TL_update
+import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.AnimatedEmojiDrawable
 import org.telegram.ui.Components.AnimatedFloat
@@ -192,13 +195,14 @@ object InuHooks {
     }
 
     @JvmStatic
-    fun handleIntent(activity: LaunchActivity, intent: Intent?): Boolean {
+    fun handleIntent(activity: LaunchActivity, intent: Intent?, restore: Boolean): Boolean {
         return PasscodeHelper.tryHandleDeepLink(activity, intent)
             || SearchRegistry.tryHandleDeepLink(activity, intent)
             || tryHandleUpdateDeepLink(activity, intent)
             // #if PLUGINS
             || desu.inugram.helpers.plugins.market.MarketLinks.tryHandleDeepLink(activity, intent)
             || PluginReposActivity.tryHandleDeepLink(activity, intent)
+            || PluginNotifications.tryHandleClick(intent, restore)
             // #endif
             || tryHandleFunDeepLink(activity, intent)
             || ShortcutHelper.handleAction(activity, intent)
@@ -258,6 +262,16 @@ object InuHooks {
         PluginManager.onAppInteractive()
         desu.inugram.helpers.plugins.PluginCrashDialog.maybeShow(launchActivity)
         // #endif
+    }
+
+    @JvmStatic
+    fun onFragmentResume(fragment: BaseFragment) {
+        LinkedChatsHelper.onFragmentResume(fragment)
+    }
+
+    @JvmStatic
+    fun onFragmentPause(fragment: BaseFragment) {
+        LinkedChatsHelper.onFragmentPause(fragment)
     }
 
     @JvmStatic

@@ -1392,6 +1392,7 @@
     <string name="InuCrashDescOom">Sorry about that. Crash logs aren\'t very useful for out-of-memory issues — a heap dump is what helps.</string>
     <string name="InuCrashDescHeapDump">A heap dump was also saved. DO NOT SHARE IT! It contains private data! Take a look at it yourself, if you want, and share your findings — that would help a lot.</string>
     <string name="InuCrashOomEnableLogs">Enable debug mode in entinyGram Settings > About to create a heap dump on every future OOM.</string>
+    <string name="InuCrashPluginHooks">Plugin hooks ran around the crash, one of these plugins may be the cause:</string>
     <string name="InuCrashShare">Share crash log</string>
     <string name="InuCrashShareHeapDump">Save heap dump</string>
     <string name="InuCrashDiscard">Discard</string>
@@ -2075,6 +2076,7 @@
     <string name="InuPluginGrantOpenUrl">Open links</string>
     <string name="InuPluginGrantAppVisibility">Monitor app visibility</string>
     <string name="InuPluginGrantNotificationsSuppress">Hold back notifications</string>
+    <string name="InuPluginGrantNotificationsPost">Post notifications</string>
     <string name="InuPluginGrantClipboardRead">Read clipboard</string>
     <string name="InuPluginGrantFetch">Internet access</string>
     <string name="InuPluginGrantAccountRead">Read account data</string>
@@ -2308,4 +2310,8 @@
     <string name="InuForceNoVibrationInfo">Turn off haptics, in-app and notification vibration, even if enabled in Telegram settings.</string>
     <string name="InuSystemMessageFontScale">Follow system font size</string>
     <string name="InuSystemMessageFontScaleInfo">Applies Android font scaling to message text. Reopen the app after changing this setting.</string>
+    <string name="InuLinkedChats">Cross-account chats</string>
+    <string name="InuLinkedChatsInfo">Add a chat to another account\'s chat list and use it from there without switching accounts.</string>
+    <string name="InuLinkedChatsAdd">Add to account</string>
+    <string name="InuLinkedChatsRemove">Remove from this account</string>
 </resources>

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenu
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
-@@ -924,6 +924,9 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -923,6 +923,9 @@ public class ActionBarMenuItem extends FrameLayout {
          }
          if (popupWindow == null || !popupWindow.isShowing()) {
              layoutLazyItems();
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          }
          if (popupLayout == null || parentMenu != null && parentMenu.isActionMode && parentMenu.parentActionBar != null && !parentMenu.parentActionBar.isActionModeShowed()) {
              return;
-@@ -2627,6 +2630,7 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -2626,6 +2629,7 @@ public class ActionBarMenuItem extends FrameLayout {
      private ArrayList<Item> lazyList;
      private HashMap<Integer, Item> lazyMap;
      public boolean inu_reorderable = false;
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
  
      public static class Item {
          public int viewType;
-@@ -2893,6 +2897,14 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -2892,6 +2896,14 @@ public class ActionBarMenuItem extends FrameLayout {
              return;
          }
          if (inu_reorderable) {
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
              desu.inugram.helpers.chat.ChatActionsHelper.reorder(lazyList);
          }
          for (int i = 0; i < lazyList.size(); ++i) {
-@@ -2901,6 +2913,22 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -2900,6 +2912,22 @@ public class ActionBarMenuItem extends FrameLayout {
          lazyList.clear();
      }
  

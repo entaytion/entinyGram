@@ -93,7 +93,7 @@ class UpdateRowView(context: Context) : FrameLayout(context) {
                 refresh(true)
             }
             MediaActionDrawable.ICON_CANCEL -> {
-                UpdateHelper.cancelDownload(UserConfig.selectedAccount)
+                UpdateHelper.cancelDownload()
                 refresh(true)
             }
             else -> {

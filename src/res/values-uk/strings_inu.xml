@@ -1134,6 +1134,7 @@
     <string name="InuCrashOomEnableLogs">Увімкніть режим відладки в Налаштуваннях entinyGram > Про додаток.</string>
     <string name="InuCrashShare">Поділитися краш-логом</string>
     <string name="InuCrashShareHeapDump">Зберегти хіпдамп</string>
+    <string name="InuCrashPluginHooks">Під час збою працювали хуки плагінів, причиною може бути один із них:</string>
     <string name="InuCrashDiscard">Скасувати</string>
     <string name="InuCrashChannel">Відновлення після крашу</string>
     <string name="InuCrashNotifTitle">entinyGram упав</string>
@@ -2049,6 +2050,7 @@
     <string name="InuPluginGrantOpenUrl">Відкриття посилань</string>
     <string name="InuPluginGrantAppVisibility">Відстеження видимості застосунку</string>
     <string name="InuPluginGrantNotificationsSuppress">Приховування сповіщень</string>
+    <string name="InuPluginGrantNotificationsPost">Надсилання сповіщень</string>
     <string name="InuPluginGrantClipboardRead">Читання буфера обміну</string>
     <string name="InuPluginGrantFetch">Доступ до інтернету</string>
     <string name="InuPluginGrantAccountRead">Читання даних акаунта</string>
@@ -2324,4 +2326,8 @@
     <string name="InuSystemMessageFontScale">Системний розмір шрифту</string>
     <string name="InuSystemMessageFontScaleInfo">Застосовує масштаб шрифту Android до тексту повідомлень. Після зміни відкрийте застосунок знову.</string>
     <string name="InuScrimBlurStrength">Розмиття фону під меню</string>
+    <string name="InuLinkedChats">Чати з інших акаунтів</string>
+    <string name="InuLinkedChatsInfo">Додайте чат до списку чатів іншого акаунта й користуйтеся ним звідти без перемикання акаунтів.</string>
+    <string name="InuLinkedChatsAdd">Додати до акаунта</string>
+    <string name="InuLinkedChatsRemove">Прибрати з цього акаунта</string>
 </resources>

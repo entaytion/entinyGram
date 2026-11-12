@@ -216,6 +216,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - double-tap account tab to switch to next account
 - long-tap "chats" tab to pick folder from menu
 - folder tabs: display mode (titles / titles+icons / icons-only), optional indicator stroke style, move to bottom of the screen
+- cross-account chats (experimental, off by default): add a chat to another account's chat list, then open it and send messages from there without switching accounts
 - folder unread counter modes: hide / regular / exclude muted / 🐶 exclude muted non-dms
 - hide "all chats" folder tab, with a note when it stays because there is no other folder
 - remove "Archived Chats" from the chat list entirely
@@ -373,6 +374,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - session list in Settings > Devices shows the real app name (entinyGram) instead of the registered api_id title ("Inugram")
 - import the Money wallet from raw ed25519 private key (+ support for 12 words rotation) - *engine patch from [gettele/money](https://github.com/gettele/money)*
   - replace an imported key with 12 new words via an on-chain key rotation, offered once right after import - *inspired by [tele](https://github.com/nitreojs/tele)*
+- "View in Explorer" for Money wallet addresses: in the My Money menu and on the profile wallet card
 
 ### behavior
 
@@ -510,6 +512,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - reaction effect and haptic skipped whenever the in-chat counter was already 0, and never played for reactions reached via the jump button (the jump marked them read before the message was even shown)
 - album reactions counted once per bottom-row photo; a stale reactions update could also mark a just-seen reaction unread again
 - in-memory unread reactions count overwritten by a stale database copy after deleting messages
+- unread reactions counter stuck in groups after reading a reaction on another device (the read only arrives as a message edit, which stock ignores outside private chats); the count is now re-requested from the server
 - channel reactions: toggling "Enable Reactions" was silently discarded on back (unsaved-changes check only compared the emoji selection, never the enabled state), and re-enabling always saved the prefilled list as an explicit set instead of "All"
 - rounded section backgrounds ignored the alpha of the fading container they lived in, so they stayed fully opaque during the animation and only popped away on the next unrelated redraw (e.g. toggling "Enable Reactions" in channel reactions)
 - sticky date pill jump and color shift when replacing an inline date separator
@@ -542,6 +545,8 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - "Add post" button no longer flashes when opening your profile before the Posts section is visible
 - stale unread badges on global-search top peers
 - stale unread mention pointer after reading mention on another device (mention button jumping to old message)
+- unread mentions counter stuck after reading a mention on another device while someone reacted to it (the message edit stored the mention as read without touching the counter, so the read update that followed was ignored)
+- chat bottom bar button (mute/unmute, join, etc.) ripple always starting slightly left of the center instead of at the touch point
 - folder pins silently missing when the pinned dialog isn't in the local dialogs cache (now fetched from server)
 - folder tab unread counters slowly drifting to zero (badge disappearing while the list still shows unread chats) as chats got read
 - photo/video gallery performance improvements
@@ -598,6 +603,7 @@ the sections below are the inugram base we build on: its features, tweaks adapte
 - crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)
 - crash opening a new-bot link when the chat was closed before the link resolved
 - crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
+- chat wallpaper stuck as a smeared/see-through dark-theme pattern after the system theme flipped while the app was in the background or killed (a pending wallpaper load for the old theme committed after the new theme's load, which then kept it)
 - expanded story reactions no longer remain above the app after dismissing the reply keyboard with the system back gesture
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
 - crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)

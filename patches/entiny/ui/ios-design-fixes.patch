@@ -116,7 +116,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -34183,7 +34183,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -34192,7 +34192,8 @@ public class ChatActivity extends BaseFragment implements
  
                  @Override
                  public void dismiss(boolean animated) {
@@ -126,7 +126,7 @@ index 0000000..0000000 100644
                      if (finalReactionsLayout1 != null) {
                          finalReactionsLayout1.dismissParent(animated);
                      }
-@@ -34247,7 +34248,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34256,7 +34257,7 @@ public class ChatActivity extends BaseFragment implements
              } else {
                  popupY = inBubbleMode ? 0 : AndroidUtilities.statusBarHeight;
              }
@@ -135,7 +135,7 @@ index 0000000..0000000 100644
                  popupY = ChatHelper.reserveMenuRoomAbove(scrimPopupContainerLayout, popupY);
              }
              final int finalPopupX = scrimPopupX = popupX;
-@@ -34288,7 +34289,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34297,7 +34298,7 @@ public class ChatActivity extends BaseFragment implements
              }
              chatListView.stopScroll();
              chatLayoutManager.setCanScrollVertically(false);

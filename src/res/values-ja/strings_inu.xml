@@ -937,6 +937,7 @@
     <string name="InuCrashTitleOom">entinyGram のメモリが不足しました</string>
     <string name="InuCrashDescHeapDump">ヒープダンプも保存されました。共有しないでください！プライベートな情報が含まれています！自分で確認して、気づいたことを教えていただけると、大変助かります。</string>
     <string name="InuCrashOomEnableLogs">entinyGram 設定 > アプリについて でデバッグモードを有効にすると、次回以降の OOM 発生時にヒープダンプを作成します。</string>
+    <string name="InuCrashPluginHooks">クラッシュ前後にプラグインのフックが実行されていました。以下のいずれかが原因の可能性があります:</string>
     <string name="InuCrashShareHeapDump">ヒープダンプを保存</string>
     <string name="InuGhostReadOnSend">送信時に既読にする</string>
     <string name="InuGhostMarkReadLocally">ローカルで既読にする</string>
@@ -1712,6 +1713,7 @@
     <string name="InuPluginGrantOpenUrl">リンクを開く</string>
     <string name="InuPluginGrantAppVisibility">アプリの表示状態を監視</string>
     <string name="InuPluginGrantNotificationsSuppress">通知を抑制</string>
+    <string name="InuPluginGrantNotificationsPost">通知の送信</string>
     <string name="InuPluginGrantClipboardRead">クリップボードを読み取る</string>
     <string name="InuPluginGrantFetch">インターネットアクセス</string>
     <string name="InuPluginGrantAccountRead">アカウントデータを読み取る</string>
@@ -2230,4 +2232,8 @@
     <string name="InuTabletModeInfo">自動は画面サイズに従います。オンは常にタブレット用、オフは常にスマートフォン用レイアウトを使います。</string>
     <string name="InuTabletModeOff">オフ</string>
     <string name="InuTabletModeOn">オン</string>
+    <string name="InuLinkedChats">アカウント間チャット</string>
+    <string name="InuLinkedChatsInfo">チャットを別のアカウントのチャットリストに追加し、アカウントを切り替えずにそこから利用できます。</string>
+    <string name="InuLinkedChatsAdd">アカウントに追加</string>
+    <string name="InuLinkedChatsRemove">このアカウントから削除</string>
 </resources>

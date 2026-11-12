@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                              if (isKeyboardVisible()) {
                                  AndroidUtilities.hideKeyboard(getParentActivity().getCurrentFocus());
                              } else if (chatActivityEnterView != null) {
-@@ -35990,6 +35990,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -35999,6 +35999,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          };
                          chatActivity.showFieldPanelForReplyQuote(replyingMessageObject, replyingQuote);

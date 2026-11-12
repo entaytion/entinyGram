@@ -87,7 +87,7 @@ index 0000000..0000000 100644
              if (!mentionContainer.getAdapter().isLongClickEnabled()) {
                  return false;
              }
-@@ -13098,7 +13121,24 @@ public class ChatActivity extends BaseFragment implements
+@@ -13107,7 +13130,24 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
          if (mentionContainer == null) {
              return;
          }
-@@ -13108,6 +13148,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -13117,6 +13157,10 @@ public class ChatActivity extends BaseFragment implements
          params.put("query_id", "" + result.query_id);
          params.put("bot", "" + uid);
          params.put("bot_name", mentionContainer.getAdapter().getContextBotName());

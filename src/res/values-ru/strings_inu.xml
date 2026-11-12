@@ -1132,6 +1132,7 @@
     <string name="InuCrashTitleOom">entinyGram исчерпал память</string>
     <string name="InuCrashDescOom">Извиняемся. Логи краша не очень полезны при нехватке памяти — тут помогает хипдамп.</string>
     <string name="InuCrashOomEnableLogs">Включи режим отладки в настройках entinyGram > О приложении, чтобы создавать хипдамп при каждом будущем OOM.</string>
+    <string name="InuCrashPluginHooks">Во время краша работали хуки плагинов, причиной может быть один из них:</string>
     <string name="InuCrashDescHeapDump">Также сохранён дамп кучи. НЕ ОТПРАВЛЯЙТЕ ЕГО! Он содержит личные данные! Можете посмотреть его сами и поделиться находками — это сильно поможет.</string>
     <string name="InuCrashShareHeapDump">Сохранить дамп кучи</string>
     <string name="InuBiometricConfirm">Биометрическое подтверждение</string>
@@ -1949,6 +1950,7 @@
     <string name="InuPluginGrantOpenUrl">Открытие ссылок</string>
     <string name="InuPluginGrantAppVisibility">Отслеживание видимости приложения</string>
     <string name="InuPluginGrantNotificationsSuppress">Блокировка уведомлений</string>
+    <string name="InuPluginGrantNotificationsPost">Отправка уведомлений</string>
     <string name="InuPluginGrantClipboardRead">Чтение буфера обмена</string>
     <string name="InuPluginGrantFetch">Доступ в интернет</string>
     <string name="InuPluginGrantAccountRead">Чтение данных аккаунта</string>
@@ -2244,4 +2246,8 @@
     <string name="InuSendServerError">У Telegram проблемы с доставкой сообщения. Повторяем попытки…</string>
     <string name="InuForceNoVibration">Отключить всю вибрацию</string>
     <string name="InuForceNoVibrationInfo">Отключает виброотклик, вибрацию в приложении и уведомлениях, даже если она включена в настройках Telegram.</string>
+    <string name="InuLinkedChats">Чаты из других аккаунтов</string>
+    <string name="InuLinkedChatsInfo">Добавь чат в список чатов другого аккаунта и пользуйся им оттуда без переключения аккаунтов.</string>
+    <string name="InuLinkedChatsAdd">Добавить в аккаунт</string>
+    <string name="InuLinkedChatsRemove">Убрать из этого аккаунта</string>
 </resources>

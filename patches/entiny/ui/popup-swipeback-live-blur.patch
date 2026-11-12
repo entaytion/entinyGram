@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  
  import java.util.ArrayList;
  
-@@ -172,12 +173,21 @@ public class PopupSwipeBackLayout extends FrameLayout {
+@@ -173,12 +174,21 @@ public class PopupSwipeBackLayout extends FrameLayout {
          }
          int s = canvas.save();
          if (i != 0) {

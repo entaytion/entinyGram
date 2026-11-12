@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12992,6 +12992,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13001,6 +13001,7 @@ public class ChatActivity extends BaseFragment implements
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
          args.putInt("messagesCount", canForwardMessagesCount);

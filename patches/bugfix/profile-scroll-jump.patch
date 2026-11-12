@@ -69,7 +69,7 @@ index 0000000..0000000 100644
                      if (!allowPullingDown && canScroll > dy) {
                          dy = canScroll;
                          if (avatarsViewPager.hasImages() && avatarImage.getImageReceiver().hasNotThumb() && !AndroidUtilities.isAccessibilityScreenReaderEnabled() && (!isInLandscapeMode && !AndroidUtilities.isTablet() || hasMainTabs)) {
-@@ -8363,7 +8376,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -8370,7 +8383,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          }
          RecyclerListView.Holder holder = child == null ? null : (RecyclerListView.Holder) listView.findContainingViewHolder(child);
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
          int adapterPosition = holder != null ? holder.getAdapterPosition() : RecyclerView.NO_POSITION;
          if (top >= 0 && adapterPosition == 0) {
              newOffset = top;
-@@ -11368,6 +11381,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11375,6 +11388,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              musicView.invalidate();
              balanceView.invalidate();
          }
@@ -101,7 +101,7 @@ index 0000000..0000000 100644
      }
  
      private Drawable getScamDrawable(int type) {
-@@ -15490,37 +15519,58 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -15497,37 +15526,58 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              listAdapter.notifyDataSetChanged();
          }
          if (savedScrollPosition >= 0) {

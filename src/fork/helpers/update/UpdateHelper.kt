@@ -96,6 +96,9 @@ object UpdateHelper {
     @Volatile var isPendingStart: Boolean = false
         private set
 
+    @Volatile var downloadAccount: Int = UserConfig.selectedAccount
+        private set
+
     @Volatile private var lastProgress: Float = 0f
 
     @JvmStatic
@@ -141,6 +144,7 @@ object UpdateHelper {
         val update = SharedConfig.pendingAppUpdate ?: return
         val doc = update.document ?: return
 
+        downloadAccount = account
         isPendingStart = true
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateLoading)
 
@@ -186,12 +190,12 @@ object UpdateHelper {
         }
     }
 
-    fun cancelDownload(account: Int) {
+    fun cancelDownload() {
         if (isPendingStart) {
             isPendingStart = false
         } else {
             SharedConfig.pendingAppUpdate?.document?.let {
-                FileLoader.getInstance(account).cancelLoadFile(it)
+                FileLoader.getInstance(downloadAccount).cancelLoadFile(it)
             }
         }
         lastProgress = 0f
@@ -235,7 +239,7 @@ object UpdateHelper {
 
     fun isDownloading(): Boolean {
         val doc = SharedConfig.pendingAppUpdate?.document ?: return false
-        return FileLoader.getInstance(UserConfig.selectedAccount)
+        return FileLoader.getInstance(downloadAccount)
             .isLoadingFile(FileLoader.getAttachFileName(doc))
     }
 

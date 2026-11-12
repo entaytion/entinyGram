@@ -157,7 +157,7 @@ index 0000000..0000000 100644
              );
          }
  
-@@ -10908,7 +10908,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -10914,7 +10914,7 @@ public class ChatActivity extends BaseFragment implements
          }
          ChatActionsHelper.addActionModeItems(this, actionMode, edit);
          actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
          actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -12768,6 +12768,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12777,6 +12777,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private boolean hasSelectedNoforwardsMessage() {
@@ -174,7 +174,7 @@ index 0000000..0000000 100644
          try {
              for (int i = 0; i < selectedMessagesIds.length; ++i) {
                  for (int j = 0; j < selectedMessagesIds[i].size(); ++j) {
-@@ -14065,7 +14066,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -14074,7 +14075,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void showTextSelectionHint(MessageObject messageObject) {
@@ -183,7 +183,7 @@ index 0000000..0000000 100644
              return;
          }
          CharSequence text;
-@@ -20203,7 +20204,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20212,7 +20213,7 @@ public class ChatActivity extends BaseFragment implements
                  int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
                  if (copyItem != null) {
                      copyVisible = copyItem.getVisibility();
@@ -192,7 +192,7 @@ index 0000000..0000000 100644
                      newCopyVisible = copyItem.getVisibility();
                  }
                  if (starItem != null) {
-@@ -20295,7 +20296,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20304,7 +20305,7 @@ public class ChatActivity extends BaseFragment implements
                                  MessageObject msg = selectedMessagesIds[a].valueAt(i);
                                  if (msg == null) continue;
                                  if (msg.isVoiceOnce() || msg.isRoundOnce()) continue;
@@ -201,7 +201,7 @@ index 0000000..0000000 100644
                                  if (msg.isVoice() || msg.isRoundVideo())
                                      show = true;
                              }
-@@ -32049,7 +32050,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32058,7 +32059,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
@@ -210,7 +210,7 @@ index 0000000..0000000 100644
          boolean noforwardsOrPaidMedia = noforwards || message.type == MessageObject.TYPE_PAID_MEDIA;
          boolean allowUnpin = message.getDialogId() != mergeDialogId && allowPin && (pinnedMessageObjects.containsKey(message.getId()) || groupedMessages != null && !groupedMessages.messages.isEmpty() && pinnedMessageObjects.containsKey(groupedMessages.messages.get(0).getId())) && !message.isExpiredStory();
          boolean allowEdit = message.canEditMessage(currentChat) && !chatActivityEnterView.hasAudioToSend() && message.getDialogId() != mergeDialogId && message.type != MessageObject.TYPE_STORY && message.type != MessageObject.TYPE_POLL;
-@@ -34754,7 +34755,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34763,7 +34764,7 @@ public class ChatActivity extends BaseFragment implements
              }
              case OPTION_REPLY: {
                  if (selectedObject != null && currentChat != null && (!ChatHelper.isEffectivelyInChat(currentChat) && !ChatObject.isMonoForum(currentChat) && !isThreadChat() || ChatObject.isChannel(currentChat) && !ChatObject.canPost(currentChat) && !currentChat.megagroup || !ChatObject.canSendMessages(currentChat))) {
@@ -219,7 +219,7 @@ index 0000000..0000000 100644
                          return;
                      }
                      MessageObject messageObject = selectedObject;
-@@ -37347,7 +37348,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37356,7 +37357,7 @@ public class ChatActivity extends BaseFragment implements
                      builder.setTitleMultipleLines(true);
                  }
                  final int finalTimestamp = timestamp;
@@ -228,7 +228,7 @@ index 0000000..0000000 100644
                  builder.setItems(noforwards ? new CharSequence[] {LocaleController.getString(R.string.Open)} : new CharSequence[]{LocaleController.getString(R.string.Open), LocaleController.getString(R.string.Copy)}, (dialog, which) -> {
                      if (which == 0) {
                          if (str.startsWith("video?")) {
-@@ -37724,7 +37725,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37733,7 +37734,7 @@ public class ChatActivity extends BaseFragment implements
          if (url == null || getParentActivity() == null) {
              return;
          }
@@ -237,7 +237,7 @@ index 0000000..0000000 100644
          if (url instanceof URLSpanMono) {
              if (!noforwards || getDialogId() == UserObject.VERIFY) {
                  ((URLSpanMono) url).copyToClipboard();
-@@ -40688,7 +40689,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40697,7 +40698,7 @@ public class ChatActivity extends BaseFragment implements
                  && messageObject.messageOwner != null
                  && chatMode != MODE_SCHEDULED
                  && !isPeerNoForwards()
@@ -246,7 +246,7 @@ index 0000000..0000000 100644
                  && messageObject.type != MessageObject.TYPE_PAID_MEDIA;
          }
  
-@@ -46653,7 +46654,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46662,7 +46663,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

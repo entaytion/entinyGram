@@ -93,7 +93,6 @@ object DrawerHelper {
     private var proxyObserver: NotificationCenter.NotificationCenterDelegate? = null
     private var updateLayout: IUpdateLayout? = null
     private var updateObserver: NotificationCenter.NotificationCenterDelegate? = null
-    private var updateObserverAccount: Int = -1
     private var menuDrawableRef: MenuDrawable? = null
     private var statusPopup: SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow? = null
 
@@ -111,7 +110,6 @@ object DrawerHelper {
             setup(dlc.context, dlc, layout)
         } else {
             notifyDataChanged()
-            rebindPerAccountObservers()
             refreshUpdateState()
         }
     }
@@ -319,26 +317,14 @@ object DrawerHelper {
             val global = NotificationCenter.getGlobalInstance()
             global.addObserver(obs, NotificationCenter.appUpdateAvailable)
             global.addObserver(obs, NotificationCenter.appUpdateLoading)
+            for (account in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
+                val nc = NotificationCenter.getInstance(account)
+                nc.addObserver(obs, NotificationCenter.fileLoadProgressChanged)
+                nc.addObserver(obs, NotificationCenter.fileLoaded)
+                nc.addObserver(obs, NotificationCenter.fileLoadFailed)
+            }
         }
-        rebindPerAccountObservers()
         refreshMenuButton(false)
-    }
-
-    private fun rebindPerAccountObservers() {
-        val obs = updateObserver ?: return
-        val newAccount = UserConfig.selectedAccount
-        if (updateObserverAccount == newAccount) return
-        if (updateObserverAccount != -1) {
-            val prev = NotificationCenter.getInstance(updateObserverAccount)
-            prev.removeObserver(obs, NotificationCenter.fileLoadProgressChanged)
-            prev.removeObserver(obs, NotificationCenter.fileLoaded)
-            prev.removeObserver(obs, NotificationCenter.fileLoadFailed)
-        }
-        updateObserverAccount = newAccount
-        val acct = NotificationCenter.getInstance(newAccount)
-        acct.addObserver(obs, NotificationCenter.fileLoadProgressChanged)
-        acct.addObserver(obs, NotificationCenter.fileLoaded)
-        acct.addObserver(obs, NotificationCenter.fileLoadFailed)
     }
 
     @JvmStatic

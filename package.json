@@ -7,6 +7,7 @@
     "setup": "bun assets/scripts/setup.ts",
     "generate-icons": "bun assets/scripts/generate-icons.ts",
     "generate-icon-packs": "bun assets/scripts/generate-icon-packs.ts",
+    "preview-icons": "bun assets/scripts/preview-icons.ts",
     "generate-tl": "bun assets/scripts/generate-tl.ts",
     "export": "bun assets/scripts/export.ts",
     "rebase": "bun assets/scripts/rebase.ts",

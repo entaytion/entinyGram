@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -34737,7 +34737,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34746,7 +34746,7 @@ public class ChatActivity extends BaseFragment implements
                  return;
              }
          }
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      }
  
      public void processSelectedOption(int option) {
-@@ -35046,7 +35046,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -35055,7 +35055,7 @@ public class ChatActivity extends BaseFragment implements
                          break;
                      }
                  }
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
                  BulletinFactory.createSaveToGalleryBulletin(this, selectedObject.isVideo() && !selectedObject.isLivePhoto(), selectedObject.isLivePhoto(), themeDelegate).show();
                  break;
              }
-@@ -35197,7 +35197,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -35206,7 +35206,7 @@ public class ChatActivity extends BaseFragment implements
                              path = f.getPath();
                          }
                      }

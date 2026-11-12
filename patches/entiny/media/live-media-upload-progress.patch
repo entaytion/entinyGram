@@ -122,7 +122,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -24357,11 +24357,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -24366,11 +24366,26 @@ public class ChatActivity extends BaseFragment implements
          } else if (id == NotificationCenter.fileNewChunkAvailable) {
              MessageObject messageObject = (MessageObject) args[0];
              long finalSize = (Long) args[3];
