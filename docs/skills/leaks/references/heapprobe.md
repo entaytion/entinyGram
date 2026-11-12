@@ -1,6 +1,6 @@
 # HeapProbe — programmatic MAT queries
 
-`scripts/heapprobe/` is a small Eclipse MAT plugin (an OSGi `IApplication`) that answers
+`../../scripts/leaks/heapprobe/` is a small Eclipse MAT plugin (an OSGi `IApplication`) that answers
 the questions the HTML reports can't, and doesn't crash on corrupt strings the way the
 "Leak Suspects / Details" renderer sometimes does. Reach for it once the reports have
 pointed you at a suspect cohort and you need to prove the retention.
@@ -24,9 +24,9 @@ Java is not available inside the agent sandbox — run with the sandbox disabled
 
 ```bash
 # macOS
-MAT=/Applications/MemoryAnalyzer.app scripts/heapprobe/build_and_run.sh <dump.ec.hprof> <command> [args...]
+MAT=/Applications/MemoryAnalyzer.app ../../scripts/leaks/heapprobe/build_and_run.sh <dump.ec.hprof> <command> [args...]
 # Windows (Git Bash): MAT is the folder that holds MemoryAnalyzerc.exe (no Contents/Eclipse)
-MAT="$HOME/Downloads/mat/mat" bash scripts/heapprobe/build_and_run.sh <dump.ec.hprof> <command> [args...]
+MAT="$HOME/Downloads/mat/mat" bash ../../scripts/leaks/heapprobe/build_and_run.sh <dump.ec.hprof> <command> [args...]
 ```
 
 The script handles both layouts: on Windows it launches `MemoryAnalyzerc.exe`, converts the

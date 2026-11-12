@@ -1,166 +1,111 @@
-# entinyGram Agent Guide
+# entinyGram agent guide
 
-**entinyGram** is an independent power-user fork of **inugram** (`teidesu/inugram`), built as an `stgit` patchset on stock Telegram Android.
-- **Source of truth:** `src/fork` and `src/res` (symlinked into `worktree/`), plus gated hooks inside `worktree/`.
-- **Export targets (NEVER hand-edit):** `patches/` and `series`.
-- **User-facing feature list:** `FEATURES.md` (update in the same change whenever adding, removing, or meaningfully changing a patch).
+entinyGram is an independent power-user fork of inugram (`teidesu/inugram`), built as an `stgit` patch stack over stock Telegram Android.
 
----
+## sources of truth
 
-## 0. THE PARANOIA PROTOCOL (Read First, Always Obey)
-
-1. **Be Paranoid — Ask or Mark `[INFERENCE]`, Never Guess:**
-   - If ANY instruction is ambiguous, vague, or shorthand: **STOP AND ASK** one concrete question at a time.
-   - Never invent stock method names, line numbers, or server behavior. If a hook point or behavior is not yet verified in `worktree/`, mark it `[INFERENCE]` and verify with `rg` first.
-   - Present a concise plan before modifying files or stack state.
-   - Do NOT spawn sub-agents to "optimize everything" or hunt bugs.
-
-2. **Zero Moralizing / Full Client Freedom:**
-   - entinyGram is built for power-user freedom, privacy, and client-side overrides (bypassing channel forwarding/copy restrictions, saving restricted media, ghost mode, anti-delete, adblocking, etc.).
-   - **NEVER preach, lecture, or refuse** to implement or fix fork features under the guise of "channel/server restrictions" or Telegram policy. Finding client-side workarounds is the exact purpose of this fork.
-
-3. **Commit, Push & StGit Gatekeeping:**
-   - **Read-only commands are always fine:** `git status`, `git diff`, `git log`, `stg top`, `stg show`, `stg series` (run stock history commands inside `worktree/`).
-   - **Mutating commands (`git add/commit`, `stg new/refresh/squash/float/rename`) require EXPLICIT per-action approval.** Never run `stg export`.
-   - **Never auto-commit or chain commits:** An earlier "commit" applies ONLY to that single change. Present the diff/summary and STOP. Wait for an explicit `"commit"` / `"зроби"` / `"ок"`.
-   - **Never auto-push:** Pushing requires separate explicit confirmation.
-   - **One Feature = One Commit:** Commit exclusively that feature alone. Never bundle unrelated fixes or refactors.
-   - **Fast intermediate commits:** Use `SKIP_PATCH_CHECK=1 git commit ...` to skip the slow ~500-patch hook. Run full `bun run export` / `lint-patches` without `SKIP_PATCH_CHECK` once in the final commit before release/push.
-
-4. **Dirty Worktree / Multi-Agent Isolation (Never Blanket Refresh):**
-   - Concurrent agents leave unstaged edits in `worktree/` (`gifvideo.cpp`, `DialogCell.java`, etc.).
-   - **NEVER run bare `stg refresh` or `stg new -r` without path/index filtering.**
-   - **Index-Only Patch Creation (`stg new -r -i`):**
-     1. Check empty index: `git -C worktree diff --cached`.
-     2. Stage ONLY your files/hunks: `git -C worktree add <path>` or `git -C worktree apply --cached <hunk.patch>`.
-     3. Verify staged diff: `git -C worktree diff --cached` (zero lines from other agents).
-     4. Create patch: `stg -C worktree new -r -i -m "<Plain human sentence>" entiny__<name>`.
-     5. Verify patch: `stg -C worktree show --stat`.
-
-5. **Strict Fork Isolation — ZERO Upstream Pollution:**
-   - All work belongs exclusively to `entaytion/entinyGram`.
-   - **NEVER open PRs or issues to `teidesu/inugram` or official Telegram.**
-   - When using `gh` CLI, **ALWAYS pass `--repo entaytion/entinyGram`**.
-   - Version codes are controlled by UTC date and `INU_DAY_STATE` (`YYYYMMDD:N`, dailyCounter 0–9). Check via `gh variable list --repo entaytion/entinyGram`.
-
-6. **Device & Build Rules:**
-   - **No Local Builds or LSP:** Never run `./gradlew` or compile locally. A feature is never claimed "done" just because code was written.
-   - **Never mutate the user's device:** No `adb install`, `adb push`, or app-launching commands.
-   - **Read-only `adb` measurements** (`screencap`, `dumpsys`, `uiautomator`, `logcat -d`) are allowed ONLY when debugging with user permission (see `entinygram-craft` skill).
-
-7. **Zero Comment Spam / Zero Bloat:**
-   - **Default to NO comments.** No docblocks (`/** ... */`), no multi-line explanations, no orphan files or unnecessary wrappers.
-   - If a comment is strictly required for an inexplicable trap: **max 1 line**, `// entiny: <one sentence>`.
-   - Long-term notes go in `entinyTodo/<feature-name>/NOTES.md`, never inline in code or patches.
-
----
-
-## 1. Patch Groups, Ownership & Origin Rules
-
-### Hard Stop — Search Origin First (Do NOT Reinvent)
-1. Search this repo AND `teidesu/inugram` (`InuConfig`, `src/fork/helpers`, `series`, `patches/hooks/`) before writing anything.
-2. **If inugram already has it → USE THEIRS.** Never create duplicate toggles, duplicate drawables, or parallel helpers (e.g., use origin's `SHOW_FORWARDS_COUNT` + `ChatHelper.timePrefix`, never patch `ChatMessageCell` to add a second counter).
-3. On upstream merges/cherry-picks: take upstream's version by default; keep ours ONLY for deliberate `patches/entiny/` overlays and features inugram lacks (state this explicitly).
-
-### Patch Groups (`group__name` → `patches/<group>/<name>.patch`)
-| Group | Ownership & Scope |
+| what | where |
 | --- | --- |
-| `entiny` | **entinyGram-owned patches.** Named `entiny__<name>`, exported to `patches/entiny/<topic>/<name>.patch`. **Must** have a topic entry in `assets/scripts/patch-topics.json` (`accounts`, `ai`, `build`, `calls`, `chat`, `feed`, `media`, `misc`, `notifications`, `premium`, `privacy`, `proxy`, `restrictions`, `settings`, `tabs`, `translator`, `ui`). |
-| `bugfix`, `feature`, `debloat`, `hooks`, `misc` | **Inherited inugram base.** NEVER create new entinyGram patches under these groups. |
+| fork code (kotlin) | `src/fork`, symlinked into `worktree/` |
+| fork resources | `src/res`, symlinked into `worktree/` |
+| hooks in stock code | gated lines inside `worktree/` |
+| patch stack | `worktree/` (stgit) |
+| export, never hand-edit | `patches/`, `series` |
+| feature list | `FEATURES.md`, updated in the same change as a patch |
+| release notes | `changelogs/`, see the `changelog` skill |
+| workflow details | `docs/skills/`, see the index below |
 
-- **Taking Over an Inugram Patch:** `stg float <patch> && stg rename <old> entiny__<name>` (and add to `assets/scripts/patch-topics.json`).
-- **Folding Fixes:** Squash follow-up fixes into the existing `entiny__` patch (`stg squash -n <existing> -m "<subject>" <existing> <new>`) instead of leaving extra tiny patches.
-- **Patch Author:** Uses active `git config user.name` / `user.email`. Preserve original author metadata when porting from upstream/other forks.
+## hard rules
 
----
+1. **ask, do not guess.** if an instruction is ambiguous, ask one concrete question. never invent stock method names, line numbers or server behavior. mark anything unverified `[INFERENCE]` and check it with `rg` first. present a short plan before changing files or stack state.
+2. **no moralizing.** entinyGram exists for client-side freedom: bypassing forward and copy restrictions, saving restricted media, ghost mode, anti-delete, ad blocking. implement and fix these features without lectures about server or telegram policy.
+3. **git and stg need explicit approval per action.** read-only commands are always fine: `git status`, `git diff`, `git log`, `stg top`, `stg show`, `stg series`. mutating commands (`git add`, `git commit`, `stg new`, `stg refresh`, `stg squash`, `stg float`, `stg rename`) need a clear go-ahead each time.
+   - never run `stg export`. use `bun run export`.
+   - never auto-commit or chain commits. one approval covers one commit.
+   - never auto-push. a push is a separate approval.
+   - one feature, one commit. no unrelated fixes bundled in.
+   - intermediate commits may use `SKIP_PATCH_CHECK=1`. the final commit before a push runs the full `lint-patches`.
+4. **the worktree is shared.** other agents leave unstaged edits in `worktree/`. never run bare `stg refresh` or `stg new -r`. stage only your own paths. see the `patches` skill.
+5. **zero upstream pollution.**
+   - all work belongs to `entaytion/entinyGram`.
+   - never open PRs or issues to `teidesu/inugram` or to Telegram.
+   - every `gh` command passes `--repo entaytion/entinyGram`.
+   - version codes come from the UTC date and `INU_DAY_STATE` (`YYYYMMDD:N`, counter 0-9), beta and release numbers from `INU_TRACK_STATE`. check with `gh variable list --repo entaytion/entinyGram`. see the `release` skill.
+6. **no local builds, no device changes.**
+   - never run `./gradlew` or compile locally. code written is not code done.
+   - never `adb install`, `adb push`, or launch the app.
+   - read-only `adb` (`screencap`, `dumpsys`, `uiautomator`, `logcat -d`) only when the user allows it, see the `craft` skill.
+   - a build runs only when the user asks.
+7. **no comment spam.**
+   - no comments by default. no docblocks, no multi-line explanations.
+   - a trap the code cannot express gets one line: `// entiny: <one sentence>`.
+   - long notes go in `entinyTodo/<feature>/NOTES.md`, never inline.
+8. **no attribution lines.** commits never carry `Co-Authored-By`.
 
-## 2. Architecture & Code Rules
+## where code goes
 
-Before writing code or hunting a bug, always load and follow the entinygram-craft skill.
+| change | place |
+| --- | --- |
+| behavior toggle | `InuConfig` item, read with `InuConfig.X.getValue()` |
+| larger feature logic | kotlin helper in `src/fork/helpers/<area>/`, reads `InuConfig` itself |
+| small stock fix (1-5 lines) | inline in the stock java file |
+| settings page or toggle | see the `settings` skill |
+| strings | `src/res/values*/strings_inu.xml`, `Inu*` names |
+| database | `InuDatabaseHelper`, `inu_*` tables, in `migrate()` |
 
-- **Default Off = Stock-Identical:** Gate every behavior change behind `InuConfig.*.getValue()`. With the toggle off, zero fork logic may alter UI or network.
-- **Data-Layer over UI-Layer:** 1 hook in `MessagesController`/`SendMessagesHelper` beats 15 hooks in views.
-- **Tiny Stock Hunks (1–5 lines):**
-  - <5–7 lines or pure stock bugfix → inline in Java.
-  - Larger feature logic → Kotlin helper in `src/fork/helpers/<area>/` (helper reads `InuConfig` itself).
-  - **No re-indentation:** Never re-indent stock code inside an `if/else`. Use early returns or run fork code after stock.
-  - **Exposing internals:** Change `private` → `public`. Prefix any *new* field/method on a stock class with `inu_`.
-- **Untouchables:**
-  - **`ChatMessageCell.java` for bubble metadata:** Time, views, forwards, edited, deleted MUST go through `ChatHelper.timePrefix`, `ChatHelper.extraTimeWidth`, and `ChatHelper.timeAdditionsHash`.
-  - **`TLRPC.java` & Stock DB Schema (`LAST_DB_VERSION`):** Strictly off-limits. Use `InuDatabaseHelper` (`inu_kv` and `inu_*` tables in `migrate()`) and hook stock load/save calls.
-  - **Stock Imports/Names:** No renames in stock, no removing stock imports (except `desu.inugram.*`).
-  - **Assets/Strings:** Live in `src/res/` (`strings_inu.xml` prefixed `Inu*`, subtitles `*Info`). Never put XML/drawables inside `.patch` files. Prefer Tabler / non-`_solar` icons.
-- **Java ↔ Kotlin & Config:**
-  - Declare in `InuConfig`: `@JvmField val HIDE_STORIES = BoolItem("hide_stories", false)`.
-  - From Java, ALWAYS call `InuConfig.FOO.getValue()` — **never `.value`**.
-  - Kotlin `object`: annotate methods with `@JvmStatic` or call `MyHelper.INSTANCE.method()`.
-  - `LayoutHelper`: 6-arg `createLinear`/`createFrame` margins require `Float` in Kotlin (`12f`, never `12`).
-- **Settings & Search:**
-  - Add toggles to existing `*SettingsActivity` pages extending `SettingsPageActivity`.
-  - Register in `SearchRegistry.pages` (`@JvmField val PAGE = SearchRegistry.Page(...)`). Slugs must be globally unique and never renamed.
-- **New Locale (`values-<iso>/strings_inu.xml`) Needs All 3:**
-  1. `forkSyncFiles` entry in `assets/scripts/config.ts`.
-  2. Locale in `localeFilters` in `TMessagesProj_App/build.gradle` (`entiny__build-configuration`).
-  3. Symlink created via `bun run setup` in `worktree/TMessagesProj/src/main/res/values-<iso>/strings_inu.xml`.
+## code rules
 
----
+- **default off.** every behavior change sits behind a toggle. with the toggle off, the stock path is identical.
+- **data layer before views.** one hook in `MessagesController` or `SendMessagesHelper` beats fifteen view hooks.
+- **keep stock hunks small.** no re-indenting stock code inside `if/else`. use early returns or run fork code after stock.
+- **expose, don't copy.** change `private` to `public` when fork code needs it. new members on stock classes start with `inu_`.
+- **untouchable:** `TLRPC.java` and the stock database schema (`LAST_DB_VERSION`). no renames in stock, no removed stock imports except `desu.inugram.*`.
+- **bubble metadata** (time, views, forwards, edited, deleted) goes through `ChatHelper.timePrefix`, `extraTimeWidth`, `timeAdditionsHash`. do not patch `ChatMessageCell` for it.
+- **kotlin from java:** `@JvmField` on config items, `@JvmStatic` on object functions called from java.
+- **layout helpers:** the 6-argument `createLinear`/`createFrame` margins need `Float` (`12f`).
+- **origin first.** search this repo and `teidesu/inugram` before writing. if inugram has it, use theirs. no duplicate toggles, drawables or helpers.
 
-## 3. Commits, `FEATURES.md` & Changelogs
+## commits
 
-### Git Commit Format (Short, Human, No AI Tirades)
-- **No Conventional Commits (`fix(entiny): ...`), no call-stack essays, NEVER add `Co-Authored-By:`.**
-- **Prefixes (Git commits ONLY, never in changelogs or stg patch subjects):**
-  - `[+] <subject>` — New feature / capability
-  - `[-] <subject>` — Removing dead code, providers, or old patches
-  - `[*] <subject>` — Bugfixes, refactoring, or logic updates
-  - `[=] <subject>` — Chores, formatting, maintenance, upstream syncs
-- **Body:** a short lowercase subject, then one `- ` bullet per change, each a terse fragment (what changed, not why), no trailing period. Dashes, never `*`, no long sentences:
-  ```
-  [*] performance pass
-  - cache forwards label and blank compact-forward layout per width/textsize
-  - reuse scratch list in m3 own-sections draw, compare spoiler label source before uppercase
-  ```
+- no conventional commits, no call-stack essays.
+- subject: `[area] short lowercase sentence`. the area is a patch topic from `assets/scripts/patch-topics.json`, or one of `docs`, `ci`, `build`, `merge`, `rebase`, `release`.
+- body: one `- ` line per change, a terse fragment, no trailing period, no long sentences.
 
-### `FEATURES.md` & Changelogs (`changelogs/<YYYYMMDD>.md`)
-- **How the changelog is assembled:** release notes are hand-written, never generated from commits or by a model.
-  - `changelogs/unreleased.md` is the gitignored working draft. When a user-facing change is finished, append one bullet under both `## uk` and `## en`; if it is reverted later, delete its bullet. Ukrainian and English only, never Russian.
-  - At release run `bun run changelog:release`: it moves the draft into `changelogs/<YYYYMMDD>.md` (UTC build date, `versionCode / 100`), appends to it on a same-day second release, and resets the draft. Commit and push that file to `main` before the build workflow. CI and the in-app updater read it by date; with none, CI falls back to commit subjects.
-  - A setting link is written in the Ukrainian bullet as `[label](tg://entinySettings/<slug>)` (slug from `SearchRegistry`). English bullets carry the plain label only, so the settings list lives in Ukrainian and English stays short.
-  - GitHub release notes use the English text. The Telegram main post is one text message with a hard limit of **4096 visible characters** (link URLs not counted); header, site link, donate line and tags take about 400, so uk and en bullets together stay under about 3600. `upload.ts` splits the post into a Ukrainian message and an English reply above 3800. The CI-channel caption under an APK is limited to about 1000.
-- Place our features under `## entinyGram additions` in the matching topical subsection.
-- **Crisp Inugram Style:** One short sentence describing ONLY **what** the user gets. No implementation mechanics, no option walks, no `(beta)`/`(wip)`/`experimental` labels.
-- **Attribution:** Always credit ported/inspired features at the end: `- *ported from <Fork>*` or `- *inspired by <Fork> (@author)*`.
-- **WIP in Changelogs:** If a change is work in progress, its bullet MUST end with `⚠️` and a short note in your own words, in the bullet's language (uk bullet in Ukrainian, en bullet in English): it is not finished or tested, may misbehave, bug reports welcome. Never copy a fixed template; word it differently each time and keep it under ~60 characters.
-- **Telegram Base Bumps in Changelogs:** One plain line (no `[+]`/`[*]` markers), keeping the parenthetical tag in English in both `## uk` and `## en`:
-  - Our own rebase onto DrKLO: `Rebase to 12.10.4 (ported by entinyGram)`
-  - Via inugram merge: `Updated to Telegram X.Y.Z (via inugram)`
+```
+[chat] performance pass
+- cache forwards label and blank compact-forward layout per width/textsize
+- reuse scratch list in m3 own-sections draw, compare spoiler label source before uppercase
+```
 
----
+## patches
 
-## 4. Reference: Hotspots, Hooks & Lifecycle
+groups and their owners are in the `patches` skill. short version:
 
-- **Stock Hotspots (`worktree/TMessagesProj/src/main/java/org/telegram/` — NEVER read top-to-bottom, use `rg`):**
-  `ui/ChatActivity.java` (46k), `ui/Cells/ChatMessageCell.java` (29k), `ui/PhotoViewer.java` (24k), `messenger/MessagesController.java` (24k), `ui/ProfileActivity.java` (17k), `ui/Components/ChatActivityEnterView.java` (15k), `ui/DialogsActivity.java` (14k), `ui/Components/SharedMediaLayout.java` (13k), `messenger/MediaDataController.java` (10k), `ui/LoginActivity.java` (10k), `ui/LaunchActivity.java` (9k), `ui/Components/ChatAttachAlert.java` (7k), `ui/Cells/DialogCell.java` (6k), `ui/Components/ChatAttachAlertPhotoLayout.java` (5k), `messenger/LocaleController.java` (4.5k), `ui/Components/ReactionsContainerLayout.java` (2.6k), `ui/Components/FilterTabsView.java` (2k), `messenger/SharedConfig.java` (2k), `ui/Components/Reactions/ReactionsLayoutInBubble.java` (1.9k), `ui/Components/EditTextBoldCursor.java` (1.3k), `ui/MainTabsActivity.java` (1k), `ui/Components/glass/GlassTabView.java` (0.6k), `messenger/LiteMode.java` (0.4k).
-- **Shared Hooks (`patches/hooks/`):**
-  `admin-logs`, `app-loader`, `chat-activity` (`ChatHelper.{addMenuItems,processMenuOption}`), `icon-replacement`, `internal-web-app`, `loginactivity`, `messagescontroller`, `notifications-controller`, `photo-viewer-menu` (`PhotoViewerHelper.*`), `popup-swipeback`, `profile-menu` (`ProfileHelper.*`), `universal-recycler`.
-- **Central Lifecycle (`src/fork/InuHooks.kt`):**
-  `init`, `onResume`, `onUpdate`, `onDeepLink`, `onAuthSuccess`, `onMessagesControllerCreated`, `onNewMessage`, `syncDoubleTapDelay`, `syncAnimationSpeed`, `syncChatInputRowHeight`, `getCurrentAppIconLicense`.
+- new patches are `entiny__<name>` in group `entiny`, each with a topic in `assets/scripts/patch-topics.json`.
+- never create patches in `bugfix`, `feature`, `debloat`, `hooks`, `misc`. those are inugram's.
+- patch subjects are one or two plain sentences, no prefixes.
 
----
+## skills
 
-## 5. Mandatory Checklists
+| skill | use it when |
+| --- | --- |
+| `craft` | any bugfix or small feature. hotspots, anchors, hooks |
+| `patches` | creating, updating or exporting stgit patches |
+| `settings` | adding, moving or removing a setting or page |
+| `changelog` | finished or reverted user-facing changes, and releases |
+| `release` | version labels, beta and release posts, `assets/release` scripts |
+| `translation` | auditing locales, adding a language |
+| `merge` | pulling changes from inugram |
+| `rebase` | moving the stack onto a new stock Telegram release |
+| `leaks` | heap dump and memory leak analysis |
 
-### Pre-Completion Verification (Run Before Declaring ANY Task Done)
-- [ ] Zero temp `Log.d` calls or comment spam left in the tree.
-- [ ] New `entiny__` patch has a topic in `assets/scripts/patch-topics.json`.
+## before you call anything done
+
+- [ ] no temporary `Log.d` and no comment spam left in the tree.
+- [ ] new `entiny__` patch has a topic in `assets/scripts/patch-topics.json`.
 - [ ] `FEATURES.md` updated under `## entinyGram additions`.
+- [ ] changelog draft updated, if the change is user-facing.
 - [ ] `bun run tsx assets/scripts/entinychecker.ts` passes.
 - [ ] `bun run tsx assets/scripts/check-translations.ts` passes.
 - [ ] `bun run lint-patches` passes.
-
-### Upstream Inugram Sync Hygiene
-- [ ] Assume merge is broken until proven otherwise; never pull upstream `changelogs/`.
-- [ ] Scan `.xml`, `.kt`, `.java`, `.gradle` for `<<<<<<<`, `=======`, `>>>>>>>` and check XML well-formedness.
-- [ ] Verify stock API renames (e.g. `UItem.text2` → `UItem.subtext`).
-- [ ] Keep `NON_ISLAND_SHARED_MEDIA_TABS` OFF (upstream `SharedMediaLayout.inu_dockOffset()` clipping bug).
-- [ ] Run `bun run assets/scripts/apply-branding.ts` immediately to restore `google-services.json` (`ua.entaytion.entinygram`) and `entiny__branding`.
+- [ ] nothing was claimed built or tested that was not.

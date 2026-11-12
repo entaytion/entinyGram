@@ -1,13 +1,3 @@
----
-name: inugram-plugin-port
-description: >
-  Use when porting a third-party Python Telegram client plugin (a `.plugin` file with
-  `from base_plugin import BasePlugin`, `__id__`/`__name__` dunders, Chaquopy `jclass`/`find_class`,
-  `hook_method`, `on_send_message_hook`, `create_settings`) to an Inugram plugin (`.inu.js` / TS
-  built with `@inugram/cli`). Trigger on "port this plugin", "rewrite X.plugin for inugram",
-  "convert this python plugin", or when the user hands over a `.plugin` file.
----
-
 # Porting Python plugins to Inugram
 
 A port is a rewrite against a different, higher-level API, not a transliteration. The source

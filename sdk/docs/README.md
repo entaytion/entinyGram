@@ -34,6 +34,8 @@ change with upstream updates, as well as the TL schema.
 
 If you have a Python `.plugin` written for Exteragram, and want to port it to Inugram, there's an agent skill for that: `inugram-plugin-port`.
 
+For the porting workflow and API mapping, see [python-plugin-porting.md](python-plugin-porting.md).
+
 It maps the Python plugin APIs to their Inugram equivalents, and nudges the agent towards small single-purpose plugins, high-level APIs and data interception instead of a line-by-line translation full of JVM reflection and xposed hooks.
 
 Install it into your plugin project with the [skills.sh](https://skills.sh) CLI:
@@ -47,6 +49,7 @@ The skill only gets you a first draft. Review the result and test it on a device
 ## TOC
 
 - [getting-started.md](getting-started.md): how to get up and running with the plugins SDK
+- [python-plugin-porting.md](python-plugin-porting.md): porting Python plugins to the Inugram plugin API
 - [telegram.md](telegram.md): how to actually use the Telegram-related APIs
 - [interception.md](interception.md): intercepting RPCs, updates and outgoing messages
 - [grants.md](grants.md): detailed explanation of permissions
