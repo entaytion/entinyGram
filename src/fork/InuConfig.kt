@@ -31,13 +31,8 @@ object InuConfig {
     fun load(context: Context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         FontConfig.register() // entiny: ensure config items register before load
-        for (item in _items) item.load(prefs)
-        migrateGhostMasterFlag()
-        migrateGhostModeEnabledDefault()
-        migrateGhostAutoOffline()
-        migrateSelfDestructCategories()
+        ConfigSanitizer.loadAll(prefs, _items)
         migrateDialogsFab()
-        migrateFeedEnabled(context)
         migrateCenterTitleDialogs()
         desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
     }
@@ -54,91 +49,6 @@ object InuConfig {
     private fun migrateCenterTitleDialogs() {
         if (!prefs.contains(CENTER_TITLE_DIALOGS.key)) CENTER_TITLE_DIALOGS.value = CENTER_TITLE_CHATS.value
         if (IOS_CHAT_HEADER.value && !CENTER_TITLE_CHATS.value) CENTER_TITLE_CHATS.value = true
-    }
-
-    // entiny: the feed became opt-in; anyone who ever touched it keeps it on
-    private fun migrateFeedEnabled(context: Context) {
-        if (prefs.contains(FEED_ENABLED.key)) return
-        val touched = listOf(
-            FEED_EXCLUDED_CHANNELS.key, FEED_INCLUDE_ARCHIVED.key, FEED_MARK_READ_ON_SCROLL.key,
-        ).any { prefs.contains(it) } ||
-            DIALOGS_MENU_ITEMS.value.any { it.item == DialogsMenuConfig.Item.FEED && it.enabled } ||
-            BOTTOM_TABS_ORDER.value.any { it.item == MainTabsMenuConfig.Item.FEED && it.enabled } ||
-            java.io.File(context.applicationInfo.dataDir, "shared_prefs/inu_feed.xml").exists()
-        FEED_ENABLED.value = touched
-    }
-
-    // entiny: auto-offline folded into presence mode; re-runs whenever an old backup import brings it back
-    fun migrateGhostAutoOffline() {
-        if (!GHOST_AUTO_OFFLINE.value) return
-        if (GHOST_PRESENCE_MODE.value == GhostPresenceModeItem.NORMAL) {
-            GHOST_PRESENCE_MODE.value = GhostPresenceModeItem.DELAYED
-        }
-        GHOST_AUTO_OFFLINE.value = false
-    }
-
-    // entiny: ghost mode migrated from single master flag to independent sub-toggles; old master flag lost on update since sub-toggles default to false
-    private fun migrateGhostMasterFlag() {
-        if (GHOST_MASTER_FLAG_MIGRATED.value) {
-            // entiny: legacy ghost_mode key resurfaced after migration -- drop it without affecting sub-toggles
-            if (prefs.contains("ghost_mode")) {
-                logGhostMigration("skipped (already migrated), dropping resurfaced legacy ghost_mode key")
-                prefs.edit(commit = false) { remove("ghost_mode") }
-            }
-            return
-        }
-        val hadLegacyMaster = prefs.contains("ghost_mode") && prefs.getBoolean("ghost_mode", false)
-        if (hadLegacyMaster) {
-            GHOST_HIDE_READ.value = true
-            GHOST_HIDE_VOICE_READ.value = true
-            GHOST_HIDE_STORY_READ.value = true
-            GHOST_HIDE_TYPING.value = true
-            GHOST_PRESENCE_MODE.value = GhostPresenceModeItem.HIDDEN
-            logGhostMigration("applied: legacy ghost_mode=true -> all sub-toggles forced on")
-        } else {
-            logGhostMigration("skipped: no legacy ghost_mode=true (contains=${prefs.contains("ghost_mode")})")
-        }
-        // entiny: record migration run and clear legacy key in one async batch; keeps start-up fsync-free
-        prefs.edit(commit = false) {
-            GHOST_MASTER_FLAG_MIGRATED.unsafeSet(true, this)
-            remove("ghost_mode")
-        }
-    }
-
-    // entiny: ghost mode enabled default depends on whether any sub-toggles were already active
-    private fun migrateGhostModeEnabledDefault() {
-        if (GHOST_MODE_ENABLED_MIGRATED.value) return
-        GHOST_MODE_ENABLED_MIGRATED.value = true
-        // entiny: a replace-import wipes the run-record; an explicit master value from the backup must survive
-        if (prefs.contains(GHOST_MODE_ENABLED.key)) return
-        val hadActiveSubToggle = GHOST_HIDE_READ.value || GHOST_HIDE_VOICE_READ.value ||
-            GHOST_HIDE_STORY_READ.value || GHOST_HIDE_TYPING.value ||
-            GHOST_PRESENCE_MODE.value != GhostPresenceModeItem.NORMAL
-        if (hadActiveSubToggle) {
-            GHOST_MODE_ENABLED.value = true
-        }
-    }
-
-    // entiny: log ghost migration using GhostHelper convention (Log.d adb, FileLog.d for release testers)
-    private fun logGhostMigration(what: String) {
-        android.util.Log.d("GhostMode", "migrateGhostMasterFlag $what")
-        org.telegram.messenger.FileLog.d("GhostMode: migrateGhostMasterFlag $what")
-    }
-
-    // entiny: self-destruct categories migrated from two bools; if either old flag was on, turn on all categories to avoid narrowing user choices
-    private fun migrateSelfDestructCategories() {
-        val hadOld = prefs.contains("save_self_destruct") || prefs.contains("save_secret_chat_content")
-        if (!hadOld) return
-        if (prefs.getBoolean("save_self_destruct", false) || prefs.getBoolean("save_secret_chat_content", false)) {
-            SAVE_SELF_DESTRUCT_MEDIA.value = true
-            SAVE_SELF_DESTRUCT_TEXT.value = true
-            SAVE_VIEW_ONCE_MEDIA.value = true
-            SAVE_TIMED_MESSAGES.value = true
-        }
-        prefs.edit(commit = false) {
-            remove("save_self_destruct")
-            remove("save_secret_chat_content")
-        }
     }
 
     enum class PrefType { BOOL, INT, LONG, FLOAT, STRING }
@@ -158,6 +68,10 @@ object InuConfig {
 
         init {
             _items.add(this)
+        }
+
+        fun reset() {
+            currentValue = default
         }
 
         fun load(prefs: SharedPreferences) {
@@ -1908,16 +1822,10 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val REGEX_FILTER_ENABLED = BoolItem("regex_filter_enabled", false)
 
     @JvmField
-    val REGEX_FILTER_PATTERNS = StringItem("regex_filter_patterns", "")
-
-    @JvmField
     val REGEX_FILTERS_JSON = StringItem("regex_filters_json", "[]")
 
     @JvmField
     val REGEX_FILTER_EXCLUSIONS_JSON = StringItem("regex_filter_exclusions_json", "[]")
-
-    @JvmField
-    val REGEX_FILTERS_MIGRATED = BoolItem("regex_filters_migrated", false, exportable = false)
 
     @JvmField
     val REGEX_FILTER_HIDE_REPLIES = BoolItem("regex_filter_hide_replies", false)
@@ -2073,13 +1981,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     // entiny: keep global target language separate so per-dialog translations do not overwrite user preference
     @JvmField
     val TRANSLATE_TARGET_LANGUAGE = StringItem("translate_target_language", "")
-
-    // entiny: one-shot guard for adopting stock's legacy per-session "translate to" pick into
-    // TRANSLATE_TARGET_LANGUAGE - without it, every settings screen visit re-adopts whatever
-    // language was last picked in an in-chat translate dialog, silently replacing "Follow app
-    // language" the moment the user ever translates a single message anywhere
-    @JvmField
-    val TRANSLATE_TARGET_LANGUAGE_MIGRATED = BoolItem("translate_target_language_migrated", false)
 
     @JvmField
     val FORCE_TRANSLATE = BoolItem("force_translate", false)
@@ -2239,13 +2140,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val BIOMETRIC_LOCK_ARCHIVE_EVERY_TIME = BoolItem("biometric_lock_archive_every_time", false)
 
-    // entiny: run-records are non-exportable so restoring a backup cannot re-arm the migration
-    @JvmField
-    val GHOST_MASTER_FLAG_MIGRATED = BoolItem("ghost_master_flag_migrated", false, exportable = false)
-
-    @JvmField
-    val GHOST_MODE_ENABLED_MIGRATED = BoolItem("ghost_mode_enabled_migrated", false, exportable = false)
-
     @JvmField
     val GHOST_MODE_ENABLED = BoolItem("ghost_mode_enabled", false)
 
@@ -2271,17 +2165,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val GHOST_HIDE_TYPING = BoolItem("ghost_hide_typing", false)
 
     class GhostPresenceModeItem : IntItem("ghost_presence_mode", NORMAL) {
-        override fun read(prefs: SharedPreferences): Int {
-            if (prefs.contains(key)) return prefs.getInt(key, default)
-            if (!prefs.contains("ghost_hide_online")) return default
-            val migrated = if (prefs.getBoolean("ghost_hide_online", true)) HIDDEN else NORMAL
-            prefs.edit(commit = false) {
-                putInt(key, migrated)
-                remove("ghost_hide_online")
-            }
-            return migrated
-        }
-
         companion object {
             const val NORMAL = 0
             const val HIDDEN = 1
@@ -2292,25 +2175,14 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val GHOST_PRESENCE_MODE = GhostPresenceModeItem()
 
-    // entiny: legacy, folded into GHOST_PRESENCE_MODE; kept so old backups still import
-    @JvmField
-    val GHOST_AUTO_OFFLINE = BoolItem("ghost_auto_offline", false)
-
     @JvmField
     val GHOST_HIDE_APP_BAR_ICON = BoolItem("ghost_hide_app_bar_icon", false)
 
     @JvmField
     val GHOST_MODE_LAUNCHER_SHORTCUT = BoolItem("ghost_mode_launcher_shortcut", false)
 
-    @JvmField
-    val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())
-
-    // entiny: legacy whitelist/target sets, folded into GHOST_CHAT_OVERRIDES; kept so old backups still import
-    val GHOST_TARGET_DIALOGS = StringSetItem("ghost_target_dialogs", emptySet())
-
     // entiny: per-chat overrides as "dialogId:read:typing" (0 default, 1 always, 2 never)
     val GHOST_CHAT_OVERRIDES = StringSetItem("ghost_chat_overrides", emptySet())
-    val GHOST_OVERRIDES_MIGRATED = BoolItem("ghost_overrides_migrated", false, exportable = false)
 
     // entiny: which chat types global ghost mode covers; ghost chats ignore these
     val GHOST_SCOPE_USERS = BoolItem("ghost_scope_users", true)

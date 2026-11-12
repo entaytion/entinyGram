@@ -128,7 +128,6 @@ object GhostHelper {
 
     // entiny: entries are "dialogId:read:typing" with signed ids, so user 123 and chat -123 never collide
     private fun overrides(): Map<Long, ChatOverride> {
-        migrateLegacyLists()
         val source = InuConfig.GHOST_CHAT_OVERRIDES.value
         if (source === overridesSource) return overridesCache
         val parsed = parseOverrides(source)
@@ -154,21 +153,6 @@ object GhostHelper {
     private fun saveOverrides(map: Map<Long, ChatOverride>) {
         InuConfig.GHOST_CHAT_OVERRIDES.value =
             map.filterValues { !it.isDefault }.mapTo(HashSet()) { (id, o) -> "$id:${o.read}:${o.typing}" }
-    }
-
-    // entiny: old whitelist/ghost-chat sets are folded in once; re-runs if an old backup import refills them
-    @Synchronized
-    private fun migrateLegacyLists() {
-        val whitelist = InuConfig.GHOST_WHITELIST_DIALOGS.value
-        val targets = InuConfig.GHOST_TARGET_DIALOGS.value
-        if (InuConfig.GHOST_OVERRIDES_MIGRATED.value && whitelist.isEmpty() && targets.isEmpty()) return
-        val map = parseOverrides(InuConfig.GHOST_CHAT_OVERRIDES.value)
-        for (key in whitelist) key.toLongOrNull()?.takeIf { it != 0L }?.let { map.putIfAbsent(it, ChatOverride(OVERRIDE_NEVER, OVERRIDE_NEVER)) }
-        for (key in targets) key.toLongOrNull()?.takeIf { it != 0L }?.let { map[it] = ChatOverride(OVERRIDE_ALWAYS, OVERRIDE_ALWAYS) }
-        saveOverrides(map)
-        if (whitelist.isNotEmpty()) InuConfig.GHOST_WHITELIST_DIALOGS.value = emptySet()
-        if (targets.isNotEmpty()) InuConfig.GHOST_TARGET_DIALOGS.value = emptySet()
-        InuConfig.GHOST_OVERRIDES_MIGRATED.value = true
     }
 
     @JvmStatic
@@ -602,7 +586,6 @@ object GhostHelper {
     }
 
     private fun presenceMode(): Int {
-        if (InuConfig.GHOST_AUTO_OFFLINE.value) InuConfig.migrateGhostAutoOffline()
         return InuConfig.GHOST_PRESENCE_MODE.value
     }
 

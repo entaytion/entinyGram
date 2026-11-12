@@ -1753,9 +1753,6 @@
     <string name="InuActionButtonStyleAccent">Акцентная</string>
     <string name="InuActionButtonStyleNeutral">Нейтральная</string>
     <string name="InuActionButtonStyleWhite">Белая</string>
-    <string name="InuDatacenterStatus">Статус дата-центров</string>
-    <string name="InuDatacenterStatusAbout">Проверка доступности и задержки к дата-центрам Telegram.</string>
-    <string name="InuDatacenterYourDc">Ваш DC</string>
     <string name="InuChatHeaderSettings">Заголовок чата</string>
     <string name="InuChatHeaderSettingsInfo">Предпросмотр выше обновляется сразу, как только вы меняете настройки ниже.</string>
     <string name="InuDialogAvatarOpensProfile">Нажатие на аватар открывает профиль</string>
@@ -1777,7 +1774,6 @@
     <string name="InuSideMenu">Боковое меню</string>
     <string name="InuMenus">Меню</string>
     <string name="InuChatBackgroundSection">Фон чата</string>
-    <string name="InuMediaSection">Медиа</string>
     <string name="InuAccountsSection">Аккаунты</string>
     <string name="InuManyAccountsTitle">Много аккаунтов</string>
     <string name="InuManyAccountsMessage">Больше 8 аккаунтов может замедлять приложение и расходовать заряд. Всё равно добавить ещё один?</string>
@@ -1826,7 +1822,6 @@
     <string name="InuDonateSectionOther">Другое</string>
     <string name="InuShowMediaSize">Показывать размер медиа</string>
     <string name="InuPlugins">Плагины</string>
-    <string name="InuPluginsInfo">Плагины — пользовательские скрипты, расширяющие приложение. Устанавливайте плагины только из доверенных источников.</string>
     <string name="InuPluginsEnableEngine">Включить плагины</string>
     <string name="InuPluginsEnableEngineInfo">Запускать установленные плагины при старте</string>
     <string name="InuPluginsEngineDisabled">Плагины сейчас отключены\n\nВключите их в настройках, чтобы установить этот плагин</string>

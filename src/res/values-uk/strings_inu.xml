@@ -1853,9 +1853,6 @@
     <string name="InuActionButtonStyleAccent">Акцентна</string>
     <string name="InuActionButtonStyleNeutral">Нейтральна</string>
     <string name="InuActionButtonStyleWhite">Біла</string>
-    <string name="InuDatacenterStatus">Статус дата-центрів</string>
-    <string name="InuDatacenterStatusAbout">Перевірка доступності та затримки до дата-центрів Telegram.</string>
-    <string name="InuDatacenterYourDc">Ваш DC</string>
     <string name="InuChatHeaderSettings">Заголовок чату</string>
     <string name="InuChatHeaderSettingsInfo">Попередній перегляд вище оновлюється одразу, щойно ви змінюєте налаштування нижче.</string>
     <string name="InuDialogAvatarOpensProfile">Тап по аватарці відкриває профіль</string>
@@ -1871,7 +1868,6 @@
     <string name="InuSideMenu">Бічне меню</string>
     <string name="InuMenus">Меню</string>
     <string name="InuChatBackgroundSection">Фон чату</string>
-    <string name="InuMediaSection">Медіа</string>
     <string name="InuAccountsSection">Акаунти</string>
     <string name="InuManyAccountsTitle">Багато акаунтів</string>
     <string name="InuManyAccountsMessage">Понад 8 акаунтів можуть сповільнювати застосунок і витрачати заряд. Усе одно додати ще один?</string>
@@ -1926,7 +1922,6 @@
     <string name="InuDonateSectionOther">Інше</string>
     <string name="InuShowMediaSize">Показувати розмір медіа</string>
     <string name="InuPlugins">Плагіни</string>
-    <string name="InuPluginsInfo">Плагіни — це користувацькі скрипти, що розширюють застосунок. Встановлюйте плагіни лише з джерел, яким довіряєте.</string>
     <string name="InuPluginsEnableEngine">Увімкнути плагіни</string>
     <string name="InuPluginsEnableEngineInfo">Запускати встановлені плагіни під час запуску додатка</string>
     <string name="InuPluginsEngineDisabled">Плагіни зараз вимкнено\n\nУвімкніть їх у налаштуваннях, щоб встановити цей плагін</string>
@@ -2336,4 +2331,9 @@
     <string name="InuWideChannelPostsPreviewReply">Пересланий пост із каналу</string>
     <string name="InuWideChannelPostsPreviewReplyLabel">Пости каналів</string>
     <string name="InuWideChannelPostsInset">Бічні відступи</string>
+    <string name="InuMediaAndCalls">Медіа та дзвінки</string>
+    <string name="InuAiAndTranslator">AI та переклад</string>
+    <string name="InuMediaVideoGif">Відео та GIF</string>
+    <string name="InuMediaVoice">Голос і автовідтворення</string>
+    <string name="InuMediaSaving">Збереження й поширення</string>
 </resources>

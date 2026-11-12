@@ -1625,9 +1625,6 @@
     <string name="InuActionButtonStyleAccent">اللون المميز</string>
     <string name="InuActionButtonStyleNeutral">محايد</string>
     <string name="InuActionButtonStyleWhite">أبيض</string>
-    <string name="InuDatacenterStatus">حالة مراكز البيانات</string>
-    <string name="InuDatacenterStatusAbout">تحقق من حالة **مراكز بيانات** Telegram وزمن استجابتها.</string>
-    <string name="InuDatacenterYourDc">مركز بياناتك</string>
     <string name="InuOnlineDots">نقاط تواجد ملونة</string>
     <string name="InuOnlineDotsInfo">نقطة زرقاء للاتصال؛ وصفراء خلال 20 دقيقة وحمراء خلال ساعة بعد انقطاع الاتصال.</string>
     <string name="InuGhostModeLauncherShortcut">اختصار التبديل على أيقونة التطبيق</string>
@@ -1645,7 +1642,6 @@
     <string name="InuDonateCopied">تم النسخ</string>
     <string name="InuShowMediaSize">إظهار حجم الوسائط</string>
     <string name="InuPlugins">الإضافات</string>
-    <string name="InuPluginsInfo">الإضافات نصوص برمجية من صنع المستخدمين توسّع التطبيق. ثبّت الإضافات من مصادر تثق بها فقط.</string>
     <string name="InuPluginsEnableEngine">تفعيل الإضافات</string>
     <string name="InuPluginsEnableEngineInfo">تشغيل الإضافات المثبتة عند بدء التطبيق</string>
     <string name="InuPluginsInstalled">المثبتة</string>
@@ -1858,7 +1854,6 @@
     <string name="InuLogsEnableAction">تفعيل</string>
     <string name="InuLogsPrivacyText">سيكتب التطبيق سجلات تقنية على الجهاز. قد تحتوي على معرّفات الحساب والمحادثات، لذا شاركها فقط مع من تثق بهم. تُحفظ السجلات حتى 25 ميغابايت ويمكن مسحها في أي وقت.</string>
     <string name="InuLogsPrivacyTitle">تفعيل وضع التصحيح؟</string>
-    <string name="InuMediaSection">الوسائط</string>
     <string name="InuMenuDivider">فاصل</string>
     <string name="InuMenus">القوائم</string>
     <string name="InuMessageDesign">مظهر الرسائل</string>

@@ -23,7 +23,6 @@
     <string name="InuSideMenu">Side menu</string>
     <string name="InuMenus">Menus</string>
     <string name="InuChatBackgroundSection">Chat background</string>
-    <string name="InuMediaSection">Media</string>
     <string name="InuAccountsSection">Accounts</string>
     <string name="InuManyAccountsTitle">Many accounts</string>
     <string name="InuManyAccountsMessage">More than 8 accounts can slow the app down and drain the battery. Add another one anyway?</string>
@@ -1921,9 +1920,6 @@
     <string name="InuActionButtonStyleAccent">Accent</string>
     <string name="InuActionButtonStyleNeutral">Neutral</string>
     <string name="InuActionButtonStyleWhite">White</string>
-    <string name="InuDatacenterStatus">Datacenter status</string>
-    <string name="InuDatacenterStatusAbout">Check the status and round-trip latency of Telegram\'s **datacenters**.</string>
-    <string name="InuDatacenterYourDc">Your DC</string>
     <string name="InuOnlineDots">Colored dots</string>
     <string name="InuChatOnlineDots">In chats</string>
     <string name="InuChatOnlineDotsInfo">Dots on sender avatars in groups.</string>
@@ -1954,7 +1950,6 @@
     <string name="InuShowMediaSize">Show media size</string>
 
     <string name="InuPlugins">Plugins</string>
-    <string name="InuPluginsInfo">Plugins are user-made scripts that extend the app. Only install plugins from sources you trust.</string>
     <string name="InuPluginsEnableEngine">Enable plugins</string>
     <string name="InuPluginsEnableEngineInfo">Run installed plugins on startup</string>
     <string name="InuPluginsEngineDisabled">Plugins are currently disabled\n\nEnable them in settings to install this plugin</string>
@@ -2320,4 +2315,9 @@
     <string name="InuWideChannelPostsPreviewReply">Forwarded channel post</string>
     <string name="InuWideChannelPostsPreviewReplyLabel">Channel posts</string>
     <string name="InuWideChannelPostsInset">Side padding</string>
+    <string name="InuMediaAndCalls">Media and calls</string>
+    <string name="InuAiAndTranslator">AI and translator</string>
+    <string name="InuMediaVideoGif">Video and GIFs</string>
+    <string name="InuMediaVoice">Voice and autoplay</string>
+    <string name="InuMediaSaving">Saving and sharing</string>
 </resources>

@@ -1565,9 +1565,6 @@
     <string name="InuActionButtonStyleAccent">Vurgu</string>
     <string name="InuActionButtonStyleNeutral">Nötr</string>
     <string name="InuActionButtonStyleWhite">Beyaz</string>
-    <string name="InuDatacenterStatus">Veri merkezi durumu</string>
-    <string name="InuDatacenterStatusAbout">Telegram **veri merkezlerinin** durumunu ve gecikme süresini kontrol edin.</string>
-    <string name="InuDatacenterYourDc">Sizin DC</string>
     <string name="InuClockFormat">Saat biçimi</string>
     <string name="InuClockFormatSystem">Sistem ayarını kullan</string>
     <string name="InuClockFormat12Hour">12 saatlik</string>
@@ -1645,7 +1642,6 @@
     <string name="InuDonateCopied">Kopyalandı</string>
     <string name="InuShowMediaSize">Medya boyutunu göster</string>
     <string name="InuPlugins">Eklentiler</string>
-    <string name="InuPluginsInfo">Eklentiler, uygulamayı genişleten kullanıcı yapımı betiklerdir. Yalnızca güvendiğiniz kaynaklardan eklenti yükleyin.</string>
     <string name="InuPluginsEnableEngine">Eklentileri etkinleştir</string>
     <string name="InuPluginsEnableEngineInfo">Yüklü eklentileri başlangıçta çalıştır</string>
     <string name="InuPluginsEngineDisabled">Eklentiler şu anda devre dışı\n\nBu eklentiyi yüklemek için ayarlardan etkinleştirin</string>
@@ -1862,7 +1858,6 @@
     <string name="InuLogsEnableAction">Etkinleştir</string>
     <string name="InuLogsPrivacyText">Uygulama cihaza teknik günlükler yazacak. Bunlar hesap ve sohbet kimliklerini içerebilir, bu yüzden yalnızca güvendiğiniz kişilerle paylaşın. Günlükler en fazla 25 MB tutulur ve istediğiniz zaman temizlenebilir.</string>
     <string name="InuLogsPrivacyTitle">Hata ayıklama modu etkinleştirilsin mi?</string>
-    <string name="InuMediaSection">Medya</string>
     <string name="InuMenuDivider">Ayırıcı</string>
     <string name="InuMenus">Menüler</string>
     <string name="InuMessageDesign">Mesaj görünümü</string>

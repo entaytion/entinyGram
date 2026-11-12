@@ -1613,9 +1613,6 @@
     <string name="InuActionButtonStyleAccent">رنگ تاکیدی</string>
     <string name="InuActionButtonStyleNeutral">خنثی</string>
     <string name="InuActionButtonStyleWhite">سفید</string>
-    <string name="InuDatacenterStatus">وضعیت مراکز داده</string>
-    <string name="InuDatacenterStatusAbout">وضعیت و تأخیر رفت‌وبرگشت **مراکز داده** تلگرام را بررسی کنید.</string>
-    <string name="InuDatacenterYourDc">مرکز داده شما</string>
     <string name="InuOnlineDots">نقطه‌های حضور رنگی</string>
     <string name="InuOnlineDotsInfo">نقطه آبی برای آنلاین؛ زرد تا ۲۰ دقیقه و قرمز تا یک ساعت پس از آفلاین شدن.</string>
     <string name="InuGhostModeLauncherShortcut">میان‌بر تعویض روی نماد برنامه</string>
@@ -1633,7 +1630,6 @@
     <string name="InuDonateCopied">کپی شد</string>
     <string name="InuShowMediaSize">نمایش اندازه رسانه</string>
     <string name="InuPlugins">افزونه‌ها</string>
-    <string name="InuPluginsInfo">افزونه‌ها اسکریپت‌هایی ساخته‌شده توسط کاربران‌اند که برنامه را گسترش می‌دهند. افزونه‌ها را فقط از منابع مورد اعتماد نصب کنید.</string>
     <string name="InuPluginsEnableEngine">فعال‌سازی افزونه‌ها</string>
     <string name="InuPluginsEnableEngineInfo">اجرای افزونه‌های نصب‌شده هنگام راه‌اندازی</string>
     <string name="InuPluginsInstalled">نصب‌شده</string>
@@ -1843,7 +1839,6 @@
     <string name="InuLogsEnableAction">فعال‌سازی</string>
     <string name="InuLogsPrivacyText">برنامه گزارش‌های فنی را روی دستگاه می‌نویسد. ممکن است شامل شناسهٔ حساب و گفتگوها باشند، پس فقط با افراد مورد اعتماد به اشتراک بگذارید. گزارش‌ها تا ۲۵ مگابایت نگه داشته می‌شوند و هر زمان قابل پاک‌سازی‌اند.</string>
     <string name="InuLogsPrivacyTitle">حالت اشکال‌زدایی فعال شود؟</string>
-    <string name="InuMediaSection">رسانه</string>
     <string name="InuMenuDivider">جداکننده</string>
     <string name="InuMenus">منوها</string>
     <string name="InuMessageDesign">ظاهر پیام‌ها</string>

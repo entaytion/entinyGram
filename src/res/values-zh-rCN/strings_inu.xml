@@ -1565,9 +1565,6 @@
     <string name="InuActionButtonStyleAccent">强调色</string>
     <string name="InuActionButtonStyleNeutral">中性色</string>
     <string name="InuActionButtonStyleWhite">白色</string>
-    <string name="InuDatacenterStatus">数据中心状态</string>
-    <string name="InuDatacenterStatusAbout">检查 Telegram **数据中心**的状态和往返延迟。</string>
-    <string name="InuDatacenterYourDc">您的DC</string>
     <string name="InuClockFormat">时间格式</string>
     <string name="InuClockFormatSystem">使用系统设置</string>
     <string name="InuClockFormat12Hour">12 小时制</string>
@@ -1645,7 +1642,6 @@
     <string name="InuDonateCopied">已复制</string>
     <string name="InuShowMediaSize">显示媒体大小</string>
     <string name="InuPlugins">插件</string>
-    <string name="InuPluginsInfo">插件是由用户制作、用于扩展应用的脚本。请只安装来自可信来源的插件。</string>
     <string name="InuPluginsEnableEngine">启用插件</string>
     <string name="InuPluginsEnableEngineInfo">启动时运行已安装的插件</string>
     <string name="InuPluginsEngineDisabled">插件目前已禁用\n\n请在设置中启用插件以安装此插件</string>
@@ -1860,7 +1856,6 @@
     <string name="InuLogsEnableAction">启用</string>
     <string name="InuLogsPrivacyText">应用会在设备上写入技术日志。日志可能包含账号和聊天标识符，请仅与信任的人分享。日志最多保留 25 MB，可随时清除。</string>
     <string name="InuLogsPrivacyTitle">启用调试模式？</string>
-    <string name="InuMediaSection">媒体</string>
     <string name="InuMenuDivider">分隔线</string>
     <string name="InuMenus">菜单</string>
     <string name="InuMessageDesign">消息外观</string>

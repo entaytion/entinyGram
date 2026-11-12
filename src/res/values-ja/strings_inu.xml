@@ -1542,9 +1542,6 @@
     <string name="InuForwardProTapToEdit">メッセージをタップして編集</string>
     <string name="InuForwardProEmptyNotice">メッセージのテキストを空にすることはできません</string>
     <string name="InuForwardTooLarge">ファイルがアップロード上限（%1$s）を超えているため転送できません</string>
-    <string name="InuDatacenterStatus">データセンターのステータス</string>
-    <string name="InuDatacenterStatusAbout">Telegramの**データセンター**のステータスと遅延を確認します。</string>
-    <string name="InuDatacenterYourDc">お使いのDC</string>
     <string name="InuActionButtonStyle">アクションボタンのスタイル</string>
     <string name="InuActionButtonStyleAccent">アクセント</string>
     <string name="InuActionButtonStyleInfo">すべての画面の送信・音声・適用ボタンの配色スタイル。</string>
@@ -1645,7 +1642,6 @@
     <string name="InuDonateCopied">コピーしました</string>
     <string name="InuShowMediaSize">メディアのサイズを表示</string>
     <string name="InuPlugins">プラグイン</string>
-    <string name="InuPluginsInfo">プラグインはユーザーが作成した、アプリを拡張するスクリプトです。信頼できる提供元のプラグインのみインストールしてください。</string>
     <string name="InuPluginsEnableEngine">プラグインを有効化</string>
     <string name="InuPluginsEnableEngineInfo">起動時にインストール済みのプラグインを実行します</string>
     <string name="InuPluginsEngineDisabled">プラグインは現在無効です\n\nこのプラグインをインストールするには設定で有効にしてください</string>
@@ -1860,7 +1856,6 @@
     <string name="InuLogsEnableAction">有効にする</string>
     <string name="InuLogsPrivacyText">アプリは技術ログを端末に書き込みます。アカウントやチャットの識別子が含まれる場合があるため、信頼できる相手にのみ共有してください。ログは最大 25 MB まで保持され、いつでも消去できます。</string>
     <string name="InuLogsPrivacyTitle">デバッグモードを有効にしますか？</string>
-    <string name="InuMediaSection">メディア</string>
     <string name="InuMenuDivider">区切り</string>
     <string name="InuMenus">メニュー</string>
     <string name="InuMessageDesign">メッセージの見た目</string>

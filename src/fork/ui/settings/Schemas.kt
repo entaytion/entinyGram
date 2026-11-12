@@ -93,7 +93,6 @@ object Schemas {
             link(R.string.InuAiCompose, R.drawable.inu_tabler_sparkles) { AiSettingsActivity() }
             link(R.string.InuTranslator, R.drawable.msg_translate, slug = "open-translator") { TranslatorSettingsActivity() }
             link(R.string.InuMessageDesign, R.drawable.msg_palette) { MessageDesignSettingsActivity() }
-            link(R.string.InuCameraSound, R.drawable.msg_camera, slug = "camera-sound-open") { CameraSoundSettingsActivity() }
         }
         section(R.string.InuMessageInput) {
             custom(
@@ -123,6 +122,8 @@ object Schemas {
             toggle(InuConfig.CHAT_TWO_FINGER_SELECT, R.string.InuChatTwoFingerSelect, R.string.InuChatTwoFingerSelectInfo)
             toggle(InuConfig.SELECTION_BOTTOM_NO_QUOTE, R.string.InuSelectionBottomNoQuote, R.string.InuSelectionBottomNoQuoteInfo)
             toggle(InuConfig.SHORTER_SWIPE_GESTURES, R.string.InuShorterSwipeGestures, R.string.InuShorterSwipeGesturesInfo)
+            toggle(InuConfig.KEEP_CHATS_IN_STACK, R.string.InuKeepChatsInStack, R.string.InuKeepChatsInStackInfo)
+            toggle(InuConfig.DISABLE_INTRO_STICKER, R.string.InuDisableIntroSticker, R.string.InuDisableIntroStickerInfo)
         }
         section(R.string.InuMentionsAndSearch) {
             custom(
@@ -171,6 +172,15 @@ object Schemas {
             toggle(InuConfig.SHOW_ALL_RECENT_STICKERS, R.string.InuShowAllRecentStickers)
             toggle(InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER, R.string.InuSuggestCustomEmojiAfter, R.string.InuSuggestCustomEmojiAfterInfo)
             toggle(InuConfig.SORT_ALBUMS_BY_SIZE, R.string.InuSortAlbumsBySize, R.string.InuSortAlbumsBySizeInfo)
+            toggle(
+                InuConfig.USE_SYSTEM_EMOJI, R.string.InuUseSystemEmoji, R.string.InuUseSystemEmojiInfo,
+                onChange = { _, value ->
+                    SharedConfig.useSystemEmoji = value
+                    MessagesController.getGlobalMainSettings().edit().putBoolean("useSystemEmoji", value).apply()
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded)
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+                },
+            )
         }
         section(R.string.CompactMode) {
             group("compact-mode-chat-types", R.string.CompactMode) { id ->
@@ -388,8 +398,13 @@ object Schemas {
             toggle(InuConfig.SHOW_SECONDS, R.string.InuShowSeconds)
             toggle(InuConfig.DISABLE_ROUNDING, R.string.InuDisableRounding, R.string.InuDisableRoundingInfo)
         }
-        section(R.string.InuMediaSection) {
-            toggle(InuConfig.KEEP_CHATS_IN_STACK, R.string.InuKeepChatsInStack, R.string.InuKeepChatsInStackInfo)
+    }
+
+    val MEDIA = schema("media-calls", R.string.InuMediaAndCalls, R.drawable.msg_calls) {
+        section {
+            link(R.string.InuCameraSound, R.drawable.msg_camera, slug = "camera-sound-open") { CameraSoundSettingsActivity() }
+        }
+        section(R.string.InuMediaVideoGif) {
             toggle(InuConfig.GIF_SEEKBAR, R.string.InuGifSeekbar, R.string.InuGifSeekbarInfo)
             toggle(InuConfig.ALTERNATIVE_GIF_BEHAVIOR, R.string.InuAlternativeGifBehavior, R.string.InuAlternativeGifBehaviorInfo)
             toggle(InuConfig.PLAY_ORIGINAL_VIDEO, R.string.InuPlayOriginalVideo, R.string.InuPlayOriginalVideoInfo)
@@ -400,29 +415,28 @@ object Schemas {
             )
             toggle(InuConfig.SEND_MP4_DOCUMENT_AS_VIDEO, R.string.InuSendMp4DocumentAsVideo, R.string.InuSendMp4DocumentAsVideoInfo)
             toggle(InuConfig.DISABLE_MOTION_PHOTOS, R.string.InuDisableMotionPhotos, R.string.InuDisableMotionPhotosInfo)
-            toggle(InuConfig.DISABLE_INTRO_STICKER, R.string.InuDisableIntroSticker, R.string.InuDisableIntroStickerInfo)
             toggle(InuConfig.DISABLE_VOLUME_PLAY_VIDEO, R.string.InuDisableVolumePlayVideo, R.string.InuDisableVolumePlayVideoInfo)
-            toggle(InuConfig.DISABLE_QUICK_SHARE, R.string.InuDisableQuickShare, R.string.InuDisableQuickShareInfo)
-            toggle(InuConfig.MEMORY_TRIM, R.string.InuMemoryTrim, R.string.InuMemoryTrimInfo)
-            toggle(
-                InuConfig.LOCK_MAX_REFRESH_RATE, R.string.InuLockMaxRefreshRate, R.string.InuLockMaxRefreshRateInfo,
-                onChange = { _, _ -> desu.inugram.helpers.RefreshRateHelper.sync(org.telegram.ui.LaunchActivity.instance) },
-            )
-            toggle(InuConfig.QUIET_VOICE_WHEN_LOCKED, R.string.InuQuietVoiceWhenLocked, R.string.InuQuietVoiceWhenLockedInfo)
-            toggle(
-                InuConfig.USE_SYSTEM_EMOJI, R.string.InuUseSystemEmoji, R.string.InuUseSystemEmojiInfo,
-                onChange = { _, value ->
-                    SharedConfig.useSystemEmoji = value
-                    MessagesController.getGlobalMainSettings().edit().putBoolean("useSystemEmoji", value).apply()
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded)
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
-                },
-            )
-            toggle(InuConfig.SAVE_SELECTED_FILES, R.string.InuSaveSelectedFiles, R.string.InuSaveSelectedFilesInfo)
             toggle(
                 InuConfig.HDR_IMAGES, R.string.InuHdrImages, R.string.InuHdrImagesInfo,
                 visible = { Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE },
             )
+        }
+        section(R.string.InuMediaVoice) {
+            toggle(InuConfig.QUIET_VOICE_WHEN_LOCKED, R.string.InuQuietVoiceWhenLocked, R.string.InuQuietVoiceWhenLockedInfo)
+            toggle(InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY, R.string.InuDisableProfileMusicAutoplay, R.string.InuDisableProfileMusicAutoplayInfo)
+            toggle(InuConfig.DISABLE_NEXT_AUDIO_PRELOAD, R.string.InuDisableNextAudioPreload, R.string.InuDisableNextAudioPreloadInfo)
+            toggle(InuConfig.DISABLE_NEXT_MUSIC_AUTOPLAY, R.string.InuDisableNextMusicAutoplay, R.string.InuDisableNextMusicAutoplayInfo)
+            toggle(InuConfig.DISABLE_NEXT_VOICE_AUTOPLAY, R.string.InuDisableNextVoiceAutoplay, R.string.InuDisableNextVoiceAutoplayInfo)
+        }
+        section(R.string.InuMediaSaving) {
+            toggle(InuConfig.SAVE_SELECTED_FILES, R.string.InuSaveSelectedFiles, R.string.InuSaveSelectedFilesInfo)
+            toggle(InuConfig.DISABLE_QUICK_SHARE, R.string.InuDisableQuickShare, R.string.InuDisableQuickShareInfo)
+        }
+        section(R.string.InuCallsSection) {
+            toggle(InuConfig.CALL_CONFIRMATION, R.string.InuCallConfirmation)
+            toggle(InuConfig.HD_BLUETOOTH_CALL_AUDIO, R.string.InuHdBluetoothCallAudio, R.string.InuHdBluetoothCallAudioInfo)
+            toggle(InuConfig.CALL_ROTATION, R.string.InuCallRotation, R.string.InuCallRotationInfo)
+            toggle(InuConfig.DISABLE_CALL_PROXIMITY, R.string.InuDisableCallProximity, R.string.InuDisableCallProximityInfo)
         }
     }
 
@@ -448,12 +462,6 @@ object Schemas {
                 visible = { UserConfig.getActivatedAccountsCount() > 1 },
                 onChange = { page, _ -> page.parentActivity?.let { ShortcutHelper.sync(it) } },
             )
-        }
-        section(R.string.InuCallsSection) {
-            toggle(InuConfig.CALL_CONFIRMATION, R.string.InuCallConfirmation)
-            toggle(InuConfig.HD_BLUETOOTH_CALL_AUDIO, R.string.InuHdBluetoothCallAudio, R.string.InuHdBluetoothCallAudioInfo)
-            toggle(InuConfig.CALL_ROTATION, R.string.InuCallRotation, R.string.InuCallRotationInfo)
-            toggle(InuConfig.DISABLE_CALL_PROXIMITY, R.string.InuDisableCallProximity, R.string.InuDisableCallProximityInfo)
         }
     }
 
@@ -945,7 +953,6 @@ object Schemas {
             link(R.string.InuBackupSettings, R.drawable.inu_tabler_cloud) { BackupSettingsActivity() }
             toggle(InuConfig.SYSTEM_MESSAGE_FONT_SCALE, R.string.InuSystemMessageFontScale, R.string.InuSystemMessageFontScaleInfo)
             link(R.string.InuCacheManagement, R.drawable.inu_tabler_trash_x, slug = "additional-cache-management") { CacheManagementSettingsActivity() }
-            link(R.string.InuDatacenterStatus, R.drawable.inu_tabler_server, slug = "additional-datacenter-status") { DatacenterStatusActivity() }
         }
         section(R.string.InuPushHeader) {
             custom(
@@ -1067,6 +1074,11 @@ object Schemas {
         }
         section(R.string.InuDeviceSection) {
             toggle(InuConfig.FORCE_NO_VIBRATION, R.string.InuForceNoVibration, R.string.InuForceNoVibrationInfo)
+            toggle(InuConfig.MEMORY_TRIM, R.string.InuMemoryTrim, R.string.InuMemoryTrimInfo)
+            toggle(
+                InuConfig.LOCK_MAX_REFRESH_RATE, R.string.InuLockMaxRefreshRate, R.string.InuLockMaxRefreshRateInfo,
+                onChange = { _, _ -> desu.inugram.helpers.RefreshRateHelper.sync(org.telegram.ui.LaunchActivity.instance) },
+            )
             custom(
                 "performance-class", R.string.InuPerformanceClass,
                 build = { _, id ->
@@ -1159,10 +1171,6 @@ object Schemas {
             toggle(InuConfig.HIDE_GIFTS_AROUND_AVATAR, R.string.InuHideGiftsAroundAvatar, R.string.InuHideGiftsAroundAvatarInfo)
             toggle(InuConfig.HIDE_PROFILE_ICONS, R.string.InuHideProfileIcons)
             toggle(InuConfig.HIDE_PROFILE_LIVE_ACTIONS_BUTTON, R.string.InuHideProfileLiveActionsButton)
-            toggle(InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY, R.string.InuDisableProfileMusicAutoplay, R.string.InuDisableProfileMusicAutoplayInfo)
-            toggle(InuConfig.DISABLE_NEXT_AUDIO_PRELOAD, R.string.InuDisableNextAudioPreload, R.string.InuDisableNextAudioPreloadInfo)
-            toggle(InuConfig.DISABLE_NEXT_MUSIC_AUTOPLAY, R.string.InuDisableNextMusicAutoplay, R.string.InuDisableNextMusicAutoplayInfo)
-            toggle(InuConfig.DISABLE_NEXT_VOICE_AUTOPLAY, R.string.InuDisableNextVoiceAutoplay, R.string.InuDisableNextVoiceAutoplayInfo)
         }
         section(R.string.InuAnnoyancesGifts) {
             toggle(InuConfig.HIDE_PROFILE_GIFTS_TAB, R.string.InuHideProfileGiftsTab, R.string.InuHideProfileGiftsTabInfo)

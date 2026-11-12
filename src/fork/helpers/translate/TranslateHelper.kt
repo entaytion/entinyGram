@@ -51,7 +51,6 @@ object TranslateHelper {
         return true
     }
     private const val ORIGINAL_SEPARATOR = "\n\n--------\n\n"
-    private const val LEGACY_TARGET_LANGUAGE_PREF = "translate_to_language"
 
     private val manual = ConcurrentHashMap<Long, MutableSet<Int>>()
     private val bodies = ConcurrentHashMap<Long, ConcurrentHashMap<Int, TLRPC.TL_textWithEntities>>()
@@ -60,28 +59,8 @@ object TranslateHelper {
     private val webPagesLangs = ConcurrentHashMap<Long, ConcurrentHashMap<Int, Pair<String?, String>>>()
     private val originals = ConcurrentHashMap<Long, ConcurrentHashMap<Int, String>>()
 
-    // entiny: single source of truth for "what is the global translate-to language" - both
-    // TranslationTargetActivity and TranslatorSettingsActivity used to reimplement this, and their
-    // near-duplicate versions were how the settings regression below happened.
-    //
-    // Empty string means "Follow app language". TRANSLATE_TARGET_LANGUAGE_MIGRATED gates a
-    // ONE-TIME adoption of stock's legacy per-session "translate to" pick (the
-    // "translate_to_language" pref TranslateAlert2 itself writes on every in-chat pick) into our
-    // persistent setting. Without the gate, simply opening a translator settings screen after ever
-    // translating a single message anywhere would silently replace "Follow app language" with
-    // whatever language happened to be picked in that unrelated in-chat dialog, every time.
     @JvmStatic
-    fun resolveTargetLanguage(): String {
-        val stored = InuConfig.TRANSLATE_TARGET_LANGUAGE.value
-        if (stored.isNotEmpty()) return stored
-        if (InuConfig.TRANSLATE_TARGET_LANGUAGE_MIGRATED.value) return ""
-        InuConfig.TRANSLATE_TARGET_LANGUAGE_MIGRATED.value = true
-        if (!MessagesController.getGlobalMainSettings().contains(LEGACY_TARGET_LANGUAGE_PREF)) return ""
-        val legacy = TranslateAlert2.getToLanguage().orEmpty()
-        if (legacy.isEmpty()) return ""
-        InuConfig.TRANSLATE_TARGET_LANGUAGE.value = legacy
-        return legacy
-    }
+    fun resolveTargetLanguage(): String = InuConfig.TRANSLATE_TARGET_LANGUAGE.value
 
     // entiny: the actual per-translate target language - same fallback chain, repeated verbatim
     // across ChatActionsHelper/TranslateHelper/InstantViewHelper before being collected here

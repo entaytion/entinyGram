@@ -14,7 +14,6 @@ import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CameraSoundSettingsActivity
 import desu.inugram.ui.settings.Schemas
 import desu.inugram.ui.settings.ChatHeaderSettingsActivity
-import desu.inugram.ui.settings.DatacenterStatusActivity
 import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
@@ -69,6 +68,7 @@ object SearchRegistry {
             FontStackActivity.PAGE,
             Schemas.DIALOGS.page,
             Schemas.CHATS.page,
+            Schemas.MEDIA.page,
             Schemas.PRIVACY.page,
             Schemas.PROFILE.page,
             Schemas.HOME.page,
@@ -86,7 +86,6 @@ object SearchRegistry {
             RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,
             ParanoiaActivity.PAGE,
-            DatacenterStatusActivity.PAGE,
             BackupSettingsActivity.PAGE,
             FeedExcludedChannelsSettingsActivity.PAGE,
         )

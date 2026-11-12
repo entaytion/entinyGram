@@ -23,7 +23,6 @@
     <string name="InuSideMenu">Menu laterale</string>
     <string name="InuMenus">Menu</string>
     <string name="InuChatBackgroundSection">Sfondo della chat</string>
-    <string name="InuMediaSection">Media</string>
     <string name="InuAccountsSection">Account</string>
     <string name="InuManyAccountsTitle">Molti account</string>
     <string name="InuManyAccountsMessage">Più di 8 account possono rallentare l\'app e consumare la batteria. Aggiungerne un altro comunque?</string>
@@ -1798,9 +1797,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuActionButtonStyleAccent">Accento</string>
     <string name="InuActionButtonStyleNeutral">Neutro</string>
     <string name="InuActionButtonStyleWhite">Bianco</string>
-    <string name="InuDatacenterStatus">Stato dei datacenter</string>
-    <string name="InuDatacenterStatusAbout">Controlla lo stato e la latenza di andata e ritorno dei **datacenter** di Telegram.</string>
-    <string name="InuDatacenterYourDc">Il tuo DC</string>
     <string name="InuOnlineDots">Punti di presenza colorati</string>
     <string name="InuChatOnlineDots">Punti online nelle chat</string>
     <string name="InuChatOnlineDotsInfo">Mostra il punto online sugli avatar dei mittenti nei gruppi.</string>
@@ -1825,7 +1821,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuShowMediaSize">Mostra dimensione dei media</string>
 
     <string name="InuPlugins">Plugin</string>
-    <string name="InuPluginsInfo">I plugin sono script creati dagli utenti che estendono l\'app. Installa solo plugin da fonti di cui ti fidi.</string>
     <string name="InuPluginsEnableEngine">Attiva i plugin</string>
     <string name="InuPluginsEnableEngineInfo">Esegue i plugin installati all\'avvio</string>
     <string name="InuPluginsEngineDisabled">I plugin sono attualmente disattivati

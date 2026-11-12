@@ -290,7 +290,6 @@ object RegexFilterHelper {
         if (globalFilters != null && chatFilters != null && exclusions != null) return
         synchronized(lock) {
             if (globalFilters != null && chatFilters != null && exclusions != null) return
-            migrateLegacyIfNeeded()
             val parsed = parseFilters(InuConfig.REGEX_FILTERS_JSON.value)
             // entiny: drop the aggressive default filter older builds created for everyone
             val all = parsed.filter { it.pattern != OLD_DEFAULT_PATTERN }
@@ -299,15 +298,6 @@ object RegexFilterHelper {
             chatFilters = all.filter { it.dialogId != null }.groupBy { it.dialogId!! }
             exclusions = parseExclusions(InuConfig.REGEX_FILTER_EXCLUSIONS_JSON.value)
         }
-    }
-
-    private fun migrateLegacyIfNeeded() {
-        if (InuConfig.REGEX_FILTERS_MIGRATED.value) return
-        InuConfig.REGEX_FILTERS_MIGRATED.value = true
-        val legacyPattern = InuConfig.REGEX_FILTER_PATTERNS.value
-        if (legacyPattern.isBlank()) return
-        val entry = FilterEntry(UUID.randomUUID().toString(), legacyPattern, null, true, true, false)
-        InuConfig.REGEX_FILTERS_JSON.value = JSONArray().put(entryToJson(entry)).toString()
     }
 
     private fun parseFilters(raw: String): List<FilterEntry> {
