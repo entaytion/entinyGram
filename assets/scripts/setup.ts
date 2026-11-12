@@ -1,5 +1,4 @@
 import fs from 'node:fs/promises'
-import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { $ } from 'zx'
 import { worktreeDir as defaultWorktreeDir, ICON_SETS, loadIconPack, patchesDir, rootDir } from './config.js'
@@ -37,28 +36,7 @@ const pluginless = args.includes('--pluginless')
 const worktreeDir = pluginless ? join(rootDir, 'worktree-pluginless') : defaultWorktreeDir
 const excludedSubmodules = pluginless ? ['TMessagesProj_App/jni/lsplant'] : []
 
-async function withSeriesPatch(entry: string, apply: (path: string) => Promise<unknown>) {
-  const path = join(patchesDir, entry).replaceAll('\\', '/')
-  if (!pluginless || entry !== 'entiny/ui/auto-marquee.patch') return apply(path)
-
-  const patch = await fs.readFile(path, 'utf8')
-  const replacements = (await fs.readFile(join(import.meta.dir, 'auto-marquee-pluginless.hunks'), 'utf8')).split(/(?=^@@ )/m)
-  const hunks = patch.split(/(?=^@@ |^diff --git )/m)
-  const signatures = ['-            protected boolean onAvatarClick() {', 'setupHeaderMenuOverlay(parentView);']
-  for (const [i, signature] of signatures.entries()) {
-    const index = hunks.findIndex(hunk => hunk.startsWith('@@ ') && hunk.includes(signature))
-    if (index < 0 || !replacements[i]?.startsWith('@@ ')) throw new Error(`Missing pluginless context for ${entry}: ${signature}`)
-    hunks[index] = replacements[i]
-  }
-  const dir = await fs.mkdtemp(join(tmpdir(), 'entiny-series-'))
-  try {
-    const variant = join(dir, 'auto-marquee.patch').replaceAll('\\', '/')
-    await fs.writeFile(variant, hunks.join(''))
-    await apply(variant)
-  } finally {
-    await fs.rm(dir, { recursive: true, force: true })
-  }
-}
+const seriesPath = (entry: string) => join(patchesDir, entry).replaceAll('\\', '/')
 
 function sameOrder(actual: string[], expected: string[]) {
   return actual.length === expected.length && actual.every((value, index) => value === expected[index])
@@ -188,7 +166,7 @@ async function importSeries(seriesEntries: string[]) {
   for (const entry of seriesEntries) {
     const patchName = patchNameFromSeriesEntry(entry)
     step(`Importing ${entry} as ${patchName}`)
-    await withSeriesPatch(entry, patchPath => repo`stg import --3way -n ${patchName} ${patchPath}`)
+    await repo`stg import --3way -n ${patchName} ${seriesPath(entry)}`
   }
 }
 
@@ -271,7 +249,7 @@ if (ci) {
   const repo = cd(worktreeDir)
   for (const entry of seriesEntries) {
     step(`Applying ${entry}`)
-    await withSeriesPatch(entry, patchPath => repo`git apply --index --allow-empty ${patchPath}`)
+    await repo`git apply --index --allow-empty ${seriesPath(entry)}`
   }
 } else {
   await ensureWorktree(commit)

@@ -128,7 +128,7 @@ index 0000000..0000000 100644
  
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
              @Override
-@@ -21834,6 +21836,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -21841,6 +21843,8 @@ public class ChatActivity extends BaseFragment implements
      public void didReceivedNotification(int id, int account, final Object... args) {
          if (id == NotificationCenter.messagesDidLoad) {
              didReceivedNotification_messagesDidLoad(id, account, args);

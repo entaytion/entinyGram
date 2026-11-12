@@ -5,7 +5,6 @@ import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:pat
 import { execSync } from 'node:child_process'
 import { glob } from 'tinyglobby'
 import { $, chalk, quote } from 'zx'
-import { topicOf } from './patch-topics.js'
 import {
   forkSyncFiles,
   rootDir,
@@ -493,12 +492,11 @@ export function parsePatchName(patchName: string) {
     throw new Error(`Patch name must use "group__name": ${patchName}`)
   }
   const [group, name] = parts
-  const dir = group === 'entiny' ? `${group}/${topicOf(patchName)}` : group
   return {
     group,
     name,
-    dir,
-    seriesEntry: `${dir}/${name}.patch`,
+    dir: group,
+    seriesEntry: `${group}/${name}.patch`,
   }
 }
 

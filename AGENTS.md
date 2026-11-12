@@ -68,7 +68,7 @@ entinyGram is an independent power-user fork of inugram (`teidesu/inugram`), bui
 ## commits
 
 - no conventional commits, no call-stack essays.
-- subject: `[area] short lowercase sentence`. the area is a patch topic from `assets/scripts/patch-topics.json`, or one of `docs`, `ci`, `build`, `merge`, `rebase`, `release`.
+- subject: `[area] short lowercase sentence`. the area is the feature area in one word (`chat`, `media`, `ui`, `settings`, `privacy`, `ai`, `proxy`, `accounts`, `calls`, `feed`, `tabs`, `translator`, `notifications`, `premium`), or one of `docs`, `ci`, `build`, `merge`, `rebase`, `release`.
 - body: one `- ` line per change, a terse fragment, no trailing period, no long sentences.
 
 ```
@@ -81,7 +81,7 @@ entinyGram is an independent power-user fork of inugram (`teidesu/inugram`), bui
 
 groups and their owners are in the `patches` skill. short version:
 
-- new patches are `entiny__<name>` in group `entiny`, each with a topic in `assets/scripts/patch-topics.json`.
+- new patches are `entiny__<name>` in group `entiny`, exported flat to `patches/entiny/<name>.patch`.
 - never create patches in `bugfix`, `feature`, `debloat`, `hooks`, `misc`. those are inugram's.
 - patch subjects are one or two plain sentences, no prefixes.
 
@@ -102,7 +102,6 @@ groups and their owners are in the `patches` skill. short version:
 ## before you call anything done
 
 - [ ] no temporary `Log.d` and no comment spam left in the tree.
-- [ ] new `entiny__` patch has a topic in `assets/scripts/patch-topics.json`.
 - [ ] `FEATURES.md` updated under `## entinyGram additions`.
 - [ ] changelog draft updated, if the change is user-facing.
 - [ ] `bun run tsx assets/scripts/entinychecker.ts` passes.

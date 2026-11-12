@@ -51,7 +51,7 @@ keeping an obsolete fix applies a worse variant of stock code.
 | --- | --- |
 | identify | `docs/scripts/rebase/status.sh`. the patch subject is the intent. anchor the fix to it |
 | read both sides | enough context to see the enclosing loop, method or braces |
-| read the patch | `patches/<group>/<name>.patch` (for `entiny`: `patches/entiny/<topic>/<name>.patch`). its `+` and `-` lines are the real fork delta. skipping this turns a one-token change into a fake rewrite |
+| read the patch | `patches/<group>/<name>.patch` (for `entiny`: `patches/entiny/<name>.patch`). its `+` and `-` lines are the real fork delta. skipping this turns a one-token change into a fake rewrite |
 | resolve | section 4 |
 | verify and continue | `rg -n -a '^(<<<<<<<\|>>>>>>>)' <file>` must be empty, then `docs/scripts/rebase/continue.sh` |
 

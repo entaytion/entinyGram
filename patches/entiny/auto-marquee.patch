@@ -6,13 +6,13 @@ Subject: Auto-scrolling titles and centered chat header
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  | 349 +++++++++++++--
  .../telegram/ui/ActionBar/SimpleTextView.java | 129 +++---
- .../java/org/telegram/ui/ChatActivity.java    |  94 +++-
+ .../java/org/telegram/ui/ChatActivity.java    |  87 +++-
  .../BottomSheetWithRecyclerListView.java      |   1 +
- .../ui/Components/ChatAvatarContainer.java    | 408 ++++++++++++++++--
+ .../ui/Components/ChatAvatarContainer.java    | 406 ++++++++++++++++--
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../java/org/telegram/ui/ProfileActivity.java |  43 +-
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 8 files changed, 910 insertions(+), 132 deletions(-)
+ 8 files changed, 909 insertions(+), 124 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -745,15 +745,6 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4182,7 +4182,7 @@ public class ChatActivity extends BaseFragment implements
-         }
-         avatarContainer = new ChatAvatarContainer(context, this, currentEncryptedChat != null, themeDelegate) {
-             @Override
--            protected boolean onAvatarClick() {
-+            public boolean onAvatarClick() {
-                 if (chatMode == inu_MODE_PLUGIN_HISTORY && desu.inugram.helpers.plugins.ui.PluginChatHistory.handleHeaderTap(ChatActivity.this)) {
-                     return true;
-                 }
 @@ -4196,6 +4196,16 @@ public class ChatActivity extends BaseFragment implements
                  return false;
              }
@@ -824,31 +815,17 @@ index 0000000..0000000 100644
              attachItem.setOverrideMenuClick(true);
              attachItem.setAllowCloseAnimation(false);
              attachItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
-@@ -4646,21 +4693,17 @@ public class ChatActivity extends BaseFragment implements
-             ChatObject.isForum(currentChat));
-         setupHeaderMenuOverlay(parentView);
+@@ -4663,6 +4710,9 @@ public class ChatActivity extends BaseFragment implements
+             avatarContainer.setActionBar(actionBar);
+         }
  
 +        actionBar.setChatAvatarContainer(avatarContainer);
 +        avatarContainer.setActionBar(actionBar);
-         if (chatMode == MODE_PINNED || chatMode == inu_MODE_PLUGIN_HISTORY) {
--            actionBar.setChatAvatarContainer(avatarContainer);
--            avatarContainer.setActionBar(actionBar);
-             if (chatMode == inu_MODE_PLUGIN_HISTORY) {
-                 desu.inugram.helpers.plugins.ui.PluginChatHistory.applyAvatar(this, avatarContainer.avatarImageView);
-             }
-         } else if (chatMode == MODE_WELCOME_MESSAGES) {
--            actionBar.setChatAvatarContainer(avatarContainer);
-             actionBar.setForcedMenuWidth(dp(46));
-             actionBar.doNotDrawGlassMenu = true;
--            avatarContainer.setActionBar(actionBar);
-         } else if (isComments) {
--            actionBar.setChatAvatarContainer(avatarContainer);
-             actionBar.setForcedMenuMinWidth(dp(46));
--            avatarContainer.setActionBar(actionBar);
-         }
- 
++
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -31343,10 +31386,45 @@ public class ChatActivity extends BaseFragment implements
+         chatInputViewsContainer.setClipChildren(false);
+         chatInputViewsContainer.setWindowInsetsProvider(windowInsetsStateHolder);
+@@ -31343,10 +31393,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  
@@ -997,19 +974,17 @@ index 0000000..0000000 100644
                  canvas.restore();
                  return b;
              }
-@@ -471,7 +479,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
- 
-     }
- 
--    protected boolean onAvatarClick() {
-+    public boolean onAvatarClick() {
-+        return false;
-+    }
-+
-+    public boolean onAvatarLongClick() {
+@@ -475,6 +483,10 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          return false;
      }
  
++    public boolean onAvatarLongClick() {
++        return false;
++    }
++
+     public void setOverrideSubtitleColor(Integer overrideSubtitleColor) {
+         this.overrideSubtitleColor = overrideSubtitleColor;
+     }
 @@ -666,14 +678,38 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          subtitleTextView.setTag(subtitle);
      }

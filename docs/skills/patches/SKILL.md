@@ -1,6 +1,6 @@
 ---
 name: patches
-description: Create, update, rename, squash, and export entinyGram stgit patches (entiny__ group, topics, index-only staging, subjects). Use when a change needs its own patch, an existing patch needs a fix, an inugram patch is taken over, or the patch stack is exported.
+description: Create, update, rename, squash, and export entinyGram stgit patches (entiny__ group, index-only staging, subjects). Use when a change needs its own patch, an existing patch needs a fix, an inugram patch is taken over, or the patch stack is exported.
 ---
 
 # patches
@@ -11,10 +11,8 @@ description: Create, update, rename, squash, and export entinyGram stgit patches
 
 | group | owner | rule |
 | --- | --- | --- |
-| `entiny` | entinyGram | new patches go here as `entiny__<name>`. exported to `patches/entiny/<topic>/<name>.patch`. the topic must exist in `assets/scripts/patch-topics.json` |
+| `entiny` | entinyGram | new patches go here as `entiny__<name>`. exported flat to `patches/entiny/<name>.patch` |
 | `bugfix`, `feature`, `debloat`, `hooks`, `misc` | inugram base | never create a new patch here |
-
-topics: `accounts`, `ai`, `build`, `calls`, `chat`, `feed`, `media`, `misc`, `notifications`, `premium`, `privacy`, `proxy`, `restrictions`, `settings`, `tabs`, `translator`, `ui`.
 
 ## create a patch (index-only)
 
@@ -29,8 +27,6 @@ stg -C worktree new -r -i -m "<one plain sentence>" entiny__<name>
 stg -C worktree show --stat
 ```
 
-then add the topic to `patch-topics.json` if it is new.
-
 ## subject and message
 
 - 1-2 plain sentences. no `[]`, no `feat()`, no `Subject:`, no essay.
@@ -42,7 +38,7 @@ then add the topic to `patch-topics.json` if it is new.
 | task | command |
 | --- | --- |
 | fold a fix into an existing patch | `stg squash -n <existing> -m "<subject>" <existing> <new>` |
-| take over an inugram patch | `stg float <patch>`, then `stg rename <old> entiny__<name>`, then add its topic |
+| take over an inugram patch | `stg float <patch>`, then `stg rename <old> entiny__<name>` |
 | edit a patch in place | stage only the file, `stg refresh -p <patch>` |
 
 fold fixes into the owning patch. do not leave tiny follow-up patches.
@@ -63,4 +59,3 @@ bun run lint-patches           # run without SKIP_PATCH_CHECK before a push
 | a patch carries unrelated hunks | `stg float` it, restage only its files |
 | the diff shows whole lines re-indented | keep stock indentation, use early returns or run fork code after stock |
 | a resource or xml inside a patch | move it to `src/res/`, the patch refers to it |
-| a topic missing from `patch-topics.json` | add it, or `lint-patches` fails |
