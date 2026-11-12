@@ -1346,6 +1346,12 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val COMPACT_MODE_DMS = BoolItem("compact_mode_dms", false)
 
     @JvmField
+    val WIDE_CHANNEL_POSTS = BoolItem("wide_channel_posts", false)
+
+    @JvmField
+    val WIDE_CHANNEL_POSTS_INSET = FloatItem("wide_channel_posts_inset", 8.0f)
+
+    @JvmField
     val DONT_AUTOPLAY_WIDGETS = BoolItem("dont_autoplay_widgets", true)
 
     // entiny: 1=Front, 2=Rear, 3=Ask

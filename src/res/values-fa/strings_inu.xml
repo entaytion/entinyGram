@@ -2271,4 +2271,10 @@
     <string name="InuWalletReplaceKey">جایگزینی کلید با ۱۲ واژه</string>
     <string name="InuWalletReplaceKeyInfo">ممکن است دیگران کلیدهای ساخته‌شده با مولدها را دیده باشند. پس از این کار کلید خصوصی از کار می‌افتد و نشانی شما همراه با ۱۲ واژه جدید کیف پول را بازیابی می‌کند.</string>
     <string name="InuWalletReplaceKeyTitle">کلید با ۱۲ واژه جایگزین شود؟</string>
+    <string name="InuWideChannelPosts">پست‌های عریض</string>
+    <string name="InuWideChannelPostsFooter">پست‌ها و بازارسال‌های کانال از تمام عرض موجود استفاده می‌کنند.</string>
+    <string name="InuWideChannelPostsPreviewText">اخبار، عکس‌ها و ویدیوها</string>
+    <string name="InuWideChannelPostsPreviewReply">پست کانالِ بازارسال‌شده</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">پست‌های کانال</string>
+    <string name="InuWideChannelPostsInset">فاصله کناری</string>
 </resources>

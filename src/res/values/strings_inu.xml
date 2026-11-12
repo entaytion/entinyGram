@@ -2314,4 +2314,10 @@
     <string name="InuLinkedChatsInfo">Add a chat to another account\'s chat list and use it from there without switching accounts.</string>
     <string name="InuLinkedChatsAdd">Add to account</string>
     <string name="InuLinkedChatsRemove">Remove from this account</string>
+    <string name="InuWideChannelPosts">Wide posts</string>
+    <string name="InuWideChannelPostsFooter">Channel posts and forwards use the available width.</string>
+    <string name="InuWideChannelPostsPreviewText">News, photos and videos</string>
+    <string name="InuWideChannelPostsPreviewReply">Forwarded channel post</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">Channel posts</string>
+    <string name="InuWideChannelPostsInset">Side padding</string>
 </resources>

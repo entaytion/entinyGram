@@ -651,3 +651,4 @@ bugfix/non-selected-account-media.patch
 hooks/fragment-lifecycle.patch
 feature/cross-account-chats.patch
 bugfix/bottom-bar-ripple-origin.patch
+entiny/ui/wide-channel-posts.patch

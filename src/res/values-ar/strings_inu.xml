@@ -2286,4 +2286,10 @@
     <string name="InuWalletReplaceKey">استبدال المفتاح بـ 12 كلمة</string>
     <string name="InuWalletReplaceKeyInfo">قد يكون الآخرون قد رأوا المفاتيح من أدوات التوليد. بعد ذلك، سيتوقف المفتاح الخاص عن العمل وستستعيد محفظتك باستخدام عنوانك و12 كلمة جديدة.</string>
     <string name="InuWalletReplaceKeyTitle">هل تريد استبدال المفتاح بـ 12 كلمة؟</string>
+    <string name="InuWideChannelPosts">منشورات عريضة</string>
+    <string name="InuWideChannelPostsFooter">منشورات القنوات والرسائل المعاد توجيهها تستخدم العرض المتاح كاملاً.</string>
+    <string name="InuWideChannelPostsPreviewText">أخبار وصور وفيديوهات</string>
+    <string name="InuWideChannelPostsPreviewReply">منشور قناة معاد توجيهه</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">منشورات القنوات</string>
+    <string name="InuWideChannelPostsInset">الحشوة الجانبية</string>
 </resources>

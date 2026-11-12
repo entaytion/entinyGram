@@ -2299,4 +2299,10 @@ Mentre è attivo:</string>
     <string name="InuWalletReplaceKey">Sostituisci la chiave con 12 parole</string>
     <string name="InuWalletReplaceKeyInfo">Altri potrebbero aver visto le chiavi dei generatori. Dopo questa operazione la chiave privata smetterà di funzionare e potrai ripristinare il portafoglio con il tuo indirizzo e 12 nuove parole.</string>
     <string name="InuWalletReplaceKeyTitle">Sostituire la chiave con 12 parole?</string>
+    <string name="InuWideChannelPosts">Post larghi</string>
+    <string name="InuWideChannelPostsFooter">I post dei canali e gli inoltri usano tutta la larghezza disponibile.</string>
+    <string name="InuWideChannelPostsPreviewText">Notizie, foto e video</string>
+    <string name="InuWideChannelPostsPreviewReply">Post di canale inoltrato</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">Post dei canali</string>
+    <string name="InuWideChannelPostsInset">Margine laterale</string>
 </resources>

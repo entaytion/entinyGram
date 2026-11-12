@@ -2236,4 +2236,10 @@
     <string name="InuLinkedChatsInfo">チャットを別のアカウントのチャットリストに追加し、アカウントを切り替えずにそこから利用できます。</string>
     <string name="InuLinkedChatsAdd">アカウントに追加</string>
     <string name="InuLinkedChatsRemove">このアカウントから削除</string>
+    <string name="InuWideChannelPosts">ワイド投稿</string>
+    <string name="InuWideChannelPostsFooter">チャンネルの投稿と転送メッセージが画面幅いっぱいに表示されます。</string>
+    <string name="InuWideChannelPostsPreviewText">ニュース、写真、動画</string>
+    <string name="InuWideChannelPostsPreviewReply">転送されたチャンネル投稿</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">チャンネル投稿</string>
+    <string name="InuWideChannelPostsInset">余白の調整</string>
 </resources>

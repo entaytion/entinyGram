@@ -2250,4 +2250,10 @@
     <string name="InuLinkedChatsInfo">Добавь чат в список чатов другого аккаунта и пользуйся им оттуда без переключения аккаунтов.</string>
     <string name="InuLinkedChatsAdd">Добавить в аккаунт</string>
     <string name="InuLinkedChatsRemove">Убрать из этого аккаунта</string>
+    <string name="InuWideChannelPosts">Широкие посты</string>
+    <string name="InuWideChannelPostsFooter">Посты каналов и пересланные сообщения используют всю доступную ширину.</string>
+    <string name="InuWideChannelPostsPreviewText">Новости, фото и видео</string>
+    <string name="InuWideChannelPostsPreviewReply">Пересланный пост из канала</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">Посты каналов</string>
+    <string name="InuWideChannelPostsInset">Боковые отступы</string>
 </resources>

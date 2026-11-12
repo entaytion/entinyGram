@@ -4,6 +4,7 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.chat.WidePostLayout
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
@@ -18,6 +19,8 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
 
     private var stickerSizePreview: StickerSizePreviewMessagesCell? = null
     private var miscPreview: MiscPreviewMessagesCell? = null
+    private var widePostsPreview: WideChannelPostsPreviewCell? = null
+    private var widePostsInsetSlider: SliderCell? = null
     private var stickerSizeSlider: SliderCell? = null
     private var reactionsInRowSlider: SliderCell? = null
     private var chatInputTextSizeSlider: SliderCell? = null
@@ -120,6 +123,37 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.SMALL_GIFS.value)
         )
         items.add(UItem.asShadow(null))
+
+        if (widePostsPreview == null) widePostsPreview = WideChannelPostsPreviewCell(context, this)
+        if (widePostsInsetSlider == null) {
+            widePostsInsetSlider = SliderCell(
+                context,
+                min = 0f,
+                max = 24f,
+                step = 1f,
+                defaultValue = InuConfig.WIDE_CHANNEL_POSTS_INSET.default,
+                initialValue = InuConfig.WIDE_CHANNEL_POSTS_INSET.value,
+                title = LocaleController.getString(R.string.InuWideChannelPostsInset),
+                format = { "${it.toInt()}dp" },
+                onChanged = {
+                    InuConfig.WIDE_CHANNEL_POSTS_INSET.value = it
+                    widePostsPreview?.refreshInset()
+                },
+                onReleased = { reloadChats() },
+            )
+        } else {
+            widePostsInsetSlider?.updateColors()
+        }
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuWideChannelPosts)))
+        items.add(UItem.asCustom(widePostsPreview))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_WIDE_CHANNEL_POSTS,
+                LocaleController.getString(R.string.InuWideChannelPosts),
+            ).setChecked(InuConfig.WIDE_CHANNEL_POSTS.value)
+        )
+        if (InuConfig.WIDE_CHANNEL_POSTS.value) items.add(UItem.asCustom(widePostsInsetSlider))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuWideChannelPostsFooter)))
 
         if (reactionsInRowSlider == null) reactionsInRowSlider = SliderCell(
             context,
@@ -268,7 +302,20 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
+
+            TOGGLE_WIDE_CHANNEL_POSTS -> {
+                val new = InuConfig.WIDE_CHANNEL_POSTS.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                widePostsPreview?.setWide(new)
+                reloadChats()
+                listView.adapter.update(true)
+            }
         }
+    }
+
+    private fun reloadChats() {
+        WidePostLayout.invalidate()
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
     }
 
     companion object {
@@ -284,6 +331,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_CHAT_BUBBLES = InuUtils.generateId()
         private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
         private val TOGGLE_SMALL_GIFS = InuUtils.generateId()
+        private val TOGGLE_WIDE_CHANNEL_POSTS = InuUtils.generateId()
 
         private fun editedMessageDateModeLabel(value: Int): String = when (value) {
             InuConfig.EditedMessageDateModeItem.EDIT_DATE -> LocaleController.getString(R.string.InuEditedMessageDateModeEdit)
@@ -317,6 +365,8 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
                 SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
                 SearchRegistry.Entry("small-gifs", R.string.InuSmallGifs, TOGGLE_SMALL_GIFS),
+                SearchRegistry.Entry("wide-channel-posts", R.string.InuWideChannelPosts, TOGGLE_WIDE_CHANNEL_POSTS),
+                SearchRegistry.Entry("wide-channel-posts-inset", R.string.InuWideChannelPostsInset, TOGGLE_WIDE_CHANNEL_POSTS),
             ),
         )
     }

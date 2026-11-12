@@ -71,6 +71,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 - 📡 **online dots** — hide them everywhere, color-code them, or put them on sender avatars inside groups
 - 📡 **clown avatars** — blocked users show 🤡 (or 💩 / 💀), users who blocked you are guessed from a missing photo and last seen, so it can be wrong
 - 📡 **messages appearance** — hide reply background, custom reply colors and pattern emoji, show spoilers directly, forum topics as Material 3 cards, snowflakes over the chat or the header
+- 📡 **wide channel posts** — channel posts, photos and albums stretch to the chat width, with adjustable side padding and a live preview - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **tablet mode** — force the tablet layout on or off, or leave it to the screen size
 - 📡 **settings screen** — reorder and hide rows (new Telegram rows are picked up automatically), hide the accounts list, custom My Profile rows, disable dividers, hide the support card, downloads button visibility with automatic, always and never modes, full-screen app icon picker, clock format (auto follows the system 12/24h setting, not the Telegram language), branded first-run intro
 - 📡 **settings link status** — on/off values stay clear of their chevrons in either layout direction

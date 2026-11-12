@@ -1,0 +1,169 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 12 Nov 2026 18:05:57 +0200
+Subject: Stretch channel posts, photos and albums to the chat width.
+
+---
+ .../org/telegram/messenger/MessageObject.java | 19 ++++++++++++++++--
+ .../telegram/ui/Cells/ChatMessageCell.java    | 20 ++++++++++++++++++-
+ 2 files changed, 36 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -1396,6 +1396,7 @@ public class MessageObject {
+         }
+ 
+         private int maxSizeWidth = 800;
++        public int inu_wideKey;
+ 
+         public final TransitionParams transitionParams = new TransitionParams();
+ 
+@@ -1438,6 +1439,7 @@ public class MessageObject {
+ 
+             maxSizeWidth = 800;
+             int firstSpanAdditionalSize = 200;
++            inu_wideKey = desu.inugram.helpers.chat.WidePostLayout.groupKey(this);
+ 
+             int count = messages.size();
+             if (count == 1) {
+@@ -1547,6 +1549,10 @@ public class MessageObject {
+                 maxSizeWidth -= 50;
+                 firstSpanAdditionalSize += 50;
+             }
++            if (inu_wideKey != 0) {
++                maxSizeWidth = desu.inugram.helpers.chat.WidePostLayout.groupSpan();
++                firstSpanAdditionalSize = 1000 - maxSizeWidth;
++            }
+ 
+             int minHeight = dp(120);
+             int minWidth = (int) (dp(120) / (Math.min(AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y) / (float) maxSizeWidth));
+@@ -7125,7 +7131,7 @@ public class MessageObject {
+             // A rich message fills its max width, so any change of it must regenerate the layout
+             // (e.g. a Fold's inner tablet chat pane is only ~18dp wider than its cover screen).
+             final int tolerance = type == TYPE_ARTICLE ? 0 : dp(52);
+-            if (Math.abs(generatedWithMinSize - newMinSize) > tolerance || generatedWithDensity != AndroidUtilities.density || generatedWithFontSize != newFontSize || generatedWithCompactMode != isCompactMode()) {
++            if (Math.abs(generatedWithMinSize - newMinSize) > tolerance || generatedWithDensity != AndroidUtilities.density || generatedWithFontSize != newFontSize || generatedWithCompactMode != isCompactMode() || inu_wideLayoutKey != desu.inugram.helpers.chat.WidePostLayout.layoutKey(this)) {
+                 layoutCreated = false;
+             }
+         }
+@@ -8796,7 +8802,7 @@ public class MessageObject {
+         return isEmbedVideoCached = messageOwner != null && messageOwner.media != null && messageOwner.media.webpage != null && !TextUtils.isEmpty(WebPlayerView.getYouTubeVideoId(messageOwner.media.webpage.url));
+     }
+ 
+-    private int getParentWidth() {
++    public int getParentWidth() {
+         if (preview && parentWidth > 0)
+             return parentWidth;
+         if (AndroidUtilities.isTablet())
+@@ -8877,6 +8883,7 @@ public class MessageObject {
+         if (emojiOnlyCount >= 1 && totalAnimatedEmojiCount <= 100 && (emojiOnlyCount - totalAnimatedEmojiCount) < (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH ? 100 : 50) && (hasValidReplyMessageObject() || isForwarded())) {
+             maxWidth = Math.min(maxWidth, (int) (generatedWithMinSize * .65f));
+         }
++        if (inu_isWide()) maxWidth = desu.inugram.helpers.chat.WidePostLayout.textWidth(this);
+         return maxWidth;
+     }
+ 
+@@ -9050,6 +9057,7 @@ public class MessageObject {
+     }
+ 
+     public void generateLayout(TLRPC.User fromUser) {
++        inu_wideLayoutKey = desu.inugram.helpers.chat.WidePostLayout.layoutKey(this);
+         if (type == TYPE_ARTICLE) {
+             final int maxWidth = getMaxMessageTextWidth();
+             if (richLayout == null || messageOwner != null && richLayout.needsUpdate(getDisplayRichMessage(), maxWidth)) {
+@@ -10466,6 +10474,13 @@ public class MessageObject {
+ 
+     // cached: checked while drawing, and a message doesn't change its dialog
+     private byte agentBotDialog; // 0 unknown, 1 no, 2 yes
++    public byte inu_wideState;
++    public int inu_wideGeneration;
++    public int inu_wideLayoutKey;
++
++    public boolean inu_isWide() {
++        return desu.inugram.helpers.chat.WidePostLayout.isWide(this);
++    }
+ 
+     public boolean isCompactMode() {
+         if (SharedConfig.compactMode) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -6276,6 +6276,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+     public MultiLayoutTypingAnimator botDraftTypingAnimator;
+ 
+     public void setMessageContent(MessageObject messageObject, MessageObject.GroupedMessages groupedMessages, boolean bottomNear, boolean topNear, boolean firstInChat, boolean lastInChatList) {
++        if (groupedMessages != null && desu.inugram.helpers.chat.WidePostLayout.ensureGroup(groupedMessages, this)) currentMessageObject = null;
+         if (messageObject.checkLayout() || currentPosition != null && lastHeight != AndroidUtilities.displaySize.y) {
+             currentMessageObject = null;
+         }
+@@ -6503,6 +6504,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 }
+                 drawSummarizeButton = false;
+             }
++            if (messageObject.inu_isWide()) {
++                drawSideButton = 0;
++                drawSummarizeButton = false;
++            }
+             hasReplyQuote = false;
+             isReplyQuote = false;
+             isReplyTaskOrPollOption = false;
+@@ -6954,6 +6959,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     // matches MessageObject#getMaxMessageTextWidth: full chat width minus 16dp on each side
+                     maxWidth = getCompactContentWidth();
+                 }
++                if (messageObject.inu_isWide()) maxWidth = desu.inugram.helpers.chat.WidePostLayout.textWidth(messageObject);
+                 drawName = drawAvatar || hasCompactNameAvatar() || isPinnedChat || isSavedChat && !messageObject.isOutOwner() && (messageObject.getSavedDialogId() < 0 || messageObject.getSavedDialogId() == UserObject.ANONYMOUS) || (messageObject.messageOwner.peer_id != null && messageObject.messageOwner.peer_id.channel_id != 0 && (!messageObject.isOutOwner() || messageObject.isSupergroup())) || messageObject.isImportedForward() && messageObject.messageOwner.fwd_from.from_id == null;
+ 
+                 availableTimeWidth = maxWidth;
+@@ -9184,7 +9190,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         documentAttach = messageObject.getDocument();
+                         documentAttachType = DOCUMENT_ATTACH_TYPE_ROUND;
+                     } else {
+-                        if (AndroidUtilities.isTablet()) {
++                        if (messageObject.inu_isWide() && desu.inugram.helpers.chat.WidePostLayout.isStretchableMedia(messageObject)) {
++                            photoWidth = desu.inugram.helpers.chat.WidePostLayout.photoWidth(messageObject, false);
++                            useFullWidth = true;
++                        } else if (AndroidUtilities.isTablet()) {
+                             photoWidth = (int) (AndroidUtilities.getMinTabletSide() * 0.7f);
+                         } else {
+                             if (
+@@ -9393,6 +9402,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         h = (int) (0.61f * w);
+                     }
+ 
++                    if (currentMessagesGroup == null && w > 0 && messageObject.inu_isWide() && desu.inugram.helpers.chat.WidePostLayout.isStretchableMedia(messageObject)) {
++                        int inuWidth = desu.inugram.helpers.chat.WidePostLayout.photoWidth(messageObject, mediaBackground);
++                        h = Math.min(photoHeight, Math.max(dp(1), Math.round(h * (inuWidth / (float) w))));
++                        w = inuWidth;
++                    }
+                     int widthForCaption = 0;
+                     int widthCaptionMin = -1;
+                     boolean fixPhotoWidth = false;
+@@ -10175,6 +10189,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             }
+ 
+             final int separatorHeight = dp(4 + 4);
++            if (messageObject.inu_isWide() && (currentPosition == null || currentMessagesGroup != null && currentMessagesGroup.isDocuments)) backgroundWidth = desu.inugram.helpers.chat.WidePostLayout.stretchBubble(messageObject, backgroundWidth);
+             if (!messageObject.isRestrictedMessage && !messageObject.isRepostPreview && (currentPosition == null || currentMessagesGroup != null && currentMessagesGroup.isDocuments && currentPosition.last) && (inlineButtons != null) && !messageObject.hasExtendedMedia()) {
+                 ensureBotKeyboard().layoutButtons(messageObject, inlineButtons, separatorHeight, drawAvatar);
+             } else {
+@@ -11545,6 +11560,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             // there is no bubble: span exactly the text width so time, labels and reply end 16dp from the edge
+             backgroundWidth = maxWidth + dp(31);
+         }
++        if (currentMessageObject.inu_isWide()) backgroundWidth = desu.inugram.helpers.chat.WidePostLayout.bubbleWidth(currentMessageObject);
+     }
+ 
+     public boolean setHighlightedText(String text) {
+@@ -24112,6 +24128,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         return currentMessageObject != null ? currentMessageObject.isCompactMode() : Theme.isCompactMode(resourcesProvider);
+     }
+ 
++    public int inu_wideGroupKey;
++
+     private boolean isCompactIn() {
+         return isCompactMode() && currentMessageObject != null && !currentMessageObject.isOutOwner();
+     }

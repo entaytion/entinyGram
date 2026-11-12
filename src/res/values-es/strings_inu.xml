@@ -2298,4 +2298,10 @@ Mientras esté activado:</string>
     <string name="InuWalletReplaceKey">Reemplazar la clave por 12 palabras</string>
     <string name="InuWalletReplaceKeyInfo">Otras personas podrían haber visto las claves generadas. Después, la clave privada dejará de funcionar y podrás restaurar la cartera con tu dirección y 12 palabras nuevas.</string>
     <string name="InuWalletReplaceKeyTitle">¿Reemplazar la clave por 12 palabras?</string>
+    <string name="InuWideChannelPosts">Publicaciones anchas</string>
+    <string name="InuWideChannelPostsFooter">Las publicaciones de canales usan todo el ancho disponible.</string>
+    <string name="InuWideChannelPostsPreviewText">Noticias, fotos y vídeos</string>
+    <string name="InuWideChannelPostsPreviewReply">Publicación de canal reenviada</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">Publicaciones de canal</string>
+    <string name="InuWideChannelPostsInset">Relleno lateral</string>
 </resources>

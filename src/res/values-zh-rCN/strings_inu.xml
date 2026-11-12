@@ -2236,4 +2236,10 @@
     <string name="InuLinkedChatsInfo">将聊天添加到另一个账号的聊天列表中，无需切换账号即可在那里使用。</string>
     <string name="InuLinkedChatsAdd">添加到账号</string>
     <string name="InuLinkedChatsRemove">从此账号中移除</string>
+    <string name="InuWideChannelPosts">宽屏帖子</string>
+    <string name="InuWideChannelPostsFooter">频道帖子和转发将使用全部可用宽度。</string>
+    <string name="InuWideChannelPostsPreviewText">新闻、照片和视频</string>
+    <string name="InuWideChannelPostsPreviewReply">已转发的频道帖子</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">频道帖子</string>
+    <string name="InuWideChannelPostsInset">边距调整</string>
 </resources>
