@@ -3,14 +3,12 @@ import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import process from 'node:process'
 import lockfile from 'proper-lockfile'
-import { rootDir, worktreeDir } from './config.js'
+import { worktreeDir } from './config.js'
 import { step } from './lib.js'
 
 const args = process.argv.slice(2)
-const pluginless = args[0] === '--pluginless'
-if (pluginless) args.shift()
 
-const cwd = pluginless ? join(rootDir, 'worktree-pluginless') : worktreeDir
+const cwd = worktreeDir
 mkdirSync(join(cwd, '.gradle'), { recursive: true })
 
 // a gradle daemon runs one build at a time: waiting inside the build would spawn a cold daemon

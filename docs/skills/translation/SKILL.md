@@ -10,17 +10,20 @@ guide for auditing and updating entinygram's `strings_inu.xml` locale files.
 ## audit a locale
 
 ```sh
-bun run tsx assets/scripts/check-translations.ts <iso>
+bun run check-translations <iso>
 ```
+
+one line per problem, exit code 1 when anything is reported.
 
 | result | action |
 | --- | --- |
 | missing | add the key from the base locale and translate its value |
-| untranslated | translate values that still match the english base |
+| same as en | translate values that still match the english base |
 | extra | remove keys that no longer exist in the base |
-| stale | compare with the base and update only if its meaning changed |
+| placeholders | make `%s` and `%d` match the base |
+| broken | fix unbalanced `<string>` tags |
 
-run the check for a specific locale, for example `uk` or `ru`. skip version-qualified resource folders that do not contain `strings_inu.xml`.
+run the check for a specific locale, for example `uk` or `ru`, or without arguments for all. skip version-qualified resource folders that do not contain `strings_inu.xml`.
 
 ## translation rules
 
@@ -28,7 +31,6 @@ run the check for a specific locale, for example `uk` or `ru`. skip version-qual
 - preserve placeholders and formatting exactly: `%1$s`, `%1$d`, `%s`, `\n`, `**bold**`, `[link](url)`, and escaped quotes.
 - keep plural keys such as `_one`, `_few`, `_many`, and `_other` consistent with the target language.
 - translate accurately and idiomatically, using standard spelling and grammar for the target locale; preserve the source tone and established terminology.
-- compare stale values with the current base before changing them; cosmetic edits do not always need a new translation.
 
 ## add a locale
 

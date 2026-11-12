@@ -45,7 +45,7 @@ entinyGram/
 │   ├── res/              # our strings, drawables, layouts, icon packs
 │   └── vendor/           # third-party code kept as-is
 ├── patches/
-│   ├── entiny/           # entinyGram patches and overrides, split by topic
+│   ├── entiny/           # entinyGram patches and overrides
 │   ├── feature/          # Inugram features
 │   ├── debloat/          # Inugram debloat patches
 │   ├── bugfix/           # fixes for stock Telegram bugs
@@ -77,7 +77,6 @@ bun install
 bun run setup          # fetch the Telegram source and apply the stack to worktree/
 
 bun run build-debug            # full build with the plugin engine
-bun run build-debug-pluginless # without plugins, quickjs and LSPlant
 ```
 
 APKs land in `worktree/TMessagesProj_App/build/outputs/apk/`.
@@ -87,7 +86,7 @@ Before opening a pull request, run the validation suite:
 ```sh
 bun run lint-patches        # patch series integrity and overwrite detection
 bun run entinychecker       # settings search slugs and unused variants
-bun run check-translations  # missing or stale locale keys
+bun run check-translations  # missing, untranslated and broken locale strings
 bun run export              # regenerate patches/ and series from stgit
 ```
 
