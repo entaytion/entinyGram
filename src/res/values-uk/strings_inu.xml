@@ -747,6 +747,8 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>
+    <string name="InuLiquidGlassTint">Тонування рідкого скла</string>
+    <string name="InuLiquidGlassBlur">Сила розмиття</string>
 
     <string name="InuReduceMenuMotion">Зменшити анімації меню</string>
     <string name="InuReduceMenuMotionInfo">Спрощує анімацію виклику меню повідомлень</string>
@@ -1919,6 +1921,7 @@
     <string name="InuDonateDirect">Надіслати GRAM у Telegram</string>
     <string name="InuDonateSectionCards">Картки</string>
     <string name="InuDonateSectionCrypto">Крипто</string>
+    <string name="InuDonateSectionCoins">Монети</string>
     <string name="InuDonateSectionOther">Інше</string>
     <string name="InuShowMediaSize">Показувати розмір медіа</string>
     <string name="InuPlugins">Плагіни</string>

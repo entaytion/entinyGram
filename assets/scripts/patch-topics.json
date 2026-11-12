@@ -5,6 +5,7 @@
   "ai-summary-inline": "ai",
   "allow-screenshots": "privacy",
   "always-show-downloads": "media",
+  "chat-list-and-glass-fixes": "ui",
   "expandable-switch-theme": "ui",
   "settings-headers-dividers": "ui",
   "android-auto-cleanup": "build",

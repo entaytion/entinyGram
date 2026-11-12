@@ -29,12 +29,13 @@ object ProfileSettingsHelper {
         return if (customized) row else null
     }
 
-    // entiny: stock section of a row: 0 inugram, 1 main, 2 premium, 3 help; -1 unknown
+    // entiny: stock section of a row: 0 inugram, 1 main, 2 premium, 3 help, 4 experimental; -1 unknown
     private fun stockGroupOf(item: UItem): Int = when (item.id) {
         99 -> 0
         in 1..3, in 5..10 -> 1
         in 11..13, 15, 16, MONEY_ROW_ID -> 2
-        17, 18, 19, 23, 24 -> 3
+        17, 18, 19, 23 -> 3
+        24, 26, 27 -> 4
         else -> -1
     }
 
@@ -73,6 +74,7 @@ object ProfileSettingsHelper {
             if (lastGroup != -1 && group != lastGroup) {
                 if (rebuilt.isNotEmpty() && group != -1) rebuilt.add(UItem.asShadow(null))
                 if (group == 3) rebuilt.add(UItem.asHeader(LocaleController.getString(R.string.SettingsHelp)))
+                if (group == 4) rebuilt.add(UItem.asHeader(LocaleController.getString(R.string.SettingsExperimental)))
             }
             rebuilt.add(row)
             lastGroup = group

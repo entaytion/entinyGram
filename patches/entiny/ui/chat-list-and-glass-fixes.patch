@@ -1,0 +1,189 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 12 Nov 2026 16:19:40 +0200
+Subject: Fix chat list avatar tap, pins drag, empty menu button, forward pro select all, glass tint and blur
+
+---
+ .../telegram/ui/Adapters/DialogsAdapter.java  |  3 +-
+ .../ui/Components/SearchViewPager.java        |  5 +++
+ .../telegram/ui/Components/ShareAlert.java    | 32 +++++++++++++++++
+ .../DownscaleScrollableNoiseSuppressor.java   |  2 ++
+ .../drawable/BlurredBackgroundDrawable.java   |  2 +-
+ .../java/org/telegram/ui/DialogsActivity.java | 34 ++++++++++++++++++-
+ 6 files changed, 75 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
+@@ -1253,7 +1253,8 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
+         int toIndex = fixPosition(toPosition);
+         TLRPC.Dialog fromDialog = dialogs.get(fromIndex);
+         TLRPC.Dialog toDialog = dialogs.get(toIndex);
+-        if (dialogsType == 7 || dialogsType == 8) {
++        if (desu.inugram.helpers.dialogs.PinHelper.swapLocalPins(currentAccount, folderId, dialogsType == 7 || dialogsType == 8 ? MessagesController.getInstance(currentAccount).selectedDialogFilter[dialogsType == 8 ? 1 : 0] : null, fromDialog.id, toDialog.id)) {
++        } else if (dialogsType == 7 || dialogsType == 8) {
+             MessagesController.DialogFilter filter = MessagesController.getInstance(currentAccount).selectedDialogFilter[dialogsType == 8 ? 1 : 0];
+             int idx1 = filter.pinnedDialogs.get(fromDialog.id);
+             int idx2 = filter.pinnedDialogs.get(toDialog.id);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
+@@ -986,6 +986,11 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+             MessageObject messageObject = selectedFiles.values().iterator().next();
+             goToMessage(messageObject);
+         } else if (id == forwardItemId) {
++            if (desu.inugram.helpers.chat.ForwardProHelper.takeOverMessages(parent, selectedFiles.values())) {
++                selectedFiles.clear();
++                showActionMode(false);
++                return;
++            }
+             Bundle args = new Bundle();
+             args.putBoolean("onlySelect", true);
+             args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+@@ -2911,6 +2911,38 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+         return true;
+     }
+ 
++    public void inu_toggleSelectAll() {
++        if (listAdapter == null || searchIsVisible || topicsGridView.getVisibility() != View.GONE) return;
++        final MessagesController controller = MessagesController.getInstance(currentAccount);
++        final ArrayList<TLRPC.Dialog> selectable = new ArrayList<>();
++        for (TLRPC.Dialog dialog : listAdapter.dialogs) {
++            if (dialog == null || dialog instanceof ShareDialogsAdapter.MyStoryDialog) continue;
++            final TLRPC.Chat chat = controller.getChat(-dialog.id);
++            if (DialogObject.isChatDialog(dialog.id) && (chat == null || ChatObject.isForum(chat) || ChatObject.isMonoForum(chat) || ChatObject.isChannel(chat) && !chat.megagroup && (!ChatObject.isCanWriteToChannel(-dialog.id, currentAccount) || hasPoll == 2 || hasPoll == 3))) continue;
++            if (DialogObject.isEncryptedDialog(dialog.id) && hasPoll != 0) continue;
++            if (DialogObject.isUserDialog(dialog.id) && (isBotForumWithNotEmptyTopics(controller.getUser(dialog.id)) || DialogObject.isPremiumBlocked(controller.isUserContactBlocked(dialog.id)) || DialogObject.getMessagesStarsPrice(controller.isUserContactBlocked(dialog.id)) > 0)) continue;
++            if (controller.getSendPaidMessagesStars(dialog.id) > 0) continue;
++            selectable.add(dialog);
++        }
++        boolean allSelected = !selectable.isEmpty();
++        for (TLRPC.Dialog dialog : selectable) {
++            if (selectedDialogs.indexOfKey(dialog.id) < 0) {
++                allSelected = false;
++                break;
++            }
++        }
++        for (TLRPC.Dialog dialog : selectable) {
++            if (allSelected) {
++                selectedDialogs.remove(dialog.id);
++                selectedDialogTopics.remove(dialog);
++            } else if (selectedDialogs.indexOfKey(dialog.id) < 0) {
++                selectedDialogs.put(dialog.id, dialog);
++            }
++        }
++        listAdapter.notifyDataSetChanged();
++        updateSelectedCount(1);
++    }
++
+     public void updateSelectedCount(int animated) {
+         if (selectedDialogs.size() == 0) {
+             showCommentTextView(false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/DownscaleScrollableNoiseSuppressor.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/DownscaleScrollableNoiseSuppressor.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/DownscaleScrollableNoiseSuppressor.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/DownscaleScrollableNoiseSuppressor.java
+@@ -149,6 +149,7 @@ public class DownscaleScrollableNoiseSuppressor {
+         }
+ 
+         public void setPrimaryEffectBlur(float radius) {
++            radius *= desu.inugram.InuConfig.LIQUID_GLASS_BLUR.getValue() / 100f;
+             final float downsampledRadiusX = downscaleRadius(radius, scaleX);
+             final float downsampledRadiusY = downscaleRadius(radius, scaleY);
+             setPrimaryEffect(RenderEffect.createBlurEffect(
+@@ -159,6 +160,7 @@ public class DownscaleScrollableNoiseSuppressor {
+         }
+ 
+         public void setPrimaryEffectBlur(float radius, RenderEffect secondEffect) {
++            radius *= desu.inugram.InuConfig.LIQUID_GLASS_BLUR.getValue() / 100f;
+             final float downsampledRadiusX = downscaleRadius(radius, scaleX);
+             final float downsampledRadiusY = downscaleRadius(radius, scaleY);
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java
+@@ -1284,7 +1284,7 @@ public class BlurredBackgroundDrawable extends GlassDrawable implements Theme.Co
+                     thickness,
+                     boundProps.liquidIntensity,
+                     boundProps.liquidIndex,
+-                    backgroundColor,
++                    Theme.multAlpha(backgroundColor, desu.inugram.InuConfig.LIQUID_GLASS_TINT.getValue() / 100f),
+                     originX - sL, originY - sT,
+                     downsample
+                 );
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -2553,6 +2553,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             if (dialog == null || !isDialogPinned(dialog) || DialogObject.isFolderDialogId(dialogId)) {
+                 return false;
+             }
++            if (source.itemView instanceof DialogCell && !desu.inugram.helpers.dialogs.PinHelper.canMove(currentAccount, folderId, viewPages[0].dialogsType == 7 || viewPages[0].dialogsType == 8 ? getMessagesController().selectedDialogFilter[viewPages[0].dialogsType == 8 ? 1 : 0] : null, ((DialogCell) source.itemView).getDialogId(), dialogId)) {
++                return false;
++            }
+             int fromIndex = source.getAdapterPosition();
+             int toIndex = target.getAdapterPosition();
+             if (parentPage.listView.getItemAnimator() == null) {
+@@ -4507,6 +4510,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                             dialogCell.avatarImage.getImageX(), dialogCell.avatarImage.getImageY(),
+                             dialogCell.avatarImage.getImageX2(), dialogCell.avatarImage.getImageY2()
+                     );
++                    long dialogId = dialogCell.getDialogId();
++                    if (desu.inugram.InuConfig.DIALOG_AVATAR_OPENS_PROFILE.getValue() && dialogId != 0 && !DialogObject.isEncryptedDialog(dialogId) && AndroidUtilities.rectTmp.contains(x, y)) {
++                        Bundle args = new Bundle();
++                        if (dialogId < 0) {
++                            args.putLong("chat_id", -dialogId);
++                        } else {
++                            args.putLong("user_id", dialogId);
++                        }
++                        presentFragment(new ProfileActivity(args));
++                        return;
++                    }
+                 }
+                 onItemClick(view, position, viewPage.dialogsAdapter, x, y);
+             });
+@@ -7238,6 +7252,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     @Override
+     public void onResume() {
+         super.onResume();
++        checkUi_itemOptionsVisibility();
+         if (desu.inugram.helpers.security.ArchiveLockHelper.shouldGate(this, folderId)) {
+             if (fragmentView != null) {
+                 fragmentView.setAlpha(0f);
+@@ -14297,10 +14312,27 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         final float factor1 = 1f - animatorSearchVisible.getFloatValue();
+         final float factor2 = 1f - getRightSlidingProgress();
+         final float factor3 = 1f - animatorDoneButtonVisible.getFloatValue();
+-        final float factor = factor1 * factor2 * factor3;
++        final float factor = factor1 * factor2 * factor3 * (inu_hasOptionsItems() ? 1f : 0f);
+         FragmentFloatingButton.setAnimatedVisibility(optionsItem, factor);
+     }
+ 
++    private boolean inu_hasOptionsItems() {
++        if (optionsItem == null || isArchive() || communityId != 0) return true;
++        final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
++        final boolean proxyVisible = proxyMenuSubItem != null && (preferences.getBoolean("proxy_enabled", false) && !TextUtils.isEmpty(preferences.getString("proxy_ip", ""))
++                || getMessagesController().blockedCountry && !SharedConfig.proxyList.isEmpty());
++        final boolean walletAvailable = getMessagesController().config.walletAvailable.get();
++        if (!walletAvailable) {
++            TLRPC.TL_attachMenuBots menuBots = MediaDataController.getInstance(currentAccount).getAttachMenuBots();
++            if (menuBots != null && menuBots.bots != null) {
++                for (TLRPC.TL_attachMenuBot bot : menuBots.bots) {
++                    if (bot.show_in_side_menu) return true;
++                }
++            }
++        }
++        return desu.inugram.helpers.menu.DialogsMenuHelper.hasMainItems(walletAvailable, proxyVisible);
++    }
++
+     private void checkUi_itemPasscodeVisibility() {
+         final float factor0 = SharedConfig.passcodeHash.isEmpty() ? 0 : 1;
+         final float factor1 = 1f - animatorSearchVisible.getFloatValue();

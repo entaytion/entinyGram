@@ -927,6 +927,8 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glassの角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glassの強度</string>
+    <string name="InuLiquidGlassTint">リキッドグラスの色味</string>
+    <string name="InuLiquidGlassBlur">ぼかしの強さ</string>
     <string name="InuStripTrackingParamsOnOpen">リンクを開くとき</string>
     <string name="InuStripTrackingParamsOnPaste">貼り付け時</string>
     <string name="InuResolveTrackableRedirects">追跡可能なリダイレクトを展開</string>

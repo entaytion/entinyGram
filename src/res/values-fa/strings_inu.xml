@@ -769,6 +769,8 @@
     <string name="InuLiquidGlass">شیشه مایع</string>
     <string name="InuLiquidGlassAngle">زاویه شیشه مایع</string>
     <string name="InuLiquidGlassIntensity">شدت شیشه مایع</string>
+    <string name="InuLiquidGlassTint">رنگ‌مایه شیشه مایع</string>
+    <string name="InuLiquidGlassBlur">شدت تاری</string>
 
     <string name="InuReduceMenuMotion">کاهش حرکت منوها</string>
     <string name="InuReduceMenuMotionInfo">رد کردن نوبت‌بندی منوی زمینه و ساده‌سازی انیمیشن‌های منوی پیام</string>

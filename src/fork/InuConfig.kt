@@ -1440,6 +1440,12 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val LIQUID_GLASS_INTENSITY = IntItem("liquid_glass_intensity", 75)
 
     @JvmField
+    val LIQUID_GLASS_TINT = IntItem("liquid_glass_tint", 100)
+
+    @JvmField
+    val LIQUID_GLASS_BLUR = IntItem("liquid_glass_blur", 100)
+
+    @JvmField
     val DISABLE_PROFILE_AVATAR_BLUR = BoolItem("disable_profile_avatar_blur", false)
 
     @JvmField

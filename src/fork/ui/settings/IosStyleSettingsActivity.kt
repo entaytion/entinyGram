@@ -17,6 +17,8 @@ import org.telegram.ui.Components.UniversalAdapter
 class IosStyleSettingsActivity : SettingsPageActivity() {
     private var angleSlider: SliderCell? = null
     private var intensitySlider: SliderCell? = null
+    private var tintSlider: SliderCell? = null
+    private var blurSlider: SliderCell? = null
 
     private var inputBarPreviewCell: InputBarPreviewCell? = null
 
@@ -130,6 +132,38 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             intensitySlider?.updateColors()
         }
         items.add(UItem.asCustom(intensitySlider))
+        if (tintSlider == null) {
+            tintSlider = SliderCell(
+                context, min = 0f, max = 100f,
+                defaultValue = InuConfig.LIQUID_GLASS_TINT.default.toFloat(),
+                initialValue = InuConfig.LIQUID_GLASS_TINT.value.toFloat(),
+                step = 1f,
+                title = LocaleController.getString(R.string.InuLiquidGlassTint),
+                format = { "${it.toInt()}%" },
+                onChanged = {
+                    InuConfig.LIQUID_GLASS_TINT.value = it.toInt()
+                    refreshLiquidGlassEffects()
+                },
+            )
+        } else {
+            tintSlider?.updateColors()
+        }
+        items.add(UItem.asCustom(tintSlider))
+        if (blurSlider == null) {
+            blurSlider = SliderCell(
+                context, min = 10f, max = 200f,
+                defaultValue = InuConfig.LIQUID_GLASS_BLUR.default.toFloat(),
+                initialValue = InuConfig.LIQUID_GLASS_BLUR.value.toFloat(),
+                step = 1f,
+                title = LocaleController.getString(R.string.InuLiquidGlassBlur),
+                format = { "${it.toInt()}%" },
+                onChanged = { InuConfig.LIQUID_GLASS_BLUR.value = it.toInt() },
+                onReleased = { showRestartBulletin() },
+            )
+        } else {
+            blurSlider?.updateColors()
+        }
+        items.add(UItem.asCustom(blurSlider))
         items.add(UItem.asShadow(null))
     }
 

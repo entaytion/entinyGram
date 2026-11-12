@@ -894,6 +894,8 @@ Sistema: %6$s
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Angolo del Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Intensità del Liquid Glass</string>
+    <string name="InuLiquidGlassTint">Tinta del Liquid Glass</string>
+    <string name="InuLiquidGlassBlur">Intensità della sfocatura</string>
 
     <string name="InuReduceMenuMotion">Riduci il movimento dei menu</string>
     <string name="InuReduceMenuMotionInfo">Salta lo scaglionamento dei menu contestuali e semplifica le animazioni del menu dei messaggi</string>

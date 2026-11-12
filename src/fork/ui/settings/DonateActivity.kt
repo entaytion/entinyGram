@@ -24,10 +24,20 @@ class DonateActivity : SettingsPageActivity() {
     private val crypto = listOf(
         Method(R.drawable.inu_tabler_send, str(R.string.InuDonateDirect), "@entaytion · 0.1 GRAM", TELEGRAM_SEND),
         Method(R.drawable.inu_tabler_brand_telegram, "CryptoBot", "t.me/send", CRYPTO_BOT),
-        Method(R.drawable.inu_simple_icons_ethereum, "ETH / USDC (Base)", "0x1D8cf5A876188256931a6D2FB1F4FAFCB5C03a99"),
-        Method(R.drawable.inu_simple_icons_bitcoin, "BTC", "bc1qk9n4mru8skrdw94k6g5s5wcm0ucwlrwqlgxjq7"),
-        Method(R.drawable.inu_tabler_currency_solana, "SOL", "BWKK9NwmMFMa4N4MbRYg8yNH2A3zNJxNYNxTBSNZAzXr"),
-        Method(R.drawable.inu_tabler_diamond, "GRAM (TON)", "UQBgCQmC-kT8W2AQfEUavuIszQEN-iuR8LUUNJkHeIN2oW5m"),
+    )
+    private val usdt = listOf(
+        Method(R.drawable.inu_cryptocurrency_trx, "USDT · TRON (TRC-20)", TRON),
+        Method(R.drawable.inu_simple_icons_ton, "USDT · TON", TON),
+        Method(R.drawable.inu_tabler_currency_solana, "USDT · Solana", SOLANA),
+        Method(R.drawable.inu_simple_icons_tether, "USDT · Ethereum, BSC, Base", EVM),
+    )
+    private val coins = listOf(
+        Method(R.drawable.inu_simple_icons_ton, "GRAM (TON)", TON),
+        Method(R.drawable.inu_simple_icons_bitcoin, "BTC", BITCOIN),
+        Method(R.drawable.inu_simple_icons_ethereum, "ETH · Ethereum, Base", EVM),
+        Method(R.drawable.inu_simple_icons_bnbchain, "BNB · BSC", EVM),
+        Method(R.drawable.inu_tabler_currency_solana, "SOL", SOLANA),
+        Method(R.drawable.inu_cryptocurrency_trx, "TRX", TRON),
     )
     private val other = listOf(
         Method(R.drawable.inu_tabler_world, str(R.string.InuDonateWebsite), "entaytion.is-a.dev/donate", SITE),
@@ -43,13 +53,19 @@ class DonateActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(str(R.string.InuDonateSectionCrypto)))
         crypto.forEach { items.add(mkTwoLineEntry(it.id, it.icon, it.title, it.shown)) }
         items.add(UItem.asShadow(null))
+        items.add(UItem.asHeader("USDT"))
+        usdt.forEach { items.add(mkTwoLineEntry(it.id, it.icon, it.title, it.shown)) }
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asHeader(str(R.string.InuDonateSectionCoins)))
+        coins.forEach { items.add(mkTwoLineEntry(it.id, it.icon, it.title, it.shown)) }
+        items.add(UItem.asShadow(null))
         items.add(UItem.asHeader(str(R.string.InuDonateSectionOther)))
         other.forEach { items.add(mkTwoLineEntry(it.id, it.icon, it.title, it.shown)) }
         items.add(UItem.asShadow(str(R.string.InuDonateThanks)))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        val method = (cards + crypto + other).firstOrNull { it.id == item.id } ?: return
+        val method = (cards + crypto + usdt + coins + other).firstOrNull { it.id == item.id } ?: return
         if (method.url != null) {
             Browser.openUrl(context ?: return, method.url)
         } else {
@@ -65,5 +81,10 @@ class DonateActivity : SettingsPageActivity() {
         private const val CRYPTO_BOT = "https://t.me/send?start=IVncNnKfmByl"
         private const val TELEGRAM_SEND = "https://t.me/sendgrams?to=entaytion&amount=0.1&text=thx+for+entiny"
         private const val SITE = "https://entaytion.is-a.dev/donate"
+        private const val TON = "UQBVF34OLvKx8trJsMaJfjVOg0kdr75C463c53HfRYav3XyQ"
+        private const val EVM = "0x1D0b404e9C2aa1aE18824a2C7f2f428A279edF01"
+        private const val SOLANA = "Na3jT5GE73rfSD8RMNUC7VkjWF4jysRjkm8vw93xu94"
+        private const val TRON = "TQxoxjRTRe6QZqcyapdA26XaAiaDmt1ZBU"
+        private const val BITCOIN = "bc1qh4zs0adawjse4sj75klyp5qs2vlqcsd7y9sp36"
     }
 }

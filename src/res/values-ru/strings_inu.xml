@@ -1122,6 +1122,8 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Угол Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Интенсивность Liquid Glass</string>
+    <string name="InuLiquidGlassTint">Тонировка жидкого стекла</string>
+    <string name="InuLiquidGlassBlur">Сила размытия</string>
     <string name="InuStripTrackingParamsOnOpen">При открытии ссылок</string>
     <string name="InuStripTrackingParamsOnPaste">При вставке</string>
     <string name="InuResolveTrackableRedirects">Раскрывать отслеживаемые ссылки</string>
@@ -1819,6 +1821,7 @@
     <string name="InuDonateDirect">Отправить GRAM в Telegram</string>
     <string name="InuDonateSectionCards">Карты</string>
     <string name="InuDonateSectionCrypto">Крипто</string>
+    <string name="InuDonateSectionCoins">Монеты</string>
     <string name="InuDonateSectionOther">Другое</string>
     <string name="InuShowMediaSize">Показывать размер медиа</string>
     <string name="InuPlugins">Плагины</string>

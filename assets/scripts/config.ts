@@ -237,5 +237,6 @@ export const ICON_SETS: Record<string, IconSet> = {
   },
   'bi': { icons: ['currency-dollar', 'currency-euro', 'openai'] },
   'bxl': { icons: ['groq-ai'] },
-  'simple-icons': { icons: ['bitcoin', 'ethereum', 'cloudflare', 'googlegemini', 'openrouter'] },
+  'simple-icons': { icons: ['bitcoin', 'ethereum', 'tether', 'bnbchain', 'ton', 'cloudflare', 'googlegemini', 'openrouter'] },
+  'cryptocurrency': { icons: ['trx'] },
 }

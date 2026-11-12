@@ -644,3 +644,4 @@ entiny/ui/stories-premium-badge-overlap.patch
 entiny/media/download-queue.patch
 entiny/media/quiet-voice-locked.patch
 entiny/ui/ios-design-fixes.patch
+entiny/ui/chat-list-and-glass-fixes.patch

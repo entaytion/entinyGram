@@ -963,6 +963,8 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass angle</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass intensity</string>
+    <string name="InuLiquidGlassTint">Liquid Glass tint</string>
+    <string name="InuLiquidGlassBlur">Blur strength</string>
 
     <string name="InuReduceMenuMotion">Reduce menu motion</string>
     <string name="InuReduceMenuMotionInfo">Skip context menu stagger, simplify message menu animations and use plain popups for header menus</string>
@@ -1946,6 +1948,7 @@
     <string name="InuDonateDirect">Send GRAM in Telegram</string>
     <string name="InuDonateSectionCards">Cards</string>
     <string name="InuDonateSectionCrypto">Crypto</string>
+    <string name="InuDonateSectionCoins">Coins</string>
     <string name="InuDonateSectionOther">Other</string>
     <string name="InuShowMediaSize">Show media size</string>
 

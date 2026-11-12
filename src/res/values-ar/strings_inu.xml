@@ -769,6 +769,8 @@
     <string name="InuLiquidGlass">الزجاج السائل</string>
     <string name="InuLiquidGlassAngle">زاوية الزجاج السائل</string>
     <string name="InuLiquidGlassIntensity">شدة الزجاج السائل</string>
+    <string name="InuLiquidGlassTint">تظليل الزجاج السائل</string>
+    <string name="InuLiquidGlassBlur">قوة الضبابية</string>
 
     <string name="InuReduceMenuMotion">تقليل حركة القوائم</string>
     <string name="InuReduceMenuMotionInfo">تخطي التتابع في قائمة السياق وتبسيط حركات قائمة الرسالة</string>

@@ -305,7 +305,9 @@ class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileRow>(key, Item.ent
         FAQ("faq", 18, R.string.TelegramFAQ, R.drawable.settings_faq),
         FEATURES("features", 23, R.string.TelegramFeatures, R.drawable.settings_features),
         POLICY("policy", 19, R.string.PrivacyPolicy, R.drawable.settings_policy),
-        ROUND_VIDEO("round_video", 24, R.string.RoundVideoSettings, R.drawable.msg_video);
+        ROUND_VIDEO("round_video", 24, R.string.RoundVideoSettings, R.drawable.msg_video),
+        AUDIO_RECORDER("audio_recorder", 26, R.string.AudioRecorderSettings, R.drawable.input_mic),
+        HEADER_SETTINGS("header_settings", 27, R.string.HeaderSettings, R.drawable.msg_customize);
 
         companion object {
             private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
@@ -316,9 +318,10 @@ class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileRow>(key, Item.ent
         }
     }
 
-    override fun itemByKey(key: String): ProfileRow? = Item.forKey(key) ?: ProfileRowRegistry.byKey(key)
+    override fun itemByKey(key: String): ProfileRow? =
+        Item.forKey(key) ?: ProfileRowRegistry.byKey(key)?.let { Item.forSettingsId(it.settingsId) ?: it }
 
-    fun isCustomized(): Boolean = value.filter { it.item is Item } != default
+    fun isCustomized(): Boolean = value.filter { it.item is Item } != default || value.any { it.item !is Item && !it.enabled }
 
     companion object {
         private val OFF_BY_DEFAULT = emptySet<ProfileRow>()

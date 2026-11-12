@@ -110,6 +110,36 @@ object PinHelper {
         refresh(account)
     }
 
+    // entiny: a local pin has no server pinnedNum, so dragging it across a server pin would zero that pin's number
+    @JvmStatic
+    fun canMove(account: Int, folderId: Int, filter: MessagesController.DialogFilter?, fromId: Long, toId: Long): Boolean {
+        if (!InuConfig.UNLIMITED_PINNED_CHATS.value) return true
+        val pins = scopeMap(account, scopeFor(folderId, filter)) ?: return true
+        return pins.containsKey(fromId) == pins.containsKey(toId)
+    }
+
+    @JvmStatic
+    fun swapLocalPins(account: Int, folderId: Int, filter: MessagesController.DialogFilter?, fromId: Long, toId: Long): Boolean {
+        if (!InuConfig.UNLIMITED_PINNED_CHATS.value) return false
+        val scope = scopeFor(folderId, filter)
+        val fromOrder: Int
+        val toOrder: Int
+        synchronized(cache) {
+            val pins = cache.get(account)?.get(scope) ?: return false
+            fromOrder = pins[fromId] ?: return false
+            toOrder = pins[toId] ?: return false
+            pins[fromId] = toOrder
+            pins[toId] = fromOrder
+        }
+        val storage = MessagesStorage.getInstance(account) ?: return true
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            InuDatabaseHelper.saveLocalPin(db, scope, fromId, toOrder)
+            InuDatabaseHelper.saveLocalPin(db, scope, toId, fromOrder)
+        }
+        return true
+    }
+
     private fun refresh(account: Int) {
         val controller = MessagesController.getInstance(account) ?: return
         controller.sortDialogs(null)

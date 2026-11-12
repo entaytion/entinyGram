@@ -57,7 +57,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 - 📡 **hide FAB** — hide the chat-list buttons with a separate toggle and keep your chosen actions
 - 📡 **iOS-style design** — compact bottom bar, compact chat header pill with adjustable avatar placement (or in the menu slot with tap and long-press swappable, avatar hideable), iOS input bar with spaced AI and emoji buttons, chat list with larger avatars, message menu as a properly positioned card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
-- 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, avatar corner radius, Accent/Neutral/White action buttons, chat input text size, and optional Android font scaling for messages
+- 📡 **themes and chrome** — standalone AMOLED, Material 3 colors for the Monet themes, adjustable liquid-glass refraction, tint and blur strength, avatar corner radius, Accent/Neutral/White action buttons, chat input text size, and optional Android font scaling for messages
 - adjustable backdrop blur behind message menus - *inspired by NagramXF*
 - 📡 **glass glare** — disabled, default or solid outline
 - 📡 **chat headers** — live header preview, a choice of which titles to center (chat list, chats, other pages), and auto marquee for long names
@@ -89,7 +89,7 @@ everything below is a switch in `Settings → entinyGram` — turn it all off an
 
 ### messages & sending
 
-- 📡 **Forward Pro** — full-screen editor over your chat wallpaper with a real bubble preview, albums kept grouped, comment before or after the forwarded message, formatted comment text; Forward can open it from chats and shared media instead of the stock picker
+- 📡 **Forward Pro** — full-screen editor over your chat wallpaper with a real bubble preview, albums kept grouped, comment before or after the forwarded message, formatted comment text; Forward can open it from chats, shared media and global search instead of the stock picker, with a select all button for the current folder
 - 📡 **round videos** — send from the gallery, bottom zoom slider with presets and visible +/- buttons, pinch zoom, exposure slider starting at neutral (50%) and AE lock, up to 720p with shared 60 FPS and video bitrate settings up to 2 Mbps, chosen audio bitrate and microphone source; 512p stays round, 720p is delivered as regular video
   - Searchable zoom and exposure settings for both round recorders.
 - 📡 **send as sticker** — long-press the send button on selected photos to send them as 512 px stickers

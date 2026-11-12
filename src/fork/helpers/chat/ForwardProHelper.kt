@@ -218,9 +218,13 @@ object ForwardProHelper {
             updateQuickToggleIcons(alert)
         }
 
+        val selectAllIcon = makeToggle(R.drawable.msg_select, R.string.SelectAll)
+        selectAllIcon.setOnClickListener { alert.inu_toggleSelectAll() }
+
         val toggleContainer = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
+            addView(selectAllIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
             addView(commentOrderIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
             addView(captionIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
             addView(silentIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
@@ -881,6 +885,12 @@ object ForwardProHelper {
             if (activity is ChatActivity || it.id > 0) messages.add(it)
         }
         return openSheet(activity, messages)
+    }
+
+    @JvmStatic
+    fun takeOverMessages(activity: BaseFragment, messages: Collection<MessageObject>): Boolean {
+        if (!InuConfig.FORWARD_PRO_REPLACE.value) return false
+        return openSheet(activity, messages.filter { it.id > 0 })
     }
 
     fun hideSelectionAuthor(activity: BaseFragment): Boolean {
