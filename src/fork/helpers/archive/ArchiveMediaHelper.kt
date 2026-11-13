@@ -95,7 +95,7 @@ object ArchiveMediaHelper {
                 val source = File(path).canonicalFile
                 if (!source.isFile || source.length() <= 0) continue
                 if (source.path.startsWith(targetRoot.path + File.separator)) continue
-                val copiedPath = runMediaCopy(PendingMediaCopy(source, File(targetRoot, "${java.util.UUID.randomUUID()}_${source.name}"))) ?: continue
+                val copiedPath = runMediaCopy(PendingMediaCopy(source, File(targetRoot, source.name))) ?: continue
                 moved++
                 storage.storageQueue.postRunnable {
                     try {
@@ -150,7 +150,7 @@ object ArchiveMediaHelper {
                 fileLoader.getPathToMessage(message, true, true),
             ).filterNotNull().firstOrNull { it.isFile && it.length() > 0 && (expectedSize <= 0 || it.length() == expectedSize) && !it.name.endsWith(".enc") } ?: return null
             if (maxBytes > 0 && path.length() > maxBytes) return null
-            PendingMediaCopy(path, File(getSavedMediaDir(account), "${MessageObject.getDialogId(message)}_${message.id}_${java.util.UUID.randomUUID()}_${path.name}"))
+            PendingMediaCopy(path, File(getSavedMediaDir(account), originalName(message, path)))
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "planMediaCopy error", e)
             null
@@ -200,14 +200,42 @@ object ArchiveMediaHelper {
     }
 
 
+    private fun originalName(message: TLRPC.Message, source: File): String {
+        val document = MessageObject.getMedia(message)?.document ?: return source.name
+        return FileLoader.getDocumentFileName(document)
+            ?.replace(Regex("[\\\\/:*?\"<>|\\x00-\\x1f]"), "_")
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() && it != "." && it != ".." }
+            ?: source.name
+    }
+
+    // entiny: two copies of the same name can run at once, so the free name is claimed by creating its .partial
+    private fun reserveTarget(target: File): File = synchronized(savedDirs) {
+        val base = target.nameWithoutExtension
+        val ext = target.extension.let { if (it.isEmpty()) "" else ".$it" }
+        var candidate = target
+        var index = 2
+        while (candidate.exists() || !File(candidate.parentFile, "${candidate.name}.partial").createNewFile()) {
+            candidate = File(target.parentFile, "$base ($index)$ext")
+            index++
+        }
+        candidate
+    }
+
     private fun runMediaCopy(plan: PendingMediaCopy?): String? {
         if (plan == null) return null
-        val temporary = File(plan.target.parentFile, "${plan.target.name}.partial")
+        val target = try {
+            reserveTarget(plan.target)
+        } catch (e: Throwable) {
+            android.util.Log.e(TAG, "copyMediaFile reserve error", e)
+            return null
+        }
+        val temporary = File(target.parentFile, "${target.name}.partial")
         return try {
             plan.source.copyTo(temporary, overwrite = true)
             check(temporary.length() > 0 && temporary.length() == plan.source.length())
-            check(temporary.renameTo(plan.target))
-            plan.target.absolutePath
+            check(temporary.renameTo(target))
+            target.absolutePath
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "copyMediaFile error", e)
             null

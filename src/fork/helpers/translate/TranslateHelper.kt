@@ -145,6 +145,7 @@ object TranslateHelper {
         provider: String? = null,
     ): Boolean {
         if (!InuConfig.IN_PLACE_TRANSLATION.value) return false
+        if (activity.chatMode == ChatActivity.inu_MODE_ARCHIVE) return false
         // #if PLUGINS
         if (activity.chatMode == ChatActivity.inu_MODE_PLUGIN_HISTORY) return false
         // #endif
@@ -192,7 +193,7 @@ object TranslateHelper {
         val pluginHistory = false
         // #endif
         val inputPeer = if (selected.isPoll || selected.isVoiceTranscriptionOpen || selected.isSponsored ||
-            selected.scheduled || activity.chatMode == ChatActivity.MODE_QUICK_REPLIES
+            selected.scheduled || activity.chatMode == ChatActivity.MODE_QUICK_REPLIES || activity.chatMode == ChatActivity.inu_MODE_ARCHIVE
             // #if PLUGINS
             || pluginHistory && !PluginChatHistory.showsInChat(activity, selected)
             // #endif

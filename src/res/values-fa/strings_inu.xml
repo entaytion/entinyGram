@@ -1560,7 +1560,6 @@
     <string name="InuExportArchive">صادر کردن آرشیو</string>
     <string name="InuExportArchiveEmpty">چیزی برای صادر کردن نیست</string>
     <string name="InuDeletedArchive">پیام‌های حذف‌شده</string>
-    <string name="InuDeletedArchiveEmpty">هنوز پیام حذف‌شده ذخیره‌شده‌ای نیست.</string>
     <string name="InuDeletedMessageSearchHint">جستجو در پیام‌های حذف‌شده و ویرایش‌شده ذخیره‌شده</string>
     <string name="InuDeletedMessageSearchEmpty">موردی پیدا نشد.</string>
     <string name="InuDeletedMessagesTransparent">پیام‌های حذف‌شده نیمه‌شفاف</string>
@@ -2004,8 +2003,6 @@
     <string name="InuEditFieldSpoiler">اسپویلر</string>
     <string name="InuEditFieldText">متن</string>
     <string name="InuEditFieldTimer">زمان‌سنج</string>
-    <string name="InuEditHistoryChanged">تغییر: %1$s</string>
-    <string name="InuEditedAtTime">ویرایش‌شده در %1$s</string>
     <string name="InuHideDialogPreview">پنهان‌کردن پیش‌نمایش آخرین پیام</string>
     <string name="InuHideDialogPreviewInfo">نمایش آخرین پیام در فهرست گفتگو زیر اسپویلر</string>
     <string name="InuHideReactionsBadges">پنهان‌کردن نشان واکنش‌ها</string>
@@ -2220,7 +2217,6 @@
     <string name="InuAlternativeGifBehaviorInfo">وقتی پخش خودکار خاموش است، GIF با اولین لمس تمام‌صفحه باز و پس از بستن متوقف می‌شود</string>
     <string name="InuAlwaysSendVideosHdInfo">هنگام ارسال ویدیو، بدون توجه به تنظیم صرفه‌جویی داده، بالاترین کیفیت فشرده‌سازی را انتخاب می‌کند.</string>
     <string name="InuChatDecor">تزئینات</string>
-    <string name="InuEditHistoryOriginal">اصلی</string>
     <string name="InuFontSyntheticBoldInfo">وقتی قلم وزن پررنگ ندارد، آن را شبیه‌سازی می‌کند. برای استفاده از وزن خود قلم خاموش کنید. نیازمند راه‌اندازی دوباره است.</string>
     <string name="InuGhostHideSeenMentionsInfo">نشان اشاره و دکمه رفتن به آن را در گفتگوهایی که در حالت روح به‌صورت محلی باز کرده‌اید پنهان می‌کند.</string>
     <string name="InuOneTimePeekInfo">باز کردن رسانه یک‌بارمصرف به فرستنده اطلاع نمی‌دهد. هر زمان خواستید مطلع شود از «علامت‌گذاری به‌عنوان دیده‌شده» در منوی پیام استفاده کنید.</string>

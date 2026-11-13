@@ -1514,8 +1514,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuAiProvidersActiveForChat">Activo para el chat</string>
     <string name="InuAiProvidersActiveForVoice">Activo para voz</string>
     <string name="InuNoEditHistory">No hay historial de ediciones de este mensaje</string>
-    <string name="InuEditedAtTime">Editado a las %1$s</string>
-    <string name="InuEditHistoryChanged">Cambió: %1$s</string>
     <string name="InuEditFieldText">texto</string>
     <string name="InuEditFieldCaption">leyenda</string>
     <string name="InuEditFieldFormatting">formato</string>
@@ -1744,7 +1742,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuExportArchive">Exportar archivo</string>
     <string name="InuExportArchiveEmpty">Nada que exportar</string>
     <string name="InuDeletedArchive">Mensajes eliminados</string>
-    <string name="InuDeletedArchiveEmpty">Aún no hay mensajes eliminados guardados.</string>
     <string name="InuDeletedMessageSearchHint">Buscar en mensajes eliminados y editados guardados</string>
     <string name="InuDeletedMessageSearchEmpty">No se encontraron coincidencias.</string>
     <string name="InuDeletedMessagesTransparent">Mensajes eliminados semitransparentes</string>
@@ -2247,7 +2244,6 @@ Mientras esté activado:</string>
     <string name="InuAlternativeGifBehaviorInfo">Con la reproducción automática desactivada, abre los GIF a pantalla completa al primer toque y los detiene al cerrar</string>
     <string name="InuAlwaysSendVideosHdInfo">Elige la mayor calidad de compresión al enviar vídeos, independientemente del ahorro de datos.</string>
     <string name="InuChatDecor">Decoración</string>
-    <string name="InuEditHistoryOriginal">Original</string>
     <string name="InuFontSyntheticBoldInfo">Simula la negrita si la fuente no tiene ese grosor. Desactívalo para usar el grosor propio de la fuente. Requiere reiniciar.</string>
     <string name="InuGhostHideSeenMentionsInfo">Oculta el indicador de mención y el botón para saltar a ella en los chats que ya abriste localmente en modo fantasma.</string>
     <string name="InuOneTimePeekInfo">Abrir contenido de visualización única no avisa al remitente. Usa «Marcar como visto» en el menú del mensaje cuando quieras avisarle.</string>

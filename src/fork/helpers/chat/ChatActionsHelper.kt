@@ -1,5 +1,6 @@
 package desu.inugram.helpers.chat
 
+import desu.inugram.helpers.archive.ArchiveChatHistory
 import desu.inugram.helpers.archive.ArchiveCache
 import android.Manifest
 import android.app.Activity
@@ -30,8 +31,6 @@ import desu.inugram.helpers.menu.reorderByMenu
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.translate.TranslateHelper
 import desu.inugram.ui.showInputDialog
-import desu.inugram.ui.DeletedArchiveActivity
-import desu.inugram.ui.EditHistoryActivity
 import desu.inugram.helpers.menu.reorderByKeys
 import java.util.WeakHashMap
 import org.telegram.messenger.AndroidUtilities
@@ -586,8 +585,8 @@ object ChatActionsHelper {
 
             ACTION_GO_TO_BEGINNING -> ChatHelper.jumpToBeginning(activity)
             ACTION_GO_TO_MESSAGE -> showGoToMessageDialog(activity)
-            ACTION_DELETED_MESSAGES -> activity.presentFragment(DeletedArchiveActivity(activity.dialogId, activity.currentAccount))
-            ACTION_EDITED_MESSAGES -> activity.presentFragment(EditHistoryActivity(activity.dialogId, activity.currentAccount))
+            ACTION_DELETED_MESSAGES -> ArchiveChatHistory.open(activity, activity.dialogId, ArchiveChatHistory.KIND_DELETED)
+            ACTION_EDITED_MESSAGES -> ArchiveChatHistory.open(activity, activity.dialogId, ArchiveChatHistory.KIND_EDITED)
             ACTION_STATISTICS -> {
                 val chat = activity.currentChat
                 if (chat != null) activity.presentFragment(StatisticActivity.create(chat, false))

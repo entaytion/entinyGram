@@ -1,5 +1,6 @@
 package desu.inugram.helpers.chat
 
+import desu.inugram.helpers.archive.ArchiveChatHistory
 import desu.inugram.helpers.archive.DeletedMessagesHelper
 import desu.inugram.helpers.archive.EditHistoryHelper
 import desu.inugram.helpers.dialogs.FolderHelper
@@ -617,7 +618,7 @@ object ChatHelper {
             icons.add(R.drawable.msg_stats)
         }
 
-        if (activity.isFiltered
+        if (activity.isFiltered || activity.chatMode == ChatActivity.inu_MODE_ARCHIVE
             // #if PLUGINS
             || PluginChatHistory.showsInChat(activity, selectedObject)
             // #endif
@@ -749,6 +750,9 @@ object ChatHelper {
 
         reservePluginItems(items, options, icons, activity, selectedObject, selectedObjectGroup)
         // #endif
+        if (activity.chatMode == ChatActivity.inu_MODE_ARCHIVE) {
+            ArchiveChatHistory.filterMessageMenu(activity, selectedObject, items, options, icons)
+        }
         applyMessageMenuOrder(items, options, icons)
     }
 
@@ -1103,6 +1107,7 @@ object ChatHelper {
         selectedObject: MessageObject,
         selectedObjectGroup: MessageObject.GroupedMessages?
     ): Boolean {
+        if (activity.chatMode == ChatActivity.inu_MODE_ARCHIVE && ArchiveChatHistory.processMenuOption(activity, option, selectedObject, selectedObjectGroup)) return true
         // #if PLUGINS
         if (option >= PluginActions.OPTION_BASE) return dispatchPluginItem(option)
         // #endif
@@ -1300,6 +1305,9 @@ object ChatHelper {
             }
 
             OPTION_SHOW_IN_CHAT ->
+                if (activity.chatMode == ChatActivity.inu_MODE_ARCHIVE) {
+                    openInNewChat(activity, selectedObject.dialogId, selectedObject.realId)
+                } else
                 // #if PLUGINS
                 if (activity.chatMode == ChatActivity.inu_MODE_PLUGIN_HISTORY) {
                     openInNewChat(activity, selectedObject.dialogId, selectedObject.realId)
@@ -1928,6 +1936,7 @@ object ChatHelper {
         if (activity.isReport) return false
         val chatMode = activity.chatMode
         if (chatMode == ChatActivity.MODE_PINNED) return InuConfig.HIDE_BOTTOM_BAR_PINNED.value
+        if (chatMode == ChatActivity.inu_MODE_ARCHIVE) return ArchiveChatHistory.buttonText(activity) == null
         // #if PLUGINS
         if (chatMode == ChatActivity.inu_MODE_PLUGIN_HISTORY) return PluginChatHistory.buttonText(activity) == null
         // #endif

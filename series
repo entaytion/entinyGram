@@ -657,3 +657,4 @@ entiny/snowflakes-ignore-lite-mode.patch
 entiny/no-forward-limit.patch
 entiny/add-to-folder-in-folder.patch
 entiny/file-ref-stale-cache-stall.patch
+entiny/archive-chat.patch

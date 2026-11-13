@@ -1515,8 +1515,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuAiProvidersActiveForChat">Attivo per la chat</string>
     <string name="InuAiProvidersActiveForVoice">Attivo per la voce</string>
     <string name="InuNoEditHistory">Nessuna cronologia delle modifiche registrata per questo messaggio</string>
-    <string name="InuEditedAtTime">Modificato alle %1$s</string>
-    <string name="InuEditHistoryChanged">Modificato: %1$s</string>
     <string name="InuEditFieldText">testo</string>
     <string name="InuEditFieldCaption">didascalia</string>
     <string name="InuEditFieldFormatting">formattazione</string>
@@ -1745,7 +1743,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuExportArchive">Esporta archivio</string>
     <string name="InuExportArchiveEmpty">Niente da esportare</string>
     <string name="InuDeletedArchive">Messaggi eliminati</string>
-    <string name="InuDeletedArchiveEmpty">Ancora nessun messaggio eliminato salvato.</string>
     <string name="InuDeletedMessageSearchHint">Cerca nei messaggi eliminati e modificati salvati</string>
     <string name="InuDeletedMessageSearchEmpty">Nessuna corrispondenza trovata.</string>
     <string name="InuDeletedMessagesTransparent">Messaggi eliminati semitrasparenti</string>
@@ -2248,7 +2245,6 @@ Mentre è attivo:</string>
     <string name="InuAlternativeGifBehaviorInfo">Con la riproduzione automatica disattivata, apre le GIF a schermo intero al primo tocco e le ferma alla chiusura</string>
     <string name="InuAlwaysSendVideosHdInfo">Seleziona la massima qualità di compressione per i video, indipendentemente dal risparmio dati.</string>
     <string name="InuChatDecor">Decorazioni</string>
-    <string name="InuEditHistoryOriginal">Originale</string>
     <string name="InuFontSyntheticBoldInfo">Simula il grassetto se il carattere non lo include. Disattiva per usare il peso originale. Richiede il riavvio.</string>
     <string name="InuGhostHideSeenMentionsInfo">Nasconde il badge delle menzioni e il pulsante di salto nelle chat già aperte localmente in modalità fantasma.</string>
     <string name="InuOneTimePeekInfo">Aprire contenuti da visualizzare una volta non avvisa il mittente. Usa «Segna come visualizzato» nel menu del messaggio quando vuoi avvisarlo.</string>

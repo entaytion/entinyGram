@@ -974,7 +974,6 @@
     <string name="InuDeletedMessageSearchHint">Kaydedilen silinen ve düzenlenen mesajlarda ara</string>
     <string name="InuDeletedMessageSearchEmpty">Eşleşme bulunamadı.</string>
     <string name="InuDeletedArchive">Silinen mesajlar</string>
-    <string name="InuDeletedArchiveEmpty">Henüz kaydedilmiş silinmiş mesaj yok.</string>
     <string name="InuClearDeletedCacheDone">Silinen mesaj önbelleği temizlendi</string>
     <string name="InuClearDeletedCacheEmpty">Silinen mesaj önbelleği boş</string>
     <string name="InuClearDeletedCacheHint">Kayıtlı mesajları ve medyayı tek tek görüp silmek için bir sohbete uzun basın</string>
@@ -2022,8 +2021,6 @@
     <string name="InuEditFieldSpoiler">spoiler</string>
     <string name="InuEditFieldText">metin</string>
     <string name="InuEditFieldTimer">zamanlayıcı</string>
-    <string name="InuEditHistoryChanged">Değişen: %1$s</string>
-    <string name="InuEditedAtTime">Düzenlenme zamanı: %1$s</string>
     <string name="InuHideDialogPreview">Son mesaj önizlemesini gizle</string>
     <string name="InuHideDialogPreviewInfo">Sohbet listesinde son mesajı spoiler altında göster</string>
     <string name="InuHideReactionsBadges">Tepki rozetlerini gizle</string>
@@ -2212,7 +2209,6 @@
     <string name="InuAlternativeGifBehaviorInfo">GIF otomatik oynatması kapalıyken ilk dokunuşta tam ekran açar ve kapatınca durdurur</string>
     <string name="InuAlwaysSendVideosHdInfo">Veri tasarrufu ayarından bağımsız olarak video gönderirken en yüksek sıkıştırma kalitesini seçer.</string>
     <string name="InuChatDecor">Süsleme</string>
-    <string name="InuEditHistoryOriginal">Orijinal</string>
     <string name="InuFontSyntheticBoldInfo">Yazı tipinde kalın stil yoksa kalınlığı taklit eder. Yazı tipinin kendi kalınlığını kullanmak için kapatın. Yeniden başlatma gerekir.</string>
     <string name="InuGhostHideSeenMentionsInfo">Hayalet modunda yerel olarak açtığınız sohbetlerde bahsetme rozetini ve gitme düğmesini gizler.</string>
     <string name="InuOneTimePeekInfo">Tek görüntülemelik medyayı açmak gönderene bildirilmez. Bildirmek istediğinizde mesaj menüsündeki «Görüldü olarak işaretle» seçeneğini kullanın.</string>

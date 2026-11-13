@@ -1,0 +1,267 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 00:09:46 +0200
+Subject: Open a chat's archive in ChatActivity as a read-only local history without a peer.
+
+---
+ .../java/org/telegram/ui/ChatActivity.java    | 100 +++++++++++++++++-
+ 1 file changed, 97 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -722,6 +722,7 @@ public class ChatActivity extends BaseFragment implements
+     public static final int MODE_SAVED = 3;
+     public static final int MODE_QUICK_REPLIES = 5;
+     public static final int MODE_EDIT_BUSINESS_LINK = 6;
++    public static final int inu_MODE_ARCHIVE = 101;
+     public static final int MODE_SEARCH = 7;
+     public static final int MODE_SUGGESTIONS = 8;
+     public static final int MODE_WELCOME_MESSAGES = 9;
+@@ -2879,6 +2880,10 @@ public class ChatActivity extends BaseFragment implements
+                 return false;
+             }
+             forceEmptyHistory();
++        } else if (chatMode == inu_MODE_ARCHIVE) {
++            if (!desu.inugram.helpers.archive.ArchiveChatHistory.attach(this, arguments)) {
++                return false;
++            }
+         } else if (chatMode == MODE_SEARCH && arguments.getInt("searchType", 0) == desu.inugram.helpers.feed.FeedMessageUtils.SEARCH_TYPE_FEED) {
+             searchType = desu.inugram.helpers.feed.FeedMessageUtils.SEARCH_TYPE_FEED;
+             hasMainTabs = arguments.getBoolean("hasMainTabs", false);
+@@ -3310,6 +3315,11 @@ public class ChatActivity extends BaseFragment implements
+                 loadMoreSearchResults();
+                 return;
+             }
++            if (chatMode == inu_MODE_ARCHIVE) {
++                waitingForLoad.add(lastLoadIndex);
++                desu.inugram.helpers.archive.ArchiveChatHistory.load(this, lastLoadIndex++);
++                return;
++            }
+             waitingForLoad.add(lastLoadIndex);
+             if (chatMode == MODE_SEARCH) {
+                 HashtagSearchController.getInstance(currentAccount).searchHashtag(searchingHashtag, classGuid, searchType, lastLoadIndex++);
+@@ -3420,6 +3430,9 @@ public class ChatActivity extends BaseFragment implements
+             getNotificationCenter().removeObserver(commentsMessagesObserver, NotificationCenter.messagesDidLoad);
+             commentsMessagesObserver = null;
+         }
++        if (chatMode == inu_MODE_ARCHIVE) {
++            desu.inugram.helpers.archive.ArchiveChatHistory.onDestroyed(this);
++        }
+         if (inu_searchFilter != null) inu_searchFilter.cancelScan();
+         ReactionsEffectOverlay.dismissByFragment(this);
+         AndroidUtilities.cancelRunOnUIThread(loadNextNewerFeedPage);
+@@ -3826,6 +3839,7 @@ public class ChatActivity extends BaseFragment implements
+             @Override
+             public void onItemClick(final int id) {
+                 // the chat's menu is also opened from the sidebar: what it does is in the chat
++                if (chatMode == inu_MODE_ARCHIVE && desu.inugram.helpers.archive.ArchiveChatHistory.onMenuItemClick(ChatActivity.this, id)) return;
+                 if (id != chat_menu_options && id != chat_menu_topics_panel && id != -1 && topicsPanel != null && topicsPanel.isOpen()) {
+                     topicsPanel.close();
+                 }
+@@ -4645,6 +4659,12 @@ public class ChatActivity extends BaseFragment implements
+             headerItem.lazilyAddSubItem(rename_business_link, R.drawable.msg_edit, getString(R.string.Rename));
+             trackRedHeaderItem(headerItem.lazilyAddSubItem(delete_business_link, R.drawable.msg_delete, getString(R.string.Delete)), true).setColors(Theme.getColor(Theme.key_text_RedRegular), Theme.getColor(Theme.key_text_RedRegular));
+         }
++        if (chatMode == inu_MODE_ARCHIVE && desu.inugram.helpers.archive.ArchiveChatHistory.hasMenu(this)) {
++            headerItem = menu.addItem(chat_menu_options, otherIcon);
++            otherIcon.addView(headerItem.getIconView());
++            headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
++            desu.inugram.helpers.archive.ArchiveChatHistory.fillMenu(this, headerItem);
++        }
+         if (ChatObject.isForum(currentChat) && isTopic && getParentLayout() != null && getParentLayout().getFragmentStack() != null && chatMode == MODE_DEFAULT) {
+             boolean hasMyForum = false;
+             for (int i = 0; i < getParentLayout().getFragmentStack().size(); ++i) {
+@@ -4740,6 +4760,10 @@ public class ChatActivity extends BaseFragment implements
+             actionBar.setForcedMenuWidth(dp(46));
+             actionBar.doNotDrawGlassMenu = true;
+             avatarContainer.setActionBar(actionBar);
++        } else if (chatMode == inu_MODE_ARCHIVE) {
++            actionBar.setChatAvatarContainer(avatarContainer);
++            avatarContainer.setActionBar(actionBar);
++            desu.inugram.helpers.archive.ArchiveChatHistory.applyAvatar(this, avatarContainer.avatarImageView);
+         } else if (isComments) {
+             actionBar.setChatAvatarContainer(avatarContainer);
+             actionBar.setForcedMenuMinWidth(dp(46));
+@@ -8828,7 +8852,9 @@ public class ChatActivity extends BaseFragment implements
+             if (getParentActivity() == null || pullingDownOffset != 0) {
+                 return;
+             }
+-            if (chatMode == MODE_SAVED) {
++            if (chatMode == inu_MODE_ARCHIVE) {
++                desu.inugram.helpers.archive.ArchiveChatHistory.onButtonClick(this);
++            } else if (chatMode == MODE_SAVED) {
+                 Bundle args = new Bundle();
+                 long dialogId = getSavedDialogId();
+                 if (dialogId >= 0) {
+@@ -14885,6 +14911,14 @@ public class ChatActivity extends BaseFragment implements
+             return;
+         }
+ 
++        if (chatMode == inu_MODE_ARCHIVE) {
++            if (totalItemCount - firstVisibleItemFinal - visibleItemCountFinal <= checkLoadCount && !loading && !endReached[0]) {
++                loading = true;
++                waitingForLoad.add(lastLoadIndex);
++                desu.inugram.helpers.archive.ArchiveChatHistory.load(this, lastLoadIndex++);
++            }
++            return;
++        }
+         AndroidUtilities.runOnUIThread(() -> {
+             if (totalItemCount - firstVisibleItemFinal - visibleItemCountFinal <= checkLoadCount && !loading) {
+                 if (!endReached[0]) {
+@@ -16990,6 +17024,12 @@ public class ChatActivity extends BaseFragment implements
+             fakePostponedScroll = false;
+             postponedScrollMessageId = 0;
+             postponedScrollIsCanceled = false;
++            if (chatMode == inu_MODE_ARCHIVE) {
++                waitingForLoad.clear();
++                waitingForLoad.add(lastLoadIndex);
++                desu.inugram.helpers.archive.ArchiveChatHistory.reload(this, lastLoadIndex++);
++                return;
++            }
+             waitingForLoad.clear();
+ 
+             waitingForLoad.add(lastLoadIndex);
+@@ -17465,7 +17505,7 @@ public class ChatActivity extends BaseFragment implements
+                         maxUnreadDate = Math.max(maxUnreadDate, messageObject.messageOwner.date);
+                     }
+                 }
+-                if (messageObject.type == MessageObject.TYPE_POLL && messageObject.getId() > 0) {
++                if (messageObject.type == MessageObject.TYPE_POLL && messageObject.getId() > 0 && chatMode != inu_MODE_ARCHIVE) {
+                     pollsToCheck.add(messageObject);
+                 }
+             }
+@@ -18245,6 +18285,9 @@ public class ChatActivity extends BaseFragment implements
+             query = true;
+         }
+ 
++        if (query && chatMode == inu_MODE_ARCHIVE) {
++            return;
++        }
+         if (query) {
+             if (isThreadChat() && id == threadMessageId) {
+                 scrollToThreadMessage = true;
+@@ -20268,7 +20311,7 @@ public class ChatActivity extends BaseFragment implements
+             if (avatarContainer != null) {
+                 avatarContainer.hideTimeItem(animated);
+             }
+-        } else if (isFeedSearch()) {
++        } else if (isFeedSearch() || chatMode == inu_MODE_ARCHIVE) {
+             if (timeItem2 != null) {
+                 timeItem2.setVisibility(View.GONE);
+             }
+@@ -20558,6 +20601,13 @@ public class ChatActivity extends BaseFragment implements
+                 }
+             }
+         }
++        if (chatMode == inu_MODE_ARCHIVE) {
++            int inu_selectedCount = selectedMessagesIds[0].size() + selectedMessagesIds[1].size();
++            canEditMessagesCount = 0;
++            canForwardMessagesCount = 0;
++            cantDeleteMessagesCount = inu_selectedCount;
++            cantForwardMessagesCount = inu_selectedCount;
++        }
+         if (last && actionBar.isActionModeShowed() && !isReport()) {
+             int selectedCount = selectedMessagesIds[0].size() + selectedMessagesIds[1].size();
+             if (selectedCount == 0) {
+@@ -20926,6 +20976,8 @@ public class ChatActivity extends BaseFragment implements
+             avatarContainer.setTitle(LocaleController.getString(R.string.RepliesTitle));
+         } else if (UserObject.isAnonymous(currentUser)) {
+             avatarContainer.setTitle(LocaleController.getString(R.string.AnonymousForward));
++        } else if (chatMode == inu_MODE_ARCHIVE) {
++            avatarContainer.setTitle(desu.inugram.helpers.archive.ArchiveChatHistory.title(this));
+         } else if (chatMode == MODE_SCHEDULED) {
+             if (UserObject.isUserSelf(currentUser)) {
+                 avatarContainer.setTitle(LocaleController.getString(R.string.Reminders));
+@@ -22245,6 +22297,11 @@ public class ChatActivity extends BaseFragment implements
+                     startLoadFromMessageId = startLoadFrom;
+                     needSelectFromMessageId = needSelect;
+                 }
++                if (chatMode == inu_MODE_ARCHIVE) {
++                    createUnreadMessageAfterId = unreadAfterId;
++                    startLoadFromMessageId = startLoadFrom;
++                    needSelectFromMessageId = needSelect;
++                }
+             }
+         }
+ 
+@@ -23491,6 +23548,9 @@ public class ChatActivity extends BaseFragment implements
+                 headerItem.setSubItemShown(open_direct, ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && currentChat.linked_monoforum_id != 0 && (ChatObject.canManageMonoForum(currentAccount, -currentChat.linked_monoforum_id) || ChatHelper.shouldForceHideBottomBar(this)));
+             }
+         } else if (id == NotificationCenter.didReceiveNewMessages) {
++            if (chatMode == inu_MODE_ARCHIVE) {
++                return;
++            }
+             FileLog.d("ChatActivity didReceiveNewMessages start");
+             long did = (Long) args[0];
+             ArrayList<MessageObject> arr = (ArrayList<MessageObject>) args[1];
+@@ -29519,6 +29579,10 @@ public class ChatActivity extends BaseFragment implements
+             if (chatActivityEnterView != null) {
+                 chatActivityEnterView.hidePopup(false);
+             }
++        } else if (chatMode == inu_MODE_ARCHIVE) {
++            bottomOverlayChatText.setTag(null);
++            CharSequence inu_archiveButtonText = desu.inugram.helpers.archive.ArchiveChatHistory.buttonText(this);
++            bottomOverlayChatText.setText(inu_archiveButtonText != null ? inu_archiveButtonText : "");
+         } else if (chatMode == MODE_SAVED && getSavedDialogId() != getUserConfig().getClientUserId()) {
+             if (getSavedDialogId() == UserObject.ANONYMOUS) {
+                 forceNoBottom = true;
+@@ -29803,6 +29867,23 @@ public class ChatActivity extends BaseFragment implements
+             } else if (isInsideContainer || forceNoBottom) {
+                 bottomChannelButtonsLayout.setVisibility(View.GONE);
+                 chatActivityEnterView.setVisibility(View.GONE);
++            } else if (chatMode == inu_MODE_ARCHIVE) {
++                bottomChannelButtonsLayout.setVisibility(View.VISIBLE);
++                chatActivityEnterView.setFieldFocused(false);
++                chatActivityEnterView.setVisibility(View.INVISIBLE);
++                chatActivityEnterView.closeKeyboard();
++                if (suggestEmojiPanel != null) {
++                    suggestEmojiPanel.forceClose();
++                }
++                if (attachItem != null) {
++                    attachItem.setVisibility(View.GONE);
++                }
++                if (otherIcon != null) {
++                    otherIcon.setIconVisible(false);
++                }
++                if (headerItem != null) {
++                    headerItem.setVisibility(View.VISIBLE);
++                }
+             } else if (isReport()) {
+                 bottomChannelButtonsLayout.setVisibility(View.VISIBLE);
+                 chatActivityEnterView.setVisibility(View.INVISIBLE);
+@@ -34757,6 +34838,9 @@ public class ChatActivity extends BaseFragment implements
+             AccountFrozenAlert.show(currentAccount);
+             return;
+         }
++        if (chatMode == inu_MODE_ARCHIVE) {
++            return;
++        }
+         if (visibleReaction != null && visibleReaction.isStar) {
+             closeMenu();
+             if (cell == null) {
+@@ -38052,6 +38136,15 @@ public class ChatActivity extends BaseFragment implements
+         return UserObject.isBotForum(currentUser);
+     }
+ 
++    public void inu_archiveEnds(boolean older, boolean newer) {
++        endReached[0] = older;
++        forwardEndReached[0] = newer;
++    }
++
++    public boolean inu_acceptsArchiveLoad(int loadIndex) {
++        return waitingForLoad.contains(loadIndex) && !(postponedScrollIsCanceled && loadIndex == postponedScrollToLastMessageQueryIndex);
++    }
++
+     public MessageObject getThreadMessage() {
+         return threadMessageObject;
+     }
+@@ -40195,6 +40288,7 @@ public class ChatActivity extends BaseFragment implements
+                     messageCell.setSponsoredMessageVisible(true, false);
+                     messageCell.isBotForum = UserObject.isBotForum(currentUser);
+                     messageCell.isReportChat = isReport();
++                    messageCell.isChat |= desu.inugram.helpers.archive.ArchiveChatHistory.showsAvatars(ChatActivity.this);
+                     messageCell.isSavedChat = chatMode == MODE_SAVED;
+                     messageCell.isSavedPreviewChat = chatMode == MODE_SAVED && isInsideContainer;
+                     messageCell.isBot = currentUser != null && currentUser.bot;

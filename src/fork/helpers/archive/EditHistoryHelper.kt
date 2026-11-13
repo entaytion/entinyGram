@@ -189,31 +189,6 @@ object EditHistoryHelper {
     }
 
     @JvmStatic
-    fun getEditHistoryAsync(account: Int, dialogId: Long, msgId: Int, onLoaded: (List<EditEntry>) -> Unit) {
-        val storage = MessagesStorage.getInstance(account)
-        if (storage == null) {
-            onLoaded(emptyList())
-            return
-        }
-        storage.storageQueue.postRunnable {
-            val db = storage.database
-            val loaded: List<EditEntry> = if (db == null) {
-                emptyList()
-            } else {
-                ArchiveStore.loadEditHistory(db, dialogId, msgId)
-                    .map { EditEntry(it.date, it.text, it.mediaPath, it.entities, it.media, fromId = it.fromId, rowId = it.rowId) }
-            }
-            AndroidUtilities.runOnUIThread {
-                synchronized(ArchiveCache.cacheLock) {
-                    val list = cachedRevisions(account, dialogId, msgId)
-                    if (list.isEmpty()) list.addAll(loaded)
-                }
-                onLoaded(loaded)
-            }
-        }
-    }
-
-    @JvmStatic
     @JvmOverloads
     fun deleteEditHistoryEntry(account: Int, dialogId: Long, msgId: Int, rowId: Long, onDone: Runnable? = null) {
         if (rowId <= 0L) return
@@ -263,7 +238,7 @@ object EditHistoryHelper {
             bulletinFactory?.createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuNoEditHistory))?.show()
             return
         }
-        val frag = desu.inugram.ui.EditHistoryActivity.forMessage(msgObj)
+        val frag = ArchiveChatHistory.create(msgObj.getDialogId(), ArchiveChatHistory.KIND_EDITED, msgObj.id)
         if (activity != null) {
             activity.presentFragment(frag)
         } else if (context is org.telegram.ui.LaunchActivity) {

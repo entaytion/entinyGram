@@ -82,14 +82,13 @@ class ArchiveMediaActivity : BaseFragment() {
         Utilities.globalQueue.postRunnable {
             val result = CacheModel(true)
             dir.listFiles()
-                ?.filter { it.isFile && it.name != ".nomedia" && it.length() > 0 }
+                ?.filter { it.isFile && it.name != ".nomedia" && !it.name.endsWith(".partial") && it.length() > 0 }
                 ?.sortedByDescending { it.lastModified() }
                 ?.forEach { file ->
                     val type = typeOf(file)
                     result.add(type, CacheModel.FileInfo(file).also {
                         it.type = type
                         it.size = file.length()
-                        it.dialogId = file.name.substringBefore('_').toLongOrNull() ?: 0L
                     })
                 }
             AndroidUtilities.runOnUIThread {
@@ -120,14 +119,15 @@ class ArchiveMediaActivity : BaseFragment() {
     private fun confirmDelete() {
         val current = model ?: return
         if (current.getSelectedFiles() == 0) return
-        val builder = AlertDialog.Builder(parentActivity ?: return)
-            .setTitle(LocaleController.getString(R.string.ClearSelectedCache))
-            .setMessage(LocaleController.getString(R.string.InuArchiveMediaDeleteSelected))
-            .setPositiveButton(LocaleController.getString(R.string.Delete)) { _, _ -> delete(current, current.selectedFiles.toList()) }
-            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
-        val dialog = builder.create()
-        showDialog(dialog)
-        (dialog.getButton(AlertDialog.BUTTON_POSITIVE) as? android.widget.TextView)?.setTextColor(Theme.getColor(Theme.key_text_RedBold))
+        showDialog(
+            AlertDialog.Builder(parentActivity ?: return)
+                .setTitle(LocaleController.getString(R.string.ClearSelectedCache))
+                .setMessage(LocaleController.getString(R.string.InuArchiveMediaDeleteSelected))
+                .setPositiveButton(LocaleController.getString(R.string.Delete)) { _, _ -> delete(current, current.selectedFiles.toList()) }
+                .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+                .makeRed(AlertDialog.BUTTON_POSITIVE)
+                .create()
+        )
     }
 
     private fun delete(current: CacheModel, files: List<CacheModel.FileInfo>) {

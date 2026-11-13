@@ -14,10 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.archive.ArchiveCache
+import desu.inugram.helpers.archive.ArchiveChatHistory
 import desu.inugram.helpers.security.ArchiveExportHelper
-import desu.inugram.ui.DeletedArchiveActivity
 import desu.inugram.ui.ChipsRow
-import desu.inugram.ui.EditHistoryActivity
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -125,7 +124,7 @@ class ArchiveCacheActivity(
             }
         })
         val menu = actionBar.createMenu()
-        menu.addItem(MENU_SEARCH, R.drawable.ic_ab_search).contentDescription =
+        menu.addItem(MENU_SEARCH, R.drawable.outline_header_search).contentDescription =
             LocaleController.getString(R.string.Search)
         val other = menu.addItem(0, R.drawable.ic_ab_other)
         other.contentDescription = LocaleController.getString(R.string.AccDescrMoreOptions)
@@ -232,13 +231,7 @@ class ArchiveCacheActivity(
             TAB_DELETED -> false
             else -> item.deleted == null
         }
-        presentFragment(
-            if (showEdits) {
-                EditHistoryActivity(dialogId, currentAccount)
-            } else {
-                DeletedArchiveActivity(dialogId, currentAccount)
-            }
-        )
+        ArchiveChatHistory.open(this, dialogId, if (showEdits) ArchiveChatHistory.KIND_EDITED else ArchiveChatHistory.KIND_DELETED)
     }
 
     private fun toggleSelection(dialogId: Long) {

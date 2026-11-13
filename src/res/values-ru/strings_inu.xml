@@ -1229,13 +1229,14 @@
     <string name="InuArchiveAll">Все</string>
     <string name="InuClearDeletedCacheAlert">Это навсегда удалит локальный архив сохранённых удалённых сообщений и их медиа. Отменить нельзя.</string>
     <string name="InuArchiveMediaDeleteSelected">Удалить выбранные файлы? Они пропадут и из архива.</string>
+    <string name="InuArchiveOpenChat">Открыть чат</string>
+    <string name="InuArchiveDeleteEntry">Удалить из архива</string>
     <string name="InuDeletedMessageSearch">Поиск по архиву</string>
     <string name="InuExportArchive">Экспортировать архив</string>
     <string name="InuExportArchiveEmpty">Нечего экспортировать</string>
     <string name="InuDeletedMessageSearchHint">Поиск по сохранённым удалённым и изменённым сообщениям</string>
     <string name="InuDeletedMessageSearchEmpty">Совпадений не найдено.</string>
     <string name="InuDeletedArchive">Архив удалённых</string>
-    <string name="InuDeletedArchiveEmpty">Пока нет сохранённых удалённых сообщений.</string>
     <string name="InuClearDeletedCacheDone">Кэш удаленных сообщений очищен</string>
     <string name="InuClearDeletedCacheEmpty">Кэш удаленных сообщений пуст</string>
     <string name="InuClearDeletedCacheHint">Удерживайте чат, чтобы просмотреть сохранённые сообщения и медиа и удалять их по одному</string>
@@ -2185,9 +2186,6 @@
     <string name="InuEditFieldSpoiler">спойлер</string>
     <string name="InuEditFieldText">текст</string>
     <string name="InuEditFieldTimer">таймер</string>
-    <string name="InuEditHistoryChanged">Изменено: %1$s</string>
-    <string name="InuEditedAtTime">Изменено в %1$s</string>
-    <string name="InuEditHistoryOriginal">Оригинал</string>
     <string name="InuHideDialogPreview">Скрыть превью последнего сообщения</string>
     <string name="InuHideDialogPreviewInfo">Показывать последнее сообщение в списке чатов под спойлером</string>
     <string name="InuHideReactionsBadges">Скрыть значки реакций</string>

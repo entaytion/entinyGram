@@ -979,7 +979,6 @@
     <string name="InuDeletedMessageSearchHint">保存された削除済み・編集済みメッセージを検索</string>
     <string name="InuDeletedMessageSearchEmpty">一致するものが見つかりません。</string>
     <string name="InuDeletedArchive">削除済みアーカイブ</string>
-    <string name="InuDeletedArchiveEmpty">保存された削除メッセージはまだありません。</string>
     <string name="InuClearDeletedCacheDone">削除済みメッセージのキャッシュを消去しました</string>
     <string name="InuClearDeletedCacheEmpty">削除済みメッセージのキャッシュは空です</string>
     <string name="InuClearDeletedCacheHint">チャットを長押しすると、保存されたメッセージとメディアを個別に確認・削除できます</string>
@@ -2020,8 +2019,6 @@
     <string name="InuEditFieldSpoiler">スポイラー</string>
     <string name="InuEditFieldText">テキスト</string>
     <string name="InuEditFieldTimer">タイマー</string>
-    <string name="InuEditHistoryChanged">変更点: %1$s</string>
-    <string name="InuEditedAtTime">編集日時 %1$s</string>
     <string name="InuHideDialogPreview">最後のメッセージのプレビューを隠す</string>
     <string name="InuHideDialogPreviewInfo">チャットリストの最後のメッセージをスポイラーで隠して表示します</string>
     <string name="InuHideReactionsBadges">リアクションバッジを隠す</string>
@@ -2207,7 +2204,6 @@
     <string name="InuAlternativeGifBehaviorInfo">GIFの自動再生がオフの場合、最初のタップで全画面表示し、閉じると停止します</string>
     <string name="InuAlwaysSendVideosHdInfo">データセーバーの設定に関係なく、動画送信時に最高の圧縮画質を選びます。</string>
     <string name="InuChatDecor">装飾</string>
-    <string name="InuEditHistoryOriginal">元のメッセージ</string>
     <string name="InuFontSyntheticBoldInfo">フォントに太字がない場合に疑似的に太くします。オフにするとフォント本来の太さを使います。再起動が必要です。</string>
     <string name="InuGhostHideSeenMentionsInfo">ゴーストモードで端末上ですでに開いたチャットのメンションバッジと移動ボタンを隠します。</string>
     <string name="InuOneTimePeekInfo">一度だけ表示できるメディアを開いても送信者には通知されません。通知したい場合はメッセージメニューの「表示済みにする」を使ってください。</string>

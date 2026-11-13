@@ -1541,6 +1541,8 @@
     <string name="InuArchiveAll">All</string>
     <string name="InuClearDeletedCacheAlert">This will permanently delete your local archive of saved deleted messages and their media. This cannot be undone.</string>
     <string name="InuArchiveMediaDeleteSelected">Delete the selected files? They will be removed from the archive too.</string>
+    <string name="InuArchiveOpenChat">Open chat</string>
+    <string name="InuArchiveDeleteEntry">Delete from archive</string>
     <string name="InuClearDeletedCacheDone">Deleted messages cache cleared</string>
     <string name="InuClearDeletedCacheEmpty">Deleted messages cache is empty</string>
     <string name="InuClearDeletedCacheHint">Long-press a chat to view its saved messages and media and delete them one by one</string>
@@ -1641,9 +1643,6 @@
     <string name="InuAiProvidersActiveForChat">Active for Chat</string>
     <string name="InuAiProvidersActiveForVoice">Active for Voice</string>
     <string name="InuNoEditHistory">No edit history recorded for this message</string>
-    <string name="InuEditedAtTime">Edited at %1$s</string>
-    <string name="InuEditHistoryOriginal">Original</string>
-    <string name="InuEditHistoryChanged">Changed: %1$s</string>
     <string name="InuEditFieldText">text</string>
     <string name="InuEditFieldCaption">caption</string>
     <string name="InuEditFieldFormatting">formatting</string>
@@ -1889,7 +1888,6 @@
     <string name="InuExportArchive">Export archive</string>
     <string name="InuExportArchiveEmpty">Nothing to export</string>
     <string name="InuDeletedArchive">Deleted messages</string>
-    <string name="InuDeletedArchiveEmpty">No saved deleted messages yet.</string>
     <string name="InuDeletedMessageSearchHint">Search saved deleted and edited messages</string>
     <string name="InuDeletedMessageSearchEmpty">No matches found.</string>
     <string name="InuDeletedMessagesTransparent">Semi-transparent deleted messages</string>

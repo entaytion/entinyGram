@@ -1572,7 +1572,6 @@
     <string name="InuExportArchive">تصدير الأرشيف</string>
     <string name="InuExportArchiveEmpty">لا شيء للتصدير</string>
     <string name="InuDeletedArchive">الرسائل المحذوفة</string>
-    <string name="InuDeletedArchiveEmpty">لا توجد رسائل محذوفة محفوظة بعد.</string>
     <string name="InuDeletedMessageSearchHint">البحث في الرسائل المحذوفة والمعدّلة المحفوظة</string>
     <string name="InuDeletedMessageSearchEmpty">لم يتم العثور على مطابقات.</string>
     <string name="InuDeletedMessagesTransparent">رسائل محذوفة شبه شفافة</string>
@@ -2019,8 +2018,6 @@
     <string name="InuEditFieldSpoiler">المخفي</string>
     <string name="InuEditFieldText">النص</string>
     <string name="InuEditFieldTimer">المؤقت</string>
-    <string name="InuEditHistoryChanged">تم التغيير: %1$s</string>
-    <string name="InuEditedAtTime">عُدّلت في %1$s</string>
     <string name="InuHideDialogPreview">إخفاء معاينة آخر رسالة</string>
     <string name="InuHideDialogPreviewInfo">عرض آخر رسالة في قائمة المحادثات تحت ساتر</string>
     <string name="InuHideReactionsBadges">إخفاء شارات التفاعلات</string>
@@ -2231,7 +2228,6 @@
     <string name="InuAlternativeGifBehaviorInfo">عند إيقاف التشغيل التلقائي، تُفتح صور GIF بملء الشاشة عند أول ضغطة وتتوقف بعد إغلاقها</string>
     <string name="InuAlwaysSendVideosHdInfo">يختار أعلى جودة ضغط عند إرسال الفيديو بغض النظر عن إعداد توفير البيانات.</string>
     <string name="InuChatDecor">الزينة</string>
-    <string name="InuEditHistoryOriginal">الأصلي</string>
     <string name="InuFontSyntheticBoldInfo">يحاكي الخط الغامق إذا لم يوفره الخط. عطّله لاستخدام وزن الخط الأصلي. يتطلب إعادة التشغيل.</string>
     <string name="InuGhostHideSeenMentionsInfo">إخفاء شارة الإشارة وزر الانتقال في المحادثات التي فتحتها محليًا بوضع التخفي.</string>
     <string name="InuOneTimePeekInfo">فتح الوسائط لمرة واحدة لا يُعلم المرسل. استخدم «تحديد كمُشاهَد» في قائمة الرسالة عندما تريد إعلامه.</string>

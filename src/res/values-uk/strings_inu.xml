@@ -1178,13 +1178,14 @@
     <string name="InuArchiveAll">Усі</string>
     <string name="InuClearDeletedCacheAlert">Це назавжди видалить локальний архів збережених видалених повідомлень та їхніх медіа. Скасувати неможливо.</string>
     <string name="InuArchiveMediaDeleteSelected">Видалити вибрані файли? Вони зникнуть і з архіву.</string>
+    <string name="InuArchiveOpenChat">Відкрити чат</string>
+    <string name="InuArchiveDeleteEntry">Видалити з архіву</string>
     <string name="InuDeletedMessageSearch">Пошук по архіву</string>
     <string name="InuExportArchive">Експортувати архів</string>
     <string name="InuExportArchiveEmpty">Немає що експортувати</string>
     <string name="InuDeletedMessageSearchHint">Пошук по збережених видалених і змінених повідомленнях</string>
     <string name="InuDeletedMessageSearchEmpty">Збігів не знайдено.</string>
     <string name="InuDeletedArchive">Архів видалених</string>
-    <string name="InuDeletedArchiveEmpty">Ще немає збережених видалених повідомлень.</string>
     <string name="InuClearDeletedCacheDone">Кеш збережених повідомлень очищено</string>
     <string name="InuClearDeletedCacheEmpty">Кеш збережених повідомлень порожній</string>
     <string name="InuClearDeletedCacheHint">Утримуйте чат, щоб переглянути збережені повідомлення та медіа й видаляти їх по одному</string>
@@ -1443,9 +1444,6 @@
     <string name="InuMd3PlayerSourceSyncedFile">Синхронізований текст із файлу</string>
     <string name="InuMd3PlayerSourcePlainFile">Текст із файлу</string>
     <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
-    <string name="InuEditedAtTime">Відредаговано о %1$s</string>
-    <string name="InuEditHistoryOriginal">Оригінал</string>
-    <string name="InuEditHistoryChanged">Змінено: %1$s</string>
     <string name="InuEditFieldText">текст</string>
     <string name="InuEditFieldCaption">підпис</string>
     <string name="InuEditFieldFormatting">форматування</string>

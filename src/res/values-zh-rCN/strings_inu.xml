@@ -974,7 +974,6 @@
     <string name="InuDeletedMessageSearchHint">搜索已保存的已删除和已编辑消息</string>
     <string name="InuDeletedMessageSearchEmpty">未找到匹配项。</string>
     <string name="InuDeletedArchive">已删除存档</string>
-    <string name="InuDeletedArchiveEmpty">尚无已保存的删除消息。</string>
     <string name="InuClearDeletedCacheDone">已删除消息缓存已清除</string>
     <string name="InuClearDeletedCacheEmpty">已删除消息缓存为空</string>
     <string name="InuClearDeletedCacheHint">长按聊天可逐条查看已保存的消息和媒体并单独删除</string>
@@ -2020,8 +2019,6 @@
     <string name="InuEditFieldSpoiler">剧透</string>
     <string name="InuEditFieldText">文本</string>
     <string name="InuEditFieldTimer">计时器</string>
-    <string name="InuEditHistoryChanged">已更改：%1$s</string>
-    <string name="InuEditedAtTime">编辑于 %1$s</string>
     <string name="InuHideDialogPreview">隐藏最后一条消息预览</string>
     <string name="InuHideDialogPreviewInfo">在聊天列表中将最后一条消息显示在剧透下</string>
     <string name="InuHideReactionsBadges">隐藏回应徽章</string>
@@ -2209,7 +2206,6 @@
     <string name="InuAlternativeGifBehaviorInfo">关闭 GIF 自动播放时，首次点击将全屏打开 GIF，退出全屏后停止播放</string>
     <string name="InuAlwaysSendVideosHdInfo">发送视频时选择最高压缩画质，不受流量节省设置影响。</string>
     <string name="InuChatDecor">装饰</string>
-    <string name="InuEditHistoryOriginal">原文</string>
     <string name="InuFontSyntheticBoldInfo">字体没有粗体字重时模拟粗体。关闭后使用字体自带字重。需要重启。</string>
     <string name="InuGhostHideSeenMentionsInfo">隐藏在隐身模式下已于本地打开的聊天中的提及角标和跳转按钮。</string>
     <string name="InuOneTimePeekInfo">打开一次性媒体不会通知发送者。如需通知对方，请在消息菜单中选择“标记为已查看”。</string>
