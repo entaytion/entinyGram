@@ -99,6 +99,7 @@ object ChatActionsHelper {
     const val ACTION_SILENT_BROADCAST = 551
     const val ACTION_SHOW_HIDDEN_MESSAGES = 552
     const val ACTION_ENTINY_MENU = 553
+    const val ACTION_CHAT_FORWARD_ALL = 554
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -109,6 +110,7 @@ object ChatActionsHelper {
     const val ACTION_SEL_UNPIN = 1506
     const val ACTION_SEL_FORWARD_NO_QUOTE = 1507
     const val ACTION_SEL_DOWNLOADS = 1508
+    const val ACTION_SEL_SELECT_ALL = 1509
     private const val SELECTION_RENDER_DEBOUNCE_MS = 32L
 
     /** the back row and the gap under it, which every plugin submenu keeps across a rebuild */
@@ -289,6 +291,12 @@ object ChatActionsHelper {
             headerItem.lazilyAddSubItem(
                 ACTION_CHAT_DELETE_MY_MESSAGES, R.drawable.msg_delete,
                 LocaleController.getString(R.string.InuDeleteMyMessages),
+            )
+        }
+        if (notEncrypted) {
+            headerItem.lazilyAddSubItem(
+                ACTION_CHAT_FORWARD_ALL, R.drawable.msg_forward,
+                LocaleController.getString(R.string.InuForwardAll),
             )
         }
         // #if PLUGINS
@@ -633,6 +641,7 @@ object ChatActionsHelper {
             ACTION_CHAT_LOCAL_NAME -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EDIT_LOCAL_NAME, null, activity.currentAccount, activity.dialogId)
             ACTION_CHAT_MARK_READ -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_MARK_AS_READ, null, activity.currentAccount, activity.dialogId)
             ACTION_CHAT_DELETE_MY_MESSAGES -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_DELETE_MY_MESSAGES, null, activity.currentAccount, activity.dialogId)
+            ACTION_CHAT_FORWARD_ALL -> ForwardAllHelper.confirmAndPick(activity)
             ACTION_REGEX_CHAT_FILTERS -> activity.presentFragment(desu.inugram.ui.settings.RegexChatFilterSettingsActivity(activity.dialogId))
             ACTION_GHOST_MODE -> GhostHelper.showChatOverridesDialog(activity, activity.currentAccount, activity.dialogId) {
                 GhostHelper.applyChatTitleGhost(activity, activity.avatarContainer?.titleTextView)
@@ -898,8 +907,16 @@ object ChatActionsHelper {
                 if (!ForwardProHelper.hideSelectionAuthor(fragment)) ChatHelper.pendingHideAuthor = true
             },
         )
-        overflow.setDelegate { id -> handleSelectionClick(menu, id) }
+        overflow.setDelegate { id ->
+            if (id == ACTION_SEL_SELECT_ALL) {
+                layout.inu_selectAllLoaded()
+                true
+            } else {
+                handleSelectionClick(menu, id)
+            }
+        }
         addSelectionItems(menu)
+        overflow.addSubItem(ACTION_SEL_SELECT_ALL, R.drawable.msg_select, LocaleController.getString(R.string.SelectAll))
         return menu
     }
 
@@ -1042,7 +1059,7 @@ object ChatActionsHelper {
             overflow.setSubItemShown(ACTION_SEL_PIN, canPin)
             overflow.setSubItemShown(ACTION_SEL_UNPIN, canUnpin)
         }
-        val anyShown = canSave || canForward || canTranslate || canSaveToGallery || canSaveToDownloads || canPin || canUnpin
+        val anyShown = canSave || canForward || canTranslate || canSaveToGallery || canSaveToDownloads || canPin || canUnpin || chat == null
         overflow.visibility = if (anyShown) View.VISIBLE else View.GONE
         // #if PLUGINS
         updateSelectionPluginItems(menu)

@@ -188,6 +188,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         CHAT_LOCAL_NAME("chat_local_name", listOf(ChatActionsHelper.ACTION_CHAT_LOCAL_NAME), R.string.InuLocalName, R.drawable.msg_edit),
         CHAT_MARK_READ("chat_mark_read", listOf(ChatActionsHelper.ACTION_CHAT_MARK_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
         CHAT_DELETE_MY_MESSAGES("chat_delete_my_messages", listOf(ChatActionsHelper.ACTION_CHAT_DELETE_MY_MESSAGES), R.string.InuDeleteMyMessages, R.drawable.msg_delete),
+        CHAT_FORWARD_ALL("chat_forward_all", listOf(ChatActionsHelper.ACTION_CHAT_FORWARD_ALL), R.string.InuForwardAll, R.drawable.msg_forward),
         ENTINY_MENU("entiny_menu", listOf(ChatActionsHelper.ACTION_ENTINY_MENU), R.string.InuChatMenuEntinyGram, R.drawable.icon_settings_inu),
         ACTIONS("actions", listOf(ChatActionsHelper.ACTION_PLUGIN_ACTIONS), R.string.InuActions, R.drawable.msg_settings_old);
 
@@ -220,6 +221,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
             Item.STATISTICS, Item.ADMINISTRATORS, Item.PERMISSIONS, Item.INVITE_LINKS,
             Item.LINKED_CHAT, Item.HIDE_TITLE, Item.CLEAR_DELETED,
             Item.CHAT_EXPORT, Item.CHAT_LOCAL_NAME, Item.CHAT_MARK_READ, Item.CHAT_DELETE_MY_MESSAGES, Item.CHAT_PROXY, Item.SHOW_HIDDEN,
+            Item.CHAT_FORWARD_ALL,
         )
     }
 }

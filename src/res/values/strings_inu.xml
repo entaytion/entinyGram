@@ -2324,4 +2324,9 @@
     <string name="InuMediaVideoGif">Video and GIFs</string>
     <string name="InuMediaVoice">Voice and autoplay</string>
     <string name="InuMediaSaving">Saving and sharing</string>
+    <string name="InuForwardAll">Forward all messages</string>
+    <string name="InuForwardAllTitle">Forward all messages?</string>
+    <string name="InuForwardAllConfirm">Every message of this chat that can be forwarded goes to the chosen chats in batches of 100, oldest first. This can take a while.</string>
+    <string name="InuForwardAllStarted">Forwarding messages…</string>
+    <string name="InuForwardAllDone">Forwarded %1$d messages</string>
 </resources>

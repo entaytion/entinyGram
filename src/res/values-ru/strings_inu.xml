@@ -2254,4 +2254,9 @@
     <string name="InuWideChannelPostsPreviewReply">Пересланный пост из канала</string>
     <string name="InuWideChannelPostsPreviewReplyLabel">Посты каналов</string>
     <string name="InuWideChannelPostsInset">Боковые отступы</string>
+    <string name="InuForwardAll">Переслать все сообщения</string>
+    <string name="InuForwardAllTitle">Переслать все сообщения?</string>
+    <string name="InuForwardAllConfirm">Все сообщения этого чата, которые можно переслать, уйдут в выбранные чаты пачками по 100, начиная со старых. Это может занять время.</string>
+    <string name="InuForwardAllStarted">Пересылаю сообщения…</string>
+    <string name="InuForwardAllDone">Переслано сообщений: %1$d</string>
 </resources>

@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 13 Nov 2026 13:14:25 +0200
+Subject: Adds forward all messages to the chat menu and select all to the shared media selection menu.
+
+---
+ .../ui/Components/SharedMediaLayout.java      | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -6782,6 +6782,29 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+         }
+     }
+ 
++    public void inu_selectAllLoaded() {
++        final int type = mediaPages[0].selectedType;
++        if (!isActionModeShowed || type < 0 || type > TAB_GIF || sharedMediaData[type] == null) {
++            return;
++        }
++        for (MessageObject message : sharedMediaData[type].messages) {
++            final int loadIndex = message.getDialogId() == dialog_id ? 0 : 1;
++            if (message.getId() == 0 || selectedFiles[loadIndex].indexOfKey(message.getId()) >= 0) {
++                continue;
++            }
++            selectedFiles[loadIndex].put(message.getId(), message);
++            if (!message.canDeleteMessage(false, null)) {
++                cantDeleteMessagesCount++;
++            }
++        }
++        onActionModeSelectedUpdate(selectedFiles[0]);
++        setSelectedMessagesCount(selectedFiles[0].size() + selectedFiles[1].size(), true);
++        deleteItem.setVisibility(cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
++        if (mediaPages[0].listView.getAdapter() != null) {
++            mediaPages[0].listView.getAdapter().notifyDataSetChanged();
++        }
++    }
++
+     private void updateRowsSelection(boolean animated) {
+         for (int i = 0; i < mediaPages.length; i++) {
+             int count = mediaPages[i].listView.getChildCount();

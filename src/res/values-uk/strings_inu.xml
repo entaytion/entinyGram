@@ -2339,4 +2339,9 @@
     <string name="InuMediaVideoGif">Відео та GIF</string>
     <string name="InuMediaVoice">Голос і автовідтворення</string>
     <string name="InuMediaSaving">Збереження й поширення</string>
+    <string name="InuForwardAll">Переслати всі повідомлення</string>
+    <string name="InuForwardAllTitle">Переслати всі повідомлення?</string>
+    <string name="InuForwardAllConfirm">Усі повідомлення цього чату, які можна переслати, підуть у вибрані чати пачками по 100, починаючи зі старих. Це може зайняти час.</string>
+    <string name="InuForwardAllStarted">Пересилаю повідомлення…</string>
+    <string name="InuForwardAllDone">Переслано повідомлень: %1$d</string>
 </resources>
