@@ -199,7 +199,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
         walk(listView ?: return)
     }
 
-    protected fun showRestartBulletin() {
+    fun showRestartBulletin() {
         BulletinFactory.of(this)
             .createSimpleBulletin(
                 R.raw.chats_infotip,

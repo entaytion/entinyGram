@@ -191,8 +191,8 @@ object Schemas {
             }
         }
         section(R.string.InuChatDecor) {
-            toggle(InuConfig.CHAT_SNOWFLAKES, R.string.InuChatSnowflakes)
-            toggle(InuConfig.ACTION_BAR_SNOWFLAKES, R.string.InuActionBarSnowflakes)
+            toggle(InuConfig.CHAT_SNOWFLAKES, R.string.InuChatSnowflakes, onChange = { page, _ -> page.showRestartBulletin() })
+            toggle(InuConfig.ACTION_BAR_SNOWFLAKES, R.string.InuActionBarSnowflakes, onChange = { page, _ -> page.showRestartBulletin() })
         }
         section(R.string.InuLinksAndBrowser) {
             toggle(InuConfig.CONFIRM_INTERNAL_LINKS, R.string.InuConfirmInternalLinks, R.string.InuConfirmInternalLinksInfo)
