@@ -277,7 +277,7 @@ object MessageMenuPreviewHelper {
                     location[1] + Math.round(
                         if (!barBelow) viewTop - reactionsHeight - dp(4f)
                         else if (minScroll < 0f) viewBottom + dp(4f)
-                        else viewTop + postHeight + (if (menuAbove) 0f else menuHeight) + dp(4f),
+                        else viewTop + postHeight + (if (menuAbove) 0f else menuHeight.toFloat()) + dp(4f),
                     ),
                 )
             }
