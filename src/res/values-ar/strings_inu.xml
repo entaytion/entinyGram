@@ -1569,9 +1569,6 @@
     <string name="InuCacheLogsCategory">السجلات وتقارير التعطل</string>
     <string name="InuPresenceLogsTtl">مسح سجلات التواجد تلقائياً</string>
     <string name="InuPresenceLogsTtlInfo">حذف سجلات التواجد الأقدم من المدة المحددة تلقائياً.</string>
-    <string name="InuTypingSpoofActive">نشط الآن</string>
-    <string name="InuTypingSpoofPickChat">اختر محادثة</string>
-    <string name="InuTypingSpoofQuickListInfo">يفتح منتقي انتحال الكتابة نفسه المتاح من قائمة ترويسة المحادثة، دون الحاجة إلى فتح المحادثة أولاً.</string>
     <string name="InuDeletedMessageSearch">البحث في الأرشيف</string>
     <string name="InuExportArchive">تصدير الأرشيف</string>
     <string name="InuExportArchiveEmpty">لا شيء للتصدير</string>

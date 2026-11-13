@@ -1250,9 +1250,6 @@
     <string name="InuCacheLogsCategory">Günlükler ve çökme raporları</string>
     <string name="InuPresenceLogsTtl">Çevrim içi günlüklerini otomatik temizle</string>
     <string name="InuPresenceLogsTtlInfo">Seçilen süreden eski çevrim içi günlüklerini otomatik olarak silin.</string>
-    <string name="InuTypingSpoofActive">Şu anda etkin</string>
-    <string name="InuTypingSpoofPickChat">Sohbet seç</string>
-    <string name="InuTypingSpoofQuickListInfo">Önce sohbeti açmaya gerek kalmadan, sohbet başlığı menüsünde bulunan aynı yazma sahteciliği seçicisini açar.</string>
     <string name="InuHideDevBadges">entinyGram rozetlerini devre dışı bırak</string>
     <string name="InuHideDevBadgesInfo">Hiçbir anlamı yoktur, herhangi bir ayrıcalık sağlamaz — sadece geliştiriciden bir teşekkürdür</string>
     <string name="InuLanguages">Diller</string>

@@ -1249,9 +1249,6 @@
     <string name="InuCacheLogsCategory">ログとクラッシュレポート</string>
     <string name="InuPresenceLogsTtl">オンライン状態記録の自動消去</string>
     <string name="InuPresenceLogsTtlInfo">選択した期間より古いオンライン状態の記録を自動消去します。</string>
-    <string name="InuTypingSpoofActive">現在有効</string>
-    <string name="InuTypingSpoofPickChat">チャットを選択</string>
-    <string name="InuTypingSpoofQuickListInfo">チャットを開かなくても、チャットヘッダーメニューと同じ入力偽装の選択画面を開きます。</string>
     <string name="InuHideDevBadges">entinyGramバッジを無効化</string>
     <string name="InuHideDevBadgesInfo">これらには特別な意味も特典もありません。単なる開発者からの感謝の印です</string>
     <string name="InuLanguages">言語</string>

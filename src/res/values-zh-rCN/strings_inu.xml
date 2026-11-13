@@ -1250,9 +1250,6 @@
     <string name="InuCacheLogsCategory">日志和崩溃报告</string>
     <string name="InuPresenceLogsTtl">自动清理在线状态记录</string>
     <string name="InuPresenceLogsTtlInfo">自动删除早于所选时段的在线状态记录。</string>
-    <string name="InuTypingSpoofActive">当前活跃</string>
-    <string name="InuTypingSpoofPickChat">选择聊天</string>
-    <string name="InuTypingSpoofQuickListInfo">打开与聊天顶部菜单中相同的输入伪造选择界面，无需先打开该聊天。</string>
     <string name="InuHideDevBadges">禁用 entinyGram 徽章</string>
     <string name="InuHideDevBadgesInfo">它们没有任何含义，也不提供任何优势——只是开发者的一份感谢</string>
     <string name="InuLanguages">语言</string>

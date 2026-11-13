@@ -1,5 +1,6 @@
 package desu.inugram.helpers.chat
 
+import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.LocaleController
@@ -12,6 +13,45 @@ object TypingSpoofHelper {
     const val ACTION_RECORD_AUDIO = 1
     const val ACTION_RECORD_ROUND = 7
     const val ACTION_UPLOAD_DOCUMENT = 3
+    const val ACTION_UPLOAD_PHOTO = 4
+    const val ACTION_UPLOAD_VIDEO = 5
+    const val ACTION_GAME_PLAY = 6
+    const val ACTION_UPLOAD_ROUND = 8
+    const val ACTION_UPLOAD_AUDIO = 9
+    const val ACTION_CHOOSE_STICKER = 10
+
+    class Mode(val action: Int, val labelRes: Int)
+
+    @JvmField
+    val modes = listOf(
+        Mode(ACTION_TYPING, R.string.InuTypingSpoofTyping),
+        Mode(ACTION_RECORD_AUDIO, R.string.InuTypingSpoofRecordVoice),
+        Mode(ACTION_RECORD_ROUND, R.string.InuTypingSpoofRecordRound),
+        Mode(ACTION_UPLOAD_PHOTO, R.string.InuTypingSpoofUploadPhoto),
+        Mode(ACTION_UPLOAD_VIDEO, R.string.InuTypingSpoofUploadVideo),
+        Mode(ACTION_UPLOAD_DOCUMENT, R.string.InuTypingSpoofUploadDocument),
+        Mode(ACTION_UPLOAD_AUDIO, R.string.InuTypingSpoofUploadAudio),
+        Mode(ACTION_UPLOAD_ROUND, R.string.InuTypingSpoofUploadRound),
+        Mode(ACTION_CHOOSE_STICKER, R.string.InuTypingSpoofChooseSticker),
+        Mode(ACTION_GAME_PLAY, R.string.InuTypingSpoofGamePlay),
+    )
+
+    @JvmStatic
+    fun savedChats(account: Int): List<Long> = InuConfig.TYPING_SPOOF_CHATS.value.mapNotNull {
+        val parts = it.split(':')
+        if (parts.size == 2 && parts[0].toIntOrNull() == account) parts[1].toLongOrNull() else null
+    }
+
+    @JvmStatic
+    fun saveChat(account: Int, dialogId: Long) {
+        InuConfig.TYPING_SPOOF_CHATS.value = InuConfig.TYPING_SPOOF_CHATS.value + "$account:$dialogId"
+    }
+
+    @JvmStatic
+    fun forgetChat(account: Int, dialogId: Long) {
+        stop(dialogId)
+        InuConfig.TYPING_SPOOF_CHATS.value = InuConfig.TYPING_SPOOF_CHATS.value - "$account:$dialogId"
+    }
 
     private const val RESEND_DELAY_MS = 4000L
 
@@ -67,7 +107,8 @@ object TypingSpoofHelper {
     fun getActiveDialogIds(): List<Long> = active.keys.toList()
 
     @JvmStatic
-    fun showPicker(fragment: BaseFragment, account: Int, dialogId: Long, threadId: Long) {
+    @JvmOverloads
+    fun showPicker(fragment: BaseFragment, account: Int, dialogId: Long, threadId: Long, onChanged: (() -> Unit)? = null) {
         val parent = fragment.parentActivity ?: return
         if (!canSpoofTyping(account, dialogId)) {
             org.telegram.ui.Components.BulletinFactory.of(fragment)
@@ -75,14 +116,9 @@ object TypingSpoofHelper {
                 .show()
             return
         }
-        val values = intArrayOf(-1, ACTION_TYPING, ACTION_RECORD_AUDIO, ACTION_RECORD_ROUND, ACTION_UPLOAD_DOCUMENT)
-        val items = listOf(
-            desu.inugram.ui.settings.RadioDialogBuilder.Item(LocaleController.getString(R.string.InuTypingSpoofOff)),
-            desu.inugram.ui.settings.RadioDialogBuilder.Item(LocaleController.getString(R.string.InuTypingSpoofTyping)),
-            desu.inugram.ui.settings.RadioDialogBuilder.Item(LocaleController.getString(R.string.InuTypingSpoofRecordVoice)),
-            desu.inugram.ui.settings.RadioDialogBuilder.Item(LocaleController.getString(R.string.InuTypingSpoofRecordRound)),
-            desu.inugram.ui.settings.RadioDialogBuilder.Item(LocaleController.getString(R.string.InuTypingSpoofUploadDocument)),
-        )
+        val entries = listOf(-1 to R.string.InuTypingSpoofOff) + modes.map { it.action to it.labelRes }
+        val values = entries.map { it.first }.toIntArray()
+        val items = entries.map { desu.inugram.ui.settings.RadioDialogBuilder.Item(LocaleController.getString(it.second)) }
         val current = if (isActive(dialogId)) activeAction(dialogId) else -1
         fragment.showDialog(
             desu.inugram.ui.settings.RadioDialogBuilder(parent, fragment.resourceProvider)
@@ -90,6 +126,7 @@ object TypingSpoofHelper {
                 .setItems(items, values.indexOf(current).coerceAtLeast(0)) { _, which ->
                     val action = values[which]
                     if (action == -1) stop(dialogId) else start(account, dialogId, threadId, action)
+                    onChanged?.invoke()
                 }.create()
         )
     }

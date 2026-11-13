@@ -1557,9 +1557,6 @@
     <string name="InuCacheLogsCategory">گزارش‌ها و گزارش‌های خرابی</string>
     <string name="InuPresenceLogsTtl">پاک کردن خودکار گزارش‌های حضور</string>
     <string name="InuPresenceLogsTtlInfo">گزارش‌های حضوری را که از بازه انتخابی قدیمی‌ترند خودکار حذف کن.</string>
-    <string name="InuTypingSpoofActive">هم‌اکنون فعال</string>
-    <string name="InuTypingSpoofPickChat">یک گفتگو انتخاب کنید</string>
-    <string name="InuTypingSpoofQuickListInfo">همان انتخابگر جعل تایپ را که از منوی سرصفحه گفتگو در دسترس است، بدون نیاز به باز کردن گفتگو باز می‌کند.</string>
     <string name="InuDeletedMessageSearch">جستجو در آرشیو</string>
     <string name="InuExportArchive">صادر کردن آرشیو</string>
     <string name="InuExportArchiveEmpty">چیزی برای صادر کردن نیست</string>

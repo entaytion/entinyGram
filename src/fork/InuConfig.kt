@@ -678,6 +678,8 @@ object InuConfig {
     @JvmField
     val SEND_TO_DISCUSS_WITHOUT_JOIN = BoolItem("send_to_discuss_without_join", true)
 
+    val TYPING_SPOOF_CHATS = StringSetItem("typing_spoof_chats", exportable = false)
+
     @JvmField
     val CHAT_SNOWFLAKES = BoolItem("chat_snowflakes", false)
 

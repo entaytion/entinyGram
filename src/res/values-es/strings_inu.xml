@@ -1741,9 +1741,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuCacheLogsCategory">Registros e informes de fallos</string>
     <string name="InuPresenceLogsTtl">Limpiar automáticamente los registros de presencia</string>
     <string name="InuPresenceLogsTtlInfo">Elimina automáticamente los registros de presencia más antiguos que el período elegido.</string>
-    <string name="InuTypingSpoofActive">Activo ahora</string>
-    <string name="InuTypingSpoofPickChat">Elige un chat</string>
-    <string name="InuTypingSpoofQuickListInfo">Abre el mismo selector de simulación de escritura del menú del encabezado de un chat, sin tener que abrir antes el chat.</string>
     <string name="InuDeletedMessageSearch">Buscar en el archivo</string>
     <string name="InuExportArchive">Exportar archivo</string>
     <string name="InuExportArchiveEmpty">Nada que exportar</string>

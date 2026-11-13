@@ -1742,9 +1742,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuCacheLogsCategory">Log e report di crash</string>
     <string name="InuPresenceLogsTtl">Pulizia automatica dei registri di presenza</string>
     <string name="InuPresenceLogsTtlInfo">Elimina automaticamente i registri di presenza più vecchi del periodo scelto.</string>
-    <string name="InuTypingSpoofActive">Attivo ora</string>
-    <string name="InuTypingSpoofPickChat">Scegli una chat</string>
-    <string name="InuTypingSpoofQuickListInfo">Apre lo stesso selettore di simulazione della digitazione disponibile dal menu dell\'intestazione di una chat, senza dover aprire prima la chat.</string>
     <string name="InuDeletedMessageSearch">Cerca nell\'archivio</string>
     <string name="InuExportArchive">Esporta archivio</string>
     <string name="InuExportArchiveEmpty">Niente da esportare</string>
