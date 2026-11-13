@@ -123,7 +123,7 @@ class DeviceSpoofSettingsActivity : SettingsPageActivity() {
                     return@runOnUIThread
                 }
                 val real = DeviceIdentity(Build.MANUFACTURER + Build.MODEL, "SDK " + Build.VERSION.SDK_INT, null)
-                val expected = DeviceIdentityProvider.resolve(real)
+                val expected = DeviceIdentityProvider.resolveFor(currentAccount, real)
                 val matches = current.device_model == expected.deviceModel && current.system_version == expected.systemVersion
                 val verdict = getString(if (matches) R.string.InuDeviceSpoofVerifyMatch else R.string.InuDeviceSpoofVerifyMismatch)
                 val message = LocaleController.formatString(
