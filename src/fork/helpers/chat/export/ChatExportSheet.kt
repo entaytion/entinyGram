@@ -25,6 +25,8 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.BottomSheet
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Cells.CheckBoxCell
+import org.telegram.ui.Cells.TextCheckCell2
 import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.SeekBar
@@ -46,12 +48,13 @@ internal class ChatExportSheet(
     private val surface = ColorUtils.blendARGB(sheetColor, textColor, 0.07f)
     private val tonal = ColorUtils.blendARGB(sheetColor, accent, 0.16f)
 
-    private val mediaRows = ArrayList<ToggleRow>()
+    private val mediaRows = ArrayList<CheckRow>()
     private lateinit var formatPill: TextView
     private lateinit var mediaPill: TextView
     private lateinit var limitPill: TextView
     private lateinit var formatInfo: TextView
-    private lateinit var selectAll: TextView
+    private lateinit var mediaHeader: MediaHeader
+    private lateinit var mediaList: LinearLayout
     private lateinit var limitCard: View
     private lateinit var limitValue: TextView
     private lateinit var limitSlider: LimitSlider
@@ -83,28 +86,24 @@ internal class ChatExportSheet(
         formatInfo = infoText(context)
         content.addView(formatInfo, infoParams())
 
-        selectAll = TextView(context).apply {
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
-            typeface = AndroidUtilities.bold()
-            setTextColor(accent)
-            setPadding(dp(8f), dp(4f), dp(8f), dp(4f))
-            background = ripple(0, 8f, ColorUtils.setAlphaComponent(accent, 40))
-            setOnClickListener {
-                val enable = mediaRows.any { !it.checked }
-                mediaRows.forEach { it.set(enable) }
-                updateSummary()
-            }
-        }
-        content.addView(sectionTitle(context, R.string.InuChatExportSectionMedia, selectAll), sectionParams())
         val mediaCard = card(context)
+        mediaHeader = MediaHeader(context) {
+            val enable = mediaRows.none { it.checked }
+            mediaRows.forEach { it.set(enable) }
+            updateSummary()
+        }
+        mediaCard.addView(mediaHeader, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 50))
+        mediaList = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+        }
+        mediaCard.addView(mediaList, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
         fun media(label: Int, get: () -> Boolean, set: (Boolean) -> Unit) {
-            if (mediaRows.isNotEmpty()) mediaCard.addView(divider(context))
-            val row = ToggleRow(context, LocaleController.getString(label), get()) { value ->
+            val row = CheckRow(context, LocaleController.getString(label), get()) { value ->
                 set(value)
                 updateSummary()
             }
             mediaRows.add(row)
-            mediaCard.addView(row, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 56))
+            mediaList.addView(row, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 50))
         }
         media(R.string.InuChatExportPhotos, { options.photo }) { options.photo = it }
         media(R.string.InuChatExportVideos, { options.video }) { options.video = it }
@@ -113,7 +112,8 @@ internal class ChatExportSheet(
         media(R.string.InuChatExportStickers, { options.sticker }) { options.sticker = it }
         media(R.string.InuChatExportGifs, { options.gif }) { options.gif = it }
         media(R.string.InuChatExportFiles, { options.document }) { options.document = it }
-        content.addView(mediaCard, cardParams())
+        mediaList.visibility = View.GONE
+        content.addView(mediaCard, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 14f, 0f, 0f))
         content.addView(
             infoText(context).apply { text = LocaleController.getString(R.string.InuChatExportSectionMediaInfo) },
             infoParams(),
@@ -164,6 +164,7 @@ internal class ChatExportSheet(
     private fun applyFormat(html: Boolean) {
         options.html = html
         mediaRows.forEach { it.lock(!html) }
+        mediaHeader.lock(!html)
         limitCard.alpha = if (html) 1f else 0.4f
         limitSlider.isEnabled = html
         formatInfo.text = LocaleController.getString(
@@ -184,11 +185,53 @@ internal class ChatExportSheet(
             mediaRows.size -> LocaleController.getString(R.string.InuChatExportMediaAll)
             else -> LocaleController.formatString(R.string.InuChatExportMediaSome, enabled, mediaRows.size)
         }
-        selectAll.text = LocaleController.getString(
-            if (enabled == mediaRows.size) R.string.InuChatExportClear else R.string.InuChatExportSelectAll
-        )
-        selectAll.alpha = if (options.html) 1f else 0.4f
-        selectAll.isEnabled = options.html
+        mediaHeader.bind(enabled, mediaRows.size)
+    }
+
+    private fun toggleMediaList() {
+        val expand = mediaList.visibility != View.VISIBLE
+        mediaHeader.setExpanded(expand)
+        if (expand) {
+            mediaList.visibility = View.VISIBLE
+            mediaList.measure(
+                View.MeasureSpec.makeMeasureSpec((mediaList.parent as View).width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            )
+            val target = mediaList.measuredHeight
+            mediaList.layoutParams.height = 0
+            ValueAnimator.ofInt(0, target).apply {
+                duration = 220
+                interpolator = CubicBezierInterpolator.EASE_OUT_QUINT
+                addUpdateListener {
+                    mediaList.layoutParams.height = it.animatedValue as Int
+                    mediaList.requestLayout()
+                }
+                addListener(object : android.animation.AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: android.animation.Animator) {
+                        mediaList.layoutParams.height = LayoutHelper.WRAP_CONTENT
+                        mediaList.requestLayout()
+                    }
+                })
+                start()
+            }
+        } else {
+            val from = mediaList.height
+            ValueAnimator.ofInt(from, 0).apply {
+                duration = 180
+                interpolator = CubicBezierInterpolator.EASE_OUT_QUINT
+                addUpdateListener {
+                    mediaList.layoutParams.height = it.animatedValue as Int
+                    mediaList.requestLayout()
+                }
+                addListener(object : android.animation.AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: android.animation.Animator) {
+                        mediaList.visibility = View.GONE
+                        mediaList.layoutParams.height = LayoutHelper.WRAP_CONTENT
+                    }
+                })
+                start()
+            }
+        }
     }
 
     private fun buildHeader(context: Context, chatTitle: String): View {
@@ -337,28 +380,52 @@ internal class ChatExportSheet(
 
     private fun dp(value: Float) = AndroidUtilities.dp(value)
 
-    private inner class ToggleRow(
+    private inner class MediaHeader(context: Context, private val onMaster: () -> Unit) :
+        TextCheckCell2(context, resourcesProvider) {
+        private var locked = false
+        private var collapsed = true
+        private var enabledCount = 0
+        private var total = 0
+
+        init {
+            checkBox.setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite)
+            foreground = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2)
+            setOnClickListener { if (!locked) toggleMediaList() }
+        }
+
+        fun bind(enabled: Int, count: Int) {
+            enabledCount = enabled
+            total = count
+            setTextAndCheck(LocaleController.getString(R.string.InuChatExportSectionMedia), enabled > 0, false, true)
+            setCollapseArrow("$enabled/$count", collapsed) { if (!locked) onMaster() }
+        }
+
+        fun setExpanded(expanded: Boolean) {
+            collapsed = !expanded
+            setCollapseArrow("$enabledCount/$total", collapsed) { if (!locked) onMaster() }
+        }
+
+        fun lock(value: Boolean) {
+            locked = value
+            alpha = if (value) 0.5f else 1f
+        }
+    }
+
+    private inner class CheckRow(
         context: Context,
         label: String,
         initial: Boolean,
         private val onChange: (Boolean) -> Unit,
-    ) : FrameLayout(context) {
+    ) : CheckBoxCell(context, CheckBoxCell.TYPE_CHECK_BOX_ROUND, 21, true, resourcesProvider) {
         var checked = initial
             private set
         private var locked = false
-        private val toggle = Switch(context).apply {
-            setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite)
-            setChecked(initial, false)
-        }
 
         init {
+            checkBoxRound.setColor(Theme.key_switch2TrackChecked, Theme.key_radioBackground, Theme.key_checkboxCheck)
+            setPad(1)
+            setText(label, "", initial, false, false)
             foreground = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2)
-            addView(TextView(context).apply {
-                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
-                setTextColor(textColor)
-                text = label
-            }, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, -2f, Gravity.START or Gravity.CENTER_VERTICAL, 16f, 0f, 72f, 0f))
-            addView(toggle, LayoutHelper.createFrame(37, 20f, Gravity.END or Gravity.CENTER_VERTICAL, 0f, 0f, 16f, 0f))
             setOnClickListener {
                 if (locked) return@setOnClickListener
                 set(!checked)
@@ -367,13 +434,13 @@ internal class ChatExportSheet(
 
         fun set(value: Boolean) {
             checked = value
-            toggle.setChecked(value, true)
+            setChecked(value, true)
             onChange(value)
         }
 
         fun lock(value: Boolean) {
             locked = value
-            alpha = if (value) 0.4f else 1f
+            alpha = if (value) 0.5f else 1f
         }
     }
 
