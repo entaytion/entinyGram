@@ -4,14 +4,14 @@ Date: Mon, 26 Oct 2026 00:07:48 +0200
 Subject: md3 player
 
 ---
- .../org/telegram/messenger/MediaController.java     |  2 ++
- .../src/main/java/org/telegram/ui/ChatActivity.java |  2 +-
- .../telegram/ui/Components/FragmentContextView.java | 13 ++++++++-----
- .../main/java/org/telegram/ui/DialogsActivity.java  |  8 ++++----
- .../main/java/org/telegram/ui/LaunchActivity.java   |  2 +-
- .../main/java/org/telegram/ui/MainTabsActivity.java |  2 ++
- .../main/java/org/telegram/ui/ProfileActivity.java  |  2 +-
- 7 files changed, 19 insertions(+), 12 deletions(-)
+ .../org/telegram/messenger/MediaController.java   |  2 ++
+ .../main/java/org/telegram/ui/ChatActivity.java   |  2 +-
+ .../ui/Components/FragmentContextView.java        | 15 +++++++++------
+ .../java/org/telegram/ui/DialogsActivity.java     |  8 ++++----
+ .../main/java/org/telegram/ui/LaunchActivity.java |  2 +-
+ .../java/org/telegram/ui/MainTabsActivity.java    |  2 ++
+ .../java/org/telegram/ui/ProfileActivity.java     |  2 +-
+ 7 files changed, 20 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
@@ -63,6 +63,15 @@ index 0000000..0000000 100644
          frameLayout.setWillNotDraw(currentStyle != STYLE_INACTIVE_GROUP_CALL);
          if (style != STYLE_INACTIVE_GROUP_CALL) {
              notifyButtonEnabled = false;
+@@ -1302,7 +1303,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
+                 titleTextView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.LEFT | Gravity.TOP, 37, 0, (isSideMenued ? 64 : 0) + 36, 0));
+                 createPlaybackSpeedButton();
+                 if (playbackSpeedButton != null) {
+-                    playbackSpeedButton.setVisibility(VISIBLE);
++                    playbackSpeedButton.setVisibility(desu.inugram.helpers.player.Md3PlayerHelper.isBarActive(this) ? INVISIBLE : VISIBLE);
+                     playbackSpeedButton.setTag(1);
+                 }
+                 closeButton.setContentDescription(getString(R.string.AccDescrClosePlayer));
 @@ -1636,6 +1637,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
      float micAmplitude;
  
