@@ -64,6 +64,8 @@ class MainTabsPreviewCell(
     }
 
     private fun render() {
+        val verticalPadding = if (MainTabsHelper.isMaterial) 0 else ROW_PADDING_DP
+        row.setPadding(dp(ROW_PADDING_DP.toFloat()), dp(verticalPadding.toFloat()), dp(ROW_PADDING_DP.toFloat()), dp(verticalPadding.toFloat()))
         row.removeAllViews()
         searchChip?.let { group.removeView(it) }
         searchChip = null
@@ -197,8 +199,13 @@ class MainTabsPreviewCell(
     private fun visibleOrder(): List<MainTabsMenuConfig.Item> =
         if (separateSearch) order.filterNot { it == MainTabsMenuConfig.Item.SEARCH } else order
 
+    // entiny: material tabs lay their label out inside the whole bar height, so shrinking them by the floating bar's padding clips the titles
     private fun tabLayoutParams() =
-        LayoutHelper.createLinear(chipWidthDp, MainTabsHelper.mainTabsBarHeight - 2 * MainTabsHelper.tabsInnerPaddingVertical, 0f, 2, 0, 2, 0)
+        LayoutHelper.createLinear(
+            chipWidthDp,
+            if (MainTabsHelper.isMaterial) MainTabsHelper.mainTabsHeight else MainTabsHelper.mainTabsBarHeight - 2 * MainTabsHelper.tabsInnerPaddingVertical,
+            0f, 2, 0, 2, 0,
+        )
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight - dp(SIDE_INSET_DP * 2f)
