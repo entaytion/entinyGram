@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 13 Nov 2026 11:57:45 +0200
+Subject: Draw the chat and app bar snowflakes even when Lite Mode disables chat backgrounds, and create the app bar hat as soon as the toggle is on.
+
+---
+ .../src/main/java/org/telegram/ui/ActionBar/Theme.java       | 5 +++++
+ .../java/org/telegram/ui/Components/SnowflakesEffect.java    | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -4671,6 +4671,11 @@ public class Theme {
+                 }
+             }
+         }
++        if (dialogs_holidayDrawable == null && desu.inugram.InuConfig.ACTION_BAR_SNOWFLAKES.getValue()) {
++            dialogs_holidayDrawable = ApplicationLoader.applicationContext.getResources().getDrawable(R.drawable.newyear);
++            dialogs_holidayDrawableOffsetX = -dp(3);
++            dialogs_holidayDrawableOffsetY = -dp(-7);
++        }
+         return dialogs_holidayDrawable;
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SnowflakesEffect.java
+@@ -162,7 +162,7 @@ public class SnowflakesEffect {
+     }
+ 
+     public void onDraw(View parent, Canvas canvas) {
+-        if (parent == null || canvas == null || !LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
++        if (parent == null || canvas == null || !LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND) && !desu.inugram.InuConfig.CHAT_SNOWFLAKES.getValue() && !desu.inugram.InuConfig.ACTION_BAR_SNOWFLAKES.getValue()) {
+             return;
+         }
+         updateColors(); // cheap (cached), follows theme switches: owners never call it

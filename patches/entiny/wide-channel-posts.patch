@@ -4,9 +4,9 @@ Date: Thu, 12 Nov 2026 18:05:57 +0200
 Subject: Stretch channel posts, photos and albums to the chat width.
 
 ---
- .../org/telegram/messenger/MessageObject.java | 19 ++++++++++++++++--
- .../telegram/ui/Cells/ChatMessageCell.java    | 20 ++++++++++++++++++-
- 2 files changed, 36 insertions(+), 3 deletions(-)
+ .../org/telegram/messenger/MessageObject.java | 24 +++++++++++++++++--
+ .../telegram/ui/Cells/ChatMessageCell.java    | 21 +++++++++++++++-
+ 2 files changed, 42 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
                  firstSpanAdditionalSize += 50;
              }
 +            if (inu_wideKey != 0) {
-+                maxSizeWidth = desu.inugram.helpers.chat.WidePostLayout.groupSpan();
++                maxSizeWidth = desu.inugram.helpers.chat.WidePostLayout.groupSpan(messages.get(0).inu_wideLeadingInset());
 +                firstSpanAdditionalSize = 1000 - maxSizeWidth;
 +            }
  
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
          if (type == TYPE_ARTICLE) {
              final int maxWidth = getMaxMessageTextWidth();
              if (richLayout == null || messageOwner != null && richLayout.needsUpdate(getDisplayRichMessage(), maxWidth)) {
-@@ -10466,6 +10474,13 @@ public class MessageObject {
+@@ -10466,6 +10474,18 @@ public class MessageObject {
  
      // cached: checked while drawing, and a message doesn't change its dialog
      private byte agentBotDialog; // 0 unknown, 1 no, 2 yes
@@ -83,6 +83,11 @@ index 0000000..0000000 100644
 +
 +    public boolean inu_isWide() {
 +        return desu.inugram.helpers.chat.WidePostLayout.isWide(this);
++    }
++
++    public int inu_wideLeadingInset() {
++        if (sideMenuEnabled) return dp(64);
++        return needDrawAvatarInternal() && !isOutOwner() && !messageOwner.isThreadMessage ? dp(52) : 0;
 +    }
  
      public boolean isCompactMode() {
@@ -142,7 +147,15 @@ index 0000000..0000000 100644
                      int widthForCaption = 0;
                      int widthCaptionMin = -1;
                      boolean fixPhotoWidth = false;
-@@ -10201,6 +10215,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -9995,6 +10009,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+ 
+             if ((currentPosition == null || currentMessageObject.isMusic() || currentMessageObject.type == MessageObject.TYPE_PAID_MEDIA || currentMessageObject.isDocument()) && !messageObject.isSponsored() && !messageObject.isAnyKindOfSticker() && addedCaptionHeight == 0 && !messageObject.isExpiredStory() && !messageObject.isUnsupported()) {
+                 int addCaptionLayoutWidth = 0;
++                if (messageObject.inu_isWide() && (currentPosition == null || currentMessagesGroup != null && currentMessagesGroup.isDocuments)) backgroundWidth = desu.inugram.helpers.chat.WidePostLayout.stretchBubble(messageObject, backgroundWidth);
+                 int width = backgroundWidth;
+                 if ((currentMessageObject.type == MessageObject.TYPE_VOICE || isRoundVideo) && messageObject.isVoiceTranscriptionOpen() && messageObject.getFactCheck() == null) {
+                     if (AndroidUtilities.isTablet()) {
+@@ -10201,6 +10216,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              }
  
              final int separatorHeight = dp(4 + 4);
@@ -150,7 +163,7 @@ index 0000000..0000000 100644
              if (!messageObject.isRestrictedMessage && !messageObject.isRepostPreview && (currentPosition == null || currentMessagesGroup != null && currentMessagesGroup.isDocuments && currentPosition.last) && (inlineButtons != null) && !messageObject.hasExtendedMedia()) {
                  ensureBotKeyboard().layoutButtons(messageObject, inlineButtons, separatorHeight, drawAvatar);
              } else {
-@@ -11577,6 +11592,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11577,6 +11593,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              // there is no bubble: span exactly the text width so time, labels and reply end 16dp from the edge
              backgroundWidth = maxWidth + dp(31);
          }
@@ -158,7 +171,7 @@ index 0000000..0000000 100644
      }
  
      public boolean setHighlightedText(String text) {
-@@ -24146,6 +24162,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24146,6 +24163,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          return currentMessageObject != null ? currentMessageObject.isCompactMode() : Theme.isCompactMode(resourcesProvider);
      }
  

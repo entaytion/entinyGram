@@ -47,12 +47,12 @@ object WidePostLayout {
     }
 
     @JvmStatic
-    fun layoutKey(m: MessageObject): Int = if (m.inu_isWide()) dp(inset()) + 1 else 0
+    fun layoutKey(m: MessageObject): Int = if (m.inu_isWide()) (dp(inset()) + 1) * 31 + m.inu_wideLeadingInset() else 0
 
     private fun inset(): Float = InuConfig.WIDE_CHANNEL_POSTS_INSET.value
 
     @JvmStatic
-    fun bubbleWidth(m: MessageObject): Int = maxOf(dp(48f), m.getParentWidth() - dp(3f) - dp(inset()))
+    fun bubbleWidth(m: MessageObject): Int = maxOf(dp(48f), m.getParentWidth() - dp(3f) - dp(inset()) - m.inu_wideLeadingInset())
 
     @JvmStatic
     fun textWidth(m: MessageObject): Int = bubbleWidth(m) - dp(31f)
@@ -79,10 +79,10 @@ object WidePostLayout {
     }
 
     @JvmStatic
-    fun groupSpan(): Int {
+    fun groupSpan(leading: Int): Int {
         val width = if (AndroidUtilities.isTablet()) AndroidUtilities.getMinTabletSide() else AndroidUtilities.displaySize.x
         if (width <= 0) return 800
-        return (1000f * (width - dp(inset())) / width).toInt().coerceIn(500, 1000)
+        return (1000f * (width - dp(inset()) - leading) / width).toInt().coerceIn(500, 1000)
     }
 
     @JvmStatic

@@ -1,0 +1,54 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 13 Nov 2026 11:56:20 +0200
+Subject: Keep the chat list title visible: do not inherit a mid-fade alpha on overlay changes and ignore stale progress while nothing hides it.
+
+---
+ .../java/org/telegram/ui/ActionBar/ActionBar.java    |  3 ++-
+ .../main/java/org/telegram/ui/DialogsActivity.java   | 12 ++++++++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2079,6 +2079,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                 ellipsizeSpanAnimator.removeView(titleTextView[0]);
+             }
+         } else if (titleTextView[0] != null) {
++            final float inu_inheritedAlpha = titleAnimationRunning ? 1f : titleTextView[0].getAlpha(); // entiny: read before cancel, the cancel resets titleAnimationRunning
+             titleTextView[0].animate().cancel();
+             if (titleTextView[1] != null) {
+                 titleTextView[1].animate().cancel();
+@@ -2098,7 +2099,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             }
+             overlayTitleAnimationInProgress = true;
+             // the new title keeps the alpha the title had, e.g. hidden under the topics opened in the side panel
+-            final float titleAlpha = adaptiveBackgroundHideTitle ? 1.0f - onTopAnimated : titleTextView[0].getAlpha();
++            final float titleAlpha = adaptiveBackgroundHideTitle ? 1.0f - onTopAnimated : inu_inheritedAlpha;
+             SimpleTextView tmp = titleTextView[1];
+             titleTextView[1] = titleTextView[0];
+             titleTextView[0] = tmp;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -1718,6 +1718,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             actionBar.setTranslationY(0);
+         }
+         final float inu_preSearchAlpha = containersAlpha;
++        // entiny: with nothing that may hide the title active, stale progress fields must not leave it dim or gone
++        if (!searchIsShowed && !animatorSearchVisible.getValue() && !actionBar.isActionModeShowed() && !hasStories && !animateToHasStories && !dialogStoriesCellVisible && !rightSlidingDialogContainer.hasFragment()) {
++            actionBar.getTitlesContainer().setScaleX(1f);
++            actionBar.getTitlesContainer().setScaleY(1f);
++            actionBar.getTitlesContainer().setAlpha(1f);
++            actionBar.getTitlesContainer().setVisibility(View.VISIBLE);
++            actionBar.getAdditionalSubTitleOverlayContainer().setScaleX(1f);
++            actionBar.getAdditionalSubTitleOverlayContainer().setScaleY(1f);
++            actionBar.getAdditionalSubTitleOverlayContainer().setAlpha(1f);
++            actionBar.getAdditionalSubTitleOverlayContainer().setVisibility(View.VISIBLE);
++            return;
++        }
+         containersAlpha *= (1f - factorSearch);
+         if (containersAlpha != 1f) {
+             actionBar.getTitlesContainer().setPivotY(AndroidUtilities.statusBarHeight);
