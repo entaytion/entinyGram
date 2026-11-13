@@ -14,7 +14,6 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
-import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
 import android.text.style.URLSpan
@@ -219,24 +218,44 @@ class UpdateAppAlertDialog(
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             isSingleLine = true
             ellipsize = TextUtils.TruncateAt.END
-            text = if (isBeta) "entinyGram β" else "entinyGram"
+            text = "entinyGram"
+        }
+        val titleRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        titleRow.addView(
+            titleView,
+            LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT),
+        )
+        val label = UpdateHelper.pendingLabel
+        if (label != null) {
+            val chipColor = if (isBeta) Theme.getColor(Theme.key_text_RedRegular) else Theme.getColor(Theme.key_featuredStickers_addButton)
+            val chip = TextView(context).apply {
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
+                typeface = AndroidUtilities.bold()
+                setTextColor(chipColor)
+                setPadding(AndroidUtilities.dp(8f), AndroidUtilities.dp(2f), AndroidUtilities.dp(8f), AndroidUtilities.dp(2f))
+                background = GradientDrawable().apply {
+                    cornerRadius = AndroidUtilities.dp(10f).toFloat()
+                    setColor(Theme.multAlpha(chipColor, 0.14f))
+                }
+                text = label
+            }
+            titleRow.addView(chip, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, 8, 0, 0, 0))
         }
         titleColumn.addView(
-            titleView,
+            titleRow,
             LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT),
         )
 
         val sizeBytes = appUpdate.document?.size ?: 0L
         val sizeStr = if (sizeBytes > 0) AndroidUtilities.formatFileSize(sizeBytes) else ""
         val newName = UpdateHelper.pendingBetaUpdate?.version?.takeIf { it.isNotBlank() }
-        val newCode = appUpdate.version?.takeIf { it.isNotBlank() }
-        val newStr = listOfNotNull(newName?.let { "v$it" }, newCode?.let { "($it)" }).joinToString(" ")
-        val oldStr = "v${UpdateHelper.stockVersionName} (${UpdateHelper.packageInfo.versionCode})"
         val versionInfo = SpannableStringBuilder().apply {
-            if (newStr.isNotEmpty()) {
-                append(oldStr)
-                setSpan(StrikethroughSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                append(" → ").append(newStr)
+            if (newName != null) {
+                if (newName != UpdateHelper.stockVersionName) append("v${UpdateHelper.stockVersionName} → ")
+                append("v$newName")
             }
             if (sizeStr.isNotEmpty()) {
                 if (isNotEmpty()) append(" • ")
@@ -358,6 +377,7 @@ class UpdateAppAlertDialog(
             textColor = Theme.getColor(Theme.key_dialogTextBlack),
             bold = false,
         ) {
+            appUpdate.version?.toIntOrNull()?.let(UpdateHelper::snooze)
             UpdateHelper.clearPending()
             dismiss()
         }

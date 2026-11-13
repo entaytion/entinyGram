@@ -101,6 +101,20 @@ object UpdateHelper {
 
     @Volatile private var lastProgress: Float = 0f
 
+    private const val SNOOZE_MS = 24L * 60 * 60 * 1000
+    private val LABEL_RE = Regex("""entinyGram\s+\S+\s+·\s+(beta|release)\s+(\d+)""", RegexOption.IGNORE_CASE)
+
+    val pendingLabel: String?
+        get() = InuConfig.UPDATE_PENDING_LABEL.value.takeIf { it.isNotEmpty() }
+
+    fun snooze(versionCode: Int) {
+        InuConfig.UPDATE_SNOOZE_CODE.value = versionCode
+        InuConfig.UPDATE_SNOOZE_UNTIL_MS.value = System.currentTimeMillis() + SNOOZE_MS
+    }
+
+    fun isSnoozed(versionCode: Int): Boolean =
+        InuConfig.UPDATE_SNOOZE_CODE.value == versionCode && System.currentTimeMillis() < InuConfig.UPDATE_SNOOZE_UNTIL_MS.value
+
     @JvmStatic
     fun revealPendingUpdate() {
         // entiny: a stale pending entry for the installed version must never pop up
@@ -127,6 +141,7 @@ object UpdateHelper {
         pendingSourceMessage = null
         isPendingStart = false
         lastProgress = 0f
+        InuConfig.UPDATE_PENDING_LABEL.value = ""
         SharedConfig.pendingAppUpdate = null
         SharedConfig.saveConfig()
         NotificationCenter.getGlobalInstance()
@@ -457,6 +472,8 @@ object UpdateHelper {
     }
 
     private fun applyUpdate(msg: TLRPC.Message, info: ApkInfo, currentVerCode: Int, isBeta: Boolean): TLRPC.TL_help_appUpdate {
+        InuConfig.UPDATE_PENDING_LABEL.value = LABEL_RE.find(msg.message ?: "")
+            ?.let { "${it.groupValues[1].lowercase()} ${it.groupValues[2]}" }.orEmpty()
         val updateObj = TLRPC.TL_help_appUpdate().apply {
             flags = flags or 2
             id = msg.id

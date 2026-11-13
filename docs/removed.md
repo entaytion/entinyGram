@@ -10,6 +10,7 @@ what entinygram used to have and no longer ships, and why. one row per feature, 
 | old config migrations | imported legacy keys for ghost mode, self-destruct, regex filter, translation language and feed | old keys are no longer read. `ConfigSanitizer` resets a broken value to its default on load. only recent migrations stay: archive scope, dialogs fab, center title |
 | censorship bypass and websocket tunnel | routed the connection through a websocket tunnel with a leak guard | removed until it can come back with better proxy support |
 | own icon packs | entinygram's own phosphor and vkui icon sets | upstream `.icons` packs from inugram are used instead |
+| custom edited and deleted marks | your own text for the "edited" and "deleted" labels on messages | too narrow for the core app. it lives in the [custom marks](https://github.com/entinyGram/plugins/tree/main/plugins/features/custom-marks) plugin instead |
 
 ## how to add a row
 

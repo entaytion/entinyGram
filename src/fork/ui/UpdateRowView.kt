@@ -129,7 +129,8 @@ class UpdateRowView(context: Context) : FrameLayout(context) {
             }
             else -> {
                 iconProgress.setIcon(MediaActionDrawable.ICON_DOWNLOAD, true, animated)
-                textView.setText(LocaleController.getString(R.string.AppUpdate), animated)
+                val label = UpdateHelper.pendingLabel
+                textView.setText(LocaleController.getString(R.string.AppUpdate) + (label?.let { " · $it" } ?: ""), animated)
                 showSize = true
             }
         }

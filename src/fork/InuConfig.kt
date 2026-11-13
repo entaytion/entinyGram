@@ -1946,6 +1946,15 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val UPDATE_LAST_CHECK_MS = LongItem("update_last_check_ms", 0L, exportable = false)
 
     @JvmField
+    val UPDATE_SNOOZE_CODE = IntItem("update_snooze_code", 0, exportable = false)
+
+    @JvmField
+    val UPDATE_SNOOZE_UNTIL_MS = LongItem("update_snooze_until_ms", 0L, exportable = false)
+
+    @JvmField
+    val UPDATE_PENDING_LABEL = StringItem("update_pending_label", "", exportable = false)
+
+    @JvmField
     val LAST_EXIT_REASON_MS = LongItem("last_exit_reason_ms", 0L, exportable = false)
 
     @JvmField

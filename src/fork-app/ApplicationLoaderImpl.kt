@@ -32,8 +32,11 @@ class ApplicationLoaderImpl : BaseApplicationLoaderImpl() {
 
     override fun showCustomUpdateAppPopup(context: Context, update: BetaUpdate, account: Int): Boolean {
         val tl = SharedConfig.pendingAppUpdate ?: return false
+        if (UpdateHelper.isSnoozed(update.versionCode)) return false
         return showUpdateAppPopup(context, tl, account)
     }
+
+    private var popup: UpdateAppAlertDialog? = null
 
     override fun checkApkInstallPermissions(context: Context): Boolean {
         if (!ApplicationLoader.applicationContext.packageManager.canRequestPackageInstalls()) {
@@ -51,8 +54,9 @@ class ApplicationLoaderImpl : BaseApplicationLoaderImpl() {
     }
 
     override fun showUpdateAppPopup(context: Context, update: TLRPC.TL_help_appUpdate, account: Int): Boolean {
+        if (popup?.isShowing == true) return true
         try {
-            UpdateAppAlertDialog(context, update, account).show()
+            popup = UpdateAppAlertDialog(context, update, account).also { it.show() }
         } catch (e: Exception) {
             FileLog.e(e)
         }
