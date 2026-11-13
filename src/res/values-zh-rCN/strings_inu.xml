@@ -2088,7 +2088,6 @@
     <string name="InuArchiveScopeSecret">私密聊天</string>
     <string name="InuChatNavigation">导航与选择</string>
     <string name="InuChatsAndMessages">聊天和消息</string>
-    <string name="InuFasterDownloadsFast">快速</string>
     <string name="InuFasterDownloadsSection">下载速度</string>
     <string name="InuForwardAndReplies">回复与转发</string>
     <string name="InuForwardChannel">受保护的转发</string>

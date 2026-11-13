@@ -2092,7 +2092,6 @@ Mientras esté activado:</string>
     <string name="InuCompactModeGroups">Grupos</string>
     <string name="InuChatNavigation">Navegación y selección</string>
     <string name="InuChatsAndMessages">Chats y mensajes</string>
-    <string name="InuFasterDownloadsFast">Rápida</string>
     <string name="InuFasterDownloadsSection">Velocidad de descarga</string>
     <string name="InuForwardAndReplies">Respuestas y reenvío</string>
     <string name="InuForwardChannel">Reenvío protegido</string>

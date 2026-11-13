@@ -1033,7 +1033,6 @@
     <string name="InuFasterDownloads">Пришвидшене завантаження</string>
     <string name="InuFasterUploads">Пришвидшена відправка</string>
     <string name="InuFasterDownloadsSection">Швидкість завантаження</string>
-    <string name="InuFasterDownloadsFast">Швидко</string>
     <string name="InuSendMp4DocumentAsVideo">Надсилати MP4 документи як відео</string>
     <string name="InuSendMp4DocumentAsVideoInfo">Файли MP4, надіслані як документ, відображатимуться як програвальні відео</string>
     <string name="InuMentionInsertTitle">Вставити згадку</string>

@@ -1270,7 +1270,6 @@
     <string name="InuFasterDownloads">Faster downloads</string>
     <string name="InuFasterUploads">Faster uploads</string>
     <string name="InuFasterDownloadsSection">Download speed</string>
-    <string name="InuFasterDownloadsFast">Fast</string>
     <string name="InuKeepDownloadsInBackground">Don\'t kill downloads on scroll/exit</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Downloads keep running when you scroll away or leave the chat.</string>
     <string name="InuBlockSleepWhileDownloading">Block sleep while downloading</string>

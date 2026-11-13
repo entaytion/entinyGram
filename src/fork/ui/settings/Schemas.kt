@@ -1068,29 +1068,7 @@ object Schemas {
 
         }
         section(R.string.InuFasterDownloadsSection) {
-            custom(
-                "faster-downloads", R.string.InuFasterDownloads,
-                build = { page, id ->
-                    val cell = page.remember(id) {
-                        SliderCell(
-                            page.context,
-                            min = 0f,
-                            max = 1f,
-                            defaultValue = 1f,
-                            initialValue = fasterDownloadsLevel().toFloat(),
-                            step = 1f,
-                            title = LocaleController.getString(R.string.InuFasterDownloads),
-                            format = { fasterDownloadsLabel(it.toInt()) },
-                            onChanged = {
-                                val level = it.toInt()
-                                InuConfig.FASTER_DOWNLOADS.value = level >= 1
-                            },
-                        )
-                    }
-                    cell.updateColors()
-                    UItem.asCustom(id, cell)
-                },
-            )
+            toggle(InuConfig.FASTER_DOWNLOADS, R.string.InuFasterDownloads)
             toggle(InuConfig.FASTER_UPLOADS, R.string.InuFasterUploads)
             toggle(InuConfig.DOWNLOAD_QUEUE, R.string.InuDownloadQueue, R.string.InuDownloadQueueInfo)
         }
@@ -1442,18 +1420,6 @@ object Schemas {
             }
         }
     }
-
-    private fun fasterDownloadsLevel(): Int = when {
-        !InuConfig.FASTER_DOWNLOADS.value -> 0
-        else -> 1
-    }
-
-    private fun fasterDownloadsLabel(level: Int): String = LocaleController.getString(
-        when (level) {
-            0 -> R.string.PasswordOff
-            else -> R.string.InuFasterDownloadsFast
-        }
-    )
 
     private val RECENT_LIMITS = listOf(25, 100, 500, 0)
 

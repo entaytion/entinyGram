@@ -2088,7 +2088,6 @@
     <string name="InuArchiveScopeSecret">秘密のチャット</string>
     <string name="InuChatNavigation">ナビゲーションと選択</string>
     <string name="InuChatsAndMessages">チャットとメッセージ</string>
-    <string name="InuFasterDownloadsFast">高速</string>
     <string name="InuFasterDownloadsSection">ダウンロード速度</string>
     <string name="InuForwardAndReplies">返信と転送</string>
     <string name="InuForwardChannel">保護された転送</string>

@@ -147,6 +147,22 @@ object MessageMenuPreviewHelper {
             place()
         }
 
+        // entiny: the info box under the menu is its last child, a capped menu takes the whole height and leaves the box clipped
+        private fun reserveInfoBox(menu: ChatScrimPopupContainerLayout, room: Int, widthSpec: Int) {
+            val info = menu.bottomView ?: return
+            if (info.parent !== menu) return
+            info.measure(widthSpec, View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+            val infoParams = info.layoutParams as? ViewGroup.MarginLayoutParams
+            val extra = info.measuredHeight + (infoParams?.topMargin ?: 0) + (infoParams?.bottomMargin ?: 0)
+            for (i in 0 until menu.childCount) {
+                val child = menu.getChildAt(i)
+                if (child === info) continue
+                val params = child.layoutParams as? ViewGroup.MarginLayoutParams ?: continue
+                val limit = room - extra
+                if (limit > 0 && params.height != limit) params.height = limit
+            }
+        }
+
         private fun place() {
             val message = cell.messageObject
             val location = IntArray(2)
@@ -229,6 +245,7 @@ object MessageMenuPreviewHelper {
                 if (menuHeight > room) {
                     ChatHelper.moveQuickRowToTop()
                     menu.setMaxHeight(room)
+                    reserveInfoBox(menu, room, widthSpec)
                     menu.measure(widthSpec, heightSpec)
                     menuWidth = menu.measuredWidth
                     menuHeight = menu.measuredHeight

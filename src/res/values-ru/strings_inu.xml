@@ -739,7 +739,6 @@
     <string name="InuFasterDownloads">Ускорение скачивания</string>
     <string name="InuFasterUploads">Ускорение выгрузки</string>
     <string name="InuFasterDownloadsSection">Скорость загрузки</string>
-    <string name="InuFasterDownloadsFast">Быстро</string>
     <string name="InuSendMp4DocumentAsVideo">Отправлять MP4-документы как видео</string>
     <string name="InuSendMp4DocumentAsVideoInfo">MP4-файлы, прикреплённые через «Файлы», отправляются как проигрываемые видео без конвертации</string>
     <string name="InuMentionInsertTitle">Вставить упоминание</string>

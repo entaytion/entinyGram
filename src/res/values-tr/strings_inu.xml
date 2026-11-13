@@ -2090,7 +2090,6 @@
     <string name="InuArchiveScopeSecret">Gizli sohbetler</string>
     <string name="InuChatNavigation">Gezinme ve seçim</string>
     <string name="InuChatsAndMessages">Sohbetler ve mesajlar</string>
-    <string name="InuFasterDownloadsFast">Hızlı</string>
     <string name="InuFasterDownloadsSection">İndirme hızı</string>
     <string name="InuForwardAndReplies">Yanıtlar ve iletme</string>
     <string name="InuForwardChannel">Korumalı iletme</string>
