@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12957,6 +12957,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -12972,6 +12972,10 @@ public class ChatActivity extends BaseFragment implements
          if (selectionReactionsOverlay != null && selectionReactionsOverlay.isVisible()) {
              selectionReactionsOverlay.setHiddenByScroll(true);
          }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          Bundle args = new Bundle();
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-@@ -34701,6 +34705,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -34751,6 +34755,12 @@ public class ChatActivity extends BaseFragment implements
                      selectedObjectGroup = null;
                      return;
                  }
@@ -85,7 +85,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-@@ -144,10 +144,10 @@ import me.vkryl.core.BitwiseUtils;
+@@ -145,10 +145,10 @@ import me.vkryl.core.BitwiseUtils;
  public class ShareAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
  
      private FrameLayout frameLayout;
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
      private FrameLayout pickerBottom;
      private float sheetBackgroundTop; // inner top of the sheet background, in containerView coordinates
      private View bottomFadeView;
-@@ -168,15 +168,15 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -169,15 +169,15 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
      private ShareDialogsAdapter listAdapter;
      private ShareTopicsAdapter shareTopicsAdapter;
      private ShareSearchAdapter searchAdapter;
@@ -118,7 +118,7 @@ index 0000000..0000000 100644
      private SwitchView switchView;
      private int containerViewTop = -1;
      private boolean fullyShown = false;
-@@ -686,9 +686,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -687,9 +687,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  int availableHeight = totalHeight - getPaddingTop();
  
                  int size = Math.max(searchAdapter.getItemCount(), listAdapter.getItemCount() - 1);
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
                      if (topicsSize > contentSize) {
                          contentSize = AndroidUtilities.lerp(contentSize, topicsSize, topicsGridView.getAlpha());
                      }
-@@ -1086,7 +1088,15 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1096,7 +1098,15 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              AndroidUtilities.showKeyboard(searchView.editText);
          });
  
@@ -149,7 +149,7 @@ index 0000000..0000000 100644
          topicsBackActionBar = new ActionBar(context);
          topicsBackActionBar.setOccupyStatusBar(false);
          topicsBackActionBar.setBackButtonImage(R.drawable.ic_ab_back);
-@@ -1163,14 +1173,14 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1173,14 +1183,14 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
  
              @Override
              protected boolean allowSelectChildAtPosition(float x, float y) {
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
                  }
                  super.draw(canvas);
                  if (topicsGridView.getVisibility() != View.GONE) {
-@@ -1243,14 +1253,14 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1253,14 +1263,14 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
  
              @Override
              protected boolean allowSelectChildAtPosition(float x, float y) {
@@ -183,7 +183,7 @@ index 0000000..0000000 100644
                  }
                  super.draw(canvas);
                  if (topicsGridView.getVisibility() != View.GONE) {
-@@ -1343,14 +1353,14 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1354,14 +1364,14 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
          containerView.addView(bottomFadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 300, Gravity.BOTTOM));
  
          FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LayoutHelper.MATCH_PARENT, AndroidUtilities.getShadowHeight(), Gravity.TOP | Gravity.LEFT);
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
  
          frameLayoutParams = new FrameLayout.LayoutParams(LayoutHelper.MATCH_PARENT, AndroidUtilities.getShadowHeight(), Gravity.BOTTOM | Gravity.LEFT);
          frameLayoutParams.bottomMargin = dp(48);
-@@ -1588,6 +1598,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1599,6 +1609,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
  
          commentTextView = new EditTextEmoji(context, sizeNotifierFrameLayout, null, EditTextEmoji.STYLE_DIALOG, true, resourcesProvider) {
  
@@ -212,7 +212,7 @@ index 0000000..0000000 100644
              @Override
              protected void bottomPanelTranslationY(float translation) {
                  super.bottomPanelTranslationY(translation);
-@@ -1686,7 +1701,10 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1697,7 +1712,10 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
  //        commentTextView.setBackgroundColor(backgroundColor);
          commentTextView.setHint(LocaleController.getString(R.string.ShareComment));
          commentTextView.onResume();
@@ -224,7 +224,7 @@ index 0000000..0000000 100644
          frameLayout2.addView(commentTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT));
          frameLayout2.setClipChildren(false);
          frameLayout2.setClipToPadding(false);
-@@ -1758,10 +1776,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1769,10 +1787,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
          writeButton.setCirclePadding(dp(1), dp(6));
          writeButton.newCounterPos = true;
          writeButtonContainer.addView(writeButton, LayoutHelper.createFrameMatchParent());
@@ -240,7 +240,7 @@ index 0000000..0000000 100644
  
          textPaint.setTextSize(dp(12));
          textPaint.setTypeface(AndroidUtilities.bold());
-@@ -2211,6 +2230,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2235,6 +2254,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
          searchView.setScaleX(0.9f + (1f - value) * 0.1f);
          searchView.setScaleY(0.9f + (1f - value) * 0.1f);
          searchView.setAlpha(1f - value);
@@ -248,7 +248,7 @@ index 0000000..0000000 100644
  
          topicsBackActionBar.getBackButton().setTranslationX(-dp(16) * (1f - value));
          topicsBackActionBar.getTitleTextView().setTranslationY(dp(16) * (1f - value));
-@@ -2248,7 +2268,20 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2272,7 +2292,20 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
          return containerView.getMeasuredHeight() - containerViewTop;
      }
  
@@ -270,7 +270,7 @@ index 0000000..0000000 100644
      private ActionBarPopupWindow sendPopupWindow;
      private boolean onSendLongClick(View view) {
          if (parentActivity == null) {
-@@ -2293,7 +2326,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2317,7 +2350,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              showSendersNameView.setTextAndIcon(false ? LocaleController.getString(R.string.ShowSenderNames) : LocaleController.getString(R.string.ShowSendersName), 0);
              showSendersNameView.setChecked(showSendersName = true);
  
@@ -280,7 +280,7 @@ index 0000000..0000000 100644
              if (darkTheme) {
                  hideSendersNameView.setTextColor(getThemedColor(Theme.key_voipgroup_nameText));
              }
-@@ -2303,11 +2337,16 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2327,11 +2361,16 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              showSendersNameView.setOnClickListener(e -> {
                  showSendersNameView.setChecked(showSendersName = true);
                  hideSendersNameView.setChecked(!showSendersName);
@@ -297,7 +297,7 @@ index 0000000..0000000 100644
              setupThemedRadialSelectors(sendPopupLayout1, Theme.key_dialogButtonSelector, resourcesProvider);
  
              layout.addView(sendPopupLayout1, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, -8));
-@@ -2410,6 +2449,10 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2434,6 +2473,10 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              }
          }
  
@@ -308,7 +308,7 @@ index 0000000..0000000 100644
          CharSequence[] text = new CharSequence[] { commentTextView.getText() };
          ArrayList<TLRPC.MessageEntity> entities = MediaDataController.getInstance(currentAccount).getEntities(text, true);
          final int video_timestamp;
-@@ -2502,13 +2545,18 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2526,13 +2569,18 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                          replyTopMsg.isTopicMainMessage = true;
                      }
                      int result;
@@ -329,7 +329,7 @@ index 0000000..0000000 100644
                      if (result != 0) {
                          removeKeys.add(key);
                      }
-@@ -2801,10 +2849,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2825,10 +2873,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  timestampFrameLayout.setVisibility(View.VISIBLE);
              }
              writeButtonContainer.setVisibility(View.VISIBLE);
@@ -342,7 +342,7 @@ index 0000000..0000000 100644
          }
          if (pickerBottom != null) {
              ViewCompat.setImportantForAccessibility(pickerBottom, show ? ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS : ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
-@@ -2882,7 +2932,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2911,7 +2961,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              writeButton.setStarsPrice(price, messagesCount, animated != 0);
              showCommentTextView(true);
  
@@ -352,7 +352,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -2892,6 +2943,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2921,6 +2972,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              AndroidUtilities.hideKeyboard(commentTextView.getEditText());
          }
          fullyShown = false;
@@ -360,7 +360,7 @@ index 0000000..0000000 100644
          super.dismiss();
          NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.dialogsNeedReload);
      }
-@@ -2936,6 +2988,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2965,6 +3017,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  if (dialog.id == selfUserId) {
                      continue;
                  }
@@ -370,7 +370,7 @@ index 0000000..0000000 100644
                  if (!DialogObject.isEncryptedDialog(dialog.id)) {
                      if (DialogObject.isUserDialog(dialog.id)) {
                          if (dialog.folder_id == 1) {
-@@ -3020,7 +3075,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -3049,7 +3104,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  case 1:
                  default: {
                      view = new View(context);
@@ -384,7 +384,7 @@ index 0000000..0000000 100644
                      break;
                  }
              }
-@@ -3567,7 +3627,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -3596,7 +3656,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  default:
                  case 1: {
                      view = new View(context);
@@ -397,7 +397,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -5154,6 +5154,10 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -5194,6 +5194,10 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                  return;
              }
  

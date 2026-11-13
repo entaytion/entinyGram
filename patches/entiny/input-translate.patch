@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -15137,6 +15137,22 @@ public class ChatActivity extends BaseFragment implements
+@@ -15152,6 +15152,22 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      private void requestLinkPreview(TL_account.getWebPagePreview req, Utilities.Callback2<Boolean, TLRPC.WebPage> done) {
          cancelSearchLinks();
          linkSearchRequestId = getConnectionsManager().sendRequestTyped(req, AndroidUtilities::runOnUIThread, (response, error) -> {
-@@ -28957,9 +28973,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28973,9 +28989,9 @@ public class ChatActivity extends BaseFragment implements
          if (chat && encryptedChat == null) {
              menu.add(R.id.menu_groupbolditalic, R.id.menu_date, order++, LocaleController.getString(R.string.FormattedDate));
          }
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
  
          aiButton = new ImageView(context);
          aiButton.setImageDrawable(aiButtonIcon = new AiButtonDrawable(context));
-@@ -6372,6 +6373,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6377,6 +6378,12 @@ public class ChatActivityEnterView extends FrameLayout implements
          setRecordVideoButtonVisible(!isInVideoMode(), true);
      }
  
@@ -74,7 +74,7 @@ index 0000000..0000000 100644
      public void inu_startRecordingLocked(boolean video) {
          createRecordCircle();
          setRecordVideoButtonVisible(video, false);
-@@ -8964,6 +8971,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8969,6 +8976,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                  suggestButton.setTranslationX(shownSendButton ? -Math.max(0, sendButton.width() - dp(64)) : dp(42));
              }
          }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
      }
  
      private void setSlowModeButtonVisible(boolean visible) {
-@@ -8992,8 +9000,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8997,8 +9005,15 @@ public class ChatActivityEnterView extends FrameLayout implements
              } else {
                  layoutParams.rightMargin = dp(50);
              }
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
                  layoutParams.rightMargin = dp(50);
              } else {
                  layoutParams.rightMargin = dp(2);
-@@ -9011,6 +9026,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -9016,6 +9031,15 @@ public class ChatActivityEnterView extends FrameLayout implements
              layoutParams2.rightMargin = editingMessageObject == null ? Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT)) : 0;
              recordedAudioPanel.setLayoutParams(layoutParams2);
          }

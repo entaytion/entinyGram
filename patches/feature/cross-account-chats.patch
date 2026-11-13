@@ -6,11 +6,11 @@ Subject: cross-account chats: show a chat from another account in the chat list
 ---
  .../ui/ActionBar/ActionBarLayout.java         |  1 +
  .../telegram/ui/Adapters/DialogsAdapter.java  | 73 ++++++++++++++++++-
- .../ui/Adapters/DialogsSearchAdapter.java     | 10 +++
+ .../ui/Adapters/DialogsSearchAdapter.java     | 12 ++-
  .../org/telegram/ui/Cells/DialogCell.java     | 34 +++++++++
  .../telegram/ui/Cells/ProfileSearchCell.java  | 29 ++++++++
  .../java/org/telegram/ui/DialogsActivity.java | 26 +++++++
- 6 files changed, 170 insertions(+), 3 deletions(-)
+ 6 files changed, 171 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
 index 0000000..0000000 100644
@@ -93,7 +93,7 @@ index 0000000..0000000 100644
              case VIEW_TYPE_DIALOG: {
                  TLRPC.Dialog dialog = (TLRPC.Dialog) getItem(i);
                  Object nextObject = getItem(i + 1);
-@@ -1548,7 +1576,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
+@@ -1551,7 +1579,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
                  int cellHeight = AndroidUtilities.dp(SharedConfig.useThreeLinesLayout ? 76 : 70);
                  int dialogsHeight = 0;
                  for (int i = 0; i < size; i++) {
@@ -102,7 +102,7 @@ index 0000000..0000000 100644
                          if (itemInternals.get(i).isForumCell && !collapsedView) {
                              dialogsHeight += AndroidUtilities.dp(SharedConfig.useThreeLinesLayout ? 86 : 91);
                          } else {
-@@ -1855,10 +1883,49 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
+@@ -1859,10 +1887,49 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
                  }
              }
          }
@@ -195,6 +195,15 @@ index 0000000..0000000 100644
  
                  if (obj instanceof TLRPC.TL_sponsoredPeer) {
                      final TLRPC.TL_sponsoredPeer sponsoredPeer = (TLRPC.TL_sponsoredPeer) obj;
+@@ -1920,7 +1930,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+                 }
+                 cell.setChecked(false, false);
+                 boolean savedMessages = false;
+-                if (user != null && user.id == selfUserId && dialogsType != DialogsActivity.DIALOGS_TYPE_BOT_SELECT_VERIFY) {
++                if (user != null && user.id == (inu_linked != null ? UserConfig.getInstance(inu_linked.account).getClientUserId() : selfUserId) && dialogsType != DialogsActivity.DIALOGS_TYPE_BOT_SELECT_VERIFY) {
+                     name = LocaleController.getString(R.string.SavedMessages);
+                     username = null;
+                     savedMessages = true;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
@@ -340,7 +349,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -726,6 +726,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -727,6 +727,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private final static int remove_from_folder = 110;
      private final static int community_ungroup = 111;
      private final static int inu_select_all = 900;
@@ -348,7 +357,7 @@ index 0000000..0000000 100644
  
      private final static int ARCHIVE_ITEM_STATE_PINNED = 0;
      private final static int ARCHIVE_ITEM_STATE_SHOWED = 1;
-@@ -2486,6 +2487,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2511,6 +2512,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
          @Override
          public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
@@ -358,7 +367,7 @@ index 0000000..0000000 100644
              if (waitingForDialogsAnimationEnd(parentPage) || parentLayout != null && parentLayout.isInPreviewMode() || rightSlidingDialogContainer.hasFragment() || communityId != 0) {
                  return 0;
              }
-@@ -2901,6 +2905,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2927,6 +2931,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  observersGroup.add(NotificationCenter.filterSettingsUpdated);
                  observersGroup.add(NotificationCenter.dialogsUnreadCounterChanged);
              }
@@ -366,7 +375,7 @@ index 0000000..0000000 100644
              observersGroup
                  .add(NotificationCenter.dialogsNeedReload)
                  .add(NotificationCenter.dialogFiltersUpdated)
-@@ -3078,6 +3083,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3104,6 +3109,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              observersGroup.removeAllObservers();
              observersGroup = null;
          }
@@ -377,7 +386,7 @@ index 0000000..0000000 100644
  
          if (commentView != null) {
              commentView.onDestroy();
-@@ -8135,6 +8144,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8159,6 +8168,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (getParentActivity() == null) {
              return;
          }
@@ -387,7 +396,7 @@ index 0000000..0000000 100644
          long dialogId = 0;
          long topicId = 0;
          int message_id = 0;
-@@ -8561,6 +8573,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8585,6 +8597,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (adapter.getItemViewType(position) == DialogsAdapter.VIEW_TYPE_FORWARD_TO_STORIES_CELL) {
              return false;
          }
@@ -397,7 +406,7 @@ index 0000000..0000000 100644
  
          if (!actionBar.isActionModeShowed() && !AndroidUtilities.isTablet() && !onlySelect && view instanceof DialogCell && !getMessagesController().isForum(((DialogCell) view).getDialogId()) && !rightSlidingDialogContainer.hasFragment()) {
              DialogCell cell = (DialogCell) view;
-@@ -8885,6 +8900,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8909,6 +8924,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (hasFolders) {
              flags |= ActionBarPopupWindow.ActionBarPopupWindowLayout.FLAG_USE_SWIPEBACK;
          }
@@ -408,7 +417,7 @@ index 0000000..0000000 100644
  
          final BaseFragment[] previewActivity = new BaseFragment[1];
          previewMenu[0] = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getParentActivity(), R.drawable.popup_fixed_alert4, getResourceProvider(), flags);
-@@ -8899,6 +8918,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8923,6 +8942,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              );
              previewMenu[0].addView(addToFolderItem);
              previewMenu[0].getSwipeBack().setOnHeightUpdateListener(height -> {
@@ -418,7 +427,7 @@ index 0000000..0000000 100644
                  if (previewActivity[0] == null || previewActivity[0].getFragmentView() == null || !previewActivity[0].isInPreviewMode()) {
                      return;
                  }
-@@ -9097,6 +9119,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9121,6 +9143,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              previewMenu[0].addView(muteItem);
          }
  

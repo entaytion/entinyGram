@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService
 index 0000000..0000000 100755
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
-@@ -5077,6 +5077,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -5130,6 +5130,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  	@Override
  	public void onSensorChanged(SensorEvent event) {
  		lastSensorEvent = event;

@@ -154,7 +154,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -1096,6 +1096,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -1097,6 +1097,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  AndroidUtilities.rectTmp.set(inset, inset, thisWidth - inset, thisHeight - inset);
                  clipPath.addRoundRect(AndroidUtilities.rectTmp, r, r, Path.Direction.CW);
                  canvas.clipPath(clipPath);
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
              }
  
              canvas.save();
-@@ -5394,6 +5399,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5400,6 +5405,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          };
          avatarImage.createBlurEffect(getActionsExtraHeight());
@@ -174,7 +174,7 @@ index 0000000..0000000 100644
          avatarImage.getImageReceiver().setAllowDecodeSingleFrame(true);
          avatarImage.setRoundRadiusForExpand(getSmallAvatarRoundRadius());
          avatarImage.setPivotX(0);
-@@ -6654,6 +6660,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6660,6 +6666,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private int getSmallAvatarRoundRadius() {

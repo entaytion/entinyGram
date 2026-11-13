@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -2227,9 +2227,6 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -2229,9 +2229,6 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                      if (messageObject == null) return false;
                      final int loadIndex = messageObject.getDialogId() == dialog_id ? 0 : 1;
                      if (selectedFiles[loadIndex].indexOfKey(messageObject.getId()) < 0) {
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
                          selectedFiles[loadIndex].put(messageObject.getId(), messageObject);
                          if (!messageObject.canDeleteMessage(false, null)) {
                              cantDeleteMessagesCount++;
-@@ -7678,9 +7675,6 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -7718,9 +7715,6 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                      cantDeleteMessagesCount--;
                  }
              } else {

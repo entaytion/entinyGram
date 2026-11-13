@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1900 400" width="1900" height="400">
+
+  <defs>
+    <clipPath id="canvas-clip">
+      <rect width="1900" height="400" />
+    </clipPath>
+  </defs>
+
+  <!-- layer 1: background (M3 surface dim) -->
+  <g id="layer-bg">
+    <rect width="1900" height="400" fill="#180509" />
+  </g>
+
+  <!-- layer 2: material 3 backdrop (large shapes past the frame edge + smooth arcs) -->
+  <g id="layer-m3-background" clip-path="url(#canvas-clip)">
+
+    <!-- large M3 pill, extending past the top-left corner -->
+    <rect id="m3-pill-left"
+          x="-140" y="-120" width="640" height="300" rx="150"
+          transform="rotate(-18 180 30)"
+          fill="#21060C" />
+
+    <!-- large M3 squircle, extending past the bottom-right edge -->
+    <rect id="m3-squircle-right"
+          x="1280" y="150" width="460" height="460" rx="140"
+          transform="rotate(22 1510 380)"
+          fill="#21060C" />
+
+    <!-- soft M3 shape behind the left side (adds depth) -->
+    <circle id="m3-circle-bottom-left"
+            cx="520" cy="490" r="240"
+            fill="#1E060B" />
+
+    <!-- concentric M3 rings in the top-right corner -->
+    <g id="m3-rings-topright" fill="none" stroke="#280810" stroke-width="38">
+      <circle cx="1840" cy="-30" r="210" />
+      <circle cx="1840" cy="-30" r="340" />
+      <circle cx="1840" cy="-30" r="470" stroke="#21060C" stroke-width="32" />
+    </g>
+
+    <!-- smooth wide M3 lines with large radius (no fine ripples) -->
+    <g id="m3-smooth-waves" fill="none" stroke="#280810" stroke-width="36" stroke-linecap="round">
+      <!-- left smooth wave -->
+      <path d="M -80 230 C 120 250, 180 440, 410 420 C 620 400, 680 180, 860 220" />
+
+      <!-- second parallel arc, bottom-left -->
+      <path d="M -60 340 C 90 360, 140 490, 320 480" stroke="#22070E" stroke-width="32" />
+
+      <!-- single smooth arc, right of center -->
+      <path d="M 1040 160 C 1200 190, 1280 30, 1490 -40" />
+    </g>
+
+  </g>
+
+  <!-- layer 3: central wavy M3 cookie backdrop (centered at 950, 200) -->
+  <g id="layer-badge" transform="translate(950, 200) scale(0.76) translate(-320, -315)">
+    <path id="wavy-circle" fill="#3A0B16" d="
+      M 320 96
+      C 342 96, 354 115, 375 119
+      C 396 123, 415 110, 432 122
+      C 449 134, 449 156, 464 171
+      C 479 186, 501 186, 513 203
+      C 525 220, 512 239, 516 260
+      C 520 281, 539 293, 539 315
+      C 539 337, 520 349, 516 370
+      C 512 391, 525 410, 513 427
+      C 501 444, 479 444, 464 459
+      C 449 474, 449 496, 432 508
+      C 415 520, 396 507, 375 511
+      C 354 515, 342 534, 320 534
+      C 298 534, 286 515, 265 511
+      C 244 507, 225 520, 208 508
+      C 191 496, 191 474, 176 459
+      C 161 444, 139 444, 127 427
+      C 115 410, 128 391, 124 370
+      C 120 349, 101 337, 101 315
+      C 101 293, 120 281, 124 260
+      C 128 239, 115 220, 127 203
+      C 139 186, 161 186, 176 171
+      C 191 156, 191 134, 208 122
+      C 225 110, 244 123, 265 119
+      C 286 115, 298 96, 320 96 Z" />
+  </g>
+
+  <!-- layer 4: satellite antenna icon (centered at 950, 200) -->
+  <g id="layer-antenna-icon"
+     transform="translate(950, 200) scale(0.76) translate(-128.5, -123.5) scale(10.5)"
+     fill="none"
+     stroke="#F20C3C"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="1.8">
+    <path id="antenna-dish" d="M4 10a7.31 7.31 0 0 0 10 10Z" />
+    <path id="antenna-pin" d="m9 15 3-3" />
+    <path id="antenna-wave-inner" d="M17 13a6 6 0 0 0-6-6" />
+    <path id="antenna-wave-outer" d="M21 13A10 10 0 0 0 11 3" />
+  </g>
+
+</svg>

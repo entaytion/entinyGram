@@ -4,9 +4,9 @@ Date: Sun, 4 Oct 2026 09:56:37 +0300
 Subject: entiny__hide-chat-avatar: option to hide the chat header avatar
 
 ---
- .../java/org/telegram/ui/Components/ChatAvatarContainer.java  | 2 +-
- .../src/main/java/org/telegram/ui/ProfileActivity.java        | 4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ .../org/telegram/ui/Components/ChatAvatarContainer.java    | 2 +-
+ .../src/main/java/org/telegram/ui/ProfileActivity.java     | 7 +------
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 index 0000000..0000000 100644
@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -6669,7 +6669,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6674,7 +6674,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          if (listView == null) return;
          final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) avatarContainer.getLayoutParams();
          avatarX = listView.getMeasuredWidth() / 2f - (params.width * avatarScale * 0.5f);
@@ -34,15 +34,17 @@ index 0000000..0000000 100644
              avatarX = lerp(prevAvatarTranslation, avatarX, avatarAnimationProgress);
          }
          avatarContainer.setTranslationX(avatarX);
-@@ -10496,7 +10496,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-                     final ViewGroup previousRoot = previousTransitionMainFragment != null && previousTransitionMainFragment.getFragmentView() instanceof ViewGroup
-                         ? (ViewGroup) previousTransitionMainFragment.getFragmentView()
-                         : previousTransitionFragment.getContentView();
--                    prevAvatarTranslation = ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, previousRoot);
-                 }
-                 if (avatarContainer != null && avatarContainer.getSubtitleTextView() instanceof SimpleTextView && ((SimpleTextView) avatarContainer.getSubtitleTextView()).getLeftDrawable() != null || avatarContainer.statusMadeShorter[0]) {
+@@ -10503,9 +10503,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+ 
+             if (previousTransitionFragment != null) {
+                 ChatAvatarContainer avatarContainer = previousTransitionFragment.getAvatarContainer();
+-                if (avatarContainer != null) {
+-                    prevAvatarTranslation = computePreviousAvatarX(avatarContainer);
+-                }
+                 if (avatarContainer != null && avatarContainer.getSubtitleTextView() instanceof SimpleTextView && ((SimpleTextView) avatarContainer.getSubtitleTextView()).getLeftDrawable() != null || avatarContainer.statusMadeShorter[0] || isPreviousTopicsSubtitleDifferent(avatarContainer)) {
                      transitionOnlineText = avatarContainer.getSubtitleTextView();
-@@ -10592,7 +10591,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     transitionOnlineTextOffsetX = getTransitionOnlineTextOffsetX();
+@@ -10601,7 +10598,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              if (previousFragment instanceof ChatActivity) {
                  ChatAvatarContainer avatarContainer = ((ChatActivity) previousFragment).getAvatarContainer();
                  AndroidUtilities.doOnPreDraw(avatarContainer, () -> {
@@ -50,3 +52,11 @@ index 0000000..0000000 100644
                      fixAvatarImageInCenter();
                  });
                  View subtitleTextView = avatarContainer.getSubtitleTextView();
+@@ -10615,7 +10611,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 // topics, also in the side panel of the chat list: the avatar goes back to where the header shows it
+                 final ChatAvatarContainer avatarContainer = previousTransitionFragment.getAvatarContainer();
+                 AndroidUtilities.doOnPreDraw(avatarContainer, () -> {
+-                    prevAvatarTranslation = computePreviousAvatarX(avatarContainer);
+                     fixAvatarImageInCenter();
+                 });
+                 if (isPreviousTopicsSubtitleDifferent(avatarContainer)) {

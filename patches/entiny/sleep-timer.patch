@@ -37,7 +37,7 @@ index 0000000..0000000 100644
  public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, DownloadController.FileDownloadProgressListener {
  
      public static AudioPlayerAlert instance;
-@@ -2945,6 +2948,11 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -2946,6 +2949,11 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
              o.dismiss();
              onSubItemClick(7);
          });

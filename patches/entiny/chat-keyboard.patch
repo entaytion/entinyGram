@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -6945,7 +6945,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -6949,7 +6949,7 @@ public class ChatActivity extends BaseFragment implements
                          wasManualScroll = true;
                          scrollingChatListView = true;
                      } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                              if (isKeyboardVisible()) {
                                  AndroidUtilities.hideKeyboard(getParentActivity().getCurrentFocus());
                              } else if (chatActivityEnterView != null) {
-@@ -35999,6 +35999,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -36074,6 +36074,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          };
                          chatActivity.showFieldPanelForReplyQuote(replyingMessageObject, replyingQuote);

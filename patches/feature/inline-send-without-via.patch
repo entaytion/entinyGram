@@ -34,15 +34,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -383,6 +383,7 @@ import desu.inugram.InuConfig;
- import desu.inugram.helpers.chat.ChatHelper;
+@@ -386,6 +386,7 @@ import desu.inugram.helpers.chat.ChatHelper;
  import desu.inugram.helpers.chat.ChatActionsHelper;
+ import desu.inugram.helpers.chat.MentionHelper;
  import desu.inugram.helpers.search.SearchFilterHelper;
 +import desu.inugram.helpers.chat.InlineResultHelper;
- import desu.inugram.helpers.chat.MentionHelper;
  
  @SuppressWarnings("unchecked")
-@@ -1689,7 +1690,22 @@ public class ChatActivity extends BaseFragment implements
+ public class ChatActivity extends BaseFragment implements
+@@ -1692,7 +1693,22 @@ public class ChatActivity extends BaseFragment implements
              if (index < 0 || index >= botContextResults.size()) {
                  return;
              }
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
          }
      };
  
-@@ -7573,6 +7589,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -7577,6 +7593,9 @@ public class ChatActivity extends BaseFragment implements
                      return;
                  }
                  TLRPC.BotInlineResult result = (TLRPC.BotInlineResult) object;
@@ -76,7 +76,7 @@ index 0000000..0000000 100644
                  if (currentEncryptedChat != null) {
                      int error = 0;
                      if (result.send_message instanceof TLRPC.TL_botInlineMessageMediaAuto && "game".equals(result.type)) {
-@@ -7657,6 +7676,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -7661,6 +7680,10 @@ public class ChatActivity extends BaseFragment implements
                  int len = mentionContainer.getAdapter().getResultLength();
                  return ChatHelper.maybeHandleMentionLongTap(this, chatActivityEnterView, (TLRPC.User) object, start, len);
              }
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
              if (!mentionContainer.getAdapter().isLongClickEnabled()) {
                  return false;
              }
-@@ -13107,7 +13130,24 @@ public class ChatActivity extends BaseFragment implements
+@@ -13130,7 +13153,24 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
          if (mentionContainer == null) {
              return;
          }
-@@ -13117,6 +13157,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -13140,6 +13180,10 @@ public class ChatActivity extends BaseFragment implements
          params.put("query_id", "" + result.query_id);
          params.put("bot", "" + uid);
          params.put("bot_name", mentionContainer.getAdapter().getContextBotName());

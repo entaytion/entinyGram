@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9038,6 +9038,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -9042,6 +9042,10 @@ public class ChatActivity extends BaseFragment implements
              FileLog.d("InuRx[" + classGuid + "] init did=" + dialog_id + " topic=" + getTopicId() + " reactions=" + reactionsMentionCount);
          }
  
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
              savedMessagesHint.setMultilineText(true);
-@@ -9181,6 +9185,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9185,6 +9189,7 @@ public class ChatActivity extends BaseFragment implements
              });
          }
  
@@ -49,7 +49,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2121,12 +2121,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2122,12 +2122,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  additionalPadding += h;
              }
  

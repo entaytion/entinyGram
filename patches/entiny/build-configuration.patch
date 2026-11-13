@@ -127,8 +127,8 @@ index 0000000..0000000 100644
      // end inu
  
      externalNativeBuild {
-@@ -210,6 +218,10 @@ android {
-         }
+@@ -215,6 +223,10 @@ android {
+         aidl true
      }
  
 +    kotlinOptions {
@@ -138,7 +138,7 @@ index 0000000..0000000 100644
      lintOptions {
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
-@@ -221,9 +233,6 @@ android {
+@@ -226,9 +238,6 @@ android {
          targetCompatibility JavaVersion.VERSION_1_8
      }
  
@@ -148,7 +148,7 @@ index 0000000..0000000 100644
  
      defaultConfig {
          buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
-@@ -233,7 +242,12 @@ android {
+@@ -238,7 +247,12 @@ android {
          targetSdkVersion 36
  
          ndk {
@@ -162,17 +162,17 @@ index 0000000..0000000 100644
          }
  
          externalNativeBuild {
-@@ -241,6 +255,9 @@ android {
+@@ -246,6 +260,9 @@ android {
                  version '3.22.1'
                  arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-26' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
-                 targets 'tmessages.49'
+                 targets 'tmessages.49', 'twidget'
 +                if (!rootProject.ext.inuPluginless) {
 +                    arguments += ['-DINU_EXPORT_SQLITE=ON']
 +                }
                  if (rootProject.ext.ccachePath) {
                      arguments += ["-DCMAKE_C_COMPILER_LAUNCHER=${rootProject.ext.ccachePath}", "-DCMAKE_CXX_COMPILER_LAUNCHER=${rootProject.ext.ccachePath}"]
                  }
-@@ -253,6 +270,7 @@ android {
+@@ -258,6 +275,7 @@ android {
              jniDebuggable true
              shrinkResources false
              multiDexEnabled true
@@ -180,7 +180,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
-@@ -265,9 +283,15 @@ android {
+@@ -270,9 +288,15 @@ android {
  
          release {
              jniDebuggable false
@@ -197,7 +197,7 @@ index 0000000..0000000 100644
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
              buildConfigField "String", "INU_BUILD_TYPE", "\"" + (System.getenv('INU_BUILD_TYPE') ?: 'debug') + "\""
-@@ -278,6 +302,10 @@ android {
+@@ -283,6 +307,10 @@ android {
          }
      }
  
@@ -265,7 +265,7 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -84,9 +88,19 @@
+@@ -90,9 +94,19 @@
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**
@@ -289,7 +289,7 @@ diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -640,12 +640,6 @@
+@@ -647,12 +647,6 @@
              </intent-filter>
          </receiver>
  
@@ -316,7 +316,7 @@ index 0000000..0000000 100644
  
  import org.telegram.PhoneFormat.PhoneFormat;
  import org.telegram.messenger.AccountInstance;
-@@ -1979,15 +1976,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1993,15 +1990,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
                      final LinkManager linkManager = new LinkManager(this, intentAccount[0], progress, openedTelegram);
                      if (linkManager.handle(data)) {
@@ -332,7 +332,7 @@ index 0000000..0000000 100644
                          return true;
                      }
  
-@@ -2906,15 +2894,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -2920,15 +2908,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                  }
                              }
                          }

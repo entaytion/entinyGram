@@ -62,7 +62,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -2254,7 +2251,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2256,7 +2253,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                      contains |= glassDrawableMenu != null && glassDrawableMenu.getBounds().contains(x, y);
                  }
  
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
                      return false;
                  }
              }
-@@ -2652,21 +2649,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2654,21 +2651,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              if (chatAvatarContainer.getTranslationX() != 0) {
                  chatAvatarContainer.setTranslationX(0);
              }
@@ -100,7 +100,7 @@ index 0000000..0000000 100644
              target = Math.min(target, roomRight - Math.max(roomLeft, leftLimit));
  
              // entiny: snap on the first pass so the header doesn't unfold from nothing on chat open; animate afterwards.
-@@ -2766,6 +2761,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2768,6 +2763,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
      }
  
@@ -115,7 +115,7 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          if (inu_needsUpdateGlassBounds()) {
-@@ -2814,7 +2817,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2816,7 +2819,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int t = getHeight() - extraHeight - (getCurrentActionBarHeight() + s) / 2 - p;
          final int b = t + s + p * 2;
  
@@ -146,7 +146,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4403,19 +4403,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -4410,19 +4410,9 @@ public class ChatActivity extends BaseFragment implements
                          }
                          return;
                      }
@@ -168,7 +168,7 @@ index 0000000..0000000 100644
                  inu_updateMenuSlotAvatar();
              }
  
-@@ -18453,6 +18443,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -18476,6 +18466,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -178,7 +178,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -44951,22 +44944,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -45023,22 +45016,26 @@ public class ChatActivity extends BaseFragment implements
                      return compactColor;
                  }
              }

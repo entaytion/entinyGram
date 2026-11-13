@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                      if (error == null) {
                          TLRPC.TL_messages_affectedHistory res = (TLRPC.TL_messages_affectedHistory) response;
                          if (res.offset > 0) {
-@@ -22490,6 +22493,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22493,6 +22496,7 @@ public class MessagesController extends BaseController implements NotificationCe
          try {
              Collections.sort(allDialogs, dialogComparator);
          } catch (Exception e) {}

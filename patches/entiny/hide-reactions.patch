@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -1984,7 +1984,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -1987,7 +1987,6 @@ public class ChatActivity extends BaseFragment implements
              if (hasDoubleTap != null) {
                  return hasDoubleTap;
              }
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
              // A double tap over a widget is the widget's (dblclick, docs/sdk-v1.md §5.5): the reaction is outside it.
              if (view instanceof ChatMessageCell && ((ChatMessageCell) view).isWidgetPress()) return false;
              String reactionStringSetting = getMediaDataController().getDoubleTapReaction();
-@@ -2013,7 +2012,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -2016,7 +2015,7 @@ public class ChatActivity extends BaseFragment implements
          @Override
          public void onDoubleTap(View view, int position, float x, float y) {
              if (desu.inugram.helpers.chat.DoubleTapActionHelper.onDoubleTap(ChatActivity.this, view, x, y)) return;
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                  return;
              }
              MessageObject messageObject;
-@@ -32496,7 +32495,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32553,7 +32552,7 @@ public class ChatActivity extends BaseFragment implements
              final boolean isEphemeral = message != null && message.isEphemeral();
              final boolean isReactionsViewAvailable = !isEphemeral && !suggestEdit && !isSecretChat() && !isInScheduleMode() && currentUser == null && primaryMessage.hasReactions() && (!ChatObject.isChannel(currentChat) || currentChat.megagroup) && !ChatObject.isMonoForum(currentChat) && !availableReacts.isEmpty() && primaryMessage.messageOwner.reactions.can_see_list && !primaryMessage.isSecretMedia();
              final boolean isReactionsAvailable;

@@ -1,21 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="108" height="108">
-  <defs>
-    <linearGradient id="entinyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF2855"/>
-      <stop offset="100%" stop-color="#D6002A"/>
-    </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
-      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.18" />
-    </filter>
-  </defs>
-  <!-- Google / AOSP Adaptive Icon Squircle -->
-  <path d="M50,2 C12,2 2,12 2,50 C2,88 12,98 50,98 C88,98 98,88 98,50 C98,12 88,2 50,2 Z" fill="url(#entinyGrad)" filter="url(#shadow)"/>
-  <svg x="20" y="20" width="60" height="60" viewBox="0 0 24 24" fill="none">
-    <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
-      <path d="M4 10a7.31 7.31 0 0 0 10 10Z" />
-      <path d="m9 15 3-3" />
-      <path d="M17 13a6 6 0 0 0-6-6" />
-      <path d="M21 13A10 10 0 0 0 11 3" />
-    </g>
-  </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="108" height="108">
+  <!-- badge -->
+  <g id="layer-badge" transform="translate(0, 5)">
+    <path id="wavy-circle" fill="#3A0B16" d="
+      M 320 96
+      C 342 96, 354 115, 375 119
+      C 396 123, 415 110, 432 122
+      C 449 134, 449 156, 464 171
+      C 479 186, 501 186, 513 203
+      C 525 220, 512 239, 516 260
+      C 520 281, 539 293, 539 315
+      C 539 337, 520 349, 516 370
+      C 512 391, 525 410, 513 427
+      C 501 444, 479 444, 464 459
+      C 449 474, 449 496, 432 508
+      C 415 520, 396 507, 375 511
+      C 354 515, 342 534, 320 534
+      C 298 534, 286 515, 265 511
+      C 244 507, 225 520, 208 508
+      C 191 496, 191 474, 176 459
+      C 161 444, 139 444, 127 427
+      C 115 410, 128 391, 124 370
+      C 120 349, 101 337, 101 315
+      C 101 293, 120 281, 124 260
+      C 128 239, 115 220, 127 203
+      C 139 186, 161 186, 176 171
+      C 191 156, 191 134, 208 122
+      C 225 110, 244 123, 265 119
+      C 286 115, 298 96, 320 96 Z" />
+  </g>
+
+  <!-- satellite antenna -->
+  <g id="layer-antenna-icon"
+     transform="translate(191.5, 196.5) scale(10.5)"
+     fill="none"
+     stroke="#F20C3C"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="1.8">
+    <path id="antenna-dish" d="M4 10a7.31 7.31 0 0 0 10 10Z" />
+    <path id="antenna-pin" d="m9 15 3-3" />
+    <path id="antenna-wave-inner" d="M17 13a6 6 0 0 0-6-6" />
+    <path id="antenna-wave-outer" d="M21 13A10 10 0 0 0 11 3" />
+  </g>
 </svg>

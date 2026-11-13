@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -3389,7 +3389,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3415,7 +3415,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  } else if (buttonPressed == 1) {
                      buttonPressed = 0;
                      playSoundEffect(SoundEffectConstants.CLICK);
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
                          didClickedImage();
                      } else {
                          didPressButton(true, false);
-@@ -3402,7 +3404,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3428,7 +3430,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      invalidate();
                  } else if (imagePressed) {
                      imagePressed = false;
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
                          playSoundEffect(SoundEffectConstants.CLICK);
                          didClickedImage();
                      } else if (buttonState == 0) {
-@@ -24317,4 +24322,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24351,4 +24356,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              blurredPhotoImage.setImageBitmap((Bitmap) null);
          }
      }

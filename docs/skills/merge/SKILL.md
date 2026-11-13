@@ -17,6 +17,7 @@ the difference from `rebase`: `rebase` moves our stack to a newer stock Telegram
 | keep ours | our `entiny__` patches and overlays (`patches/entiny/`), and features inugram does not have. say which one you keep and why |
 | search before writing | if inugram already has the feature, use theirs. no duplicate toggles, drawables or helpers (`InuConfig`, `src/fork/helpers`, `series`, `patches/hooks/`) |
 | no upstream changelogs | never pull `changelogs/` from upstream. our notes live in `changelogs/<YYYYMMDD>.md` |
+| no upstream FEATURES | never take inugram's `FEATURES.md`. ours lists only entinyGram additions and links to inugram's file for the base |
 | nothing goes upstream | never open issues or PRs to inugram or Telegram |
 
 ## 1. before the merge
@@ -44,10 +45,10 @@ a plain merge. do not rebase, do not squash. the merge commit subject is `[merge
 right after the merge, check for leaked files:
 
 ```bash
-git diff --cached --name-only | rg '^changelogs/'
+git diff --cached --name-only | rg '^(changelogs/|FEATURES\.md$)'
 ```
 
-upstream changelogs must not stay. `6c721877` brought `changelogs/55.md` in. remove it: `git rm changelogs/<file>`.
+upstream changelogs and `FEATURES.md` must not stay. `6c721877` brought `changelogs/55.md` in. remove it: `git rm changelogs/<file>`. for `FEATURES.md`, restore ours: `git checkout HEAD -- FEATURES.md`.
 
 ## 3. resolve conflicts
 
@@ -101,6 +102,7 @@ bun run lint-patches
 | trap | fix |
 | --- | --- |
 | `changelogs/55.md` from upstream | remove it (section 2) |
+| inugram's `FEATURES.md` in the merge | restore ours (section 2) |
 | upstream "what's new" sheet and settings page | drop them, keep our updater |
 | `NON_ISLAND_SHARED_MEDIA_TABS` | keep it OFF. upstream `SharedMediaLayout.inu_dockOffset()` clips the list bottom |
 | `google-services.json` and `entiny__branding` | run `bun run assets/scripts/apply-branding.ts` right after the merge |

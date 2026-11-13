@@ -25,11 +25,9 @@
     "changelog:release": "bun assets/release/changelog.ts"
   },
   "dependencies": {
-    "@antfu/eslint-config": "^8.1.0",
     "@fuman/utils": "^0.0.19",
     "@iconify/json": "^2.2.554",
     "@mtcute/node": "^0.31.0",
-    "eslint": "^10.2.0",
     "tinyglobby": "^0.2.16",
     "zx": "^8.8.4",
     "@inugram/plugin-types": "workspace:*"

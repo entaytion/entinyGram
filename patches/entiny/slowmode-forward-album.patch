@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13001,6 +13001,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13024,6 +13024,7 @@ public class ChatActivity extends BaseFragment implements
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
          args.putInt("messagesCount", canForwardMessagesCount);
@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -557,6 +557,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -558,6 +558,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private boolean checkingImportDialog;
  
      private int messagesCount;
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
      private int hasPoll;
      private boolean hasInvoice;
  
-@@ -2839,6 +2840,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2841,6 +2842,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              resetDelegate = arguments.getBoolean("resetDelegate", true);
              messagesCount = arguments.getInt("messagesCount", 0);

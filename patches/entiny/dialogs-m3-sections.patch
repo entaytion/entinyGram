@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
-@@ -1224,6 +1224,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
+@@ -1227,6 +1227,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
                  break;
              }
          }
@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2041,7 +2041,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2042,7 +2042,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                              canvas.save();
                          }
                          canvas.translate(view.getX(), view.getY());
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
                          view.draw(canvas);
                          canvas.restore();
                      }
-@@ -4130,6 +4130,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4156,6 +4156,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPage.listView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
              viewPage.listView.setClipToPadding(false);
              viewPage.listView.setPivotY(0);

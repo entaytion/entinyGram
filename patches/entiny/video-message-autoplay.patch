@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -8662,7 +8662,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -8688,7 +8688,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      photoImage.setAllowStartAnimation(true);
                  } else if (messageObject.isRoundVideo()) {
                      MessageObject playingMessage = MediaController.getInstance().getPlayingMessageObject();
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
                  } else {
                      photoImage.setAllowStartAnimation(messageObject.gifState == 0);
                  }
-@@ -10594,7 +10594,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -10620,7 +10620,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          } else {
              if (allowStart) {
                  MessageObject playingMessage = MediaController.getInstance().getPlayingMessageObject();
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
              }
              photoImage.setAllowStartAnimation(allowStart);
              if (thumb != null) {
-@@ -15295,9 +15295,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15329,9 +15329,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (!currentMessageObject.needDrawBluredPreview() && !autoPlayingMedia && documentAttach != null && !desu.inugram.helpers.chat.LinkPreviewSpoilerHelper.isMediaCovered(currentMessageObject)) {
                  if (documentAttachType == DOCUMENT_ATTACH_TYPE_ROUND) {
                      photoImage.setImage(ImageLocation.getForDocument(documentAttach), ImageLoader.AUTOPLAY_FILTER, ImageLocation.getForObject(currentPhotoObject, photoParentObject), currentPhotoObject instanceof TLRPC.TL_photoStrippedSize || currentPhotoObject != null && "s".equals(currentPhotoObject.type) ? currentPhotoFilterThumb : currentPhotoFilter, ImageLocation.getForObject(currentPhotoObjectThumb, photoParentObject), currentPhotoFilterThumb, currentPhotoObjectThumbStripped, documentAttach.size, null, currentMessageObject, 0);
@@ -121,7 +121,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -15155,6 +15155,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -15264,6 +15264,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          f.presentFragment(set);
                          set.scrollToFlags(LiteMode.FLAG_AUTOPLAY_GIFS);
                      }).withLink("tg://settings/power-saving/gifs"),

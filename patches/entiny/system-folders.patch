@@ -87,7 +87,7 @@ index 0000000..0000000 100644
          ArrayList<MessagesController.DialogFilter> filtersFinal = new ArrayList<>(getMessagesController().dialogFilters);
          storageQueue.postRunnable(() -> {
              dialogFilters.clear();
-@@ -6511,7 +6522,8 @@ public class MessagesStorage extends BaseController {
+@@ -6589,7 +6600,8 @@ public class MessagesStorage extends BaseController {
              }
          }*/
  
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
              final boolean isFilter = a < N;
              final boolean isMain = a == N;
              final boolean isArchive = a == N + 1;
-@@ -6520,7 +6532,7 @@ public class MessagesStorage extends BaseController {
+@@ -6598,7 +6610,7 @@ public class MessagesStorage extends BaseController {
              MessagesController.DialogFilter filter;
              int flags;
              if (a < N) {
@@ -106,7 +106,7 @@ index 0000000..0000000 100644
                  if (filter.pendingUnreadCount < 0) {
                      continue;
                  }
-@@ -18253,8 +18265,9 @@ public class MessagesStorage extends BaseController {
+@@ -18332,8 +18344,9 @@ public class MessagesStorage extends BaseController {
  
      public void resetAllUnreadCounters(boolean muted) {
          if (muted && FolderHelper.isMuteFilteringActive()) muted = false;

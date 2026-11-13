@@ -1,15 +1,15 @@
-﻿import { spawnSync } from 'node:child_process'
+import { spawnSync } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { parallelMap } from '@fuman/utils'
 import { chalk } from 'zx'
-import { patchesDir, worktreeDir } from '../config.js'
+import { patchesDir, worktreeDir } from './config.js'
 import {
   generateStablePatchFromCommit,
   getAllPatchCommitIds,
   getAppliedPatchNames,
   parsePatchName,
-} from '../lib.js'
+} from './lib.js'
 
 const resCheck = spawnSync('bun', ['assets/scripts/entinychecker.ts', '--res-only'], { stdio: 'inherit', shell: true })
 if (resCheck.status !== 0) {

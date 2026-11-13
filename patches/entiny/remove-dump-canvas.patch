@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4067,8 +4067,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -4074,8 +4074,6 @@ public class ChatActivity extends BaseFragment implements
                      openTopicsPanel();
                  } else if (id == chat_menu_topic_create) {
                      presentFragment(TopicCreateFragment.create(-dialog_id, 0).setOpenInChatActivity(ChatActivity.this));
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                  } else if (id == 889) {
                      sendDebugRichMessage();
                  }
-@@ -4551,10 +4549,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -4558,10 +4556,6 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  

@@ -4,28 +4,30 @@ Date: Thu, 5 Nov 2026 20:32:32 +0200
 Subject: Fix icon pack crashes
 
 ---
- .../java/org/telegram/ui/Cells/ChatMessageCell.java    |  2 --
+ .../java/org/telegram/ui/Cells/ChatMessageCell.java    |  4 ++--
  .../org/telegram/ui/Components/SearchViewPager.java    |  2 +-
  .../src/main/java/org/telegram/ui/DialogsActivity.java | 10 ++++++----
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ 3 files changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -13073,7 +13073,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -13105,7 +13105,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          }
          if (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF && !isCompactMode()) {
              if (drawPhotoImage && !currentMessageObject.isRepostPreview && !currentMessageObject.isSponsored() && photoImage.getVisible() && !hasGamePreview && !currentMessageObject.needDrawBluredPreview() && !currentMessageObject.preview && !isSmallImage && !currentMessageObject.isSponsored() && !desu.inugram.helpers.chat.LinkPreviewSpoilerHelper.shouldHideMediaOverlays(this)) {
 -                int oldAlpha = ((BitmapDrawable) Theme.chat_msgMediaMenuDrawable).getPaint().getAlpha();
++                int oldAlpha = Theme.chat_msgMediaMenuDrawable.getAlpha();
                  Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha));
                  setDrawableBounds(Theme.chat_msgMediaMenuDrawable, otherX = (int) (photoImage.getImageX() + photoImage.getImageWidth() - dp(14)), otherY = (int) (photoImage.getImageY() + dp(8.1f)));
                  Theme.chat_msgMediaMenuDrawable.draw(canvas);
-@@ -22494,7 +22493,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22528,7 +22528,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (photoImage.getVisible() && !currentMessageObject.isRepostPreview) {
                  if (!currentMessageObject.needDrawBluredPreview() && !currentMessageObject.isSponsored() && !currentMessageObject.isRepostPreview && !currentMessageObject.preview && !isSmallImage) {
                      if (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO && !isCompactMode()) {
 -                        int oldAlpha = ((BitmapDrawable) Theme.chat_msgMediaMenuDrawable).getPaint().getAlpha();
++                        int oldAlpha = Theme.chat_msgMediaMenuDrawable.getAlpha();
                          if (drawMediaCheckBox) {
                              Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha * (1.0f - checkBoxAnimationProgress)));
                          } else {
@@ -46,7 +48,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13959,9 +13959,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13983,9 +13983,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      @Override
      public void onFactorChangeFinished(int id, float finalFactor, FactorAnimator callee) {
          if (id == ANIMATOR_ID_SPEED_BUTTON_VISIBLE && speedItem != null) {
@@ -60,7 +62,7 @@ index 0000000..0000000 100644
                  if (SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_LOW) {
                      TLRPC.TL_help_premiumPromo premiumPromo = MediaDataController.getInstance(currentAccount).getPremiumPromo();
                      String typeString = PremiumPreviewFragment.featureTypeToServerString(PremiumPreviewFragment.PREMIUM_FEATURE_DOWNLOAD_SPEED);
-@@ -13978,9 +13980,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14002,9 +14004,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          }
                      }
                  }

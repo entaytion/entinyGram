@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: xmogdemaybe <xmogdelegenda@gmail.com>
-Date: Thu, 5 Nov 2026 11:12:10 +0400
+Date: Fri, 13 Nov 2026 01:01:58 +0200
 Subject: Zoom slider, exposure rail and pinch controls for round video recording.
 
 ---
@@ -27,15 +27,15 @@ index 0000000..0000000 100644
      private static final int SWITCH_PREVIEW_BITMAP_SIZE = 180;
      private static final long UI_FRAME_FALLBACK_DELAY_NS = 70_000_000L;
      private static final long CAMERA_FLIP_MINIMUM_DURATION_MS = 580L;
-@@ -101,7 +99,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
-     private SendOptions pendingSend;
-     private boolean finishRequested;
+@@ -103,7 +101,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+     /** The host destroyed the view while a send was finishing; the session completes detached. */
+     private boolean sendDetached;
      private AnimatorSet visibilityAnimator;
 -    private ValueAnimator zoomResetAnimator;
      private ValueAnimator cameraFlipAnimator;
      private RLottieDrawable switchCameraDrawable;
      private RLottieDrawable flashOnDrawable;
-@@ -126,15 +123,13 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -128,15 +125,13 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
      private float panTranslationY;
      private float animationTranslationY;
      private float pinchStartDistance;
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
      private boolean heavyOperationsStopped;
      private float previousWindowBrightness = Float.NaN;
      private int textureViewSize;
-@@ -250,8 +245,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -252,8 +247,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
                  0
          ));
  
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
          switchCameraButton = new FlashViews.ImageViewInvertable(context);
          switchCameraButton.setScaleType(ImageView.ScaleType.CENTER);
          switchCameraButton.setContentDescription(
-@@ -265,13 +258,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -267,13 +260,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
          buttonsLayout.addView(flashButton, LayoutHelper.createLinear(44, 44));
          flashButton.setOnClickListener(view -> toggleFlash());
  
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
          inu_aeButton = RoundRecorderHelper.attachRoundAeLockButton(buttonsLayout, () -> session);
  
          buttonIconSize = dp(isNewDesign ? 24 : 28);
-@@ -312,6 +299,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -314,6 +301,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
          drawable.setPadding(dp(6));
          drawable.setRadius(dp(21));
          buttonsLayout.setBackground(drawable);
@@ -85,16 +85,16 @@ index 0000000..0000000 100644
      }
  
      @Override
-@@ -347,7 +335,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -349,7 +337,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
      public void destroy(boolean async) {
          setRecordingUiFrameClockActive(false);
          cancelCameraFlipAnimation();
 -        if (zoomResetAnimator != null) zoomResetAnimator.cancel();
 +        if (inu_controls != null) inu_controls.release();
-         if (session != null) {
-             session.release();
-             session = null;
-@@ -765,15 +753,11 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+         if (session != null && isSendFinishing()) {
+             // The output is still being produced: the session keeps finishing on its own and
+             // the message is sent from onCompleted, so neither the session nor the upload goes.
+@@ -781,15 +769,11 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              if (info.isPreviewPlaying() && getWindowVisibility() != VISIBLE) {
                  AndroidUtilities.runOnUIThread(InstantCameraView2.this::pauseForHiddenWindow);
              }
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -785,13 +769,13 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -801,13 +785,13 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
                  SharedSettings.roundVideoLastCamera.set(cameraCapabilities.getActiveFacing());
              }
              updateButtons();
@@ -127,7 +127,7 @@ index 0000000..0000000 100644
              startCameraFlipAnimation(facing);
          }
  
-@@ -800,6 +784,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -816,6 +800,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              cameraFlipSessionReady = true;
              FileLog.d("RoundVideo camera flip session ready: facing=" + facing
                      + ", elapsedMs=" + getCameraFlipElapsedMs());
@@ -135,7 +135,7 @@ index 0000000..0000000 100644
              maybeFinishCameraFlip();
          }
  
-@@ -1065,7 +1050,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1092,7 +1077,6 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              return false;
          }
          if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
@@ -143,7 +143,7 @@ index 0000000..0000000 100644
              pinchZoomActive = false;
              zoomPointerId1 = event.getPointerId(0);
              zoomPointerId2 = -1;
-@@ -1081,7 +1065,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1108,7 +1092,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              zoomPointerId2 = event.getPointerId(1);
              pinchStartDistance = pointerDistance(event, 0, 1);
              pinchZoomActive = pinchStartDistance > 0f;
@@ -152,7 +152,7 @@ index 0000000..0000000 100644
              return true;
          }
          if (event.getActionMasked() == MotionEvent.ACTION_MOVE && pinchZoomActive) {
-@@ -1091,8 +1075,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1118,8 +1102,7 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
                  finishZoomGesture();
                  return true;
              }
@@ -162,7 +162,7 @@ index 0000000..0000000 100644
              return true;
          }
          if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP && pinchZoomActive) {
-@@ -1107,6 +1090,10 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1134,6 +1117,10 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
              finishZoomGesture();
              return true;
          }
@@ -173,7 +173,7 @@ index 0000000..0000000 100644
          return true;
      }
  
-@@ -1120,39 +1107,9 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -1147,39 +1134,9 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
      private void finishZoomGesture() {
          if (!pinchZoomActive) return;
          pinchZoomActive = false;

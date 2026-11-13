@@ -57,6 +57,7 @@ object InuHooks {
         // entiny: isTablet is read from AndroidUtilities' static block before the config exists, so re-apply it after loading
         TabletModeHelper.sync()
         AndroidUtilities.inu_resetTabletCache()
+        CrashReporter.collectNativeExit(context)
     }
 
     /**

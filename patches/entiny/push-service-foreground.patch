@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      <uses-permission android:name="android.permission.RECORD_AUDIO" />
      <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-@@ -884,8 +885,11 @@
+@@ -891,8 +892,11 @@
              android:name=".NotificationsService"
              android:enabled="true"
              android:exported="true"
@@ -39,7 +39,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoade
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -410,14 +410,24 @@ public class ApplicationLoader extends Application {
+@@ -419,14 +419,24 @@ public class ApplicationLoader extends Application {
          } else {
              enabled = MessagesController.getMainSettings(UserConfig.selectedAccount).getBoolean("keepAliveService", false);
          }

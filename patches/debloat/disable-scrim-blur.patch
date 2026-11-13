@@ -188,7 +188,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
-@@ -4052,6 +4052,18 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+@@ -4056,6 +4056,18 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
          if (blurredView == null || parentLayout == null) {
              return;
          }

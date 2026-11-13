@@ -42,6 +42,11 @@ entinyGram is an independent power-user fork of inugram (`teidesu/inugram`), bui
    - long notes go in `entinyTodo/<feature>/NOTES.md`, never inline.
 8. **no attribution lines.** commits never carry `Co-Authored-By`.
 
+## what goes in features
+
+- list a feature only if a user notices it. no build tooling, dev scripts, version numbering, or single bugfixes.
+- bugfixes and internal changes go in commit messages and patch subjects, not in `FEATURES.md`.
+
 ## where code goes
 
 | change | place |

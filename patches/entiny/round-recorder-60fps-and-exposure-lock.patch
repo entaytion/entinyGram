@@ -24,7 +24,7 @@ index 0000000..0000000 100644
  import android.util.Size;
  import android.util.SizeF;
  import android.view.Surface;
-@@ -486,6 +487,52 @@ public class Camera2Session {
+@@ -515,6 +516,52 @@ public class Camera2Session {
          }
      }
  
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
      private void updateCaptureRequest() {
          if (cameraDevice == null || surface == null || captureSession == null) return;
          try {
-@@ -508,10 +555,35 @@ public class Camera2Session {
+@@ -537,10 +584,35 @@ public class Camera2Session {
              captureRequestBuilder.set(CaptureRequest.FLASH_MODE, flashing ? (recordingVideo ? CaptureRequest.FLASH_MODE_TORCH : CaptureRequest.FLASH_MODE_SINGLE) : CaptureRequest.FLASH_MODE_OFF);
  
              if (recordingVideo) {
@@ -385,7 +385,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCamer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView2.java
-@@ -388,14 +388,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
+@@ -395,14 +395,14 @@ public final class InstantCameraView2 extends InstantCameraViewBase {
          progressView.setProgress(0f);
          showInitialPlaceholder();
          upload = new TelegramRoundVideoUpload(currentAccount, secretChat);
@@ -408,7 +408,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/Round
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCameraController.java
-@@ -2810,6 +2810,7 @@ final class RoundVideoCameraController {
+@@ -2794,6 +2794,7 @@ final class RoundVideoCameraController {
          if (cameraResolution == RoundVideoSession.CameraResolution.LOW) {
              return outputResolution.getSize();
          }

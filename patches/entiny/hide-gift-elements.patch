@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -28932,6 +28932,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28956,6 +28956,9 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void checkGroupEmojiPackHint() {
@@ -24,7 +24,7 @@ index 0000000..0000000 100644
          if (groupEmojiPackHint == null && ChatObject.isMegagroup(currentChat)) {
              final TLRPC.ChatFull chatFull = getMessagesController().getChatFull(currentChat.id);
              if (chatFull == null || chatActivityEnterView == null || getContext() == null) {
-@@ -29598,6 +29601,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -29622,6 +29625,10 @@ public class ChatActivity extends BaseFragment implements
  
          bottomOverlayChatText.setTextColorKey(accentTextButton ? (NonIslandHelper.chatElements() ? Theme.key_featuredStickers_addButton : Theme.key_featuredStickers_buttonText) : Theme.key_glass_defaultText);
  
@@ -39,7 +39,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -11263,6 +11263,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -11268,6 +11268,15 @@ public class ChatActivityEnterView extends FrameLayout implements
      }
  
      public void updateGiftButton(boolean animated) {
@@ -71,7 +71,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -5667,6 +5667,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5672,6 +5672,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          checkPhotoDescriptionAlpha();
          avatarContainer2.addView(animatedStatusView);
  
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
          ratingView = new StarRatingView(context);
          ratingView.setLayoutParams(LayoutHelper.createFrame(32, 32, Gravity.LEFT, 109 - 6, -2, 0, 0));
          ratingView.setResourcesProvider(resourcesProvider);
-@@ -5681,6 +5682,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5686,6 +5687,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          avatarContainer2.addView(ratingView);
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
  
          storyView = new ProfileStoriesView(context, currentAccount, getDialogId(), isTopic, avatarContainer, avatarImage, resourcesProvider) {
              @Override
-@@ -5713,8 +5715,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5718,8 +5720,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarImage.setHasStories(needInsetForStories());
          }
          avatarContainer2.addView(storyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
@@ -98,7 +98,7 @@ index 0000000..0000000 100644
          updateProfileData(true);
  
          writeButton = new RLottieImageView(context);
-@@ -9585,9 +9589,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9598,9 +9602,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
                  if (chatId != 0) {
                      boolean gift = !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
                      }
                  }
              }
-@@ -10019,6 +10023,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10031,6 +10035,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          updateProfileData(true);
@@ -118,7 +118,7 @@ index 0000000..0000000 100644
          fixLayout();
          if (nameTextView != null) {
              setParentActivityTitle(nameTextView.getText());
-@@ -10808,9 +10813,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10901,9 +10906,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          inu_fetchLinkedChannelMessage();
          if (chatId != 0) {
              boolean gift = !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
@@ -130,7 +130,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -11640,6 +11645,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11733,6 +11738,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      }
  
      private Drawable getPremiumCrossfadeDrawable() {
@@ -140,7 +140,7 @@ index 0000000..0000000 100644
          if (premiumCrossfadeDrawable == null) {
              premiumStarDrawable = ContextCompat.getDrawable(getParentActivity(), R.drawable.msg_premium_liststar).mutate();
              premiumStarDrawable.setColorFilter(dontApplyPeerColor(getThemedColor(Theme.key_profile_verifiedBackground)), PorterDuff.Mode.MULTIPLY);
-@@ -11819,23 +11827,27 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11928,23 +11936,27 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
              avatarDrawable.setInfo(currentAccount, user);
  
@@ -171,7 +171,7 @@ index 0000000..0000000 100644
  
  
              final ImageLocation imageLocation = ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_BIG);
-@@ -11959,7 +11971,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12068,7 +12080,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      rightIconIsStatus = true;
                      nameTextView.setRightDrawable(getEmojiStatusDrawable(user.emoji_status, true, !ProfileHelper.reduceMotion()));
                      nameTextViewRightDrawableContentDescription = LocaleController.getString(R.string.AccDescrPremium);
@@ -180,7 +180,7 @@ index 0000000..0000000 100644
                      rightIconIsPremium = true;
                      nameTextView.setRightDrawable(getEmojiStatusDrawable(null, true, !ProfileHelper.reduceMotion()));
                      nameTextViewRightDrawableContentDescription = LocaleController.getString(R.string.AccDescrPremium);
-@@ -11967,7 +11979,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12076,7 +12088,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      nameTextView.setRightDrawable(null);
                      nameTextViewRightDrawableContentDescription = null;
                  }
@@ -189,7 +189,7 @@ index 0000000..0000000 100644
                      nameTextView.setLeftDrawableOutside(true);
                      leftIcon = getBotVerificationDrawable(user.bot_verification_icon, false);
                      if (desu.inugram.helpers.badges.BadgeRegistry.hasBadge(user.id)) {
-@@ -12084,20 +12096,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12193,20 +12205,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  flagSecure.invalidate();
              }
  
@@ -217,7 +217,7 @@ index 0000000..0000000 100644
  
              if (isTopic) {
                  topic = getMessagesController().getTopicsController().findTopic(chatId, topicId);
-@@ -12248,7 +12264,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12357,7 +12373,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  } else {
                      nameTextView.setRightDrawable(null);
                  }
@@ -226,7 +226,7 @@ index 0000000..0000000 100644
                      nameTextView.setLeftDrawableOutside(true);
                      nameTextView.setLeftDrawable(getBotVerificationDrawable(chat.bot_verification_icon, false));
                      if (desu.inugram.helpers.badges.BadgeRegistry.hasBadge(-chat.id)) {
-@@ -12592,7 +12608,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12701,7 +12717,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  if (!UserObject.isDeleted(user) && !isBot && currentEncryptedChat == null && !userBlocked && userId != 333000 && userId != 777000 && userId != 42777) {
                      if (!user.self && !user.bot && !MessagesController.isSupportUser(user) && !getMessagesController().premiumPurchaseBlocked()) {
                          StarsController.getInstance(currentAccount).loadStarGifts();
@@ -236,7 +236,7 @@ index 0000000..0000000 100644
                          giftAction = true;
                      }
                      if (getMessagesController().config.walletAvailable.get() && !MessagesController.isSupportUser(user) && !UserObject.isService(user.id)) {
-@@ -12648,10 +12666,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12757,10 +12775,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      callItemVisible = call != null;
                      voiceChatAction = call != null || voiceChatAction;
                  }
@@ -250,7 +250,7 @@ index 0000000..0000000 100644
                      otherItem.addSubItem(channel_stories, R.drawable.msg_archive, LocaleController.getString(R.string.OpenChannelArchiveStories));
                  }
                  if (chat.megagroup) {
-@@ -12684,8 +12705,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12793,8 +12814,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      }
                      if (!getMessagesController().premiumPurchaseBlocked()) {
                          StarsController.getInstance(currentAccount).loadStarGifts();
@@ -261,7 +261,7 @@ index 0000000..0000000 100644
                          giftAction = true;
                      }
                      if (chatInfo != null && chatInfo.linked_chat_id != 0) {
-@@ -12773,11 +12796,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12882,11 +12905,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              actionsView.set(ProfileActionsView.KEY_VIDEO, videoCallItemVisible);
              actionsView.set(ProfileActionsView.KEY_DISCUSS, discussAction);
              actionsView.set(ProfileActionsView.KEY_LEAVE, leaveAction);

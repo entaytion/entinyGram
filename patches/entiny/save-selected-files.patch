@@ -61,7 +61,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -1613,6 +1613,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -1615,6 +1615,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
      private SharedMediaPreloader sharedMediaPreloader;
  
      private final static int forward = 100;
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
      private final static int delete = 101;
      private final static int gotochat = 102;
      private final static int pin = 103;
-@@ -2044,6 +2045,9 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -2046,6 +2047,9 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
              if (!isStoriesView()) {
                  gotoItem = createActionModeItem(context, gotochat, R.drawable.msg_message, getString(R.string.AccDescrGoToMessage));
                  forwardItem = createActionModeItem(context, forward, R.drawable.msg_forward, getString(R.string.Forward));
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
              }
  
              pinItem = createActionModeItem(context, pin, R.drawable.msg_pin, getString(R.string.PinMessage));
-@@ -5002,6 +5006,11 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -5042,6 +5046,11 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
      }
  
      public void onActionBarItemClick(View v, int id) {
@@ -95,7 +95,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3912,7 +3912,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3938,7 +3938,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
              @Override
              public void onItemClick(int id) {

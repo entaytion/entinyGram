@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -6766,6 +6766,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6771,6 +6771,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          sendPlainEnabled = true;
          sendRoundEnabled = true;
          sendVoiceEnabled = true;
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  
          if (chat != null) {
              audioVideoButtonContainerForbidden = !(ChatObject.canSendVoice(chat) || (ChatObject.canSendRoundVideo(chat) && hasRecordVideo));
-@@ -6784,6 +6785,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6789,6 +6790,9 @@ public class ChatActivityEnterView extends FrameLayout implements
          } else if (userFull != null) {
              audioVideoButtonContainerForbidden = userFull.voice_messages_forbidden;
              userInfo = userFull;
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
          }
  
          audioVideoButtonContainer.setAlpha(audioVideoButtonContainerForbidden ? 0.5f : 1.0f);
-@@ -6792,16 +6796,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6797,16 +6801,11 @@ public class ChatActivityEnterView extends FrameLayout implements
              getThemedColor(Theme.key_glass_defaultIcon) : Color.WHITE, PorterDuff.Mode.SRC_IN));
          audioVideoSendButton.invalidate();
          updateFieldHint(false);
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
          }
          setRecordVideoButtonVisible(currentModeVideo, false);
      }
-@@ -6989,11 +6988,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6994,11 +6993,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              currentModeVideo = false;
          }
          if (!sendVoiceEnabled && !currentModeVideo) {

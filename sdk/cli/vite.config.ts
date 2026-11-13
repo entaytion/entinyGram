@@ -9,7 +9,7 @@ import dts from 'vite-plugin-dts'
 
 const workspaceRoot = join(import.meta.dirname, '../..')
 const ownPackageJson = createRequire(import.meta.url)('./package.json') as { version: string }
-/** the release the sdk is published as, set by `scripts/ci/publish-sdk.ts`; never written to the tree */
+/** the release the sdk is published as; never written to the tree */
 const version = process.env.INU_SDK_VERSION ?? ownPackageJson.version
 
 /**

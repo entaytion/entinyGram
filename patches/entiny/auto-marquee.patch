@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sun, 23 Aug 2026 23:56:36 +0300
+Date: Fri, 13 Nov 2026 01:05:14 +0200
 Subject: Auto-scrolling titles and centered chat header
 
 ---
@@ -10,9 +10,9 @@ Subject: Auto-scrolling titles and centered chat header
  .../BottomSheetWithRecyclerListView.java      |   1 +
  .../ui/Components/ChatAvatarContainer.java    | 406 ++++++++++++++++--
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
- .../java/org/telegram/ui/ProfileActivity.java |  43 +-
+ .../java/org/telegram/ui/ProfileActivity.java |  37 +-
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 8 files changed, 909 insertions(+), 124 deletions(-)
+ 8 files changed, 906 insertions(+), 121 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -311,7 +311,7 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2449,8 +2614,163 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2451,8 +2616,163 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          super.draw(canvas);
      }
  
@@ -475,7 +475,7 @@ index 0000000..0000000 100644
          if (drawSectionsBackground) {
              final int color = Theme.multAlpha(getThemedColor(Theme.key_windowBackgroundGray), customHeaderAlpha / 255f);
  
-@@ -2507,33 +2827,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2509,33 +2829,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                      glassDrawable.draw(canvas);
                  }
              } else {
@@ -745,7 +745,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4196,6 +4196,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -4203,6 +4203,16 @@ public class ChatActivity extends BaseFragment implements
                  return false;
              }
  
@@ -762,7 +762,7 @@ index 0000000..0000000 100644
              @Override
              protected boolean useAnimatedSubtitle() {
                  return chatMode == MODE_SAVED;
-@@ -4375,6 +4385,39 @@ public class ChatActivity extends BaseFragment implements
+@@ -4382,6 +4392,39 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
@@ -802,7 +802,7 @@ index 0000000..0000000 100644
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
-@@ -4596,7 +4639,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -4603,7 +4646,11 @@ public class ChatActivity extends BaseFragment implements
  
          if (chatMode == 0 && (!isThreadChat() || isTopic) && !isReport()) {
              attachItem = menu.lazilyAddItem(chat_menu_attach, otherIcon, themeDelegate);
@@ -815,7 +815,7 @@ index 0000000..0000000 100644
              attachItem.setOverrideMenuClick(true);
              attachItem.setAllowCloseAnimation(false);
              attachItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
-@@ -4663,6 +4710,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -4670,6 +4717,9 @@ public class ChatActivity extends BaseFragment implements
              avatarContainer.setActionBar(actionBar);
          }
  
@@ -825,7 +825,7 @@ index 0000000..0000000 100644
          chatInputViewsContainer = new ChatInputViewsContainer(context);
          chatInputViewsContainer.setClipChildren(false);
          chatInputViewsContainer.setWindowInsetsProvider(windowInsetsStateHolder);
-@@ -31343,10 +31393,45 @@ public class ChatActivity extends BaseFragment implements
+@@ -31367,10 +31417,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  
@@ -1468,7 +1468,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3201,6 +3201,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3227,6 +3227,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
@@ -1483,18 +1483,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -8765,8 +8765,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-         nameY = AndroidUtilities.lerp(minNameY, backwardInitialValues[8], backwardDiff);
-         onlineY = AndroidUtilities.lerp(minOnlineY, backwardInitialValues[9], backwardDiff);
- 
--        final float nameX = lerp((prevAvatarTranslation - dp(109) + dp(desu.inugram.helpers.theme.NonIslandHelper.chatElements() ? 54 : 48)), backwardInitialValues[12], backwardDiff);
--        final float onlineX = lerp((prevAvatarTranslation - dp(109) + dp(desu.inugram.helpers.theme.NonIslandHelper.chatElements() ? 54 : 48)), backwardInitialValues[13], backwardDiff);
-+        final float nameX = lerp(inu_getStartTitleX(), backwardInitialValues[12], backwardDiff);
-+        final float onlineX = lerp(inu_getStartSubtitleX(), backwardInitialValues[13], backwardDiff);
-         nameTextView.setTranslationX(nameX);
-         nameTextView.setTranslationY(nameY);
-         onlineTextView.setTranslationX(onlineX + customPhotoOffset);
-@@ -9226,7 +9226,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9236,7 +9236,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  final float avatarBottom = (float) Math.floor(endNameY) + (avatarContainer.getHeight() * avatarContainer.getScaleY() + dpf2(8)) * (openAnimationInProgress ? avatarAnimationProgress : diff);
                  nameY = avatarBottom + dp(1.3f) + dp(7) * diff + titleAnimationsYDiff * (1f - avatarAnimationProgress);
                  onlineY = avatarBottom + dp(24) + (float) Math.floor(11 * AndroidUtilities.density) * diff;
@@ -1504,16 +1493,7 @@ index 0000000..0000000 100644
  
                  if (showStatusButton != null) {
                      showStatusButton.setAlpha((int) (0xFF * diff));
-@@ -9251,7 +9252,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-                 if (openAnimationInProgress) {
-                     // from the title of the chat's header to the centre
-                     nameX = AndroidUtilities.lerp(minimizedX, nameX, diff);
--                    onlineX = AndroidUtilities.lerp(minimizedX, onlineX, diff);
-+                    onlineX = AndroidUtilities.lerp(minimizedOnlineX, onlineX, diff);
-                 }
- 
-                 if (expandAnimator == null || !expandAnimator.isRunning()) {
-@@ -10359,6 +10360,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10375,6 +10376,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      boolean profileTransitionInProgress;
  
      private float prevAvatarTranslation;
@@ -1534,9 +1514,9 @@ index 0000000..0000000 100644
 +        return inu_getStartTitleX();
 +    }
  
-     private BaseFragment findPreviousChatFragment() {
-         if (parentLayout == null || parentLayout.getFragmentStack().size() < 2) {
-@@ -10433,6 +10450,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+     @Override
+     public AnimatorSet onCustomTransitionAnimation(final boolean isOpen, final Runnable callback) {
+@@ -10444,6 +10461,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
          if (isOpen) {
              prevAvatarTranslation = 0;

@@ -208,7 +208,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -18047,6 +18047,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -18062,6 +18062,9 @@ public class ChatActivity extends BaseFragment implements
          if (sideControlsButtonsLayout == null) {
              return;
          }
@@ -218,7 +218,7 @@ index 0000000..0000000 100644
  
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_MENTION, show && !ChatObject.isMonoForum(currentChat), animated);
          if (!show) {
-@@ -25251,6 +25254,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -25267,6 +25270,9 @@ public class ChatActivity extends BaseFragment implements
              long topicId = (Long) args[1];
              if (dialog_id == dialogId && this.getTopicId() == topicId) {
                  int count = (int) args[2];
@@ -263,7 +263,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2871,6 +2871,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2873,6 +2873,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              currentConnectionState = getConnectionsManager().getConnectionState();
  
              observersGroup.addGlobal(NotificationCenter.emojiLoaded);
@@ -284,7 +284,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11837,7 +11837,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11949,7 +11949,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      if (userInfo != null && userInfo.stars_rating != null && userInfo.stars_rating.stars < 0) {
                          newString2 = getString(R.string.StarRatingLevelNegative).toLowerCase(Locale.ROOT);
                      } else {

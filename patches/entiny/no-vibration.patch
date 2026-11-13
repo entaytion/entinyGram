@@ -334,7 +334,7 @@ index 0000000..0000000 100755
  	public static final int CALL_MIN_LAYER = 65;
  
  	public static final int STATE_HANGING_UP = 10;
-@@ -4232,7 +4237,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4284,7 +4289,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  				} else {
  					vibrate = prefs.getInt("vibrate_calls", 0);
  				}

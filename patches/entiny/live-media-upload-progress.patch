@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -1283,6 +1283,24 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -1284,6 +1284,24 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      AnimatedTextView.AnimatedTextDrawable animatedInfoLayout;
      AnimatedTextView.AnimatedTextDrawable animatedInfoLayout2;
      StaticLayout loadingProgressLayout;
@@ -50,7 +50,7 @@ index 0000000..0000000 100644
      private long loadingProgressLayoutHash;
      private int infoX;
      int infoWidth;
-@@ -15516,6 +15534,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15550,6 +15568,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              lastLoadingSizeTotal = totalSize;
          }
          createLoadingProgressLayout(uploadedSize, totalSize);
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
      }
  
      private void createLoadingProgressLayout(TLRPC.Document document) {
-@@ -22533,7 +22552,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22567,7 +22586,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          updatePlayingMessageProgress();
                      }
  
@@ -68,7 +68,7 @@ index 0000000..0000000 100644
                          boolean drawLoadingProgress;
                          float alpha = 0;
                          boolean drawDocTitleLayout;
-@@ -22575,10 +22595,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22609,10 +22629,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              } else {
                                  imageW = 0;
                              }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
                              } else {
                                  infoW = infoWidth;
                              }
-@@ -22606,7 +22626,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22640,7 +22660,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                  photoImage.setAlpha(wasAlpha);
                                  canvas.restore();
                                  canvas.drawRoundRect(rect, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
                                  canvas.scale(loadingProgressAlpha, loadingProgressAlpha, x1, y1);
                                  canvas.drawRoundRect(rect, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
                              } else {
-@@ -22632,14 +22652,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22666,14 +22686,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                  noSoundCenterX += offset + size / 2;
                                  canvas.restore();
                              }
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
                                  canvas.restore();
                              } else if (drawDocTitleLayout) {
                                  Theme.chat_infoPaint.setAlpha((int) (255 * controlsAlpha * alpha));
-@@ -22683,7 +22703,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22717,7 +22737,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      invalidate();
                  }
  
@@ -122,7 +122,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -24373,11 +24373,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -24397,11 +24397,26 @@ public class ChatActivity extends BaseFragment implements
          } else if (id == NotificationCenter.fileNewChunkAvailable) {
              MessageObject messageObject = (MessageObject) args[0];
              long finalSize = (Long) args[3];

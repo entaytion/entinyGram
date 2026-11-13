@@ -47,7 +47,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3292,6 +3292,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3294,6 +3294,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              fragmentSearchField.updateColors();
          }
  
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
          fragmentSearchField.setCloseButtonOnClickListener(() -> {
              if (searchViewPager != null && searchViewPager.actionModeShowing()) {
                  searchViewPager.hideActionMode();
-@@ -3312,6 +3316,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3314,6 +3318,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              @Override
              public void onSearchExpand() {
                  searching = true;
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                  if (switchItem != null) {
                      switchItem.setVisibility(View.GONE);
                  }
-@@ -3375,6 +3380,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3377,6 +3382,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
  
                  searching = false;

@@ -2054,8 +2054,12 @@ object ChatHelper {
     @JvmStatic
     fun maybeHandleFileClick(fragment: BaseFragment, message: MessageObject): Boolean {
         val name = message.documentName ?: return false
-        val resolve = { existingFileForMessage(fragment, message) }
-        if (maybeHandleFile(fragment, name, message.mimeType, resolve)) return true
+        val fontAlbum = (fragment as? ChatActivity)?.getValidGroupedMessage(message)?.messages
+            ?.filter { it.documentName?.let(FontImportHelper::isFontFileName) == true }
+            ?.takeIf { it.size > 1 }
+            .orEmpty()
+        val resolve = { getMessageFile(fragment.currentAccount, message) }
+        if (maybeHandleFile(fragment, name, message.mimeType, fontAlbum, resolve)) return true
         if (!isRecognizedFileName(name)) return false
 
         // entiny: trigger download manually so stock does not route un-cached file to system open-with chooser
@@ -2070,12 +2074,10 @@ object ChatHelper {
             name.endsWith(".inu.js", ignoreCase = true) ||
             FontImportHelper.isFontFileName(name)
 
-    private fun existingFileForMessage(fragment: BaseFragment, message: MessageObject): File? {
-        val attach = message.messageOwner?.attachPath?.takeIf { it.isNotEmpty() }?.let { File(it) }
-        return attach?.takeIf { it.exists() }
-            ?: FileLoader.getInstance(fragment.currentAccount).getPathToMessage(message.messageOwner)
-                ?.takeIf { it.exists() }
-    }
+
+    fun getMessageFile(account: Int, message: MessageObject): File? =
+        message.messageOwner?.attachPath?.takeIf { it.isNotEmpty() }?.let { File(it) }?.takeIf { it.exists() }
+            ?: FileLoader.getInstance(account).getPathToMessage(message.messageOwner)?.takeIf { it.exists() }
 
     @JvmStatic
     fun maybeHandleRichDocumentClick(document: TLRPC.Document, file: File): Boolean {
@@ -2083,7 +2085,13 @@ object ChatHelper {
         return maybeHandleFile(fragment, FileLoader.getDocumentFileName(document), document.mime_type) { file }
     }
 
-    private fun maybeHandleFile(fragment: BaseFragment, name: String, mimeType: String?, resolveFile: () -> File?): Boolean {
+    private fun maybeHandleFile(
+        fragment: BaseFragment,
+        name: String,
+        mimeType: String?,
+        fontAlbum: List<MessageObject> = emptyList(),
+        resolveFile: () -> File?,
+    ): Boolean {
         val isSettings = name.endsWith(SettingsBackupHelper.FILENAME_SUFFIX)
         val isPlugin = !isSettings && name.endsWith(".inu.js", ignoreCase = true)
         val isFont = !isSettings && !isPlugin && FontImportHelper.isFontFileName(name)
@@ -2107,7 +2115,7 @@ object ChatHelper {
                 R.string.InuPluginsOpenSettings,
             ) { InuSettingsActivity() }
             // #endif
-            else -> FontImportHelper.startImportFromFile(fragment, file, name, mimeType)
+            else -> FontImportHelper.startImportFromFile(fragment, file, name, mimeType, fontAlbum)
         }
         return true
     }
@@ -2121,7 +2129,7 @@ object ChatHelper {
         if (attempts > 60) return
         AndroidUtilities.runOnUIThread({
             if (fragment.parentActivity == null) return@runOnUIThread
-            val file = existingFileForMessage(fragment, message)
+            val file = getMessageFile(fragment.currentAccount, message)
             if (file != null) {
                 maybeHandleFile(fragment, name, message.mimeType) { file }
             } else {

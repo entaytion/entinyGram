@@ -34,7 +34,7 @@ index 0000000..0000000 100644
                                  chats.remove(a);
                                  a--;
                                  pushDialogs.remove(did);
-@@ -9127,9 +9127,9 @@ public class MessagesStorage extends BaseController {
+@@ -9205,9 +9205,9 @@ public class MessagesStorage extends BaseController {
              try {
                  int result;
                  if (topicId != 0) {
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                  }
                  if (cursor.next() && cursor.intValue(1) == expectedCount) {
                      result = cursor.intValue(0);
-@@ -15108,25 +15108,25 @@ public class MessagesStorage extends BaseController {
+@@ -15187,25 +15187,25 @@ public class MessagesStorage extends BaseController {
                  for (int i = 0; i < 5; i++) {
                      if (i == 0) {
                          if (dialogId != 0) {
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
                      }
                      TLRPC.TL_messageEmpty emptyMessage = new TLRPC.TL_messageEmpty();
                      NativeByteBuffer data = new NativeByteBuffer(emptyMessage.getObjectSize());
-@@ -15134,9 +15134,8 @@ public class MessagesStorage extends BaseController {
+@@ -15213,9 +15213,8 @@ public class MessagesStorage extends BaseController {
  
                      state.requery();
                      state.bindByteBuffer(1, data);

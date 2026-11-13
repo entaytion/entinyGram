@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -5181,6 +5181,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -5185,6 +5185,14 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
  
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
              @Override
              public boolean onTouchEvent(MotionEvent e) {
                  textSelectionHelper.checkSelectionCancel(e);
-@@ -10834,6 +10842,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -10838,6 +10846,14 @@ public class ChatActivity extends BaseFragment implements
          return INavigationLayout.BackButtonState.BACK;
      }
  

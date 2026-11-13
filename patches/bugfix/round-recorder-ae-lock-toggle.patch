@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Se
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
-@@ -579,7 +579,7 @@ public class Camera2Session {
+@@ -608,7 +608,7 @@ public class Camera2Session {
              if (recordingVideo) {
                  Boolean aeLockAvailable = cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_LOCK_AVAILABLE) : null;
                  if (aeLockAvailable == null || aeLockAvailable) {
