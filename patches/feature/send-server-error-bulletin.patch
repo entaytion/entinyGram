@@ -76,7 +76,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -1545,6 +1545,11 @@ public class ConnectionsManager extends BaseController {
+@@ -1546,6 +1546,11 @@ public class ConnectionsManager extends BaseController {
          }
      }
  

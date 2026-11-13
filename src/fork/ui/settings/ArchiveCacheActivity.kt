@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.archive.ArchiveCache
+import desu.inugram.helpers.security.ArchiveExportHelper
 import desu.inugram.ui.DeletedArchiveActivity
 import desu.inugram.ui.ChipsRow
 import desu.inugram.ui.EditHistoryActivity
@@ -116,16 +117,21 @@ class ArchiveCacheActivity(
             override fun onItemClick(id: Int) {
                 when (id) {
                     -1 -> if (selecting) cancelSelection() else finishFragment()
+                    MENU_SEARCH -> presentFragment(DeletedMessageSearchActivity())
+                    MENU_EXPORT -> ArchiveExportHelper.export(this@ArchiveCacheActivity)
                     MENU_SELECT_ALL -> selectAll()
                     MENU_CLEAR -> confirmClear()
                 }
             }
         })
         val menu = actionBar.createMenu()
-        menu.addItem(MENU_SELECT_ALL, R.drawable.msg_select).contentDescription =
-            LocaleController.getString(R.string.SelectAll)
-        menu.addItem(MENU_CLEAR, R.drawable.inu_tabler_trash_x).contentDescription =
-            LocaleController.getString(R.string.Delete)
+        menu.addItem(MENU_SEARCH, R.drawable.ic_ab_search).contentDescription =
+            LocaleController.getString(R.string.Search)
+        val other = menu.addItem(0, R.drawable.ic_ab_other)
+        other.contentDescription = LocaleController.getString(R.string.AccDescrMoreOptions)
+        other.addSubItem(MENU_SELECT_ALL, R.drawable.msg_select, LocaleController.getString(R.string.SelectAll))
+        other.addSubItem(MENU_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuExportArchive))
+        other.addSubItem(MENU_CLEAR, R.drawable.msg_delete, LocaleController.getString(R.string.Delete)).setColorKeys(Theme.key_text_RedRegular, Theme.key_text_RedRegular)
 
         val root = FrameLayout(context).apply {
             setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite))
@@ -449,5 +455,7 @@ class ArchiveCacheActivity(
         const val TAB_EDITED = 2
         private const val MENU_SELECT_ALL = 1
         private const val MENU_CLEAR = 2
+        private const val MENU_SEARCH = 3
+        private const val MENU_EXPORT = 4
     }
 }

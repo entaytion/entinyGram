@@ -6,7 +6,6 @@ import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.archive.ArchiveMediaHelper
 import desu.inugram.helpers.archive.ArchiveScope
-import desu.inugram.helpers.security.ArchiveExportHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
@@ -128,12 +127,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         for (option in oneTimeToggles) {
             items.add(UItem.asCheck(option.id, LocaleController.getString(option.labelRes)).setChecked(option.config.value))
         }
-
-        if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
-            items.add(UItem.asShadow(null))
-            items.add(mkSubPageButton(BUTTON_SEARCH, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuDeletedMessageSearch)))
-            items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuExportArchive)))
-        }
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -177,8 +171,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_DELETED_OWN.toggle()
                 listView?.adapter?.update(true)
             }
-            BUTTON_SEARCH -> presentFragment(DeletedMessageSearchActivity())
-            BUTTON_EXPORT -> ArchiveExportHelper.export(this)
         }
     }
 
@@ -193,8 +185,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_DELETED_OWN = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_EDIT_HISTORY_DIFF = InuUtils.generateId()
-        private val BUTTON_SEARCH = InuUtils.generateId()
-        private val BUTTON_EXPORT = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT_MEDIA = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT_TEXT = InuUtils.generateId()
         private val TOGGLE_SAVE_VIEW_ONCE_MEDIA = InuUtils.generateId()

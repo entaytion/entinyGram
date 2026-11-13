@@ -33,7 +33,6 @@ internal class PluginRepoPluginActivity(
     override fun getTitle(): CharSequence = manifest.name
 
     private val onPluginsChanged: () -> Unit = {
-        installer.onPluginsChanged()
         listView?.adapter?.update(true)
     }
 
