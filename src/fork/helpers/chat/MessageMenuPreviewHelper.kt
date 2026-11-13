@@ -84,6 +84,8 @@ object MessageMenuPreviewHelper {
 
             override fun scroll(delta: Float) = scrollBy(delta)
 
+            override fun menuMeasured(height: Int) = onMenuSize(height)
+
             override fun dismiss() = dismiss.run()
         })
 
@@ -110,6 +112,12 @@ object MessageMenuPreviewHelper {
             onChanged?.run()
         }
 
+        private lateinit var list: View
+        private var viewportTop = 0f
+        private var viewportBottom = 0f
+        private var placedMenuHeight = 0
+        private var replaces = 0
+
         fun show(
             window: ActionBarPopupWindow,
             list: View,
@@ -118,6 +126,28 @@ object MessageMenuPreviewHelper {
             viewportBottom: Float,
         ) {
             this.content = content
+            this.list = list
+            this.viewportTop = viewportTop
+            this.viewportBottom = viewportBottom
+            place()
+
+            window.setAnimationStyle(0)
+            window.setAnimationEnabled(false)
+            window.setLayoutInScreen(true)
+            window.width = ViewGroup.LayoutParams.MATCH_PARENT
+            window.height = ViewGroup.LayoutParams.MATCH_PARENT
+            menu.alpha = 0f
+            menu.animate().alpha(1f).setDuration(180).start()
+        }
+
+        // entiny: the overlay laid the menu out taller than it was placed for, so place again or the last rows end up clipped
+        private fun onMenuSize(height: Int) {
+            if (replaces >= 2 || placedMenuHeight == 0 || Math.abs(height - placedMenuHeight) <= dp(1f)) return
+            replaces++
+            place()
+        }
+
+        private fun place() {
             val message = cell.messageObject
             val location = IntArray(2)
             val position = IntArray(2)
@@ -172,8 +202,9 @@ object MessageMenuPreviewHelper {
             } else 0
             val reactionsInset = if (reactionsHeight > 0) reactionsHeight + dp(4f) else 0
 
-            viewTop = viewportTop + reactionsInset
-            viewBottom = viewportBottom
+            val barBelow = reactionsInset > 0 && InuConfig.REACTION_BAR_BELOW.value
+            viewTop = viewportTop + if (barBelow) 0 else reactionsInset
+            viewBottom = viewportBottom - if (barBelow) reactionsInset else 0
             val gap = 0f
             val total = postHeight + gap + menuHeight
             val available = viewBottom - viewTop
@@ -216,7 +247,7 @@ object MessageMenuPreviewHelper {
 
             view.setMenuPosition(
                 location[0] + Math.round(menuLeft),
-                location[1] + Math.round(if (menuAbove) viewTop - reactionsInset - menuHeight else viewTop + postHeight + gap),
+                location[1] + Math.round(if (menuAbove) viewTop - (if (barBelow) 0 else reactionsInset) - menuHeight else viewTop + postHeight + gap),
                 menuWidth,
                 menuHeight,
             )
@@ -226,17 +257,15 @@ object MessageMenuPreviewHelper {
                     .coerceIn(viewportLeft, maxOf(viewportLeft, viewportRight - view.reactionsWidth))
                 view.setReactionsPosition(
                     location[0] + Math.round(reactionsLeft),
-                    location[1] + Math.round(viewTop) - reactionsHeight - dp(4f),
+                    location[1] + Math.round(
+                        if (!barBelow) viewTop - reactionsHeight - dp(4f)
+                        else if (minScroll < 0f) viewBottom + dp(4f)
+                        else viewTop + postHeight + (if (menuAbove) 0f else menuHeight) + dp(4f),
+                    ),
                 )
             }
-
-            window.setAnimationStyle(0)
-            window.setAnimationEnabled(false)
-            window.setLayoutInScreen(true)
-            window.width = ViewGroup.LayoutParams.MATCH_PARENT
-            window.height = ViewGroup.LayoutParams.MATCH_PARENT
-            menu.alpha = 0f
-            menu.animate().alpha(1f).setDuration(180).start()
+            placedMenuHeight = menuHeight
+            onChanged?.run()
         }
     }
 }

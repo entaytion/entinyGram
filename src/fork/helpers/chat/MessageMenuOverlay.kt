@@ -19,6 +19,7 @@ class MessageMenuOverlay(
         fun contains(screenX: Float, screenY: Float): Boolean
         fun canScroll(): Boolean
         fun scroll(delta: Float)
+        fun menuMeasured(height: Int)
         fun dismiss()
     }
 
@@ -100,6 +101,7 @@ class MessageMenuOverlay(
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        listener.menuMeasured(menu.measuredHeight)
         getLocationOnScreen(position)
         var x = menuX - position[0]
         var y = menuY - position[1]
