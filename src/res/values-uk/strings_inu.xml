@@ -2355,4 +2355,5 @@
     <string name="InuForwardAllConfirm">Усі повідомлення цього чату, які можна переслати, підуть у вибрані чати пачками по 100, починаючи зі старих. Це може зайняти час.</string>
     <string name="InuForwardAllStarted">Пересилаю повідомлення…</string>
     <string name="InuForwardAllDone">Переслано повідомлень: %1$d</string>
+    <string name="InuPluginsInfo">Плагіни — це скрипти користувачів, що розширюють застосунок. Встановлюйте плагіни лише з джерел, яким довіряєте.</string>
 </resources>
