@@ -310,7 +310,7 @@ index 0000000..0000000 100644
 +                        float sendButtonAlpha = child.getAlpha();
 +                        if (textTransitionIsRunning) {
 +                            isSendBubbleDismissed = true;
-+                        } else if (sendButtonAlpha > sendButtonLastDrawAlpha || sendButtonAlpha >= 1f) {
++                        } else if (sendButtonAlpha > sendButtonLastDrawAlpha || sendButtonAlpha >= 1f || sendButtonAlpha > 0f && sendButtonAlpha == sendButtonLastDrawAlpha) {
 +                            isSendBubbleDismissed = false;
 +                        }
 +                        if (sendBubbleDrawable != null && child.getVisibility() == VISIBLE && !isSendBubbleDismissed) {
