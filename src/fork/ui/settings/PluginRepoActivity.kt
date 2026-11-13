@@ -10,7 +10,6 @@ import android.widget.TextView
 import desu.inugram.InuConfig
 import desu.inugram.core.plugins.PluginManifest
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.plugins.PluginDependencies
 import desu.inugram.helpers.plugins.PluginImportHelper
 import desu.inugram.helpers.plugins.PluginManager
 import desu.inugram.helpers.plugins.PluginRepo
@@ -43,7 +42,6 @@ class PluginRepoActivity(private val repo: PluginRepo) : SettingsPageActivity() 
     private val installer = RepoInstaller(this)
 
     private val onPluginsChanged: () -> Unit = {
-        installer.onPluginsChanged()
         listView?.adapter?.update(true)
     }
 
@@ -204,26 +202,9 @@ internal fun installRepoPost(fragment: BaseFragment, post: PluginRepoPost) {
     }
 }
 
-/** installs a plugin and, when it needs an SDK that is missing, the SDK from the same repository first */
+/** installs a plugin of a repository. One per screen */
 internal class RepoInstaller(private val fragment: BaseFragment) {
-    private var afterSdk: PluginRepoPost? = null
-
-    fun onPluginsChanged() {
-        afterSdk?.takeIf { PluginDependencies.sdkEnabled() }?.let {
-            afterSdk = null
-            installRepoPost(fragment, it)
-        }
-    }
-
-    fun install(post: PluginRepoPost, manifest: PluginManifest, repoPosts: List<Pair<PluginRepoPost, PluginManifest>>) {
-        val missing = PluginDependencies.unmetFor(manifest.raw[PluginDependencies.KEY].orEmpty(), manifest.id)
-        val sdk = if (missing?.startsWith(PluginDependencies.SDK_ID) == true) {
-            PluginRepos.pickLatest(repoPosts).firstOrNull { it.second.id == PluginDependencies.SDK_ID }?.first
-        } else null
-        if (sdk == null) return installRepoPost(fragment, post)
-        afterSdk = post
-        installRepoPost(fragment, sdk)
-    }
+    fun install(post: PluginRepoPost) = installRepoPost(fragment, post)
 }
 
 @SuppressLint("ViewConstructor")

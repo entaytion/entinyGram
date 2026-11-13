@@ -46,7 +46,6 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
     }
 
     private val onPluginsChanged: () -> Unit = {
-        installer.onPluginsChanged()
         listView?.adapter?.update(true)
     }
 

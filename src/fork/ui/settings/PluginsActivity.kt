@@ -19,7 +19,6 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.plugins.BootGuard
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.plugins.Plugin
-import desu.inugram.helpers.plugins.PluginDependencies
 import desu.inugram.helpers.plugins.PluginDevServer
 import desu.inugram.helpers.plugins.PluginImportHelper
 import desu.inugram.helpers.plugins.PluginManager
@@ -240,7 +239,7 @@ class PluginsActivity : SettingsPageActivity() {
         ) { enabled ->
             PluginManager.setEnabled(plugin, enabled)
         }
-        row.bindSettings(if (plugin.settingsPageId != null && plugin.manifest.id != PluginDependencies.SDK_ID) ({ PluginUi.openRegisteredSettings(plugin) }) else null)
+        row.bindSettings(if (plugin.settingsPageId != null) ({ PluginUi.openRegisteredSettings(plugin) }) else null)
         row.bindActions(
             onReload = { PluginManager.reload(plugin) },
             onRemove = { removePlugin(plugin) },

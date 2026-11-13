@@ -6,13 +6,10 @@ import org.telegram.messenger.R
 
 /**
  * `@requires <plugin-id> [>=<version>]`, repeatable: the plugin installs and runs only while the named plugins
- * are installed and enabled. This is how a plugin depends on another, the entinyGram SDK being the first.
+ * are installed and enabled. This is how a plugin depends on another.
  */
 object PluginDependencies {
     const val KEY = "requires"
-
-    /** the plugin that carries the entinyGram SDK; plugins that use its directives require it */
-    const val SDK_ID = "entinygram.sdk"
 
     class Need(val id: String, val minVersion: String?)
 
@@ -44,9 +41,6 @@ object PluginDependencies {
         }
         return null
     }
-
-    /** the SDK plugin is installed and on */
-    fun sdkEnabled(): Boolean = PluginManager.plugins().any { it.manifest.id == SDK_ID && it.enabled }
 
     /** dotted numbers; a missing part counts as 0, anything else as 0 too */
     fun compareVersions(have: String?, want: String): Int {

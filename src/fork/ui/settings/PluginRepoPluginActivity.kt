@@ -125,7 +125,7 @@ internal class PluginRepoPluginActivity(
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_INSTALL -> installer.install(post, manifest, repoPosts)
+            BUTTON_INSTALL -> installer.install(post)
             BUTTON_OPEN -> PluginManager.findUpdateTarget(manifest)?.let { presentFragment(PluginInfoActivity(it)) }
             SOURCE -> messagesController.openByUserName(post.repo.username, this, 0)
             PLUGIN_ID -> manifest.id?.let {
@@ -136,7 +136,7 @@ internal class PluginRepoPluginActivity(
                 val (versionPost, versionManifest) = versions[item.id - VERSION_BASE]
                 val installed = PluginManager.findUpdateTarget(versionManifest)
                 if (installed != null && installed.manifest.version == versionManifest.version) presentFragment(PluginInfoActivity(installed))
-                else installer.install(versionPost, versionManifest, repoPosts)
+                else installer.install(versionPost)
             }
         }
     }

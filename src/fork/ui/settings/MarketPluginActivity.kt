@@ -41,7 +41,6 @@ internal class MarketPluginActivity(
     override fun getTitle(): CharSequence = entry.name
 
     private val onPluginsChanged: () -> Unit = {
-        installer.onPluginsChanged()
         listView?.adapter?.update(true)
     }
 
