@@ -18,6 +18,21 @@ object ArchiveStore {
         db.executeFast("DELETE FROM inu_deleted_reactions").stepThis().dispose()
     }
 
+    fun detachMediaPaths(db: SQLiteDatabase, paths: Collection<String>) {
+        for (table in arrayOf("inu_deleted_messages", "inu_edit_history")) {
+            val state = db.executeFast("UPDATE $table SET media_path = NULL WHERE media_path = ?")
+            try {
+                for (path in paths) {
+                    state.requery()
+                    state.bindString(1, path)
+                    state.step()
+                }
+            } finally {
+                state.dispose()
+            }
+        }
+    }
+
     fun detachSavedMedia(db: SQLiteDatabase) {
         db.executeFast("UPDATE inu_deleted_messages SET media_path = NULL WHERE media_path IS NOT NULL").stepThis().dispose()
         db.executeFast("UPDATE inu_edit_history SET media_path = NULL WHERE media_path IS NOT NULL").stepThis().dispose()

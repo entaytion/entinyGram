@@ -30,6 +30,10 @@ class DeletedArchiveActivity(dialogId: Long, account: Int) : ArchiveChatFragment
     override val isDeletedArchive: Boolean get() = true
     override val overlayActionBar: Boolean get() = true
 
+    override val switchIcon: Int get() = R.drawable.msg_edit
+    override val switchLabel: Int get() = R.string.InuCacheEditsCategory
+    override fun switchTarget() = EditHistoryActivity(dialogId, currentAccount)
+
     override fun hasContent(): Boolean = entries.isNotEmpty()
 
     override fun onCleared() {

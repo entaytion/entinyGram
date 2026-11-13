@@ -1225,7 +1225,10 @@
     <string name="InuCacheTtlMonth">Старше 1 месяца</string>
     <string name="InuClearCache">Очистить кэш</string>
     <string name="InuClearDeletedCache">Очистить кэш удаленных сообщений</string>
+    <string name="InuArchiveTitle">Удалённые и изменённые</string>
+    <string name="InuArchiveAll">Все</string>
     <string name="InuClearDeletedCacheAlert">Это навсегда удалит локальный архив сохранённых удалённых сообщений и их медиа. Отменить нельзя.</string>
+    <string name="InuArchiveMediaDeleteSelected">Удалить выбранные файлы? Они пропадут и из архива.</string>
     <string name="InuDeletedMessageSearch">Поиск по архиву</string>
     <string name="InuExportArchive">Экспортировать архив</string>
     <string name="InuExportArchiveEmpty">Нечего экспортировать</string>
@@ -1505,7 +1508,6 @@
     <string name="InuCacheClearAll">Очистить кэш…</string>
     <string name="InuCacheClearAllDone">Выбранный кэш очищен</string>
     <string name="InuCacheCalculating">Подсчёт…</string>
-    <string name="InuCacheSummarySubtitle">%1$d записей во всех кэшах</string>
     <string name="InuCacheEntriesShort">%1$d записей</string>
     <string name="InuCachePresenceCategory">Журналы активности</string>
     <string name="InuCacheDeletedCategory">Удалённые сообщения</string>

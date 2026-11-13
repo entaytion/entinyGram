@@ -1728,7 +1728,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuCacheClearAll">Limpiar caché…</string>
     <string name="InuCacheClearAllDone">Caché seleccionada limpiada</string>
     <string name="InuCacheCalculating">Calculando…</string>
-    <string name="InuCacheSummarySubtitle">%1$d registros en todas las cachés</string>
     <string name="InuCacheEntriesShort">%1$d registros</string>
     <string name="InuCachePresenceCategory">Registros de presencia</string>
     <string name="InuCacheDeletedCategory">Mensajes eliminados</string>

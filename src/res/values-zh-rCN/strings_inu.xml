@@ -1237,7 +1237,6 @@
     <string name="InuCacheClearAll">清除缓存…</string>
     <string name="InuCacheClearAllDone">所选缓存已清除</string>
     <string name="InuCacheCalculating">正在计算…</string>
-    <string name="InuCacheSummarySubtitle">所有缓存共 %1$d 条记录</string>
     <string name="InuCacheEntriesShort">%1$d 条记录</string>
     <string name="InuCachePresenceCategory">在线状态记录</string>
     <string name="InuCacheDeletedCategory">已删除的消息</string>

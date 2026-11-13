@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.archive.ArchiveCache
 import desu.inugram.ui.DeletedArchiveActivity
+import desu.inugram.ui.ChipsRow
 import desu.inugram.ui.EditHistoryActivity
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -37,9 +38,31 @@ import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
 
 class ArchiveCacheActivity(
-    private val edited: Boolean,
+    private var tab: Int = TAB_ALL,
 ) : BaseFragment() {
-    private var stats = emptyList<InuDatabaseHelper.DialogCacheStat>()
+    private class Merged(
+        val dialogId: Long,
+        val deleted: InuDatabaseHelper.DialogCacheStat?,
+        val edited: InuDatabaseHelper.DialogCacheStat?,
+    ) {
+        fun stat(tab: Int): InuDatabaseHelper.DialogCacheStat? = when (tab) {
+            TAB_DELETED -> deleted
+            TAB_EDITED -> edited
+            else -> if (deleted != null && edited != null) {
+                if (deleted.lastDate >= edited.lastDate) deleted else edited
+            } else deleted ?: edited
+        }
+
+        fun count(tab: Int): Int = when (tab) {
+            TAB_DELETED -> deleted?.count ?: 0
+            TAB_EDITED -> edited?.count ?: 0
+            else -> (deleted?.count ?: 0) + (edited?.count ?: 0)
+        }
+    }
+
+    private var all = emptyList<Merged>()
+    private var stats = emptyList<Merged>()
+    private var chips: ChipsRow? = null
     private var loading = true
     private var clearing = false
     private var selecting = false
@@ -49,8 +72,30 @@ class ArchiveCacheActivity(
     private var emptyView: TextView? = null
 
     private fun categoryTitle() = LocaleController.getString(
-        if (edited) R.string.InuCacheEditsCategory else R.string.InuCacheDeletedCategory
+        when (tab) {
+            TAB_DELETED -> R.string.InuCacheDeletedCategory
+            TAB_EDITED -> R.string.InuCacheEditsCategory
+            else -> R.string.InuArchiveTitle
+        }
     )
+
+    private fun applyTab() {
+        stats = all.filter { it.count(tab) > 0 }
+        chips?.bind(
+            listOf(
+                "${LocaleController.getString(R.string.InuArchiveAll)} (${all.size})",
+                "${LocaleController.getString(R.string.InuCacheDeletedCategory)} (${all.count { it.deleted != null }})",
+                "${LocaleController.getString(R.string.InuCacheEditsCategory)} (${all.count { it.edited != null }})",
+            ),
+            tab,
+        ) {
+            tab = it
+            cancelSelection()
+            actionBar?.setTitle(categoryTitle())
+            applyTab()
+            refreshRows()
+        }
+    }
 
     private fun dialogTitle(id: Long): String = when (id) {
         0L, userConfig.clientUserId -> LocaleController.getString(R.string.SavedMessages)
@@ -95,7 +140,7 @@ class ArchiveCacheActivity(
         listView = list
         list.setOnItemClickListener { _, position, _, _ ->
             val stat = stats.getOrNull(position) ?: return@setOnItemClickListener
-            if (selecting) toggleSelection(stat.dialogId) else openArchive(stat.dialogId)
+            if (selecting) toggleSelection(stat.dialogId) else openArchive(stat)
         }
         list.setOnItemLongClickListener { _, position ->
             stats.getOrNull(position)?.let {
@@ -105,7 +150,12 @@ class ArchiveCacheActivity(
             }
             true
         }
-        root.addView(list, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat()))
+        val chipsRow = ChipsRow(context).also { chips = it }
+        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        column.addView(chipsRow, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 52))
+        column.addView(list, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 0, 1f))
+        root.addView(column, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat()))
+        applyTab()
 
         val empty = TextView(context).apply {
             gravity = Gravity.CENTER
@@ -135,11 +185,19 @@ class ArchiveCacheActivity(
         val storage = MessagesStorage.getInstance(currentAccount)
         storage.storageQueue.postRunnable {
             val result = runCatching {
-                ArchiveStore.getDeletedMessagesStats(checkNotNull(storage.database), edited)
+                val db = checkNotNull(storage.database)
+                ArchiveStore.getDeletedMessagesStats(db, false) to ArchiveStore.getDeletedMessagesStats(db, true)
             }
             AndroidUtilities.runOnUIThread {
                 if (isFinished) return@runOnUIThread
-                result.onSuccess { stats = it }.onFailure {
+                result.onSuccess { (deleted, edits) ->
+                    val deletedById = deleted.associateBy { it.dialogId }
+                    val editedById = edits.associateBy { it.dialogId }
+                    all = (deletedById.keys + editedById.keys)
+                        .map { Merged(it, deletedById[it], editedById[it]) }
+                        .sortedByDescending { it.stat(TAB_ALL)?.lastDate ?: 0L }
+                    applyTab()
+                }.onFailure {
                     BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.ErrorOccurred))
                         .show()
                 }
@@ -161,9 +219,15 @@ class ArchiveCacheActivity(
         actionBar?.setSubtitle(if (selecting) "${selected.size}" else null)
     }
 
-    private fun openArchive(dialogId: Long) {
+    private fun openArchive(item: Merged) {
+        val dialogId = item.dialogId
+        val showEdits = when (tab) {
+            TAB_EDITED -> true
+            TAB_DELETED -> false
+            else -> item.deleted == null
+        }
         presentFragment(
-            if (edited) {
+            if (showEdits) {
                 EditHistoryActivity(dialogId, currentAccount)
             } else {
                 DeletedArchiveActivity(dialogId, currentAccount)
@@ -222,14 +286,16 @@ class ArchiveCacheActivity(
                     .show()
             }
         }
-        if (edited) {
-            ArchiveCache.clearEditHistory(currentAccount, ids, done)
-        } else {
-            ArchiveCache.clearCache(currentAccount, ids, deletedOnly = true, onDone = done)
+        when (tab) {
+            TAB_EDITED -> ArchiveCache.clearEditHistory(currentAccount, ids, done)
+            TAB_DELETED -> ArchiveCache.clearCache(currentAccount, ids, deletedOnly = true, onDone = done)
+            else -> ArchiveCache.clearCache(currentAccount, ids, deletedOnly = true) {
+                ArchiveCache.clearEditHistory(currentAccount, ids, done)
+            }
         }
     }
 
-    private fun previewText(stat: InuDatabaseHelper.DialogCacheStat): CharSequence {
+    private fun previewText(stat: InuDatabaseHelper.DialogCacheStat, edited: Boolean): CharSequence {
         val body = stat.preview
         if (body.isEmpty() || edited) return body
         val chat = if (stat.dialogId < 0) messagesController.getChat(-stat.dialogId) else null
@@ -264,8 +330,8 @@ class ArchiveCacheActivity(
             RecyclerListView.Holder(ArchiveRow(context))
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val stat = stats[position]
-            (holder.itemView as ArchiveRow).bind(stat, selecting, stat.dialogId in selected)
+            val item = stats[position]
+            (holder.itemView as ArchiveRow).bind(item, selecting, item.dialogId in selected)
         }
     }
 
@@ -352,7 +418,9 @@ class ArchiveCacheActivity(
             )
         }
 
-        fun bind(stat: InuDatabaseHelper.DialogCacheStat, selecting: Boolean, isSelected: Boolean) {
+        fun bind(item: Merged, selecting: Boolean, isSelected: Boolean) {
+            val stat = item.stat(tab) ?: return
+            val statEdited = stat === item.edited
             val peer: org.telegram.tgnet.TLObject? = when {
                 stat.dialogId == 0L -> null
                 stat.dialogId > 0 -> messagesController.getUser(stat.dialogId)
@@ -367,16 +435,19 @@ class ArchiveCacheActivity(
             avatar.setForUserOrChat(peer, drawable)
             title.text = dialogTitle(stat.dialogId)
             time.text = lastTimeLabel(context, stat.lastDate)
-            preview.text = previewText(stat)
-            count.text = stat.count.toString()
+            preview.text = previewText(stat, statEdited)
+            count.text = item.count(tab).toString()
             checkbox.visibility = if (selecting) View.VISIBLE else View.GONE
             checkbox.setChecked(isSelected, false)
             count.visibility = if (selecting) View.GONE else View.VISIBLE
         }
     }
 
-    private companion object {
-        const val MENU_SELECT_ALL = 1
-        const val MENU_CLEAR = 2
+    companion object {
+        const val TAB_ALL = 0
+        const val TAB_DELETED = 1
+        const val TAB_EDITED = 2
+        private const val MENU_SELECT_ALL = 1
+        private const val MENU_CLEAR = 2
     }
 }

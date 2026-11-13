@@ -21,6 +21,7 @@ import org.telegram.ui.ActionBar.BottomSheet
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.CheckBoxCell
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.CacheChart
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
@@ -30,7 +31,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCacheManagement)
 
     private var stats: List<CacheStatsHelper.Stat> = emptyList()
-    private var summaryCell: CacheSummaryCell? = null
+    private var chart: CacheChart? = null
     private var loading = true
 
     override fun onResume() {
@@ -39,9 +40,27 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        if (summaryCell == null) summaryCell = CacheSummaryCell(context, { confirmClearAll() }, { openCategory(stats[it].kind) })
-        bindSummary()
-        items.add(UItem.asCustom(summaryCell))
+        val chartView = chart ?: object : CacheChart(
+            context,
+            KINDS.size,
+            KINDS.map(::kindColorKey).toIntArray(),
+            CacheChart.TYPE_CACHE,
+            KINDS.map(::kindParticle).toIntArray(),
+        ) {
+            override fun onSectionClick(index: Int) {
+                KINDS.getOrNull(index)?.let(::openCategory)
+            }
+        }.also { chart = it }
+        bindChart()
+        items.add(UItem.asCustom(chartView))
+        for (kind in KINDS) {
+            val stat = stats.firstOrNull { it.kind == kind }
+            if (kind != Kind.DELETED && kind != Kind.EDITS && (stat == null || stat.count == 0 && stat.size == 0L)) continue
+            items.add(UItem.asButton(ROW_IDS.getValue(kind), kindIcon(kind), kindTitle(kind), stat?.let { AndroidUtilities.formatFileSize(it.size) } ?: "…"))
+        }
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asButton(BUTTON_CLEAR_ALL, LocaleController.getString(R.string.InuCacheClearAll)).red()
+            .setEnabled(stats.any { it.count > 0 || it.size > 0 }))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuCacheManagementInfo)))
 
         items.add(UItem.asButton(BUTTON_MESSAGES_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuCacheTtl)).also {
@@ -50,9 +69,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asButton(BUTTON_LOGS_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuPresenceLogsTtl)).also {
             it.subtext = ttlLabel(InuConfig.PRESENCE_LOGS_TTL.value)
         })
-        items.add(UItem.asShadow(null))
-        items.add(UItem.asButton(BUTTON_CLEAR_DELETED_CACHE, R.drawable.msg_delete, kindTitle(Kind.DELETED)))
-        items.add(UItem.asButton(BUTTON_EDITED_CACHE, R.drawable.msg_edit, kindTitle(Kind.EDITS)))
         items.add(UItem.asShadow(null))
     }
 
@@ -126,41 +142,40 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         Kind.LOGS -> R.drawable.msg_report
     }
 
-    private fun kindColor(kind: Kind): Int = when (kind) {
-        Kind.DELETED -> 0xFFE5534B.toInt()
-        Kind.EDITS -> 0xFFF5A623.toInt()
-        Kind.REACTIONS -> 0xFFEB5FA0.toInt()
-        Kind.MEDIA -> 0xFF9B6BDF.toInt()
-        Kind.PRESENCE -> 0xFF3390EC.toInt()
-        Kind.RECENT -> 0xFF26B6C7.toInt()
-        Kind.PILLS -> 0xFFB5A23A.toInt()
-        Kind.TEMP -> 0xFF8E8E93.toInt()
-        Kind.LOGS -> 0xFF6C7A89.toInt()
+    private fun kindColorKey(kind: Kind): Int = when (kind) {
+        Kind.DELETED -> Theme.key_statisticChartLine_red
+        Kind.EDITS -> Theme.key_statisticChartLine_orange
+        Kind.REACTIONS -> Theme.key_statisticChartLine_purple
+        Kind.MEDIA -> Theme.key_statisticChartLine_lightblue
+        Kind.PRESENCE -> Theme.key_statisticChartLine_blue
+        Kind.RECENT -> Theme.key_statisticChartLine_cyan
+        Kind.PILLS -> Theme.key_statisticChartLine_golden
+        Kind.TEMP -> Theme.key_statisticChartLine_lightgreen
+        Kind.LOGS -> Theme.key_statisticChartLine_indigo
     }
 
-    private fun bindSummary() {
-        val cell = summaryCell ?: return
-        if (loading && stats.isEmpty()) {
-            cell.bind("…", LocaleController.getString(R.string.InuCacheCalculating), emptyList(), clearEnabled = false)
-            return
-        }
-        val rows = stats.map {
-            CacheSummaryCell.Row(
-                kindColor(it.kind), kindIcon(it.kind), kindTitle(it.kind),
-                LocaleController.formatString(R.string.InuCacheEntriesShort, it.count), it.size,
-            )
-        }
-        val totalSize = stats.sumOf { it.size }
-        cell.bind(
-            AndroidUtilities.formatFileSize(totalSize),
-            LocaleController.formatString(R.string.InuCacheSummarySubtitle, stats.sumOf { it.count }),
-            rows,
-            clearEnabled = totalSize > 0 || stats.any { it.count > 0 },
-        )
+    private fun kindParticle(kind: Kind): Int = when (kind) {
+        Kind.MEDIA -> R.raw.cache_photos
+        Kind.PRESENCE, Kind.RECENT -> R.raw.cache_profile_photos
+        Kind.REACTIONS -> R.raw.cache_stickers
+        Kind.LOGS -> R.raw.cache_documents
+        else -> R.raw.cache_other
+    }
+
+    private fun bindChart() {
+        val view = chart ?: return
+        if (loading && stats.isEmpty()) return
+        val segments = KINDS.map { kind -> CacheChart.SegmentSize.of(stats.firstOrNull { it.kind == kind }?.size ?: 0L) }
+        view.setSegments(segments.sumOf { it.size }, true, *segments.toTypedArray())
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        ROW_IDS.entries.firstOrNull { it.value == item.id }?.let {
+            openCategory(it.key)
+            return
+        }
         when (item.id) {
+            BUTTON_CLEAR_ALL -> confirmClearAll()
             BUTTON_MESSAGES_TTL -> showTtlDialog(R.string.InuCacheTtl, R.string.InuCacheTtlInfo, InuConfig.DELETED_MESSAGES_TTL.value) {
                 InuConfig.DELETED_MESSAGES_TTL.value = it
                 if (it != InuConfig.DeletedMessagesTtlItem.NEVER) ArchiveCache.pruneIfNeeded(UserConfig.selectedAccount)
@@ -169,8 +184,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
                 InuConfig.PRESENCE_LOGS_TTL.value = it
                 if (it != InuConfig.PresenceLogsTtlItem.NEVER) PresenceHelper.pruneIfNeeded(UserConfig.selectedAccount)
             }
-            BUTTON_CLEAR_DELETED_CACHE -> presentFragment(ArchiveCacheActivity(false))
-            BUTTON_EDITED_CACHE -> presentFragment(ArchiveCacheActivity(true))
         }
     }
 
@@ -279,12 +292,16 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
 
     private fun openCategory(kind: Kind) {
         if (kind == Kind.DELETED || kind == Kind.EDITS) {
-            presentFragment(ArchiveCacheActivity(kind == Kind.EDITS))
+            presentFragment(ArchiveCacheActivity(if (kind == Kind.EDITS) ArchiveCacheActivity.TAB_EDITED else ArchiveCacheActivity.TAB_DELETED))
             return
         }
         val stat = stats.firstOrNull { it.kind == kind } ?: return
         if (stat.count == 0 && stat.size == 0L) {
             BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuClearDeletedCacheEmpty)).show()
+            return
+        }
+        if (kind == Kind.MEDIA) {
+            presentFragment(ArchiveMediaActivity())
             return
         }
         val row = SheetRow(kindTitle(kind), LocaleController.formatString(R.string.InuCacheEntriesShort, stat.count), stat.size)
@@ -309,8 +326,9 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_MESSAGES_TTL = InuUtils.generateId()
         private val BUTTON_LOGS_TTL = InuUtils.generateId()
-        private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()
-        private val BUTTON_EDITED_CACHE = InuUtils.generateId()
+        private val BUTTON_CLEAR_ALL = InuUtils.generateId()
+        private val KINDS = Kind.entries
+        private val ROW_IDS = KINDS.associateWith { InuUtils.generateId() }
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -321,7 +339,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_MESSAGES_TTL),
                 SearchRegistry.Entry("presence-logs-ttl", R.string.InuPresenceLogsTtl, BUTTON_LOGS_TTL),
-                SearchRegistry.Entry("clear-deleted-cache", R.string.InuClearDeletedCache, BUTTON_CLEAR_DELETED_CACHE),
+                SearchRegistry.Entry("clear-deleted-cache", R.string.InuClearDeletedCache, ROW_IDS.getValue(Kind.DELETED)),
             ),
         )
     }

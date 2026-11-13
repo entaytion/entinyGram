@@ -1236,7 +1236,6 @@
     <string name="InuCacheClearAll">キャッシュを消去…</string>
     <string name="InuCacheClearAllDone">選択したキャッシュを消去しました</string>
     <string name="InuCacheCalculating">計算中…</string>
-    <string name="InuCacheSummarySubtitle">全キャッシュで%1$d件の記録</string>
     <string name="InuCacheEntriesShort">%1$d件の記録</string>
     <string name="InuCachePresenceCategory">オンライン状態の記録</string>
     <string name="InuCacheDeletedCategory">削除されたメッセージ</string>

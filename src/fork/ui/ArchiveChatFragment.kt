@@ -93,6 +93,9 @@ abstract class ArchiveChatFragment(
     protected abstract fun onMediaDownloaded(entry: EditEntry, path: String)
     protected open fun labelOf(row: Row): CharSequence = ""
     protected open fun onNearTop() {}
+    protected open val switchIcon: Int = 0
+    protected open val switchLabel: Int = 0
+    protected open fun switchTarget(): BaseFragment? = null
     protected open fun spanSizeAt(position: Int): Int = FULL_SPAN
     protected open fun onTimePressed(message: MessageObject) {}
 
@@ -337,9 +340,13 @@ abstract class ArchiveChatFragment(
                 when (id) {
                     -1 -> finishFragment()
                     MENU_CLEAR_ARCHIVE -> confirmClearArchive()
+                    MENU_SWITCH -> presentFragment(switchTarget() ?: return, true)
                 }
             }
         })
+        if (switchTarget() != null) {
+            actionBar.createMenu().addItem(MENU_SWITCH, switchIcon).contentDescription = LocaleController.getString(switchLabel)
+        }
         if (clearable) actionBar.createMenu().addItem(MENU_CLEAR_ARCHIVE, R.drawable.inu_tabler_trash_x)
         if (overlayActionBar) {
             actionBar.setAddToContainer(false)
@@ -570,5 +577,6 @@ abstract class ArchiveChatFragment(
         const val VIEW_DATE = 3
         const val VIEW_LABEL = 4
         private const val MENU_CLEAR_ARCHIVE = 3
+        private const val MENU_SWITCH = 4
     }
 }

@@ -1556,7 +1556,6 @@
     <string name="InuCacheClearAll">مسح الذاكرة المؤقتة…</string>
     <string name="InuCacheClearAllDone">تم مسح الذاكرة المؤقتة المحددة</string>
     <string name="InuCacheCalculating">جارٍ الحساب…</string>
-    <string name="InuCacheSummarySubtitle">%1$d سجل في جميع الذاكرات المؤقتة</string>
     <string name="InuCacheEntriesShort">%1$d سجل</string>
     <string name="InuCachePresenceCategory">سجلات التواجد</string>
     <string name="InuCacheDeletedCategory">الرسائل المحذوفة</string>

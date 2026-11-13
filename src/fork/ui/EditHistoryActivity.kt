@@ -45,6 +45,10 @@ class EditHistoryActivity(
     override val clearable: Boolean get() = wholeDialog
     override val isDeletedArchive: Boolean get() = false
 
+    override val switchIcon: Int get() = R.drawable.msg_delete
+    override val switchLabel: Int get() = R.string.InuCacheDeletedCategory
+    override fun switchTarget() = if (wholeDialog) DeletedArchiveActivity(dialogId, currentAccount) else null
+
     override fun hasContent(): Boolean = entries.isNotEmpty()
 
     override fun onCleared() {

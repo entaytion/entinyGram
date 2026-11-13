@@ -1729,7 +1729,6 @@ Questa azione non può essere annullata.</string>
     <string name="InuCacheClearAll">Svuota la cache…</string>
     <string name="InuCacheClearAllDone">Cache selezionata svuotata</string>
     <string name="InuCacheCalculating">Calcolo…</string>
-    <string name="InuCacheSummarySubtitle">%1$d registrazioni in tutte le cache</string>
     <string name="InuCacheEntriesShort">%1$d registrazioni</string>
     <string name="InuCachePresenceCategory">Registri di presenza</string>
     <string name="InuCacheDeletedCategory">Messaggi eliminati</string>

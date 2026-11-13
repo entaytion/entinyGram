@@ -144,7 +144,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **system emoji** — draw emoji with the system font
 - **quiet voice messages when locked** — headset, car or lock screen controls cannot start voice or round messages on a locked phone - *inspired by HushTelegram*
 - **download queue** — large files download one at a time in request order, with a Downloads entry in the chats menu and cancel - *inspired by HushTelegram*
-- **cache management** — size overview per category, clear each category or all at once
+- **cache management** — stock storage chart per category, every category opens: archives, saved media browser, or a clear sheet
 - **stability & ui fixes** — photo viewer close crash, topics panel flicker, interrupted theme switches recover, rtl truncation in the header
 - **push notifications** in optimized builds
 

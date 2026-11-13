@@ -1174,7 +1174,10 @@
     <string name="InuChatTitleMarqueeInfo">Назви та підписи в шапці чату, заголовки екранів і імʼя в профілі прокручуються біжучим рядком, якщо не вміщуються</string>
     <string name="InuClearCache">Очистити кеш</string>
     <string name="InuClearDeletedCache">Очистити кеш збережених повідомлень</string>
+    <string name="InuArchiveTitle">Видалені та змінені</string>
+    <string name="InuArchiveAll">Усі</string>
     <string name="InuClearDeletedCacheAlert">Це назавжди видалить локальний архів збережених видалених повідомлень та їхніх медіа. Скасувати неможливо.</string>
+    <string name="InuArchiveMediaDeleteSelected">Видалити вибрані файли? Вони зникнуть і з архіву.</string>
     <string name="InuDeletedMessageSearch">Пошук по архіву</string>
     <string name="InuExportArchive">Експортувати архів</string>
     <string name="InuExportArchiveEmpty">Немає що експортувати</string>
@@ -1725,7 +1728,6 @@
     <string name="InuCacheClearAll">Очистити кеш…</string>
     <string name="InuCacheClearAllDone">Вибраний кеш очищено</string>
     <string name="InuCacheCalculating">Підрахунок…</string>
-    <string name="InuCacheSummarySubtitle">%1$d записів у всіх кешах</string>
     <string name="InuCacheEntriesShort">%1$d записів</string>
     <string name="InuCachePresenceCategory">Журнали активності</string>
     <string name="InuCacheDeletedCategory">Видалені повідомлення</string>

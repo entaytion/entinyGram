@@ -1237,7 +1237,6 @@
     <string name="InuCacheClearAll">Önbelleği temizle…</string>
     <string name="InuCacheClearAllDone">Seçili önbellek temizlendi</string>
     <string name="InuCacheCalculating">Hesaplanıyor…</string>
-    <string name="InuCacheSummarySubtitle">Tüm önbelleklerde %1$d kayıt</string>
     <string name="InuCacheEntriesShort">%1$d kayıt</string>
     <string name="InuCachePresenceCategory">Çevrim içi günlükleri</string>
     <string name="InuCacheDeletedCategory">Silinen mesajlar</string>

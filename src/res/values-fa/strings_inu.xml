@@ -1544,7 +1544,6 @@
     <string name="InuCacheClearAll">پاک کردن حافظه نهان…</string>
     <string name="InuCacheClearAllDone">حافظه نهان انتخاب‌شده پاک شد</string>
     <string name="InuCacheCalculating">در حال محاسبه…</string>
-    <string name="InuCacheSummarySubtitle">%1$d رکورد در همه حافظه‌های نهان</string>
     <string name="InuCacheEntriesShort">%1$d رکورد</string>
     <string name="InuCachePresenceCategory">گزارش‌های حضور</string>
     <string name="InuCacheDeletedCategory">پیام‌های حذف‌شده</string>
