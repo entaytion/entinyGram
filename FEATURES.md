@@ -121,6 +121,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 
 - **chat list sections** — rounded material 3 cards with adjustable side margins, separate pinned chats - *inspired by Modular Sections (@RnPlugins)*
 - **local folders** once the server limit is reached, folder icon picker, the list opens on the folder you used last
+- **add to folder from any folder** — the chat selection menu offers "add to folder" inside folders too, so a chat moves between folders without the All chats tab; off by default
 - **unread chats first** — unread chats, muted ones too, go above read ones in every folder; pinned chats stay on top
 - **tap avatar** to open the profile from the chat list
 - **keep three-dot menu** — keep the chats menu button when the side menu is on

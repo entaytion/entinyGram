@@ -1416,6 +1416,8 @@
     <string name="InuUnlimitedFavoriteStickersInfo">Убирает локальное ограничение избранных стикеров и GIF — на сервере они сохраняются полностью.</string>
     <string name="InuUnlimitedFolderChats">Безлимитные чаты в папке</string>
     <string name="InuUnlimitedFolderChatsInfo">Добавляйте в папку больше чатов, чем позволяет Telegram. Лишние остаются на этом устройстве.</string>
+    <string name="InuAddToFolderInFolder">Добавление в папку из любой папки</string>
+    <string name="InuAddToFolderInFolderInfo">Показывать «Добавить в папку» в меню выбора чатов внутри папок, а не только во вкладке «Все чаты».</string>
     <string name="InuLocalFolders">Локальные папки</string>
     <string name="InuLocalFoldersInfo">Создавайте папки сверх лимита Telegram. Лишние папки остаются на этом устройстве.</string>
     <string name="InuPillStack">Pill Stack</string>

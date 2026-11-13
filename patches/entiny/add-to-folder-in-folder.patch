@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 13 Nov 2026 20:15:36 +0200
+Subject: Show Add to folder in the chat selection menu inside folders when the toggle is on.
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -10365,7 +10365,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             }
+         }
+         if (addToFolderItem != null) {
+-            if (folderId == 1 || filterTabsView != null && getFilterTabsVisibilityFactor(false) > 0.5f && filterTabsView.currentTabIsDefault() && !FiltersListBottomSheet.getCanAddDialogFilters(this, selectedDialogs).isEmpty()) {
++            if (folderId == 1 || filterTabsView != null && getFilterTabsVisibilityFactor(false) > 0.5f && (filterTabsView.currentTabIsDefault() || desu.inugram.InuConfig.ADD_TO_FOLDER_IN_FOLDER.getValue()) && !FiltersListBottomSheet.getCanAddDialogFilters(this, selectedDialogs).isEmpty()) {
+                 addToFolderItem.setVisibility(View.VISIBLE);
+             } else {
+                 addToFolderItem.setVisibility(View.GONE);

@@ -1816,6 +1816,8 @@
     <string name="InuUnlimitedFavoriteStickersInfo">Removes the local cap on favorite stickers and GIFs; the server keeps them all anyway.</string>
     <string name="InuUnlimitedFolderChats">Unlimited chats per folder</string>
     <string name="InuUnlimitedFolderChatsInfo">Add more chats to a folder than Telegram allows. Extras stay on this device.</string>
+    <string name="InuAddToFolderInFolder">Add to folder from any folder</string>
+    <string name="InuAddToFolderInFolderInfo">Show \"Add to folder\" in the chat selection menu inside folders, not only in All chats.</string>
     <string name="InuLocalFolders">Local folders</string>
     <string name="InuLocalFoldersInfo">Create folders beyond Telegram\'s limit. Extra folders stay on this device.</string>
     <string name="InuFolderIcon">Folder icon</string>

@@ -663,6 +663,7 @@ object Schemas {
             )
             toggle(InuConfig.REMEMBER_SELECTED_FOLDER, R.string.InuRememberSelectedFolder, R.string.InuRememberSelectedFolderInfo)
             toggle(InuConfig.FOLDERS_INFINITE_SWIPE, R.string.InuFoldersInfiniteSwipe, R.string.InuFoldersInfiniteSwipeInfo)
+            toggle(InuConfig.ADD_TO_FOLDER_IN_FOLDER, R.string.InuAddToFolderInFolder, R.string.InuAddToFolderInFolderInfo)
             toggle(InuConfig.HIDE_ARCHIVE_FROM_CHAT_LIST, R.string.InuHideArchive, onChange = { page, _ -> page.rebuildAll() })
             toggle(InuConfig.UNREAD_CHATS_FIRST, R.string.InuUnreadChatsFirst, onChange = { _, _ -> UnreadFirstHelper.refresh() })
             toggle(InuConfig.UNREAD_CHATS_FIRST_PINNED, R.string.InuUnreadChatsFirstPinned, onChange = { _, _ -> UnreadFirstHelper.refresh() })

@@ -656,3 +656,4 @@ bugfix/share-alert-keyboard.patch
 entiny/dialogs-title-visibility.patch
 entiny/snowflakes-ignore-lite-mode.patch
 entiny/no-forward-limit.patch
+entiny/add-to-folder-in-folder.patch

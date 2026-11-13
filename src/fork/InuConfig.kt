@@ -490,6 +490,9 @@ object InuConfig {
     val UNLIMITED_FOLDER_CHATS = BoolItem("unlimited_folder_chats", false)
 
     @JvmField
+    val ADD_TO_FOLDER_IN_FOLDER = BoolItem("add_to_folder_in_folder", false)
+
+    @JvmField
     val SYSTEM_FOLDERS_STATE = StringItem("system_folders_state", "")
 
     @JvmField
