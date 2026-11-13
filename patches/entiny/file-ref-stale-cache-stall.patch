@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 4 Nov 2026 21:32:47 +0400
+Subject: Fix downloads stalling forever after a repeated file reference expiry. Requesters a stale cache answer left waiting stay attached to the server answer.
+
+---
+ .../telegram/messenger/FileRefController.java | 24 ++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java
+@@ -442,6 +442,7 @@ public class FileRefController extends BaseController {
+         if (added != 2) {
+             return;
+         }
++        final ArrayList<Requester> inu_parentRequesters = arrayList;
+ 
+         String cacheKey = locationKey;
+         if (parentObject instanceof String) {
+@@ -464,7 +465,8 @@ public class FileRefController extends BaseController {
+         if (cachedResult != null) {
+             if (!onRequestComplete(locationKey, parentKey, cachedResult.response, null,false, true)) {
+                 responseCache.remove(locationKey);
+-            } else {
++                inu_keepPendingRequesters(parentKey, inu_parentRequesters);
++            } else if (!inu_keepPendingRequesters(parentKey, inu_parentRequesters)) {
+                 return;
+             }
+         } else {
+@@ -472,7 +474,8 @@ public class FileRefController extends BaseController {
+             if (cachedResult != null) {
+                 if (!onRequestComplete(locationKey, parentKey, cachedResult.response, null, false, true)) {
+                     responseCache.remove(parentKey);
+-                } else {
++                    inu_keepPendingRequesters(parentKey, inu_parentRequesters);
++                } else if (!inu_keepPendingRequesters(parentKey, inu_parentRequesters)) {
+                     return;
+                 }
+             }
+@@ -480,6 +483,16 @@ public class FileRefController extends BaseController {
+         requestReferenceFromServer(parentObject, locationKey, parentKey, args);
+     }
+ 
++    // entiny: a stale cache answer leaves requesters waiting, so they must stay reachable by the server answer
++    private boolean inu_keepPendingRequesters(String parentKey, ArrayList<Requester> requesters) {
++        requesters.removeIf(requester -> requester.completed);
++        if (requesters.isEmpty()) {
++            return false;
++        }
++        parentRequester.put(parentKey, requesters);
++        return true;
++    }
++
+     private String getObjectString(Object parentObject) {
+         if (parentObject instanceof String) {
+             return (String) parentObject;
+@@ -1485,12 +1498,17 @@ public class FileRefController extends BaseController {
+             if (result != null) {
+                 if (onUpdateObjectReference(requester, result, locationReplacement != null ? locationReplacement[0] : null, fromCache)) {
+                     found = true;
++                } else {
++                    requester.completed = false;
+                 }
+             } else {
+                 sendErrorToObject(requester.args, 1);
+             }
+         }
+-        locationRequester.remove(locationKey);
++        arrayList.removeIf(requester -> requester.completed);
++        if (arrayList.isEmpty()) {
++            locationRequester.remove(locationKey);
++        }
+         if (found) {
+             putReponseToCache(cacheKey, response);
+         }

@@ -603,7 +603,6 @@ entiny/round-video-512p.patch
 entiny/round-video-zoom-ratio.patch
 entiny/round-video-controls.patch
 bugfix/paint-density-scale.patch
-bugfix/file-ref-stale-cache-stall.patch
 bugfix/inline-restriction-check.patch
 feature/inline-send-without-via.patch
 feature/send-sticker-without-pack.patch
@@ -657,3 +656,4 @@ entiny/dialogs-title-visibility.patch
 entiny/snowflakes-ignore-lite-mode.patch
 entiny/no-forward-limit.patch
 entiny/add-to-folder-in-folder.patch
+entiny/file-ref-stale-cache-stall.patch
