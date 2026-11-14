@@ -190,6 +190,32 @@ object ArchiveMediaHelper {
 
     private const val PREFETCH_TRACKED = 1000
 
+    private val deadMedia = HashSet<String>()
+
+    // entiny: the server drops a deleted message's files, so one failed reference refresh ends all further requests for it
+    @JvmStatic
+    fun markDead(account: Int, parent: Any?, fileName: String?): Boolean {
+        if (fileName == null || parent !is MessageObject || !DeletedMessagesHelper.isKept(parent)) return false
+        synchronized(deadMedia) { deadMedia.add("$account:$fileName") }
+        return true
+    }
+
+    @JvmStatic
+    fun isDead(account: Int, parent: Any?, fileName: String?): Boolean {
+        if (fileName == null || parent !is MessageObject) return false
+        if (synchronized(deadMedia) { "$account:$fileName" !in deadMedia }) return false
+        return DeletedMessagesHelper.isKept(parent)
+    }
+
+    @JvmStatic
+    fun isDead(obj: MessageObject?): Boolean {
+        if (obj == null || synchronized(deadMedia) { deadMedia.isEmpty() }) return false
+        val media = MessageObject.getMedia(obj.messageOwner) ?: return false
+        val name = media.document?.let { FileLoader.getAttachFileName(it) }
+            ?: media.photo?.sizes?.let { FileLoader.getClosestPhotoSizeWithSize(it, AndroidUtilities.getPhotoSize(true), false, null, true) }?.let { FileLoader.getAttachFileName(it) }
+        return isDead(obj.currentAccount, obj, name)
+    }
+
     internal fun planMediaCopy(account: Int, message: TLRPC.Message?, maxBytes: Long = AUTO_COPY_MAX_BYTES): PendingMediaCopy? {
         if (message?.media == null || message.media is TLRPC.TL_messageMediaWebPage) return null
         return try {
@@ -402,9 +428,9 @@ object ArchiveMediaHelper {
             loading = true
             val parent = MessageObject(account, message, false, false)
             if (document != null) {
-                loader.loadFile(document, parent, FileLoader.PRIORITY_NORMAL, 1)
+                loader.loadFile(document, parent, FileLoader.PRIORITY_HIGH, 1)
             } else {
-                loader.loadFile(location, parent, "jpg", FileLoader.PRIORITY_NORMAL, 1)
+                loader.loadFile(location, parent, "jpg", FileLoader.PRIORITY_HIGH, 1)
             }
         }
         return {

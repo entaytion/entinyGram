@@ -668,3 +668,4 @@ entiny/chat-preview-buttons.patch
 entiny/voice-skip-session.patch
 entiny/pinned-jump-return.patch
 entiny/dialogs-selection-npe.patch
+entiny/deleted-media-dead-refs.patch

@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 15 Nov 2026 01:01:56 +0200
+Subject: Stop requesting media of a saved deleted message once the server refuses to refresh its file reference. No error toast, no auto-download and no repeat requests for it.
+
+---
+ .../java/org/telegram/messenger/DownloadController.java  | 2 ++
+ .../src/main/java/org/telegram/messenger/FileLoader.java | 9 ++++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java b/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
+@@ -619,6 +619,7 @@ public class DownloadController extends BaseController implements NotificationCe
+         if (messageObject.isHiddenSensitive())
+             return false;
+         if (desu.inugram.helpers.archive.EditHistoryHelper.isHistoryPreview(messageObject)) return false;
++        if (desu.inugram.helpers.archive.ArchiveMediaHelper.isDead(messageObject)) return false;
+         return canDownloadMediaInternal(messageObject) == 1;
+     }
+ 
+@@ -660,6 +661,7 @@ public class DownloadController extends BaseController implements NotificationCe
+         if (messageObject.isHiddenSensitive())
+             return 0;
+         if (desu.inugram.helpers.archive.EditHistoryHelper.isHistoryPreview(messageObject)) return 0;
++        if (desu.inugram.helpers.archive.ArchiveMediaHelper.isDead(messageObject)) return 0;
+         return canDownloadMediaInternal(messageObject);
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+@@ -875,6 +875,11 @@ public class FileLoader extends BaseController {
+             FileLog.e(new RuntimeException("cant get hash from " + document));
+             return null;
+         }
++        if (stream == null && loadOperationPaths.get(fileName) == null && desu.inugram.helpers.archive.ArchiveMediaHelper.isDead(currentAccount, parentObject, fileName)) {
++            loadOperationPathsUI.remove(fileName);
++            if (delegate != null) delegate.fileDidFailedLoad(fileName, 0);
++            return null;
++        }
+         if (cacheType != 10 && !TextUtils.isEmpty(fileName) && !fileName.contains("" + Integer.MIN_VALUE)) {
+             loadOperationPathsUI.put(fileName, new LoadOperationUIObject());
+         }
+@@ -1081,7 +1086,9 @@ public class FileLoader extends BaseController {
+                     delegate.fileDidFailedLoad(fileName, reason);
+                 }
+ 
+-                if (document != null && parentObject instanceof MessageObject && reason == 0) {
++                if (operation.inu_refDead && desu.inugram.helpers.archive.ArchiveMediaHelper.markDead(currentAccount, parentObject, fileName)) {
++                    if (document != null && parentObject instanceof MessageObject) getDownloadController().onDownloadFail((MessageObject) parentObject, 1);
++                } else if (document != null && parentObject instanceof MessageObject && reason == 0) {
+                     getDownloadController().onDownloadFail((MessageObject) parentObject, reason);
+                 } else if (reason == -1) {
+                     LaunchActivity.checkFreeDiscSpaceStatic(2);

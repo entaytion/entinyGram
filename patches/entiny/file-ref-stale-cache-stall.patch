@@ -4,9 +4,23 @@ Date: Wed, 4 Nov 2026 21:32:47 +0400
 Subject: Fix downloads stalling forever on file reference refreshes. Waiting requesters stay attached to the server answer, and a parent with no refresh request no longer leaves them mapped.
 
 ---
- .../telegram/messenger/FileRefController.java | 61 ++++++++++++++++---
- 1 file changed, 54 insertions(+), 7 deletions(-)
+ .../telegram/messenger/FileLoadOperation.java |  1 +
+ .../telegram/messenger/FileRefController.java | 62 ++++++++++++++++---
+ .../messenger/FileStreamLoadOperation.java    |  1 +
+ 3 files changed, 57 insertions(+), 7 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+@@ -252,6 +252,7 @@ public class FileLoadOperation {
+     private int cdnDatacenterId;
+     private boolean reuploadingCdn;
+     protected boolean requestingReference;
++    public volatile boolean inu_refDead;
+     private boolean requestedReference;
+     private RandomAccessFile fileReadStream;
+     private byte[] cdnCheckBytes;
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java
@@ -116,7 +130,15 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -1485,12 +1527,17 @@ public class FileRefController extends BaseController {
+@@ -1072,6 +1114,7 @@ public class FileRefController extends BaseController {
+             if (args[1] instanceof FileLoadOperation) {
+                 FileLoadOperation fileLoadOperation = (FileLoadOperation) args[1];
+                 fileLoadOperation.requestingReference = false;
++                fileLoadOperation.inu_refDead = true;
+                 FileLog.e("debug_loading: " + fileLoadOperation.getCacheFileFinal().getName() + " reference can't update: fail operation ");
+                 fileLoadOperation.onFail(false, 0);
+             }
+@@ -1485,12 +1528,17 @@ public class FileRefController extends BaseController {
              if (result != null) {
                  if (onUpdateObjectReference(requester, result, locationReplacement != null ? locationReplacement[0] : null, fromCache)) {
                      found = true;
@@ -135,3 +157,15 @@ index 0000000..0000000 100644
          if (found) {
              putReponseToCache(cacheKey, response);
          }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java
+@@ -175,6 +175,7 @@ public class FileStreamLoadOperation implements DataSource, FileLoadOperationStr
+                             countDownLatch.await();
+                             countDownLatch = null;
+                         }
++                        if (this.loadOperation != null && this.loadOperation.inu_refDead) throw new IOException("file reference is dead");
+                     }
+ //                    FileLog.e("FileStreamLoadOperation " + document.id + " read availableLength=" + availableLength);
+                     File currentFileFast = loadOperation.getCurrentFileFast();
