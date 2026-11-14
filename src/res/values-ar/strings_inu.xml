@@ -580,6 +580,8 @@
     <string name="InuSearchFromGlobalInfo">عند تصفية بحث المحادثة حسب المرسل، يُضمَّن المستخدمون المطابقون عالمياً أيضاً، وليس أعضاء المحادثة فقط</string>
     <string name="InuDisableChatPreviewExpand">معاينة محادثة تفاعلية</string>
     <string name="InuDisableChatPreviewExpandInfo">تعطيل النقر للتوسيع، وجعل الفقاعات تفاعلية بدلاً من ذلك</string>
+    <string name="InuChatPreviewButtons">أزرار في معاينة الدردشة</string>
+    <string name="InuChatPreviewButtonsInfo">إضافة فتح الدردشة وإغلاق إلى القائمة التي تظهر عند الضغط المطول على دردشة</string>
     <string name="InuDialogAvatarOpensProfile">النقر على الصورة الرمزية يفتح الملف الشخصي</string>
     <string name="InuDialogAvatarOpensProfileInfo">النقر على الصورة الرمزية لمحادثة في القائمة يفتح ملفها الشخصي مباشرة بدلاً من المحادثة.</string>
     <string name="InuAlwaysShowDownloads">زر التنزيلات</string>

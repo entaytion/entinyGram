@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 14:40:44 +0200
+Subject: Optional Open chat and Close buttons in the press-and-hold chat preview menu.
+
+---
+ .../java/org/telegram/ui/ActionBar/ActionBarLayout.java     | 6 ++++++
+ .../src/main/java/org/telegram/ui/DialogsActivity.java      | 2 ++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+@@ -2593,6 +2593,12 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+ 
+     @Override
+     public void expandPreviewFragment() {
++        if (previewMenu != null) {
++            if (previewMenu.getParent() != null) {
++                ((ViewGroup) previewMenu.getParent()).removeView(previewMenu);
++            }
++            previewMenu = null;
++        }
+         previewOpenAnimationInProgress = true;
+         inPreviewMode = false;
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -9178,6 +9178,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             previewMenu[0].addView(deleteItem);
+         }
+ 
++        desu.inugram.helpers.dialogs.ChatPreviewButtonsHelper.addItems(this, previewMenu[0]);
++
+ 
+         if (isCommunityCell) {
+             if (searchString != null) {

@@ -317,6 +317,8 @@
     <string name="InuSearchFromGlobalInfo">按发送者筛选聊天搜索时，除聊天成员外也包含全局匹配的用户</string>
     <string name="InuDisableChatPreviewExpand">交互式聊天预览</string>
     <string name="InuDisableChatPreviewExpandInfo">禁用点击展开，改为让气泡可交互</string>
+    <string name="InuChatPreviewButtons">聊天预览中的按钮</string>
+    <string name="InuChatPreviewButtonsInfo">在长按聊天时的菜单中添加“打开聊天”和“关闭”</string>
     <string name="InuHideMyPhoneNumber">隐藏我的手机号</string>
     <string name="InuNoJoinedNotifications">注册时不通知联系人</string>
     <string name="InuNoJoinedNotificationsInfo">注册新号码时，要求 Telegram 不通知保存了该号码的人</string>

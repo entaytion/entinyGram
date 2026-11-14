@@ -1405,6 +1405,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val NO_JOINED_NOTIFICATIONS = BoolItem("no_joined_notifications", false)
 
     @JvmField
+    val CHAT_PREVIEW_BUTTONS = BoolItem("chat_preview_buttons", false)
+
+    @JvmField
     val REACTIONS_IN_ROW = ReactionsInRowItem()
 
     @JvmField

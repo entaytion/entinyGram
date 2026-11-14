@@ -442,6 +442,8 @@
     <string name="InuSearchFromGlobalInfo">Sohbet aramasını gönderene göre filtrelerken yalnızca sohbet üyelerini değil, küresel olarak eşleşen kullanıcıları da dahil eder</string>
     <string name="InuDisableChatPreviewExpand">Etkileşimli sohbet önizlemesi</string>
     <string name="InuDisableChatPreviewExpandInfo">Büyütmek için dokunmayı devre dışı bırakır ve baloncukları etkileşimli hale getirir</string>
+    <string name="InuChatPreviewButtons">Sohbet önizlemesinde düğmeler</string>
+    <string name="InuChatPreviewButtonsInfo">Bir sohbete basılı tutunca çıkan menüye Sohbeti aç ve Kapat ekle</string>
     <string name="InuHideMyPhoneNumber">Telefon numaramı gizle</string>
     <string name="InuNoJoinedNotifications">Kayıtta kişilere bildirme</string>
     <string name="InuNoJoinedNotificationsInfo">Yeni numara kaydederken Telegram\'dan numarayı kayıtlı tutanlara haber vermemesini iste</string>

@@ -688,6 +688,7 @@ object Schemas {
             toggle(InuConfig.DISABLE_SWIPE_TO_HIDE_GENERAL_TOPIC, R.string.InuDisableSwipeToHideGeneralTopic)
             toggle(InuConfig.HIDE_BOT_WEBVIEW_DIALOGS, R.string.InuHideBotWebView, onChange = { page, _ -> page.rebuildAll() })
             toggle(InuConfig.INTERACTIVE_CHAT_PREVIEW, R.string.InuDisableChatPreviewExpand, R.string.InuDisableChatPreviewExpandInfo)
+            toggle(InuConfig.CHAT_PREVIEW_BUTTONS, R.string.InuChatPreviewButtons, R.string.InuChatPreviewButtonsInfo)
             custom(
                 "community-display-mode", R.string.InuCommunityDisplayMode,
                 build = { _, id ->

@@ -693,6 +693,8 @@ Sistema: %6$s
     <string name="InuSearchFromGlobalInfo">Al filtrar la búsqueda por remitente, incluye usuarios coincidentes globalmente</string>
     <string name="InuDisableChatPreviewExpand">Vista previa de chat interactiva</string>
     <string name="InuDisableChatPreviewExpandInfo">Desactiva tocar para expandir y hace interactivas las burbujas</string>
+    <string name="InuChatPreviewButtons">Botones en la vista previa del chat</string>
+    <string name="InuChatPreviewButtonsInfo">Añadir Abrir chat y Cerrar al menú que aparece al mantener pulsado un chat</string>
     <string name="InuDialogAvatarOpensProfile">Tocar avatar para abrir perfil</string>
     <string name="InuDialogAvatarOpensProfileInfo">Tocar el avatar de un chat en la lista abre su perfil directamente en lugar del chat.</string>
     <string name="InuAlwaysShowDownloads">Botón de descargas</string>

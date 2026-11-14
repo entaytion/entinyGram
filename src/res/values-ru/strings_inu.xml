@@ -389,6 +389,8 @@
     <string name="InuSearchFromGlobalInfo">При фильтрации поиска в чате по отправителю также включать пользователей, найденных глобально, а не только участников чата</string>
     <string name="InuDisableChatPreviewExpand">Интерактивное превью чата</string>
     <string name="InuDisableChatPreviewExpandInfo">Отключить разворачивание по нажатию и сделать пузыри интерактивными</string>
+    <string name="InuChatPreviewButtons">Кнопки в превью чата</string>
+    <string name="InuChatPreviewButtonsInfo">Добавить «Открыть чат» и «Закрыть» в меню при долгом нажатии на чат</string>
     <string name="InuHideMyPhoneNumber">Скрыть мой номер телефона</string>
     <string name="InuNoJoinedNotifications">Не уведомлять контакты о регистрации</string>
     <string name="InuNoJoinedNotificationsInfo">При регистрации нового номера просить Telegram не сообщать тем, у кого он сохранён</string>

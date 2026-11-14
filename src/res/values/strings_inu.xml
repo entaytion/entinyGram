@@ -752,6 +752,8 @@
     <string name="InuSearchFromGlobalInfo">When filtering chat search by sender, also include users matched globally — not just chat members</string>
     <string name="InuDisableChatPreviewExpand">Interactive chat preview</string>
     <string name="InuDisableChatPreviewExpandInfo">Disable tap-to-expand, and make the bubbles interactive instead</string>
+    <string name="InuChatPreviewButtons">Buttons in chat preview</string>
+    <string name="InuChatPreviewButtonsInfo">Add Open chat and Close preview to the menu shown when you press and hold a chat</string>
     <string name="InuDialogAvatarOpensProfile">Tap avatar to open profile</string>
     <string name="InuDialogAvatarOpensProfileInfo">Tapping a chat\'s avatar in the chat list opens their profile directly instead of the chat.</string>
     <string name="InuAlwaysShowDownloads">Downloads button</string>

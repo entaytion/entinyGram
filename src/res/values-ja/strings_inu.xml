@@ -318,6 +318,8 @@
     <string name="InuSearchFromGlobalInfo">チャット内検索で送信者を絞り込むとき、チャットメンバーだけでなくグローバルで見つかったユーザーも含める</string>
     <string name="InuDisableChatPreviewExpand">インタラクティブなチャットプレビュー</string>
     <string name="InuDisableChatPreviewExpandInfo">タップで展開する動作を無効化し、代わりにバブルを操作可能にする</string>
+    <string name="InuChatPreviewButtons">チャットプレビューのボタン</string>
+    <string name="InuChatPreviewButtonsInfo">チャットを長押ししたときのメニューに「チャットを開く」と「閉じる」を追加する</string>
     <string name="InuHideMyPhoneNumber">自分の電話番号を非表示</string>
     <string name="InuNoJoinedNotifications">登録時に連絡先へ通知しない</string>
     <string name="InuNoJoinedNotificationsInfo">新しい番号の登録時、その番号を保存している人に知らせないようTelegramに依頼する</string>

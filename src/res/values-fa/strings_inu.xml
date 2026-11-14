@@ -580,6 +580,8 @@
     <string name="InuSearchFromGlobalInfo">هنگام فیلتر کردن جستجوی گفتگو بر اساس فرستنده، کاربرانی که به‌صورت سراسری هم پیدا می‌شوند گنجانده شوند، نه فقط اعضای گفتگو</string>
     <string name="InuDisableChatPreviewExpand">پیش‌نمایش تعاملی گفتگو</string>
     <string name="InuDisableChatPreviewExpandInfo">ضربه برای بزرگ‌کردن غیرفعال شود و در عوض حباب‌ها تعاملی شوند</string>
+    <string name="InuChatPreviewButtons">دکمه‌ها در پیش‌نمایش گفتگو</string>
+    <string name="InuChatPreviewButtonsInfo">افزودن باز کردن گفتگو و بستن به منوی نگه‌داشتن روی گفتگو</string>
     <string name="InuDialogAvatarOpensProfile">ضربه روی آواتار نمایه را باز می‌کند</string>
     <string name="InuDialogAvatarOpensProfileInfo">ضربه روی آواتار یک گفتگو در فهرست، به‌جای گفتگو مستقیماً نمایه او را باز می‌کند.</string>
     <string name="InuAlwaysShowDownloads">دکمه دانلودها</string>
