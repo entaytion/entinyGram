@@ -1979,6 +1979,7 @@
     <string name="InuRoundAudioSourceStandard">標準</string>
     <string name="InuRoundAudioSourceUnprocessed">未処理</string>
     <string name="InuRoundBitrateDefault">デフォルト</string>
+    <string name="InuRoundBitrateAuto">自動</string>
     <string name="InuRoundVideos">丸型ビデオ</string>
     <string name="InuSaveLastSeen">最終オンラインを保存</string>
     <string name="InuSaveLastSeenInfo">最終オンライン時刻を記憶し、連絡先がステータスを非表示にしても表示し続けます</string>

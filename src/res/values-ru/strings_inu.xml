@@ -2157,6 +2157,7 @@
     <string name="InuRoundAudioSourceStandard">Стандартный</string>
     <string name="InuRoundAudioSourceUnprocessed">Необработанный</string>
     <string name="InuRoundBitrateDefault">По умолчанию</string>
+    <string name="InuRoundBitrateAuto">Авто</string>
     <string name="InuRoundVideos">Кружочки</string>
     <string name="InuVoiceMessages">Голосовые сообщения</string>
     <string name="InuLogsRedact">Скрывать чувствительные данные</string>

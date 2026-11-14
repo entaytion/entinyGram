@@ -661,3 +661,4 @@ entiny/archive-chat.patch
 entiny/copy-restricted.patch
 entiny/story-ghost-alert.patch
 entiny/ghost-schedule-send.patch
+entiny/round-auto-bitrate.patch

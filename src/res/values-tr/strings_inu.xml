@@ -1981,6 +1981,7 @@
     <string name="InuRoundAudioSourceStandard">Standart</string>
     <string name="InuRoundAudioSourceUnprocessed">İşlenmemiş</string>
     <string name="InuRoundBitrateDefault">Varsayılan</string>
+    <string name="InuRoundBitrateAuto">Otomatik</string>
     <string name="InuRoundVideos">Yuvarlak videolar</string>
     <string name="InuSaveLastSeen">Son görülmeyi kaydet</string>
     <string name="InuSaveLastSeenInfo">Son görülme zamanını hatırlar; kişi durumunu gizlese bile görünür kalır</string>

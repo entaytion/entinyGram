@@ -2259,6 +2259,7 @@
     <string name="InuRoundAudioSourceStandard">Стандартний</string>
     <string name="InuRoundAudioSourceUnprocessed">Необроблений</string>
     <string name="InuRoundBitrateDefault">За замовчуванням</string>
+    <string name="InuRoundBitrateAuto">Авто</string>
     <string name="InuRoundVideos">Відеоповідомлення</string>
     <string name="InuVoiceMessages">Голосові повідомлення</string>
     <string name="InuLogsRedact">Приховувати чутливі дані</string>

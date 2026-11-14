@@ -940,6 +940,7 @@
     <string name="InuRoundCameraRear">Rear</string>
     <string name="InuRoundCameraAsk">Ask every time</string>
     <string name="InuRoundBitrateDefault">Default</string>
+    <string name="InuRoundBitrateAuto">Auto</string>
     <string name="InuRoundAudioBitrate">Round audio bitrate</string>
     <string name="InuRoundAudioSource">Round audio source</string>
     <string name="InuRoundAudioSourceStandard">Standard</string>

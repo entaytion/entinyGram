@@ -865,6 +865,7 @@ Sistema: %6$s
     <string name="InuRoundCameraRear">Posteriore</string>
     <string name="InuRoundCameraAsk">Chiedi ogni volta</string>
     <string name="InuRoundBitrateDefault">Predefinito</string>
+    <string name="InuRoundBitrateAuto">Auto</string>
     <string name="InuRoundAudioBitrate">Bitrate audio dei messaggi rotondi</string>
     <string name="InuRoundAudioSource">Sorgente audio dei messaggi rotondi</string>
     <string name="InuRoundAudioSourceStandard">Standard</string>

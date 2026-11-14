@@ -267,11 +267,11 @@ object RoundRecorderHelper {
 
     // entiny: общая настройка битрейта кружочков — единый источник для обоих рекордеров, читается из Java без импорта SharedSettings
     @JvmStatic
-    fun sharedVideoBitrate(): Int = SharedSettings.roundVideoVideoBitrate.get()
+    fun sharedVideoBitrate(): Int = SharedSettings.roundVideoVideoBitrate.get().let { if (it == RoundBitrateBudget.AUTO) 1_200_000 else it }
 
     // entiny: InstantCameraView2 (base-патч инуграма) передаёт дефолт аргументом — оверрайд или дефолт
     @JvmStatic
-    fun videoBitrate(defaultBps: Int): Int = SharedSettings.roundVideoVideoBitrate.get().takeIf { it > 0 } ?: defaultBps
+    fun videoBitrate(defaultBps: Int): Int = SharedSettings.roundVideoVideoBitrate.get().let { if (it == RoundBitrateBudget.AUTO) RoundBitrateBudget.START_BPS else it.takeIf { v -> v > 0 } ?: defaultBps }
 
     @JvmStatic
     fun outputResolution(default: RoundVideoSession.OutputResolution): RoundVideoSession.OutputResolution {

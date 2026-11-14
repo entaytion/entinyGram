@@ -1979,6 +1979,7 @@
     <string name="InuRoundAudioSourceStandard">标准</string>
     <string name="InuRoundAudioSourceUnprocessed">未处理</string>
     <string name="InuRoundBitrateDefault">默认</string>
+    <string name="InuRoundBitrateAuto">自动</string>
     <string name="InuRoundVideos">圆形视频</string>
     <string name="InuSaveLastSeen">保存最后上线时间</string>
     <string name="InuSaveLastSeenInfo">记住最后上线时间，即使联系人隐藏了状态也依然可见</string>

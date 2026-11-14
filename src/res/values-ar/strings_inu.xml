@@ -1978,6 +1978,7 @@
     <string name="InuRoundAudioSourceStandard">قياسي</string>
     <string name="InuRoundAudioSourceUnprocessed">غير معالج</string>
     <string name="InuRoundBitrateDefault">الافتراضي</string>
+    <string name="InuRoundBitrateAuto">تلقائي</string>
     <string name="InuRoundVideos">الفيديوهات الدائرية</string>
     <string name="InuSaveLastSeen">حفظ آخر ظهور</string>
     <string name="InuSaveLastSeenInfo">يتذكر وقت آخر ظهور ليبقى ظاهرًا بعد أن تخفي جهة الاتصال حالتها</string>

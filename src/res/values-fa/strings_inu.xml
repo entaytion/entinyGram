@@ -1963,6 +1963,7 @@
     <string name="InuRoundAudioSourceStandard">استاندارد</string>
     <string name="InuRoundAudioSourceUnprocessed">پردازش‌نشده</string>
     <string name="InuRoundBitrateDefault">پیش‌فرض</string>
+    <string name="InuRoundBitrateAuto">خودکار</string>
     <string name="InuRoundVideos">ویدیوهای گرد</string>
     <string name="InuSaveLastSeen">ذخیره آخرین بازدید</string>
     <string name="InuSaveLastSeenInfo">زمان آخرین بازدید را به خاطر می‌سپارد تا پس از پنهان کردن وضعیت توسط مخاطب هم دیده شود</string>

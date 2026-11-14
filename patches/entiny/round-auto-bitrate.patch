@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 13:56:04 +0200
+Subject: Let the round video bitrate lower itself while recording so a round up to a minute stays under the server size limit.
+
+---
+ .../telegram/utils/recorder/round/RoundVideoCodecRecorder.java  | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoCodecRecorder.java
+@@ -308,6 +308,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
+         MediaCodecInfo.VideoCapabilities capabilities = videoCodec.getCodecInfo()
+                 .getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_AVC)
+                 .getVideoCapabilities();
++        desu.inugram.helpers.chat.RoundBitrateBudget.begin(videoBitrate, capabilities.getBitrateRange());
+         if (!capabilities.isSizeSupported(outputSize, outputSize)
+                 || !capabilities.areSizeAndRateSupported(
+                 outputSize,
+@@ -355,6 +356,7 @@ final class RoundVideoCodecRecorder implements RoundVideoGlProcessor.FrameTiming
+                         if (info.presentationTimeUs < stopPresentationTimeUs) {
+                             videoBuffers++;
+                             videoBytes += info.size;
++                            desu.inugram.helpers.chat.RoundBitrateBudget.onSample(videoCodec, info.presentationTimeUs, videoBytes + audioBytes);
+                             recordSampleStats(true, info);
+                             recordCodecLatency(info.presentationTimeUs);
+                             writeSample(true, videoCodec.getOutputBuffer(index), info);

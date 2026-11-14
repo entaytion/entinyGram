@@ -383,7 +383,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         private val roundAudioBitrates = listOf(0, 32, 64, 96, 128, 192)
 
         // расширяет базовый список из RoundVideoSettingsActivity (750k..2M) до 4M; пишет в SharedSettings
-        private fun roundBitrates(): List<Int> = listOf(750_000, 1_000_000, 1_200_000, 2_000_000)
+        private fun roundBitrates(): List<Int> = listOf(desu.inugram.helpers.chat.RoundBitrateBudget.AUTO, 750_000, 1_000_000, 1_200_000, 2_000_000)
 
         private fun roundAudioBitrateLabel(): String =
             InuConfig.ROUND_AUDIO_BITRATE.value.let { if (it == 0) LocaleController.getString(R.string.InuRoundBitrateDefault) else "$it kbps" }
@@ -397,6 +397,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         )
 
         private fun formatRoundBitrate(bitrate: Int): String = when {
+            bitrate == desu.inugram.helpers.chat.RoundBitrateBudget.AUTO -> LocaleController.getString(R.string.InuRoundBitrateAuto)
             bitrate % 1_000_000 == 0 -> "${bitrate / 1_000_000} Mbps"
             bitrate > 1_000_000 -> String.format(java.util.Locale.US, "%.1f Mbps", bitrate / 1_000_000f)
             else -> "${bitrate / 1_000} kbps"
