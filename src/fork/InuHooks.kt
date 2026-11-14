@@ -162,6 +162,7 @@ object InuHooks {
         if (message.messageOwner != null) UpdateHelper.onNewMessage(message.messageOwner)
         desu.inugram.helpers.dialogs.HiddenDialogsHelper.unhide(account, message.dialogId)
         desu.inugram.helpers.security.LastSeenHelper.onMessage(account, message.messageOwner)
+        desu.inugram.helpers.archive.ArchiveMediaHelper.prefetch(account, message)
     }
 
     private fun systemAnimatorScale(): Float = try {

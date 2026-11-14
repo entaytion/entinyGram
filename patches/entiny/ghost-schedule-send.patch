@@ -12,27 +12,27 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2257,6 +2257,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
-         if (desu.inugram.helpers.plugins.telegram.PluginCompose.interceptForward(this, currentAccount, messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, payStars, monoForumPeerId, suggestionParams)) {
+@@ -2258,6 +2258,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return 0;
          }
+         int sendResult = 0;
 +        if (scheduleDate == 0) {
 +            final int inu_date = desu.inugram.helpers.security.GhostScheduleHelper.forwardDate(currentAccount, peer, scheduleDate, scheduleRepeatPeriod, payStars, monoForumPeerId, suggestionParams);
 +            if (inu_date != 0) {
 +                return sendMessage(messages, peer, forwardFromMyName, hideCaption, notify, inu_date, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, payStars, monoForumPeerId, suggestionParams);
 +            }
 +        }
-         int sendResult = 0;
          long myId = getUserConfig().getClientUserId();
          boolean isChannel = false;
-@@ -4487,6 +4493,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
- 
-     public void sendMessage(SendMessageParams sendMessageParams) {
-         if (desu.inugram.helpers.plugins.telegram.PluginCompose.interceptParams(this, currentAccount, sendMessageParams)) return;
-+        sendMessageParams.scheduleDate = desu.inugram.helpers.security.GhostScheduleHelper.paramsDate(currentAccount, sendMessageParams);
-         desu.inugram.helpers.UrlCleanerHelper.markPendingRedirects(sendMessageParams);
+         if (!DialogObject.isEncryptedDialog(peer)) {
+@@ -4491,6 +4497,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
                  sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
+         String message = sendMessageParams.message;
++        sendMessageParams.scheduleDate = desu.inugram.helpers.security.GhostScheduleHelper.paramsDate(currentAccount, sendMessageParams);
+         String caption = sendMessageParams.caption;
+         TLRPC.MessageMedia location = sendMessageParams.location;
+         TLRPC.TL_photo photo = sendMessageParams.photo;
 @@ -7810,6 +7817,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  

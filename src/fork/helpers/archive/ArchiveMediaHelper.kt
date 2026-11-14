@@ -2,6 +2,7 @@ package desu.inugram.helpers.archive
 
 import desu.inugram.InuConfig
 import java.io.File
+import org.telegram.messenger.DialogObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLoader
@@ -137,6 +138,57 @@ object ArchiveMediaHelper {
         if (planMediaCopy(account, message, 0L) != null) return
         AndroidUtilities.runOnUIThread { downloadArchiveMedia(account, message, rowId, deleted, AUTO_FETCH_TIMEOUT_MS) {} }
     }
+
+    // entiny: file references die with the message, so attachments are downloaded on arrival and only copied at deletion
+    @JvmStatic
+    fun prefetch(account: Int, obj: MessageObject?) {
+        val message = obj?.messageOwner ?: return
+        if (!InuConfig.ARCHIVE_MEDIA_ENABLED.value || obj.isAnyKindOfSticker) return
+        val dialogId = MessageObject.getDialogId(message)
+        if (DialogObject.isEncryptedDialog(dialogId)) return
+        val media = MessageObject.getMedia(message)
+        if (media == null || media is TLRPC.TL_messageMediaWebPage || media.ttl_seconds != 0) return
+        val document = media.document
+        val photo = media.photo
+        if (document == null && photo == null) return
+        if (!DeletedMessagesHelper.shouldArchive(account, dialogId, message)) return
+        if (!ArchiveScope.allows(account, dialogId, message, ArchiveScope.Kind.MEDIA)) return
+        val limit = ArchiveScope.mediaLimitBytes().takeIf { it > 0 } ?: AUTO_COPY_MAX_BYTES
+        val loader = FileLoader.getInstance(account)
+        if (document != null) {
+            if (document.size <= 0 || document.size > limit) return
+            mediaQueue.postRunnable {
+                if (loader.getPathToAttach(document, null, false, true).exists()) return@postRunnable
+                markPrefetching(account, dialogId, message.id)
+                loader.loadFile(document, obj, FileLoader.PRIORITY_LOW, 0)
+            }
+            return
+        }
+        val size = FileLoader.getClosestPhotoSizeWithSize(photo!!.sizes, AndroidUtilities.getPhotoSize(true), false, null, true) ?: return
+        if (size.size > limit) return
+        val location = ImageLocation.getForPhoto(size, photo) ?: return
+        mediaQueue.postRunnable {
+            if (loader.getPathToAttach(size, null, false, true).exists()) return@postRunnable
+            markPrefetching(account, dialogId, message.id)
+            loader.loadFile(location, obj, "jpg", FileLoader.PRIORITY_LOW, 0)
+        }
+    }
+
+    private val prefetching = LinkedHashSet<String>()
+
+    private fun markPrefetching(account: Int, dialogId: Long, msgId: Int) = synchronized(prefetching) {
+        prefetching.add("$account:$dialogId:$msgId")
+        if (prefetching.size > PREFETCH_TRACKED) prefetching.remove(prefetching.first())
+    }
+
+    // entiny: a chat cell cancels unfinished media when it scrolls away, which would kill the download the archive needs
+    @JvmStatic
+    fun isPrefetching(obj: MessageObject?): Boolean {
+        if (obj == null) return false
+        return synchronized(prefetching) { "${obj.currentAccount}:${obj.dialogId}:${obj.id}" in prefetching }
+    }
+
+    private const val PREFETCH_TRACKED = 1000
 
     internal fun planMediaCopy(account: Int, message: TLRPC.Message?, maxBytes: Long = AUTO_COPY_MAX_BYTES): PendingMediaCopy? {
         if (message?.media == null || message.media is TLRPC.TL_messageMediaWebPage) return null

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 23 Aug 2026 22:49:53 +0300
-Subject: Keep chat downloads alive in the background
+Subject: Keep chat downloads alive in the background, and never cancel a download the archive started when its cell scrolls away.
 
 ---
  .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java   | 3 +++
@@ -15,7 +15,7 @@ index 0000000..0000000 100644
      }
  
      private void fileDetach(MessageObject messageObject) {
-+        if (desu.inugram.InuConfig.KEEP_DOWNLOADS_IN_BACKGROUND.getValue() && messageObject != null && !messageObject.loadingCancelled) {
++        if ((desu.inugram.InuConfig.KEEP_DOWNLOADS_IN_BACKGROUND.getValue() || desu.inugram.helpers.archive.ArchiveMediaHelper.isPrefetching(messageObject)) && messageObject != null && !messageObject.loadingCancelled) {
 +            return;
 +        }
          if (photoImage != null) {

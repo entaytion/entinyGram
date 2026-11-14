@@ -58,6 +58,11 @@ object EditHistoryHelper {
 
     @JvmStatic
     fun onStoredEdit(account: Int, oldMessage: TLRPC.Message?, newMessage: TLRPC.Message) {
+        if (oldMessage != null && InuConfig.ARCHIVE_MEDIA_ENABLED.value && DeletedMessagesHelper.isSaveDeletedEnabled() &&
+            MessageObject.getFileName(oldMessage) != MessageObject.getFileName(newMessage)
+        ) {
+            ArchiveMediaHelper.prefetch(account, MessageObject(account, newMessage, false, false))
+        }
         if (!isSaveEditedEnabled()) return
         val dialogId = MessageObject.getDialogId(newMessage)
         val old = oldMessage?.let { revisionOf(it) }
