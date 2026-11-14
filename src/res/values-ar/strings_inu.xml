@@ -2003,6 +2003,8 @@
     <string name="InuDisableNextMusicAutoplayInfo">التوقف بعد انتهاء المقطع بدلًا من تشغيل التالي</string>
     <string name="InuDisableNextVoiceAutoplay">عدم تشغيل الرسالة الصوتية التالية تلقائيًا</string>
     <string name="InuDisableNextVoiceAutoplayInfo">التوقف بعد الرسالة الصوتية بدلًا من تشغيل التالية في المحادثة</string>
+    <string name="InuRememberShortPosition">تذكر الموضع في الوسائط القصيرة</string>
+    <string name="InuRememberShortPositionInfo">حفظ موضع توقف التشغيل للفيديو والصوت الأطول من عشر ثوانٍ وليس الطويلة فقط</string>
     <string name="InuBottomTabsLift">رفع شريط التنقل</string>
     <string name="InuStartTab">علامة التبويب الافتتاحية</string>
     <string name="InuMutualContactIconLeft">أيقونة الاتصال المتبادل قبل اللقب</string>

@@ -326,6 +326,8 @@
     <string name="InuDisableNextMusicAutoplayInfo">Stop when a track ends instead of starting the next one</string>
     <string name="InuDisableNextVoiceAutoplay">Don\'t auto-play next voice message</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Stop after a voice message instead of playing the next one in the chat</string>
+    <string name="InuRememberShortPosition">Remember position in short media</string>
+    <string name="InuRememberShortPositionInfo">Save where playback stopped for videos and audio longer than ten seconds, not only the long ones</string>
     <string name="InuHideGiftAuctionsHint">Hide gift auction banner</string>
     <string name="InuHideCacheHint">Hide \"free up space\" card</string>
     <string name="InuHidePsaPromoChat">Hide PSA promo chat</string>

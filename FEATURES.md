@@ -133,7 +133,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **background service** — optional always-on connection for on-time notifications, at a battery cost
 - **notification fixes** — topic settings stay scoped to their topic, in-app vibration switch takes effect
 - **calls** — rotate the call screen, keep the screen on by ignoring the proximity sensor
-- **audio** — fix playback stuck on pause (miui and some dsps), no preloading or auto-play of the next track or voice message
+- **audio** — fix playback stuck on pause (miui and some dsps), no preloading or auto-play of the next track or voice message, remembered playback position for short videos and audio
 
 ### proxy, plugins & performance
 

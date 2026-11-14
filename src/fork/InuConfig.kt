@@ -985,6 +985,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val DISABLE_NEXT_VOICE_AUTOPLAY = BoolItem("disable_next_voice_autoplay", false)
 
     @JvmField
+    val REMEMBER_SHORT_POSITION = BoolItem("remember_short_position", false)
+
+    @JvmField
     val DISABLE_ANIMATED_AVATARS = BoolItem("disable_animated_avatars", false)
 
     @JvmField

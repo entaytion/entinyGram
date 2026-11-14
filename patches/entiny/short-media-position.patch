@@ -1,0 +1,63 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 14:19:42 +0200
+Subject: Optional remembered playback position for videos and audio longer than ten seconds.
+
+---
+ .../main/java/org/telegram/messenger/MediaController.java   | 4 ++--
+ .../src/main/java/org/telegram/ui/PhotoViewer.java          | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -4130,7 +4130,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                 }
+                 if (messageObject.isVoice()) {
+                     String name = messageObject.getFileName();
+-                    if (name != null && messageObject.getDuration() >= 5 * 60) {
++                    if (name != null && messageObject.getDuration() >= desu.inugram.helpers.media.ShortPositionHelper.minSeconds(5 * 60)) {
+                         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
+                         float pos = preferences.getFloat(name, -1);
+                         if (pos > 0 && pos < 0.99f) {
+@@ -4152,7 +4152,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                         FileLog.e(e);
+                     }
+                     String name = messageObject.getFileName();
+-                    if (!TextUtils.isEmpty(name) && messageObject.getDuration() >= 10 * 60) {
++                    if (!TextUtils.isEmpty(name) && messageObject.getDuration() >= desu.inugram.helpers.media.ShortPositionHelper.minSeconds(10 * 60)) {
+                         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
+                         float pos = preferences.getFloat(name, -1);
+                         if (pos > 0 && pos < 0.999f) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -10374,7 +10374,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                         }
+                         shouldSavePositionForCurrentVideoShortTerm = name;
+                     }
+-                    if (duration >= 5 * 60) {
++                    if (duration >= desu.inugram.helpers.media.ShortPositionHelper.minSeconds(5 * 60)) {
+                         if (currentMessageObject.forceSeekTo < 0) {
+                             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
+                             float pos = preferences.getFloat(name, -1);
+@@ -10874,7 +10874,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                         }
+                         shouldSavePositionForCurrentVideoShortTerm = name;
+                     }
+-                    if (duration >= 5 * 60) {
++                    if (duration >= desu.inugram.helpers.media.ShortPositionHelper.minSeconds(5 * 60)) {
+                         if (currentMessageObject.forceSeekTo < 0) {
+                             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
+                             float pos = preferences.getFloat(name, -1);
+@@ -23811,7 +23811,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                     }
+                 }
+             }
+-            if (duration >= 2 * 60) {
++            if (duration >= desu.inugram.helpers.media.ShortPositionHelper.minSeconds(2 * 60)) {
+                 if (msg.forceSeekTo < 0) {
+                     SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
+                     float pos = preferences.getFloat(name, -1);

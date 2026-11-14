@@ -297,6 +297,8 @@ Sistema: %6$s
     <string name="InuDisableNextMusicAutoplayInfo">Fermati al termine di una traccia invece di avviare la successiva</string>
     <string name="InuDisableNextVoiceAutoplay">Non riprodurre automaticamente il messaggio vocale successivo</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Fermati dopo un messaggio vocale invece di riprodurre il successivo della chat</string>
+    <string name="InuRememberShortPosition">Ricorda la posizione nei media brevi</string>
+    <string name="InuRememberShortPositionInfo">Salva il punto di arresto di video e audio più lunghi di dieci secondi, non solo di quelli lunghi</string>
     <string name="InuHideGiftAuctionsHint">Nascondi il banner delle aste dei regali</string>
     <string name="InuHideCacheHint">Nascondi la scheda «libera spazio»</string>
     <string name="InuHidePsaPromoChat">Nascondi la chat promozionale PSA</string>
