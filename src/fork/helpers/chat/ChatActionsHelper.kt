@@ -110,6 +110,7 @@ object ChatActionsHelper {
     const val ACTION_SEL_FORWARD_NO_QUOTE = 1507
     const val ACTION_SEL_DOWNLOADS = 1508
     const val ACTION_SEL_SELECT_ALL = 1509
+    private const val SELECT_ALL_LIMIT = 100
     private const val SELECTION_RENDER_DEBOUNCE_MS = 32L
 
     /** the back row and the gap under it, which every plugin submenu keeps across a rebuild */
@@ -647,6 +648,7 @@ object ChatActionsHelper {
             }
 
             ACTION_SELECT_RANGE -> fillSelectionGaps(activity)
+            ACTION_SEL_SELECT_ALL -> selectAllLoaded(activity)
             ACTION_SEL_SAVE, ACTION_SEL_FORWARD_NO_QUOTE, ACTION_SEL_GALLERY, ACTION_SEL_DOWNLOADS ->
                 return selectionMenus[activity]?.let { handleSelectionClick(it, id) } ?: false
             ACTION_SEL_TRANSLATE -> translateSelection(activity)
@@ -859,6 +861,7 @@ object ChatActionsHelper {
             { forwardSelectionNoQuote(activity) },
         )
         addSelectionItems(menu)
+        menu.overflow.addSubItem(ACTION_SEL_SELECT_ALL, R.drawable.msg_select, LocaleController.getString(R.string.SelectAll))
         selectionMenus[activity] = menu
         activity.actionModeViews.add(overflow)
     }
@@ -1442,6 +1445,26 @@ object ChatActionsHelper {
             false
         }
         return found
+    }
+
+    private fun selectAllLoaded(activity: ChatActivity) {
+        val dialogId = activity.dialogId
+        val picked = ArrayList<MessageObject>()
+        var count = activity.selectedMessagesIds[0].size() + activity.selectedMessagesIds[1].size()
+        for (msg in activity.messages) {
+            if (count >= SELECT_ALL_LIMIT) break
+            if (msg.isDateObject || msg.id <= 0 || msg.messageOwner is TLRPC.TL_messageService) continue
+            val arr = activity.selectedMessagesIds[if (msg.dialogId == dialogId) 0 else 1]
+            if (arr.indexOfKey(msg.id) >= 0) continue
+            picked.add(msg)
+            count++
+        }
+        if (picked.isEmpty()) return
+        for (i in picked.indices) {
+            activity.addToSelectedMessages(picked[i], false, i == picked.size - 1)
+        }
+        activity.updateActionModeTitle()
+        activity.updateVisibleRows()
     }
 
     private fun fillSelectionGaps(activity: ChatActivity) {

@@ -95,7 +95,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 ### messages & sending
 
 - **forward pro** — full-screen editor over your wallpaper with a real bubble preview, albums stay grouped, comment before or after the forward, formatted comment text. forward can open it from chats, shared media and global search
-- **no forward limit** — "forward all messages" in the chat menu sends the whole chat or topic in batches of 100, oldest first, to any chats you pick. shared media gets "select all" in the selection menu for everything already loaded in the tab. idea and credit: [@zwylair](https://t.me/zwylair) and his NoForwardLimit plugin
+- **no forward limit** — "forward all messages" in the chat menu sends the whole chat or topic in batches of 100, oldest first, to any chats you pick. chats and shared media get "select all" in the selection menu for everything already loaded (up to 100 messages in a chat). idea and credit: [@zwylair](https://t.me/zwylair) and his NoForwardLimit plugin
 - **round videos** — send from the gallery, zoom slider with presets, pinch zoom, exposure with AE lock, up to 720p with 60 fps and video bitrate up to 2 Mbps or an auto mode that keeps a full minute under the round size limit. 512p stays round, 720p is sent as regular video
 - **send as sticker** — long-press send on photos to send 512 px stickers
 - **confirm before sending** voice, video messages, stickers and gifs, keep screen on while recording
