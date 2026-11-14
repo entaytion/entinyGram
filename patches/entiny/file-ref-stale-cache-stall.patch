@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 4 Nov 2026 21:32:47 +0400
-Subject: Fix downloads stalling forever after a repeated file reference expiry. Requesters a stale cache answer left waiting stay attached to the server answer.
+Subject: Fix downloads stalling forever on file reference refreshes. Waiting requesters stay attached to the server answer, and a parent with no refresh request no longer leaves them mapped.
 
 ---
- .../telegram/messenger/FileRefController.java | 24 ++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ .../telegram/messenger/FileRefController.java | 61 ++++++++++++++++---
+ 1 file changed, 54 insertions(+), 7 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileRefController.java
 index 0000000..0000000 100644
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                      return;
                  }
              }
-@@ -480,6 +483,16 @@ public class FileRefController extends BaseController {
+@@ -480,6 +483,45 @@ public class FileRefController extends BaseController {
          requestReferenceFromServer(parentObject, locationKey, parentKey, args);
      }
  
@@ -53,10 +53,70 @@ index 0000000..0000000 100644
 +        return true;
 +    }
 +
++    // entiny: a parent with no refresh request left its requesters mapped, so the next request for that file never got an answer
++    private void inu_failWithoutRequest(String locationKey, String parentKey, Object[] args) {
++        ArrayList<Requester> waiting = new ArrayList<>();
++        ArrayList<Requester> byLocation = locationRequester.remove(locationKey);
++        if (byLocation != null) {
++            waiting.addAll(byLocation);
++        }
++        ArrayList<Requester> byParent = parentRequester.remove(parentKey);
++        if (byParent != null) {
++            for (Requester requester : byParent) {
++                if (!waiting.contains(requester)) {
++                    waiting.add(requester);
++                }
++            }
++        }
++        boolean failedArgs = false;
++        for (Requester requester : waiting) {
++            if (requester.completed) {
++                continue;
++            }
++            requester.completed = true;
++            failedArgs |= requester.args == args;
++            sendErrorToObject(requester.args, 0);
++        }
++        if (!failedArgs) {
++            sendErrorToObject(args, 0);
++        }
++    }
++
      private String getObjectString(Object parentObject) {
          if (parentObject instanceof String) {
              return (String) parentObject;
-@@ -1485,12 +1498,17 @@ public class FileRefController extends BaseController {
+@@ -510,7 +552,7 @@ public class FileRefController extends BaseController {
+         if (parentObject instanceof StoriesController.BotPreview) {
+             StoriesController.BotPreview storyItem = (StoriesController.BotPreview) parentObject;
+             if (storyItem.list == null) {
+-                sendErrorToObject(args, 0);
++                inu_failWithoutRequest(locationKey, parentKey, args);
+                 return;
+             }
+             storyItem.list.requestReference(storyItem, newStoryItem -> {
+@@ -690,10 +732,10 @@ public class FileRefController extends BaseController {
+                         getConnectionsManager().sendRequest(req, (response, error) -> onRequestComplete(locationKey, parentKey, response, error, false, false));
+                     }
+                 } else {
+-                    sendErrorToObject(args, 0);
++                    inu_failWithoutRequest(locationKey, parentKey, args);
+                 }
+             } else {
+-                sendErrorToObject(args, 0);
++                inu_failWithoutRequest(locationKey, parentKey, args);
+             }
+         } else if (parentObject instanceof TLRPC.TL_messages_stickerSet) {
+             TLRPC.TL_messages_stickerSet stickerSet = (TLRPC.TL_messages_stickerSet) parentObject;
+@@ -714,7 +756,7 @@ public class FileRefController extends BaseController {
+             req.stickerset = (TLRPC.InputStickerSet) parentObject;
+             getConnectionsManager().sendRequest(req, (response, error) -> onRequestComplete(locationKey, parentKey, response, error, true, false));
+         } else {
+-            sendErrorToObject(args, 0);
++            inu_failWithoutRequest(locationKey, parentKey, args);
+         }
+     }
+ 
+@@ -1485,12 +1527,17 @@ public class FileRefController extends BaseController {
              if (result != null) {
                  if (onUpdateObjectReference(requester, result, locationReplacement != null ? locationReplacement[0] : null, fromCache)) {
                      found = true;

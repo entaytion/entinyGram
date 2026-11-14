@@ -184,7 +184,7 @@ object DeletedMessagesHelper {
             return
         }
         val mediaCopy = ArchiveMediaHelper.planNewMediaCopy(account, message) ?: return ArchiveMediaHelper.fetchNewMedia(account, message)
-        ArchiveMediaHelper.copyThenStore(account, "d:$account:$dialogId:$msgId", mediaCopy) { copyDb, copied ->
+        ArchiveMediaHelper.copyThenStore(account, "d:$account:$dialogId:$msgId", mediaCopy, { ArchiveMediaHelper.fetchNewMedia(account, message) }) { copyDb, copied ->
             val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id = $msgId", copied)
             if (stored) ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, copied)
             stored

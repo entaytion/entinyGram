@@ -114,7 +114,7 @@ object EditHistoryHelper {
                     ArchiveMediaHelper.fetchNewMedia(account, source, rowId, false)
                     return@Runnable
                 }
-                ArchiveMediaHelper.copyThenStore(account, "e:$account:$rowId", mediaCopy) { copyDb, copied ->
+                ArchiveMediaHelper.copyThenStore(account, "e:$account:$rowId", mediaCopy, { ArchiveMediaHelper.fetchNewMedia(account, source, rowId, false) }) { copyDb, copied ->
                     val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_edit_history", "rowid = $rowId", copied)
                     if (stored) synchronized(ArchiveCache.cacheLock) { ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong()) }
                     stored

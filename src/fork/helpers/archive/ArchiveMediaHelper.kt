@@ -157,12 +157,15 @@ object ArchiveMediaHelper {
         }
     }
 
-    internal fun copyThenStore(account: Int, key: String, plan: PendingMediaCopy, store: (org.telegram.SQLite.SQLiteDatabase, String) -> Boolean) {
+    internal fun copyThenStore(account: Int, key: String, plan: PendingMediaCopy, onSourceLost: (() -> Unit)? = null, store: (org.telegram.SQLite.SQLiteDatabase, String) -> Boolean) {
         synchronized(pendingCopies) { if (!pendingCopies.add(key)) return }
         mediaQueue.postRunnable {
             val copied = runMediaCopy(plan)
             if (copied == null) {
                 synchronized(pendingCopies) { pendingCopies.remove(key) }
+                if (!plan.source.exists()) {
+                    onSourceLost?.invoke()
+                }
                 return@postRunnable
             }
             val storage = MessagesStorage.getInstance(account)
@@ -261,6 +264,7 @@ object ArchiveMediaHelper {
         }
         val center = NotificationCenter.getInstance(account)
         var active = true
+        var loading = false
         lateinit var observer: NotificationCenter.NotificationCenterDelegate
         lateinit var timeout: Runnable
         fun detach() {
@@ -268,10 +272,16 @@ object ArchiveMediaHelper {
             center.removeObserver(observer, NotificationCenter.fileLoadFailed)
             AndroidUtilities.cancelRunOnUIThread(timeout)
         }
+        fun stopLoading() {
+            if (!loading) return
+            loading = false
+            if (document != null) loader.cancelLoadFile(document) else loader.cancelLoadFile(size)
+        }
         fun finish(success: Boolean) {
             if (!active) return
             detach()
             if (!success) {
+                stopLoading()
                 active = false
                 callback(null)
                 return
@@ -336,12 +346,22 @@ object ArchiveMediaHelper {
         AndroidUtilities.runOnUIThread(timeout, timeoutMs)
         if (planMediaCopy(account, message, 0L) != null) {
             finish(true)
-        } else if (document != null) {
-            loader.loadFile(document, message, FileLoader.PRIORITY_NORMAL, 1)
         } else {
-            loader.loadFile(location, message, "jpg", FileLoader.PRIORITY_NORMAL, 1)
+            loading = true
+            val parent = MessageObject(account, message, false, false)
+            if (document != null) {
+                loader.loadFile(document, parent, FileLoader.PRIORITY_NORMAL, 1)
+            } else {
+                loader.loadFile(location, parent, "jpg", FileLoader.PRIORITY_NORMAL, 1)
+            }
         }
-        return { active = false; detach() }
+        return {
+            if (active) {
+                active = false
+                detach()
+                stopLoading()
+            }
+        }
     }
 
     // entiny: image loaders resolve documents by the stock cache path, so put the archived copy back there
