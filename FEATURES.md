@@ -33,7 +33,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 
 ### unlocks & restrictions
 
-- **device spoof** — custom device name (or random per launch), system and app version, hidden time zone and install source
+- **device spoof** — custom device name (or a random pick from 16 phone presets per launch), system and app version, hidden time zone and install source
 - **screenshots anywhere** — disable FLAG_SECURE in protected windows, secret chats, expiring media and protected stories
 - **copy from protected chats** — a separate switch brings Copy back in the message menu and text selection without allowing forwarding
 - **protected content** — copy text and select messages in protected chats, save any story or auto-save viewed ones, copy and forward from protected channels with background bulk download, forward without the "Forwarded from" header, re-send saved view-once media
