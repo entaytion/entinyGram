@@ -40,6 +40,9 @@ object RestrictedFeaturesHelper {
     fun noforwards(message: TLRPC.Message?): Boolean =
         message?.noforwards == true && !InuConfig.ALLOW_FORWARD_RESTRICTED.value
 
+    @JvmStatic
+    fun copyAllowed(): Boolean = InuConfig.ALLOW_COPY_RESTRICTED.value || InuConfig.ALLOW_FORWARD_RESTRICTED.value
+
     // entiny: check raw noforwards flags because isPeerNoForwards returns false when toggle is on
     private fun isSourceNoForwards(controller: MessagesController, msg: MessageObject): Boolean {
         if (msg.messageOwner?.noforwards == true) return true

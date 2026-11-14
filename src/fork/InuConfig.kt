@@ -1721,6 +1721,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)
 
     @JvmField
+    val ALLOW_COPY_RESTRICTED = BoolItem("allow_copy_restricted", false)
+
+    @JvmField
     val ALLOW_SCREENSHOTS = BoolItem("allow_screenshots", false)
 
     @JvmField

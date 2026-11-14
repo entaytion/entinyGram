@@ -955,6 +955,8 @@
     <string name="InuAiOpenSettings">Ayarları aç</string>
     <string name="InuAllowForwardRestricted">Korumalı sohbetlerden iletmeye izin ver</string>
     <string name="InuAllowForwardRestrictedInfo">İletimi kapalı olan sohbetlerden medya iletmek, kopyalamak ve kaydetmek için içerik korumasını atlayın.</string>
+    <string name="InuAllowCopyRestricted">Korumalı sohbetlerden kopyalamaya izin ver</string>
+    <string name="InuAllowCopyRestrictedInfo">Kaydetmenin kapalı olduğu sohbet ve mesajlardaki metni, iletmeye izin vermeden seç ve kopyala.</string>
     <string name="InuCacheTtl">Mesaj önbelleğini otomatik temizle</string>
     <string name="InuCacheTtlDay">1 günden eski</string>
     <string name="InuCacheTtlInfo">Seçilen süreden eski kaydedilmiş silinen/düzenlenen mesajları otomatik olarak siler</string>

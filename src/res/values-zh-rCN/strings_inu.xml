@@ -955,6 +955,8 @@
     <string name="InuAiOpenSettings">打开设置</string>
     <string name="InuAllowForwardRestricted">允许从受保护的聊天转发</string>
     <string name="InuAllowForwardRestrictedInfo">绕过内容保护，从禁止转发的聊天中转发、复制和保存媒体。</string>
+    <string name="InuAllowCopyRestricted">允许从受保护的聊天复制</string>
+    <string name="InuAllowCopyRestrictedInfo">在禁止保存的聊天和消息中选择并复制文本，但不允许转发。</string>
     <string name="InuCacheTtl">自动清理消息缓存</string>
     <string name="InuCacheTtlDay">1 天前</string>
     <string name="InuCacheTtlInfo">自动删除早于所选时间段的保存已删除/已编辑消息</string>

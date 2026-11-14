@@ -1360,6 +1360,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuSaveTimedMessages">Conserva i messaggi a tempo</string>
     <string name="InuAllowForwardRestricted">Consenti l\'inoltro dalle chat protette</string>
     <string name="InuAllowForwardRestrictedInfo">Aggira la protezione dei contenuti per inoltrare, copiare e salvare i media dalle chat con inoltro disattivato.</string>
+    <string name="InuAllowCopyRestricted">Consenti la copia dalle chat protette</string>
+    <string name="InuAllowCopyRestrictedInfo">Copia e seleziona il testo da chat e messaggi con il salvataggio disattivato, senza consentire l\'inoltro.</string>
     <string name="InuAllowForwardRestrictedWarning">Telegram può comunque bloccare alcuni inoltri anche con questa opzione attiva. Se vedi «Plain forwarding is not allowed.», copia il testo o salva il media.</string>
     <string name="InuDownloadingStory">Download della storia…</string>
     <string name="InuSaveAnyStory">Salva qualsiasi storia</string>

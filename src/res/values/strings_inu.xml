@@ -1460,6 +1460,8 @@
     <string name="InuSaveTimedMessages">Keep timed messages</string>
     <string name="InuAllowForwardRestricted">Allow forwarding from protected chats</string>
     <string name="InuAllowForwardRestrictedInfo">Bypass content protection to forward, copy and save media from chats with forwarding disabled.</string>
+    <string name="InuAllowCopyRestricted">Allow copying from protected chats</string>
+    <string name="InuAllowCopyRestrictedInfo">Copy and select text from chats and messages with saving disabled, without allowing forwarding.</string>
     <string name="InuAllowForwardRestrictedWarning">Telegram can still block some forwards even with this on. If you see "Plain forwarding is not allowed.", copy the text or save the media instead.</string>
     <string name="InuDownloadingStory">Downloading story…</string>
     <string name="InuSaveAnyStory">Save any story</string>

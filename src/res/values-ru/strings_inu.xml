@@ -1161,6 +1161,8 @@
     <string name="InuSaveTimedMessages">Сохранять сообщения с таймером</string>
     <string name="InuAllowForwardRestricted">Разрешить пересылку из защищенных чатов</string>
     <string name="InuAllowForwardRestrictedInfo">Обход защиты контента для пересылки, копирования и сохранения медиа из чатов с запретом пересылки.</string>
+    <string name="InuAllowCopyRestricted">Разрешить копирование из защищенных чатов</string>
+    <string name="InuAllowCopyRestrictedInfo">Копирование и выделение текста в чатах и сообщениях с запретом сохранения, без разрешения пересылки.</string>
     <string name="InuDownloadingStory">Загрузка истории…</string>
     <string name="InuSaveAnyStory">Сохранять любые истории</string>
     <string name="InuSaveAnyStoryInfo">Позволяет скачивать любые истории в галерею без Premium и ограничений автора.</string>

@@ -1359,6 +1359,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuSaveTimedMessages">Conservar mensajes temporizados</string>
     <string name="InuAllowForwardRestricted">Permitir reenvío desde chats protegidos</string>
     <string name="InuAllowForwardRestrictedInfo">Omite la protección de contenido para reenviar, copiar y guardar archivos de chats protegidos.</string>
+    <string name="InuAllowCopyRestricted">Permitir copiar de chats protegidos</string>
+    <string name="InuAllowCopyRestrictedInfo">Copia y selecciona texto de chats y mensajes con el guardado desactivado, sin permitir el reenvío.</string>
     <string name="InuAllowForwardRestrictedWarning">Telegram aún puede bloquear algunos reenvíos incluso con esto activado. Si ves «Plain forwarding is not allowed.», copia el texto o guarda el archivo.</string>
     <string name="InuDownloadingStory">Descargando historia…</string>
     <string name="InuSaveAnyStory">Guardar cualquier historia</string>

@@ -561,6 +561,7 @@ object Schemas {
                     }
                 },
             )
+            toggle(InuConfig.ALLOW_COPY_RESTRICTED, R.string.InuAllowCopyRestricted, R.string.InuAllowCopyRestrictedInfo)
             toggle(InuConfig.ALLOW_SCREENSHOTS, R.string.InuDisableFlagSecure, R.string.InuDisableFlagSecureInfo)
             toggle(InuConfig.SUPPRESS_SCREENSHOT_NOTIFICATION, R.string.InuSuppressScreenshotNotification, R.string.InuSuppressScreenshotNotificationInfo)
             toggle(InuConfig.BYPASS_GIF_RESTRICTIONS, R.string.InuBypassGifRestrictions, R.string.InuBypassGifRestrictionsInfo)

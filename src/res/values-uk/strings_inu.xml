@@ -1161,6 +1161,8 @@
     <string name="InuSelfDestructMedia">Самознищуване медіа</string>
     <string name="InuAllowForwardRestricted">Дозволити пересилання з захищених чатів</string>
     <string name="InuAllowForwardRestrictedInfo">Обхід захисту контенту для пересилання, копіювання та збереження медіа з чатів із забороною пересилання.</string>
+    <string name="InuAllowCopyRestricted">Дозволити копіювання із захищених чатів</string>
+    <string name="InuAllowCopyRestrictedInfo">Копіювання та виділення тексту в чатах і повідомленнях із забороною збереження, без дозволу пересилання.</string>
     <string name="InuSaveAnyStory">Зберігати будь-які історії</string>
     <string name="InuSaveAnyStoryInfo">Дозволяє завантажувати будь-які історії в галерею без вимог Premium та обмежень автора.</string>
     <string name="InuAutoSaveStories">Автозбереження переглянутих історій</string>

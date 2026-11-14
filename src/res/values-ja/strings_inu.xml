@@ -960,6 +960,8 @@
     <string name="InuAiOpenSettings">設定を開く</string>
     <string name="InuAllowForwardRestricted">保護されたチャットからの転送を許可</string>
     <string name="InuAllowForwardRestrictedInfo">コンテンツ保護をバイパスして、転送が禁止されているチャットからメディアを転送・コピー・保存します。</string>
+    <string name="InuAllowCopyRestricted">保護されたチャットからのコピーを許可</string>
+    <string name="InuAllowCopyRestrictedInfo">保存が無効なチャットやメッセージのテキストを、転送を許可せずに選択・コピーできます。</string>
     <string name="InuCacheTtl">メッセージキャッシュの自動消去</string>
     <string name="InuCacheTtlDay">1日以上前</string>
     <string name="InuCacheTtlInfo">選択した期間より古い保存済み削除/編集メッセージを自動的に削除します</string>

@@ -1203,6 +1203,8 @@
     <string name="InuSaveTimedMessages">نگه داشتن پیام‌های زمان‌دار</string>
     <string name="InuAllowForwardRestricted">اجازه بازارسال از گفتگوهای محافظت‌شده</string>
     <string name="InuAllowForwardRestrictedInfo">محافظت از محتوا را دور می‌زند تا بتوانید رسانه گفتگوهایی را که بازارسال در آن‌ها بسته است بازارسال، کپی و ذخیره کنید.</string>
+    <string name="InuAllowCopyRestricted">اجازه کپی از گفتگوهای محافظت‌شده</string>
+    <string name="InuAllowCopyRestrictedInfo">متن گفتگوها و پیام‌هایی که ذخیره در آن‌ها ممنوع است را بدون اجازه بازارسال انتخاب و کپی کنید.</string>
     <string name="InuDownloadingStory">در حال دانلود استوری…</string>
     <string name="InuSaveAnyStory">ذخیره هر استوری</string>
     <string name="InuSaveAnyStoryInfo">دانلود هر استوری در گالری را بدون نیاز به پریمیوم یا محدودیت نویسنده ممکن می‌کند.</string>

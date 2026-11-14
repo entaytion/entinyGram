@@ -1215,6 +1215,8 @@
     <string name="InuSaveTimedMessages">الاحتفاظ بالرسائل المؤقتة</string>
     <string name="InuAllowForwardRestricted">السماح بإعادة التوجيه من المحادثات المحمية</string>
     <string name="InuAllowForwardRestrictedInfo">تجاوز حماية المحتوى لإعادة توجيه الوسائط ونسخها وحفظها من محادثات معطّل فيها إعادة التوجيه.</string>
+    <string name="InuAllowCopyRestricted">السماح بالنسخ من المحادثات المحمية</string>
+    <string name="InuAllowCopyRestrictedInfo">انسخ النص وحدده من المحادثات والرسائل التي يُمنع حفظها، دون السماح بإعادة التوجيه.</string>
     <string name="InuDownloadingStory">جارٍ تنزيل القصة…</string>
     <string name="InuSaveAnyStory">حفظ أي قصة</string>
     <string name="InuSaveAnyStoryInfo">يتيح تنزيل أي قصة إلى المعرض دون متطلبات Premium أو قيود المؤلف.</string>
