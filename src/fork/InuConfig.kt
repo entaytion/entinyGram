@@ -1408,6 +1408,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val CHAT_PREVIEW_BUTTONS = BoolItem("chat_preview_buttons", false)
 
     @JvmField
+    val VOICE_SKIP_IN_SESSION = BoolItem("voice_skip_in_session", false)
+
+    @JvmField
     val REACTIONS_IN_ROW = ReactionsInRowItem()
 
     @JvmField

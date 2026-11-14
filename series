@@ -665,3 +665,4 @@ entiny/round-auto-bitrate.patch
 entiny/short-media-position.patch
 entiny/signup-no-notify.patch
 entiny/chat-preview-buttons.patch
+entiny/voice-skip-session.patch

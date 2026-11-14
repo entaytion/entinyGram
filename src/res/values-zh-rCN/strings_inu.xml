@@ -2008,6 +2008,8 @@
     <string name="InuDisableNextMusicAutoplayInfo">曲目结束后停止，而不是开始下一首</string>
     <string name="InuDisableNextVoiceAutoplay">不自动播放下一条语音消息</string>
     <string name="InuDisableNextVoiceAutoplayInfo">语音消息结束后停止，而不是播放聊天中的下一条</string>
+    <string name="InuVoiceSkipInSession">语音消息的上一条和下一条</string>
+    <string name="InuVoiceSkipInSessionInfo">与音乐一样，在媒体会话中为语音消息显示上一条和下一条</string>
     <string name="InuRememberShortPosition">记住短媒体的播放位置</string>
     <string name="InuRememberShortPositionInfo">超过十秒的视频和音频也保存播放停止的位置，而不只是长的</string>
     <string name="InuBottomTabsLift">抬高底部导航栏</string>

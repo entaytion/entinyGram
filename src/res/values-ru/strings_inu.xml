@@ -2177,6 +2177,8 @@
     <string name="InuDisableNextMusicAutoplayInfo">Останавливаться после трека вместо запуска следующего</string>
     <string name="InuDisableNextVoiceAutoplay">Не включать следующее голосовое автоматически</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Останавливаться после голосового вместо воспроизведения следующего в чате</string>
+    <string name="InuVoiceSkipInSession">Далее и назад для голосовых</string>
+    <string name="InuVoiceSkipInSessionInfo">Показывать «следующее» и «предыдущее» в медиасессии для голосовых сообщений, как для музыки</string>
     <string name="InuRememberShortPosition">Помнить позицию в коротких медиа</string>
     <string name="InuRememberShortPositionInfo">Сохранять место остановки для видео и аудио длиннее десяти секунд, а не только для длинных</string>
     <string name="InuBottomTabsLift">Поднять нижнюю панель</string>

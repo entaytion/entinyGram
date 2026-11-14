@@ -2010,6 +2010,8 @@
     <string name="InuDisableNextMusicAutoplayInfo">Parça bitince sonrakini başlatmak yerine dur</string>
     <string name="InuDisableNextVoiceAutoplay">Sonraki sesli mesajı otomatik oynatma</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Sesli mesajdan sonra sohbetteki sonrakini oynatmak yerine dur</string>
+    <string name="InuVoiceSkipInSession">Sesli mesajlar için sonraki ve önceki</string>
+    <string name="InuVoiceSkipInSessionInfo">Medya oturumunda sesli mesajlar için de müzikteki gibi sonraki ve önceki göster</string>
     <string name="InuRememberShortPosition">Kısa medyada konumu hatırla</string>
     <string name="InuRememberShortPositionInfo">On saniyeden uzun video ve seslerde oynatmanın durduğu yeri kaydet, yalnızca uzunlarda değil</string>
     <string name="InuBottomTabsLift">Gezinme çubuğunu yükselt</string>

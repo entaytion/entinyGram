@@ -2008,6 +2008,8 @@
     <string name="InuDisableNextMusicAutoplayInfo">トラックの終了後に次を再生せず停止します</string>
     <string name="InuDisableNextVoiceAutoplay">次のボイスメッセージを自動再生しない</string>
     <string name="InuDisableNextVoiceAutoplayInfo">ボイスメッセージの終了後にチャット内の次を再生せず停止します</string>
+    <string name="InuVoiceSkipInSession">ボイスメッセージの次へ・前へ</string>
+    <string name="InuVoiceSkipInSessionInfo">音楽と同じように、メディアセッションでボイスメッセージにも次へ・前へを表示する</string>
     <string name="InuRememberShortPosition">短いメディアの再生位置を記憶</string>
     <string name="InuRememberShortPositionInfo">10秒を超える動画と音声でも再生を止めた位置を保存する（長いものだけでなく）</string>
     <string name="InuBottomTabsLift">ナビゲーションバーを上げる</string>

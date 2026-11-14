@@ -426,6 +426,7 @@ object Schemas {
             toggle(InuConfig.DISABLE_NEXT_AUDIO_PRELOAD, R.string.InuDisableNextAudioPreload, R.string.InuDisableNextAudioPreloadInfo)
             toggle(InuConfig.DISABLE_NEXT_MUSIC_AUTOPLAY, R.string.InuDisableNextMusicAutoplay, R.string.InuDisableNextMusicAutoplayInfo)
             toggle(InuConfig.DISABLE_NEXT_VOICE_AUTOPLAY, R.string.InuDisableNextVoiceAutoplay, R.string.InuDisableNextVoiceAutoplayInfo)
+            toggle(InuConfig.VOICE_SKIP_IN_SESSION, R.string.InuVoiceSkipInSession, R.string.InuVoiceSkipInSessionInfo)
             toggle(InuConfig.REMEMBER_SHORT_POSITION, R.string.InuRememberShortPosition, R.string.InuRememberShortPositionInfo)
         }
         section(R.string.InuMediaSaving) {

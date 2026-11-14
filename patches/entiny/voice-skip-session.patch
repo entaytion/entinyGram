@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 14:48:21 +0200
+Subject: Optional next and previous controls for voice messages in the media session.
+
+---
+ .../java/org/telegram/messenger/MusicPlayerService.java     | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java b/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
+@@ -132,7 +132,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+                 @Override
+                 public void onSkipToNext() {
+                     MessageObject playingMessageObject = MediaController.getInstance().getPlayingMessageObject();
+-                    if (playingMessageObject != null && playingMessageObject.isMusic()) {
++                    if (playingMessageObject != null && (playingMessageObject.isMusic() || desu.inugram.helpers.media.VoiceSkipHelper.allows(playingMessageObject))) {
+                         MediaController.getInstance().playNextMessage();
+                     }
+                 }
+@@ -140,7 +140,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+                 @Override
+                 public void onSkipToPrevious() {
+                     MessageObject playingMessageObject = MediaController.getInstance().getPlayingMessageObject();
+-                    if (playingMessageObject != null && playingMessageObject.isMusic()) {
++                    if (playingMessageObject != null && (playingMessageObject.isMusic() || desu.inugram.helpers.media.VoiceSkipHelper.allows(playingMessageObject))) {
+                         MediaController.getInstance().playPreviousMessage();
+                     }
+                 }
+@@ -485,6 +485,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+                 }
+             } else {
+                 long actions = PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_SEEK_TO | PlaybackStateCompat.ACTION_SET_REPEAT_MODE | PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE;
++                actions |= desu.inugram.helpers.media.VoiceSkipHelper.actions(messageObject);
+                 if (messageObject.isMusic()) {
+                     actions |= PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS | PlaybackStateCompat.ACTION_SKIP_TO_NEXT;
+                 }
+@@ -728,6 +729,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+         } else {
+             long actions = PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_SEEK_TO | PlaybackStateCompat.ACTION_SET_REPEAT_MODE | PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE;
+             MessageObject messageObject = MediaController.getInstance().getPlayingMessageObject();
++            actions |= desu.inugram.helpers.media.VoiceSkipHelper.actions(messageObject);
+             if (messageObject != null && messageObject.isMusic()) {
+                 actions |= PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS | PlaybackStateCompat.ACTION_SKIP_TO_NEXT;
+                 int shuffleIcon = SharedConfig.shuffleMusic ? R.drawable.player_new_shuffle : R.drawable.player_new_shuffle_off;
