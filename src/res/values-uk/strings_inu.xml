@@ -1479,6 +1479,8 @@
     <string name="InuGhostSilentSendAlways">Завжди</string>
     <string name="InuGhostStoryAlert">Питати перед відкриттям історій</string>
     <string name="InuGhostStoryAlertInfo">Коли режим привида не приховує перегляди історій, питати перед відкриттям непереглянутої історії.</string>
+    <string name="InuGhostScheduleSend">Надсилати як відкладені</string>
+    <string name="InuGhostScheduleSendInfo">Надсилає повідомлення як відкладені приблизно на 12 секунд уперед, щоб вас не бачили онлайн під час надсилання. У чаті вони з\'являються після затримки. Не для Збережених, ботів, секретних чатів, платних і швидких відповідей.</string>
     <string name="InuStoryGhostAlertTitle">Режим привида не приховує цей перегляд</string>
     <string name="InuStoryGhostAlertMessage">Відкриття цієї історії позначить її переглянутою. Спершу увімкнути режим привида?</string>
     <string name="InuStoryGhostAlertEnable">Увімкнути режим привида</string>

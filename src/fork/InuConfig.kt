@@ -2207,6 +2207,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val GHOST_STORY_ALERT = BoolItem("ghost_story_alert", false)
 
     @JvmField
+    val GHOST_SCHEDULE_SEND = BoolItem("ghost_schedule_send", false)
+
+    @JvmField
     val GHOST_HIDE_APP_BAR_ICON = BoolItem("ghost_hide_app_bar_icon", false)
 
     @JvmField

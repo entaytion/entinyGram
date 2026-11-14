@@ -1135,6 +1135,8 @@
     <string name="InuGhostSilentSendAlways">常に</string>
     <string name="InuGhostStoryAlert">ストーリーを開く前に確認</string>
     <string name="InuGhostStoryAlertInfo">ゴーストモードがストーリーの閲覧を隠していないとき、未視聴のストーリーを開く前に確認します。</string>
+    <string name="InuGhostScheduleSend">予約送信にする</string>
+    <string name="InuGhostScheduleSendInfo">メッセージを約12秒後の予約送信として送るので、送信時にオンラインと見られません。チャットには遅れて表示されます。保存済みメッセージ、ボット、シークレットチャット、有料・クイック返信は対象外です。</string>
     <string name="InuStoryGhostAlertTitle">ゴーストモードはこの閲覧を隠していません</string>
     <string name="InuStoryGhostAlertMessage">このストーリーを開くと視聴済みになります。先にゴーストモードをオンにしますか？</string>
     <string name="InuStoryGhostAlertEnable">ゴーストモードをオン</string>

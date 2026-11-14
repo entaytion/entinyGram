@@ -1556,6 +1556,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuGhostSilentSendAlways">Siempre</string>
     <string name="InuGhostStoryAlert">Preguntar antes de abrir historias</string>
     <string name="InuGhostStoryAlertInfo">Cuando el modo fantasma no oculta las vistas de historias, pregunta antes de abrir una historia sin ver.</string>
+    <string name="InuGhostScheduleSend">Enviar como programado</string>
+    <string name="InuGhostScheduleSendInfo">Envía los mensajes como programados unos 12 segundos después, para que no te vean en línea al enviar. Aparecen en el chat tras la espera. No para Mensajes guardados, bots, chats secretos, de pago ni respuestas rápidas.</string>
     <string name="InuStoryGhostAlertTitle">El modo fantasma no oculta esta vista</string>
     <string name="InuStoryGhostAlertMessage">Al abrir esta historia se marcará como vista. ¿Activar primero el modo fantasma?</string>
     <string name="InuStoryGhostAlertEnable">Activar modo fantasma</string>

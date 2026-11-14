@@ -1687,6 +1687,8 @@
     <string name="InuGhostSilentSendAlways">Always</string>
     <string name="InuGhostStoryAlert">Ask before opening stories</string>
     <string name="InuGhostStoryAlertInfo">When ghost mode is not hiding story views, ask before opening an unread story.</string>
+    <string name="InuGhostScheduleSend">Send as scheduled</string>
+    <string name="InuGhostScheduleSendInfo">Sends messages as scheduled ones about 12 seconds ahead, so you are not seen online for sending. They show up in the chat after the delay. Not for Saved Messages, bots, secret chats, paid or quick replies.</string>
     <string name="InuStoryGhostAlertTitle">Ghost mode is not hiding this view</string>
     <string name="InuStoryGhostAlertMessage">Opening this story will mark it as seen. Turn on ghost mode first?</string>
     <string name="InuStoryGhostAlertEnable">Turn on ghost mode</string>

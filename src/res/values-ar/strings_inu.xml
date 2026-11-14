@@ -1387,6 +1387,8 @@
     <string name="InuGhostSilentSendAlways">دائماً</string>
     <string name="InuGhostStoryAlert">اسأل قبل فتح القصص</string>
     <string name="InuGhostStoryAlertInfo">عندما لا يخفي وضع الشبح مشاهدات القصص، يُسأل قبل فتح قصة غير مشاهَدة.</string>
+    <string name="InuGhostScheduleSend">الإرسال كمجدول</string>
+    <string name="InuGhostScheduleSendInfo">يرسل الرسائل كمجدولة بعد نحو 12 ثانية حتى لا يُرى أنك متصل أثناء الإرسال. تظهر في المحادثة بعد التأخير. لا يشمل الرسائل المحفوظة والبوتات والمحادثات السرية والمدفوعة والردود السريعة.</string>
     <string name="InuStoryGhostAlertTitle">وضع الشبح لا يخفي هذه المشاهدة</string>
     <string name="InuStoryGhostAlertMessage">فتح هذه القصة سيجعلها مشاهَدة. هل تريد تفعيل وضع الشبح أولاً؟</string>
     <string name="InuStoryGhostAlertEnable">تفعيل وضع الشبح</string>

@@ -1315,6 +1315,8 @@
     <string name="InuGhostSilentSendAlways">Всегда</string>
     <string name="InuGhostStoryAlert">Спрашивать перед открытием историй</string>
     <string name="InuGhostStoryAlertInfo">Когда режим призрака не скрывает просмотры историй, спрашивать перед открытием непросмотренной истории.</string>
+    <string name="InuGhostScheduleSend">Отправлять как отложенные</string>
+    <string name="InuGhostScheduleSendInfo">Отправляет сообщения как отложенные примерно на 12 секунд вперёд, чтобы вас не видели онлайн при отправке. В чате они появляются после задержки. Не для Избранного, ботов, секретных чатов, платных и быстрых ответов.</string>
     <string name="InuStoryGhostAlertTitle">Режим призрака не скрывает этот просмотр</string>
     <string name="InuStoryGhostAlertMessage">Открытие этой истории отметит её просмотренной. Сначала включить режим призрака?</string>
     <string name="InuStoryGhostAlertEnable">Включить режим призрака</string>

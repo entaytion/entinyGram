@@ -1557,6 +1557,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuGhostSilentSendAlways">Sempre</string>
     <string name="InuGhostStoryAlert">Chiedi prima di aprire le storie</string>
     <string name="InuGhostStoryAlertInfo">Quando la modalità fantasma non nasconde le visualizzazioni delle storie, chiede prima di aprire una storia non vista.</string>
+    <string name="InuGhostScheduleSend">Invia come programmato</string>
+    <string name="InuGhostScheduleSendInfo">Invia i messaggi come programmati circa 12 secondi dopo, così non risulti online per l\'invio. Compaiono in chat dopo l\'attesa. Non per Messaggi salvati, bot, chat segrete, a pagamento o risposte rapide.</string>
     <string name="InuStoryGhostAlertTitle">La modalità fantasma non nasconde questa visualizzazione</string>
     <string name="InuStoryGhostAlertMessage">Aprire questa storia la segnerà come vista. Attivare prima la modalità fantasma?</string>
     <string name="InuStoryGhostAlertEnable">Attiva modalità fantasma</string>

@@ -1375,6 +1375,8 @@
     <string name="InuGhostSilentSendAlways">همیشه</string>
     <string name="InuGhostStoryAlert">پرسش پیش از باز کردن استوری‌ها</string>
     <string name="InuGhostStoryAlertInfo">وقتی حالت روح بازدید استوری را پنهان نمی‌کند، پیش از باز کردن استوری دیده‌نشده می‌پرسد.</string>
+    <string name="InuGhostScheduleSend">ارسال به‌صورت زمان‌بندی‌شده</string>
+    <string name="InuGhostScheduleSendInfo">پیام‌ها را حدود ۱۲ ثانیه بعد به‌صورت زمان‌بندی‌شده می‌فرستد تا هنگام ارسال آنلاین دیده نشوید. پیام‌ها پس از تأخیر در گفتگو ظاهر می‌شوند. برای پیام‌های ذخیره‌شده، ربات‌ها، گفتگوهای مخفی، پولی و پاسخ‌های سریع نیست.</string>
     <string name="InuStoryGhostAlertTitle">حالت روح این بازدید را پنهان نمی‌کند</string>
     <string name="InuStoryGhostAlertMessage">باز کردن این استوری آن را دیده‌شده علامت می‌زند. ابتدا حالت روح روشن شود؟</string>
     <string name="InuStoryGhostAlertEnable">روشن کردن حالت روح</string>

@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 13:51:27 +0200
+Subject: Send ghost mode messages as scheduled about 12 seconds ahead so the sender is not seen online.
+
+---
+ .../java/org/telegram/messenger/SendMessagesHelper.java  | 9 +++++++++
+ .../src/main/java/org/telegram/ui/ChatActivity.java      | 2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -2257,6 +2257,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (desu.inugram.helpers.plugins.telegram.PluginCompose.interceptForward(this, currentAccount, messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, payStars, monoForumPeerId, suggestionParams)) {
+             return 0;
+         }
++        if (scheduleDate == 0) {
++            final int inu_date = desu.inugram.helpers.security.GhostScheduleHelper.forwardDate(currentAccount, peer, scheduleDate, scheduleRepeatPeriod, payStars, monoForumPeerId, suggestionParams);
++            if (inu_date != 0) {
++                return sendMessage(messages, peer, forwardFromMyName, hideCaption, notify, inu_date, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, payStars, monoForumPeerId, suggestionParams);
++            }
++        }
+         int sendResult = 0;
+         long myId = getUserConfig().getClientUserId();
+         boolean isChannel = false;
+@@ -4487,6 +4493,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+ 
+     public void sendMessage(SendMessageParams sendMessageParams) {
+         if (desu.inugram.helpers.plugins.telegram.PluginCompose.interceptParams(this, currentAccount, sendMessageParams)) return;
++        sendMessageParams.scheduleDate = desu.inugram.helpers.security.GhostScheduleHelper.paramsDate(currentAccount, sendMessageParams);
+         desu.inugram.helpers.UrlCleanerHelper.markPendingRedirects(sendMessageParams);
+         final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
+                 sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
+@@ -7810,6 +7817,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+     }
+ 
+     protected void performSendMessageRequestMulti(final TLObject request, final ArrayList<MessageObject> msgObjs, final ArrayList<String> originalPaths, final ArrayList<Object> parentObjects, DelayedMessage delayedMessage, boolean scheduled) {
++        desu.inugram.helpers.security.GhostScheduleHelper.keepAhead(currentAccount, request, scheduled);
+         for (int a = 0, size = msgObjs.size(); a < size; a++) {
+             putToSendingMessages(msgObjs.get(a).messageOwner, scheduled);
+         }
+@@ -8159,6 +8167,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+     }
+ 
+     protected void performSendMessageRequest(final TLObject req, final MessageObject msgObj, final String originalPath, DelayedMessage parentMessage, boolean check, DelayedMessage delayedMessage, Object parentObject, HashMap<String, String> params, boolean scheduled) {
++        desu.inugram.helpers.security.GhostScheduleHelper.keepAhead(currentAccount, req, scheduled);
+         if (req instanceof TLRPC.TL_messages_addPollAnswer) {
+             TLRPC.TL_messages_addPollAnswer r = (TLRPC.TL_messages_addPollAnswer) req;
+             if (r.answer.input_media instanceof TLRPC.TL_inputMediaUploadedDocument || r.answer.input_media instanceof TLRPC.TL_inputMediaUploadedPhoto) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -23566,7 +23566,7 @@ public class ChatActivity extends BaseFragment implements
+                 boolean scheduled = (Boolean) args[2];
+                 int mode = (Integer) args[3];
+                 if (mode != chatMode && chatMode != MODE_SAVED && chatMode != MODE_SUGGESTIONS) {
+-                    if (chatMode != MODE_SCHEDULED && mode == MODE_SCHEDULED && !isPaused && LaunchActivity.getSafeLastFragment() == this && messagePreviewParams == null) {
++                    if (chatMode != MODE_SCHEDULED && mode == MODE_SCHEDULED && !isPaused && LaunchActivity.getSafeLastFragment() == this && messagePreviewParams == null && !desu.inugram.helpers.security.GhostScheduleHelper.justScheduled(dialog_id)) {
+                         if (!arr.isEmpty() && arr.get(0).getId() < 0) {
+                             openScheduledMessages(arr.get(0).getId(), arr.get(0).messageOwner != null && arr.get(0).messageOwner.video_processing_pending);
+                         }

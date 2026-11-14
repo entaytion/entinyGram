@@ -65,6 +65,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 silentSendLabel(),
             )
         )
+        items.add(mkTwoLineCheckItem(TOGGLE_SCHEDULE_SEND, R.string.InuGhostScheduleSend, R.string.InuGhostScheduleSendInfo, InuConfig.GHOST_SCHEDULE_SEND.value))
         items.add(mkTwoLineCheckItem(TOGGLE_STORY_ALERT, R.string.InuGhostStoryAlert, R.string.InuGhostStoryAlertInfo, InuConfig.GHOST_STORY_ALERT.value))
         items.add(mkTwoLineCheckItem(TOGGLE_HIDE_APP_BAR_ICON, R.string.InuGhostHideAppBarIcon, R.string.InuGhostHideAppBarIconInfo, InuConfig.GHOST_HIDE_APP_BAR_ICON.value))
         items.add(mkTwoLineCheckItem(TOGGLE_LAUNCHER_SHORTCUT, R.string.InuGhostModeLauncherShortcut, R.string.InuGhostModeLauncherShortcutInfo, InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.value))
@@ -131,6 +132,10 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 InuConfig.GHOST_SILENT_SEND.value = which
                 listView?.adapter?.update(true)
             }
+            TOGGLE_SCHEDULE_SEND -> {
+                val new = InuConfig.GHOST_SCHEDULE_SEND.toggle()
+                setCellChecked(view, new)
+            }
             TOGGLE_STORY_ALERT -> {
                 val new = InuConfig.GHOST_STORY_ALERT.toggle()
                 setCellChecked(view, new)
@@ -179,6 +184,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val BUTTON_MANAGE_OVERRIDES = InuUtils.generateId()
         private val BUTTON_SILENT_SEND = InuUtils.generateId()
         private val TOGGLE_STORY_ALERT = InuUtils.generateId()
+        private val TOGGLE_SCHEDULE_SEND = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -199,6 +205,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
                 SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostPresenceModeDelayed, BUTTON_PRESENCE_MODE),
                 SearchRegistry.Entry("ghost-silent-send", R.string.InuGhostSilentSend, BUTTON_SILENT_SEND),
+                SearchRegistry.Entry("ghost-schedule-send", R.string.InuGhostScheduleSend, TOGGLE_SCHEDULE_SEND),
                 SearchRegistry.Entry("ghost-story-alert", R.string.InuGhostStoryAlert, TOGGLE_STORY_ALERT),
                 SearchRegistry.Entry("ghost-hide-app-bar-icon", R.string.InuGhostHideAppBarIcon, TOGGLE_HIDE_APP_BAR_ICON),
                 SearchRegistry.Entry("ghost-launcher-shortcut", R.string.InuGhostModeLauncherShortcut, TOGGLE_LAUNCHER_SHORTCUT),

@@ -21,7 +21,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 
 ### privacy & protection
 
-- **ghost mode** — hide read receipts, story views, online status, typing, recording and upload indicators. read-on-send, local mark-as-read, per-chat and per-chat-type overrides, quick toggle in the drawer, chats menu and launcher shortcut, send without sound (never, in ghost mode or always) and an ask-before-opening prompt for unread stories when ghost mode is not hiding views
+- **ghost mode** — hide read receipts, story views, online status, typing, recording and upload indicators. read-on-send, local mark-as-read, per-chat and per-chat-type overrides, quick toggle in the drawer, chats menu and launcher shortcut, send without sound (never, in ghost mode or always), send as scheduled about 12 seconds ahead and an ask-before-opening prompt for unread stories when ghost mode is not hiding views
 - **anti-deletion & edit history** — deleted messages stay in the chat under a 🗑️ mark. deleted text, media and every edit revision go to an archive with word and caption diffs. a chat's archive opens as a read-only stock chat, deleted and edited switched from ⋮. archive has search, ttl, selective deletion and json export. attachments per network are capped and saved into one hidden folder under their original names
 - **self-destructing media** — save view-once photos, videos, video notes and voice notes, keep secret-chat media and timed text playable
 - **save user info** — phone country, registration date, change log of name, username, bio and photo

@@ -1131,6 +1131,8 @@
     <string name="InuGhostSilentSendAlways">Her zaman</string>
     <string name="InuGhostStoryAlert">Hikayeleri açmadan önce sor</string>
     <string name="InuGhostStoryAlertInfo">Hayalet modu hikaye görüntülemelerini gizlemiyorsa, görülmemiş bir hikayeyi açmadan önce sorar.</string>
+    <string name="InuGhostScheduleSend">Zamanlanmış olarak gönder</string>
+    <string name="InuGhostScheduleSendInfo">Mesajları yaklaşık 12 saniye sonrasına zamanlanmış olarak gönderir, böylece gönderirken çevrimiçi görünmezsin. Sohbette gecikmeden sonra görünürler. Kayıtlı Mesajlar, botlar, gizli sohbetler, ücretli ve hızlı yanıtlar için değil.</string>
     <string name="InuStoryGhostAlertTitle">Hayalet modu bu görüntülemeyi gizlemiyor</string>
     <string name="InuStoryGhostAlertMessage">Bu hikayeyi açmak onu görüldü olarak işaretler. Önce hayalet modu açılsın mı?</string>
     <string name="InuStoryGhostAlertEnable">Hayalet modunu aç</string>

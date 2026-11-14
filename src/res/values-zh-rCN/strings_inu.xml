@@ -1131,6 +1131,8 @@
     <string name="InuGhostSilentSendAlways">始终</string>
     <string name="InuGhostStoryAlert">打开快拍前询问</string>
     <string name="InuGhostStoryAlertInfo">幽灵模式未隐藏快拍浏览时，打开未看过的快拍前会询问。</string>
+    <string name="InuGhostScheduleSend">以定时消息发送</string>
+    <string name="InuGhostScheduleSendInfo">将消息作为约 12 秒后的定时消息发送，这样发送时不会显示在线。消息会在延迟后出现在聊天中。不适用于已保存消息、机器人、私密聊天、付费和快捷回复。</string>
     <string name="InuStoryGhostAlertTitle">幽灵模式没有隐藏此次浏览</string>
     <string name="InuStoryGhostAlertMessage">打开此快拍会将其标记为已看。是否先开启幽灵模式？</string>
     <string name="InuStoryGhostAlertEnable">开启幽灵模式</string>
