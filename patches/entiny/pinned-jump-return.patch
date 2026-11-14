@@ -1,0 +1,58 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 14:59:55 +0200
+Subject: Optional return to the reading position after jumping to a pinned message.
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java    | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -495,7 +495,7 @@ public class ChatActivity extends BaseFragment implements
+     private ChatListViewPaddingsAnimator chatListViewPaddingsAnimator;
+     public ChatListRecyclerView chatListView;
+     private ChatListItemAnimator chatListItemAnimator;
+-    private GridLayoutManagerFixed chatLayoutManager;
++    public GridLayoutManagerFixed chatLayoutManager;
+     public ChatActivityAdapter chatAdapter;
+     public UnreadCounterTextView bottomOverlayChatText;
+     private boolean bottomOverlayLinks;
+@@ -944,7 +944,7 @@ public class ChatActivity extends BaseFragment implements
+     private int[] minDate = new int[2];
+     private boolean[] endReached = new boolean[2];
+     private boolean[] cacheEndReached = new boolean[2];
+-    private boolean[] forwardEndReached = new boolean[]{true, true};
++    public boolean[] forwardEndReached = new boolean[]{true, true};
+     private boolean hideForwardEndReached;
+     private boolean loading = true;
+     private boolean firstLoading = true;
+@@ -12370,7 +12370,7 @@ public class ChatActivity extends BaseFragment implements
+                 if (!forceScrollToFirst) {
+                     forceNextPinnedMessageId = -forceNextPinnedMessageId;
+                 }
+-                scrollToMessageId(currentPinned, 0, true, 0, true, forceNextPinnedMessageId);
++                scrollToMessageId(currentPinned, desu.inugram.helpers.chat.PinnedReturnHelper.returnId(this), true, 0, true, forceNextPinnedMessageId);
+                 updateMessagesVisiblePart(false);
+             }
+         });
+@@ -12620,7 +12620,7 @@ public class ChatActivity extends BaseFragment implements
+         fragment.chatActivityDelegate = new ChatActivityDelegate() {
+             @Override
+             public void openReplyMessage(int mid) {
+-                scrollToMessageId(mid, 0, true, 0, true, 0);
++                scrollToMessageId(mid, desu.inugram.helpers.chat.PinnedReturnHelper.returnId(ChatActivity.this), true, 0, true, 0);
+             }
+ 
+             @Override
+@@ -39599,7 +39599,7 @@ public class ChatActivity extends BaseFragment implements
+         private int botForumStartThreadRow = -5;
+ 
+         public int messagesStartRow;
+-        private int messagesEndRow;
++        public int messagesEndRow;
+ 
+         public ArrayList<MessageObject> getMessages() {
+             return inu_filtering ? inu_visibleMessages : inu_getSourceMessages();

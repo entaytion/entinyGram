@@ -2007,6 +2007,8 @@
     <string name="InuDisableNextMusicAutoplayInfo">التوقف بعد انتهاء المقطع بدلًا من تشغيل التالي</string>
     <string name="InuDisableNextVoiceAutoplay">عدم تشغيل الرسالة الصوتية التالية تلقائيًا</string>
     <string name="InuDisableNextVoiceAutoplayInfo">التوقف بعد الرسالة الصوتية بدلًا من تشغيل التالية في المحادثة</string>
+    <string name="InuPinnedJumpReturn">العودة بعد القفز إلى المثبتة</string>
+    <string name="InuPinnedJumpReturnInfo">بعد القفز إلى رسالة مثبتة، يعيدك زر النزول إلى مكان قراءتك</string>
     <string name="InuVoiceSkipInSession">التالي والسابق للرسائل الصوتية</string>
     <string name="InuVoiceSkipInSessionInfo">إظهار التالي والسابق في جلسة الوسائط للرسائل الصوتية كما في الموسيقى</string>
     <string name="InuRememberShortPosition">تذكر الموضع في الوسائط القصيرة</string>

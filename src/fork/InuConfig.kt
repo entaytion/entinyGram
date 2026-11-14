@@ -1411,6 +1411,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val VOICE_SKIP_IN_SESSION = BoolItem("voice_skip_in_session", false)
 
     @JvmField
+    val PINNED_JUMP_RETURN = BoolItem("pinned_jump_return", false)
+
+    @JvmField
     val REACTIONS_IN_ROW = ReactionsInRowItem()
 
     @JvmField

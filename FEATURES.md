@@ -110,6 +110,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **chat menu** — privacy and local-data actions grouped under entinygram, with its own order section
 - **text & input fixes** — better url parsing, separator after mention, keyboard stays up when scrolling a chat with a draft
 - **long-press to close the pinned panel** — until a new pin, or always in this chat
+- **return after a pinned jump** — the down button takes you back to where you were reading after jumping to a pinned message
 - **no confirmation for links** — external links open without the "Open link" dialog
 
 ### media, camera & player

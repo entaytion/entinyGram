@@ -297,6 +297,8 @@ Sistema: %6$s
     <string name="InuDisableNextMusicAutoplayInfo">Fermati al termine di una traccia invece di avviare la successiva</string>
     <string name="InuDisableNextVoiceAutoplay">Non riprodurre automaticamente il messaggio vocale successivo</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Fermati dopo un messaggio vocale invece di riprodurre il successivo della chat</string>
+    <string name="InuPinnedJumpReturn">Ritorno dopo il salto a un fissato</string>
+    <string name="InuPinnedJumpReturnInfo">Dopo il salto a un messaggio fissato, il pulsante giù ti riporta dove stavi leggendo</string>
     <string name="InuVoiceSkipInSession">Avanti e indietro per i vocali</string>
     <string name="InuVoiceSkipInSessionInfo">Mostra successivo e precedente nella sessione multimediale per i messaggi vocali, come per la musica</string>
     <string name="InuRememberShortPosition">Ricorda la posizione nei media brevi</string>

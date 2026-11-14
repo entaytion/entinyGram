@@ -326,6 +326,8 @@
     <string name="InuDisableNextMusicAutoplayInfo">Stop when a track ends instead of starting the next one</string>
     <string name="InuDisableNextVoiceAutoplay">Don\'t auto-play next voice message</string>
     <string name="InuDisableNextVoiceAutoplayInfo">Stop after a voice message instead of playing the next one in the chat</string>
+    <string name="InuPinnedJumpReturn">Return after jumping to pinned</string>
+    <string name="InuPinnedJumpReturnInfo">After jumping to a pinned message, the down button returns you to where you were reading</string>
     <string name="InuVoiceSkipInSession">Next and previous for voice messages</string>
     <string name="InuVoiceSkipInSessionInfo">Show next and previous in the media session for voice messages, as for music</string>
     <string name="InuRememberShortPosition">Remember position in short media</string>
