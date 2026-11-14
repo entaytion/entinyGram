@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 23:46:36 +0200
+Subject: Fix a crash when selecting a chat in the dialogs list before the selection counter exists.
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -10540,7 +10540,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             }
+         }
+         updateCounters(false);
+-        selectedDialogsCountTextView.setNumber(selectedDialogs.size(), updateAnimated);
++        if (selectedDialogsCountTextView != null) selectedDialogsCountTextView.setNumber(selectedDialogs.size(), updateAnimated);
+     }
+ 
+     private void closeSearch() {
