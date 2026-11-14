@@ -4,10 +4,34 @@ Date: Sun, 1 Nov 2026 22:29:32 +0200
 Subject: settings headers in card and hide dividers
 
 ---
+ .../java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java | 5 +++++
  .../java/org/telegram/ui/Components/UniversalAdapter.java    | 5 +++--
  .../org/telegram/ui/Components/UniversalRecyclerView.java    | 2 +-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ 3 files changed, 9 insertions(+), 3 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
+@@ -1141,6 +1141,10 @@ public class ActionBarPopupWindow extends PopupWindow {
+             super(context);
+             this.shadowDrawable = Theme.getThemedDrawable(getContext(), R.drawable.greydivider, shadowColor);
+             setBackgroundColor(color);
++            if (desu.inugram.InuConfig.HIDE_DIVIDERS.getValue()) {
++                shadowDrawable = null;
++                setBackgroundColor(0);
++            }
+         }
+ 
+         public GapView(Context context, Theme.ResourcesProvider resourcesProvider, int colorKey) {
+@@ -1148,6 +1152,7 @@ public class ActionBarPopupWindow extends PopupWindow {
+         }
+ 
+         public void setColor(int color) {
++            if (desu.inugram.InuConfig.HIDE_DIVIDERS.getValue()) return;
+             setBackgroundColor(color);
+         }
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java

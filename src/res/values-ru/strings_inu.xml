@@ -831,7 +831,7 @@
     <string name="InuAvatarCornersRight">Круглые</string>
     <string name="InuUnifiedCornerRadius">Единый радиус скругления</string>
     <string name="InuHideDividers">Отключить разделители</string>
-    <string name="InuHideDividersInfo">Убирает линии и промежутки между строками в списках настроек.</string>
+    <string name="InuHideDividersInfo">Убирает линии и промежутки между строками в списках настроек и полосы-разделители во всплывающих меню.</string>
     <string name="InuUnifiedCornerRadiusInfo">Применять одинаковый радиус скругления ко всем аватаркам, включая темы форумов</string>
     <string name="InuMaterial3NavigationAnimation">Анимация навигации</string>
     <string name="InuMaterial3Player">Плеер музыки</string>

@@ -2224,7 +2224,7 @@ Mentre è attivo:</string>
     <string name="InuDisableOverscrollStoryInfo">La lista chat non apre più le storie quando la trascini verso il basso dall’inizio.</string>
     <string name="InuDontAutoplayWidgetsInfo">I widget interattivi nei messaggi si avviano solo quando li tocchi</string>
     <string name="InuForwardProReplaceInfo">Inoltra apre il pannello Forward Pro al posto del selettore di Telegram.</string>
-    <string name="InuHideDividersInfo">Rimuove linee e spazi tra le righe negli elenchi delle impostazioni.</string>
+    <string name="InuHideDividersInfo">Rimuove linee e spazi tra le righe negli elenchi delle impostazioni e le bande separatrici nei menu popup.</string>
     <string name="InuMarketTagAiAbout">traduzione e assistenti basati su modelli linguistici</string>
     <string name="InuMarketTagCallsAbout">chiamate vocali e video</string>
     <string name="InuMarketTagChatAbout">chat, messaggi, cartelle e menu</string>

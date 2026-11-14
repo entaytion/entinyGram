@@ -2223,7 +2223,7 @@ Mientras esté activado:</string>
     <string name="InuDisableOverscrollStoryInfo">La lista de chats ya no abre las historias al deslizar hacia abajo desde arriba.</string>
     <string name="InuDontAutoplayWidgetsInfo">Los widgets interactivos de los mensajes solo se inician al tocarlos</string>
     <string name="InuForwardProReplaceInfo">Reenviar abre el panel Forward Pro en lugar del selector de Telegram.</string>
-    <string name="InuHideDividersInfo">Elimina las líneas y espacios entre filas en las listas de ajustes.</string>
+    <string name="InuHideDividersInfo">Elimina las líneas y espacios entre filas en las listas de ajustes y las franjas separadoras en los menús emergentes.</string>
     <string name="InuMarketTagAiAbout">traducción y asistentes de modelos de lenguaje</string>
     <string name="InuMarketTagCallsAbout">llamadas de voz y vídeo</string>
     <string name="InuMarketTagChatAbout">chats, mensajes, carpetas y menús</string>

@@ -2196,7 +2196,7 @@
     <string name="InuDisableOverscrollStoryInfo">کشیدن فهرست گفتگو از بالای صفحه به پایین دیگر استوری‌ها را باز نمی‌کند.</string>
     <string name="InuDontAutoplayWidgetsInfo">ابزارک‌های تعاملی پیام‌ها فقط پس از لمس شروع می‌شوند</string>
     <string name="InuForwardProReplaceInfo">گزینه ارسال مجدد به‌جای انتخابگر تلگرام، پنجره Forward Pro را باز می‌کند.</string>
-    <string name="InuHideDividersInfo">خطوط و فاصله‌های بین ردیف‌های فهرست تنظیمات را حذف می‌کند.</string>
+    <string name="InuHideDividersInfo">خطوط و فاصله‌های بین ردیف‌های فهرست تنظیمات و نوارهای جداکننده در منوهای بازشو را حذف می‌کند.</string>
     <string name="InuMarketTagAiAbout">ترجمه و دستیارهای مدل زبانی</string>
     <string name="InuMarketTagCallsAbout">تماس‌های صوتی و تصویری</string>
     <string name="InuMarketTagChatAbout">گفتگوها، پیام‌ها، پوشه‌ها و منوها</string>

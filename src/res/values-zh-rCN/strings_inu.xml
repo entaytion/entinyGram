@@ -2189,7 +2189,7 @@
     <string name="InuDisableLinkPreviewsInfo">不为消息中的链接生成或发送预览</string>
     <string name="InuDisableOverscrollStoryInfo">在聊天列表顶部下拉时不再打开故事。</string>
     <string name="InuForwardProReplaceInfo">点击转发时打开 Forward Pro 面板，而非 Telegram 默认选择器。</string>
-    <string name="InuHideDividersInfo">移除设置列表中各行之间的分隔线和间距。</string>
+    <string name="InuHideDividersInfo">移除设置列表中各行之间的分隔线和间距，以及弹出菜单中的分隔条。</string>
     <string name="InuMarketTagAiAbout">翻译与大语言模型助手</string>
     <string name="InuMarketTagCallsAbout">语音和视频通话</string>
     <string name="InuMarketTagChatAbout">聊天、消息、文件夹和菜单</string>

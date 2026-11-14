@@ -2192,7 +2192,7 @@
     <string name="InuDisableLinkPreviewsInfo">Mesajlarınızdaki bağlantılar için önizleme oluşturmaz veya göndermez</string>
     <string name="InuDisableOverscrollStoryInfo">Sohbet listesinin en üstünde aşağı çekmek artık hikâyeleri açmaz.</string>
     <string name="InuForwardProReplaceInfo">İlet seçeneği Telegram’ın seçim ekranı yerine Forward Pro panelini açar.</string>
-    <string name="InuHideDividersInfo">Ayar listelerindeki satırlar arasındaki çizgileri ve boşlukları kaldırır.</string>
+    <string name="InuHideDividersInfo">Ayar listelerindeki satırlar arasındaki çizgileri ve boşlukları, açılır menülerdeki ayırıcı şeritleri kaldırır.</string>
     <string name="InuMarketTagAiAbout">çeviri ve dil modeli asistanları</string>
     <string name="InuMarketTagCallsAbout">sesli ve görüntülü aramalar</string>
     <string name="InuMarketTagChatAbout">sohbetler, mesajlar, klasörler ve menüler</string>

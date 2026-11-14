@@ -123,7 +123,7 @@
     <string name="InuAvatarCornersRight">Круглі</string>
     <string name="InuUnifiedCornerRadius">Єдиний радіус скруглення</string>
     <string name="InuHideDividers">Вимкнути роздільники</string>
-    <string name="InuHideDividersInfo">Прибирає лінії й проміжки між рядками в списках налаштувань.</string>
+    <string name="InuHideDividersInfo">Прибирає лінії й проміжки між рядками в списках налаштувань і смуги-роздільники у випливних меню.</string>
     <string name="InuUnifiedCornerRadiusInfo">Застосовувати однаковий радіус скруглення до всіх аватарок, включно з темами форумів</string>
     <string name="InuMonetTheme">Тема Monet</string>
     <string name="InuMonetThemeDisabled">Вимкнено</string>

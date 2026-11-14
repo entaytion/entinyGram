@@ -2207,7 +2207,7 @@
     <string name="InuDisableOverscrollStoryInfo">لن تفتح قائمة المحادثات القصص عند سحبها لأسفل من الأعلى.</string>
     <string name="InuDontAutoplayWidgetsInfo">لا تبدأ الأدوات التفاعلية في الرسائل إلا بعد الضغط عليها</string>
     <string name="InuForwardProReplaceInfo">يفتح خيار إعادة التوجيه نافذة Forward Pro بدلًا من محدد Telegram.</string>
-    <string name="InuHideDividersInfo">يزيل الخطوط والفجوات بين الصفوف في قوائم الإعدادات.</string>
+    <string name="InuHideDividersInfo">يزيل الخطوط والفجوات بين الصفوف في قوائم الإعدادات وشرائط الفصل في القوائم المنبثقة.</string>
     <string name="InuMarketTagAiAbout">الترجمة ومساعدو النماذج اللغوية</string>
     <string name="InuMarketTagCallsAbout">المكالمات الصوتية ومكالمات الفيديو</string>
     <string name="InuMarketTagChatAbout">المحادثات والرسائل والمجلدات والقوائم</string>

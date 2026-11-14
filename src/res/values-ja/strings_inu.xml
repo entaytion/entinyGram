@@ -2187,7 +2187,7 @@
     <string name="InuDisableLinkPreviewsInfo">自分のメッセージ内のリンクのプレビューを生成・送信しません</string>
     <string name="InuDisableOverscrollStoryInfo">チャット一覧の先頭で下に引いてもストーリーを開きません。</string>
     <string name="InuForwardProReplaceInfo">転送時にTelegram標準の選択画面ではなくForward Proを開きます。</string>
-    <string name="InuHideDividersInfo">設定一覧の行の間にある線と隙間を取り除きます。</string>
+    <string name="InuHideDividersInfo">設定一覧の行の間にある線と隙間、およびポップアップメニューの区切り帯を取り除きます。</string>
     <string name="InuMarketTagAiAbout">翻訳と言語モデルのアシスタント</string>
     <string name="InuMarketTagCallsAbout">音声通話とビデオ通話</string>
     <string name="InuMarketTagChatAbout">チャット、メッセージ、フォルダー、メニュー</string>

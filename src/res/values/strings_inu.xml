@@ -218,7 +218,7 @@
     <string name="InuAvatarCornersRight">Round</string>
     <string name="InuUnifiedCornerRadius">Unified corner radius</string>
     <string name="InuHideDividers">Disable dividers</string>
-    <string name="InuHideDividersInfo">Removes the lines and gaps between rows in settings lists.</string>
+    <string name="InuHideDividersInfo">Removes the lines and gaps between rows in settings lists, and the divider bands in popup menus.</string>
     <string name="InuUnifiedCornerRadiusInfo">Apply the same corner radius to all avatars, including forum topics</string>
     <string name="InuMonetTheme">Monet theme</string>
     <string name="InuMonetThemeDisabled">Disabled</string>
