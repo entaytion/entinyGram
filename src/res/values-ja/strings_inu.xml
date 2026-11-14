@@ -319,6 +319,8 @@
     <string name="InuDisableChatPreviewExpand">インタラクティブなチャットプレビュー</string>
     <string name="InuDisableChatPreviewExpandInfo">タップで展開する動作を無効化し、代わりにバブルを操作可能にする</string>
     <string name="InuHideMyPhoneNumber">自分の電話番号を非表示</string>
+    <string name="InuNoJoinedNotifications">登録時に連絡先へ通知しない</string>
+    <string name="InuNoJoinedNotificationsInfo">新しい番号の登録時、その番号を保存している人に知らせないようTelegramに依頼する</string>
     <string name="InuFonts">フォント</string>
     <string name="InuAppFont">アプリのフォント</string>
     <string name="InuAppFontInfo">アプリ全体のインターフェースで使用するフォントです。アプリのフォントに設定できるのはカスタム（インポートした）フォントのみです。</string>

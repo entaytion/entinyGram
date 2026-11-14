@@ -699,6 +699,8 @@ Sistema: %6$s
     <string name="InuAlwaysShowDownloadsInfo">Mostrar siempre el botón de descargas en el encabezado de chats</string>
     <string name="InuHideDownloadsButtonInfo">Nunca mostrar el botón de descargas en el encabezado de los chats</string>
     <string name="InuHideMyPhoneNumber">Ocultar mi número de teléfono</string>
+    <string name="InuNoJoinedNotifications">No avisar a los contactos al registrarse</string>
+    <string name="InuNoJoinedNotificationsInfo">Al registrar un número nuevo, pedir a Telegram que no avise a quienes lo tienen guardado</string>
     <string name="InuFonts">Fuentes</string>
     <string name="InuAppFont">Fuente de la app</string>
     <string name="InuAppFontInfo">Solo las fuentes personalizadas (importadas) pueden usarse como fuente de la app.</string>

@@ -318,6 +318,8 @@
     <string name="InuDisableChatPreviewExpand">交互式聊天预览</string>
     <string name="InuDisableChatPreviewExpandInfo">禁用点击展开，改为让气泡可交互</string>
     <string name="InuHideMyPhoneNumber">隐藏我的手机号</string>
+    <string name="InuNoJoinedNotifications">注册时不通知联系人</string>
+    <string name="InuNoJoinedNotificationsInfo">注册新号码时，要求 Telegram 不通知保存了该号码的人</string>
     <string name="InuFonts">字体</string>
     <string name="InuAppFont">应用字体</string>
     <string name="InuAppFontInfo">整个应用界面使用的字体。只有自定义（导入的）字体才能设为应用字体。</string>

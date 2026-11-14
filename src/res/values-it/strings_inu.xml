@@ -699,6 +699,8 @@ Sistema: %6$s
     <string name="InuAlwaysShowDownloadsInfo">Mostra sempre il pulsante dei download nell\'intestazione delle chat</string>
     <string name="InuHideDownloadsButtonInfo">Non mostrare mai il pulsante download nell\'intestazione delle chat</string>
     <string name="InuHideMyPhoneNumber">Nascondi il mio numero di telefono</string>
+    <string name="InuNoJoinedNotifications">Non avvisare i contatti alla registrazione</string>
+    <string name="InuNoJoinedNotificationsInfo">Registrando un nuovo numero, chiedi a Telegram di non avvisare chi lo ha salvato</string>
     <string name="InuFonts">Font</string>
     <string name="InuAppFont">Font dell\'app</string>
     <string name="InuAppFontInfo">Solo i font personalizzati (importati) possono essere usati come font dell\'app.</string>

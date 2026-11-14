@@ -488,6 +488,7 @@ object Schemas {
         }
         section(R.string.PrivacyTitle) {
             toggle(InuConfig.HIDE_MY_PHONE_NUMBER, R.string.InuHideMyPhoneNumber)
+            toggle(InuConfig.NO_JOINED_NOTIFICATIONS, R.string.InuNoJoinedNotifications, R.string.InuNoJoinedNotificationsInfo)
             toggle(InuConfig.DISABLE_DRAFT_UPLOAD, R.string.InuDisableDraftUpload, R.string.InuDisableDraftUploadInfo)
             toggle(InuConfig.DISABLE_SENSITIVE, R.string.InuDisableSensitive, R.string.InuDisableSensitiveInfo)
             toggle(

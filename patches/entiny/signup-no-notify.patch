@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 14:36:59 +0200
+Subject: Optional sign-up flag that asks Telegram not to notify contacts about a new account.
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+@@ -8039,6 +8039,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+                 TLRPC.TL_auth_firebasePnvSignUp req = new TLRPC.TL_auth_firebasePnvSignUp();
+                 req.first_name = firstNameField.getText().toString();
+                 req.last_name = lastNameField.getText().toString();
++                req.no_joined_notifications |= desu.inugram.InuConfig.NO_JOINED_NOTIFICATIONS.getValue();
+                 request = req;
+             } else {
+                 TLRPC.TL_auth_signUp req = new TLRPC.TL_auth_signUp();
+@@ -8046,6 +8047,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+                 req.phone_number = requestPhone;
+                 req.first_name = firstNameField.getText().toString();
+                 req.last_name = lastNameField.getText().toString();
++                req.no_joined_notifications |= desu.inugram.InuConfig.NO_JOINED_NOTIFICATIONS.getValue();
+                 request = req;
+             }
+             needShowProgress(0);

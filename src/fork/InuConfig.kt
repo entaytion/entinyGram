@@ -1402,6 +1402,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val HIDE_MY_PHONE_NUMBER = BoolItem("hide_my_phone_number", true)
 
     @JvmField
+    val NO_JOINED_NOTIFICATIONS = BoolItem("no_joined_notifications", false)
+
+    @JvmField
     val REACTIONS_IN_ROW = ReactionsInRowItem()
 
     @JvmField

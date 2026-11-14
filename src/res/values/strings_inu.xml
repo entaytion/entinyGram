@@ -758,6 +758,8 @@
     <string name="InuAlwaysShowDownloadsInfo">Always show the downloads button in the chats header</string>
     <string name="InuHideDownloadsButtonInfo">Never show the downloads button in the chats header</string>
     <string name="InuHideMyPhoneNumber">Hide my phone number</string>
+    <string name="InuNoJoinedNotifications">Don\'t notify contacts on sign-up</string>
+    <string name="InuNoJoinedNotificationsInfo">When registering a new number, ask Telegram not to tell people who have it saved</string>
     <string name="InuFonts">Fonts</string>
     <string name="InuAppFont">App font</string>
     <string name="InuAppFontInfo">Only custom (imported) fonts can be set as the app font.</string>

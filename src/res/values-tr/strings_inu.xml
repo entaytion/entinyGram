@@ -443,6 +443,8 @@
     <string name="InuDisableChatPreviewExpand">Etkileşimli sohbet önizlemesi</string>
     <string name="InuDisableChatPreviewExpandInfo">Büyütmek için dokunmayı devre dışı bırakır ve baloncukları etkileşimli hale getirir</string>
     <string name="InuHideMyPhoneNumber">Telefon numaramı gizle</string>
+    <string name="InuNoJoinedNotifications">Kayıtta kişilere bildirme</string>
+    <string name="InuNoJoinedNotificationsInfo">Yeni numara kaydederken Telegram\'dan numarayı kayıtlı tutanlara haber vermemesini iste</string>
     <string name="InuFonts">Yazı Tipleri</string>
     <string name="InuAppFont">Uygulama yazı tipi</string>
     <string name="InuAppFontInfo">Uygulama arayüzü genelinde kullanılan yazı tipi. Uygulama yazı tipi olarak yalnızca Özel (içe aktarılmış) yazı tipleri seçilebilir.</string>

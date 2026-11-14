@@ -390,6 +390,8 @@
     <string name="InuDisableChatPreviewExpand">Интерактивное превью чата</string>
     <string name="InuDisableChatPreviewExpandInfo">Отключить разворачивание по нажатию и сделать пузыри интерактивными</string>
     <string name="InuHideMyPhoneNumber">Скрыть мой номер телефона</string>
+    <string name="InuNoJoinedNotifications">Не уведомлять контакты о регистрации</string>
+    <string name="InuNoJoinedNotificationsInfo">При регистрации нового номера просить Telegram не сообщать тем, у кого он сохранён</string>
     <string name="InuFontDefault">По умолчанию</string>
     <string name="InuFontSystem">Системный</string>
     <string name="InuFontImportFailed">Не удалось импортировать шрифт. Убедитесь, что это файл TTF/OTF/TTC.</string>

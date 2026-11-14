@@ -586,6 +586,8 @@
     <string name="InuAlwaysShowDownloadsInfo">إظهار زر التنزيلات دائمًا في رأس المحادثات</string>
     <string name="InuHideDownloadsButtonInfo">عدم إظهار زر التنزيلات في رأس الدردشات أبدًا</string>
     <string name="InuHideMyPhoneNumber">إخفاء رقم هاتفي</string>
+    <string name="InuNoJoinedNotifications">عدم إشعار جهات الاتصال عند التسجيل</string>
+    <string name="InuNoJoinedNotificationsInfo">عند تسجيل رقم جديد، اطلب من تيليجرام عدم إبلاغ من حفظوا الرقم</string>
     <string name="InuFonts">الخطوط</string>
     <string name="InuAppFont">خط التطبيق</string>
     <string name="InuAppFontInfo">يمكن تعيين الخطوط المخصصة (المستوردة) فقط كخط للتطبيق.</string>

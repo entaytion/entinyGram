@@ -547,6 +547,8 @@
     <string name="InuDisableChatPreviewExpand">Інтерактивний передперегляд чату</string>
     <string name="InuDisableChatPreviewExpandInfo">Вимкнути розгортання та зробити повідомлення інтерактивними</string>
     <string name="InuHideMyPhoneNumber">Приховати мій номер телефону</string>
+    <string name="InuNoJoinedNotifications">Не сповіщати контакти про реєстрацію</string>
+    <string name="InuNoJoinedNotificationsInfo">Під час реєстрації нового номера просити Telegram не повідомляти тих, у кого він збережений</string>
     <string name="InuFonts">Шрифти</string>
     <string name="InuAppFont">Шрифт додатка</string>
     <string name="InuAppFontInfo">Як шрифт додатка можна встановити лише власні (імпортовані) шрифти.</string>

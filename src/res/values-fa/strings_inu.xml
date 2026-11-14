@@ -586,6 +586,8 @@
     <string name="InuAlwaysShowDownloadsInfo">همیشه دکمه دانلودها را در سربرگ چت‌ها نشان بده</string>
     <string name="InuHideDownloadsButtonInfo">دکمه دانلودها هرگز در سربرگ گفتگوها نمایش داده نشود</string>
     <string name="InuHideMyPhoneNumber">پنهان کردن شماره تلفن من</string>
+    <string name="InuNoJoinedNotifications">اطلاع ندادن به مخاطبان هنگام ثبت‌نام</string>
+    <string name="InuNoJoinedNotificationsInfo">هنگام ثبت‌نام شماره جدید از تلگرام بخواه به کسانی که شماره را ذخیره کرده‌اند خبر ندهد</string>
     <string name="InuFonts">فونت‌ها</string>
     <string name="InuAppFont">فونت برنامه</string>
     <string name="InuAppFontInfo">فقط فونت‌های سفارشی (واردشده) را می‌توان به‌عنوان فونت برنامه تعیین کرد.</string>
