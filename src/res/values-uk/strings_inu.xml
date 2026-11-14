@@ -1473,6 +1473,17 @@
     <string name="InuGhostHideTyping">Приховати набір тексту та прогрес завантаження</string>
     <string name="InuGhostPresenceMode">Статус онлайн</string>
     <string name="InuGhostPresenceModeNormal">Звичайний</string>
+    <string name="InuGhostSilentSend">Надсилати без звуку</string>
+    <string name="InuGhostSilentSendOff">Ніколи</string>
+    <string name="InuGhostSilentSendGhost">У режимі привида</string>
+    <string name="InuGhostSilentSendAlways">Завжди</string>
+    <string name="InuGhostStoryAlert">Питати перед відкриттям історій</string>
+    <string name="InuGhostStoryAlertInfo">Коли режим привида не приховує перегляди історій, питати перед відкриттям непереглянутої історії.</string>
+    <string name="InuStoryGhostAlertTitle">Режим привида не приховує цей перегляд</string>
+    <string name="InuStoryGhostAlertMessage">Відкриття цієї історії позначить її переглянутою. Спершу увімкнути режим привида?</string>
+    <string name="InuStoryGhostAlertEnable">Увімкнути режим привида</string>
+    <string name="InuStoryGhostAlertWatch">Все одно дивитися</string>
+    <string name="InuStoryGhostAlertNever">Більше не питати</string>
     <string name="InuGhostPresenceModeHidden">Завжди прихований</string>
     <string name="InuGhostPresenceModeDelayed">Переходити офлайн невдовзі після входу в мережу</string>
     <string name="InuGhostScope">Застосовувати до</string>

@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 14 Nov 2026 13:42:51 +0200
+Subject: Ask before opening an unread story when ghost mode is not hiding story views.
+
+---
+ .../src/main/java/org/telegram/ui/Stories/StoryViewer.java     | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
+@@ -376,6 +376,9 @@ public class StoryViewer implements NotificationCenter.NotificationCenterDelegat
+             doOnAnimationReadyRunnables.clear();
+             return;
+         }
++        if (!isShowing && desu.inugram.helpers.security.StoryGhostAlert.intercept(this, account, context, storyItem, peerIds, position, storiesList, userStories, placeProvider, reversed)) {
++            return;
++        }
+         if (openCloseAnimator != null) {
+             openCloseAnimator.cancel();
+             openCloseAnimator = null;

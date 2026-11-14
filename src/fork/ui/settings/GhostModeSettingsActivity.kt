@@ -58,6 +58,14 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 presenceModeLabel(),
             ).setEnabled(masterOn)
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_SILENT_SEND,
+                LocaleController.getString(R.string.InuGhostSilentSend),
+                silentSendLabel(),
+            )
+        )
+        items.add(mkTwoLineCheckItem(TOGGLE_STORY_ALERT, R.string.InuGhostStoryAlert, R.string.InuGhostStoryAlertInfo, InuConfig.GHOST_STORY_ALERT.value))
         items.add(mkTwoLineCheckItem(TOGGLE_HIDE_APP_BAR_ICON, R.string.InuGhostHideAppBarIcon, R.string.InuGhostHideAppBarIconInfo, InuConfig.GHOST_HIDE_APP_BAR_ICON.value))
         items.add(mkTwoLineCheckItem(TOGGLE_LAUNCHER_SHORTCUT, R.string.InuGhostModeLauncherShortcut, R.string.InuGhostModeLauncherShortcutInfo, InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.value))
         items.add(mkSubPageButton(BUTTON_MANAGE_OVERRIDES, LocaleController.getString(R.string.InuGhostOverrides)))
@@ -77,6 +85,12 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         InuConfig.GhostPresenceModeItem.HIDDEN -> LocaleController.getString(R.string.InuGhostPresenceModeHidden)
         InuConfig.GhostPresenceModeItem.DELAYED -> LocaleController.getString(R.string.InuGhostPresenceModeDelayed)
         else -> LocaleController.getString(R.string.InuGhostPresenceModeNormal)
+    }
+
+    private fun silentSendLabel(): String = when (InuConfig.GHOST_SILENT_SEND.value) {
+        InuConfig.GhostSilentModeItem.GHOST -> LocaleController.getString(R.string.InuGhostSilentSendGhost)
+        InuConfig.GhostSilentModeItem.ALWAYS -> LocaleController.getString(R.string.InuGhostSilentSendAlways)
+        else -> LocaleController.getString(R.string.InuGhostSilentSendOff)
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -104,6 +118,22 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 GhostHelper.syncPresence(currentAccount)
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
                 listView?.adapter?.update(true)
+            }
+            BUTTON_SILENT_SEND -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuGhostSilentSendOff),
+                    LocaleController.getString(R.string.InuGhostSilentSendGhost),
+                    LocaleController.getString(R.string.InuGhostSilentSendAlways),
+                ),
+                InuConfig.GHOST_SILENT_SEND.value,
+            ) { which ->
+                InuConfig.GHOST_SILENT_SEND.value = which
+                listView?.adapter?.update(true)
+            }
+            TOGGLE_STORY_ALERT -> {
+                val new = InuConfig.GHOST_STORY_ALERT.toggle()
+                setCellChecked(view, new)
             }
             BUTTON_MANAGE_OVERRIDES -> presentFragment(GhostChatOverridesSettingsActivity())
             TOGGLE_READ_ON_SEND -> {
@@ -147,6 +177,8 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_APP_BAR_ICON = InuUtils.generateId()
         private val TOGGLE_LAUNCHER_SHORTCUT = InuUtils.generateId()
         private val BUTTON_MANAGE_OVERRIDES = InuUtils.generateId()
+        private val BUTTON_SILENT_SEND = InuUtils.generateId()
+        private val TOGGLE_STORY_ALERT = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -166,6 +198,8 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
                 SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostPresenceModeDelayed, BUTTON_PRESENCE_MODE),
+                SearchRegistry.Entry("ghost-silent-send", R.string.InuGhostSilentSend, BUTTON_SILENT_SEND),
+                SearchRegistry.Entry("ghost-story-alert", R.string.InuGhostStoryAlert, TOGGLE_STORY_ALERT),
                 SearchRegistry.Entry("ghost-hide-app-bar-icon", R.string.InuGhostHideAppBarIcon, TOGGLE_HIDE_APP_BAR_ICON),
                 SearchRegistry.Entry("ghost-launcher-shortcut", R.string.InuGhostModeLauncherShortcut, TOGGLE_LAUNCHER_SHORTCUT),
                 SearchRegistry.Entry("ghost-chat-overrides", R.string.InuGhostOverrides, BUTTON_MANAGE_OVERRIDES),

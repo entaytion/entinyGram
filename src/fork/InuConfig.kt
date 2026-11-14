@@ -2192,6 +2192,20 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val GHOST_PRESENCE_MODE = GhostPresenceModeItem()
 
+    class GhostSilentModeItem : IntItem("ghost_silent_send", OFF) {
+        companion object {
+            const val OFF = 0
+            const val GHOST = 1
+            const val ALWAYS = 2
+        }
+    }
+
+    @JvmField
+    val GHOST_SILENT_SEND = GhostSilentModeItem()
+
+    @JvmField
+    val GHOST_STORY_ALERT = BoolItem("ghost_story_alert", false)
+
     @JvmField
     val GHOST_HIDE_APP_BAR_ICON = BoolItem("ghost_hide_app_bar_icon", false)
 

@@ -1125,6 +1125,17 @@
     <string name="InuGhostHideTyping">隐藏正在输入和上传进度</string>
     <string name="InuGhostPresenceMode">在线状态</string>
     <string name="InuGhostPresenceModeNormal">正常</string>
+    <string name="InuGhostSilentSend">静音发送</string>
+    <string name="InuGhostSilentSendOff">从不</string>
+    <string name="InuGhostSilentSendGhost">幽灵模式下</string>
+    <string name="InuGhostSilentSendAlways">始终</string>
+    <string name="InuGhostStoryAlert">打开快拍前询问</string>
+    <string name="InuGhostStoryAlertInfo">幽灵模式未隐藏快拍浏览时，打开未看过的快拍前会询问。</string>
+    <string name="InuStoryGhostAlertTitle">幽灵模式没有隐藏此次浏览</string>
+    <string name="InuStoryGhostAlertMessage">打开此快拍会将其标记为已看。是否先开启幽灵模式？</string>
+    <string name="InuStoryGhostAlertEnable">开启幽灵模式</string>
+    <string name="InuStoryGhostAlertWatch">仍然查看</string>
+    <string name="InuStoryGhostAlertNever">不再询问</string>
     <string name="InuGhostPresenceModeHidden">始终隐藏</string>
     <string name="InuGhostPresenceModeDelayed">上线后不久转为离线</string>
     <string name="InuGhostScope">应用于</string>

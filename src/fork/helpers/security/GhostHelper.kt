@@ -342,6 +342,20 @@ object GhostHelper {
         return !InuConfig.GHOST_MARK_READ_LOCALLY.value && shouldSuppress(dialogId, SuppressKind.READ)
     }
 
+    private fun applySilent(request: TLObject, dialogId: Long) {
+        val mode = InuConfig.GHOST_SILENT_SEND.value
+        if (mode == InuConfig.GhostSilentModeItem.OFF) return
+        if (mode == InuConfig.GhostSilentModeItem.GHOST && !(if (dialogId != 0L) isGhostActiveForDialog(dialogId) else isGhostActive())) return
+        when (request) {
+            is TLRPC.TL_messages_sendMessage -> request.silent = true
+            is TLRPC.TL_messages_sendMedia -> request.silent = true
+            is TLRPC.TL_messages_sendMultiMedia -> request.silent = true
+            is TLRPC.TL_messages_sendInlineBotResult -> request.silent = true
+            is TLRPC.TL_messages_forwardMessages -> request.silent = true
+            else -> {}
+        }
+    }
+
     @JvmStatic
     fun processSendRequest(
         request: TLObject,
@@ -406,6 +420,7 @@ object GhostHelper {
             is TLRPC.TL_messages_forwardMessages,
             is TLRPC.TL_messages_sendVote,
             is TLRPC.TL_messages_sendQuickReplyMessages -> {
+                applySilent(request, dialogId)
                 if (dialogId != 0L && InuConfig.GHOST_READ_ON_SEND.value && shouldSuppress(dialogId, SuppressKind.READ)) {
                     AndroidUtilities.runOnUIThread {
                         markDialogAsRead(account, dialogId)

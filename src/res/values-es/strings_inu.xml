@@ -1550,6 +1550,17 @@ Esta acción no se puede deshacer.</string>
     <string name="InuGhostHideTyping">Ocultar estado escribiendo y progreso de subida</string>
     <string name="InuGhostPresenceMode">Estado en línea</string>
     <string name="InuGhostPresenceModeNormal">Normal</string>
+    <string name="InuGhostSilentSend">Enviar sin sonido</string>
+    <string name="InuGhostSilentSendOff">Nunca</string>
+    <string name="InuGhostSilentSendGhost">En modo fantasma</string>
+    <string name="InuGhostSilentSendAlways">Siempre</string>
+    <string name="InuGhostStoryAlert">Preguntar antes de abrir historias</string>
+    <string name="InuGhostStoryAlertInfo">Cuando el modo fantasma no oculta las vistas de historias, pregunta antes de abrir una historia sin ver.</string>
+    <string name="InuStoryGhostAlertTitle">El modo fantasma no oculta esta vista</string>
+    <string name="InuStoryGhostAlertMessage">Al abrir esta historia se marcará como vista. ¿Activar primero el modo fantasma?</string>
+    <string name="InuStoryGhostAlertEnable">Activar modo fantasma</string>
+    <string name="InuStoryGhostAlertWatch">Ver igualmente</string>
+    <string name="InuStoryGhostAlertNever">No volver a preguntar</string>
     <string name="InuGhostPresenceModeHidden">Siempre oculto</string>
     <string name="InuGhostPresenceModeDelayed">Pasar a desconectado poco después de conectarse</string>
 

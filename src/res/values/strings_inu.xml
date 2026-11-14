@@ -1681,6 +1681,17 @@
     <string name="InuGhostHideTyping">Hide typing and upload progress</string>
     <string name="InuGhostPresenceMode">Online status</string>
     <string name="InuGhostPresenceModeNormal">Normal</string>
+    <string name="InuGhostSilentSend">Send without sound</string>
+    <string name="InuGhostSilentSendOff">Never</string>
+    <string name="InuGhostSilentSendGhost">In ghost mode</string>
+    <string name="InuGhostSilentSendAlways">Always</string>
+    <string name="InuGhostStoryAlert">Ask before opening stories</string>
+    <string name="InuGhostStoryAlertInfo">When ghost mode is not hiding story views, ask before opening an unread story.</string>
+    <string name="InuStoryGhostAlertTitle">Ghost mode is not hiding this view</string>
+    <string name="InuStoryGhostAlertMessage">Opening this story will mark it as seen. Turn on ghost mode first?</string>
+    <string name="InuStoryGhostAlertEnable">Turn on ghost mode</string>
+    <string name="InuStoryGhostAlertWatch">Watch anyway</string>
+    <string name="InuStoryGhostAlertNever">Do not ask again</string>
     <string name="InuGhostPresenceModeHidden">Always hidden</string>
     <string name="InuGhostPresenceModeDelayed">Go offline shortly after coming online</string>
 

@@ -1551,6 +1551,17 @@ Questa azione non può essere annullata.</string>
     <string name="InuGhostHideTyping">Nascondi digitazione e avanzamento del caricamento</string>
     <string name="InuGhostPresenceMode">Stato online</string>
     <string name="InuGhostPresenceModeNormal">Normale</string>
+    <string name="InuGhostSilentSend">Invia senza suono</string>
+    <string name="InuGhostSilentSendOff">Mai</string>
+    <string name="InuGhostSilentSendGhost">In modalità fantasma</string>
+    <string name="InuGhostSilentSendAlways">Sempre</string>
+    <string name="InuGhostStoryAlert">Chiedi prima di aprire le storie</string>
+    <string name="InuGhostStoryAlertInfo">Quando la modalità fantasma non nasconde le visualizzazioni delle storie, chiede prima di aprire una storia non vista.</string>
+    <string name="InuStoryGhostAlertTitle">La modalità fantasma non nasconde questa visualizzazione</string>
+    <string name="InuStoryGhostAlertMessage">Aprire questa storia la segnerà come vista. Attivare prima la modalità fantasma?</string>
+    <string name="InuStoryGhostAlertEnable">Attiva modalità fantasma</string>
+    <string name="InuStoryGhostAlertWatch">Guarda comunque</string>
+    <string name="InuStoryGhostAlertNever">Non chiedere più</string>
     <string name="InuGhostPresenceModeHidden">Sempre nascosto</string>
     <string name="InuGhostPresenceModeDelayed">Vai offline poco dopo essere andato online</string>
 

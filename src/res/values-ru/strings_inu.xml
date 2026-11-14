@@ -1309,6 +1309,17 @@
     <string name="InuGhostHideTyping">Скрывать набор текста и загрузку</string>
     <string name="InuGhostPresenceMode">Статус онлайн</string>
     <string name="InuGhostPresenceModeNormal">Обычный</string>
+    <string name="InuGhostSilentSend">Отправлять без звука</string>
+    <string name="InuGhostSilentSendOff">Никогда</string>
+    <string name="InuGhostSilentSendGhost">В режиме призрака</string>
+    <string name="InuGhostSilentSendAlways">Всегда</string>
+    <string name="InuGhostStoryAlert">Спрашивать перед открытием историй</string>
+    <string name="InuGhostStoryAlertInfo">Когда режим призрака не скрывает просмотры историй, спрашивать перед открытием непросмотренной истории.</string>
+    <string name="InuStoryGhostAlertTitle">Режим призрака не скрывает этот просмотр</string>
+    <string name="InuStoryGhostAlertMessage">Открытие этой истории отметит её просмотренной. Сначала включить режим призрака?</string>
+    <string name="InuStoryGhostAlertEnable">Включить режим призрака</string>
+    <string name="InuStoryGhostAlertWatch">Всё равно смотреть</string>
+    <string name="InuStoryGhostAlertNever">Больше не спрашивать</string>
     <string name="InuGhostPresenceModeHidden">Всегда скрыт</string>
     <string name="InuGhostPresenceModeDelayed">Уходить в офлайн вскоре после выхода в онлайн</string>
     <string name="InuGhostScope">Применять к</string>

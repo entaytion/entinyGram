@@ -1381,6 +1381,17 @@
     <string name="InuGhostHideTyping">إخفاء الكتابة وتقدم الرفع</string>
     <string name="InuGhostPresenceMode">حالة الاتصال</string>
     <string name="InuGhostPresenceModeNormal">عادية</string>
+    <string name="InuGhostSilentSend">إرسال بدون صوت</string>
+    <string name="InuGhostSilentSendOff">أبداً</string>
+    <string name="InuGhostSilentSendGhost">في وضع الشبح</string>
+    <string name="InuGhostSilentSendAlways">دائماً</string>
+    <string name="InuGhostStoryAlert">اسأل قبل فتح القصص</string>
+    <string name="InuGhostStoryAlertInfo">عندما لا يخفي وضع الشبح مشاهدات القصص، يُسأل قبل فتح قصة غير مشاهَدة.</string>
+    <string name="InuStoryGhostAlertTitle">وضع الشبح لا يخفي هذه المشاهدة</string>
+    <string name="InuStoryGhostAlertMessage">فتح هذه القصة سيجعلها مشاهَدة. هل تريد تفعيل وضع الشبح أولاً؟</string>
+    <string name="InuStoryGhostAlertEnable">تفعيل وضع الشبح</string>
+    <string name="InuStoryGhostAlertWatch">شاهد على أي حال</string>
+    <string name="InuStoryGhostAlertNever">لا تسأل مرة أخرى</string>
     <string name="InuGhostPresenceModeHidden">مخفية دائماً</string>
     <string name="InuGhostPresenceModeDelayed">قطع الاتصال بعد وقت قصير من الاتصال</string>
 

@@ -1125,6 +1125,17 @@
     <string name="InuGhostHideTyping">Yazıyor ve yükleme durumunu gizle</string>
     <string name="InuGhostPresenceMode">Çevrim içi durumu</string>
     <string name="InuGhostPresenceModeNormal">Normal</string>
+    <string name="InuGhostSilentSend">Sessiz gönder</string>
+    <string name="InuGhostSilentSendOff">Asla</string>
+    <string name="InuGhostSilentSendGhost">Hayalet modunda</string>
+    <string name="InuGhostSilentSendAlways">Her zaman</string>
+    <string name="InuGhostStoryAlert">Hikayeleri açmadan önce sor</string>
+    <string name="InuGhostStoryAlertInfo">Hayalet modu hikaye görüntülemelerini gizlemiyorsa, görülmemiş bir hikayeyi açmadan önce sorar.</string>
+    <string name="InuStoryGhostAlertTitle">Hayalet modu bu görüntülemeyi gizlemiyor</string>
+    <string name="InuStoryGhostAlertMessage">Bu hikayeyi açmak onu görüldü olarak işaretler. Önce hayalet modu açılsın mı?</string>
+    <string name="InuStoryGhostAlertEnable">Hayalet modunu aç</string>
+    <string name="InuStoryGhostAlertWatch">Yine de izle</string>
+    <string name="InuStoryGhostAlertNever">Bir daha sorma</string>
     <string name="InuGhostPresenceModeHidden">Her zaman gizli</string>
     <string name="InuGhostPresenceModeDelayed">Çevrim içi olduktan kısa süre sonra çevrim dışı ol</string>
     <string name="InuGhostScope">Uygulanacak yerler</string>

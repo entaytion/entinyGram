@@ -1369,6 +1369,17 @@
     <string name="InuGhostHideTyping">پنهان کردن تایپ و پیشرفت بارگذاری</string>
     <string name="InuGhostPresenceMode">وضعیت آنلاین</string>
     <string name="InuGhostPresenceModeNormal">عادی</string>
+    <string name="InuGhostSilentSend">ارسال بدون صدا</string>
+    <string name="InuGhostSilentSendOff">هرگز</string>
+    <string name="InuGhostSilentSendGhost">در حالت روح</string>
+    <string name="InuGhostSilentSendAlways">همیشه</string>
+    <string name="InuGhostStoryAlert">پرسش پیش از باز کردن استوری‌ها</string>
+    <string name="InuGhostStoryAlertInfo">وقتی حالت روح بازدید استوری را پنهان نمی‌کند، پیش از باز کردن استوری دیده‌نشده می‌پرسد.</string>
+    <string name="InuStoryGhostAlertTitle">حالت روح این بازدید را پنهان نمی‌کند</string>
+    <string name="InuStoryGhostAlertMessage">باز کردن این استوری آن را دیده‌شده علامت می‌زند. ابتدا حالت روح روشن شود؟</string>
+    <string name="InuStoryGhostAlertEnable">روشن کردن حالت روح</string>
+    <string name="InuStoryGhostAlertWatch">به هر حال ببین</string>
+    <string name="InuStoryGhostAlertNever">دیگر نپرس</string>
     <string name="InuGhostPresenceModeHidden">همیشه پنهان</string>
     <string name="InuGhostPresenceModeDelayed">مدتی کوتاه پس از آنلاین شدن آفلاین شو</string>
 

@@ -659,3 +659,4 @@ entiny/add-to-folder-in-folder.patch
 entiny/file-ref-stale-cache-stall.patch
 entiny/archive-chat.patch
 entiny/copy-restricted.patch
+entiny/story-ghost-alert.patch
