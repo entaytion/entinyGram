@@ -68,7 +68,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         val onClick: (MenuOrderRow) -> Unit,
     )
 
-    protected fun isAvailable(item: I): Boolean = !BuildConfig.INU_PLUGINLESS || item.key != "actions"
+    protected fun isAvailable(item: I): Boolean = item.isFeatureOn && (!BuildConfig.INU_PLUGINLESS || item.key != "actions")
 
     protected open fun isToggleable(item: I): Boolean = true
 
@@ -131,7 +131,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         val showActions = false
         // #endif
         val builtIns = entries.filter {
-            !it.bottom && mainRowVisible(it) && (it.item.key != "actions" || showActions)
+            !it.bottom && mainRowVisible(it) && it.item.isFeatureOn && (it.item.key != "actions" || showActions)
         }
         // #if PLUGINS
         val pinned = if (kind == null || !InuConfig.PLUGINS_ENABLED.value) {
@@ -222,7 +222,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         val showActions = false
         // #endif
         val visible = entries.filter {
-            !it.bottom && mainRowVisible(it) && (it.item.key != "actions" || showActions)
+            !it.bottom && mainRowVisible(it) && it.item.isFeatureOn && (it.item.key != "actions" || showActions)
         }
         if (reordered.size != visible.size) return
         val byItem = entries.associateBy { it.item }

@@ -1411,7 +1411,6 @@
     <string name="InuNetworkAndNotifications">شبکه و اعلان‌ها</string>
     <string name="InuNo">خیر</string>
     <string name="InuNoEditHistory">تاریخچه ویرایشی برای این پیام ثبت نشده است</string>
-    <string name="InuNoHiddenMessages">پیام پنهانی در اینجا نیست</string>
     <string name="InuNoJoinedNotifications">اطلاع ندادن به مخاطبان هنگام ثبت‌نام</string>
     <string name="InuNoJoinedNotificationsInfo">هنگام ثبت‌نام شماره جدید از تلگرام بخواه به کسانی که شماره را ذخیره کرده‌اند خبر ندهد</string>
     <string name="InuNonIslandChatElements">عناصر گفتگو</string>
@@ -1922,7 +1921,6 @@
     <string name="InuRestartApp">راه‌اندازی مجدد برنامه</string>
     <string name="InuRestartNow">راه‌اندازی مجدد</string>
     <string name="InuRestartRequired">برای اعمال تغییرات، راه‌اندازی مجدد لازم است</string>
-    <string name="InuRestoreHiddenMessages">نمایش پیام‌های پنهان</string>
     <string name="InuRestrictedContentCopy">کپی</string>
     <string name="InuRestrictedContentFull">دور زدن کامل</string>
     <string name="InuRestrictedContentMode">چت‌های محافظت‌شده</string>

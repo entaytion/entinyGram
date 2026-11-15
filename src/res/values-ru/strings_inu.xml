@@ -1418,7 +1418,6 @@
     <string name="InuNetworkAndNotifications">Сеть и уведомления</string>
     <string name="InuNo">Нет</string>
     <string name="InuNoEditHistory">История редактирования отсутствует</string>
-    <string name="InuNoHiddenMessages">Здесь нет скрытых сообщений</string>
     <string name="InuNoJoinedNotifications">Не уведомлять контакты о регистрации</string>
     <string name="InuNoJoinedNotificationsInfo">При регистрации нового номера просить Telegram не сообщать тем, у кого он сохранён</string>
     <string name="InuNonIslandChatElements">Элементы чата</string>
@@ -1933,7 +1932,6 @@
     <string name="InuRestartApp">Перезапустить приложение</string>
     <string name="InuRestartNow">Перезапустить</string>
     <string name="InuRestartRequired">Требуется перезапуск</string>
-    <string name="InuRestoreHiddenMessages">Показать скрытые сообщения</string>
     <string name="InuRestrictedContentCopy">Копирование</string>
     <string name="InuRestrictedContentFull">Полный обход</string>
     <string name="InuRestrictedContentMode">Защищённые чаты</string>

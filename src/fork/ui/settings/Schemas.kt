@@ -126,6 +126,10 @@ object Schemas {
             toggle(InuConfig.DISABLE_BOT_DRAFT_TOP, R.string.InuDisableBotDraftTop)
             toggle(InuConfig.DISABLE_LINK_PREVIEWS, R.string.InuDisableLinkPreviews, R.string.InuDisableLinkPreviewsInfo)
         }
+        section(R.string.InuMenus) {
+            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_arrows_sort, slug = "chat-menu-order") { ChatMenuOrderActivity() }
+            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_message_dots, slug = "message-menu-order") { MessageMenuOrderActivity() }
+        }
         section(R.string.InuChatNavigation) {
             toggle(InuConfig.DISABLE_PULL_TO_NEXT, R.string.InuDisablePullToNext)
             toggle(InuConfig.CHAT_ALWAYS_SHOW_DOWN, R.string.InuChatAlwaysShowDown, R.string.InuChatAlwaysShowDownInfo)
@@ -408,10 +412,6 @@ object Schemas {
             toggle(InuConfig.SHOW_SECONDS, R.string.InuShowSeconds)
             toggle(InuConfig.DISABLE_ROUNDING, R.string.InuDisableRounding, R.string.InuDisableRoundingInfo)
         }
-        section(R.string.InuMenus) {
-            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_arrows_sort, slug = "chat-menu-order") { ChatMenuOrderActivity() }
-            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_message_dots, slug = "message-menu-order") { MessageMenuOrderActivity() }
-        }
     }
 
     val MEDIA = schema("media-calls", R.string.InuMediaAndCalls, R.drawable.msg_calls) {
@@ -483,6 +483,12 @@ object Schemas {
                 slug = "local-names",
             ) { LocalNamesSettingsActivity() }
         }
+        section(R.string.InuMenus) {
+            toggle(InuConfig.ACCENT_ICONS, R.string.InuAccentIcons) { page, _ -> page.rebuildAll() }
+            toggle(InuConfig.COMPACT_SETTINGS, R.string.InuCompactSettings) { page, _ -> page.rebuildAll() }
+            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-settings-rows-order") { ProfileSettingsMenuOrderActivity() }
+            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-info-rows-order") { ProfileInfoMenuOrderActivity() }
+        }
         section(R.string.InuAccountsSection) {
             toggle(InuConfig.SETTINGS_SHOW_ACCOUNTS, R.string.InuSettingsShowAccounts)
             toggle(
@@ -490,12 +496,6 @@ object Schemas {
                 visible = { UserConfig.getActivatedAccountsCount() > 1 },
                 onChange = { page, _ -> page.parentActivity?.let { ShortcutHelper.sync(it) } },
             )
-        }
-        section(R.string.InuMenus) {
-            toggle(InuConfig.ACCENT_ICONS, R.string.InuAccentIcons) { page, _ -> page.rebuildAll() }
-            toggle(InuConfig.COMPACT_SETTINGS, R.string.InuCompactSettings) { page, _ -> page.rebuildAll() }
-            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-settings-rows-order") { ProfileSettingsMenuOrderActivity() }
-            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-info-rows-order") { ProfileInfoMenuOrderActivity() }
         }
     }
 
@@ -859,6 +859,10 @@ object Schemas {
             link(R.string.InuBookmarks, R.drawable.msg_fave, slug = "bookmarks-open") { BookmarksManagerActivity() }
             link(R.string.InuFeed, R.drawable.msg_channel, slug = "feed-open") { FeedExcludedChannelsSettingsActivity() }
         }
+        section(R.string.InuMenus) {
+            link(R.string.InuSideMenu, R.drawable.inu_tabler_layout_sidebar) { DrawerMenuOrderActivity() }
+            link(R.string.InuDialogsMenuOrder, R.drawable.inu_tabler_list_details, slug = "dialogs-menu-order") { DialogsMenuOrderActivity() }
+        }
         section(R.string.InuRecentChats, R.string.InuRecentChatsStyleInfo) {
             toggle(
                 InuConfig.RECENT_CHATS_ENABLED, R.string.InuRecentChats,
@@ -975,10 +979,6 @@ object Schemas {
                 visible = { InuConfig.NAVIGATION_DRAWER.value },
                 onChange = { _, _ -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged) },
             )
-        }
-        section(R.string.InuMenus) {
-            link(R.string.InuSideMenu, R.drawable.inu_tabler_layout_sidebar) { DrawerMenuOrderActivity() }
-            link(R.string.InuDialogsMenuOrder, R.drawable.inu_tabler_list_details, slug = "dialogs-menu-order") { DialogsMenuOrderActivity() }
         }
     }
 

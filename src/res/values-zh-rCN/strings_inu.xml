@@ -1410,7 +1410,6 @@
     <string name="InuNetworkAndNotifications">网络与通知</string>
     <string name="InuNo">否</string>
     <string name="InuNoEditHistory">没有可用的编辑历史</string>
-    <string name="InuNoHiddenMessages">此处没有隐藏消息</string>
     <string name="InuNoJoinedNotifications">注册时不通知联系人</string>
     <string name="InuNoJoinedNotificationsInfo">注册新号码时，要求 Telegram 不通知保存了该号码的人</string>
     <string name="InuNonIslandChatElements">聊天元素</string>
@@ -1920,7 +1919,6 @@
     <string name="InuRestartApp">重启应用</string>
     <string name="InuRestartNow">重启</string>
     <string name="InuRestartRequired">需要重启以应用更改</string>
-    <string name="InuRestoreHiddenMessages">显示隐藏的消息</string>
     <string name="InuRestrictedContentCopy">复制</string>
     <string name="InuRestrictedContentFull">完全绕过</string>
     <string name="InuRestrictedContentMode">受保护的聊天</string>

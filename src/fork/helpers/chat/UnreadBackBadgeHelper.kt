@@ -95,7 +95,7 @@ class BackButtonBadge(private val bar: ActionBar) : FactorAnimator.Target {
         if (iosShape()) {
             textPaint.textSize = dpf2(12f)
             val width = (chipWidth.getFactor() * presence.getFactor() + dpf2(CHIP_TRIM) * (1f - presence.getFactor()))
-                .coerceIn(dpf2(CHIP_H), chipWidth.getFactor())
+                .coerceAtMost(chipWidth.getFactor()).coerceAtLeast(dpf2(CHIP_H))
             val left = cx - dpf2(ARROW_SLIDE) * fade + dpf2(CHIP_GAP)
             chip.set(left, cy - dpf2(CHIP_H) / 2f, left + width, cy + dpf2(CHIP_H) / 2f)
             drawChip(canvas, alpha, scale, Theme.key_actionBarActionModeDefault, Theme.key_actionBarActionModeDefaultIcon)

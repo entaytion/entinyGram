@@ -1412,7 +1412,6 @@
     <string name="InuNetworkAndNotifications">Ağ ve bildirimler</string>
     <string name="InuNo">Hayır</string>
     <string name="InuNoEditHistory">Düzenleme geçmişi yok</string>
-    <string name="InuNoHiddenMessages">Burada gizli mesaj yok</string>
     <string name="InuNoJoinedNotifications">Kayıtta kişilere bildirme</string>
     <string name="InuNoJoinedNotificationsInfo">Yeni numara kaydederken Telegram\'dan numarayı kayıtlı tutanlara haber vermemesini iste</string>
     <string name="InuNonIslandChatElements">Sohbet ögeleri</string>
@@ -1923,7 +1922,6 @@
     <string name="InuRestartApp">Uygulamayı yeniden başlat</string>
     <string name="InuRestartNow">Yeniden başlat</string>
     <string name="InuRestartRequired">Değişikliklerin uygulanması için yeniden başlatma gerekiyor</string>
-    <string name="InuRestoreHiddenMessages">Gizli mesajları göster</string>
     <string name="InuRestrictedContentCopy">Kopyalama</string>
     <string name="InuRestrictedContentFull">Tam atlatma</string>
     <string name="InuRestrictedContentMode">Korumalı sohbetler</string>

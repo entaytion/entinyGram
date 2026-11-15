@@ -1433,7 +1433,6 @@
     <string name="InuNetworkAndNotifications">Мережа та сповіщення</string>
     <string name="InuNo">Ні</string>
     <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
-    <string name="InuNoHiddenMessages">Тут немає прихованих повідомлень</string>
     <string name="InuNoJoinedNotifications">Не сповіщати контакти про реєстрацію</string>
     <string name="InuNoJoinedNotificationsInfo">Під час реєстрації нового номера просити Telegram не повідомляти тих, у кого він збережений</string>
     <string name="InuNonIslandChatElements">Елементи чату</string>
@@ -1948,7 +1947,6 @@
     <string name="InuRestartApp">Перезапустити застосунок</string>
     <string name="InuRestartNow">Перезапустити</string>
     <string name="InuRestartRequired">Необхідно перезапустити додаток для застосування змін</string>
-    <string name="InuRestoreHiddenMessages">Показати приховані повідомлення</string>
     <string name="InuRestrictedContentCopy">Копіювання</string>
     <string name="InuRestrictedContentFull">Повний обхід</string>
     <string name="InuRestrictedContentMode">Захищені чати</string>

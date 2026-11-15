@@ -1423,7 +1423,6 @@
     <string name="InuNetworkAndNotifications">الشبكة والإشعارات</string>
     <string name="InuNo">لا</string>
     <string name="InuNoEditHistory">لا يوجد سجل تعديلات مسجَّل لهذه الرسالة</string>
-    <string name="InuNoHiddenMessages">لا توجد رسائل مخفية هنا</string>
     <string name="InuNoJoinedNotifications">عدم إشعار جهات الاتصال عند التسجيل</string>
     <string name="InuNoJoinedNotificationsInfo">عند تسجيل رقم جديد، اطلب من تيليجرام عدم إبلاغ من حفظوا الرقم</string>
     <string name="InuNonIslandChatElements">عناصر المحادثة</string>
@@ -1937,7 +1936,6 @@
     <string name="InuRestartApp">إعادة تشغيل التطبيق</string>
     <string name="InuRestartNow">إعادة التشغيل</string>
     <string name="InuRestartRequired">يتطلب إعادة التشغيل لتطبيق التغييرات</string>
-    <string name="InuRestoreHiddenMessages">إظهار الرسائل المخفية</string>
     <string name="InuRestrictedContentCopy">النسخ</string>
     <string name="InuRestrictedContentFull">تجاوز كامل</string>
     <string name="InuRestrictedContentMode">الدردشات المحمية</string>

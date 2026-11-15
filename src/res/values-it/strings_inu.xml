@@ -1425,7 +1425,6 @@ Tocca per personalizzare…</string>
     <string name="InuNetworkAndNotifications">Rete e notifiche</string>
     <string name="InuNo">No</string>
     <string name="InuNoEditHistory">Nessuna cronologia delle modifiche registrata per questo messaggio</string>
-    <string name="InuNoHiddenMessages">Nessun messaggio nascosto qui</string>
     <string name="InuNoJoinedNotifications">Non avvisare i contatti alla registrazione</string>
     <string name="InuNoJoinedNotificationsInfo">Registrando un nuovo numero, chiedi a Telegram di non avvisare chi lo ha salvato</string>
     <string name="InuNonIslandChatElements">Elementi della chat</string>
@@ -1945,7 +1944,6 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuRestartApp">Riavvia l\'app</string>
     <string name="InuRestartNow">Riavvia</string>
     <string name="InuRestartRequired">Riavvio necessario per applicare le modifiche</string>
-    <string name="InuRestoreHiddenMessages">Mostra messaggi nascosti</string>
     <string name="InuRestrictedContentCopy">Copia</string>
     <string name="InuRestrictedContentFull">Bypass completo</string>
     <string name="InuRestrictedContentMode">Chat protette</string>

@@ -18,6 +18,8 @@ interface MenuOrderItem {
     val label: CharSequence get() = org.telegram.messenger.LocaleController.getString(labelRes)
 
     val isSlot: Boolean get() = false
+
+    val isFeatureOn: Boolean get() = true
 }
 
 data class MenuOrderEntry<I : MenuOrderItem>(val item: I, val enabled: Boolean, val bottom: Boolean = false)
@@ -133,10 +135,12 @@ inline fun <Row> reorderByKeys(
     return ordered
 }
 
+private const val OWN_ID_BASE = 700_000
+
 class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
     enum class Item(
         override val key: String,
-        val ids: List<Int>,
+        private val stockIds: List<Int>,
         override val labelRes: Int,
         override val iconRes: Int,
     ) : MenuOrderItem {
@@ -158,45 +162,56 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         BOT_HELP("bot_help", listOf(ChatActivity.bot_help), R.string.InuBotHelp, R.drawable.msg_help),
         OPEN_FORUM("open_forum", listOf(ChatActivity.open_forum), R.string.OpenAllTopics, R.drawable.msg_discussion),
         CLOSE_TOPIC("close_topic", listOf(ChatActivity.topic_close), R.string.CloseTopic, R.drawable.msg_topic_close),
-        SHOW_PINNED_PANEL("show_pinned_panel", listOf(ChatActionsHelper.ACTION_SHOW_PINNED_PANEL), R.string.InuShowPinnedPanel, R.drawable.msg_pin),
-        SHOW_HIDDEN_MESSAGES(
-            "show_hidden_messages",
-            listOf(ChatActionsHelper.ACTION_SHOW_HIDDEN_MESSAGES),
-            R.string.InuShowFilteredMessages,
-            R.drawable.msg_message
-        ),
-        RECENT_ACTIONS("recent_actions", listOf(ChatActionsHelper.ACTION_RECENT_ACTIONS), R.string.EventLog, R.drawable.msg_log),
-        GO_TO_BEGINNING("go_to_beginning", listOf(ChatActionsHelper.ACTION_GO_TO_BEGINNING), R.string.InuJumpToBeginning, R.drawable.msg_go_up),
-        GO_TO_MESSAGE("go_to_message", listOf(ChatActionsHelper.ACTION_GO_TO_MESSAGE), R.string.InuGoToMessage, R.drawable.msg_message),
-        LINKED_CHAT("linked_chat", listOf(ChatActionsHelper.ACTION_LINKED_CHAT), R.string.InuLinkedChat, R.drawable.msg_groups),
-        HIDE_TITLE("hide_title", listOf(ChatActionsHelper.ACTION_HIDE_TITLE), R.string.InuHideTitle, R.drawable.inu_tabler_eye_off),
-        CLEAR_DELETED("clear_deleted", listOf(ChatActionsHelper.ACTION_CLEAR_DELETED), R.string.InuClearDeletedHere, R.drawable.inu_tabler_trash_x),
-        STATISTICS("statistics", listOf(ChatActionsHelper.ACTION_STATISTICS), R.string.Statistics, R.drawable.msg_stats),
-        ADMINISTRATORS("administrators", listOf(ChatActionsHelper.ACTION_ADMINISTRATORS), R.string.ChannelAdministrators, R.drawable.msg_admins),
-        PERMISSIONS("permissions", listOf(ChatActionsHelper.ACTION_PERMISSIONS), R.string.ChannelPermissions, R.drawable.msg_permissions),
-        INVITE_LINKS("invite_links", listOf(ChatActionsHelper.ACTION_INVITE_LINKS), R.string.InviteLinks, R.drawable.msg_link2),
-        TYPING_SPOOF("typing_spoof", listOf(ChatActionsHelper.ACTION_TYPING_SPOOF), R.string.InuTypingSpoof, R.drawable.input_mic),
-        REGEX_CHAT_FILTERS("regex_chat_filters", listOf(ChatActionsHelper.ACTION_REGEX_CHAT_FILTERS), R.string.InuRegexChatFilters, R.drawable.msg_block2),
-        DELETED_MESSAGES("deleted_messages", listOf(ChatActionsHelper.ACTION_DELETED_MESSAGES), R.string.InuDeletedArchive, R.drawable.msg_delete),
-        EDITED_MESSAGES("edited_messages", listOf(ChatActionsHelper.ACTION_EDITED_MESSAGES), R.string.InuEditedArchive, R.drawable.msg_edit),
-        GHOST_MODE("ghost_mode", listOf(ChatActionsHelper.ACTION_GHOST_MODE), R.string.InuGhostMode, R.drawable.inu_ghost),
-        CHAT_EXPORT("chat_export", listOf(ChatActionsHelper.ACTION_CHAT_EXPORT), R.string.InuChatExport, R.drawable.msg_share_solar),
-        SHOW_HIDDEN("show_hidden", listOf(ChatActionsHelper.ACTION_SHOW_HIDDEN), R.string.InuRestoreHiddenMessages, R.drawable.inu_tabler_eye),
-        CHAT_PROXY("chat_proxy", listOf(ChatActionsHelper.ACTION_CHAT_PROXY), R.string.ProxySettings, R.drawable.outline_shield_check),
-        SILENT_BROADCAST("silent_broadcast", listOf(ChatActionsHelper.ACTION_SILENT_BROADCAST), R.string.InuSilentBroadcast, R.drawable.input_notify_on),
-        BUSINESS_BOT("business_bot", listOf(ChatActionsHelper.ACTION_BUSINESS_BOT), R.string.InuBusinessBot, R.drawable.msg_bot),
-        CHAT_LOCAL_NAME("chat_local_name", listOf(ChatActionsHelper.ACTION_CHAT_LOCAL_NAME), R.string.InuLocalName, R.drawable.msg_edit),
-        CHAT_MARK_READ("chat_mark_read", listOf(ChatActionsHelper.ACTION_CHAT_MARK_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
-        CHAT_DELETE_MY_MESSAGES("chat_delete_my_messages", listOf(ChatActionsHelper.ACTION_CHAT_DELETE_MY_MESSAGES), R.string.InuDeleteMyMessages, R.drawable.msg_delete),
-        CHAT_FORWARD_ALL("chat_forward_all", listOf(ChatActionsHelper.ACTION_CHAT_FORWARD_ALL), R.string.InuForwardAll, R.drawable.msg_forward),
-        ENTINY_MENU("entiny_menu", listOf(ChatActionsHelper.ACTION_ENTINY_MENU), R.string.InuChatMenuEntinyGram, R.drawable.icon_settings_inu),
-        ACTIONS("actions", listOf(ChatActionsHelper.ACTION_PLUGIN_ACTIONS), R.string.InuActions, R.drawable.msg_settings_old);
+        SHOW_PINNED_PANEL("show_pinned_panel", R.string.InuShowPinnedPanel, R.drawable.msg_pin),
+        SHOW_HIDDEN_MESSAGES("show_hidden_messages", R.string.InuShowFilteredMessages, R.drawable.msg_message),
+        RECENT_ACTIONS("recent_actions", R.string.EventLog, R.drawable.msg_log),
+        GO_TO_BEGINNING("go_to_beginning", R.string.InuJumpToBeginning, R.drawable.msg_go_up),
+        GO_TO_MESSAGE("go_to_message", R.string.InuGoToMessage, R.drawable.msg_message),
+        LINKED_CHAT("linked_chat", R.string.InuLinkedChat, R.drawable.msg_groups),
+        HIDE_TITLE("hide_title", R.string.InuHideTitle, R.drawable.inu_tabler_eye_off),
+        CLEAR_DELETED("clear_deleted", R.string.InuClearDeletedHere, R.drawable.inu_tabler_trash_x),
+        STATISTICS("statistics", R.string.Statistics, R.drawable.msg_stats),
+        ADMINISTRATORS("administrators", R.string.ChannelAdministrators, R.drawable.msg_admins),
+        PERMISSIONS("permissions", R.string.ChannelPermissions, R.drawable.msg_permissions),
+        INVITE_LINKS("invite_links", R.string.InviteLinks, R.drawable.msg_link2),
+        TYPING_SPOOF("typing_spoof", R.string.InuTypingSpoof, R.drawable.input_mic),
+        REGEX_CHAT_FILTERS("regex_chat_filters", R.string.InuRegexChatFilters, R.drawable.msg_block2),
+        DELETED_MESSAGES("deleted_messages", R.string.InuDeletedArchive, R.drawable.msg_delete),
+        EDITED_MESSAGES("edited_messages", R.string.InuEditedArchive, R.drawable.msg_edit),
+        GHOST_MODE("ghost_mode", R.string.InuGhostMode, R.drawable.inu_ghost),
+        CHAT_EXPORT("chat_export", R.string.InuChatExport, R.drawable.msg_share_solar),
+        CHAT_PROXY("chat_proxy", R.string.ProxySettings, R.drawable.outline_shield_check),
+        SILENT_BROADCAST("silent_broadcast", R.string.InuSilentBroadcast, R.drawable.input_notify_on),
+        BUSINESS_BOT("business_bot", R.string.InuBusinessBot, R.drawable.msg_bot),
+        CHAT_LOCAL_NAME("chat_local_name", R.string.InuLocalName, R.drawable.msg_edit),
+        CHAT_MARK_READ("chat_mark_read", R.string.InuMarkChatAsRead, R.drawable.msg_markread),
+        CHAT_DELETE_MY_MESSAGES("chat_delete_my_messages", R.string.InuDeleteMyMessages, R.drawable.msg_delete),
+        CHAT_FORWARD_ALL("chat_forward_all", R.string.InuForwardAll, R.drawable.msg_forward),
+        ENTINY_MENU("entiny_menu", R.string.InuChatMenuEntinyGram, R.drawable.icon_settings_inu),
+        ACTIONS("actions", R.string.InuActions, R.drawable.msg_settings_old);
+
+        // entiny: fork-owned entries get an id from their position, no ACTION_* constant to keep in sync
+        constructor(key: String, labelRes: Int, iconRes: Int) : this(key, emptyList(), labelRes, iconRes)
+
+        val ids: List<Int> get() = stockIds.ifEmpty { listOf(OWN_ID_BASE + ordinal) }
+        val id: Int get() = ids.first()
 
         val isEntinyMenuItem: Boolean
             get() = when (this) {
                 CLEAR_DELETED, TYPING_SPOOF, REGEX_CHAT_FILTERS, DELETED_MESSAGES, EDITED_MESSAGES,
-                GHOST_MODE, SHOW_HIDDEN, CHAT_LOCAL_NAME, CHAT_MARK_READ, SHOW_HIDDEN_MESSAGES -> true
+                GHOST_MODE, CHAT_LOCAL_NAME, CHAT_MARK_READ, SHOW_HIDDEN_MESSAGES -> true
                 else -> false
+            }
+
+        override val isFeatureOn: Boolean
+            get() = when (this) {
+                CHAT_LOCAL_NAME -> InuConfig.LOCAL_NAMES.value
+                CHAT_EXPORT -> InuConfig.CHAT_EXPORT.value
+                SILENT_BROADCAST -> InuConfig.NOTIFY_BELL_IN_MENU.value
+                BUSINESS_BOT -> InuConfig.HIDE_BUSINESS_BOT_BANNER.value
+                REGEX_CHAT_FILTERS -> InuConfig.REGEX_FILTER_ENABLED.value
+                ACTIONS -> InuConfig.PLUGINS_ENABLED.value
+                else -> true
             }
 
         companion object {
@@ -209,7 +224,11 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
             private val byKey: Map<String, Item> by lazy { Item.entries.associateBy { it.key } }
 
             fun forId(id: Int): Item? = byId[id]
-            fun forKey(k: String): Item? = if (k == "delete_own_messages") CHAT_DELETE_MY_MESSAGES else byKey[k]
+            fun forKey(k: String): Item? = when (k) {
+                "delete_own_messages" -> CHAT_DELETE_MY_MESSAGES
+                "show_hidden" -> SHOW_HIDDEN_MESSAGES
+                else -> byKey[k]
+            }
         }
     }
 
@@ -220,7 +239,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
             Item.RECENT_ACTIONS, Item.GO_TO_BEGINNING, Item.GO_TO_MESSAGE,
             Item.STATISTICS, Item.ADMINISTRATORS, Item.PERMISSIONS, Item.INVITE_LINKS,
             Item.LINKED_CHAT, Item.HIDE_TITLE, Item.CLEAR_DELETED,
-            Item.CHAT_EXPORT, Item.CHAT_LOCAL_NAME, Item.CHAT_MARK_READ, Item.CHAT_DELETE_MY_MESSAGES, Item.CHAT_PROXY, Item.SHOW_HIDDEN,
+            Item.CHAT_EXPORT, Item.CHAT_LOCAL_NAME, Item.CHAT_MARK_READ, Item.CHAT_DELETE_MY_MESSAGES, Item.CHAT_PROXY,
             Item.CHAT_FORWARD_ALL,
         )
     }
@@ -353,6 +372,12 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
         RESTART_APP("restart_app", R.string.InuRestartApp, R.drawable.msg_retry),
         SETTINGS("settings", R.string.Settings, R.drawable.msg_settings_old);
 
+        override val isFeatureOn: Boolean
+            get() = when (this) {
+                RECENT_CHATS -> InuConfig.RECENT_CHATS_ENABLED.value
+                else -> true
+            }
+
         companion object {
             private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
             fun forKey(k: String): Item? = byKey[k]
@@ -465,6 +490,15 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         SLOT_DELETE("slot_delete", emptyList(), R.string.InuMenuSlotDelete, R.drawable.msg_delete, true),
         SLOT_EDIT_FORWARD("slot_edit_forward", emptyList(), R.string.InuMenuSlotEditForward, R.drawable.msg_edit, true);
 
+        override val isFeatureOn: Boolean
+            get() = when (this) {
+                FORWARD_PRO -> InuConfig.FORWARD_PRO.value
+                ADD_FILTER -> InuConfig.REGEX_FILTER_ENABLED.value
+                EDIT_HISTORY -> InuConfig.SAVE_EDITED_MESSAGES.value
+                ACTIONS -> InuConfig.PLUGINS_ENABLED.value
+                else -> true
+            }
+
         companion object {
             private val byOption: Map<Int, Item> by lazy {
                 val map = HashMap<Int, Item>()
@@ -519,6 +553,12 @@ class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key
         DIVIDER_8("divider_8", R.string.InuMenuDivider, R.drawable.msg_list);
 
         val isDivider: Boolean get() = key.startsWith("divider_")
+
+        override val isFeatureOn: Boolean
+            get() = when (this) {
+                RECENT_CHATS -> InuConfig.RECENT_CHATS_ENABLED.value
+                else -> true
+            }
 
         companion object {
             private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }

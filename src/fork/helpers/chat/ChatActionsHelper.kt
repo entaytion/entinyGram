@@ -70,35 +70,7 @@ import org.telegram.ui.StatisticActivity
 
 object ChatActionsHelper {
     const val ACTION_OPEN_IN_DISCUSSION = 504
-    const val ACTION_SHOW_PINNED_PANEL = 506
     const val ACTION_PINNED_UNPIN_ALL = 507
-    const val ACTION_RECENT_ACTIONS = 513
-    const val ACTION_GO_TO_BEGINNING = 514
-    const val ACTION_GO_TO_MESSAGE = 515
-    const val ACTION_STATISTICS = 517
-    const val ACTION_ADMINISTRATORS = 518
-    const val ACTION_PERMISSIONS = 519
-    const val ACTION_INVITE_LINKS = 520
-    const val ACTION_TYPING_SPOOF = 521
-    const val ACTION_REGEX_CHAT_FILTERS = 522
-    const val ACTION_GHOST_MODE = 540
-    const val ACTION_LINKED_CHAT = 523
-    const val ACTION_HIDE_TITLE = 524
-    const val ACTION_CLEAR_DELETED = 525
-    const val ACTION_DELETED_MESSAGES = 541
-    const val ACTION_PLUGIN_ACTIONS = 542
-    const val ACTION_CHAT_EXPORT = 543
-    const val ACTION_CHAT_LOCAL_NAME = 544
-    const val ACTION_CHAT_MARK_READ = 545
-    const val ACTION_CHAT_DELETE_MY_MESSAGES = 546
-    const val ACTION_EDITED_MESSAGES = 547
-    const val ACTION_CHAT_PROXY = 548
-    const val ACTION_SHOW_HIDDEN = 549
-    const val ACTION_BUSINESS_BOT = 550
-    const val ACTION_SILENT_BROADCAST = 551
-    const val ACTION_SHOW_HIDDEN_MESSAGES = 552
-    const val ACTION_ENTINY_MENU = 553
-    const val ACTION_CHAT_FORWARD_ALL = 554
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -118,7 +90,7 @@ object ChatActionsHelper {
 
     private fun addEntinyItems(activity: ChatActivity, headerItem: ActionBarMenuItem) {
         val visible = InuConfig.CHAT_MENU_ITEMS.value
-            .filter { it.enabled && it.item.isEntinyMenuItem }
+            .filter { it.enabled && it.item.isEntinyMenuItem && it.item.isFeatureOn }
             .filter { isEntinyItemAvailable(it.item, activity) }
         if (visible.isEmpty() || InuConfig.CHAT_MENU_ITEMS.value.none { it.enabled && it.item == ChatMenuConfig.Item.ENTINY_MENU }) return
         val popup = headerItem.getPopupLayout()
@@ -130,7 +102,7 @@ object ChatActionsHelper {
         for (entry in visible) {
             val item = entry.item
             submenu.add(item.iconRes, LocaleController.getString(item.labelRes)) {
-                handleClick(item.ids.first(), activity)
+                handleClick(item.id, activity)
                 headerItem.closeSubMenu()
             }
             if (item == ChatMenuConfig.Item.SHOW_HIDDEN_MESSAGES) {
@@ -138,7 +110,7 @@ object ChatActionsHelper {
             }
         }
         headerItem.inu_lazilyAddSwipeBackItem(
-            ACTION_ENTINY_MENU,
+            ChatMenuConfig.Item.ENTINY_MENU.id,
             R.drawable.icon_settings_inu,
             null,
             LocaleController.getString(R.string.InuChatMenuEntinyGram),
@@ -208,57 +180,57 @@ object ChatActionsHelper {
     fun addItems(activity: ChatActivity, headerItem: ActionBarMenuItem) {
         if (activity.currentEncryptedChat == null) {
             headerItem.lazilyAddSubItem(
-                ACTION_SHOW_PINNED_PANEL, R.drawable.msg_pin,
+                ChatMenuConfig.Item.SHOW_PINNED_PANEL.id, R.drawable.msg_pin,
                 LocaleController.getString(R.string.InuShowPinnedPanel),
             )
-            headerItem.setSubItemShown(ACTION_SHOW_PINNED_PANEL, false)
+            headerItem.setSubItemShown(ChatMenuConfig.Item.SHOW_PINNED_PANEL.id, false)
         }
         if (canViewAdminLog(activity.currentChat)) {
             headerItem.lazilyAddSubItem(
-                ACTION_RECENT_ACTIONS, R.drawable.msg_log,
+                ChatMenuConfig.Item.RECENT_ACTIONS.id, R.drawable.msg_log,
                 LocaleController.getString(R.string.EventLog),
             )
         }
         headerItem.lazilyAddSubItem(
-            ACTION_GO_TO_BEGINNING, R.drawable.msg_go_up,
+            ChatMenuConfig.Item.GO_TO_BEGINNING.id, R.drawable.msg_go_up,
             LocaleController.getString(R.string.InuJumpToBeginning),
         )
         headerItem.lazilyAddSubItem(
-            ACTION_GO_TO_MESSAGE, R.drawable.msg_message,
+            ChatMenuConfig.Item.GO_TO_MESSAGE.id, R.drawable.msg_message,
             LocaleController.getString(R.string.InuGoToMessage),
         )
         val linkedSource = activity.currentChat
         if (linkedSource != null && linkedSource.has_link && activity.chatMode == 0 && !activity.isThreadChat && activity.currentEncryptedChat == null) {
             val toGroup = ChatObject.isChannelAndNotMegaGroup(linkedSource)
             headerItem.lazilyAddSubItem(
-                ACTION_LINKED_CHAT, if (toGroup) R.drawable.msg_groups else R.drawable.msg_channel,
+                ChatMenuConfig.Item.LINKED_CHAT.id, if (toGroup) R.drawable.msg_groups else R.drawable.msg_channel,
                 LocaleController.getString(if (toGroup) R.string.InuLinkedGroup else R.string.InuLinkedChannel),
             )
         }
         headerItem.lazilyAddSubItem(
-            ACTION_HIDE_TITLE, R.drawable.inu_tabler_eye_off,
+            ChatMenuConfig.Item.HIDE_TITLE.id, R.drawable.inu_tabler_eye_off,
             LocaleController.getString(R.string.InuHideTitle),
         )
         if (ChatObject.isBoostSupported(activity.currentChat) && ChatObject.hasAdminRights(activity.currentChat)) {
             headerItem.lazilyAddSubItem(
-                ACTION_STATISTICS, R.drawable.msg_stats,
+                ChatMenuConfig.Item.STATISTICS.id, R.drawable.msg_stats,
                 LocaleController.getString(R.string.Statistics),
             )
         }
         val chat = activity.currentChat
         if (chat != null && (!chat.broadcast || ChatObject.hasAdminRights(chat))) {
             headerItem.lazilyAddSubItem(
-                ACTION_ADMINISTRATORS, R.drawable.msg_admins,
+                ChatMenuConfig.Item.ADMINISTRATORS.id, R.drawable.msg_admins,
                 LocaleController.getString(R.string.ChannelAdministrators),
             )
             headerItem.lazilyAddSubItem(
-                ACTION_PERMISSIONS, R.drawable.msg_permissions,
+                ChatMenuConfig.Item.PERMISSIONS.id, R.drawable.msg_permissions,
                 LocaleController.getString(R.string.ChannelPermissions),
             )
         }
         if (canViewInviteLinks(activity)) {
             headerItem.lazilyAddSubItem(
-                ACTION_INVITE_LINKS, R.drawable.msg_link2,
+                ChatMenuConfig.Item.INVITE_LINKS.id, R.drawable.msg_link2,
                 LocaleController.getString(R.string.InviteLinks),
             )
         }
@@ -267,35 +239,35 @@ object ChatActionsHelper {
         val notEncrypted = activity.currentEncryptedChat == null && dialogId != 0L
         if (InuConfig.CHAT_EXPORT.value && notEncrypted) {
             headerItem.lazilyAddSubItem(
-                ACTION_CHAT_EXPORT, R.drawable.msg_share_solar,
+                ChatMenuConfig.Item.CHAT_EXPORT.id, R.drawable.msg_share_solar,
                 LocaleController.getString(R.string.InuChatExport),
             )
         }
         if (InuConfig.NOTIFY_BELL_IN_MENU.value && canPostToChannel(activity.currentChat)) {
             headerItem.lazilyAddSubItem(
-                ACTION_SILENT_BROADCAST, R.drawable.input_notify_on,
+                ChatMenuConfig.Item.SILENT_BROADCAST.id, R.drawable.input_notify_on,
                 LocaleController.getString(R.string.InuSilentBroadcast),
             )
         }
         if (BusinessBotHelper.menuAvailable(activity)) {
             headerItem.lazilyAddSubItem(
-                ACTION_BUSINESS_BOT, R.drawable.msg_bot,
+                ChatMenuConfig.Item.BUSINESS_BOT.id, R.drawable.msg_bot,
                 LocaleController.getString(R.string.InuBusinessBot),
             )
         }
         headerItem.lazilyAddSubItem(
-            ACTION_CHAT_PROXY, R.drawable.outline_shield_check,
+            ChatMenuConfig.Item.CHAT_PROXY.id, R.drawable.outline_shield_check,
             LocaleController.getString(R.string.ProxySettings),
         )
         if (notEncrypted && !ChatObject.isChannelAndNotMegaGroup(activity.currentChat) && dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
             headerItem.lazilyAddSubItem(
-                ACTION_CHAT_DELETE_MY_MESSAGES, R.drawable.msg_delete,
+                ChatMenuConfig.Item.CHAT_DELETE_MY_MESSAGES.id, R.drawable.msg_delete,
                 LocaleController.getString(R.string.InuDeleteMyMessages),
             )
         }
         if (notEncrypted) {
             headerItem.lazilyAddSubItem(
-                ACTION_CHAT_FORWARD_ALL, R.drawable.msg_forward,
+                ChatMenuConfig.Item.CHAT_FORWARD_ALL.id, R.drawable.msg_forward,
                 LocaleController.getString(R.string.InuForwardAll),
             )
         }
@@ -340,7 +312,8 @@ object ChatActionsHelper {
     fun updateRevealItem(activity: ChatActivity) {
         val item = revealItems[activity] ?: return
         val revealed = BlockedMessagesHelper.isRevealed(activity.currentAccount, activity.dialogId)
-        val shown = revealed || BlockedMessagesHelper.hasFiltered(activity.messages)
+        val shown = revealed || BlockedMessagesHelper.hasFiltered(activity.messages) ||
+            BlockedMessagesHelper.manualHiddenCount(activity.currentAccount, activity.dialogId) > 0
         item.setTextAndIcon(
             LocaleController.getString(if (revealed) R.string.InuHideFilteredMessages else R.string.InuShowFilteredMessages),
             if (revealed) R.drawable.menu_hide_gift else R.drawable.msg_message,
@@ -351,7 +324,7 @@ object ChatActionsHelper {
                 isEntinyItemAvailable(it.item, activity)
         }
         val folderEnabled = InuConfig.CHAT_MENU_ITEMS.value.any { it.enabled && it.item == ChatMenuConfig.Item.ENTINY_MENU }
-        activity.headerItem?.setSubItemShown(ACTION_ENTINY_MENU, folderEnabled && (shown || hasOtherItems))
+        activity.headerItem?.setSubItemShown(ChatMenuConfig.Item.ENTINY_MENU.id, folderEnabled && (shown || hasOtherItems))
     }
 
     fun onFragmentDestroy(activity: ChatActivity) {
@@ -485,7 +458,7 @@ object ChatActionsHelper {
     private fun updatePluginSubmenu(activity: ChatActivity, state: ChatPluginMenu, rows: List<ActionRow>) {
         val headerItem = state.headerItem
         if (rows.isEmpty()) {
-            if (state.swipeBackShown) headerItem.hideSubItem(ACTION_PLUGIN_ACTIONS)
+            if (state.swipeBackShown) headerItem.hideSubItem(ChatMenuConfig.Item.ACTIONS.id)
             state.swipeBackShown = false
             // the cells that are left would otherwise hold the engine that drew them until the chat closes
             state.submenu?.let(::clearSubmenuRows)
@@ -512,11 +485,11 @@ object ChatActionsHelper {
             }
             submenu.last?.let { PluginActions.bindSecondaryCallback(it, row, state.surface) { headerItem.closeSubMenu() } }
         }
-        if (headerItem.hasSubItem(ACTION_PLUGIN_ACTIONS)) {
-            headerItem.showSubItem(ACTION_PLUGIN_ACTIONS)
+        if (headerItem.hasSubItem(ChatMenuConfig.Item.ACTIONS.id)) {
+            headerItem.showSubItem(ChatMenuConfig.Item.ACTIONS.id)
         } else {
             headerItem.inu_lazilyAddSwipeBackItem(
-                ACTION_PLUGIN_ACTIONS,
+                ChatMenuConfig.Item.ACTIONS.id,
                 R.drawable.msg_settings_old,
                 null,
                 LocaleController.getString(R.string.InuActions),
@@ -578,23 +551,23 @@ object ChatActionsHelper {
         if (id >= PluginActions.OPTION_BASE) return dispatchPluginItem(id, activity)
         // #endif
         when (id) {
-            ACTION_SHOW_PINNED_PANEL -> showPinnedPanel(activity)
-            ACTION_RECENT_ACTIONS -> {
+            ChatMenuConfig.Item.SHOW_PINNED_PANEL.id -> showPinnedPanel(activity)
+            ChatMenuConfig.Item.RECENT_ACTIONS.id -> {
                 val chat = activity.currentChat
                 if (chat != null) activity.presentFragment(ChannelAdminLogActivity(chat))
             }
 
-            ACTION_GO_TO_BEGINNING -> ChatHelper.jumpToBeginning(activity)
-            ACTION_GO_TO_MESSAGE -> showGoToMessageDialog(activity)
-            ACTION_DELETED_MESSAGES -> ArchiveChatHistory.open(activity, activity.dialogId, ArchiveChatHistory.KIND_DELETED)
-            ACTION_EDITED_MESSAGES -> ArchiveChatHistory.open(activity, activity.dialogId, ArchiveChatHistory.KIND_EDITED)
-            ACTION_STATISTICS -> {
+            ChatMenuConfig.Item.GO_TO_BEGINNING.id -> ChatHelper.jumpToBeginning(activity)
+            ChatMenuConfig.Item.GO_TO_MESSAGE.id -> showGoToMessageDialog(activity)
+            ChatMenuConfig.Item.DELETED_MESSAGES.id -> ArchiveChatHistory.open(activity, activity.dialogId, ArchiveChatHistory.KIND_DELETED)
+            ChatMenuConfig.Item.EDITED_MESSAGES.id -> ArchiveChatHistory.open(activity, activity.dialogId, ArchiveChatHistory.KIND_EDITED)
+            ChatMenuConfig.Item.STATISTICS.id -> {
                 val chat = activity.currentChat
                 if (chat != null) activity.presentFragment(StatisticActivity.create(chat, false))
             }
 
-            ACTION_ADMINISTRATORS -> openChatUsers(activity, ChatUsersActivity.TYPE_ADMIN)
-            ACTION_PERMISSIONS -> run {
+            ChatMenuConfig.Item.ADMINISTRATORS.id -> openChatUsers(activity, ChatUsersActivity.TYPE_ADMIN)
+            ChatMenuConfig.Item.PERMISSIONS.id -> run {
                 val chat = activity.currentChat
                 if (chat != null) openChatUsers(
                     activity,
@@ -606,7 +579,7 @@ object ChatActionsHelper {
                 )
             }
 
-            ACTION_INVITE_LINKS -> {
+            ChatMenuConfig.Item.INVITE_LINKS.id -> {
                 val chat = activity.currentChat
                 val info = activity.currentChatInfo
                 if (chat != null && info != null) {
@@ -616,34 +589,34 @@ object ChatActionsHelper {
                 }
             }
 
-            ACTION_SHOW_HIDDEN_MESSAGES -> BlockedMessagesHelper.setRevealed(
-                activity.currentAccount, activity.dialogId,
-                !BlockedMessagesHelper.isRevealed(activity.currentAccount, activity.dialogId),
-            )
+            ChatMenuConfig.Item.SHOW_HIDDEN_MESSAGES.id -> {
+                val account = activity.currentAccount
+                val dialogId = activity.dialogId
+                if (BlockedMessagesHelper.manualHiddenCount(account, dialogId) > 0) {
+                    BlockedMessagesHelper.restoreManual(activity.chatAdapter, account, dialogId)
+                }
+                if (BlockedMessagesHelper.isRevealed(account, dialogId) || BlockedMessagesHelper.hasFiltered(activity.messages)) {
+                    BlockedMessagesHelper.setRevealed(account, dialogId, !BlockedMessagesHelper.isRevealed(account, dialogId))
+                }
+                updateRevealItem(activity)
+            }
             ACTION_PINNED_UNPIN_ALL -> activity.bottomOverlayChatText?.callOnClick()
             ACTION_OPEN_IN_DISCUSSION -> openInDiscussionGroup(activity)
-            ACTION_LINKED_CHAT -> openLinkedChat(activity)
-            ACTION_HIDE_TITLE -> toggleHideTitle(activity)
-            ACTION_CLEAR_DELETED -> confirmClearDeleted(activity)
-            ACTION_TYPING_SPOOF -> showTypingSpoofSelector(activity)
+            ChatMenuConfig.Item.LINKED_CHAT.id -> openLinkedChat(activity)
+            ChatMenuConfig.Item.HIDE_TITLE.id -> toggleHideTitle(activity)
+            ChatMenuConfig.Item.CLEAR_DELETED.id -> confirmClearDeleted(activity)
+            ChatMenuConfig.Item.TYPING_SPOOF.id -> showTypingSpoofSelector(activity)
             // same handlers as the profile menu, keyed by its ids
-            ACTION_CHAT_EXPORT -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EXPORT_CHAT, null, activity.currentAccount, activity.dialogId)
-            ACTION_SHOW_HIDDEN -> {
-                if (BlockedMessagesHelper.manualHiddenCount(activity.currentAccount, activity.dialogId) > 0) {
-                    BlockedMessagesHelper.restoreManual(activity.chatAdapter, activity.currentAccount, activity.dialogId)
-                } else {
-                    BulletinFactory.of(activity).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuNoHiddenMessages)).show()
-                }
-            }
-            ACTION_CHAT_PROXY -> activity.presentFragment(org.telegram.ui.ProxyListActivity())
-            ACTION_BUSINESS_BOT -> BusinessBotHelper.toggle(activity)
-            ACTION_SILENT_BROADCAST -> activity.chatActivityEnterView?.inu_toggleSilent()
-            ACTION_CHAT_LOCAL_NAME -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EDIT_LOCAL_NAME, null, activity.currentAccount, activity.dialogId)
-            ACTION_CHAT_MARK_READ -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_MARK_AS_READ, null, activity.currentAccount, activity.dialogId)
-            ACTION_CHAT_DELETE_MY_MESSAGES -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_DELETE_MY_MESSAGES, null, activity.currentAccount, activity.dialogId)
-            ACTION_CHAT_FORWARD_ALL -> ForwardAllHelper.confirmAndPick(activity)
-            ACTION_REGEX_CHAT_FILTERS -> activity.presentFragment(desu.inugram.ui.settings.RegexChatFilterSettingsActivity(activity.dialogId))
-            ACTION_GHOST_MODE -> GhostHelper.showChatOverridesDialog(activity, activity.currentAccount, activity.dialogId) {
+            ChatMenuConfig.Item.CHAT_EXPORT.id -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EXPORT_CHAT, null, activity.currentAccount, activity.dialogId)
+            ChatMenuConfig.Item.CHAT_PROXY.id -> activity.presentFragment(org.telegram.ui.ProxyListActivity())
+            ChatMenuConfig.Item.BUSINESS_BOT.id -> BusinessBotHelper.toggle(activity)
+            ChatMenuConfig.Item.SILENT_BROADCAST.id -> activity.chatActivityEnterView?.inu_toggleSilent()
+            ChatMenuConfig.Item.CHAT_LOCAL_NAME.id -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EDIT_LOCAL_NAME, null, activity.currentAccount, activity.dialogId)
+            ChatMenuConfig.Item.CHAT_MARK_READ.id -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_MARK_AS_READ, null, activity.currentAccount, activity.dialogId)
+            ChatMenuConfig.Item.CHAT_DELETE_MY_MESSAGES.id -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_DELETE_MY_MESSAGES, null, activity.currentAccount, activity.dialogId)
+            ChatMenuConfig.Item.CHAT_FORWARD_ALL.id -> ForwardAllHelper.confirmAndPick(activity)
+            ChatMenuConfig.Item.REGEX_CHAT_FILTERS.id -> activity.presentFragment(desu.inugram.ui.settings.RegexChatFilterSettingsActivity(activity.dialogId))
+            ChatMenuConfig.Item.GHOST_MODE.id -> GhostHelper.showChatOverridesDialog(activity, activity.currentAccount, activity.dialogId) {
                 GhostHelper.applyChatTitleGhost(activity, activity.avatarContainer?.titleTextView)
             }
 
@@ -800,13 +773,13 @@ object ChatActionsHelper {
     fun updateShowPinnedMenuItem(activity: ChatActivity, hasPinnedMessages: Boolean) {
         val headerItem = activity.headerItem ?: return
         if (!hasPinnedMessages) {
-            headerItem.setSubItemShown(ACTION_SHOW_PINNED_PANEL, false)
+            headerItem.setSubItemShown(ChatMenuConfig.Item.SHOW_PINNED_PANEL.id, false)
             return
         }
         val prefs = MessagesController.getNotificationsSettings(activity.currentAccount)
         val hidden = prefs.getInt(stockPinKey(activity.dialogId), 0) == activity.pinnedMessageIds[0] ||
             isPinnedHiddenForever(activity.currentAccount, activity.dialogId)
-        headerItem.setSubItemShown(ACTION_SHOW_PINNED_PANEL, hidden)
+        headerItem.setSubItemShown(ChatMenuConfig.Item.SHOW_PINNED_PANEL.id, hidden)
     }
 
     // --- selection action mode ---

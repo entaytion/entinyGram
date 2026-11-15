@@ -1410,7 +1410,6 @@
     <string name="InuNetworkAndNotifications">ネットワークと通知</string>
     <string name="InuNo">いいえ</string>
     <string name="InuNoEditHistory">編集履歴はありません</string>
-    <string name="InuNoHiddenMessages">非表示のメッセージはありません</string>
     <string name="InuNoJoinedNotifications">登録時に連絡先へ通知しない</string>
     <string name="InuNoJoinedNotificationsInfo">新しい番号の登録時、その番号を保存している人に知らせないようTelegramに依頼する</string>
     <string name="InuNonIslandChatElements">チャット要素</string>
@@ -1920,7 +1919,6 @@
     <string name="InuRestartApp">アプリを再起動</string>
     <string name="InuRestartNow">再起動</string>
     <string name="InuRestartRequired">変更を適用するには再起動が必要です</string>
-    <string name="InuRestoreHiddenMessages">非表示のメッセージを表示</string>
     <string name="InuRestrictedContentCopy">コピー</string>
     <string name="InuRestrictedContentFull">完全バイパス</string>
     <string name="InuRestrictedContentMode">保護されたチャット</string>

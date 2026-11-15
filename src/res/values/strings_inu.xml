@@ -1419,7 +1419,6 @@
     <string name="InuNetworkAndNotifications">Network and notifications</string>
     <string name="InuNo">No</string>
     <string name="InuNoEditHistory">No edit history recorded for this message</string>
-    <string name="InuNoHiddenMessages">No hidden messages here</string>
     <string name="InuNoJoinedNotifications">Don\'t notify contacts on sign-up</string>
     <string name="InuNoJoinedNotificationsInfo">When registering a new number, ask Telegram not to tell people who have it saved</string>
     <string name="InuNonIslandChatElements">Chat elements</string>
@@ -1930,7 +1929,6 @@
     <string name="InuRestartApp">Restart app</string>
     <string name="InuRestartNow">Restart</string>
     <string name="InuRestartRequired">Restart required to apply changes</string>
-    <string name="InuRestoreHiddenMessages">Show hidden messages</string>
     <string name="InuRestrictedContentCopy">Copy</string>
     <string name="InuRestrictedContentFull">Full bypass</string>
     <string name="InuRestrictedContentMode">Protected chats</string>
