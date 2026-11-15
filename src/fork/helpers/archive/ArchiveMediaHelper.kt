@@ -3,6 +3,7 @@ package desu.inugram.helpers.archive
 import desu.inugram.InuConfig
 import java.io.File
 import org.telegram.messenger.DialogObject
+import org.telegram.messenger.DownloadController
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLoader
@@ -144,6 +145,7 @@ object ArchiveMediaHelper {
     fun prefetch(account: Int, obj: MessageObject?) {
         val message = obj?.messageOwner ?: return
         if (!InuConfig.ARCHIVE_MEDIA_ENABLED.value || obj.isAnyKindOfSticker) return
+        if (DownloadController.getInstance(account).getCurrentDownloadMask() == 0) return
         val dialogId = MessageObject.getDialogId(message)
         if (DialogObject.isEncryptedDialog(dialogId)) return
         val media = MessageObject.getMedia(message)
