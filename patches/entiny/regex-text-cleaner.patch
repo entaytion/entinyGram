@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 16 Nov 2026 00:46:43 +0200
+Subject: Routes message text and caption rewrites through the regex text cleaner.
+
+---
+ .../src/main/java/org/telegram/messenger/MessageObject.java | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -4000,7 +4000,7 @@ public class MessageObject {
+     public void applyNewText() {
+         translated = false;
+         summarized = false;
+-        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
++        inu_rewrite = desu.inugram.helpers.chat.TextCleanerHelper.getRewrite(this);
+         applyNewText(inu_rewrite != null ? inu_rewrite.text : messageOwner.message);
+     }
+ 
+@@ -4870,7 +4870,7 @@ public class MessageObject {
+     }
+ 
+     private void updateMessageText(AbstractMap<Long, TLRPC.User> users, AbstractMap<Long, TLRPC.Chat> chats, LongSparseArray<TLRPC.User> sUsers, LongSparseArray<TLRPC.Chat> sChats) {
+-        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
++        inu_rewrite = desu.inugram.helpers.chat.TextCleanerHelper.getRewrite(this);
+         TLRPC.User fromUser = null;
+         TLRPC.Chat fromChat = null;
+         if (messageOwner.from_id instanceof TLRPC.TL_peerUser) {
+@@ -7942,7 +7942,7 @@ public class MessageObject {
+         captionLinksHidden = hideLinks;
+         String text = messageOwner.message;
+         ArrayList<TLRPC.MessageEntity> entities = messageOwner.entities;
+-        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
++        inu_rewrite = desu.inugram.helpers.chat.TextCleanerHelper.getRewrite(this);
+         if (inu_rewrite != null) {
+             text = inu_rewrite.text;
+             entities = inu_rewrite.entities;

@@ -22,7 +22,14 @@ object RegexFilterHelper {
         val enabled: Boolean,
         val caseInsensitive: Boolean,
         val reversed: Boolean,
+        val action: Int = ACTION_BLOCK,
+        val name: String = "",
     )
+
+    const val ACTION_BLOCK = 0
+    const val ACTION_CLEAN = 1
+
+    @Volatile @JvmField var cleanVersion = 0
 
     private const val MATCH_CACHE_PER_DIALOG = 4_000
     private const val MATCH_CACHE_DIALOGS = 8
@@ -127,7 +134,7 @@ object RegexFilterHelper {
     }
 
     private fun isMatch(filter: FilterEntry, text: CharSequence): Boolean {
-        if (!filter.enabled) return false
+        if (!filter.enabled || filter.action == ACTION_CLEAN) return false
         val pattern = getCompiledPattern(filter) ?: return false
         val matched = try {
             pattern.matcher(text).find()
@@ -152,6 +159,17 @@ object RegexFilterHelper {
         return compiled
     }
 
+    fun cleanPatterns(dialogId: Long): List<Pattern> {
+        ensureLoaded()
+        val excludedIds = exclusions!![dialogId].orEmpty()
+        val out = ArrayList<Pattern>()
+        for (filter in chatFilters!![dialogId].orEmpty() + globalFilters!!.filter { it.id !in excludedIds }) {
+            if (!filter.enabled || filter.action != ACTION_CLEAN) continue
+            getCompiledPattern(filter)?.let { out.add(it) }
+        }
+        return out
+    }
+
     @JvmStatic
     fun getGlobalFilters(): List<FilterEntry> {
         ensureLoaded()
@@ -172,18 +190,38 @@ object RegexFilterHelper {
 
     @JvmStatic
     @JvmOverloads
-    fun addFilter(pattern: String, dialogId: Long?, caseInsensitive: Boolean = true, reversed: Boolean = false): FilterEntry {
+    fun addFilter(pattern: String, dialogId: Long?, caseInsensitive: Boolean = true, reversed: Boolean = false, action: Int = ACTION_BLOCK, name: String = ""): FilterEntry {
         ensureLoaded()
-        val entry = FilterEntry(UUID.randomUUID().toString(), pattern, dialogId, true, caseInsensitive, reversed)
+        val entry = FilterEntry(UUID.randomUUID().toString(), pattern, dialogId, true, caseInsensitive, reversed, action, name)
         saveAll(allFilters() + entry)
         return entry
     }
 
+    class Check(val pattern: Pattern?, val error: String?, val matchesEmpty: Boolean)
+
+    fun check(pattern: String, caseInsensitive: Boolean): Check {
+        val flags = if (caseInsensitive) Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE else 0
+        return try {
+            val compiled = Pattern.compile(pattern, flags)
+            Check(compiled, null, compiled.matcher("").find())
+        } catch (e: java.util.regex.PatternSyntaxException) {
+            Check(null, if (e.index >= 0) "${e.description} (${e.index})" else e.description, false)
+        } catch (e: Exception) {
+            Check(null, e.message ?: "?", false)
+        }
+    }
+
     @JvmStatic
-    fun updateFilter(id: String, pattern: String, enabled: Boolean, caseInsensitive: Boolean, reversed: Boolean) {
+    fun setEnabled(id: String, enabled: Boolean) {
+        ensureLoaded()
+        saveAll(allFilters().map { if (it.id == id) it.copy(enabled = enabled) else it })
+    }
+
+    @JvmStatic
+    fun updateFilter(id: String, pattern: String, enabled: Boolean, caseInsensitive: Boolean, reversed: Boolean, action: Int = ACTION_BLOCK, name: String = "") {
         ensureLoaded()
         val updated = allFilters().map {
-            if (it.id == id) it.copy(pattern = pattern, enabled = enabled, caseInsensitive = caseInsensitive, reversed = reversed) else it
+            if (it.id == id) it.copy(pattern = pattern, enabled = enabled, caseInsensitive = caseInsensitive, reversed = reversed, action = action, name = name) else it
         }
         saveAll(updated)
     }
@@ -239,6 +277,8 @@ object RegexFilterHelper {
                         enabled = obj.optBoolean("enabled", true),
                         caseInsensitive = obj.optBoolean("caseInsensitive", true),
                         reversed = obj.optBoolean("reversed", false),
+                        action = obj.optInt("action", ACTION_BLOCK),
+                        name = obj.optString("name"),
                     )
                 )
             }
@@ -314,6 +354,8 @@ object RegexFilterHelper {
                         enabled = obj.optBoolean("enabled", true),
                         caseInsensitive = obj.optBoolean("caseInsensitive", true),
                         reversed = obj.optBoolean("reversed", false),
+                        action = obj.optInt("action", ACTION_BLOCK),
+                        name = obj.optString("name"),
                     )
                 )
             }
@@ -330,6 +372,8 @@ object RegexFilterHelper {
         put("enabled", entry.enabled)
         put("caseInsensitive", entry.caseInsensitive)
         put("reversed", entry.reversed)
+        if (entry.action != ACTION_BLOCK) put("action", entry.action)
+        if (entry.name.isNotEmpty()) put("name", entry.name)
     }
 
     private fun parseExclusions(raw: String): Map<Long, Set<String>> {
@@ -358,6 +402,7 @@ object RegexFilterHelper {
             chatFilters = entries.filter { it.dialogId != null }.groupBy { it.dialogId!! }
             compiledPatterns.clear()
             matchCache.clear()
+            cleanVersion++
             BlockedMessagesHelper.invalidateVisible()
         }
         notifyChanged()
@@ -377,12 +422,15 @@ object RegexFilterHelper {
         synchronized(lock) {
             exclusions = map
             matchCache.clear()
+            cleanVersion++
             BlockedMessagesHelper.invalidateVisible()
         }
         notifyChanged()
     }
 
     fun notifyChanged() {
+        cleanVersion++
+        BlockedMessagesHelper.notifyChanged(UserConfig.selectedAccount)
         BlockedMessagesHelper.refreshOpenChats()
         NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(
             NotificationCenter.updateInterfaces,

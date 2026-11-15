@@ -558,7 +558,6 @@ object Schemas {
         section {
             link(R.string.InuGhostMode, R.drawable.inu_ghost_filled) { GhostModeSettingsActivity() }
             link(R.string.InuAntiDeletion, R.drawable.inu_tabler_trash_off) { AntiDeletionSettingsActivity() }
-            link(R.string.InuRegexFilter, R.drawable.inu_tabler_filter) { RegexFilterSettingsActivity() }
             link(R.string.InuDeviceSpoof, R.drawable.inu_tabler_device_mobile) { DeviceSpoofSettingsActivity() }
             link(R.string.InuTypingSpoof, R.drawable.inu_tabler_keyboard) { TypingSpoofQuickListSettingsActivity() }
         }
@@ -1254,6 +1253,9 @@ object Schemas {
     }
 
     val ANNOYANCES = schema("annoyances", R.string.InuAnnoyances, R.drawable.inu_tabler_mood_annoyed) {
+        section {
+            link(R.string.InuRegexFilter, R.drawable.inu_tabler_filter) { RegexFilterSettingsActivity() }
+        }
         section(R.string.InuAnnoyancesChats) {
             group("hide-bottom-bar", R.string.InuHideBottomBar) { id ->
                 ExpandableBoolGroup(

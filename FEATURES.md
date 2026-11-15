@@ -30,7 +30,8 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **force relay calls** — route calls through telegram servers to hide your ip
 - **sign-up privacy** — ask telegram not to tell contacts when you register a new number
 - **chat preview buttons** — open chat and close buttons in the press-and-hold chat preview menu
-- **adblock & content filtering** — hide sponsored messages, proxy sponsor chat and business bot banner. regex rules spoiler or hide messages, including inline buttons
+- **adblock & content filtering** — hide sponsored messages, proxy sponsor chat and business bot banner
+- **regex filters** — regex rules spoiler or hide messages, including inline buttons, or cut matched fragments out of message text and captions (text cleaner), under "hide the clutter"; named rules with pattern validation and a live test on sample text
 - **hide last message preview** — chat list previews show under a spoiler
 
 ### unlocks & restrictions

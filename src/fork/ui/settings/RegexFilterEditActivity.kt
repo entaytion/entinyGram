@@ -3,11 +3,12 @@ package desu.inugram.ui.settings
 import android.view.View
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.RegexFilterHelper
-import desu.inugram.ui.showInputDialog
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
+import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -17,45 +18,65 @@ class RegexFilterEditActivity(
     prefillPattern: String? = null,
 ) : SettingsPageActivity() {
 
-    private val isNew = filterId == null
     private val existing = filterId?.let { RegexFilterHelper.getFilter(it) }
-    private var pattern: String = prefillPattern ?: existing?.pattern.orEmpty()
     private var enabled: Boolean = existing?.enabled ?: true
     private var caseInsensitive: Boolean = existing?.caseInsensitive ?: true
     private var reversed: Boolean = existing?.reversed ?: false
+    private var editor: RegexEditorCell? = null
+    private val initialName = existing?.name.orEmpty()
+    private val initialPattern = prefillPattern ?: existing?.pattern.orEmpty()
+    private val initialAction = existing?.action ?: RegexFilterHelper.ACTION_BLOCK
+    private val persistRunnable = Runnable { persist() }
+
+    private val isNew get() = filterId == null
 
     override fun getTitle(): CharSequence =
         LocaleController.getString(if (filterId == null) R.string.InuRegexFilterAdd else R.string.InuRegexFilterEditTitle)
 
+    override fun onFragmentDestroy() {
+        if (!isNew) {
+            AndroidUtilities.cancelRunOnUIThread(persistRunnable)
+            persist()
+        }
+        super.onFragmentDestroy()
+    }
+
+    private fun editorCell(): RegexEditorCell = editor ?: RegexEditorCell(
+        context, initialName, initialPattern, initialAction,
+    ) {
+        if (!isNew) {
+            AndroidUtilities.cancelRunOnUIThread(persistRunnable)
+            AndroidUtilities.runOnUIThread(persistRunnable, 700)
+        }
+    }.also {
+        it.caseInsensitive = caseInsensitive
+        it.reversed = reversed
+        it.onActionChanged = { listView?.adapter?.update(true) }
+        editor = it
+    }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(
-            UItem.asButton(
-                BUTTON_PATTERN,
-                LocaleController.getString(R.string.InuRegexPattern),
-                pattern.ifBlank { LocaleController.getString(R.string.InuRegexPatternEmpty) },
-            )
-        )
+        val cell = editorCell()
+        items.add(UItem.asCustom(cell))
         items.add(UItem.asShadow(null))
         items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_ENABLED,
-                R.string.InuRegexFilterEnabled,
-                R.string.InuRegexFilterEnabledInfo,
-                enabled,
-            )
+            UItem.asCheck(TOGGLE_ENABLED, LocaleController.getString(R.string.InuRegexRuleEnabled))
+                .setChecked(enabled)
         )
         items.add(
             UItem.asCheck(TOGGLE_CASE_INSENSITIVE, LocaleController.getString(R.string.InuRegexCaseInsensitive))
                 .setChecked(caseInsensitive)
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_REVERSED,
-                R.string.InuRegexReversed,
-                R.string.InuRegexReversedInfo,
-                reversed,
+        if (cell.action == RegexFilterHelper.ACTION_BLOCK) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_REVERSED,
+                    R.string.InuRegexReversed,
+                    R.string.InuRegexReversedInfo,
+                    reversed,
+                )
             )
-        )
+        }
         items.add(UItem.asShadow(null))
         if (isNew) {
             items.add(UItem.asButton(BUTTON_SAVE, LocaleController.getString(R.string.Save)))
@@ -66,33 +87,22 @@ class RegexFilterEditActivity(
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_PATTERN -> showInputDialog(
-                this,
-                LocaleController.getString(R.string.InuRegexPattern),
-                initialText = pattern,
-                selectAll = true,
-            ) { text ->
-                if (text.isBlank()) return@showInputDialog false
-                pattern = text
-                persist()
-                listView?.adapter?.update(true)
-                true
-            }
-
             TOGGLE_ENABLED -> {
                 enabled = !enabled
                 persist()
-                (view as? NotificationsCheckCell)?.isChecked = enabled
+                (view as? TextCheckCell)?.isChecked = enabled
             }
 
             TOGGLE_CASE_INSENSITIVE -> {
                 caseInsensitive = !caseInsensitive
+                editor?.caseInsensitive = caseInsensitive
                 persist()
                 (view as? TextCheckCell)?.isChecked = caseInsensitive
             }
 
             TOGGLE_REVERSED -> {
                 reversed = !reversed
+                editor?.reversed = reversed
                 persist()
                 (view as? NotificationsCheckCell)?.isChecked = reversed
             }
@@ -100,27 +110,41 @@ class RegexFilterEditActivity(
             BUTTON_SAVE -> saveNew()
 
             BUTTON_DELETE -> {
+                AndroidUtilities.cancelRunOnUIThread(persistRunnable)
                 filterId?.let { RegexFilterHelper.removeFilter(it) }
+                filterId = null
                 finishFragment()
             }
         }
     }
 
+    // entiny: skip half-typed patterns, a trailing "|" would match every message
     private fun persist() {
         val id = filterId ?: return
-        if (pattern.isBlank()) return
-        RegexFilterHelper.updateFilter(id, pattern, enabled, caseInsensitive, reversed)
+        val cell = editor ?: return
+        if (cell.patternText.isBlank() || cell.error() != null) return
+        RegexFilterHelper.updateFilter(id, cell.patternText, enabled, caseInsensitive, effectiveReversed(cell), cell.action, cell.nameText)
     }
 
+    private fun effectiveReversed(cell: RegexEditorCell) = reversed && cell.action == RegexFilterHelper.ACTION_BLOCK
+
     private fun saveNew() {
-        if (pattern.isBlank()) return
-        val id = RegexFilterHelper.addFilter(pattern, scopeDialogId, caseInsensitive, reversed).id
-        if (!enabled) RegexFilterHelper.updateFilter(id, pattern, false, caseInsensitive, reversed)
+        val cell = editor ?: return
+        if (cell.patternText.isBlank()) return
+        cell.error()?.let {
+            BulletinFactory.of(this).createSimpleBulletin(R.raw.error, it).show()
+            return
+        }
+        val id = RegexFilterHelper.addFilter(
+            cell.patternText, scopeDialogId, caseInsensitive, effectiveReversed(cell), cell.action, cell.nameText,
+        ).id
+        if (!enabled) {
+            RegexFilterHelper.updateFilter(id, cell.patternText, false, caseInsensitive, effectiveReversed(cell), cell.action, cell.nameText)
+        }
         finishFragment()
     }
 
     companion object {
-        private val BUTTON_PATTERN = InuUtils.generateId()
         private val TOGGLE_ENABLED = InuUtils.generateId()
         private val TOGGLE_CASE_INSENSITIVE = InuUtils.generateId()
         private val TOGGLE_REVERSED = InuUtils.generateId()

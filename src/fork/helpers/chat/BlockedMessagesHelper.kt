@@ -65,13 +65,8 @@ object BlockedMessagesHelper {
     }
 
     fun hasFiltered(messages: List<MessageObject>): Boolean {
-        if (!isEnabled() && !isPluginFiltering()) return false
-        return messages.any {
-            shouldSpoil(it)
-                // #if PLUGINS
-                || PluginMessageFilters.getRewrite(it) != null
-                // #endif
-        }
+        if (!isEnabled() && !isPluginFiltering() && !RegexFilterHelper.isEnabled()) return false
+        return messages.any { shouldSpoil(it) || TextCleanerHelper.getRewrite(it) != null }
     }
 
     fun isRevealed(account: Int, dialogId: Long): Boolean = revealed.isNotEmpty() && Pair(account, dialogId) in revealed
@@ -92,16 +87,16 @@ object BlockedMessagesHelper {
 
     fun rebuildIfStale(msg: MessageObject): Boolean {
         val spoiled = shouldSpoil(msg)
+        val rewrite = TextCleanerHelper.getRewrite(msg)
         // #if PLUGINS
-        val rewrite = PluginMessageFilters.getRewrite(msg)
         val textStale = rewrite !== msg.inu_rewrite || PluginTextEntities.isStale(msg)
         // #else
-        val textStale = false
+        val textStale = rewrite !== msg.inu_rewrite
         // #endif
         if (spoiled == msg.inu_spoiled && !textStale) return false
         msg.forceUpdate = true
-        // #if PLUGINS
         msg.inu_rewrite = rewrite
+        // #if PLUGINS
         PluginTextEntities.markCurrent(msg)
         // #endif
         if (msg.translated) return true

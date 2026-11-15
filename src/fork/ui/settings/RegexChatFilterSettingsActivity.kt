@@ -22,7 +22,7 @@ class RegexChatFilterSettingsActivity(private val dialogId: Long) : SettingsPage
             items.add(
                 UItem.asButton(
                     CHAT_FILTER_BASE + index,
-                    filter.pattern.ifBlank { LocaleController.getString(R.string.InuRegexPatternEmpty) },
+                    filter.name.ifBlank { filter.pattern }.ifBlank { LocaleController.getString(R.string.InuRegexPatternEmpty) },
                     LocaleController.getString(if (filter.enabled) R.string.InuRegexFilterStatusEnabled else R.string.InuRegexFilterDisabled),
                 )
             )
@@ -38,7 +38,7 @@ class RegexChatFilterSettingsActivity(private val dialogId: Long) : SettingsPage
                 items.add(
                     UItem.asCheck(
                         EXCLUDE_BASE + index,
-                        filter.pattern.ifBlank { LocaleController.getString(R.string.InuRegexPatternEmpty) },
+                        filter.name.ifBlank { filter.pattern }.ifBlank { LocaleController.getString(R.string.InuRegexPatternEmpty) },
                     ).setChecked(!excluded)
                 )
             }
