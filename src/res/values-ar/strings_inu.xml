@@ -1933,7 +1933,8 @@
     <string name="InuLocalEditsClearConfirm">ستتم استعادة كل الرسائل المعدلة محليًا إلى نصها الأصلي.</string>
     <string name="InuLocalMessageEdit">تعديل الرسائل محليًا</string>
     <string name="InuLocalMessageEditInfo">يضيف «تعديل النص محليًا» إلى قائمة الرسالة (فعّله في ترتيب القائمة). التعديلات تظهر على هذا الجهاز فقط ويُحتفظ بالنص الأصلي</string>
-    <string name="InuMaterial3AccentIcons">أيقونات بلون التمييز</string>
+    <string name="InuAccentIcons">أيقونات بلون التمييز</string>
+    <string name="InuCompactSettings">إعدادات مضغوطة</string>
     <string name="InuMaterial3Player">مشغل الموسيقى</string>
     <string name="InuMd3PlayerClassic">المشغل الكلاسيكي</string>
     <string name="InuMd3PlayerFindLyrics">بحث عبر الإنترنت</string>

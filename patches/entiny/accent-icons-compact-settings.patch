@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 15 Nov 2026 21:51:40 +0200
+Subject: Accent-colored settings icons draw flat rounded plates in monet tones, compact settings rows hide descriptions, and the entinyGram row icon gets a gradient.
+
+---
+ .../src/main/java/org/telegram/ui/Cells/TextCell.java         | 4 ++--
+ .../java/org/telegram/ui/Components/IconBackgroundColors.java | 2 +-
+ .../src/main/java/org/telegram/ui/SettingsActivity.java       | 3 +++
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
+@@ -736,8 +736,8 @@ public class TextCell extends FrameLayout implements Theme.Colorable {
+         final boolean border = resourcesProvider != null ? resourcesProvider.isDark() : Theme.isCurrentThemeDark();
+         SettingsActivity.SettingCell.Background drawable = new SettingsActivity.SettingCell.Background();
+         drawable.setColor(colorTop, colorBottom);
+-        if (isM3 || desu.inugram.helpers.theme.M3SectionsHelper.isAccentIcons()) {
+-            drawable.inu_monetColor = desu.inugram.helpers.theme.M3SectionsHelper.circleColor(colorTop, colorBottom);
++        if (isM3 || (!forceStock && desu.inugram.helpers.theme.M3SectionsHelper.isAccentIcons())) {
++            if (isM3) drawable.inu_monetColor = desu.inugram.helpers.theme.M3SectionsHelper.circleColor(colorTop, colorBottom);
+             imageView.setColorFilter(new PorterDuffColorFilter(desu.inugram.helpers.theme.M3SectionsHelper.iconColor(colorTop, colorBottom), PorterDuff.Mode.SRC_IN));
+         }
+         drawable.setDrawBorder(border);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
+@@ -14,7 +14,7 @@ public enum IconBackgroundColors {
+     CYAN(0xFF32C0CE, 0xFF1D9CC6),
+     PURPLE(0xFFC46EF4, 0xFF9F55DF),
+     GRAY(0xFF8699AA, 0xFF6E8397),
+-    ENTINY(0xFFF20C3C, 0xFFF20C3C);
++    ENTINY(0xFFFF4A66, 0xFFE80A38);
+ 
+     public final int top;
+     public final int bottom;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -1379,6 +1379,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+             iconBackground.setColor(iconColorTop, iconColorBottom);
+             iconView.setImageResource(icon);
+             titleView.setText(title);
++            if (desu.inugram.helpers.theme.M3SectionsHelper.isCompactSettings()) subtitle = null;
+             subtitleView.setVisibility((twoLines = !TextUtils.isEmpty(subtitle)) ? View.VISIBLE : View.GONE);
+             subtitleView.setText(subtitle);
+             setValue(value);
+@@ -1418,6 +1419,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+             }
+ 
+             public void setColor(int topColor, int bottomColor) {
++                topColor = desu.inugram.helpers.theme.M3SectionsHelper.squarePlateColor(topColor, true);
++                bottomColor = desu.inugram.helpers.theme.M3SectionsHelper.squarePlateColor(bottomColor, false);
+                 gradient = new LinearGradient(0, 0, 0, dp(28), new int[] { topColor, bottomColor }, new float[] { 0, 1 }, Shader.TileMode.CLAMP);
+                 paint.setShader(gradient);
+             }

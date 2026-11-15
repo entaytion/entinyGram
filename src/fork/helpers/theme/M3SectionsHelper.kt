@@ -21,6 +21,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.HeaderCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Cells.TextInfoPrivacyCell
+import org.telegram.ui.Components.IconBackgroundColors
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.SectionsScrollView
 import org.telegram.ui.Components.TranslateAlert3
@@ -424,26 +425,41 @@ object M3SectionsHelper {
             }
         }
 
-        if (!isCircleIconsEnabled() && !isAccentIcons()) {
+        val circle = isCircleIconsEnabled()
+        val glyph = if (isEntinyColor(topColor)) 20 else 24
+        if ((!circle && !isAccentIcons()) || (topColor == 0 && bottomColor == 0)) {
             resizeSquare(iconLayout, 28)
+            resizeSquare(iconView, glyph)
             iconView.clearColorFilter()
             cellBackground.inu_monetColor = 0
             return
         }
 
-        resizeSquare(iconLayout, if (isCircleIconsEnabled()) 36 else 28)
-        // accent circles are solid, so the glyph is white and a bit larger to fill the plate
-        resizeSquare(iconView, if (isAccentIcons() && isCircleIconsEnabled()) 28 else 24)
+        resizeSquare(iconLayout, if (circle) 36 else 28)
+        resizeSquare(iconView, glyph)
         iconView.setColorFilter(iconColor(topColor, bottomColor))
-        cellBackground.inu_monetColor = circleColor(topColor, bottomColor)
+        cellBackground.inu_monetColor = if (circle) circleColor(topColor, bottomColor) else 0
     }
 
     @JvmStatic
-    fun isAccentIcons(): Boolean = InuConfig.M3_ACCENT_ICONS.value
+    fun isAccentIcons(): Boolean = InuConfig.ACCENT_ICONS.value
+
+    @JvmStatic
+    fun isCompactSettings(): Boolean = InuConfig.COMPACT_SETTINGS.value
+
+    /** square plates keep the stock rounded gradient, only the colors come from the accent */
+    @JvmStatic
+    fun squarePlateColor(color: Int, top: Boolean): Int {
+        if (color == 0 || !isAccentIcons() || isCircleIconsEnabled()) return color
+        return accentPlate()
+    }
+
+    private fun isEntinyColor(color: Int): Boolean =
+        color == IconBackgroundColors.ENTINY.top || color == IconBackgroundColors.ENTINY.bottom
 
     @JvmStatic
     fun circleColor(topColor: Int, bottomColor: Int): Int {
-        if (isAccentIcons()) return accentColor()
+        if (isAccentIcons()) return accentPlate()
         val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(flat, hsl)
@@ -473,9 +489,19 @@ object M3SectionsHelper {
     // entiny: "accent icons" option paints every row icon with the theme accent instead of its own color
     private fun accentColor(): Int = Theme.getColor(Theme.key_featuredStickers_addButton)
 
+    // entiny: same tones as stock monet action buttons: pale plate + dark glyph in dark themes, strong plate + pale glyph in light ones
+    private fun accentPlate(): Int =
+        if (MonetHelper.isMonetActive()) MonetHelper.getColor(if (Theme.isCurrentThemeDark()) "a1_200" else "a1_600")
+        else if (Theme.isCurrentThemeDark()) ColorUtils.blendARGB(accentColor(), 0xFFFFFFFF.toInt(), 0.25f) else accentColor()
+
+    private fun accentGlyph(): Int =
+        if (MonetHelper.isMonetActive()) MonetHelper.getColor(if (Theme.isCurrentThemeDark()) "a1_800" else "a1_100")
+        else if (Theme.isCurrentThemeDark()) ColorUtils.blendARGB(accentColor(), 0xFF000000.toInt(), 0.72f)
+        else ColorUtils.blendARGB(accentColor(), 0xFFFFFFFF.toInt(), 0.88f)
+
     @JvmStatic
     fun iconColor(topColor: Int, bottomColor: Int): Int {
-        if (isAccentIcons()) return 0xFFFFFFFF.toInt()
+        if (isAccentIcons()) return accentGlyph()
         val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(flat, hsl)

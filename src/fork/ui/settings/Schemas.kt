@@ -478,6 +478,8 @@ object Schemas {
             )
         }
         section(R.string.InuMenus) {
+            toggle(InuConfig.ACCENT_ICONS, R.string.InuAccentIcons) { page, _ -> page.rebuildAll() }
+            toggle(InuConfig.COMPACT_SETTINGS, R.string.InuCompactSettings) { page, _ -> page.rebuildAll() }
             link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-settings-rows-order") { ProfileSettingsMenuOrderActivity() }
             link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-info-rows-order") { ProfileInfoMenuOrderActivity() }
         }

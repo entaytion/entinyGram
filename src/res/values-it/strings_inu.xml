@@ -168,7 +168,8 @@ Sistema: %6$s
     <string name="InuMaterial3Sliders">Cursori</string>
     <string name="InuMaterial3Fabs">Pulsanti flottanti</string>
     <string name="InuMaterial3Sections">Elementi dell\'elenco</string>
-    <string name="InuMaterial3AccentIcons">Icone con colore d\'accento</string>
+    <string name="InuAccentIcons">Icone con colore d\'accento</string>
+    <string name="InuCompactSettings">Impostazioni compatte</string>
     <string name="InuMaterial3Avatars">Avatar</string>
     <string name="InuMaterial3NavigationAnimation">Animazione di navigazione</string>
     <string name="InuMaterial3Player">Lettore musicale</string>

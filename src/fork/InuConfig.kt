@@ -212,7 +212,8 @@ object InuConfig {
 
     @JvmField
     val M3_HEADERS_IN_CARD = BoolItem("m3_headers_in_card", true)
-    val M3_ACCENT_ICONS = BoolItem("m3_accent_icons", false)
+    val ACCENT_ICONS = BoolItem("m3_accent_icons", false)
+    @JvmField val COMPACT_SETTINGS = BoolItem("compact_settings", false)
 
     @JvmField val FORUM_M3_SECTIONS = BoolItem("forum_m3_sections", false)
     @JvmField val DIALOGS_M3_SECTIONS = BoolItem("dialogs_m3_sections", false)

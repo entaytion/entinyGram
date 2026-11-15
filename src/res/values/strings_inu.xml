@@ -179,7 +179,8 @@
     <string name="InuMaterial3Sections">List items</string>
     <string name="InuMaterial3HeadersInCard">Section titles inside the card</string>
     <string name="InuForumSectionsCards">Card sections in forum topics</string>
-    <string name="InuMaterial3AccentIcons">Accent-colored icons</string>
+    <string name="InuAccentIcons">Accent-colored icons</string>
+    <string name="InuCompactSettings">Compact settings</string>
     <string name="InuMaterial3Avatars">Avatars</string>
     <string name="InuMaterial3NavigationAnimation">Navigation animation</string>
     <string name="InuMaterial3Player">Music player</string>

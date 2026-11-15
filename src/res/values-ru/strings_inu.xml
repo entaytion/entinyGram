@@ -2111,7 +2111,8 @@
     <string name="InuAllowForwardRestrictedWarning">Telegram всё равно может блокировать часть пересылок, даже с включённой опцией. Если видите «Plain forwarding is not allowed.», скопируйте текст или сохраните медиа.</string>
     <string name="InuBackupImportSheetReplace">Заменить все настройки</string>
     <string name="InuDrawerMenuAddDivider">Добавить разделитель</string>
-    <string name="InuMaterial3AccentIcons">Иконки акцентного цвета</string>
+    <string name="InuAccentIcons">Иконки акцентного цвета</string>
+    <string name="InuCompactSettings">Компактные настройки</string>
     <string name="InuAppIconsSelect">Применить иконку</string>
     <string name="InuAppIconsKeep">Оставить текущую иконку</string>
     <string name="InuAppIconBlush">Румянец</string>

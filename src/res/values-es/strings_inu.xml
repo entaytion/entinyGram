@@ -168,7 +168,8 @@ Sistema: %6$s
     <string name="InuMaterial3Sliders">Deslizadores</string>
     <string name="InuMaterial3Fabs">Botones flotantes (FAB)</string>
     <string name="InuMaterial3Sections">Elementos de lista</string>
-    <string name="InuMaterial3AccentIcons">Iconos con color de acento</string>
+    <string name="InuAccentIcons">Iconos con color de acento</string>
+    <string name="InuCompactSettings">Ajustes compactos</string>
     <string name="InuMaterial3Avatars">Avatares</string>
     <string name="InuMaterial3NavigationAnimation">Animación de navegación</string>
     <string name="InuMaterial3Player">Reproductor de música</string>
