@@ -1398,8 +1398,6 @@
     <string name="InuYes">Evet</string>
     <string name="InuAccountSwitchShortcut">Hesap değiştirici kısayolu</string>
     <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine, hangi hesabın açılacağını soran bir uzun basma kısayolu ekler</string>
-    <string name="InuBlockSleepWhileDownloading">İndirirken uyku modunu engelle</string>
-    <string name="InuBlockSleepWhileDownloadingInfo">İndirme etkin olduğunda Android\'in arka planda duraklatmasını önlemek için kısmi bir wake lock tutar.</string>
     <string name="InuHideProxySponsorChat">Vekil sunucu sponsor sohbetini gizle</string>
     <string name="InuHideProxySponsorChatInfo">Bağlıyken bazı MTProto vekil sunucularının sohbet listenizin en üstüne sabitlediği tanıtım sohbetini/kanalını engeller</string>
     <string name="InuHideBusinessBotBanner">İş botu bannerını gizle</string>
@@ -1408,8 +1406,6 @@
     <string name="InuBusinessBotStopped">İş botu durduruldu</string>
     <string name="InuBusinessBotStarted">İş botu başlatıldı</string>
     <string name="InuHideRichEditorButton">Zengin metin düzenleyici düğmesini gizle</string>
-    <string name="InuKeepDownloadsInBackground">Kaydırma veya çıkışta indirmeleri sonlandırma</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">Kaydırdığınızda veya sohbetten çıktığınızda indirmeler devam eder.</string>
     <string name="InuMaterial3BottomTabs">Alt sekmeler</string>
     <string name="InuIosBottomBar">iOS tarzı alt çubuk</string>
     <string name="InuIosChatList">iOS tarzı sohbet listesi</string>
@@ -2261,14 +2257,6 @@
     <string name="InuMaskServerAppNameInfo">Oturum listesinde entinyGram adını gizler ve resmi istemcinin adını gösterir</string>
     <string name="InuAdBlockSection">Reklamlar</string>
     <string name="InuDeviceSpoofPresetRandom">Her açılışta rastgele</string>
-    <string name="InuDownloadQueue">İndirme sırası</string>
-    <string name="InuDownloadQueueInfo">Büyük dosyalar (20 MB üstü) istediğiniz sırayla tek tek iner. Sohbet menüsüne İndirilenler girişi ekler.</string>
-    <string name="InuDownloadsManager">İndirilenler</string>
-    <string name="InuDownloadsActive">Sürüyor</string>
-    <string name="InuDownloadsRunning">İndiriliyor</string>
-    <string name="InuDownloadsWaiting">Bekliyor</string>
-    <string name="InuDownloadsFinished">Tamamlandı</string>
-    <string name="InuDownloadsEmpty">İndirilen bir şey yok</string>
     <string name="InuUseSystemEmoji">Sistem emojilerini kullan</string>
     <string name="InuUseSystemEmojiInfo">Emojileri Telegram setiyle değil sistem yazı tipiyle çizer. Her yerde uygulanması için uygulamayı yeniden başlatın.</string>
     <string name="InuQuietVoiceWhenLocked">Kilitliyken sessiz sesli mesajlar</string>

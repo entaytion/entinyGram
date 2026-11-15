@@ -260,14 +260,6 @@
     <string name="InuDisablePullToNext">Disable pull to next channel</string>
     <string name="InuDisableSensitive">Disable sensitive filter</string>
     <string name="InuDisableSensitiveInfo">Removes the blur and warning screens on sensitive content and client-side restrictions. Channels banned by Telegram itself stay closed, because the server does not send them.</string>
-    <string name="InuDownloadQueue">Download queue</string>
-    <string name="InuDownloadQueueInfo">Large files (over 20 MB) download one at a time in the order you asked for them. Adds a Downloads entry to the chats menu.</string>
-    <string name="InuDownloadsManager">Downloads</string>
-    <string name="InuDownloadsActive">In progress</string>
-    <string name="InuDownloadsRunning">Downloading</string>
-    <string name="InuDownloadsWaiting">Waiting</string>
-    <string name="InuDownloadsFinished">Finished</string>
-    <string name="InuDownloadsEmpty">Nothing is downloading</string>
     <string name="InuUseSystemEmoji">Use system emoji</string>
     <string name="InuUseSystemEmojiInfo">Draws emoji with the system font instead of the Telegram set. Restart the app to apply it everywhere.</string>
     <string name="InuQuietVoiceWhenLocked">Quiet voice messages when locked</string>
@@ -1281,10 +1273,6 @@
     <string name="InuFasterDownloads">Faster downloads</string>
     <string name="InuFasterUploads">Faster uploads</string>
     <string name="InuFasterDownloadsSection">Download speed</string>
-    <string name="InuKeepDownloadsInBackground">Don\'t kill downloads on scroll/exit</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">Downloads keep running when you scroll away or leave the chat.</string>
-    <string name="InuBlockSleepWhileDownloading">Block sleep while downloading</string>
-    <string name="InuBlockSleepWhileDownloadingInfo">Holds a partial wake lock while a download is active so Android doesn\'t pause it in the background.</string>
     <string name="InuSendMp4DocumentAsVideo">Send MP4 documents as videos</string>
     <string name="InuSendMp4DocumentAsVideoInfo">MP4 files attached through Files are sent as playable videos without conversion</string>
     <string name="InuAttachCameraMirrorFront">Mirror front camera</string>

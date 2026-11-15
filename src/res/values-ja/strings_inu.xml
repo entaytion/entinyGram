@@ -1385,8 +1385,6 @@
     <string name="InuYes">はい</string>
     <string name="InuAccountSwitchShortcut">アカウント切り替えショートカット</string>
     <string name="InuAccountSwitchShortcutInfo">アプリアイコンの長押しメニューに、開くアカウントを選ぶショートカットを追加します</string>
-    <string name="InuBlockSleepWhileDownloading">ダウンロード中のスリープを防止</string>
-    <string name="InuBlockSleepWhileDownloadingInfo">ダウンロード中に部分的なウェイクロックを保持し、Androidがバックグラウンドで停止しないようにします。</string>
     <string name="InuHideProxySponsorChat">プロキシのスポンサーチャットを非表示</string>
     <string name="InuHideProxySponsorChatInfo">接続時に一部のMTProtoプロキシがチャット一覧の一番上に固定するプロモーションチャット/チャンネルをブロックします</string>
     <string name="InuHideBusinessBotBanner">ビジネスボットのバナーを非表示</string>
@@ -1395,8 +1393,6 @@
     <string name="InuBusinessBotStopped">ビジネスボットを停止しました</string>
     <string name="InuBusinessBotStarted">ビジネスボットを開始しました</string>
     <string name="InuHideRichEditorButton">リッチテキストエディターボタンを非表示</string>
-    <string name="InuKeepDownloadsInBackground">スクロールや終了時にダウンロードを中断しない</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">スクロールで見えなくなったりチャットを離れても、ダウンロードを続けます。</string>
     <string name="InuMaterial3BottomTabs">下部タブ</string>
     <string name="InuIosBottomBar">iOS風のボトムバー</string>
     <string name="InuIosChatList">iOSスタイルのチャットリスト</string>
@@ -2258,14 +2254,6 @@
     <string name="InuMaskServerAppNameInfo">セッション一覧でentinyGramの名前を隠し、公式クライアント名を表示します</string>
     <string name="InuAdBlockSection">広告</string>
     <string name="InuDeviceSpoofPresetRandom">起動ごとにランダム</string>
-    <string name="InuDownloadQueue">ダウンロードキュー</string>
-    <string name="InuDownloadQueueInfo">大きなファイル（20 MB超）は、要求した順に1つずつダウンロードされます。チャットメニューにダウンロード項目を追加します。</string>
-    <string name="InuDownloadsManager">ダウンロード</string>
-    <string name="InuDownloadsActive">進行中</string>
-    <string name="InuDownloadsRunning">ダウンロード中</string>
-    <string name="InuDownloadsWaiting">待機中</string>
-    <string name="InuDownloadsFinished">完了</string>
-    <string name="InuDownloadsEmpty">ダウンロード中のものはありません</string>
     <string name="InuUseSystemEmoji">システム絵文字を使う</string>
     <string name="InuUseSystemEmojiInfo">Telegramのセットではなくシステムフォントで絵文字を描画します。すべてに反映するにはアプリを再起動してください。</string>
     <string name="InuQuietVoiceWhenLocked">ロック中は音声メッセージを静かに</string>

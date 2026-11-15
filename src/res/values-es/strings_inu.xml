@@ -1200,10 +1200,6 @@ Esta acción no se puede deshacer.</string>
     <string name="InuProxyImported_other">%1$d proxies importados</string>
     <string name="InuFasterDownloads">Descargas más rápidas</string>
     <string name="InuFasterUploads">Subidas más rápidas</string>
-    <string name="InuKeepDownloadsInBackground">No cancelar descargas al desplazarse/salir</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">Las descargas continúan ejecutándose cuando te desplazas o sales del chat.</string>
-    <string name="InuBlockSleepWhileDownloading">Bloquear la suspensión durante la descarga</string>
-    <string name="InuBlockSleepWhileDownloadingInfo">Mantiene un wake lock parcial mientras hay una descarga activa para que Android no la pause en segundo plano.</string>
     <string name="InuSendMp4DocumentAsVideo">Enviar documentos MP4 como vídeos</string>
     <string name="InuSendMp4DocumentAsVideoInfo">Los archivos MP4 adjuntados como Archivos se envían como videos reproducibles sin conversión</string>
     <string name="InuAttachCameraSquare">Mosaico cuadrado de la cámara</string>
@@ -2321,14 +2317,6 @@ Mientras esté activado:</string>
     <string name="InuAdBlockSection">Anuncios</string>
     <string name="InuSettingNotFound">Este ajuste no está disponible en esta versión de entinyGram</string>
     <string name="InuDeviceSpoofPresetRandom">Aleatorio en cada inicio</string>
-    <string name="InuDownloadQueue">Cola de descargas</string>
-    <string name="InuDownloadQueueInfo">Los archivos grandes (más de 20 MB) se descargan uno a uno en el orden en que los pediste. Añade una entrada Descargas al menú de chats.</string>
-    <string name="InuDownloadsManager">Descargas</string>
-    <string name="InuDownloadsActive">En curso</string>
-    <string name="InuDownloadsRunning">Descargando</string>
-    <string name="InuDownloadsWaiting">En espera</string>
-    <string name="InuDownloadsFinished">Finalizadas</string>
-    <string name="InuDownloadsEmpty">No se está descargando nada</string>
     <string name="InuUseSystemEmoji">Usar emoji del sistema</string>
     <string name="InuUseSystemEmojiInfo">Dibuja los emoji con la fuente del sistema en lugar del conjunto de Telegram. Reinicia la app para aplicarlo en todas partes.</string>
     <string name="InuQuietVoiceWhenLocked">Mensajes de voz silenciosos con el teléfono bloqueado</string>

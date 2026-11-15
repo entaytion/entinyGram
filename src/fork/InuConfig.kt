@@ -2140,15 +2140,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val FASTER_UPLOADS = BoolItem("faster_uploads", true)
 
     @JvmField
-    val DOWNLOAD_QUEUE = BoolItem("download_queue", false)
-
-    @JvmField
-    val KEEP_DOWNLOADS_IN_BACKGROUND = BoolItem("keep_downloads_in_background", false)
-
-    @JvmField
-    val BLOCK_SLEEP_WHILE_DOWNLOADING = BoolItem("block_sleep_while_downloading", false)
-
-    @JvmField
     val BIOMETRIC_CONFIRM_DELETE_CHAT = BoolItem("biometric_confirm_delete_chat", false)
 
     @JvmField

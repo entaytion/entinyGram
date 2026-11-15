@@ -1054,10 +1054,6 @@
     <string name="InuProxyImported_other">تم استيراد %1$d وكيل</string>
     <string name="InuFasterDownloads">تنزيلات أسرع</string>
     <string name="InuFasterUploads">رفع أسرع</string>
-    <string name="InuKeepDownloadsInBackground">عدم إيقاف التنزيلات عند التمرير/الخروج</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">تستمر التنزيلات بالعمل عند التمرير بعيداً أو مغادرة المحادثة.</string>
-    <string name="InuBlockSleepWhileDownloading">منع السكون أثناء التنزيل</string>
-    <string name="InuBlockSleepWhileDownloadingInfo">يحتفظ بقفل تنبيه جزئي أثناء نشاط التنزيل حتى لا يوقفه Android في الخلفية.</string>
     <string name="InuSendMp4DocumentAsVideo">إرسال مستندات MP4 كفيديوهات</string>
     <string name="InuSendMp4DocumentAsVideoInfo">ملفات MP4 المرفقة عبر الملفات تُرسل كفيديوهات قابلة للتشغيل دون تحويل</string>
     <string name="InuAttachCameraSquare">مربع الكاميرا</string>
@@ -2309,14 +2305,6 @@
     <string name="InuAdBlockSection">الإعلانات</string>
     <string name="InuSettingNotFound">هذا الإعداد غير متوفر في هذا الإصدار من entinyGram</string>
     <string name="InuDeviceSpoofPresetRandom">عشوائي عند كل تشغيل</string>
-    <string name="InuDownloadQueue">قائمة انتظار التنزيل</string>
-    <string name="InuDownloadQueueInfo">تُنزَّل الملفات الكبيرة (أكثر من 20 ميغابايت) واحدًا تلو الآخر بالترتيب الذي طلبته. يضيف عنصر التنزيلات إلى قائمة المحادثات.</string>
-    <string name="InuDownloadsManager">التنزيلات</string>
-    <string name="InuDownloadsActive">قيد التنفيذ</string>
-    <string name="InuDownloadsRunning">جارٍ التنزيل</string>
-    <string name="InuDownloadsWaiting">في الانتظار</string>
-    <string name="InuDownloadsFinished">اكتملت</string>
-    <string name="InuDownloadsEmpty">لا شيء قيد التنزيل</string>
     <string name="InuUseSystemEmoji">استخدام رموز النظام التعبيرية</string>
     <string name="InuUseSystemEmojiInfo">يرسم الرموز التعبيرية بخط النظام بدل مجموعة Telegram. أعد تشغيل التطبيق لتطبيق ذلك في كل مكان.</string>
     <string name="InuQuietVoiceWhenLocked">رسائل صوتية هادئة عند القفل</string>

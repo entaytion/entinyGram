@@ -35,7 +35,7 @@ index 0000000..0000000 100644
                          playSoundEffect(SoundEffectConstants.CLICK);
                          didClickedImage();
                      } else if (buttonState == 0) {
-@@ -24351,4 +24356,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24348,4 +24353,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              blurredPhotoImage.setImageBitmap((Bitmap) null);
          }
      }

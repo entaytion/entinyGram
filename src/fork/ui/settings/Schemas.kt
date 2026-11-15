@@ -1076,21 +1076,11 @@ object Schemas {
         section(R.string.InuFasterDownloadsSection) {
             toggle(InuConfig.FASTER_DOWNLOADS, R.string.InuFasterDownloads)
             toggle(InuConfig.FASTER_UPLOADS, R.string.InuFasterUploads)
-            toggle(InuConfig.DOWNLOAD_QUEUE, R.string.InuDownloadQueue, R.string.InuDownloadQueueInfo)
         }
         section(R.string.InuDownloadsAndNetwork) {
             toggle(
                 InuConfig.AUTO_DISABLE_PROXY_ON_VPN, R.string.InuAutoDisableProxyOnVpn,
                 onChange = { _, _ -> ProxyVpnHelper.reconcile() },
-            )
-            toggle(
-                InuConfig.KEEP_DOWNLOADS_IN_BACKGROUND, R.string.InuKeepDownloadsInBackground, R.string.InuKeepDownloadsInBackgroundInfo,
-                onChange = { page, _ -> page.refresh() },
-            )
-            toggle(
-                InuConfig.BLOCK_SLEEP_WHILE_DOWNLOADING, R.string.InuBlockSleepWhileDownloading, R.string.InuBlockSleepWhileDownloadingInfo,
-                visible = { InuConfig.KEEP_DOWNLOADS_IN_BACKGROUND.value },
-                onChange = { _, on -> if (on) desu.inugram.helpers.media.DownloadKeepAliveHelper.startPolling() },
             )
             toggle(InuConfig.ALWAYS_SEND_VIDEOS_HD, R.string.InuAlwaysSendVideosHd, R.string.InuAlwaysSendVideosHdInfo)
             custom(

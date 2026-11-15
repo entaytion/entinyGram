@@ -2,8 +2,6 @@ package desu.inugram.helpers.archive
 
 import desu.inugram.InuConfig
 import java.io.File
-import org.telegram.messenger.DialogObject
-import org.telegram.messenger.DownloadController
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLoader
@@ -140,84 +138,6 @@ object ArchiveMediaHelper {
         AndroidUtilities.runOnUIThread { downloadArchiveMedia(account, message, rowId, deleted, AUTO_FETCH_TIMEOUT_MS) {} }
     }
 
-    // entiny: file references die with the message, so attachments are downloaded on arrival and only copied at deletion
-    @JvmStatic
-    fun prefetch(account: Int, obj: MessageObject?) {
-        val message = obj?.messageOwner ?: return
-        if (!InuConfig.ARCHIVE_MEDIA_ENABLED.value || obj.isAnyKindOfSticker) return
-        if (DownloadController.getInstance(account).getCurrentDownloadMask() == 0) return
-        val dialogId = MessageObject.getDialogId(message)
-        if (DialogObject.isEncryptedDialog(dialogId)) return
-        val media = MessageObject.getMedia(message)
-        if (media == null || media is TLRPC.TL_messageMediaWebPage || media.ttl_seconds != 0) return
-        val document = media.document
-        val photo = media.photo
-        if (document == null && photo == null) return
-        if (!DeletedMessagesHelper.shouldArchive(account, dialogId, message)) return
-        if (!ArchiveScope.allows(account, dialogId, message, ArchiveScope.Kind.MEDIA)) return
-        val limit = ArchiveScope.mediaLimitBytes().takeIf { it > 0 } ?: AUTO_COPY_MAX_BYTES
-        val loader = FileLoader.getInstance(account)
-        if (document != null) {
-            if (document.size <= 0 || document.size > limit) return
-            mediaQueue.postRunnable {
-                if (loader.getPathToAttach(document, null, false, true).exists()) return@postRunnable
-                markPrefetching(account, dialogId, message.id)
-                loader.loadFile(document, obj, FileLoader.PRIORITY_LOW, 0)
-            }
-            return
-        }
-        val size = FileLoader.getClosestPhotoSizeWithSize(photo!!.sizes, AndroidUtilities.getPhotoSize(true), false, null, true) ?: return
-        if (size.size > limit) return
-        val location = ImageLocation.getForPhoto(size, photo) ?: return
-        mediaQueue.postRunnable {
-            if (loader.getPathToAttach(size, null, false, true).exists()) return@postRunnable
-            markPrefetching(account, dialogId, message.id)
-            loader.loadFile(location, obj, "jpg", FileLoader.PRIORITY_LOW, 0)
-        }
-    }
-
-    private val prefetching = LinkedHashSet<String>()
-
-    private fun markPrefetching(account: Int, dialogId: Long, msgId: Int) = synchronized(prefetching) {
-        prefetching.add("$account:$dialogId:$msgId")
-        if (prefetching.size > PREFETCH_TRACKED) prefetching.remove(prefetching.first())
-    }
-
-    // entiny: a chat cell cancels unfinished media when it scrolls away, which would kill the download the archive needs
-    @JvmStatic
-    fun isPrefetching(obj: MessageObject?): Boolean {
-        if (obj == null) return false
-        return synchronized(prefetching) { "${obj.currentAccount}:${obj.dialogId}:${obj.id}" in prefetching }
-    }
-
-    private const val PREFETCH_TRACKED = 1000
-
-    private val deadMedia = HashSet<String>()
-
-    // entiny: the server drops a deleted message's files, so one failed reference refresh ends all further requests for it
-    @JvmStatic
-    fun markDead(account: Int, parent: Any?, fileName: String?): Boolean {
-        if (fileName == null || parent !is MessageObject || !DeletedMessagesHelper.isKept(parent)) return false
-        synchronized(deadMedia) { deadMedia.add("$account:$fileName") }
-        return true
-    }
-
-    @JvmStatic
-    fun isDead(account: Int, parent: Any?, fileName: String?): Boolean {
-        if (fileName == null || parent !is MessageObject) return false
-        if (synchronized(deadMedia) { "$account:$fileName" !in deadMedia }) return false
-        return DeletedMessagesHelper.isKept(parent)
-    }
-
-    @JvmStatic
-    fun isDead(obj: MessageObject?): Boolean {
-        if (obj == null || synchronized(deadMedia) { deadMedia.isEmpty() }) return false
-        val media = MessageObject.getMedia(obj.messageOwner) ?: return false
-        val name = media.document?.let { FileLoader.getAttachFileName(it) }
-            ?: media.photo?.sizes?.let { FileLoader.getClosestPhotoSizeWithSize(it, AndroidUtilities.getPhotoSize(true), false, null, true) }?.let { FileLoader.getAttachFileName(it) }
-        return isDead(obj.currentAccount, obj, name)
-    }
-
     internal fun planMediaCopy(account: Int, message: TLRPC.Message?, maxBytes: Long = AUTO_COPY_MAX_BYTES): PendingMediaCopy? {
         if (message?.media == null || message.media is TLRPC.TL_messageMediaWebPage) return null
         return try {
@@ -237,15 +157,12 @@ object ArchiveMediaHelper {
         }
     }
 
-    internal fun copyThenStore(account: Int, key: String, plan: PendingMediaCopy, onSourceLost: (() -> Unit)? = null, store: (org.telegram.SQLite.SQLiteDatabase, String) -> Boolean) {
+    internal fun copyThenStore(account: Int, key: String, plan: PendingMediaCopy, store: (org.telegram.SQLite.SQLiteDatabase, String) -> Boolean) {
         synchronized(pendingCopies) { if (!pendingCopies.add(key)) return }
         mediaQueue.postRunnable {
             val copied = runMediaCopy(plan)
             if (copied == null) {
                 synchronized(pendingCopies) { pendingCopies.remove(key) }
-                if (!plan.source.exists()) {
-                    onSourceLost?.invoke()
-                }
                 return@postRunnable
             }
             val storage = MessagesStorage.getInstance(account)
@@ -344,7 +261,6 @@ object ArchiveMediaHelper {
         }
         val center = NotificationCenter.getInstance(account)
         var active = true
-        var loading = false
         lateinit var observer: NotificationCenter.NotificationCenterDelegate
         lateinit var timeout: Runnable
         fun detach() {
@@ -352,16 +268,10 @@ object ArchiveMediaHelper {
             center.removeObserver(observer, NotificationCenter.fileLoadFailed)
             AndroidUtilities.cancelRunOnUIThread(timeout)
         }
-        fun stopLoading() {
-            if (!loading) return
-            loading = false
-            if (document != null) loader.cancelLoadFile(document) else loader.cancelLoadFile(size)
-        }
         fun finish(success: Boolean) {
             if (!active) return
             detach()
             if (!success) {
-                stopLoading()
                 active = false
                 callback(null)
                 return
@@ -426,22 +336,12 @@ object ArchiveMediaHelper {
         AndroidUtilities.runOnUIThread(timeout, timeoutMs)
         if (planMediaCopy(account, message, 0L) != null) {
             finish(true)
+        } else if (document != null) {
+            loader.loadFile(document, message, FileLoader.PRIORITY_NORMAL, 1)
         } else {
-            loading = true
-            val parent = MessageObject(account, message, false, false)
-            if (document != null) {
-                loader.loadFile(document, parent, FileLoader.PRIORITY_HIGH, 1)
-            } else {
-                loader.loadFile(location, parent, "jpg", FileLoader.PRIORITY_HIGH, 1)
-            }
+            loader.loadFile(location, message, "jpg", FileLoader.PRIORITY_NORMAL, 1)
         }
-        return {
-            if (active) {
-                active = false
-                detach()
-                stopLoading()
-            }
-        }
+        return { active = false; detach() }
     }
 
     // entiny: image loaders resolve documents by the stock cache path, so put the archived copy back there

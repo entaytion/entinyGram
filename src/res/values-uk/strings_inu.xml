@@ -163,14 +163,6 @@
     <string name="InuDisablePullToNext">Вимкнути потягування до наступного каналу</string>
     <string name="InuDisableSensitive">Вимкнути фільтр делікатного контенту</string>
     <string name="InuDisableSensitiveInfo">Прибирає розмиття та заглушки на делікатному контенті й клієнтські обмеження. Канали, забанені самим Telegram, лишаються закритими, бо сервер їх не віддає.</string>
-    <string name="InuDownloadQueue">Черга завантажень</string>
-    <string name="InuDownloadQueueInfo">Великі файли (понад 20 МБ) завантажуються по одному в порядку запитів. Додає пункт «Завантаження» в меню чатів.</string>
-    <string name="InuDownloadsManager">Завантаження</string>
-    <string name="InuDownloadsActive">Виконуються</string>
-    <string name="InuDownloadsRunning">Завантажується</string>
-    <string name="InuDownloadsWaiting">Очікує</string>
-    <string name="InuDownloadsFinished">Завершені</string>
-    <string name="InuDownloadsEmpty">Нічого не завантажується</string>
     <string name="InuUseSystemEmoji">Системні емодзі</string>
     <string name="InuUseSystemEmojiInfo">Малює емодзі системним шрифтом замість набору Telegram. Щоб застосувалось усюди, перезапустіть застосунок.</string>
     <string name="InuQuietVoiceWhenLocked">Тихі голосові на заблокованому телефоні</string>
@@ -1802,11 +1794,7 @@
     <string name="InuAccountSwitchShortcut">Ярлик перемикання акаунтів</string>
     <string name="InuAccountSwitchShortcutInfo">Додати ярлик за довгим натисканням на іконку додатка з вибором акаунта для входу</string>
 
-    <string name="InuBlockSleepWhileDownloading">Блокувати режим сну під час завантаження</string>
-    <string name="InuBlockSleepWhileDownloadingInfo">Утримує wake lock під час активного завантаження, щоб Android не призупиняв його у фоні.</string>
     <string name="InuHideRichEditorButton">Приховати кнопку форматування тексту</string>
-    <string name="InuKeepDownloadsInBackground">Не переривати завантаження під час скролу та виходу</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">Завантаження тривають, коли ви прокручуєте повідомлення або виходите з чату.</string>
     <string name="InuMaterial3BottomTabs">Нижні вкладки</string>
     <string name="InuIosBottomBar">Нижня панель у стилі iOS</string>
     <string name="InuIosChatList">Список чатів у стилі iOS</string>

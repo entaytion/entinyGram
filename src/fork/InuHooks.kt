@@ -74,7 +74,6 @@ object InuHooks {
         syncAnimationSpeed()
         syncChatInputRowHeight()
         desu.inugram.helpers.archive.ArchiveScope.init()
-        desu.inugram.helpers.media.DownloadKeepAliveHelper.startPolling()
         (context.applicationContext as? android.app.Application)?.let { desu.inugram.helpers.MemoryTrimHelper.init(it) }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MonetHelper.registerOverlayChangeReceiver(context)
@@ -162,7 +161,6 @@ object InuHooks {
         if (message.messageOwner != null) UpdateHelper.onNewMessage(message.messageOwner)
         desu.inugram.helpers.dialogs.HiddenDialogsHelper.unhide(account, message.dialogId)
         desu.inugram.helpers.security.LastSeenHelper.onMessage(account, message.messageOwner)
-        desu.inugram.helpers.archive.ArchiveMediaHelper.prefetch(account, message)
     }
 
     private fun systemAnimatorScale(): Float = try {

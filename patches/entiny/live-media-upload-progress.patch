@@ -50,7 +50,7 @@ index 0000000..0000000 100644
      private long loadingProgressLayoutHash;
      private int infoX;
      int infoWidth;
-@@ -15550,6 +15568,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15547,6 +15565,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              lastLoadingSizeTotal = totalSize;
          }
          createLoadingProgressLayout(uploadedSize, totalSize);
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
      }
  
      private void createLoadingProgressLayout(TLRPC.Document document) {
-@@ -22567,7 +22586,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22564,7 +22583,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          updatePlayingMessageProgress();
                      }
  
@@ -68,7 +68,7 @@ index 0000000..0000000 100644
                          boolean drawLoadingProgress;
                          float alpha = 0;
                          boolean drawDocTitleLayout;
-@@ -22609,10 +22629,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22606,10 +22626,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              } else {
                                  imageW = 0;
                              }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
                              } else {
                                  infoW = infoWidth;
                              }
-@@ -22640,7 +22660,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22637,7 +22657,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                  photoImage.setAlpha(wasAlpha);
                                  canvas.restore();
                                  canvas.drawRoundRect(rect, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
                                  canvas.scale(loadingProgressAlpha, loadingProgressAlpha, x1, y1);
                                  canvas.drawRoundRect(rect, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
                              } else {
-@@ -22666,14 +22686,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22663,14 +22683,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                  noSoundCenterX += offset + size / 2;
                                  canvas.restore();
                              }
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
                                  canvas.restore();
                              } else if (drawDocTitleLayout) {
                                  Theme.chat_infoPaint.setAlpha((int) (255 * controlsAlpha * alpha));
-@@ -22717,7 +22737,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22714,7 +22734,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      invalidate();
                  }
  

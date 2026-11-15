@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -13105,7 +13105,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -13102,7 +13102,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          }
          if (documentAttachType == DOCUMENT_ATTACH_TYPE_GIF && !isCompactMode()) {
              if (drawPhotoImage && !currentMessageObject.isRepostPreview && !currentMessageObject.isSponsored() && photoImage.getVisible() && !hasGamePreview && !currentMessageObject.needDrawBluredPreview() && !currentMessageObject.preview && !isSmallImage && !currentMessageObject.isSponsored() && !desu.inugram.helpers.chat.LinkPreviewSpoilerHelper.shouldHideMediaOverlays(this)) {
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
                  Theme.chat_msgMediaMenuDrawable.setAlpha((int) (oldAlpha * controlsAlpha));
                  setDrawableBounds(Theme.chat_msgMediaMenuDrawable, otherX = (int) (photoImage.getImageX() + photoImage.getImageWidth() - dp(14)), otherY = (int) (photoImage.getImageY() + dp(8.1f)));
                  Theme.chat_msgMediaMenuDrawable.draw(canvas);
-@@ -22528,7 +22528,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22525,7 +22525,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (photoImage.getVisible() && !currentMessageObject.isRepostPreview) {
                  if (!currentMessageObject.needDrawBluredPreview() && !currentMessageObject.isSponsored() && !currentMessageObject.isRepostPreview && !currentMessageObject.preview && !isSmallImage) {
                      if (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO && !isCompactMode()) {

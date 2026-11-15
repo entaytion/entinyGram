@@ -1046,10 +1046,6 @@
     <string name="InuProxyImported_other">%1$d پروکسی درون‌ریزی شد</string>
     <string name="InuFasterDownloads">دانلود سریع‌تر</string>
     <string name="InuFasterUploads">بارگذاری سریع‌تر</string>
-    <string name="InuKeepDownloadsInBackground">دانلودها با اسکرول/خروج متوقف نشوند</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">وقتی اسکرول می‌کنید یا از گفتگو خارج می‌شوید دانلودها ادامه می‌یابند.</string>
-    <string name="InuBlockSleepWhileDownloading">جلوگیری از خواب هنگام دانلود</string>
-    <string name="InuBlockSleepWhileDownloadingInfo">تا وقتی دانلودی فعال است قفل بیداری جزئی نگه می‌دارد تا Android آن را در پس‌زمینه متوقف نکند.</string>
     <string name="InuSendMp4DocumentAsVideo">ارسال اسناد MP4 به‌صورت ویدیو</string>
     <string name="InuSendMp4DocumentAsVideoInfo">فایل‌های MP4 که از بخش فایل‌ها پیوست می‌شوند بدون تبدیل به‌صورت ویدیوی قابل‌پخش ارسال می‌شوند</string>
     <string name="InuAttachCameraSquare">کاشی مربعی دوربین</string>
@@ -2294,14 +2290,6 @@
     <string name="InuAdBlockSection">تبلیغات</string>
     <string name="InuSettingNotFound">این تنظیم در این نسخه از entinyGram موجود نیست</string>
     <string name="InuDeviceSpoofPresetRandom">تصادفی در هر اجرا</string>
-    <string name="InuDownloadQueue">صف دانلود</string>
-    <string name="InuDownloadQueueInfo">فایل‌های بزرگ (بیش از ۲۰ مگابایت) یکی‌یکی و به ترتیبی که درخواست کرده‌اید دانلود می‌شوند. گزینه دانلودها را به منوی گفتگوها اضافه می‌کند.</string>
-    <string name="InuDownloadsManager">دانلودها</string>
-    <string name="InuDownloadsActive">در حال انجام</string>
-    <string name="InuDownloadsRunning">در حال دانلود</string>
-    <string name="InuDownloadsWaiting">در انتظار</string>
-    <string name="InuDownloadsFinished">پایان‌یافته</string>
-    <string name="InuDownloadsEmpty">چیزی در حال دانلود نیست</string>
     <string name="InuUseSystemEmoji">استفاده از ایموجی سیستم</string>
     <string name="InuUseSystemEmojiInfo">ایموجی‌ها را به‌جای مجموعه تلگرام با فونت سیستم می‌کشد. برای اعمال در همه جا برنامه را دوباره راه‌اندازی کنید.</string>
     <string name="InuQuietVoiceWhenLocked">پیام‌های صوتی بی‌صدا هنگام قفل</string>

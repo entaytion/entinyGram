@@ -53,7 +53,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -6613,6 +6625,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6610,6 +6622,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              captionOffsetX = 0;
              currentCaption = null;
              explanationLayout = null;
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
              if (poll != null) {
                  poll.explanationTitleLayout = null;
                  poll.currentExplanation = null;
-@@ -7724,7 +7738,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -7721,7 +7735,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                  restLines = restLinesCount;
                                  descriptionLayout = generateStaticLayout(text, Theme.chat_replyTextPaint, linkPreviewMaxWidth - (isRTL ? smallImageSide + 2 * smallSideMargin : 0), linkPreviewMaxWidth - smallImageSide - 2 * smallSideMargin, restLinesCount, maxLines);
                              }
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
  
                              int height = descriptionLayout.getLineBottom(descriptionLayout.getLineCount() - 1);
                              linkPreviewHeight += height;
-@@ -16950,7 +16966,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -16947,7 +16963,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          if (hasReplyQuote || getMessageObject().replyMessageObject != null && !getMessageObject().replyMessageObject.isSpoilersRevealed) {
                              SpoilerEffect.addSpoilers(this, replyTextLayout, replyTextOffset, replyTextOffset + (inu_isCustomSpoiler ? replySpoilerTextWidth : replyTextWidth), replySpoilersPool, replySpoilers);
                          }

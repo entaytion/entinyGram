@@ -1646,8 +1646,6 @@
     <string name="InuMsgDetailWaveformLength">Сэмплы волны</string>
     <string name="InuAccountSwitchShortcut">Ярлык переключения аккаунта</string>
     <string name="InuAccountSwitchShortcutInfo">Добавляет в меню долгого нажатия на значок приложения ярлык с выбором открываемого аккаунта</string>
-    <string name="InuBlockSleepWhileDownloading">Запретить спящий режим при загрузке</string>
-    <string name="InuBlockSleepWhileDownloadingInfo">Удерживает wake lock во время активной загрузки, чтобы Android не приостанавливал её в фоне.</string>
     <string name="InuHideProxySponsorChat">Скрыть спонсорский чат прокси</string>
     <string name="InuHideProxySponsorChatInfo">Блокирует рекламный чат или канал, который некоторые MTProto-прокси закрепляют вверху списка чатов</string>
     <string name="InuHideBusinessBotBanner">Скрыть баннер бизнес-бота</string>
@@ -1656,8 +1654,6 @@
     <string name="InuBusinessBotStopped">Бизнес-бот остановлен</string>
     <string name="InuBusinessBotStarted">Бизнес-бот запущен</string>
     <string name="InuHideRichEditorButton">Скрыть кнопку редактора форматирования</string>
-    <string name="InuKeepDownloadsInBackground">Не прерывать загрузки при скролле и выходе</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">Загрузки продолжаются, когда вы прокручиваете сообщение или выходите из чата.</string>
     <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
     <string name="InuIosBottomBar">Нижняя панель в стиле iOS</string>
     <string name="InuIosChatList">Список чатов в стиле iOS</string>
@@ -2297,14 +2293,6 @@
     <string name="InuForwardAllStarted">Пересылаю сообщения…</string>
     <string name="InuForwardAllDone">Переслано сообщений: %1$d</string>
     <string name="InuDeviceSpoofPresetRandom">Случайно при каждом запуске</string>
-    <string name="InuDownloadQueue">Очередь загрузок</string>
-    <string name="InuDownloadQueueInfo">Большие файлы (больше 20 МБ) скачиваются по одному в том порядке, в котором вы их запросили. Добавляет пункт «Загрузки» в меню чатов.</string>
-    <string name="InuDownloadsManager">Загрузки</string>
-    <string name="InuDownloadsActive">Выполняются</string>
-    <string name="InuDownloadsRunning">Скачивается</string>
-    <string name="InuDownloadsWaiting">Ожидают</string>
-    <string name="InuDownloadsFinished">Завершены</string>
-    <string name="InuDownloadsEmpty">Ничего не скачивается</string>
     <string name="InuUseSystemEmoji">Системные эмодзи</string>
     <string name="InuUseSystemEmojiInfo">Рисует эмодзи системным шрифтом вместо набора Telegram. Перезапустите приложение, чтобы применить везде.</string>
     <string name="InuQuietVoiceWhenLocked">Тихие голосовые при блокировке</string>
