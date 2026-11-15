@@ -107,9 +107,7 @@
     <string name="InuAiTranscribeNoKey">Aún no hay ningún proveedor de IA configurado para voz. Añade uno en Ajustes &gt; IA &gt; Proveedores.</string>
     <string name="InuAiTranscribePrompt">Pista para el reconocimiento</string>
     <string name="InuAiTranscribePromptInfo">Texto opcional que ayuda a reconocer nombres y términos, por ejemplo una lista de palabras. Se envía con cada mensaje de voz.</string>
-    <string name="InuAllowCopyRestricted">Permitir copiar de chats protegidos</string>
     <string name="InuAllowCopyRestrictedInfo">Copia y selecciona texto de chats y mensajes con el guardado desactivado, sin permitir el reenvío.</string>
-    <string name="InuAllowForwardRestricted">Permitir reenvío desde chats protegidos</string>
     <string name="InuAllowForwardRestrictedInfo">Omite la protección de contenido para reenviar, copiar y guardar archivos de chats protegidos.</string>
     <string name="InuAllowForwardRestrictedWarning">Telegram aún puede bloquear algunos reenvíos incluso con esto activado. Si ves «Plain forwarding is not allowed.», copia el texto o guarda el archivo.</string>
     <string name="InuAlreadyInTargetLanguage">Este mensaje ya está en %1$s.</string>
@@ -1947,6 +1945,11 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuRestartNow">Reiniciar</string>
     <string name="InuRestartRequired">Hay que reiniciar para aplicar los cambios</string>
     <string name="InuRestoreHiddenMessages">Mostrar mensajes ocultos</string>
+    <string name="InuRestrictedContentCopy">Copiar</string>
+    <string name="InuRestrictedContentFull">Evasión total</string>
+    <string name="InuRestrictedContentMode">Chats protegidos</string>
+    <string name="InuRestrictedContentOff">Desactivado</string>
+    <string name="InuRestrictedContentOffInfo">La protección de contenido funciona como en Telegram.</string>
     <string name="InuRestrictedFeatures">Funciones restringidas</string>
     <string name="InuRootSystem">Sistema</string>
     <string name="InuRoundAudioBitrate">Tasa de bits del audio redondo</string>

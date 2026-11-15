@@ -106,9 +106,7 @@
     <string name="InuAiTranscribeNoKey">هنوز هیچ ارائه‌دهنده هوش مصنوعی برای صدا تنظیم نشده است. یکی در تنظیمات &gt; هوش مصنوعی &gt; ارائه‌دهندگان اضافه کنید.</string>
     <string name="InuAiTranscribePrompt">راهنما برای تشخیص</string>
     <string name="InuAiTranscribePromptInfo">متن اختیاری برای کمک به تشخیص نام‌ها و اصطلاحات، مثلاً فهرستی از کلمات. با هر پیام صوتی ارسال می‌شود.</string>
-    <string name="InuAllowCopyRestricted">اجازه کپی از گفتگوهای محافظت‌شده</string>
     <string name="InuAllowCopyRestrictedInfo">متن گفتگوها و پیام‌هایی که ذخیره در آن‌ها ممنوع است را بدون اجازه بازارسال انتخاب و کپی کنید.</string>
-    <string name="InuAllowForwardRestricted">اجازه بازارسال از گفتگوهای محافظت‌شده</string>
     <string name="InuAllowForwardRestrictedInfo">محافظت از محتوا را دور می‌زند تا بتوانید رسانه گفتگوهایی را که بازارسال در آن‌ها بسته است بازارسال، کپی و ذخیره کنید.</string>
     <string name="InuAllowForwardRestrictedWarning">ممکن است Telegram حتی با فعال بودن این گزینه برخی ارسال‌ها را مسدود کند. اگر پیام «Plain forwarding is not allowed.» را دیدید، به‌جای آن متن را کپی کنید یا رسانه را ذخیره کنید.</string>
     <string name="InuAlreadyInTargetLanguage">این پیام از قبل به %1$s است.</string>
@@ -1925,6 +1923,11 @@
     <string name="InuRestartNow">راه‌اندازی مجدد</string>
     <string name="InuRestartRequired">برای اعمال تغییرات، راه‌اندازی مجدد لازم است</string>
     <string name="InuRestoreHiddenMessages">نمایش پیام‌های پنهان</string>
+    <string name="InuRestrictedContentCopy">کپی</string>
+    <string name="InuRestrictedContentFull">دور زدن کامل</string>
+    <string name="InuRestrictedContentMode">چت‌های محافظت‌شده</string>
+    <string name="InuRestrictedContentOff">خاموش</string>
+    <string name="InuRestrictedContentOffInfo">حفاظت از محتوا مانند Telegram کار می‌کند.</string>
     <string name="InuRestrictedFeatures">قابلیت‌های محدود</string>
     <string name="InuRootSystem">سیستم</string>
     <string name="InuRoundAudioBitrate">بیت‌ریت صدای گرد</string>

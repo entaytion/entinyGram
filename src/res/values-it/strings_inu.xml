@@ -107,9 +107,7 @@
     <string name="InuAiTranscribeNoKey">Nessun fornitore IA è ancora configurato per la voce. Aggiungine uno in Impostazioni &gt; IA &gt; Fornitori.</string>
     <string name="InuAiTranscribePrompt">Suggerimento per il riconoscimento</string>
     <string name="InuAiTranscribePromptInfo">Testo facoltativo che aiuta a riconoscere nomi e termini, ad esempio un elenco di parole. Viene inviato con ogni messaggio vocale.</string>
-    <string name="InuAllowCopyRestricted">Consenti la copia dalle chat protette</string>
     <string name="InuAllowCopyRestrictedInfo">Copia e seleziona il testo da chat e messaggi con il salvataggio disattivato, senza consentire l\'inoltro.</string>
-    <string name="InuAllowForwardRestricted">Consenti l\'inoltro dalle chat protette</string>
     <string name="InuAllowForwardRestrictedInfo">Aggira la protezione dei contenuti per inoltrare, copiare e salvare i media dalle chat con inoltro disattivato.</string>
     <string name="InuAllowForwardRestrictedWarning">Telegram può comunque bloccare alcuni inoltri anche con questa opzione attiva. Se vedi «Plain forwarding is not allowed.», copia il testo o salva il media.</string>
     <string name="InuAlreadyInTargetLanguage">Questo messaggio è già in %1$s.</string>
@@ -1948,6 +1946,11 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuRestartNow">Riavvia</string>
     <string name="InuRestartRequired">Riavvio necessario per applicare le modifiche</string>
     <string name="InuRestoreHiddenMessages">Mostra messaggi nascosti</string>
+    <string name="InuRestrictedContentCopy">Copia</string>
+    <string name="InuRestrictedContentFull">Bypass completo</string>
+    <string name="InuRestrictedContentMode">Chat protette</string>
+    <string name="InuRestrictedContentOff">Disattivato</string>
+    <string name="InuRestrictedContentOffInfo">La protezione dei contenuti funziona come in Telegram.</string>
     <string name="InuRestrictedFeatures">Funzioni limitate</string>
     <string name="InuRootSystem">Sistema</string>
     <string name="InuRoundAudioBitrate">Bitrate audio dei messaggi rotondi</string>

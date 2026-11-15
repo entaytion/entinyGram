@@ -106,9 +106,7 @@
     <string name="InuAiTranscribeNoKey">音声用の AI プロバイダーがまだ設定されていません。設定 &gt; AI &gt; プロバイダー で追加してください。</string>
     <string name="InuAiTranscribePrompt">認識のヒント</string>
     <string name="InuAiTranscribePromptInfo">名前や用語の認識に役立つ任意のテキスト（単語リストなど）。すべてのボイスメッセージと一緒に送信されます。</string>
-    <string name="InuAllowCopyRestricted">保護されたチャットからのコピーを許可</string>
     <string name="InuAllowCopyRestrictedInfo">保存が無効なチャットやメッセージのテキストを、転送を許可せずに選択・コピーできます。</string>
-    <string name="InuAllowForwardRestricted">保護されたチャットからの転送を許可</string>
     <string name="InuAllowForwardRestrictedInfo">コンテンツ保護をバイパスして、転送が禁止されているチャットからメディアを転送・コピー・保存します。</string>
     <string name="InuAllowForwardRestrictedWarning">この設定をオンにしても、Telegram が一部の転送をブロックする場合があります。「Plain forwarding is not allowed.」と表示された場合は、代わりにテキストをコピーするかメディアを保存してください。</string>
     <string name="InuAlreadyInTargetLanguage">このメッセージはすでに %1$s です。</string>
@@ -1923,6 +1921,11 @@
     <string name="InuRestartNow">再起動</string>
     <string name="InuRestartRequired">変更を適用するには再起動が必要です</string>
     <string name="InuRestoreHiddenMessages">非表示のメッセージを表示</string>
+    <string name="InuRestrictedContentCopy">コピー</string>
+    <string name="InuRestrictedContentFull">完全バイパス</string>
+    <string name="InuRestrictedContentMode">保護されたチャット</string>
+    <string name="InuRestrictedContentOff">オフ</string>
+    <string name="InuRestrictedContentOffInfo">コンテンツ保護はTelegramと同じように動作します。</string>
     <string name="InuRestrictedFeatures">制限された機能</string>
     <string name="InuRootSystem">システム</string>
     <string name="InuRoundAudioBitrate">丸型ビデオの音声ビットレート</string>

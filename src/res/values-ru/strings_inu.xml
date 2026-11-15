@@ -106,9 +106,7 @@
     <string name="InuAiTranscribeNoKey">Голосовой AI-провайдер ещё не настроен. Добавьте его в Настройках &gt; AI &gt; Провайдеры.</string>
     <string name="InuAiTranscribePrompt">Подсказка для распознавания</string>
     <string name="InuAiTranscribePromptInfo">Необязательный текст, который помогает распознавать имена и термины, например список слов. Отправляется с каждым голосовым сообщением.</string>
-    <string name="InuAllowCopyRestricted">Разрешить копирование из защищенных чатов</string>
     <string name="InuAllowCopyRestrictedInfo">Копирование и выделение текста в чатах и сообщениях с запретом сохранения, без разрешения пересылки.</string>
-    <string name="InuAllowForwardRestricted">Разрешить пересылку из защищенных чатов</string>
     <string name="InuAllowForwardRestrictedInfo">Обход защиты контента для пересылки, копирования и сохранения медиа из чатов с запретом пересылки.</string>
     <string name="InuAllowForwardRestrictedWarning">Telegram всё равно может блокировать часть пересылок, даже с включённой опцией. Если видите «Plain forwarding is not allowed.», скопируйте текст или сохраните медиа.</string>
     <string name="InuAlreadyInTargetLanguage">Это сообщение уже на %1$s.</string>
@@ -1936,6 +1934,11 @@
     <string name="InuRestartNow">Перезапустить</string>
     <string name="InuRestartRequired">Требуется перезапуск</string>
     <string name="InuRestoreHiddenMessages">Показать скрытые сообщения</string>
+    <string name="InuRestrictedContentCopy">Копирование</string>
+    <string name="InuRestrictedContentFull">Полный обход</string>
+    <string name="InuRestrictedContentMode">Защищённые чаты</string>
+    <string name="InuRestrictedContentOff">Выключено</string>
+    <string name="InuRestrictedContentOffInfo">Защита контента работает как в Telegram.</string>
     <string name="InuRestrictedFeatures">Ограниченные функции</string>
     <string name="InuRootSystem">Управление приложением</string>
     <string name="InuRoundAudioBitrate">Битрейт звука кружочков</string>

@@ -106,9 +106,7 @@
     <string name="InuAiTranscribeNoKey">尚未为语音配置 AI 服务商。请在 设置 &gt; AI &gt; 服务商 中添加。</string>
     <string name="InuAiTranscribePrompt">识别提示</string>
     <string name="InuAiTranscribePromptInfo">可选文本，帮助识别人名和术语，例如词语列表。会随每条语音消息一起发送。</string>
-    <string name="InuAllowCopyRestricted">允许从受保护的聊天复制</string>
     <string name="InuAllowCopyRestrictedInfo">在禁止保存的聊天和消息中选择并复制文本，但不允许转发。</string>
-    <string name="InuAllowForwardRestricted">允许从受保护的聊天转发</string>
     <string name="InuAllowForwardRestrictedInfo">绕过内容保护，从禁止转发的聊天中转发、复制和保存媒体。</string>
     <string name="InuAllowForwardRestrictedWarning">即使开启此选项，Telegram 仍可能拦截部分转发。如果看到“Plain forwarding is not allowed.”，请改为复制文本或保存媒体。</string>
     <string name="InuAlreadyInTargetLanguage">此消息已是 %1$s。</string>
@@ -1923,6 +1921,11 @@
     <string name="InuRestartNow">重启</string>
     <string name="InuRestartRequired">需要重启以应用更改</string>
     <string name="InuRestoreHiddenMessages">显示隐藏的消息</string>
+    <string name="InuRestrictedContentCopy">复制</string>
+    <string name="InuRestrictedContentFull">完全绕过</string>
+    <string name="InuRestrictedContentMode">受保护的聊天</string>
+    <string name="InuRestrictedContentOff">关闭</string>
+    <string name="InuRestrictedContentOffInfo">内容保护与 Telegram 中一致。</string>
     <string name="InuRestrictedFeatures">受限功能</string>
     <string name="InuRootSystem">系统</string>
     <string name="InuRoundAudioBitrate">圆形视频音频码率</string>

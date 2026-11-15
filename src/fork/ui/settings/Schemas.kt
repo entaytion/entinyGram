@@ -90,6 +90,7 @@ object Schemas {
         "hide-premium" to listOf("hide-premium-badge", "hide-collectible-status", "hide-attach-premium-badges", "hide-emoji-premium-upsell", "hide-caption-limit-upsell", "hide-paid-reaction-upsell"),
         "hide-interface" to listOf("hide-trending-stickers", "hide-group-sticker-pack", "hide-hashtag-suggestions", "hide-rich-editor-button"),
         "hide-channels" to listOf("hide-similar-channels-tab", "hide-channel-recommendations", "hide-channel-share-button", "hide-psa-promo-chat"),
+        "restricted-content" to listOf("allow-forward-restricted", "allow-copy-restricted"),
         "customize-messages" to listOf("hide-reply-background", "disable-reply-custom-colors", "hide-reply-background-emoji"),
     )
 
@@ -564,22 +565,28 @@ object Schemas {
         section(R.string.InuContentProtectionBypass) {
             toggle(InuConfig.SAVE_ANY_STORY, R.string.InuSaveAnyStory, R.string.InuSaveAnyStoryInfo)
             toggle(InuConfig.AUTO_SAVE_STORIES, R.string.InuAutoSaveStories, R.string.InuAutoSaveStoriesInfo)
-            toggle(
-                InuConfig.ALLOW_FORWARD_RESTRICTED, R.string.InuAllowForwardRestricted, R.string.InuAllowForwardRestrictedInfo,
-                onChange = { page, on ->
-                    val ctx = page.parentActivity
-                    if (on && ctx != null) {
-                        page.showDialog(
-                            AlertDialog.Builder(ctx, page.resourceProvider)
-                                .setTitle(LocaleController.getString(R.string.InuAllowForwardRestricted))
-                                .setMessage(LocaleController.getString(R.string.InuAllowForwardRestrictedWarning))
-                                .setPositiveButton(LocaleController.getString(R.string.OK), null)
-                                .create()
-                        )
-                    }
+            custom(
+                "restricted-content", R.string.InuRestrictedContentMode,
+                build = { page, id ->
+                    UItem.asCustom(
+                        id,
+                        page.remember(id) {
+                            RestrictedContentCell(page.context) { mode ->
+                                val ctx = page.parentActivity
+                                if (mode == InuConfig.RestrictedContentModeItem.FULL && ctx != null) {
+                                    page.showDialog(
+                                        AlertDialog.Builder(ctx, page.resourceProvider)
+                                            .setTitle(LocaleController.getString(R.string.InuRestrictedContentMode))
+                                            .setMessage(LocaleController.getString(R.string.InuAllowForwardRestrictedWarning))
+                                            .setPositiveButton(LocaleController.getString(R.string.OK), null)
+                                            .create()
+                                    )
+                                }
+                            }
+                        },
+                    )
                 },
             )
-            toggle(InuConfig.ALLOW_COPY_RESTRICTED, R.string.InuAllowCopyRestricted, R.string.InuAllowCopyRestrictedInfo)
             toggle(InuConfig.ALLOW_SCREENSHOTS, R.string.InuDisableFlagSecure, R.string.InuDisableFlagSecureInfo)
             toggle(InuConfig.SUPPRESS_SCREENSHOT_NOTIFICATION, R.string.InuSuppressScreenshotNotification, R.string.InuSuppressScreenshotNotificationInfo)
             toggle(InuConfig.BYPASS_GIF_RESTRICTIONS, R.string.InuBypassGifRestrictions, R.string.InuBypassGifRestrictionsInfo)

@@ -106,9 +106,7 @@
     <string name="InuAiTranscribeNoKey">لم يُضبط أي مزود ذكاء اصطناعي للصوت بعد. أضف واحداً في الإعدادات &gt; الذكاء الاصطناعي &gt; المزودون.</string>
     <string name="InuAiTranscribePrompt">تلميح للتعرّف</string>
     <string name="InuAiTranscribePromptInfo">نص اختياري يساعد على التعرّف على الأسماء والمصطلحات، مثل قائمة كلمات. يُرسل مع كل رسالة صوتية.</string>
-    <string name="InuAllowCopyRestricted">السماح بالنسخ من المحادثات المحمية</string>
     <string name="InuAllowCopyRestrictedInfo">انسخ النص وحدده من المحادثات والرسائل التي يُمنع حفظها، دون السماح بإعادة التوجيه.</string>
-    <string name="InuAllowForwardRestricted">السماح بإعادة التوجيه من المحادثات المحمية</string>
     <string name="InuAllowForwardRestrictedInfo">تجاوز حماية المحتوى لإعادة توجيه الوسائط ونسخها وحفظها من محادثات معطّل فيها إعادة التوجيه.</string>
     <string name="InuAllowForwardRestrictedWarning">قد يظل Telegram يحظر بعض عمليات إعادة التوجيه حتى مع تفعيل هذا الخيار. إذا ظهرت لك رسالة «Plain forwarding is not allowed.»، فانسخ النص أو احفظ الوسائط بدلاً من ذلك.</string>
     <string name="InuAlreadyInTargetLanguage">هذه الرسالة بلغة %1$s بالفعل.</string>
@@ -1940,6 +1938,11 @@
     <string name="InuRestartNow">إعادة التشغيل</string>
     <string name="InuRestartRequired">يتطلب إعادة التشغيل لتطبيق التغييرات</string>
     <string name="InuRestoreHiddenMessages">إظهار الرسائل المخفية</string>
+    <string name="InuRestrictedContentCopy">النسخ</string>
+    <string name="InuRestrictedContentFull">تجاوز كامل</string>
+    <string name="InuRestrictedContentMode">الدردشات المحمية</string>
+    <string name="InuRestrictedContentOff">معطّل</string>
+    <string name="InuRestrictedContentOffInfo">تعمل حماية المحتوى كما في Telegram.</string>
     <string name="InuRestrictedFeatures">الميزات المقيّدة</string>
     <string name="InuRootSystem">النظام</string>
     <string name="InuRoundAudioBitrate">معدل بت الصوت الدائري</string>

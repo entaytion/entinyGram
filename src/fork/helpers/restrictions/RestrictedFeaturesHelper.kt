@@ -41,7 +41,7 @@ object RestrictedFeaturesHelper {
         message?.noforwards == true && !InuConfig.ALLOW_FORWARD_RESTRICTED.value
 
     @JvmStatic
-    fun copyAllowed(): Boolean = InuConfig.ALLOW_COPY_RESTRICTED.value || InuConfig.ALLOW_FORWARD_RESTRICTED.value
+    fun copyAllowed(): Boolean = InuConfig.RESTRICTED_CONTENT_MODE.value != InuConfig.RestrictedContentModeItem.OFF
 
     // entiny: check raw noforwards flags because isPeerNoForwards returns false when toggle is on
     private fun isSourceNoForwards(controller: MessagesController, msg: MessageObject): Boolean {

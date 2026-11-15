@@ -106,9 +106,7 @@
     <string name="InuAiTranscribeNoKey">Голосовий AI-провайдер ще не налаштований. Додайте його в Налаштуваннях &gt; AI &gt; Провайдери.</string>
     <string name="InuAiTranscribePrompt">Підказка для розпізнавання</string>
     <string name="InuAiTranscribePromptInfo">Необов\'язковий текст, що допомагає розпізнавати імена й терміни, наприклад список слів. Надсилається з кожним голосовим повідомленням.</string>
-    <string name="InuAllowCopyRestricted">Дозволити копіювання із захищених чатів</string>
     <string name="InuAllowCopyRestrictedInfo">Копіювання та виділення тексту в чатах і повідомленнях із забороною збереження, без дозволу пересилання.</string>
-    <string name="InuAllowForwardRestricted">Дозволити пересилання з захищених чатів</string>
     <string name="InuAllowForwardRestrictedInfo">Обхід захисту контенту для пересилання, копіювання та збереження медіа з чатів із забороною пересилання.</string>
     <string name="InuAllowForwardRestrictedWarning">Telegram усе одно може блокувати частину пересилань, навіть з увімкненою опцією. Якщо бачите "Plain forwarding is not allowed.", скопіюйте текст або збережіть медіа.</string>
     <string name="InuAlreadyInTargetLanguage">Це повідомлення вже мовою %1$s.</string>
@@ -1951,6 +1949,11 @@
     <string name="InuRestartNow">Перезапустити</string>
     <string name="InuRestartRequired">Необхідно перезапустити додаток для застосування змін</string>
     <string name="InuRestoreHiddenMessages">Показати приховані повідомлення</string>
+    <string name="InuRestrictedContentCopy">Копіювання</string>
+    <string name="InuRestrictedContentFull">Повний обхід</string>
+    <string name="InuRestrictedContentMode">Захищені чати</string>
+    <string name="InuRestrictedContentOff">Вимкнено</string>
+    <string name="InuRestrictedContentOffInfo">Захист контенту працює як у Telegram.</string>
     <string name="InuRestrictedFeatures">Обмежені функції</string>
     <string name="InuRootSystem">Керування застосунком</string>
     <string name="InuRoundAudioBitrate">Бітрейт звуку відеоповідомлень</string>

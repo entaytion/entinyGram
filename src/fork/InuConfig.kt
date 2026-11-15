@@ -1733,11 +1733,34 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val SAVE_DELETED_OWN = BoolItem("save_deleted_own", false)
 
-    @JvmField
-    val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)
+    class RestrictedContentModeItem : IntItem("restricted_content_mode", OFF) {
+        override var value: Int
+            get() = super.value.coerceIn(OFF, FULL)
+            set(v) {
+                super.value = v
+            }
+
+        companion object {
+            const val OFF = 0
+            const val COPY = 1
+            const val FULL = 2
+        }
+    }
 
     @JvmField
-    val ALLOW_COPY_RESTRICTED = BoolItem("allow_copy_restricted", false)
+    val RESTRICTED_CONTENT_MODE = RestrictedContentModeItem()
+
+    // entiny: stock hooks in patches still read this name, so it follows the mode instead of being stored
+    class FullBypassItem : BoolItem("allow_forward_restricted", false, false) {
+        override var value: Boolean
+            get() = RESTRICTED_CONTENT_MODE.value == RestrictedContentModeItem.FULL
+            set(v) {
+                RESTRICTED_CONTENT_MODE.value = if (v) RestrictedContentModeItem.FULL else RestrictedContentModeItem.OFF
+            }
+    }
+
+    @JvmField
+    val ALLOW_FORWARD_RESTRICTED = FullBypassItem()
 
     @JvmField
     val ALLOW_SCREENSHOTS = BoolItem("allow_screenshots", false)

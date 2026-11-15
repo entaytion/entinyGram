@@ -106,9 +106,7 @@
     <string name="InuAiTranscribeNoKey">Ses için henüz bir AI sağlayıcısı ayarlanmadı. Ayarlar &gt; AI &gt; Sağlayıcılar bölümünden ekleyin.</string>
     <string name="InuAiTranscribePrompt">Tanıma ipucu</string>
     <string name="InuAiTranscribePromptInfo">İsimleri ve terimleri tanımaya yardımcı olan isteğe bağlı metin, örneğin bir kelime listesi. Her sesli mesajla birlikte gönderilir.</string>
-    <string name="InuAllowCopyRestricted">Korumalı sohbetlerden kopyalamaya izin ver</string>
     <string name="InuAllowCopyRestrictedInfo">Kaydetmenin kapalı olduğu sohbet ve mesajlardaki metni, iletmeye izin vermeden seç ve kopyala.</string>
-    <string name="InuAllowForwardRestricted">Korumalı sohbetlerden iletmeye izin ver</string>
     <string name="InuAllowForwardRestrictedInfo">İletimi kapalı olan sohbetlerden medya iletmek, kopyalamak ve kaydetmek için içerik korumasını atlayın.</string>
     <string name="InuAllowForwardRestrictedWarning">Bu açık olsa bile Telegram bazı iletmeleri yine de engelleyebilir. “Plain forwarding is not allowed.” hatasını görürseniz bunun yerine metni kopyalayın veya medyayı kaydedin.</string>
     <string name="InuAlreadyInTargetLanguage">Bu mesaj zaten %1$s dilinde.</string>
@@ -1926,6 +1924,11 @@
     <string name="InuRestartNow">Yeniden başlat</string>
     <string name="InuRestartRequired">Değişikliklerin uygulanması için yeniden başlatma gerekiyor</string>
     <string name="InuRestoreHiddenMessages">Gizli mesajları göster</string>
+    <string name="InuRestrictedContentCopy">Kopyalama</string>
+    <string name="InuRestrictedContentFull">Tam atlatma</string>
+    <string name="InuRestrictedContentMode">Korumalı sohbetler</string>
+    <string name="InuRestrictedContentOff">Kapalı</string>
+    <string name="InuRestrictedContentOffInfo">İçerik koruması Telegram ile aynı şekilde çalışır.</string>
     <string name="InuRestrictedFeatures">Kısıtlı özellikler</string>
     <string name="InuRootSystem">Sistem</string>
     <string name="InuRoundAudioBitrate">Yuvarlak ses bit hızı</string>
