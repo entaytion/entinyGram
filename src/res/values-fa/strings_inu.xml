@@ -2091,6 +2091,10 @@
     <string name="InuStickers">استیکرها</string>
     <string name="InuStickerSetRefreshed">بسته به‌روز شد</string>
     <string name="InuStickerSetRefreshFailed">تازه‌سازی بسته ممکن نشد</string>
+    <string name="InuStickerShape">شکل استیکر</string>
+    <string name="InuStickerShapeDefault">پیش‌فرض</string>
+    <string name="InuStickerShapeMessage">مثل پیام</string>
+    <string name="InuStickerShapeRounded">گرد</string>
     <string name="InuStickerSize">اندازه استیکر</string>
     <string name="InuStickerSizeDialogMessage">من عاشق آنتن‌ها هستم!</string>
     <string name="InuStickerTimeMode">نمایش ساعت روی استیکر</string>

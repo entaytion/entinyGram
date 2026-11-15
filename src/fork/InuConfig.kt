@@ -1052,6 +1052,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val STICKER_SIZE = FloatItem("sticker_size", 14.0f)
 
     @JvmField
+    val STICKER_SHAPE = IntItem("sticker_shape", 0)
+
+    @JvmField
     val SMALL_GIFS = BoolItem("small_gifs", false)
 
     class FoldersDisplayModeItem : IntItem("folders_display_mode", TITLES) {

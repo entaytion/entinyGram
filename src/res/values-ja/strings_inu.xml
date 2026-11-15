@@ -2089,6 +2089,10 @@
     <string name="InuStickers">スタンプ</string>
     <string name="InuStickerSetRefreshed">パックを更新しました</string>
     <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
+    <string name="InuStickerShape">スタンプの形</string>
+    <string name="InuStickerShapeDefault">デフォルト</string>
+    <string name="InuStickerShapeMessage">メッセージ風</string>
+    <string name="InuStickerShapeRounded">角丸</string>
     <string name="InuStickerSize">スタンプのサイズ</string>
     <string name="InuStickerSizeDialogMessage">アンテナ大好き！</string>
     <string name="InuStickerTimeMode">スタンプ上の時刻表示</string>

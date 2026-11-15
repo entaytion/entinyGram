@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 16 Nov 2026 01:20:16 +0200
+Subject: Crops stickers in chat to a rounded or message-bubble shape when sticker shape is set.
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -9149,7 +9149,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     availableTimeWidth = photoWidth - dp(14);
+                     backgroundWidth = photoWidth + dp(12);
+ 
+-                    photoImage.setRoundRadius(0);
++                    desu.inugram.helpers.chat.StickerShapeHelper.apply(photoImage, messageObject);
+                     canChangeRadius = false;
+                     if (!messageObject.isOutOwner() && MessageObject.isPremiumSticker(messageObject.getDocument())) {
+                         flipImage = true;

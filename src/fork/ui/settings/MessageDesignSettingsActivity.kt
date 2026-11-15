@@ -18,6 +18,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMessageDesign)
 
     private var stickerSizePreview: StickerSizePreviewMessagesCell? = null
+    private var stickerShapeCell: StickerShapeCell? = null
     private var miscPreview: MiscPreviewMessagesCell? = null
     private var widePostsPreview: WideChannelPostsPreviewCell? = null
     private var widePostsInsetSlider: SliderCell? = null
@@ -46,9 +47,14 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
         } else {
             stickerSizeSlider?.updateColors()
         }
+        if (stickerShapeCell == null) stickerShapeCell = StickerShapeCell(context) {
+            stickerSizePreview?.invalidate()
+            reloadChats()
+        }
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuStickers)))
         items.add(UItem.asCustom(stickerSizePreview))
         items.add(UItem.asCustom(stickerSizeSlider))
+        items.add(UItem.asShadow(null))
         items.add(
             UItem.asButton(
                 BUTTON_STICKER_TIME_MODE,
@@ -61,6 +67,9 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
                 }
             )
         )
+        items.add(UItem.asShadow(null))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStickerShape)))
+        items.add(UItem.asCustom(stickerShapeCell))
         items.add(UItem.asShadow(null))
 
         if (miscPreview == null) miscPreview = MiscPreviewMessagesCell(context, this)

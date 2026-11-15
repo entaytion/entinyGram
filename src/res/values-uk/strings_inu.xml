@@ -2117,6 +2117,10 @@
     <string name="InuStickers">Наліпки</string>
     <string name="InuStickerSetRefreshed">Пакунок оновлено</string>
     <string name="InuStickerSetRefreshFailed">Не вдалося оновити пакунок</string>
+    <string name="InuStickerShape">Форма наліпок</string>
+    <string name="InuStickerShapeDefault">Стандартна</string>
+    <string name="InuStickerShapeMessage">Як повідомлення</string>
+    <string name="InuStickerShapeRounded">Закруглена</string>
     <string name="InuStickerSize">Розмір наліпок</string>
     <string name="InuStickerSizeDialogMessage">я люблю антени!</string>
     <string name="InuStickerTimeMode">Відображення часу на наліпках</string>

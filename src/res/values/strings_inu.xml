@@ -2099,6 +2099,10 @@
     <string name="InuStickers">Stickers</string>
     <string name="InuStickerSetRefreshed">Pack updated</string>
     <string name="InuStickerSetRefreshFailed">Couldn\'t refresh the pack</string>
+    <string name="InuStickerShape">Sticker shape</string>
+    <string name="InuStickerShapeDefault">Default</string>
+    <string name="InuStickerShapeMessage">Message</string>
+    <string name="InuStickerShapeRounded">Rounded</string>
     <string name="InuStickerSize">Sticker size</string>
     <string name="InuStickerSizeDialogMessage">i love antennas!</string>
     <string name="InuStickerTimeMode">Sticker time overlay</string>

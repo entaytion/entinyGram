@@ -2092,6 +2092,10 @@
     <string name="InuStickers">Çıkartmalar</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
+    <string name="InuStickerShape">Çıkartma şekli</string>
+    <string name="InuStickerShapeDefault">Varsayılan</string>
+    <string name="InuStickerShapeMessage">Mesaj gibi</string>
+    <string name="InuStickerShapeRounded">Yuvarlak</string>
     <string name="InuStickerSize">Çıkartma boyutu</string>
     <string name="InuStickerSizeDialogMessage">antenleri severim!</string>
     <string name="InuStickerTimeMode">Çıkartma saat katmanı</string>

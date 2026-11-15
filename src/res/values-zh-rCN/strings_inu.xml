@@ -2089,6 +2089,10 @@
     <string name="InuStickers">贴纸</string>
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
     <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
+    <string name="InuStickerShape">贴纸形状</string>
+    <string name="InuStickerShapeDefault">默认</string>
+    <string name="InuStickerShapeMessage">消息样式</string>
+    <string name="InuStickerShapeRounded">圆角</string>
     <string name="InuStickerSize">贴纸尺寸</string>
     <string name="InuStickerSizeDialogMessage">我喜欢天线！</string>
     <string name="InuStickerTimeMode">贴纸上的时间显示</string>

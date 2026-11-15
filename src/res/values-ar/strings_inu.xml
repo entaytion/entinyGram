@@ -2106,6 +2106,10 @@
     <string name="InuStickers">الملصقات</string>
     <string name="InuStickerSetRefreshed">تم تحديث الحزمة</string>
     <string name="InuStickerSetRefreshFailed">تعذّر تحديث الحزمة</string>
+    <string name="InuStickerShape">شكل الملصق</string>
+    <string name="InuStickerShapeDefault">افتراضي</string>
+    <string name="InuStickerShapeMessage">مثل الرسالة</string>
+    <string name="InuStickerShapeRounded">مستدير</string>
     <string name="InuStickerSize">حجم الملصق</string>
     <string name="InuStickerSizeDialogMessage">أحب الهوائيات!</string>
     <string name="InuStickerTimeMode">تراكب وقت الملصق</string>

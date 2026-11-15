@@ -2113,6 +2113,10 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuStickers">Pegatinas</string>
     <string name="InuStickerSetRefreshed">Paquete actualizado</string>
     <string name="InuStickerSetRefreshFailed">No se pudo actualizar el paquete</string>
+    <string name="InuStickerShape">Forma de stickers</string>
+    <string name="InuStickerShapeDefault">Predeterminada</string>
+    <string name="InuStickerShapeMessage">Como mensaje</string>
+    <string name="InuStickerShapeRounded">Redondeada</string>
     <string name="InuStickerSize">Tamaño de stickers</string>
     <string name="InuStickerSizeDialogMessage">¡me encantan las antenas!</string>
     <string name="InuStickerTimeMode">Hora sobre los stickers</string>

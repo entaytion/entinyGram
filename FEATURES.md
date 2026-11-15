@@ -83,6 +83,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **side drawer** — material 3 sections with aligned icons and labels
 - **menu shortcuts** — clear cache and restart in the chats menu, restart and plugin settings in the side menu
 - **disable vibration** across the app, calls and notifications
+- **sticker shape** — crop stickers in chat to default, rounded or message-bubble corners
 
 ### profile & identity
 
