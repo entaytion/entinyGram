@@ -6,6 +6,9 @@ import android.view.View
 import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.InuHooks
+import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.icons.IconPackHelper
+import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import desu.inugram.helpers.LocalPremiumHelper
 import desu.inugram.helpers.ProxyVpnHelper
 import desu.inugram.helpers.push.UnifiedPushHelper
@@ -77,6 +80,17 @@ object Schemas {
         "bottom-tabs-reset" to listOf("customize-bottom-tabs"),
         "fab-main-action" to listOf("dialogs-fab-main-action"),
         "fab-secondary-action" to listOf("dialogs-fab-secondary-action"),
+        "unified-avatar-radius" to listOf("unified-corner-radius"),
+        "optimized-attachment-menu" to listOf("lightweight-attachment-animation"),
+        "center-titles" to listOf("center-title-chats", "center-title-dialogs", "center-title-pages"),
+        "non-island-ui" to listOf("non-island-folders-bar", "non-island-shared-media-tabs", "non-island-global-search", "non-island-chat-elements", "hide-fade-view", "disable-profile-avatar-blur"),
+        "hide-stories" to listOf("hide-story-avatars", "disable-overscroll-story", "hide-repost-to-story", "hide-profile-story-button", "hide-profile-menu-archived-stories"),
+        "hide-profile" to listOf("hide-stars-rating", "hide-verification-badge", "hide-profile-colorful-background", "hide-gifts-around-avatar", "hide-profile-icons", "hide-profile-live-actions-button"),
+        "hide-gifts" to listOf("hide-profile-gifts-tab", "hide-profile-gift-button", "hide-profile-menu-send-gift", "hide-gift-button-input", "hide-gift-cards-in-chat", "hide-gift-auctions-hint", "hide-giveaways"),
+        "hide-premium" to listOf("hide-premium-badge", "hide-collectible-status", "hide-attach-premium-badges", "hide-emoji-premium-upsell", "hide-caption-limit-upsell", "hide-paid-reaction-upsell"),
+        "hide-interface" to listOf("hide-trending-stickers", "hide-group-sticker-pack", "hide-hashtag-suggestions", "hide-rich-editor-button"),
+        "hide-channels" to listOf("hide-similar-channels-tab", "hide-channel-recommendations", "hide-channel-share-button", "hide-psa-promo-chat"),
+        "customize-messages" to listOf("hide-reply-background", "disable-reply-custom-colors", "hide-reply-background-emoji"),
     )
 
     val LEGACY_PAGE_SLUGS: Map<String, List<String>> = mapOf(
@@ -172,7 +186,6 @@ object Schemas {
                 InuConfig.USE_SYSTEM_EMOJI, R.string.InuUseSystemEmoji, R.string.InuUseSystemEmojiInfo,
                 onChange = { _, value ->
                     SharedConfig.useSystemEmoji = value
-                    MessagesController.getGlobalMainSettings().edit().putBoolean("useSystemEmoji", value).apply()
                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded)
                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
                 },
@@ -1107,6 +1120,139 @@ object Schemas {
         }
     }
 
+    private val AVATAR_PREVIEW_KEY = InuUtils.generateId()
+
+    val APPEARANCE = schema("appearance", R.string.InuCategoryAppearance, R.drawable.msg_settings_old) {
+        section(R.string.InuTypographyAndIcons) {
+            link(R.string.InuFonts, slug = "font") { FontsSettingsActivity() }
+            link(R.string.InuIconReplacement, R.drawable.inu_tabler_palette, value = { IconPackHelper.getActivePacksSummary() }, slug = "icon-replacement") { IconPacksActivity() }
+            custom(
+                "notification-icon", R.string.InuNotificationIcon,
+                build = { page, id ->
+                    UItem.asCustom(page.remember(id) { NotificationIconCell(page.context!!) { page.showRestart() } }).also { it.id = id }
+                },
+            )
+        }
+        section(R.string.InuDesignStyle) {
+            link(R.string.InuIosSettings, R.drawable.msg_newphone, value = { LocaleController.getString(R.string.InuIosSettingsInfo) }) { IosStyleSettingsActivity() }
+            link(R.string.InuMaterial3, R.drawable.inu_tabler_layout_cards, value = { LocaleController.getString(R.string.InuMaterial3SettingsInfo) }) { Material3SettingsActivity() }
+            link(R.string.InuChatHeaderSettings, R.drawable.inu_tabler_app_window, slug = "chat-header-settings") { ChatHeaderSettingsActivity() }
+            link(R.string.InuMessageDesign, R.drawable.msg_palette) { MessageDesignSettingsActivity() }
+            group("center-titles", R.string.InuCenterTitles, onChange = { page, changed ->
+                if (InuConfig.CENTER_TITLE_CHATS in changed && !InuConfig.CENTER_TITLE_CHATS.value) InuConfig.IOS_CHAT_HEADER.value = false
+                if (InuConfig.CENTER_TITLE_PAGES in changed) page.rebuildAll()
+                else if (InuConfig.CENTER_TITLE_DIALOGS in changed) page.rebuildSoft()
+            }) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuCenterTitles),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuCenterTitleDialogs, InuConfig.CENTER_TITLE_DIALOGS),
+                        ExpandableBoolGroup.Option(R.string.InuCenterTitleChats, InuConfig.CENTER_TITLE_CHATS),
+                        ExpandableBoolGroup.Option(R.string.InuCenterTitlePages, InuConfig.CENTER_TITLE_PAGES),
+                    ),
+                    sectionId = id,
+                )
+            }
+            group("non-island-ui", R.string.InuNonIslandUI, infoRes = R.string.InuNonIslandHint, onChange = { page, changed ->
+                if (InuConfig.NON_ISLAND_HEADERS in changed) page.rebuildAll()
+                else if (InuConfig.NON_ISLAND_FOLDERS_BAR in changed || InuConfig.NON_ISLAND_GLOBAL_SEARCH in changed || InuConfig.HIDE_FADE_VIEW in changed) page.rebuildSoft()
+                if (InuConfig.NON_ISLAND_CHAT_ELEMENTS in changed) {
+                    if (InuConfig.NON_ISLAND_CHAT_ELEMENTS.value) InuConfig.IOS_INPUT_APPEARANCE.value = false
+                    InuHooks.syncChatInputRowHeight()
+                }
+            }) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuNonIslandUI),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuNonIslandFoldersBar, InuConfig.NON_ISLAND_FOLDERS_BAR),
+                        ExpandableBoolGroup.Option(R.string.InuNonIslandSharedMediaTabs, InuConfig.NON_ISLAND_SHARED_MEDIA_TABS),
+                        ExpandableBoolGroup.Option(R.string.InuNonIslandGlobalSearch, InuConfig.NON_ISLAND_GLOBAL_SEARCH),
+                        ExpandableBoolGroup.Option(R.string.InuNonIslandChatElements, InuConfig.NON_ISLAND_CHAT_ELEMENTS),
+                        ExpandableBoolGroup.Option(R.string.InuNonIslandHeaders, InuConfig.NON_ISLAND_HEADERS),
+                        ExpandableBoolGroup.Option(R.string.InuHideFadeView, InuConfig.HIDE_FADE_VIEW),
+                        ExpandableBoolGroup.Option(R.string.InuDisableProfileAvatarBlur, InuConfig.DISABLE_PROFILE_AVATAR_BLUR),
+                    ),
+                    sectionId = id,
+                )
+            }
+        }
+        section {
+            custom(
+                "", 0,
+                build = { page, _ ->
+                    UItem.asCustom(page.remember(AVATAR_PREVIEW_KEY) { AvatarCornerPreviewCell(page.context!!) }.also { it.updatePreview() })
+                },
+            )
+            toggle(
+                InuConfig.UNIFIED_AVATAR_RADIUS, R.string.InuUnifiedCornerRadius, R.string.InuUnifiedCornerRadiusInfo,
+                onChange = { page, _ -> page.peek<AvatarCornerPreviewCell>(AVATAR_PREVIEW_KEY)?.updatePreview() },
+            )
+            toggle(
+                InuConfig.HIDE_DIVIDERS, R.string.InuHideDividers, R.string.InuHideDividersInfo,
+                onChange = { page, _ ->
+                    page.rebuildAll()
+                    page.rebuildSoft()
+                },
+            )
+        }
+        section(R.string.InuLayout, R.string.InuTabletModeInfo) {
+            choice(
+                InuConfig.TABLET_MODE, R.string.InuTabletMode,
+                listOf(R.string.InuTabletModeAuto, R.string.InuTabletModeOn, R.string.InuTabletModeOff),
+                onChange = { page ->
+                    page.refresh()
+                    page.showRestart()
+                },
+            )
+        }
+        section(R.string.InuMotion, R.string.InuAnimationSpeedInfo) {
+            toggle(InuConfig.DISABLE_SCRIM_BLUR, R.string.InuDisableScrimBlur, R.string.InuDisableScrimBlurInfo, onChange = { page, _ -> page.refresh() })
+            slider(
+                InuConfig.SCRIM_BLUR_STRENGTH, R.string.InuScrimBlurStrength, 20f, 150f, 5f,
+                format = { "${it.toInt()}%" },
+                visible = { !InuConfig.DISABLE_SCRIM_BLUR.value },
+            )
+            toggle(InuConfig.REDUCE_MENU_MOTION, R.string.InuReduceMenuMotion, R.string.InuReduceMenuMotionInfo)
+            toggle(InuConfig.SIMPLE_ATTACH_POPUP_ANIMATION, R.string.InuSimpleAttachPopupAnimation)
+            toggle(InuConfig.OPTIMIZED_ATTACHMENT_MENU, R.string.InuOptimizedAttachmentMenu, R.string.InuOptimizedAttachmentMenuInfo)
+            choice(
+                InuConfig.PREDICTIVE_BACK_MODE, R.string.InuPredictiveBack,
+                listOf(R.string.InuPredictiveBackOff, R.string.InuPredictiveBackStock, R.string.InuPredictiveBackMaterial3),
+                visible = { Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE },
+                onChange = { page -> page.showRestart() },
+            )
+            custom(
+                "animation-speed", R.string.InuAnimationSpeed,
+                build = { page, id ->
+                    val cell = page.remember(id) {
+                        SliderCell(
+                            page.context!!, min = 0.5f, max = 3f,
+                            defaultValue = InuConfig.ANIMATION_SPEED.default,
+                            initialValue = if (InuConfig.ANIMATION_SPEED.value >= 3f) 3f else InuConfig.ANIMATION_SPEED.value,
+                            step = 0.05f,
+                            title = LocaleController.getString(R.string.InuAnimationSpeed),
+                            format = {
+                                if (it >= 3f) LocaleController.getString(R.string.InuAnimationSpeedInstant)
+                                else String.format("%.2fx", it)
+                            },
+                            onChanged = {
+                                InuConfig.ANIMATION_SPEED.value = if (it >= 3f) 9999f else it
+                                InuHooks.syncAnimationSpeed()
+                            },
+                        )
+                    }
+                    cell.updateColors()
+                    UItem.asCustom(id, cell)
+                },
+            )
+        }
+        section(R.string.InuChatBackgroundSection) {
+            toggle(InuConfig.DISABLE_CHAT_BACKGROUNDS, R.string.InuDisableChatBackgrounds)
+            toggle(InuConfig.DISABLE_CHAT_THEMES, R.string.InuDisableChatThemes)
+            toggle(InuConfig.DISABLE_BG_PARALLAX, R.string.InuDisableBgParallax)
+        }
+    }
+
     val ANNOYANCES = schema("annoyances", R.string.InuAnnoyances, R.drawable.inu_tabler_mood_annoyed) {
         section(R.string.InuAnnoyancesChats) {
             group("hide-bottom-bar", R.string.InuHideBottomBar) { id ->
@@ -1137,55 +1283,99 @@ object Schemas {
             toggle(InuConfig.HIDE_CALL_ACTION_BUTTON, R.string.InuHideCallActionButton)
             toggle(InuConfig.HIDE_REACTIONS_ENTRY, R.string.InuHideReactionEntry, R.string.InuHideReactionEntryInfo)
         }
-        section(R.string.InuCustomizeMessages) {
-            toggle(InuConfig.HIDE_REPLY_BACKGROUND, R.string.InuHideReplyBackground, R.string.InuHideReplyBackgroundInfo)
-            toggle(InuConfig.DISABLE_REPLY_CUSTOM_COLORS, R.string.InuDisableReplyCustomColors, R.string.InuDisableReplyCustomColorsInfo)
-            toggle(InuConfig.HIDE_REPLY_BACKGROUND_EMOJI, R.string.InuHideReplyBackgroundEmoji, R.string.InuHideReplyBackgroundEmojiInfo)
-        }
-        section(R.string.InuAnnoyancesStories) {
-            toggle(InuConfig.HIDE_STORIES, R.string.InuHideStories, R.string.InuHideStoriesInfo, onChange = { page, _ -> page.notifyAllAccounts(NotificationCenter.storiesUpdated) })
-            toggle(InuConfig.HIDE_STORY_AVATARS, R.string.InuHideStoryAvatars, R.string.InuHideStoryAvatarsInfo, onChange = { page, _ -> page.notifyAllAccounts(NotificationCenter.storiesUpdated) })
-            toggle(InuConfig.DISABLE_OVERSCROLL_STORY, R.string.InuDisableOverscrollStory, R.string.InuDisableOverscrollStoryInfo)
-            toggle(InuConfig.HIDE_REPOST_TO_STORY, R.string.InuHideRepostToStory)
-            toggle(InuConfig.HIDE_PROFILE_STORY_BUTTON, R.string.InuHideProfileStoryButton)
-            toggle(InuConfig.HIDE_PROFILE_MENU_ARCHIVED_STORIES, R.string.InuHideProfileMenuArchivedStories)
-        }
-        section(R.string.InuAnnoyancesProfile) {
-            toggle(InuConfig.HIDE_STARS_RATING, R.string.InuHideStarsRating)
-            toggle(InuConfig.HIDE_VERIFICATION_BADGE, R.string.InuHideVerificationBadge)
-            toggle(InuConfig.HIDE_PROFILE_COLORFUL_BACKGROUND, R.string.InuHideProfileColorfulBackground)
-            toggle(InuConfig.HIDE_GIFTS_AROUND_AVATAR, R.string.InuHideGiftsAroundAvatar, R.string.InuHideGiftsAroundAvatarInfo)
-            toggle(InuConfig.HIDE_PROFILE_ICONS, R.string.InuHideProfileIcons)
-            toggle(InuConfig.HIDE_PROFILE_LIVE_ACTIONS_BUTTON, R.string.InuHideProfileLiveActionsButton)
-        }
-        section(R.string.InuAnnoyancesGifts) {
-            toggle(InuConfig.HIDE_PROFILE_GIFTS_TAB, R.string.InuHideProfileGiftsTab, R.string.InuHideProfileGiftsTabInfo)
-            toggle(InuConfig.HIDE_PROFILE_GIFT_BUTTON, R.string.InuHideProfileGiftButton)
-            toggle(InuConfig.HIDE_PROFILE_MENU_SEND_GIFT, R.string.InuHideProfileMenuSendGift)
-            toggle(InuConfig.HIDE_GIFT_BUTTON_INPUT, R.string.InuHideGiftButtonInput, R.string.InuHideGiftButtonInputInfo)
-            toggle(InuConfig.HIDE_GIFT_CARDS_IN_CHAT, R.string.InuHideGiftCardsInChat, R.string.InuHideGiftCardsInChatInfo, onChange = { page, _ -> page.showRestart() })
-            toggle(InuConfig.HIDE_GIFT_AUCTIONS_HINT, R.string.InuHideGiftAuctionsHint)
-            toggle(InuConfig.HIDE_GIVEAWAYS, R.string.InuHideGiveaways, onChange = { page, _ -> page.showRestart() })
-        }
-        section(R.string.InuAnnoyancesPremium) {
-            toggle(InuConfig.HIDE_PREMIUM_BADGE, R.string.InuHidePremiumBadge)
-            toggle(InuConfig.HIDE_COLLECTIBLE_STATUS, R.string.InuHideCollectibleStatus, R.string.InuHideCollectibleStatusInfo)
-            toggle(InuConfig.HIDE_ATTACH_PREMIUM_BADGES, R.string.InuHideAttachPremiumBadges)
-            toggle(InuConfig.HIDE_EMOJI_PREMIUM_UPSELL, R.string.InuHideEmojiPremiumUpsell)
-            toggle(InuConfig.HIDE_CAPTION_LIMIT_UPSELL, R.string.InuHideCaptionLimitUpsell, R.string.InuHideCaptionLimitUpsellInfo)
-            toggle(InuConfig.HIDE_PAID_REACTION_UPSELL, R.string.InuHidePaidReactionUpsell)
-        }
-        section(R.string.InuAnnoyancesInterface) {
-            toggle(InuConfig.HIDE_TRENDING_STICKERS, R.string.InuHideTrendingStickers)
-            toggle(InuConfig.HIDE_GROUP_STICKER_PACK, R.string.InuHideGroupStickerPack)
-            toggle(InuConfig.HIDE_HASHTAG_SUGGESTIONS, R.string.InuHideHashtagSuggestions)
-            toggle(InuConfig.HIDE_RICH_EDITOR_BUTTON, R.string.InuHideRichEditorButton)
-        }
-        section(R.string.InuAnnoyancesChannels) {
-            toggle(InuConfig.HIDE_SIMILAR_CHANNELS_TAB, R.string.InuHideSimilarChannelsTab)
-            toggle(InuConfig.HIDE_CHANNEL_RECOMMENDATIONS, R.string.InuHideChannelRecommendations, onChange = { page, _ -> page.showRestart() })
-            toggle(InuConfig.HIDE_CHANNEL_SHARE_BUTTON, R.string.InuHideChannelShareButton, R.string.InuHideChannelShareButtonInfo)
-            toggle(InuConfig.HIDE_PSA_PROMO_CHAT, R.string.InuHidePsaPromoChat)
+        section {
+            group("customize-messages", R.string.InuCustomizeMessages) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuCustomizeMessages),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuHideReplyBackground, InuConfig.HIDE_REPLY_BACKGROUND),
+                        ExpandableBoolGroup.Option(R.string.InuDisableReplyCustomColors, InuConfig.DISABLE_REPLY_CUSTOM_COLORS),
+                        ExpandableBoolGroup.Option(R.string.InuHideReplyBackgroundEmoji, InuConfig.HIDE_REPLY_BACKGROUND_EMOJI),
+                    ),
+                    sectionId = id,
+                )
+            }
+            group("hide-stories", R.string.InuAnnoyancesStories, onChange = { page, _ -> page.notifyAllAccounts(NotificationCenter.storiesUpdated) }) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuAnnoyancesStories),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuHideStories, InuConfig.HIDE_STORIES),
+                        ExpandableBoolGroup.Option(R.string.InuHideStoryAvatars, InuConfig.HIDE_STORY_AVATARS),
+                        ExpandableBoolGroup.Option(R.string.InuDisableOverscrollStory, InuConfig.DISABLE_OVERSCROLL_STORY),
+                        ExpandableBoolGroup.Option(R.string.InuHideRepostToStory, InuConfig.HIDE_REPOST_TO_STORY),
+                        ExpandableBoolGroup.Option(R.string.InuHideProfileStoryButton, InuConfig.HIDE_PROFILE_STORY_BUTTON),
+                        ExpandableBoolGroup.Option(R.string.InuHideProfileMenuArchivedStories, InuConfig.HIDE_PROFILE_MENU_ARCHIVED_STORIES),
+                    ),
+                    sectionId = id,
+                )
+            }
+            group("hide-profile", R.string.InuAnnoyancesProfile) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuAnnoyancesProfile),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuHideStarsRating, InuConfig.HIDE_STARS_RATING),
+                        ExpandableBoolGroup.Option(R.string.InuHideVerificationBadge, InuConfig.HIDE_VERIFICATION_BADGE),
+                        ExpandableBoolGroup.Option(R.string.InuHideProfileColorfulBackground, InuConfig.HIDE_PROFILE_COLORFUL_BACKGROUND),
+                        ExpandableBoolGroup.Option(R.string.InuHideGiftsAroundAvatar, InuConfig.HIDE_GIFTS_AROUND_AVATAR),
+                        ExpandableBoolGroup.Option(R.string.InuHideProfileIcons, InuConfig.HIDE_PROFILE_ICONS),
+                        ExpandableBoolGroup.Option(R.string.InuHideProfileLiveActionsButton, InuConfig.HIDE_PROFILE_LIVE_ACTIONS_BUTTON),
+                    ),
+                    sectionId = id,
+                )
+            }
+            group("hide-gifts", R.string.InuAnnoyancesGifts, onChange = { page, changed -> if (InuConfig.HIDE_GIFT_CARDS_IN_CHAT in changed || InuConfig.HIDE_GIVEAWAYS in changed) page.showRestart() }) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuAnnoyancesGifts),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuHideProfileGiftsTab, InuConfig.HIDE_PROFILE_GIFTS_TAB),
+                        ExpandableBoolGroup.Option(R.string.InuHideProfileGiftButton, InuConfig.HIDE_PROFILE_GIFT_BUTTON),
+                        ExpandableBoolGroup.Option(R.string.InuHideProfileMenuSendGift, InuConfig.HIDE_PROFILE_MENU_SEND_GIFT),
+                        ExpandableBoolGroup.Option(R.string.InuHideGiftButtonInput, InuConfig.HIDE_GIFT_BUTTON_INPUT),
+                        ExpandableBoolGroup.Option(R.string.InuHideGiftCardsInChat, InuConfig.HIDE_GIFT_CARDS_IN_CHAT),
+                        ExpandableBoolGroup.Option(R.string.InuHideGiftAuctionsHint, InuConfig.HIDE_GIFT_AUCTIONS_HINT),
+                        ExpandableBoolGroup.Option(R.string.InuHideGiveaways, InuConfig.HIDE_GIVEAWAYS),
+                    ),
+                    sectionId = id,
+                )
+            }
+            group("hide-premium", R.string.InuAnnoyancesPremium) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuAnnoyancesPremium),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuHidePremiumBadge, InuConfig.HIDE_PREMIUM_BADGE),
+                        ExpandableBoolGroup.Option(R.string.InuHideCollectibleStatus, InuConfig.HIDE_COLLECTIBLE_STATUS),
+                        ExpandableBoolGroup.Option(R.string.InuHideAttachPremiumBadges, InuConfig.HIDE_ATTACH_PREMIUM_BADGES),
+                        ExpandableBoolGroup.Option(R.string.InuHideEmojiPremiumUpsell, InuConfig.HIDE_EMOJI_PREMIUM_UPSELL),
+                        ExpandableBoolGroup.Option(R.string.InuHideCaptionLimitUpsell, InuConfig.HIDE_CAPTION_LIMIT_UPSELL),
+                        ExpandableBoolGroup.Option(R.string.InuHidePaidReactionUpsell, InuConfig.HIDE_PAID_REACTION_UPSELL),
+                    ),
+                    sectionId = id,
+                )
+            }
+            group("hide-interface", R.string.InuAnnoyancesInterface) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuAnnoyancesInterface),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuHideTrendingStickers, InuConfig.HIDE_TRENDING_STICKERS),
+                        ExpandableBoolGroup.Option(R.string.InuHideGroupStickerPack, InuConfig.HIDE_GROUP_STICKER_PACK),
+                        ExpandableBoolGroup.Option(R.string.InuHideHashtagSuggestions, InuConfig.HIDE_HASHTAG_SUGGESTIONS),
+                        ExpandableBoolGroup.Option(R.string.InuHideRichEditorButton, InuConfig.HIDE_RICH_EDITOR_BUTTON),
+                    ),
+                    sectionId = id,
+                )
+            }
+            group("hide-channels", R.string.InuAnnoyancesChannels, onChange = { page, changed -> if (InuConfig.HIDE_CHANNEL_RECOMMENDATIONS in changed) page.showRestart() }) { id ->
+                ExpandableBoolGroup(
+                    LocaleController.getString(R.string.InuAnnoyancesChannels),
+                    listOf(
+                        ExpandableBoolGroup.Option(R.string.InuHideSimilarChannelsTab, InuConfig.HIDE_SIMILAR_CHANNELS_TAB),
+                        ExpandableBoolGroup.Option(R.string.InuHideChannelRecommendations, InuConfig.HIDE_CHANNEL_RECOMMENDATIONS),
+                        ExpandableBoolGroup.Option(R.string.InuHideChannelShareButton, InuConfig.HIDE_CHANNEL_SHARE_BUTTON),
+                        ExpandableBoolGroup.Option(R.string.InuHidePsaPromoChat, InuConfig.HIDE_PSA_PROMO_CHAT),
+                    ),
+                    sectionId = id,
+                )
+            }
         }
         section(R.string.InuAnnoyancesAi) {
             group("hide-ai-features", R.string.InuHideAiFeatures) { id ->

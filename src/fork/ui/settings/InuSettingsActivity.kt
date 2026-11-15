@@ -103,7 +103,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         }
         val ctx = context ?: return
         when (item.id) {
-            CAT_APPEARANCE -> presentFragment(AppearanceSettingsActivity())
+            CAT_APPEARANCE -> presentFragment(SchemaPageActivity(Schemas.APPEARANCE))
             CAT_HOME -> presentFragment(SchemaPageActivity(Schemas.HOME))
             CAT_CHATS -> presentFragment(SchemaPageActivity(Schemas.CHATS))
             CAT_MEDIA -> presentFragment(SchemaPageActivity(Schemas.MEDIA))

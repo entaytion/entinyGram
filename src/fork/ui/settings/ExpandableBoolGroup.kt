@@ -1,12 +1,12 @@
 package desu.inugram.ui.settings
 
+import android.text.SpannableStringBuilder
 import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Cells.CheckBoxCell
 import org.telegram.ui.Cells.TextCheckCell2
 import org.telegram.ui.Components.UItem
 
@@ -31,10 +31,10 @@ class ExpandableBoolGroup(
     /** [info] is a row of its own shown first while the group is open, for a note that belongs to the group */
     fun addTo(items: ArrayList<UItem>, info: UItem? = null, onChange: (options: List<Option>) -> Unit) {
         val checkedCount = options.count { it.config.value }
-        val total = options.size
         val isChecked = checkedCount > 0
         items.add(
-            UItem.asExpandableSwitch(sectionId, title, "$checkedCount/$total")
+            // entiny: stock cell does toString() on the subtitle and its AnimatedTextView ignores spans, so the pill rides in the title; " " keeps the arrow
+            UItem.asExpandableSwitch(sectionId, SpannableStringBuilder(title).append("  ").append(SettingsBadge.state(checkedCount)), " ")
                 .setChecked(isChecked)
                 .setCollapsed(!expanded)
                 .setClickCallback {
@@ -66,13 +66,7 @@ class ExpandableBoolGroup(
         if (expanded) {
             info?.let { items.add(it) }
             for (opt in options) {
-                items.add(
-                    UItem.asRoundCheckbox(opt.id, LocaleController.getString(opt.labelRes))
-                        .setChecked(opt.config.value)
-                        .setPad(1)
-                        .setEnabled(enabled)
-                        .onBind(Utilities.Callback { it.alpha = if (enabled) 1f else 0.5f })
-                )
+                items.add(WrapCheckCell.Factory.of(opt.id, LocaleController.getString(opt.labelRes), opt.config.value, enabled))
             }
         }
     }
@@ -86,7 +80,7 @@ class ExpandableBoolGroup(
         val opt = options.firstOrNull { it.id == item.id } ?: return false
         if (!enabled) return true
         val new = opt.config.toggle()
-        (view as? CheckBoxCell)?.setChecked(new, true)
+        (view as? WrapCheckCell)?.setChecked(new, true)
         onChange(opt)
         return true
     }

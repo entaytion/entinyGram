@@ -3,17 +3,12 @@ package desu.inugram.ui.settings
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Paint.FontMetricsInt
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.text.Layout
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.TextPaint
-import android.text.style.ReplacementSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -324,52 +319,12 @@ abstract class SettingsPageActivity : UniversalFragment() {
 
 
     protected fun addExperimentalSpan(string: CharSequence): CharSequence {
-        val pill = SpannableString(" ")
-        pill.setSpan(
-            PillSpan(LocaleController.getString(R.string.InuBetaPill), Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader)),
-            0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-        )
+        val pill = SettingsBadge.pill(LocaleController.getString(R.string.InuBetaPill), Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader))
         return SpannableStringBuilder().append(pill).append("  ").append(string)
     }
 
-    protected fun withBadge(title: CharSequence, badge: CharSequence): CharSequence {
-        val pill = SpannableString(" ")
-        pill.setSpan(
-            PillSpan(badge.toString(), Theme.getColor(Theme.key_featuredStickers_addButton)),
-            0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-        )
-        return SpannableStringBuilder().append(title).append(" ").append(pill)
-    }
-
-    /** small tinted pill drawn inline with a settings title */
-    private class PillSpan(private val label: String, tint: Int) : ReplacementSpan() {
-        private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            typeface = AndroidUtilities.bold()
-            textSize = AndroidUtilities.dp(11f).toFloat()
-            color = tint
-        }
-        private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = tint
-            alpha = 40
-        }
-        private val padX = AndroidUtilities.dp(6f)
-        private val padY = AndroidUtilities.dp(2.5f)
-
-        override fun getSize(paint: Paint, text: CharSequence?, start: Int, end: Int, fm: FontMetricsInt?): Int =
-            (textPaint.measureText(label) + padX * 2).toInt() + AndroidUtilities.dp(2f)
-
-        override fun draw(canvas: Canvas, text: CharSequence?, start: Int, end: Int, x: Float, top: Int, y: Int, bottom: Int, paint: Paint) {
-            val w = textPaint.measureText(label)
-            val fm = textPaint.fontMetrics
-            val cy = y + (paint.ascent() + paint.descent()) / 2f
-            val half = (fm.descent - fm.ascent) / 2f + padY
-            val left = x + AndroidUtilities.dp(1f)
-            val r = AndroidUtilities.dp(5f).toFloat()
-            AndroidUtilities.rectTmp.set(left, cy - half, left + w + padX * 2, cy + half)
-            canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, bgPaint)
-            canvas.drawText(label, left + padX, cy - (fm.ascent + fm.descent) / 2f, textPaint)
-        }
-    }
+    protected fun withBadge(title: CharSequence, badge: CharSequence, tint: Int = Theme.getColor(Theme.key_featuredStickers_addButton)): CharSequence =
+        SpannableStringBuilder().append(title).append(" ").append(SettingsBadge.pill(badge, tint))
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean {
         val opts = ItemOptions.makeOptions(this, view).setLongPressSelectionEnabled(false)

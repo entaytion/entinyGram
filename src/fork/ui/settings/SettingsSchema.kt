@@ -1,10 +1,16 @@
 package desu.inugram.ui.settings
 
+import android.util.TypedValue
 import android.view.View
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.R
+import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
@@ -43,7 +49,11 @@ sealed class Row {
         val slug: String,
         val titleRes: Int,
         val create: (Int) -> ExpandableBoolGroup,
-    ) : Row()
+        val infoRes: Int = 0,
+        val onChange: ((SchemaPageActivity, List<InuConfig.BoolItem>) -> Unit)? = null,
+    ) : Row() {
+        val infoId: Int = InuUtils.generateId()
+    }
 
     class Custom(
         val slug: String,
@@ -65,7 +75,12 @@ sealed class Row {
     ) : Row()
 }
 
-class Section(val headerRes: Int, val footerRes: Int, val rows: List<Row>, val visible: (() -> Boolean)? = null) {
+class Section(
+    val headerRes: Int,
+    val footerRes: Int,
+    val rows: List<Row>,
+    val visible: (() -> Boolean)? = null,
+) {
     val id: Int = InuUtils.generateId()
 }
 
@@ -87,7 +102,7 @@ class Schema(val slug: String, val titleRes: Int, val iconRes: Int, val sections
                     is Row.Toggle -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
                     is Row.Choice -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
                     is Row.Group -> entry(r.slug, r.titleRes, r.id)
-                    is Row.Custom -> entry(r.slug, r.titleRes, r.id)
+                    is Row.Custom -> if (r.slug.isEmpty()) null else entry(r.slug, r.titleRes, r.id)
                     is Row.Slider -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
                     is Row.Link -> if (r.slug.isEmpty()) null else entry(r.slug, r.titleRes, r.id)
                 }
@@ -125,8 +140,14 @@ class SectionBuilder {
         rows.add(Row.Link(slug, titleRes, icon, value, badge, create).also { it.visible = visible })
     }
 
-    fun group(slug: String, titleRes: Int, create: (Int) -> ExpandableBoolGroup) {
-        rows.add(Row.Group(slug, titleRes, create))
+    fun group(
+        slug: String,
+        titleRes: Int,
+        infoRes: Int = 0,
+        onChange: ((SchemaPageActivity, List<InuConfig.BoolItem>) -> Unit)? = null,
+        create: (Int) -> ExpandableBoolGroup,
+    ) {
+        rows.add(Row.Group(slug, titleRes, create, infoRes, onChange))
     }
 
     fun custom(
@@ -158,7 +179,12 @@ class SectionBuilder {
 class SchemaBuilder {
     val sections = ArrayList<Section>()
 
-    fun section(headerRes: Int = 0, footerRes: Int = 0, visible: (() -> Boolean)? = null, build: SectionBuilder.() -> Unit) {
+    fun section(
+        headerRes: Int = 0,
+        footerRes: Int = 0,
+        visible: (() -> Boolean)? = null,
+        build: SectionBuilder.() -> Unit,
+    ) {
         sections.add(Section(headerRes, footerRes, SectionBuilder().apply(build).rows, visible))
     }
 }
@@ -188,6 +214,21 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
 
     fun showRestart() = showRestartBulletin()
 
+    fun rebuildSoft() = softRebuild()
+
+    private fun groupInfo(row: Row.Group): UItem {
+        val view = remember(row.infoId) {
+            TextView(context).apply {
+                text = LocaleController.getString(row.infoRes)
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+                setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+                setPadding(AndroidUtilities.dp(22f), AndroidUtilities.dp(6f), AndroidUtilities.dp(22f), AndroidUtilities.dp(12f))
+                layoutParams = RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT)
+            }
+        }
+        return UItem.asCustom(row.infoId, view)
+    }
+
     fun twoLineCheck(id: Int, titleRes: Int, infoRes: Int, checked: Boolean, experimental: Boolean): UItem =
         mkTwoLineCheckItem(id, titleRes, infoRes, checked, experimental)
 
@@ -211,7 +252,8 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
                 items.add(UItem.asHeader(section.id, LocaleController.getString(section.headerRes)))
             }
             for (row in rows) addRow(items, row)
-            items.add(UItem.asShadow(if (section.footerRes != 0) LocaleController.getString(section.footerRes) else null))
+            val footer = if (section.footerRes != 0) LocaleController.getString(section.footerRes) else null
+            items.add(UItem.asShadow(footer))
         }
     }
 
@@ -235,7 +277,11 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
 
             is Row.Link -> items.add(
                 when {
-                    row.icon != 0 -> mkSubPageButton(row.id, row.icon, LocaleController.getString(row.titleRes))
+                    row.icon != 0 -> {
+                        val title = LocaleController.getString(row.titleRes)
+                        val value = row.value?.invoke()
+                        if (value != null) mkTwoLineEntry(row.id, row.icon, title, value) else mkSubPageButton(row.id, row.icon, title)
+                    }
                     else -> {
                         val title = LocaleController.getString(row.titleRes)
                         val badge = row.badge?.invoke()
@@ -248,7 +294,10 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
                 }
             )
 
-            is Row.Group -> groups[row.id]?.addTo(items) { refresh() }
+            is Row.Group -> groups[row.id]?.addTo(items, if (row.infoRes != 0) groupInfo(row) else null) { changed ->
+                row.onChange?.invoke(this, changed.map { it.config })
+                refresh()
+            }
             is Row.Custom -> items.add(row.build(this, row.id))
             is Row.Slider -> {
                 val cell = sliders.getOrPut(row.id) {
@@ -280,7 +329,14 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        for (group in groups.values) if (group.handleClick(item, view) { refresh() }) return
+        for (row in schema.rows) {
+            if (row !is Row.Group) continue
+            val group = groups[row.id] ?: continue
+            if (group.handleClick(item, view) { opt ->
+                    if (opt != null) row.onChange?.invoke(this, listOf(opt.config))
+                    refresh()
+                }) return
+        }
         val row = schema.rows.firstOrNull { it.id == item.id } ?: return
         when (row) {
             is Row.Toggle -> {

@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 15 Nov 2026 23:48:10 +0200
+Subject: System emoji setting is read from the fork config instead of the stock preference.
+
+---
+ .../src/main/java/org/telegram/messenger/SharedConfig.java      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
+@@ -617,7 +617,7 @@ public class SharedConfig {
+             bubbleRadius = preferences.getInt("bubbleRadius", 17);
+             ivFontSize = preferences.getInt("iv_font_size", fontSize);
+             allowBigEmoji = preferences.getBoolean("allowBigEmoji", true);
+-            useSystemEmoji = preferences.getBoolean("useSystemEmoji", false);
++            useSystemEmoji = desu.inugram.InuConfig.USE_SYSTEM_EMOJI.getValue();
+             useSystemBoldFont = preferences.getBoolean("useSystemBoldFont", false);
+             forceForumTabs = preferences.getBoolean("forceForumTabs", false);
+             fastWallpaperDisabled = preferences.getBoolean("fastWallpaperDisabled", false);

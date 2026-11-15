@@ -8,7 +8,6 @@ import desu.inugram.ui.settings.AiSettingsActivity
 import desu.inugram.ui.settings.AiSummarySettingsActivity
 import desu.inugram.ui.settings.AiVoiceSettingsActivity
 import desu.inugram.ui.settings.AntiDeletionSettingsActivity
-import desu.inugram.ui.settings.AppearanceSettingsActivity
 import desu.inugram.ui.settings.BackupSettingsActivity
 import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CameraSoundSettingsActivity
@@ -58,7 +57,7 @@ object SearchRegistry {
             desu.inugram.ui.spoof.DeviceSpoofSettingsActivity.PAGE,
             CacheManagementSettingsActivity.PAGE,
             InuSettingsActivity.PAGE,
-            AppearanceSettingsActivity.PAGE,
+            Schemas.APPEARANCE.page,
             ChatHeaderSettingsActivity.PAGE,
             IosStyleSettingsActivity.PAGE,
             Material3SettingsActivity.PAGE,
