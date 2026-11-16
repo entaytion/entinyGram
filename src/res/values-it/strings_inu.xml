@@ -191,12 +191,14 @@
     <string name="InuAppIconStock">Originale</string>
     <string name="InuAppIconSunset">Tramonto</string>
     <string name="InuArchiveAttachments">Allegati</string>
-    <string name="InuArchiveAttachmentsInfo">Configura chat e limiti</string>
+    <string name="InuArchiveAttachmentsInfo">Limiti per Wi-Fi e dati mobili; i file mancanti vengono scaricati entro questi limiti</string>
     <string name="InuArchiveAttachmentsSave">Salva allegati</string>
     <string name="InuArchiveLimitDefault">Predefinito</string>
-    <string name="InuArchiveLimitInfo">I file più grandi non vengono copiati nell’archivio. Il limite predefinito è 50 MB.</string>
+    <string name="InuArchiveLimitInfo">I file più grandi non vengono salvati. Se il contenuto di un messaggio eliminato non è sul dispositivo, viene scaricato, nei gruppi e canali pubblici solo se attivato qui sotto. Predefinito: download fino a 64 MB con Wi-Fi e 16 MB con dati mobili, file già sul dispositivo fino a 50 MB.</string>
     <string name="InuArchiveLimitMobile">Limite di dimensione con dati mobili</string>
     <string name="InuArchiveLimitWifi">Limite di dimensione con Wi-Fi</string>
+    <string name="InuArchiveMediaPublic">Scarica nei gruppi e canali pubblici</string>
+    <string name="InuArchiveMediaPublicInfo">Disattivato per impostazione predefinita: le chat pubbliche consumano più dati. I file già sul dispositivo vengono salvati comunque</string>
     <string name="InuArchiveScope">Dove salvare</string>
     <string name="InuArchiveScopeAdd">Aggiungi chat</string>
     <string name="InuArchiveScopeAll">Tutte le chat</string>

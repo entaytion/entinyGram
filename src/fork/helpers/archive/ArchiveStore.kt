@@ -104,6 +104,13 @@ object ArchiveStore {
     }
 
     fun loadMessagesForArchive(db: SQLiteDatabase, dialogId: Long, mids: Collection<Int>): Map<Int, TLRPC.Message> {
+        val result = storedMessages(db, dialogId, mids)
+        val missing = mids.filter { it !in result }
+        if (missing.isNotEmpty()) result.putAll(archivedMessages(db, dialogId, missing))
+        return result
+    }
+
+    fun storedMessages(db: SQLiteDatabase, dialogId: Long, mids: Collection<Int>): HashMap<Int, TLRPC.Message> {
         val result = HashMap<Int, TLRPC.Message>()
         if (mids.isEmpty()) return result
         val cursor = db.queryFinalized("SELECT mid, data FROM messages_v2 WHERE uid = ? AND mid IN (${mids.joinToString(",")})", dialogId)
@@ -121,8 +128,6 @@ object ArchiveStore {
         } finally {
             cursor.dispose()
         }
-        val missing = mids.filter { it !in result }
-        if (missing.isNotEmpty()) result.putAll(archivedMessages(db, dialogId, missing))
         return result
     }
 
@@ -272,10 +277,10 @@ object ArchiveStore {
         entities: ArrayList<TLRPC.MessageEntity>? = null,
         media: TLRPC.MessageMedia? = null,
         fromId: Long = 0L,
-    ): Boolean {
+    ): Long {
         val exists = db.queryFinalized("SELECT 1 FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? AND date = ?", dialogId, msgId, date)
         try {
-            if (exists.next()) return false
+            if (exists.next()) return 0L
         } finally {
             exists.dispose()
         }
@@ -298,13 +303,14 @@ object ArchiveStore {
             query.bindLong(8, System.currentTimeMillis() / 1000L)
             query.bindLong(9, fromId)
             query.step()
-            return true
         } catch (e: Throwable) {
             Log.e("InuDatabaseHelper", "saveEditHistory failed", e)
-            return false
+            return 0L
         } finally {
             query.dispose()
         }
+        val cursor = db.queryFinalized("SELECT id FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? AND date = ?", dialogId, msgId, date)
+        return try { if (cursor.next()) cursor.longValue(0) else 0L } finally { cursor.dispose() }
     }
 
     data class EditHistoryRow(
@@ -413,35 +419,11 @@ object ArchiveStore {
     private fun entryOf(row: EditHistoryRow) =
         desu.inugram.helpers.archive.EditHistoryHelper.EditEntry(row.date, row.text, row.mediaPath, row.entities, row.media)
 
-    fun loadEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int): List<EditHistoryRow> =
-        readEditHistory(db, "SELECT date, text, media_path, entities, media, rowid, from_id FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? ORDER BY date ASC, rowid ASC", dialogId, msgId)
-
-    private fun readEditHistory(db: SQLiteDatabase, sql: String, dialogId: Long, msgId: Int): List<EditHistoryRow> {
-        val list = ArrayList<EditHistoryRow>()
-        val cursor = db.queryFinalized(sql, dialogId, msgId)
-        try {
-            while (cursor.next()) {
-                val date = cursor.longValue(0)
-                val text = cursor.stringValue(1) ?: ""
-                val mediaPath = if (cursor.isNull(2)) null else cursor.stringValue(2)
-                val entities = readTl(cursor, 3) { data ->
-                    TLRPC.TL_textWithEntities.TLdeserialize(data, data.readInt32(false), false)?.entities
-                }
-                val media = readTl(cursor, 4) { data ->
-                    TLRPC.MessageMedia.TLdeserialize(data, data.readInt32(false), false)
-                }
-                list.add(EditHistoryRow(date, text, mediaPath, entities, media, cursor.longValue(5), cursor.longValue(6)))
-            }
-        } finally {
-            cursor.dispose()
-        }
-        return list
-    }
-
-    fun loadEditHistoryInDialog(db: SQLiteDatabase, dialogId: Long): List<Pair<Int, EditHistoryRow>> {
+    fun loadEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int = 0): List<Pair<Int, EditHistoryRow>> {
         val list = ArrayList<Pair<Int, EditHistoryRow>>()
         val cursor = db.queryFinalized(
-            "SELECT date, text, media_path, entities, media, id, msg_id, from_id FROM inu_edit_history WHERE dialog_id = ? ORDER BY date ASC, id ASC",
+            "SELECT date, text, media_path, entities, media, id, msg_id, from_id FROM inu_edit_history WHERE dialog_id = ?" +
+                (if (msgId != 0) " AND msg_id = $msgId" else "") + " ORDER BY date ASC, id ASC",
             dialogId,
         )
         try {
@@ -463,12 +445,6 @@ object ArchiveStore {
             cursor.dispose()
         }
         return list
-    }
-
-    fun deleteEditHistoryEntry(db: SQLiteDatabase, dialogId: Long, msgId: Int, date: Long) {
-        val mediaPaths = collectMediaPaths(db, "inu_edit_history", "dialog_id = $dialogId AND msg_id = $msgId AND date = $date")
-        db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id = $msgId AND date = $date").stepThis().dispose()
-        deleteUnreferencedMediaFiles(db, mediaPaths)
     }
 
     fun deleteEditHistoryRevision(db: SQLiteDatabase, dialogId: Long, msgId: Int, rowId: Long) {

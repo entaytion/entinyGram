@@ -5,13 +5,14 @@ Subject: Preserve deleted messages in storage and chats
 
 ---
  .../messenger/MessagesController.java         | 15 ++++-
- .../telegram/messenger/MessagesStorage.java   | 61 +++++++++++++------
+ .../telegram/messenger/MessagesStorage.java   | 63 +++++++++++++------
+ .../messenger/PushListenerController.java     |  1 +
  .../messenger/SendMessagesHelper.java         |  2 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |  8 ++-
  .../java/org/telegram/ui/ChatActivity.java    | 13 ++++
  .../telegram/ui/Components/AlertsCreator.java |  8 +--
  .../Components/DeleteMessagesBottomSheet.java |  4 +-
- 7 files changed, 81 insertions(+), 30 deletions(-)
+ 8 files changed, 83 insertions(+), 31 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -109,6 +110,15 @@ index 0000000..0000000 100644
                                  addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
                              }
  
+@@ -15139,7 +15148,7 @@ public class MessagesStorage extends BaseController {
+                             TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                             message.readAttachPath(data, getUserConfig().clientUserId);
+                             data.reuse();
+-                            addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
++                            if (!desu.inugram.helpers.archive.DeletedMessagesHelper.isKept(currentAccount, did, mid)) addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
+                             if (message.action instanceof TLRPC.TL_messageActionTopicCreate) {
+                                 if (topicsToDelete == null) {
+                                     topicsToDelete = new ArrayList<>();
 @@ -15344,13 +15353,14 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
@@ -205,6 +215,18 @@ index 0000000..0000000 100644
              database.executeFast(String.format(Locale.US, "DELETE FROM media_v4 WHERE uid = %d AND mid <= %d", -channelId, mid)).stepThis().dispose();
              database.executeFast(String.format(Locale.US, "UPDATE media_counts_v2 SET old = 1 WHERE uid = %d", -channelId)).stepThis().dispose();
              database.executeFast(String.format(Locale.US, "UPDATE media_counts_topics SET old = 1 WHERE uid = %d", -channelId)).stepThis().dispose();
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java b/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
+@@ -425,6 +425,7 @@ public class PushListenerController {
+                                 ids.add(Utilities.parseInt(messagesArgs[a]));
+                             }
+                             deletedMessages.put(-channel_id, ids);
++                            desu.inugram.helpers.archive.DeletedMessagesHelper.rescuePushMessages(currentAccount, dialogId, ids);
+                             NotificationsController.getInstance(currentAccount).removeDeletedMessagesFromNotifications(deletedMessages, false);
+ 
+                             MessagesController.getInstance(currentAccount).deleteMessagesByPush(dialogId, ids, channel_id);
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java

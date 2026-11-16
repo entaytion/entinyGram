@@ -190,12 +190,14 @@
     <string name="InuAppIconStock">الأساسية</string>
     <string name="InuAppIconSunset">غروب</string>
     <string name="InuArchiveAttachments">المرفقات</string>
-    <string name="InuArchiveAttachmentsInfo">إعداد المحادثات والحدود</string>
+    <string name="InuArchiveAttachmentsInfo">حدود Wi-Fi وبيانات الجوال؛ تُنزَّل الملفات غير الموجودة ضمن هذه الحدود</string>
     <string name="InuArchiveAttachmentsSave">حفظ المرفقات</string>
     <string name="InuArchiveLimitDefault">الافتراضي</string>
-    <string name="InuArchiveLimitInfo">لا تُنسخ الملفات الأكبر إلى الأرشيف. الحد الافتراضي 50 ميغابايت.</string>
+    <string name="InuArchiveLimitInfo">لا تُحفظ الملفات الأكبر. إذا لم تكن وسائط الرسالة المحذوفة موجودة على الجهاز فسيتم تنزيلها، وفي المجموعات والقنوات العامة فقط إذا فُعّل الخيار أدناه. الافتراضي: التنزيل حتى 64 ميغابايت عبر Wi-Fi و16 ميغابايت عبر بيانات الجوال، والملفات الموجودة على الجهاز حتى 50 ميغابايت.</string>
     <string name="InuArchiveLimitMobile">حد الحجم عند استخدام بيانات الهاتف</string>
     <string name="InuArchiveLimitWifi">حد الحجم عند استخدام Wi-Fi</string>
+    <string name="InuArchiveMediaPublic">التنزيل في المجموعات والقنوات العامة</string>
+    <string name="InuArchiveMediaPublicInfo">معطّل افتراضيًا: الدردشات العامة تستهلك أكبر قدر من البيانات. الملفات الموجودة على الجهاز تُحفظ على أي حال</string>
     <string name="InuArchiveScope">مكان الحفظ</string>
     <string name="InuArchiveScopeAdd">إضافة محادثات</string>
     <string name="InuArchiveScopeAll">كل المحادثات</string>

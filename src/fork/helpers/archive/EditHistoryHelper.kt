@@ -2,6 +2,7 @@ package desu.inugram.helpers.archive
 
 import androidx.collection.LongSparseArray
 import desu.inugram.InuConfig
+import org.telegram.SQLite.SQLiteDatabase
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.DialogObject
@@ -60,15 +61,27 @@ object EditHistoryHelper {
     fun onStoredEdit(account: Int, oldMessage: TLRPC.Message?, newMessage: TLRPC.Message) {
         if (!isSaveEditedEnabled()) return
         val dialogId = MessageObject.getDialogId(newMessage)
-        val old = oldMessage?.let { revisionOf(it) }
-            ?: ArchiveCache.shadow(account, dialogId, newMessage.id)?.let {
-                EditEntry(revisionDate(it.editDate, it.date), it.text, null, it.entities, it.media)
-            }
+        val source = oldMessage ?: ArchiveCache.shadow(account, dialogId, newMessage.id)
         ArchiveCache.updateShadow(account, newMessage)
+        val old = source?.let { revisionOf(it) }
         if (old == null || newMessage.edit_date <= old.timestamp) return
         val changed = changes(old, revisionOf(newMessage))
         if (changed.isEmpty()) return
-        record(account, dialogId, newMessage.id, old, oldMessage, R.string.InuEditFieldMedia in changed, messageAuthor(account, newMessage))
+        record(account, dialogId, newMessage.id, old, source, R.string.InuEditFieldMedia in changed, messageAuthor(account, newMessage))
+    }
+
+    // entiny: a history page overwrites stored rows without an edit update, so the old version is compared before stock replaces it
+    @JvmStatic
+    fun onStoredHistory(db: SQLiteDatabase, account: Int, dialogId: Long, messages: ArrayList<TLRPC.Message>) {
+        if (!isSaveEditedEnabled()) return
+        val edited = messages.filter { it.edit_date != 0 && it.id > 0 }
+        if (edited.isEmpty()) return
+        try {
+            val stored = ArchiveStore.storedMessages(db, dialogId, edited.map { it.id })
+            for (message in edited) onStoredEdit(account, stored[message.id] ?: continue, message)
+        } catch (e: Throwable) {
+            android.util.Log.d(TAG, "history edit check failed", e)
+        }
     }
 
     @JvmStatic
@@ -97,24 +110,17 @@ object EditHistoryHelper {
                 ?: LongSparseArray<ArchiveCache.DeletedIdSet>().also { ArchiveCache.editHistoryIds.put(account.toLong(), it) }
             (ids.get(dialogId) ?: ArchiveCache.DeletedIdSet().also { ids.put(dialogId, it) }).add(msgId, 0L)
         }
-        val mediaCopy = if (copyMedia) ArchiveMediaHelper.planNewMediaCopy(account, source) else null
         val storage = MessagesStorage.getInstance(account) ?: return
         val persist = Runnable {
             val db = storage.database ?: return@Runnable
             try {
-                val date = kept.timestamp.toInt()
-                val inserted = ArchiveStore.saveEditHistory(db, dialogId, msgId, kept.text, date, null, kept.entities, kept.media, kept.fromId)
+                val rowId = ArchiveStore.saveEditHistory(db, dialogId, msgId, kept.text, kept.timestamp.toInt(), null, kept.entities, kept.media, kept.fromId)
                 synchronized(ArchiveCache.cacheLock) {
                     ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
                 }
-                if (!inserted || !copyMedia || source == null) return@Runnable
-                val rowId = ArchiveMediaHelper.latestEditRowId(db, dialogId, msgId, date)
-                if (rowId <= 0) return@Runnable
-                if (mediaCopy == null) {
-                    ArchiveMediaHelper.fetchNewMedia(account, source, rowId, false)
-                    return@Runnable
-                }
-                ArchiveMediaHelper.copyThenStore(account, "e:$account:$rowId", mediaCopy) { copyDb, copied ->
+                if (rowId <= 0 || !copyMedia) return@Runnable
+                val mediaCopy = ArchiveMediaHelper.planMediaCopy(account, source, ArchiveScope.Kind.EDITED) ?: return@Runnable
+                ArchiveMediaHelper.copyThenStore(account, "e:$account:$rowId", mediaCopy.pin()) { copyDb, copied ->
                     val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_edit_history", "rowid = $rowId", copied)
                     if (stored) synchronized(ArchiveCache.cacheLock) { ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong()) }
                     stored

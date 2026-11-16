@@ -8,6 +8,7 @@ import org.telegram.messenger.ChatObject
 import org.telegram.messenger.ContactsController
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.MessagesStorage
 import org.telegram.tgnet.TLRPC
 
 object ArchiveScope {
@@ -17,7 +18,7 @@ object ArchiveScope {
     const val FLAG_SECRET = 1 shl 20
     const val FLAG_BOT_IN_GROUP = 1 shl 21
 
-    enum class Kind { DELETED, EDITED, MEDIA }
+    enum class Kind { DELETED, EDITED }
 
     class Entry(val flags: Int, val ids: List<Long>) {
         val isEmpty: Boolean get() = flags == 0 && ids.isEmpty()
@@ -37,7 +38,6 @@ object ArchiveScope {
     private fun item(kind: Kind) = when (kind) {
         Kind.DELETED -> InuConfig.ARCHIVE_SCOPE_DELETED
         Kind.EDITED -> InuConfig.ARCHIVE_SCOPE_EDITED
-        Kind.MEDIA -> InuConfig.ARCHIVE_SCOPE_MEDIA
     }
 
     // entiny: must run at startup, a lazy migration reads the legacy defaults as exclusions once the master toggle is on
@@ -96,11 +96,11 @@ object ArchiveScope {
         if (entry.isEmpty) return false
         if (dialogId in entry.ids) return true
         val flags = entry.flags
-        val controller = MessagesController.getInstance(account)
+        if (flags == 0) return false
         return when {
             DialogObject.isEncryptedDialog(dialogId) -> flags and FLAG_SECRET != 0
             dialogId > 0 -> {
-                val user = controller.getUser(dialogId)
+                val user = user(account, dialogId)
                 when {
                     user?.bot == true -> flags and MessagesController.DIALOG_FILTER_FLAG_BOTS != 0
                     user != null && (user.self || user.contact || ContactsController.getInstance(account).isContact(dialogId)) ->
@@ -109,12 +109,12 @@ object ArchiveScope {
                 }
             }
             dialogId < 0 -> {
-                val chat = controller.getChat(-dialogId)
+                val chat = chat(account, -dialogId)
                 when {
                     chat != null && ChatObject.isChannel(chat) && !chat.megagroup ->
                         flags and MessagesController.DIALOG_FILTER_FLAG_CHANNELS != 0
                     flags and MessagesController.DIALOG_FILTER_FLAG_GROUPS != 0 -> true
-                    flags and FLAG_BOT_IN_GROUP != 0 -> isBotMessage(controller, message)
+                    flags and FLAG_BOT_IN_GROUP != 0 -> isBotMessage(account, message)
                     else -> false
                 }
             }
@@ -122,17 +122,34 @@ object ArchiveScope {
         }
     }
 
-    private fun isBotMessage(controller: MessagesController, message: TLRPC.Message?): Boolean {
+    private fun isBotMessage(account: Int, message: TLRPC.Message?): Boolean {
         val id = message?.from_id?.user_id?.takeIf { it != 0L } ?: return false
-        return controller.getUser(id)?.bot == true
+        return user(account, id)?.bot == true
+    }
+
+    private fun user(account: Int, id: Long): TLRPC.User? {
+        val controller = MessagesController.getInstance(account)
+        return controller.getUser(id) ?: stored(account) { it.getUser(id) }?.also { controller.putUser(it, true) }
+    }
+
+    internal fun chat(account: Int, id: Long): TLRPC.Chat? {
+        val controller = MessagesController.getInstance(account)
+        return controller.getChat(id) ?: stored(account) { it.getChat(id) }?.also { controller.putChat(it, true) }
+    }
+
+    // entiny: a push-woken process has no users or chats in memory; only read on the storage queue, the *Sync getters deadlock there
+    private fun <T> stored(account: Int, load: (MessagesStorage) -> T?): T? {
+        val storage = MessagesStorage.getInstance(account)
+        return if (Thread.currentThread() === storage.storageQueue) load(storage) else null
     }
 
     fun mediaLimitOptions(): IntArray = MEDIA_LIMITS_MB
 
-    // entiny: 0 means no limit; the cap follows the current connection like the stock auto-download does
-    fun mediaLimitBytes(): Long {
-        val mb = (if (ApplicationLoader.isConnectedToWiFi()) InuConfig.ARCHIVE_MEDIA_LIMIT_WIFI else InuConfig.ARCHIVE_MEDIA_LIMIT_MOBILE).value
-        return if (mb <= 0) 0L else mb * 1024L * 1024L
+    // entiny: 0 is the default: 50 MB for a file already on disk, 64 MB on Wi-Fi and 16 MB on mobile data for a download
+    fun mediaLimitBytes(download: Boolean): Long {
+        val wifi = ApplicationLoader.isConnectedToWiFi()
+        val mb = (if (wifi) InuConfig.ARCHIVE_MEDIA_LIMIT_WIFI else InuConfig.ARCHIVE_MEDIA_LIMIT_MOBILE).value
+        return (if (mb > 0) mb else if (!download) 50 else if (wifi) 64 else 16) * 1024L * 1024L
     }
 
     private fun entryJson(entry: Entry): JSONObject = JSONObject().put("flags", entry.flags).put("ids", JSONArray(entry.ids))

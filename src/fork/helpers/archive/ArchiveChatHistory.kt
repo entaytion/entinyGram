@@ -301,11 +301,7 @@ object ArchiveChatHistory {
 
     // entiny: one message keeps one block of versions, the current text closes it; one batch, newest first
     private fun editedPage(db: SQLiteDatabase, screen: Screen): Page {
-        val stored = if (screen.msgId != 0) {
-            ArchiveStore.loadEditHistory(db, screen.dialogId, screen.msgId).map { screen.msgId to it }
-        } else {
-            ArchiveStore.loadEditHistoryInDialog(db, screen.dialogId)
-        }
+        val stored = ArchiveStore.loadEditHistory(db, screen.dialogId, screen.msgId)
         val ids = stored.mapTo(HashSet()) { it.first }
         if (screen.msgId != 0) ids.add(screen.msgId)
         val live = try {

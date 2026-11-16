@@ -4,11 +4,13 @@ import desu.inugram.InuConfig
 import java.io.File
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
+import org.telegram.messenger.ChatObject
+import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.ImageLocation
-import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesStorage
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 
@@ -42,13 +44,14 @@ object ArchiveMediaHelper {
         false
     }
 
-    private const val AUTO_COPY_MAX_BYTES = 50L * 1024 * 1024
-    private const val AUTO_FETCH_TIMEOUT_MS = 30 * 60_000L
     internal const val STARTUP_DELAY_MS = 20_000L
+    private const val FETCH_TIMEOUT_MS = 3 * 60_000L
+    private const val MAX_FETCHES = 8
 
     // entiny: file copies run here so storageQueue only sees short database writes
     private val mediaQueue by lazy { org.telegram.messenger.DispatchQueue("inuArchiveMedia") }
     private val pendingCopies = HashSet<String>()
+    private val fetching = HashSet<String>()
     private val migratedAccounts = HashSet<Int>()
 
     // entiny: media saved by older builds (app-private folder, old public folder) moves into the current folder once
@@ -118,39 +121,38 @@ object ArchiveMediaHelper {
         }
     }
 
-    internal data class PendingMediaCopy(val source: File, val target: File)
+    internal class PendingMediaCopy(val source: File, val target: File) {
+        val size = source.length()
+        private var pinned: java.io.InputStream? = null
 
-    // entiny: a copy made while the message is being deleted or edited follows the attachment settings
-    internal fun planNewMediaCopy(account: Int, message: TLRPC.Message?): PendingMediaCopy? {
-        if (message == null || !desu.inugram.InuConfig.ARCHIVE_MEDIA_ENABLED.value) return null
-        if (!ArchiveScope.allows(account, MessageObject.getDialogId(message), message, ArchiveScope.Kind.MEDIA)) return null
-        val limit = ArchiveScope.mediaLimitBytes()
-        return planMediaCopy(account, message, if (limit > 0) limit else AUTO_COPY_MAX_BYTES)
+        // entiny: stock deletes replaced media right after it stores an edit, an open stream keeps the old bytes readable
+        fun pin() = apply { pinned = runCatching { source.inputStream() }.getOrNull() }
+
+        fun open(): java.io.InputStream = pinned ?: source.inputStream()
+
+        fun release() {
+            runCatching { pinned?.close() }
+        }
     }
 
-    // entiny: the file reference dies with the message, so media that was never opened is fetched right at deletion
-    internal fun fetchNewMedia(account: Int, message: TLRPC.Message, rowId: Long = 0L, deleted: Boolean = true) {
-        if (!InuConfig.ARCHIVE_MEDIA_ENABLED.value || MessageObject.getMedia(message).let { it?.document == null && it?.photo == null }) return
-        if (!ArchiveScope.allows(account, MessageObject.getDialogId(message), message, ArchiveScope.Kind.MEDIA)) return
-        val limit = ArchiveScope.mediaLimitBytes().takeIf { it > 0 } ?: AUTO_COPY_MAX_BYTES
-        if ((MessageObject.getMedia(message)?.document?.size ?: 0L) > limit) return
-        if (planMediaCopy(account, message, 0L) != null) return
-        AndroidUtilities.runOnUIThread { downloadArchiveMedia(account, message, rowId, deleted, AUTO_FETCH_TIMEOUT_MS) {} }
-    }
-
-    internal fun planMediaCopy(account: Int, message: TLRPC.Message?, maxBytes: Long = AUTO_COPY_MAX_BYTES): PendingMediaCopy? {
-        if (message?.media == null || message.media is TLRPC.TL_messageMediaWebPage) return null
+    internal fun planMediaCopy(account: Int, message: TLRPC.Message?, kind: ArchiveScope.Kind, maxBytes: Long = ArchiveScope.mediaLimitBytes(false)): PendingMediaCopy? {
+        if (message?.media == null || message.media is TLRPC.TL_messageMediaWebPage || !InuConfig.ARCHIVE_MEDIA_ENABLED.value) return null
+        if (!ArchiveScope.allows(account, MessageObject.getDialogId(message), message, kind)) return null
         return try {
             val fileLoader = FileLoader.getInstance(account) ?: return null
-            val expectedSize = MessageObject.getMedia(message)?.document?.size ?: 0L
-            if (maxBytes > 0 && expectedSize > maxBytes) return null
-            val path = sequenceOf(
+            val media = MessageObject.getMedia(message)
+            val expectedSize = media?.document?.size ?: 0L
+            if (expectedSize > maxBytes) return null
+            val photoSizes = media?.photo?.sizes.orEmpty().filter { it !is TLRPC.TL_photoSizeEmpty && it !is TLRPC.TL_photoStrippedSize }
+            val candidates = sequenceOf(
                 message.attachPath?.takeIf { it.isNotBlank() }?.let { File(it) },
                 fileLoader.getPathToMessage(message),
                 fileLoader.getPathToMessage(message, true, true),
-            ).filterNotNull().firstOrNull { it.isFile && it.length() > 0 && (expectedSize <= 0 || it.length() == expectedSize) && !it.name.endsWith(".enc") } ?: return null
-            if (maxBytes > 0 && path.length() > maxBytes) return null
-            PendingMediaCopy(path, File(getSavedMediaDir(account), originalName(message, path)))
+            ) + photoSizes.asReversed().asSequence().map { fileLoader.getPathToAttach(it, null, false, true) }
+            val source = candidates.filterNotNull().firstOrNull {
+                it.isFile && it.length() > 0 && (expectedSize <= 0 || it.length() == expectedSize) && !it.name.endsWith(".enc")
+            } ?: return null
+            PendingMediaCopy(source, File(getSavedMediaDir(account), originalName(message, source))).takeIf { it.size <= maxBytes }
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "planMediaCopy error", e)
             null
@@ -158,7 +160,12 @@ object ArchiveMediaHelper {
     }
 
     internal fun copyThenStore(account: Int, key: String, plan: PendingMediaCopy, store: (org.telegram.SQLite.SQLiteDatabase, String) -> Boolean) {
-        synchronized(pendingCopies) { if (!pendingCopies.add(key)) return }
+        synchronized(pendingCopies) {
+            if (!pendingCopies.add(key)) {
+                plan.release()
+                return
+            }
+        }
         mediaQueue.postRunnable {
             val copied = runMediaCopy(plan)
             if (copied == null) {
@@ -179,6 +186,47 @@ object ArchiveMediaHelper {
         }
     }
 
+    // entiny: the only download the archive starts: media of a deleted message that is not on disk, size checked first, public chats only when allowed
+    internal fun fetchThenStore(account: Int, key: String, message: TLRPC.Message, store: (org.telegram.SQLite.SQLiteDatabase, String) -> Boolean) {
+        if (!InuConfig.ARCHIVE_MEDIA_ENABLED.value || message.media == null || message.media is TLRPC.TL_messageMediaWebPage) return
+        val dialogId = MessageObject.getDialogId(message)
+        if (DialogObject.isEncryptedDialog(dialogId) || !ArchiveScope.allows(account, dialogId, message)) return
+        if (dialogId < 0 && ArchiveScope.chat(account, -dialogId).let { it == null || (ChatObject.isPublic(it) && !InuConfig.ARCHIVE_MEDIA_PUBLIC.value) }) return
+        val media = MessageObject.getMedia(message) ?: return
+        if (media.ttl_seconds != 0) return
+        val document = media.document
+        val photoSize = if (document == null) FileLoader.getClosestPhotoSizeWithSize(media.photo?.sizes, AndroidUtilities.getPhotoSize()) else null
+        val size = document?.size ?: photoSize?.size?.toLong() ?: return
+        val limit = ArchiveScope.mediaLimitBytes(true)
+        val name = FileLoader.getAttachFileName(document ?: photoSize)
+        if (size <= 0 || size > limit || name.isNullOrEmpty()) return
+        synchronized(fetching) { if (fetching.size >= MAX_FETCHES || !fetching.add(key)) return }
+        AndroidUtilities.runOnUIThread {
+            val center = NotificationCenter.getInstance(account)
+            lateinit var observer: NotificationCenter.NotificationCenterDelegate
+            val stop = Runnable {
+                center.removeObserver(observer, NotificationCenter.fileLoaded)
+                center.removeObserver(observer, NotificationCenter.fileLoadFailed)
+                synchronized(fetching) { fetching.remove(key) }
+            }
+            observer = object : NotificationCenter.NotificationCenterDelegate {
+                override fun didReceivedNotification(id: Int, currentAccount: Int, vararg args: Any?) {
+                    if (args.getOrNull(0) != name) return
+                    AndroidUtilities.cancelRunOnUIThread(stop)
+                    stop.run()
+                    if (id != NotificationCenter.fileLoaded) return
+                    mediaQueue.postRunnable { planMediaCopy(account, message, ArchiveScope.Kind.DELETED, limit)?.let { copyThenStore(account, key, it, store) } }
+                }
+            }
+            center.addObserver(observer, NotificationCenter.fileLoaded)
+            center.addObserver(observer, NotificationCenter.fileLoadFailed)
+            AndroidUtilities.runOnUIThread(stop, FETCH_TIMEOUT_MS)
+            val loader = FileLoader.getInstance(account)
+            if (document != null) loader.loadFile(document, message, FileLoader.PRIORITY_LOW, 0)
+            else loader.loadFile(ImageLocation.getForPhoto(photoSize, media.photo), message, "jpg", FileLoader.PRIORITY_LOW, 0)
+        }
+    }
+
     internal fun updateMediaPath(db: org.telegram.SQLite.SQLiteDatabase, table: String, where: String, path: String): Boolean {
         val free = "($where) AND (media_path IS NULL OR media_path = '')"
         val cursor = db.queryFinalized("SELECT 1 FROM $table WHERE $free")
@@ -193,12 +241,6 @@ object ArchiveMediaHelper {
         }
         return true
     }
-
-    internal fun latestEditRowId(db: org.telegram.SQLite.SQLiteDatabase, dialogId: Long, msgId: Int, date: Int): Long {
-        val cursor = db.queryFinalized("SELECT MAX(rowid) FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id = $msgId AND date = $date")
-        return try { if (cursor.next()) cursor.longValue(0) else 0L } finally { cursor.dispose() }
-    }
-
 
     private fun originalName(message: TLRPC.Message, source: File): String {
         val document = MessageObject.getMedia(message)?.document ?: return source.name
@@ -222,126 +264,23 @@ object ArchiveMediaHelper {
         candidate
     }
 
-    private fun runMediaCopy(plan: PendingMediaCopy?): String? {
-        if (plan == null) return null
-        val target = try {
-            reserveTarget(plan.target)
-        } catch (e: Throwable) {
-            android.util.Log.e(TAG, "copyMediaFile reserve error", e)
-            return null
-        }
-        val temporary = File(target.parentFile, "${target.name}.partial")
+    private fun runMediaCopy(plan: PendingMediaCopy): String? {
+        var temporary: File? = null
         return try {
-            plan.source.copyTo(temporary, overwrite = true)
-            check(temporary.length() > 0 && temporary.length() == plan.source.length())
-            check(temporary.renameTo(target))
-            target.absolutePath
+            plan.open().use { input ->
+                val target = reserveTarget(plan.target)
+                val partial = File(target.parentFile, "${target.name}.partial").also { temporary = it }
+                partial.outputStream().use { input.copyTo(it) }
+                check(plan.size > 0 && partial.length() == plan.size)
+                check(partial.renameTo(target))
+                target.absolutePath
+            }
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "copyMediaFile error", e)
             null
         } finally {
-            temporary.delete()
+            temporary?.delete()
         }
-    }
-
-    fun downloadArchiveMedia(account: Int, message: TLRPC.Message, rowId: Long, deleted: Boolean, timeoutMs: Long = 120_000, callback: (String?) -> Unit): () -> Unit {
-        val loader = FileLoader.getInstance(account)
-        val media = MessageObject.getMedia(message)
-        val document = media?.document
-        val photo = media?.photo
-        val size = photo?.sizes?.let { FileLoader.getClosestPhotoSizeWithSize(it, AndroidUtilities.getPhotoSize(true), false, null, true) }
-        val location = if (size != null && photo != null) ImageLocation.getForPhoto(size, photo) else null
-        val name = when {
-            document != null -> FileLoader.getAttachFileName(document)
-            location != null -> FileLoader.getAttachFileName(size)
-            else -> {
-                callback(null)
-                return {}
-            }
-        }
-        val center = NotificationCenter.getInstance(account)
-        var active = true
-        lateinit var observer: NotificationCenter.NotificationCenterDelegate
-        lateinit var timeout: Runnable
-        fun detach() {
-            center.removeObserver(observer, NotificationCenter.fileLoaded)
-            center.removeObserver(observer, NotificationCenter.fileLoadFailed)
-            AndroidUtilities.cancelRunOnUIThread(timeout)
-        }
-        fun finish(success: Boolean) {
-            if (!active) return
-            detach()
-            if (!success) {
-                active = false
-                callback(null)
-                return
-            }
-            fun deliver(path: String?) {
-                AndroidUtilities.runOnUIThread {
-                    if (active) {
-                        active = false
-                        callback(path)
-                    }
-                }
-            }
-            val dialogId = MessageObject.getDialogId(message)
-            val table = if (deleted) "inu_deleted_messages" else "inu_edit_history"
-            val where = if (deleted) "dialog_id = $dialogId AND msg_id = ${message.id}" else "rowid = $rowId AND dialog_id = $dialogId AND msg_id = ${message.id}"
-            val storage = MessagesStorage.getInstance(account)
-            mediaQueue.postRunnable {
-                val plan = planMediaCopy(account, message, 0L)
-                if (plan == null) {
-                    deliver(null)
-                    return@postRunnable
-                }
-                val copied = runMediaCopy(plan)
-                if (copied == null) {
-                    deliver(plan.source.absolutePath)
-                    return@postRunnable
-                }
-                storage.storageQueue.postRunnable {
-                    var stored = false
-                    try {
-                        val query = storage.database.executeFast("UPDATE $table SET media_path = ? WHERE $where")
-                        try {
-                            query.bindString(1, copied)
-                            query.step()
-                        } finally {
-                            query.dispose()
-                        }
-                        val cursor = storage.database.queryFinalized("SELECT 1 FROM $table WHERE $where AND media_path = ?", copied)
-                        stored = try { cursor.next() } finally { cursor.dispose() }
-                    } catch (e: Exception) {
-                        android.util.Log.d(TAG, "archive download save failed", e)
-                    }
-                    if (stored) {
-                        if (deleted) ArchiveCache.rememberDeletedMediaPath(account, dialogId, message.id, copied)
-                        else synchronized(ArchiveCache.cacheLock) { ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(message.id.toLong()) }
-                        deliver(copied)
-                    } else {
-                        File(copied).delete()
-                        deliver(plan.source.absolutePath)
-                    }
-                }
-            }
-        }
-        observer = object : NotificationCenter.NotificationCenterDelegate {
-            override fun didReceivedNotification(id: Int, currentAccount: Int, vararg args: Any?) {
-                if (args.getOrNull(0) == name) finish(id == NotificationCenter.fileLoaded)
-            }
-        }
-        timeout = Runnable { finish(false) }
-        center.addObserver(observer, NotificationCenter.fileLoaded)
-        center.addObserver(observer, NotificationCenter.fileLoadFailed)
-        AndroidUtilities.runOnUIThread(timeout, timeoutMs)
-        if (planMediaCopy(account, message, 0L) != null) {
-            finish(true)
-        } else if (document != null) {
-            loader.loadFile(document, message, FileLoader.PRIORITY_NORMAL, 1)
-        } else {
-            loader.loadFile(location, message, "jpg", FileLoader.PRIORITY_NORMAL, 1)
-        }
-        return { active = false; detach() }
     }
 
     // entiny: image loaders resolve documents by the stock cache path, so put the archived copy back there

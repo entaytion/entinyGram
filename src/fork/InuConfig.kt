@@ -1809,9 +1809,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ARCHIVE_SCOPE_EDITED = StringItem("archive_scope_edited", "")
 
     @JvmField
-    val ARCHIVE_SCOPE_MEDIA = StringItem("archive_scope_media", "")
-
-    @JvmField
     val ARCHIVE_MEDIA_ENABLED = BoolItem("archive_media_enabled", true)
 
     @JvmField
@@ -1819,6 +1816,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val ARCHIVE_MEDIA_LIMIT_MOBILE = IntItem("archive_media_limit_mobile", 0)
+
+    @JvmField
+    val ARCHIVE_MEDIA_PUBLIC = BoolItem("archive_media_public", false)
 
     @JvmField
     val SHOW_EDIT_HISTORY_DIFF = BoolItem("show_edit_history_diff", true)

@@ -190,12 +190,14 @@
     <string name="InuAppIconStock">پایه</string>
     <string name="InuAppIconSunset">غروب</string>
     <string name="InuArchiveAttachments">پیوست‌ها</string>
-    <string name="InuArchiveAttachmentsInfo">تنظیم گفتگوها و محدودیت‌ها</string>
+    <string name="InuArchiveAttachmentsInfo">محدودیت‌های Wi-Fi و داده همراه؛ فایل‌های ناموجود در همین محدوده دانلود می‌شوند</string>
     <string name="InuArchiveAttachmentsSave">ذخیره پیوست‌ها</string>
     <string name="InuArchiveLimitDefault">پیش‌فرض</string>
-    <string name="InuArchiveLimitInfo">فایل‌های بزرگ‌تر در بایگانی کپی نمی‌شوند. مقدار پیش‌فرض ۵۰ مگابایت است.</string>
+    <string name="InuArchiveLimitInfo">فایل‌های بزرگ‌تر ذخیره نمی‌شوند. اگر رسانهٔ پیام حذف‌شده روی دستگاه نباشد دانلود می‌شود، در گروه‌ها و کانال‌های عمومی فقط اگر گزینهٔ زیر فعال باشد. پیش‌فرض: دانلود تا ۶۴ مگابایت با Wi-Fi و ۱۶ مگابایت با دادهٔ همراه، فایل‌های موجود روی دستگاه تا ۵۰ مگابایت.</string>
     <string name="InuArchiveLimitMobile">محدودیت حجم با داده تلفن همراه</string>
     <string name="InuArchiveLimitWifi">محدودیت حجم با وای‌فای</string>
+    <string name="InuArchiveMediaPublic">دانلود در گروه‌ها و کانال‌های عمومی</string>
+    <string name="InuArchiveMediaPublicInfo">به‌طور پیش‌فرض خاموش: گفتگوهای عمومی بیشترین داده را مصرف می‌کنند. فایل‌هایی که روی دستگاه هستند در هر حال ذخیره می‌شوند</string>
     <string name="InuArchiveScope">محل ذخیره</string>
     <string name="InuArchiveScopeAdd">افزودن گفتگوها</string>
     <string name="InuArchiveScopeAll">همه گفتگوها</string>

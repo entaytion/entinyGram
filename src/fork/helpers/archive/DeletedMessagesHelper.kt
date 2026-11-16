@@ -62,7 +62,7 @@ object DeletedMessagesHelper {
             val owner = lookup(id)?.messageOwner
             if (userInitiated) synchronized(ArchiveCache.cacheLock) { ArchiveCache.forgetKept(account, dialogId, id) }
             if (!userInitiated && keepInChat(account, dialogId, owner, false)) {
-                rememberKept(account, dialogId, id, now)
+                ArchiveCache.rememberKept(account, dialogId, id, now)
                 keptAny = true
                 continue
             }
@@ -70,10 +70,6 @@ object DeletedMessagesHelper {
         }
         return if (keptAny) result else null
     }
-
-    @JvmStatic
-    fun rememberKept(account: Int, dialogId: Long, msgId: Int, date: Long) =
-        ArchiveCache.rememberKept(account, dialogId, msgId, date)
 
     @JvmStatic
     fun isKept(account: Int, dialogId: Long, msgId: Int): Boolean {
@@ -138,6 +134,47 @@ object DeletedMessagesHelper {
         if (restored.isNotEmpty()) storage.putMessages(restored, true, false, false, 0, 0, 0)
     }
 
+    // entiny: a message that arrived while the process was dead exists only as a push row; queued before the notification cleanup erases it
+    @JvmStatic
+    fun rescuePushMessages(account: Int, dialogId: Long, ids: ArrayList<Int>) {
+        if (ids.isEmpty() || dialogId == 0L || !isSaveDeletedEnabled()) return
+        val storage = MessagesStorage.getInstance(account) ?: return
+        val copy = ArrayList(ids)
+        storage.storageQueue.postRunnable { rescueFromPushRows(storage, account, dialogId, copy) }
+    }
+
+    private fun rescueFromPushRows(storage: MessagesStorage, account: Int, dialogId: Long, ids: ArrayList<Int>) {
+        val db = storage.database ?: return
+        try {
+            val joined = ids.joinToString(",")
+            val inChat = HashSet<Int>()
+            db.queryFinalized("SELECT mid FROM messages_v2 WHERE uid = ? AND mid IN ($joined)", dialogId).let { c ->
+                try { while (c.next()) inChat.add(c.intValue(0)) } finally { c.dispose() }
+            }
+            val cursor = db.queryFinalized("SELECT data, mid, date FROM unread_push_messages WHERE uid = ? AND mid IN ($joined) AND is_reaction = 0", dialogId)
+            try {
+                while (cursor.next()) {
+                    val mid = cursor.intValue(1)
+                    if (mid in inChat) continue
+                    val data = cursor.byteBufferValue(0) ?: continue
+                    val message = try { TLRPC.Message.TLdeserialize(data, data.readInt32(false), false) } finally { data.reuse() } ?: continue
+                    if (message.action != null && message.action !is TLRPC.TL_messageActionEmpty) continue
+                    message.id = mid
+                    message.date = cursor.intValue(2)
+                    message.dialog_id = dialogId
+                    if (message.from_id == null && DialogObject.isUserDialog(dialogId)) {
+                        message.from_id = TLRPC.TL_peerUser().also { it.user_id = dialogId }
+                    }
+                    archiveMessage(db, account, dialogId, message)
+                }
+            } finally {
+                cursor.dispose()
+            }
+        } catch (e: Throwable) {
+            android.util.Log.d("DeletedMessagesHelper", "push rescue failed", e)
+        }
+    }
+
     @JvmStatic
     fun onStorageDelete(db: SQLiteDatabase, account: Int, dialogId: Long, message: TLRPC.Message, userInitiated: Boolean, kept: androidx.collection.LongSparseArray<ArrayList<Int>>): Boolean {
         val was = ArchiveStore.isDeletedMessageArchived(db, dialogId, message.id)
@@ -183,12 +220,15 @@ object DeletedMessagesHelper {
             ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, savedPath)
             return
         }
-        val mediaCopy = ArchiveMediaHelper.planNewMediaCopy(account, message) ?: return ArchiveMediaHelper.fetchNewMedia(account, message)
-        ArchiveMediaHelper.copyThenStore(account, "d:$account:$dialogId:$msgId", mediaCopy) { copyDb, copied ->
+        val key = "d:$account:$dialogId:$msgId"
+        val store = { copyDb: SQLiteDatabase, copied: String ->
             val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id = $msgId", copied)
             if (stored) ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, copied)
             stored
         }
+        val mediaCopy = ArchiveMediaHelper.planMediaCopy(account, message, ArchiveScope.Kind.DELETED)
+        if (mediaCopy != null) ArchiveMediaHelper.copyThenStore(account, key, mediaCopy, store)
+        else ArchiveMediaHelper.fetchThenStore(account, key, message, store)
     }
 
     @JvmStatic

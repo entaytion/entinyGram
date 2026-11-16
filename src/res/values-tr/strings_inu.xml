@@ -190,12 +190,14 @@
     <string name="InuAppIconStock">Varsayılan</string>
     <string name="InuAppIconSunset">Gün batımı</string>
     <string name="InuArchiveAttachments">Ekler</string>
-    <string name="InuArchiveAttachmentsInfo">Sohbetleri ve sınırları yapılandır</string>
+    <string name="InuArchiveAttachmentsInfo">Wi-Fi ve mobil veri sınırları; eksik dosyalar bu sınırlar içinde indirilir</string>
     <string name="InuArchiveAttachmentsSave">Ekleri kaydet</string>
     <string name="InuArchiveLimitDefault">Varsayılan</string>
-    <string name="InuArchiveLimitInfo">Daha büyük dosyalar arşive kopyalanmaz. Varsayılan sınır 50 MB’dir.</string>
+    <string name="InuArchiveLimitInfo">Daha büyük dosyalar kaydedilmez. Silinen mesajın medyası cihazda yoksa, herkese açık gruplarda ve kanallarda yalnızca aşağıda açıksa indirilir. Varsayılan: indirmeler Wi-Fi’de 64 MB, mobil veride 16 MB; cihazdaki dosyalar 50 MB’ye kadar.</string>
     <string name="InuArchiveLimitMobile">Mobil veri için boyut sınırı</string>
     <string name="InuArchiveLimitWifi">Wi-Fi için boyut sınırı</string>
+    <string name="InuArchiveMediaPublic">Herkese açık gruplarda ve kanallarda indir</string>
+    <string name="InuArchiveMediaPublicInfo">Varsayılan olarak kapalı: herkese açık sohbetler en çok veriyi kullanır. Cihazda zaten olan dosyalar yine de kaydedilir</string>
     <string name="InuArchiveScope">Kaydetme yeri</string>
     <string name="InuArchiveScopeAdd">Sohbet ekle</string>
     <string name="InuArchiveScopeAll">Tüm sohbetler</string>

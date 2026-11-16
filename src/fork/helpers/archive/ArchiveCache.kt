@@ -179,16 +179,7 @@ object ArchiveCache {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<K, V>): Boolean = size > maxSize
     }
 
-    internal data class ShadowEntry(
-        val text: String,
-        val date: Int,
-        val editDate: Int,
-        val entities: ArrayList<TLRPC.MessageEntity>?,
-        val media: TLRPC.MessageMedia?,
-        val message: TLRPC.Message?,
-    )
-
-    private val shadowMessageCache = LongSparseArray<LinkedHashMap<Pair<Long, Int>, ShadowEntry>>()
+    private val shadowMessageCache = LongSparseArray<LinkedHashMap<Pair<Long, Int>, TLRPC.Message>>()
 
     private const val LOAD_PAGE_ROWS = 2000
     private const val LOAD_RETRY_MS = 60_000L
@@ -409,16 +400,16 @@ object ArchiveCache {
         putShadow(account, message)
     }
 
-    internal fun shadow(account: Int, dialogId: Long, msgId: Int): ShadowEntry? = synchronized(cacheLock) {
+    // entiny: the stored copy is shared, callers that hand it to stock take messageSnapshot instead
+    internal fun shadow(account: Int, dialogId: Long, msgId: Int): TLRPC.Message? = synchronized(cacheLock) {
         shadowMessageCache.get(account.toLong())?.get(dialogId to msgId)
     }
 
     internal fun messageSnapshot(account: Int, dialogId: Long, msgId: Int): TLRPC.Message? {
-        val entry = synchronized(cacheLock) {
-            val messages = shadowMessageCache.get(account.toLong())
-            if (dialogId != 0L) messages?.get(dialogId to msgId) else messages?.entries?.firstOrNull { it.key.second == msgId }?.value
+        val message = if (dialogId != 0L) shadow(account, dialogId, msgId) else synchronized(cacheLock) {
+            shadowMessageCache.get(account.toLong())?.entries?.firstOrNull { it.key.second == msgId }?.value
         }
-        return entry?.message?.let { InuUtils.cloneTLObject(it, TLRPC.Message::TLdeserialize) }
+        return message?.let { InuUtils.cloneTLObject(it, TLRPC.Message::TLdeserialize) }
     }
 
     internal fun updateShadow(account: Int, message: TLRPC.Message) {
@@ -426,19 +417,14 @@ object ArchiveCache {
     }
 
     private fun putShadow(account: Int, message: TLRPC.Message) {
-        val entry = ShadowEntry(
-            message.message ?: "",
-            message.date,
-            message.edit_date,
-            if (message.entities.isNullOrEmpty()) null else ArrayList(message.entities),
-            ArchiveStore.cloneMedia(message.media),
-            if (DeletedMessagesHelper.isSaveDeletedEnabled()) InuUtils.cloneTLObject(message, TLRPC.Message::TLdeserialize) else null,
-        )
+        val dialogId = MessageObject.getDialogId(message)
+        val copy = InuUtils.cloneTLObject(message, TLRPC.Message::TLdeserialize) ?: return
+        copy.dialog_id = dialogId
         synchronized(cacheLock) {
             val map = shadowMessageCache.get(account.toLong())
-                ?: BoundedLinkedHashMap<Pair<Long, Int>, ShadowEntry>(SHADOW_CACHE_MAX_PER_ACCOUNT)
+                ?: BoundedLinkedHashMap<Pair<Long, Int>, TLRPC.Message>(SHADOW_CACHE_MAX_PER_ACCOUNT)
                     .also { shadowMessageCache.put(account.toLong(), it) }
-            map[MessageObject.getDialogId(message) to message.id] = entry
+            map[dialogId to message.id] = copy
         }
     }
 

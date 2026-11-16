@@ -4,10 +4,10 @@ Date: Tue, 27 Oct 2026 13:43:00 +0200
 Subject: edit history hooks
 
 ---
- .../main/java/org/telegram/messenger/DownloadController.java    | 2 ++
- .../src/main/java/org/telegram/messenger/MessagesStorage.java   | 2 ++
- .../main/java/org/telegram/messenger/SendMessagesHelper.java    | 2 ++
- 3 files changed, 6 insertions(+)
+ .../main/java/org/telegram/messenger/DownloadController.java   | 2 ++
+ .../src/main/java/org/telegram/messenger/MessagesStorage.java  | 3 +++
+ .../main/java/org/telegram/messenger/SendMessagesHelper.java   | 2 ++
+ 3 files changed, 7 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java b/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java
 index 0000000..0000000 100644
@@ -33,7 +33,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -16771,6 +16771,7 @@ public class MessagesStorage extends BaseController {
+@@ -16717,6 +16717,7 @@ public class MessagesStorage extends BaseController {
+                         closeHolesInMedia(dialogId, minId, maxId, -1, threadMessageId);
+                     }
+                     int count = messages.messages.size();
++                    if (load_type != -2) desu.inugram.helpers.archive.EditHistoryHelper.onStoredHistory(database, currentAccount, dialogId, messages.messages);
+ 
+                     //load_type == 0 ? backward loading
+                     //load_type == 1 ? forward loading
+@@ -16771,6 +16772,7 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
@@ -41,7 +49,7 @@ index 0000000..0000000 100644
                                      if (reactionUpdates != null) {
                                          reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
                                      }
-@@ -16842,6 +16843,7 @@ public class MessagesStorage extends BaseController {
+@@ -16842,6 +16844,7 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {

@@ -1,10 +1,8 @@
 package desu.inugram.ui.settings
 
 import android.view.View
-import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.archive.ArchiveScope
-import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
@@ -36,25 +34,6 @@ class ArchiveScopeActivity(private val kind: ArchiveScope.Kind) : SettingsPageAc
         items.add(UItem.asCheck(CHECK_SECRET, LocaleController.getString(R.string.InuArchiveScopeSecret)).setChecked(entry.flags and ArchiveScope.FLAG_SECRET != 0))
         items.add(UItem.asCheck(CHECK_BOTS_IN_GROUPS, LocaleController.getString(R.string.InuArchiveScopeBotsInGroups)).setChecked(entry.flags and ArchiveScope.FLAG_BOT_IN_GROUP != 0))
         items.add(UItem.asShadow(null))
-
-        if (kind == ArchiveScope.Kind.MEDIA) addLimits(items)
-    }
-
-    private fun addLimits(items: ArrayList<UItem>) {
-        val options = ArchiveScope.mediaLimitOptions()
-        val labels = Array(options.size) { index ->
-            if (options[index] == 0) LocaleController.getString(R.string.InuArchiveLimitDefault)
-            else AndroidUtilities.formatFileSize(options[index] * 1024L * 1024L)
-        }
-        for ((header, config) in listOf(
-            R.string.InuArchiveLimitWifi to InuConfig.ARCHIVE_MEDIA_LIMIT_WIFI,
-            R.string.InuArchiveLimitMobile to InuConfig.ARCHIVE_MEDIA_LIMIT_MOBILE,
-        )) {
-            items.add(UItem.asHeader(LocaleController.getString(header)))
-            val chosen = options.indexOf(config.value).coerceAtLeast(0)
-            items.add(UItem.asSlideView(labels, chosen) { index -> config.value = options[index] })
-        }
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuArchiveLimitInfo)))
     }
 
     private fun typeRows(): List<Triple<Int, String, String>> = listOf(
@@ -118,7 +97,6 @@ class ArchiveScopeActivity(private val kind: ArchiveScope.Kind) : SettingsPageAc
         private fun titleRes(kind: ArchiveScope.Kind): Int = when (kind) {
             ArchiveScope.Kind.DELETED -> R.string.InuSaveDeletedMessages
             ArchiveScope.Kind.EDITED -> R.string.InuEditHistory
-            ArchiveScope.Kind.MEDIA -> R.string.InuArchiveAttachments
         }
 
         @JvmStatic
