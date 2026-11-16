@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -6916,7 +6916,7 @@ public class MessageObject {
+@@ -6910,7 +6910,7 @@ public class MessageObject {
          if (messageOwner == null || messageOwner.entities == null)
              return false;
          for (int i = 0; i < messageOwner.entities.size(); ++i)
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                  return true;
          return false;
      }
-@@ -8352,8 +8352,9 @@ public class MessageObject {
+@@ -8338,8 +8338,9 @@ public class MessageObject {
          for (int i = 0; i < entities.size(); ++i) {
              if (limitCount <= 0) break;
              TLRPC.MessageEntity messageEntity = entities.get(i);
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
                  for (int j = 0; j < emojiSpans.length; ++j) {
                      Emoji.EmojiSpan span = emojiSpans[j];
                      if (span != null) {
-@@ -8652,6 +8653,7 @@ public class MessageObject {
+@@ -8638,6 +8639,7 @@ public class MessageObject {
                  }
                  spannable.setSpan(new URLSpanNoUnderline("tel:" + tel, run), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
              } else if (run.urlEntity instanceof TLRPC.TL_messageEntityTextUrl) {

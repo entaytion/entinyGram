@@ -39,7 +39,7 @@ index 0000000..0000000 100644
  
              int minHeight = dp(120);
              int minWidth = (int) (dp(120) / (Math.min(AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y) / (float) maxSizeWidth));
-@@ -7125,7 +7131,7 @@ public class MessageObject {
+@@ -7119,7 +7125,7 @@ public class MessageObject {
              // A rich message fills its max width, so any change of it must regenerate the layout
              // (e.g. a Fold's inner tablet chat pane is only ~18dp wider than its cover screen).
              final int tolerance = type == TYPE_ARTICLE ? 0 : dp(52);
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
                  layoutCreated = false;
              }
          }
-@@ -8796,7 +8802,7 @@ public class MessageObject {
+@@ -8782,7 +8788,7 @@ public class MessageObject {
          return isEmbedVideoCached = messageOwner != null && messageOwner.media != null && messageOwner.media.webpage != null && !TextUtils.isEmpty(WebPlayerView.getYouTubeVideoId(messageOwner.media.webpage.url));
      }
  
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
          if (preview && parentWidth > 0)
              return parentWidth;
          if (AndroidUtilities.isTablet())
-@@ -8877,6 +8883,7 @@ public class MessageObject {
+@@ -8863,6 +8869,7 @@ public class MessageObject {
          if (emojiOnlyCount >= 1 && totalAnimatedEmojiCount <= 100 && (emojiOnlyCount - totalAnimatedEmojiCount) < (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH ? 100 : 50) && (hasValidReplyMessageObject() || isForwarded())) {
              maxWidth = Math.min(maxWidth, (int) (generatedWithMinSize * .65f));
          }
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
          return maxWidth;
      }
  
-@@ -9050,6 +9057,7 @@ public class MessageObject {
+@@ -9036,6 +9043,7 @@ public class MessageObject {
      }
  
      public void generateLayout(TLRPC.User fromUser) {
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
          if (type == TYPE_ARTICLE) {
              final int maxWidth = getMaxMessageTextWidth();
              if (richLayout == null || messageOwner != null && richLayout.needsUpdate(getDisplayRichMessage(), maxWidth)) {
-@@ -10466,6 +10474,18 @@ public class MessageObject {
+@@ -10452,6 +10460,18 @@ public class MessageObject {
  
      // cached: checked while drawing, and a message doesn't change its dialog
      private byte agentBotDialog; // 0 unknown, 1 no, 2 yes

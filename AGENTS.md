@@ -103,6 +103,7 @@ groups and their owners are in the `patches` skill. short version:
 | `merge` | pulling changes from inugram |
 | `rebase` | moving the stack onto a new stock Telegram release |
 | `leaks` | heap dump and memory leak analysis |
+| `gotcha` | known traps: auto-start downloads, stock file loader patches, missing disk space, tester reports, windows builds |
 
 ## before you call anything done
 

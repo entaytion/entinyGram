@@ -192,17 +192,13 @@ object BlockedMessagesHelper {
         original: ArrayList<TLRPC.MessageEntity>?,
     ): ArrayList<TLRPC.MessageEntity>? {
         messageObject?.inu_spoiled = shouldSpoil(messageObject)
-        // #if PLUGINS
         messageObject?.inu_rewrite?.let { return addSpoiler(messageObject, original, it.text) }
-        // #endif
         return addSpoiler(messageObject, original, messageObject?.messageOwner?.message)
     }
 
     @JvmStatic
     fun checkBlockedEntities(messageObject: MessageObject?): ArrayList<TLRPC.MessageEntity>? {
-        // #if PLUGINS
         messageObject?.inu_rewrite?.let { return addSpoiler(messageObject, it.entities, it.text) }
-        // #endif
         return checkBlockedOwnEntities(messageObject)
     }
 

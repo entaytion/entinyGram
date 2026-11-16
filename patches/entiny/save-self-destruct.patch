@@ -76,7 +76,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -6957,7 +6957,7 @@ public class MessageObject {
+@@ -6951,7 +6951,7 @@ public class MessageObject {
                  }
              } else if (hasExtendedMediaPreview()) {
                  type = TYPE_EXTENDED_MEDIA_PREVIEW;
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                  contentType = 1;
                  type = TYPE_DATE;
              } else if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaGiveaway) {
-@@ -10405,6 +10405,7 @@ public class MessageObject {
+@@ -10391,6 +10391,7 @@ public class MessageObject {
      }
  
      public boolean needDrawBluredPreview() {
@@ -93,7 +93,7 @@ index 0000000..0000000 100644
          if (isRepostPreview) {
              return false;
          }
-@@ -12036,6 +12037,7 @@ public class MessageObject {
+@@ -12022,6 +12023,7 @@ public class MessageObject {
      }
  
      public boolean canForwardMessage() {

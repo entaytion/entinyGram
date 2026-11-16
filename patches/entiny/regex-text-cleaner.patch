@@ -4,37 +4,105 @@ Date: Mon, 16 Nov 2026 00:46:43 +0200
 Subject: Routes message text and caption rewrites through the regex text cleaner.
 
 ---
- .../src/main/java/org/telegram/messenger/MessageObject.java | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../org/telegram/messenger/MessageObject.java  | 18 ++++++++++++++++--
+ .../messenger/NotificationsController.java     |  2 +-
+ .../java/org/telegram/ui/Cells/DialogCell.java |  2 +-
+ 3 files changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -4000,7 +4000,7 @@ public class MessageObject {
+@@ -350,6 +350,7 @@ public class MessageObject {
+ 
+     public boolean forceUpdate;
+     public boolean inu_spoiled;
++    public TLRPC.TL_textWithEntities inu_rewrite;
+ 
+     public SendAnimationData sendAnimationData;
+ 
+@@ -3940,7 +3941,7 @@ public class MessageObject {
+             if (type == TYPE_ARTICLE) {
+                 generateLayout(null);
+             } else {
+-                applyNewText(messageOwner.message);
++                applyNewText(inu_rewrite != null ? inu_rewrite.text : messageOwner.message);
+                 generateCaption();
+             }
+             return replyUpdated || true;
+@@ -3999,7 +4000,8 @@ public class MessageObject {
      public void applyNewText() {
          translated = false;
          summarized = false;
--        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
+-        applyNewText(messageOwner.message);
 +        inu_rewrite = desu.inugram.helpers.chat.TextCleanerHelper.getRewrite(this);
-         applyNewText(inu_rewrite != null ? inu_rewrite.text : messageOwner.message);
++        applyNewText(inu_rewrite != null ? inu_rewrite.text : messageOwner.message);
      }
  
-@@ -4870,7 +4870,7 @@ public class MessageObject {
+     public void applyNewText(CharSequence text) {
+@@ -4868,6 +4870,7 @@ public class MessageObject {
      }
  
      private void updateMessageText(AbstractMap<Long, TLRPC.User> users, AbstractMap<Long, TLRPC.Chat> chats, LongSparseArray<TLRPC.User> sUsers, LongSparseArray<TLRPC.Chat> sChats) {
--        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
 +        inu_rewrite = desu.inugram.helpers.chat.TextCleanerHelper.getRewrite(this);
          TLRPC.User fromUser = null;
          TLRPC.Chat fromChat = null;
          if (messageOwner.from_id instanceof TLRPC.TL_peerUser) {
-@@ -7942,7 +7942,7 @@ public class MessageObject {
+@@ -6388,6 +6391,9 @@ public class MessageObject {
+                 } else {
+                     messageText = messageOwner.message;
+                 }
++                if (inu_rewrite != null) {
++                    messageText = inu_rewrite.text;
++                }
+             }
+         }
+ 
+@@ -7936,6 +7942,11 @@ public class MessageObject {
          captionLinksHidden = hideLinks;
          String text = messageOwner.message;
          ArrayList<TLRPC.MessageEntity> entities = messageOwner.entities;
--        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
 +        inu_rewrite = desu.inugram.helpers.chat.TextCleanerHelper.getRewrite(this);
-         if (inu_rewrite != null) {
-             text = inu_rewrite.text;
-             entities = inu_rewrite.entities;
++        if (inu_rewrite != null) {
++            text = inu_rewrite.text;
++            entities = inu_rewrite.entities;
++        }
+         boolean forceManualEntities = false;
+         if (type == TYPE_STORY) {
+             if (messageOwner.media != null && messageOwner.media.storyItem != null) {
+@@ -8319,6 +8330,9 @@ public class MessageObject {
+                 return inu_tt != null ? inu_tt.entities : null;
+             }
+         }
++        if (inu_rewrite != null) {
++            return inu_rewrite.entities;
++        }
+         return messageOwner.entities;
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+@@ -2631,7 +2631,7 @@ public class NotificationsController extends BaseController implements Notificat
+         if (messageObject == null || messageObject.messageOwner == null) {
+             return null;
+         }
+-        String text = messageObject.messageOwner.message;
++        String text = messageObject.inu_rewrite != null ? messageObject.inu_rewrite.text : messageObject.messageOwner.message;
+         if (text == null || messageObject.messageOwner.entities == null && !desu.inugram.helpers.chat.BlockedMessagesHelper.shouldSpoil(messageObject)) {
+             return null;
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -6244,7 +6244,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 }
+             }
+         } else if (message.messageOwner.message != null) {
+-            CharSequence mess = message.messageOwner.message;
++            CharSequence mess = message.inu_rewrite != null ? message.inu_rewrite.text : message.messageOwner.message;
+             if (message.hasHighlightedWords()) {
+                 if (message.messageTrimmedToHighlight != null) {
+                     mess = message.messageTrimmedToHighlight;

@@ -6,21 +6,19 @@ Subject: Add the QuickJS plugin engine (hooks, action rows)
 ---
  TMessagesProj/jni/gifvideo.cpp                |  13 ++
  TMessagesProj/src/main/AndroidManifest.xml    |   4 +
- .../org/telegram/messenger/MessageObject.java |  22 ++-
+ .../org/telegram/messenger/MessageObject.java |   4 +-
  .../messenger/MessagesController.java         | 131 +++++++++------
- .../messenger/NotificationsController.java    |   2 +-
  .../messenger/SendMessageChatArguments.java   |   7 +
  .../messenger/SendMessagesHelper.java         |  38 ++++-
  .../telegram/tgnet/ConnectionsManager.java    |   8 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |   2 +-
- .../org/telegram/ui/Cells/DialogCell.java     |   2 +-
  .../java/org/telegram/ui/Cells/TextCell.java  |   2 +-
  .../java/org/telegram/ui/ChatActivity.java    | 158 +++++++++++++++---
  .../ui/Components/AnimatedFileNative.java     |   7 +
  .../ui/Components/ChatAvatarContainer.java    |   9 +-
  .../org/telegram/ui/GroupCreateActivity.java  |  33 +++-
  .../java/org/telegram/ui/LaunchActivity.java  |   1 +
- 16 files changed, 339 insertions(+), 100 deletions(-)
+ 14 files changed, 321 insertions(+), 96 deletions(-)
 
 diff --git a/TMessagesProj/jni/gifvideo.cpp b/TMessagesProj/jni/gifvideo.cpp
 index 0000000..0000000 100644
@@ -65,82 +63,22 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -3863,6 +3863,9 @@ public class MessageObject {
+@@ -3863,6 +3863,8 @@ public class MessageObject {
  
      public boolean translated = false;
      public boolean summarized = false;
 +    public desu.inugram.helpers.plugins.telegram.PluginMessageFilters.Verdict inu_filterVerdict;
-+    public TLRPC.TL_textWithEntities inu_rewrite;
 +    public int inu_textEntitiesGeneration;
      public boolean updateTranslation(boolean force) {
          boolean replyUpdated = replyMessageObject != null && replyMessageObject != this && replyMessageObject.updateTranslation(force);
          TranslateController translateController = MessagesController.getInstance(currentAccount).getTranslateController();
-@@ -3928,7 +3931,7 @@ public class MessageObject {
-             if (type == TYPE_ARTICLE) {
-                 generateLayout(null);
-             } else {
--                applyNewText(messageOwner.message);
-+                applyNewText(inu_rewrite != null ? inu_rewrite.text : messageOwner.message);
-                 generateCaption();
-             }
-             return replyUpdated || true;
-@@ -3987,7 +3990,8 @@ public class MessageObject {
-     public void applyNewText() {
-         translated = false;
-         summarized = false;
--        applyNewText(messageOwner.message);
-+        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
-+        applyNewText(inu_rewrite != null ? inu_rewrite.text : messageOwner.message);
-     }
- 
-     public void applyNewText(CharSequence text) {
-@@ -4856,6 +4860,7 @@ public class MessageObject {
-     }
- 
-     private void updateMessageText(AbstractMap<Long, TLRPC.User> users, AbstractMap<Long, TLRPC.Chat> chats, LongSparseArray<TLRPC.User> sUsers, LongSparseArray<TLRPC.Chat> sChats) {
-+        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
-         TLRPC.User fromUser = null;
-         TLRPC.Chat fromChat = null;
-         if (messageOwner.from_id instanceof TLRPC.TL_peerUser) {
-@@ -6376,6 +6381,9 @@ public class MessageObject {
-                 } else {
-                     messageText = messageOwner.message;
-                 }
-+                if (inu_rewrite != null) {
-+                    messageText = inu_rewrite.text;
-+                }
-             }
-         }
- 
-@@ -7915,6 +7923,11 @@ public class MessageObject {
-         captionLinksHidden = hideLinks;
-         String text = messageOwner.message;
-         ArrayList<TLRPC.MessageEntity> entities = messageOwner.entities;
-+        inu_rewrite = desu.inugram.helpers.plugins.telegram.PluginMessageFilters.getRewrite(this);
-+        if (inu_rewrite != null) {
-+            text = inu_rewrite.text;
-+            entities = inu_rewrite.entities;
-+        }
-         boolean forceManualEntities = false;
-         if (type == TYPE_STORY) {
-             if (messageOwner.media != null && messageOwner.media.storyItem != null) {
-@@ -8245,7 +8258,7 @@ public class MessageObject {
+@@ -8245,7 +8247,7 @@ public class MessageObject {
              entities.add(entityItalic);
              return addEntitiesToText(text, entities, isOutOwner(), true, photoViewer, useManualParse);
          } else {
 -            return addEntitiesToText(text, desu.inugram.helpers.chat.BlockedMessagesHelper.checkBlockedEntities(this, getEntities()), isOutOwner(), true, photoViewer, useManualParse);
 +            return desu.inugram.helpers.plugins.telegram.PluginTextEntities.apply(this, text, addEntitiesToText(text, desu.inugram.helpers.chat.BlockedMessagesHelper.checkBlockedEntities(this, getEntities()), isOutOwner(), true, photoViewer, useManualParse));
          }
-     }
- 
-@@ -8298,6 +8311,9 @@ public class MessageObject {
-                 return inu_tt != null ? inu_tt.entities : null;
-             }
-         }
-+        if (inu_rewrite != null) {
-+            return inu_rewrite.entities;
-+        }
-         return messageOwner.entities;
      }
  
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
@@ -374,19 +312,6 @@ index 0000000..0000000 100644
  
          AndroidUtilities.runOnUIThread(() -> {
              int updateMask = interfaceUpdateMaskFinal;
-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -2628,7 +2628,7 @@ public class NotificationsController extends BaseController implements Notificat
-         if (messageObject == null || messageObject.messageOwner == null) {
-             return null;
-         }
--        String text = messageObject.messageOwner.message;
-+        String text = messageObject.inu_rewrite != null ? messageObject.inu_rewrite.text : messageObject.messageOwner.message;
-         if (text == null || messageObject.messageOwner.entities == null && !desu.inugram.helpers.chat.BlockedMessagesHelper.shouldSpoil(messageObject)) {
-             return null;
-         }
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessageChatArguments.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessageChatArguments.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessageChatArguments.java
@@ -626,19 +551,6 @@ index 0000000..0000000 100644
                  hadLongPress = true;
                  delegate.didPressUrl(this, pressedLink.getSpan(), true);
                  return true;
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -6169,7 +6169,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
-                 }
-             }
-         } else if (message.messageOwner.message != null) {
--            CharSequence mess = message.messageOwner.message;
-+            CharSequence mess = message.inu_rewrite != null ? message.inu_rewrite.text : message.messageOwner.message;
-             if (message.hasHighlightedWords()) {
-                 if (message.messageTrimmedToHighlight != null) {
-                     mess = message.messageTrimmedToHighlight;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
