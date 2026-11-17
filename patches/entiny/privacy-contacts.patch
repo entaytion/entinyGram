@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6854,6 +6854,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6855,6 +6855,7 @@ public class MessagesController extends BaseController implements NotificationCe
          desu.inugram.helpers.profile.LocalNameHelper.applyTo(user, currentAccount);
          fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
          TLRPC.User oldUser = users.get(user.id);
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          desu.inugram.helpers.security.LastSeenHelper.onUserStatus(currentAccount, user);
          if (oldUser == user && !force) {
              return false;
-@@ -7837,6 +7838,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -7838,6 +7839,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          }
                      }
                      desu.inugram.helpers.profile.LocalNameHelper.applyTo(userFull, currentAccount);
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
                      fullUsers.put(user.id, userFull);
                      final boolean contactBlockedChanged = syncUserContactBlocked(user.id, userFull);
                      getTranslateController().updateDialogFull(user.id);
-@@ -8110,6 +8112,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8111,6 +8113,7 @@ public class MessagesController extends BaseController implements NotificationCe
              settings.business_bot_manage_url = "https://telegram.org/";
          }
          editor.apply();
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
          userPeerSettings.put(dialogId, settings);
          getNotificationCenter().postNotificationName(NotificationCenter.peerSettingsDidLoad, dialogId);
      }
-@@ -8163,9 +8166,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8164,9 +8167,9 @@ public class MessagesController extends BaseController implements NotificationCe
      public TLRPC.PeerSettings getPeerSettings(long dialogId) {
          TLRPC.UserFull userFull = getUserFull(dialogId);
          if (userFull != null && userFull.settings != null) {

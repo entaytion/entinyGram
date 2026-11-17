@@ -23,7 +23,7 @@ index 0000000..0000000 100644
              if (d.folder_id != 0 && (flags & DIALOG_FILTER_FLAG_EXCLUDE_ARCHIVED) != 0) {
                  return false;
              }
-@@ -2255,6 +2258,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2256,6 +2259,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      putUsers(users, true);
                      putChats(chats, true);
                      dialogFiltersLoaded = true;
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
                      getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
                      if (remote == 0) {
                          loadRemoteFilters(false);
-@@ -2632,6 +2636,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2633,6 +2637,7 @@ public class MessagesController extends BaseController implements NotificationCe
      public void removeFilter(DialogFilter filter) {
          dialogFilters.remove(filter);
          dialogFiltersById.remove(filter.id);

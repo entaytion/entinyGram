@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -9398,13 +9398,21 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9399,13 +9399,21 @@ public class MessagesController extends BaseController implements NotificationCe
          deleteMessages(messages, randoms, encryptedChat, dialogId, forAll, mode, cacheOnly, taskId, taskRequest, topicId, false, 0);
      }
  
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
              }
              messages = new ArrayList<>(messages.subList(0, 100));
          }
-@@ -9453,10 +9461,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9454,10 +9462,10 @@ public class MessagesController extends BaseController implements NotificationCe
                  } else {
                      markDialogMessageAsDeleted(dialogId, messages);
                  }
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          } else {
              if (taskRequest instanceof TLRPC.TL_channels_deleteMessages) {
                  channelId = ((TLRPC.TL_channels_deleteMessages) taskRequest).channel.channel_id;
-@@ -18988,6 +18996,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18992,6 +19000,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);

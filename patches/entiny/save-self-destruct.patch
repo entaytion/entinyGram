@@ -105,7 +105,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -8340,6 +8340,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8341,6 +8341,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  if (task != null) {
                      for (int a = 0, N = task.size(); a < N; a++) {
                          ArrayList<Integer> mids = task.valueAt(a);
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
                          deleteMessages(mids, null, null, task.keyAt(a), 0, true, 0, !mids.isEmpty() && mids.get(0) > 0);
                      }
                  }
-@@ -8349,7 +8350,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8350,7 +8351,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      for (int a = 0, N = taskMedia.size(); a < N; a++) {
                          long dialogId = taskMedia.keyAt(a);
                          ArrayList<Integer> mids = taskMedia.valueAt(a);
@@ -122,7 +122,7 @@ index 0000000..0000000 100644
                              final int id = viewerObject.getId();
                              mids.remove((Integer) id);
                              viewerObject.forceExpired = true;
-@@ -21370,6 +21371,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21374,6 +21375,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }

@@ -314,27 +314,100 @@ object GhostHelper {
     @JvmStatic
     fun shouldSuppressRead(dialogId: Long): Boolean = shouldSuppress(dialogId, SuppressKind.READ)
 
-    @JvmStatic
-    fun rememberTopicRead(account: Int, dialogId: Long, topicId: Long, maxId: Int) {
-        if (topicId <= 0 || maxId <= 0 || maxId == Int.MAX_VALUE || !InuConfig.GHOST_MARK_READ_LOCALLY.value ||
-            !shouldSuppressRead(dialogId) || !ChatObject.isForum(account, dialogId) || ChatObject.isMonoForum(account, dialogId)) return
+    // entiny: hidden = unread the server still counts at or below localMax, valid while its read max equals serverMax
+    private class LocalRead(val localMax: Int, val serverMax: Int, val hidden: Int)
+
+    private fun localReadKey(dialogId: Long, topicId: Long): String =
+        if (topicId == 0L) "inu_ghost_read_$dialogId" else "inu_ghost_read_${dialogId}_$topicId"
+
+    private fun loadLocalRead(account: Int, dialogId: Long, topicId: Long): LocalRead? {
         val prefs = UserConfig.getInstance(account).preferences
-        val key = "inu_ghost_topic_read_${dialogId}_${topicId}"
-        if (maxId > prefs.getInt(key, 0)) prefs.edit().putInt(key, maxId).apply()
-        val topics = MessagesController.getInstance(account).topicsController
+        val parts = prefs.getString(localReadKey(dialogId, topicId), null)?.split(',')?.mapNotNull { it.toIntOrNull() }
+        if (parts != null && parts.size == 3) return LocalRead(parts[0], parts[1], parts[2])
+        if (topicId == 0L) return null
+        val legacy = prefs.getInt("inu_ghost_topic_read_${dialogId}_$topicId", 0)
+        return if (legacy > 0) LocalRead(legacy, 0, 0) else null
+    }
+
+    private fun clearLocalRead(account: Int, dialogId: Long, topicId: Long, maxId: Int) {
+        val r = loadLocalRead(account, dialogId, topicId) ?: return
+        if (maxId < r.localMax) return
+        val edit = UserConfig.getInstance(account).preferences.edit().remove(localReadKey(dialogId, topicId))
+        if (topicId != 0L) edit.remove("inu_ghost_topic_read_${dialogId}_$topicId")
+        edit.apply()
+    }
+
+    private fun storeLocalRead(account: Int, dialogId: Long, topicId: Long, maxId: Int, topMessage: Int, serverReadMax: Int, unreadBefore: Int, countDiff: Int) {
+        val prev = loadLocalRead(account, dialogId, topicId)?.takeIf { serverReadMax <= it.localMax }
+        if (prev != null && maxId <= prev.localMax) return
+        val floor = prev?.localMax ?: serverReadMax
+        val cleared = (if (countDiff == 0 || maxId >= topMessage) unreadBefore else minOf(unreadBefore, countDiff))
+            .coerceIn(0, (maxId - floor).coerceAtLeast(0))
+        val hidden = (prev?.hidden ?: 0) + cleared
+        UserConfig.getInstance(account).preferences.edit()
+            .putString(localReadKey(dialogId, topicId), "$maxId,${prev?.serverMax?.takeIf { it > 0 } ?: serverReadMax},$hidden")
+            .apply()
+    }
+
+    private fun localUnread(r: LocalRead, topMessage: Int, readMax: Int, unread: Int, isChannel: Boolean): Int {
+        if (topMessage <= r.localMax) return 0
+        var count = if (readMax == r.serverMax) unread - r.hidden else unread
+        if (isChannel) count = minOf(count, topMessage - r.localMax)
+        return count.coerceAtLeast(0)
+    }
+
+    @JvmStatic
+    fun rememberLocalRead(account: Int, dialogId: Long, topicId: Long, maxId: Int, countDiff: Int) {
+        if (maxId <= 0 || maxId == Int.MAX_VALUE || DialogObject.isEncryptedDialog(dialogId)) return
+        if (!shouldSuppressRead(dialogId)) {
+            clearLocalRead(account, dialogId, topicId, maxId)
+            return
+        }
+        if (!InuConfig.GHOST_MARK_READ_LOCALLY.value) return
+        val controller = MessagesController.getInstance(account)
+        if (topicId == 0L) {
+            val dialog = controller.dialogs_dict.get(dialogId) ?: return
+            val knownMax = maxOf(controller.dialogs_read_inbox_max[dialogId] ?: 0, dialog.read_inbox_max_id)
+            storeLocalRead(account, dialogId, 0L, maxId, dialog.top_message, knownMax, dialog.unread_count, countDiff)
+            dialog.read_inbox_max_id = maxOf(dialog.read_inbox_max_id, maxId)
+            return
+        }
+        if (topicId < 0 || !ChatObject.isForum(account, dialogId) || ChatObject.isMonoForum(account, dialogId)) return
+        val topics = controller.topicsController
         val topic = topics.findTopic(-dialogId, topicId) ?: return
-        if (topic.top_message in 1..maxId) topics.updateMaxReadId(-dialogId, topicId, maxId, 0, 0)
+        storeLocalRead(account, dialogId, topicId, maxId, topic.top_message, topic.read_inbox_max_id, topic.unread_count, countDiff)
+        controller.messagesStorage.updateRepliesMaxReadId(-dialogId, topicId, maxId, -1, true)
+        if (topic.top_message in 1..maxId) {
+            topics.updateMaxReadId(-dialogId, topicId, maxId, 0, 0)
+        } else {
+            topic.read_inbox_max_id = maxOf(topic.read_inbox_max_id, maxId)
+        }
+    }
+
+    @JvmStatic
+    fun preserveDialogRead(account: Int, dialog: TLRPC.Dialog?) {
+        if (dialog == null || dialog.id == 0L || dialog is TLRPC.TL_dialogFolder || DialogObject.isEncryptedDialog(dialog.id) ||
+            !InuConfig.GHOST_MARK_READ_LOCALLY.value) return
+        val r = loadLocalRead(account, dialog.id, 0L) ?: return
+        if (dialog.read_inbox_max_id >= r.localMax) return
+        dialog.unread_count = localUnread(r, dialog.top_message, dialog.read_inbox_max_id, dialog.unread_count, DialogObject.isChannel(dialog))
+        dialog.read_inbox_max_id = r.localMax
+        if (dialog.unread_count == 0) {
+            dialog.unread_mentions_count = 0
+            if (dialog.top_message <= r.localMax) dialog.unread_mark = false
+        } else {
+            dialog.unread_mentions_count = minOf(dialog.unread_mentions_count, dialog.unread_count)
+        }
     }
 
     @JvmStatic
     fun preserveTopicRead(account: Int, dialogId: Long, topic: TLRPC.TL_forumTopic) {
-        if (!InuConfig.GHOST_MARK_READ_LOCALLY.value || !shouldSuppressRead(dialogId)) return
-        val key = "inu_ghost_topic_read_${dialogId}_${topic.id}"
-        val maxId = UserConfig.getInstance(account).preferences.getInt(key, 0)
-        if (topic.top_message <= 0 || topic.top_message > maxId) return
-        topic.unread_count = 0
-        topic.unread_mentions_count = 0
-        topic.read_inbox_max_id = maxOf(topic.read_inbox_max_id, maxId)
+        if (!InuConfig.GHOST_MARK_READ_LOCALLY.value) return
+        val r = loadLocalRead(account, dialogId, topic.id.toLong()) ?: return
+        if (topic.read_inbox_max_id >= r.localMax) return
+        topic.unread_count = localUnread(r, topic.top_message, topic.read_inbox_max_id, topic.unread_count, true)
+        topic.read_inbox_max_id = r.localMax
+        topic.unread_mentions_count = minOf(topic.unread_mentions_count, topic.unread_count)
     }
 
     @JvmStatic

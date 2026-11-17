@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6850,6 +6850,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6851,6 +6851,7 @@ public class MessagesController extends BaseController implements NotificationCe
              return false;
          }
          desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
          TLRPC.User oldUser = users.get(user.id);
          if (oldUser == user && !force) {
-@@ -6985,6 +6986,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6986,6 +6987,7 @@ public class MessagesController extends BaseController implements NotificationCe
          if (chat == null) {
              return;
          }

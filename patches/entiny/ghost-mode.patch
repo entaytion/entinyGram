@@ -4,18 +4,18 @@ Date: Mon, 10 Aug 2026 08:11:28 +0300
 Subject: Ghost mode with persistent local reads and seen mentions
 
 ---
- .../org/telegram/messenger/ContactsController.java   |  1 +
- .../org/telegram/messenger/LocaleController.java     |  6 ++++++
- .../org/telegram/messenger/MessagesController.java   | 12 +++++++++---
- .../org/telegram/messenger/TopicsController.java     |  5 ++++-
- .../java/org/telegram/tgnet/ConnectionsManager.java  |  4 ++++
- .../main/java/org/telegram/ui/Cells/DialogCell.java  |  9 +++++----
- .../src/main/java/org/telegram/ui/ChatActivity.java  |  6 ++++++
- .../telegram/ui/Components/ChatAvatarContainer.java  |  7 ++++++-
- .../org/telegram/ui/Components/TopicsTabsView.java   |  2 +-
- .../main/java/org/telegram/ui/DialogsActivity.java   |  3 +++
- .../main/java/org/telegram/ui/ProfileActivity.java   |  6 +++++-
- 11 files changed, 50 insertions(+), 11 deletions(-)
+ .../telegram/messenger/ContactsController.java   |  1 +
+ .../org/telegram/messenger/LocaleController.java |  6 ++++++
+ .../telegram/messenger/MessagesController.java   | 16 +++++++++++++---
+ .../org/telegram/messenger/TopicsController.java |  5 ++++-
+ .../org/telegram/tgnet/ConnectionsManager.java   |  4 ++++
+ .../java/org/telegram/ui/Cells/DialogCell.java   |  9 +++++----
+ .../main/java/org/telegram/ui/ChatActivity.java  |  6 ++++++
+ .../ui/Components/ChatAvatarContainer.java       |  7 ++++++-
+ .../telegram/ui/Components/TopicsTabsView.java   |  2 +-
+ .../java/org/telegram/ui/DialogsActivity.java    |  3 +++
+ .../java/org/telegram/ui/ProfileActivity.java    |  6 +++++-
+ 11 files changed, 54 insertions(+), 11 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
 index 0000000..0000000 100644
@@ -61,7 +61,15 @@ index 0000000..0000000 100644
                  return false;
              }
              if (dialogId > 0) {
-@@ -9886,7 +9886,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2153,6 +2153,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             for (int a = 0; a < pinnedDialogs.dialogs.size(); a++) {
+                 TLRPC.Dialog d = pinnedDialogs.dialogs.get(a);
+                 DialogObject.initDialog(d);
++                desu.inugram.helpers.security.GhostHelper.preserveDialogRead(currentAccount, d);
+                 if (d.id == 0) {
+                     continue;
+                 }
+@@ -9886,7 +9887,7 @@ public class MessagesController extends BaseController implements NotificationCe
              }
  
              unreadCounts.unreadCount += dialog.unread_count;
@@ -70,18 +78,34 @@ index 0000000..0000000 100644
              unreadCounts.reactionMentionCount += dialog.unread_reactions_count;
              unreadCounts.pollVotesMentionCount += dialog.unread_poll_votes_count;
              if (!unreadCounts.hasUnmutedUnreadDialogs && dialog.unread_count > 0) {
-@@ -14797,6 +14797,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -13568,6 +13569,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             for (int a = 0; a < dialogsRes.dialogs.size(); a++) {
+                 TLRPC.Dialog d = dialogsRes.dialogs.get(a);
+                 DialogObject.initDialog(d);
++                desu.inugram.helpers.security.GhostHelper.preserveDialogRead(currentAccount, d);
+                 if (d.id == 0) {
+                     continue;
+                 }
+@@ -14203,6 +14205,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             for (int a = 0; a < dialogsRes.dialogs.size(); a++) {
+                 TLRPC.Dialog d = dialogsRes.dialogs.get(a);
+                 DialogObject.initDialog(d);
++                desu.inugram.helpers.security.GhostHelper.preserveDialogRead(currentAccount, d);
+                 if (promoDialogId == 0 || promoDialogId != d.id) {
+                     if (DialogObject.isChannel(d)) {
+                         TLRPC.Chat chat = chatsDict.get(-d.id);
+@@ -14797,6 +14800,10 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogAsRead(long dialogId, int maxPositiveId, int maxNegativeId, int maxDate, boolean popup, long threadId, int countDiff, boolean readNow, int scheduledCount) {
 +        if (desu.inugram.helpers.security.GhostHelper.shouldSuppressLocalRead(dialogId)) {
 +            return;
 +        }
-+        desu.inugram.helpers.security.GhostHelper.rememberTopicRead(currentAccount, dialogId, threadId, maxPositiveId);
++        desu.inugram.helpers.security.GhostHelper.rememberLocalRead(currentAccount, dialogId, threadId, maxPositiveId, countDiff);
          boolean createReadTask;
  
          if (threadId != 0) {
-@@ -14845,6 +14849,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14845,6 +14852,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              }
                          }
                          getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, UPDATE_MASK_READ_DIALOG_MESSAGE);
@@ -89,7 +113,7 @@ index 0000000..0000000 100644
                      }
                      if (!popup) {
                          getNotificationsController().processReadMessages(null, dialogId, 0, maxPositiveId, false);
-@@ -14899,6 +14904,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14899,6 +14907,7 @@ public class MessagesController extends BaseController implements NotificationCe
                              }
                          }
                          getNotificationCenter().postNotificationName(NotificationCenter.updateInterfaces, UPDATE_MASK_READ_DIALOG_MESSAGE);
@@ -97,6 +121,14 @@ index 0000000..0000000 100644
                      }
                      LongSparseIntArray dialogsToUpdate = new LongSparseIntArray(1);
                      dialogsToUpdate.put(dialogId, 0);
+@@ -17550,6 +17559,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     TLRPC.Dialog d = newPinnedDialogs.get(a);
+                     d.pinned = true;
+                     DialogObject.initDialog(d);
++                    desu.inugram.helpers.security.GhostHelper.preserveDialogRead(currentAccount, d);
+                     if (DialogObject.isChannel(d)) {
+                         TLRPC.Chat chat = chatsDict.get(-d.id);
+                         if (chat != null && chat.left) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TopicsController.java
