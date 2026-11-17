@@ -12,6 +12,7 @@ import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
@@ -376,7 +377,7 @@ object GhostHelper {
         val topics = controller.topicsController
         val topic = topics.findTopic(-dialogId, topicId) ?: return
         storeLocalRead(account, dialogId, topicId, maxId, topic.top_message, topic.read_inbox_max_id, topic.unread_count, countDiff)
-        controller.messagesStorage.updateRepliesMaxReadId(-dialogId, topicId, maxId, -1, true)
+        MessagesStorage.getInstance(account).updateRepliesMaxReadId(-dialogId, topicId, maxId, -1, true)
         if (topic.top_message in 1..maxId) {
             topics.updateMaxReadId(-dialogId, topicId, maxId, 0, 0)
         } else {
