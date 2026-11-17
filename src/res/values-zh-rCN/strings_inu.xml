@@ -1967,6 +1967,9 @@
     <string name="InuSaveDeletedMessages">保存已删除的消息</string>
     <string name="InuSaveDeletedMessagesInfo">在聊天中保留已删除的消息并加上标记</string>
     <string name="InuSaveDeletedOwn">我自己的消息</string>
+    <string name="InuKeepRemovedChats">保留你被移出的聊天</string>
+    <string name="InuKeepRemovedChatsInfo">当群组或频道将你移出或封禁时，聊天及其已保存的消息会留在此设备上供阅读</string>
+    <string name="InuKeepRemovedChatsOpened">你已被移出此聊天。正在显示此设备上保存的内容。</string>
     <string name="InuSaveEditedMessages">保存编辑历史</string>
     <string name="InuSaveEditedMessagesInfo">保存以前的消息版本并允许查看编辑历史</string>
     <string name="InuSaveFilenameDate">已保存文件名中包含消息日期</string>

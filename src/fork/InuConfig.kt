@@ -1733,6 +1733,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val SAVE_DELETED_OWN = BoolItem("save_deleted_own", false)
 
+    @JvmField
+    val KEEP_REMOVED_CHATS = BoolItem("keep_removed_chats", false)
+
     class RestrictedContentModeItem : IntItem("restricted_content_mode", OFF) {
         override var value: Int
             get() = super.value.coerceIn(OFF, FULL)

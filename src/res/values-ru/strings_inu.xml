@@ -1980,6 +1980,9 @@
     <string name="InuSaveDeletedMessages">Сохранять удаленные сообщения</string>
     <string name="InuSaveDeletedMessagesInfo">Сохраняет удалённые сообщения в чатах с пометкой</string>
     <string name="InuSaveDeletedOwn">Моих собственных сообщениях</string>
+    <string name="InuKeepRemovedChats">Сохранять чаты, из которых вас удалили</string>
+    <string name="InuKeepRemovedChatsInfo">Когда группа или канал удаляет или блокирует вас, чат и сохранённые сообщения остаются на устройстве для чтения</string>
+    <string name="InuKeepRemovedChatsOpened">Вас удалили из этого чата. Показано то, что сохранено на устройстве.</string>
     <string name="InuSaveEditedMessages">Сохранять историю редактирования</string>
     <string name="InuSaveEditedMessagesInfo">Сохраняет предыдущие версии сообщений и позволяет просматривать историю</string>
     <string name="InuSaveFilenameDate">Дата сообщения в именах файлов</string>

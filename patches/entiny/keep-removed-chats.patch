@@ -1,0 +1,99 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 17 Nov 2026 21:19:20 +0200
+Subject: Keep chats you were removed or banned from, with their saved history, when the toggle is on.
+
+---
+ .../telegram/messenger/MessagesController.java  | 17 +++++++++--------
+ .../main/java/org/telegram/ui/ChatActivity.java |  1 +
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -10162,6 +10162,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     protected void deleteDialog(long did, int first, int onlyHistory, int max_id, boolean revoke, TLRPC.InputPeer peer, long taskId) {
++        desu.inugram.helpers.archive.KeepRemovedChats.forget(currentAccount, did, onlyHistory);
+         if (onlyHistory == 2) {
+             if (did == getUserConfig().getClientUserId()) {
+                 getSavedMessagesController().deleteAllDialogs();
+@@ -13725,14 +13726,14 @@ public class MessagesController extends BaseController implements NotificationCe
+                         if (!chat.megagroup) {
+                             allowCheck = false;
+                         }
+-                        if (ChatObject.isNotInChat(chat) && (promoDialogId == 0 || promoDialogId != d.id)) {
++                        if (desu.inugram.helpers.archive.KeepRemovedChats.notInChat(currentAccount, chat) && (promoDialogId == 0 || promoDialogId != d.id)) {
+                             continue;
+                         }
+                     }
+                     channelsPts.put(-d.id, d.pts);
+                 } else if (DialogObject.isChatDialog(d.id)) {
+                     TLRPC.Chat chat = chatsDict.get(-d.id);
+-                    if (chat != null && (chat.migrated_to != null || ChatObject.isNotInChat(chat))) {
++                    if (chat != null && (chat.migrated_to != null || desu.inugram.helpers.archive.KeepRemovedChats.notInChat(currentAccount, chat))) {
+                         continue;
+                     }
+                 }
+@@ -14302,12 +14303,12 @@ public class MessagesController extends BaseController implements NotificationCe
+                 if (promoDialogId == 0 || promoDialogId != message.dialog_id) {
+                     if (message.peer_id != null && message.peer_id.channel_id != 0) {
+                         TLRPC.Chat chat = chatsDict.get(message.peer_id.channel_id);
+-                        if (chat != null && ChatObject.isNotInChat(chat)) {
++                        if (chat != null && desu.inugram.helpers.archive.KeepRemovedChats.notInChat(currentAccount, chat)) {
+                             continue;
+                         }
+                     } else if (message.peer_id != null && message.peer_id.chat_id != 0) {
+                         TLRPC.Chat chat = chatsDict.get(message.peer_id.chat_id);
+-                        if (chat != null && (chat.migrated_to != null || ChatObject.isNotInChat(chat))) {
++                        if (chat != null && (chat.migrated_to != null || desu.inugram.helpers.archive.KeepRemovedChats.notInChat(currentAccount, chat))) {
+                             continue;
+                         }
+                     }
+@@ -14331,12 +14332,12 @@ public class MessagesController extends BaseController implements NotificationCe
+                 if (promoDialogId == 0 || promoDialogId != d.id) {
+                     if (DialogObject.isChannel(d)) {
+                         TLRPC.Chat chat = chatsDict.get(-d.id);
+-                        if (chat != null && ChatObject.isNotInChat(chat)) {
++                        if (chat != null && desu.inugram.helpers.archive.KeepRemovedChats.notInChat(currentAccount, chat)) {
+                             continue;
+                         }
+                     } else if (DialogObject.isChatDialog(d.id)) {
+                         TLRPC.Chat chat = chatsDict.get(-d.id);
+-                        if (chat != null && (chat.migrated_to != null || ChatObject.isNotInChat(chat))) {
++                        if (chat != null && (chat.migrated_to != null || desu.inugram.helpers.archive.KeepRemovedChats.notInChat(currentAccount, chat))) {
+                             continue;
+                         }
+                     }
+@@ -21059,7 +21060,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                         if (chat != null) {
+                             if (dialog == null && chat instanceof TLRPC.TL_channel && !chat.left) {
+                                 Utilities.stageQueue.postRunnable(() -> getChannelDifference(update.channel_id, 1, 0, null));
+-                            } else if (ChatObject.isNotInChat(chat) && dialog != null && (promoDialog == null || promoDialog.id != dialog.id)) {
++                            } else if (ChatObject.isNotInChat(chat) && dialog != null && (promoDialog == null || promoDialog.id != dialog.id) && !desu.inugram.helpers.archive.KeepRemovedChats.keep(currentAccount, chat)) {
+                                 deleteDialog(dialog.id, 0);
+                             }
+                             if (chat instanceof TLRPC.TL_channelForbidden || chat.kicked) {
+@@ -21098,7 +21099,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                                 }
+                             }
+                             TLRPC.Dialog dialog = dialogs_dict.get(-chat.id);
+-                            if (dialog != null) {
++                            if (dialog != null && !desu.inugram.helpers.archive.KeepRemovedChats.keep(currentAccount, chat)) {
+                                 deleteDialog(dialog.id, 0);
+                             }
+                         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -24350,6 +24350,7 @@ public class ChatActivity extends BaseFragment implements
+         } else if (id == NotificationCenter.chatInfoCantLoad) {
+             long chatId = (Long) args[0];
+             if (currentChat != null && currentChat.id == chatId) {
++                if (desu.inugram.helpers.archive.KeepRemovedChats.onCantLoad(this, currentChat)) return;
+                 int reason = (Integer) args[1];
+                 if (getParentActivity() == null || closeChatDialog != null) {
+                     return;

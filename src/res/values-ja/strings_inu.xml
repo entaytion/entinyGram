@@ -1967,6 +1967,9 @@
     <string name="InuSaveDeletedMessages">削除されたメッセージを保存</string>
     <string name="InuSaveDeletedMessagesInfo">削除されたメッセージを印付きでチャットに保持します</string>
     <string name="InuSaveDeletedOwn">自分のメッセージ</string>
+    <string name="InuKeepRemovedChats">削除されたチャットを保持</string>
+    <string name="InuKeepRemovedChatsInfo">グループやチャンネルから削除・追放されても、チャットと保存済みメッセージがこの端末に残り閲覧できます</string>
+    <string name="InuKeepRemovedChatsOpened">このチャットから削除されました。この端末に保存された内容を表示しています。</string>
     <string name="InuSaveEditedMessages">編集履歴を保存</string>
     <string name="InuSaveEditedMessagesInfo">メッセージの過去のバージョンを保存し、編集履歴を表示できるようにします</string>
     <string name="InuSaveFilenameDate">保存ファイル名にメッセージの日付を付ける</string>

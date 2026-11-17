@@ -1980,6 +1980,9 @@
     <string name="InuSaveDeletedMessages">حفظ الرسائل المحذوفة</string>
     <string name="InuSaveDeletedMessagesInfo">يُبقي الرسائل المحذوفة في المحادثات مع علامة</string>
     <string name="InuSaveDeletedOwn">رسائلي أنا</string>
+    <string name="InuKeepRemovedChats">الاحتفاظ بالمحادثات التي أُزلت منها</string>
+    <string name="InuKeepRemovedChatsInfo">عندما تزيلك مجموعة أو قناة أو تحظرك، تبقى المحادثة ورسائلها المحفوظة على هذا الجهاز للقراءة</string>
+    <string name="InuKeepRemovedChatsOpened">تمت إزالتك من هذه المحادثة. يُعرض ما هو محفوظ على هذا الجهاز.</string>
     <string name="InuSaveEditedMessages">حفظ سجل التعديلات</string>
     <string name="InuSaveEditedMessagesInfo">يحفظ النسخ السابقة للرسائل ويتيح عرض سجل التعديلات</string>
     <string name="InuSaveFilenameDate">تاريخ الرسالة في أسماء الملفات</string>

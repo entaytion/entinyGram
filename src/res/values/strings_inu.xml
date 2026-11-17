@@ -1977,6 +1977,9 @@
     <string name="InuSaveDeletedMessages">Save deleted messages</string>
     <string name="InuSaveDeletedMessagesInfo">Keeps deleted messages in chats, marked as deleted</string>
     <string name="InuSaveDeletedOwn">My own messages</string>
+    <string name="InuKeepRemovedChats">Keep chats you\'re removed from</string>
+    <string name="InuKeepRemovedChatsInfo">When a group or channel removes or bans you, the chat and its saved messages stay on this device to read</string>
+    <string name="InuKeepRemovedChatsOpened">You were removed from this chat. Showing what is saved on this device.</string>
     <string name="InuSaveEditedMessages">Save edit history</string>
     <string name="InuSaveEditedMessagesInfo">Saves previous message versions and allows viewing edit history</string>
     <string name="InuSaveFilenameDate">Message date in saved file names</string>

@@ -75,6 +75,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             items.add(UItem.asCheck(TOGGLE_SAVE_DELETED_OWN, LocaleController.getString(R.string.InuSaveDeletedOwn)).setChecked(InuConfig.SAVE_DELETED_OWN.value))
             items.add(mkSplitCheckItem(TOGGLE_ARCHIVE_MEDIA_ENABLED, R.string.InuArchiveAttachmentsSave, R.string.InuArchiveAttachmentsInfo, InuConfig.ARCHIVE_MEDIA_ENABLED.value))
         }
+        items.add(mkTwoLineCheckItem(TOGGLE_KEEP_REMOVED_CHATS, R.string.InuKeepRemovedChats, R.string.InuKeepRemovedChatsInfo, InuConfig.KEEP_REMOVED_CHATS.value))
 
         items.add(UItem.asShadow(null))
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuEditHistory)))
@@ -155,6 +156,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_DELETED_OWN.toggle()
                 listView?.adapter?.update(true)
             }
+            TOGGLE_KEEP_REMOVED_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.KEEP_REMOVED_CHATS.toggle()
         }
     }
 
@@ -166,6 +168,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val BUTTON_SCOPE_EDITED = InuUtils.generateId()
         private val TOGGLE_ARCHIVE_MEDIA_ENABLED = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_OWN = InuUtils.generateId()
+        private val TOGGLE_KEEP_REMOVED_CHATS = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT_MEDIA = InuUtils.generateId()
@@ -191,6 +194,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("deleted-transparent", R.string.InuDeletedMessagesTransparent, TOGGLE_DELETED_MESSAGES_TRANSPARENT),
                 SearchRegistry.Entry("deleted-mark", R.string.InuDeletedMark, CELL_DELETED_MARK),
                 SearchRegistry.Entry("save-deleted-own", R.string.InuSaveDeletedOwn, TOGGLE_SAVE_DELETED_OWN),
+                SearchRegistry.Entry("keep-removed-chats", R.string.InuKeepRemovedChats, TOGGLE_KEEP_REMOVED_CHATS),
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
                 SearchRegistry.Entry("edit-history-diff", R.string.InuEditHistoryDiff, TOGGLE_EDIT_HISTORY_DIFF),
                 SearchRegistry.Entry("self-destruct-save", R.string.InuSelfDestructMedia, SECTION_SELF_DESTRUCT_SAVE),

@@ -1991,6 +1991,9 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuSaveDeletedMessages">Guardar mensajes eliminados</string>
     <string name="InuSaveDeletedMessagesInfo">Conserva los mensajes eliminados en los chats, con una marca</string>
     <string name="InuSaveDeletedOwn">Mis propios mensajes</string>
+    <string name="InuKeepRemovedChats">Conservar chats de los que te eliminan</string>
+    <string name="InuKeepRemovedChatsInfo">Si un grupo o canal te elimina o te bloquea, el chat y sus mensajes guardados se quedan en este dispositivo para leerlos</string>
+    <string name="InuKeepRemovedChatsOpened">Te eliminaron de este chat. Se muestra lo guardado en este dispositivo.</string>
     <string name="InuSaveEditedMessages">Guardar historial de ediciones</string>
     <string name="InuSaveEditedMessagesInfo">Guarda las versiones anteriores de los mensajes y permite ver el historial de ediciones</string>
     <string name="InuSaveFilenameDate">Fecha del mensaje en los nombres de archivo guardados</string>

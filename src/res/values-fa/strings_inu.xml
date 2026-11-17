@@ -1969,6 +1969,9 @@
     <string name="InuSaveDeletedMessages">ذخیره پیام‌های حذف‌شده</string>
     <string name="InuSaveDeletedMessagesInfo">پیام‌های حذف‌شده را با یک نشان در گفتگوها نگه می‌دارد</string>
     <string name="InuSaveDeletedOwn">پیام‌های خودم</string>
+    <string name="InuKeepRemovedChats">نگه‌داشتن گفتگوهایی که از آن‌ها حذف شده‌اید</string>
+    <string name="InuKeepRemovedChatsInfo">وقتی گروه یا کانالی شما را حذف یا مسدود می‌کند، گفتگو و پیام‌های ذخیره‌شده‌اش برای خواندن روی این دستگاه می‌مانند</string>
+    <string name="InuKeepRemovedChatsOpened">شما از این گفتگو حذف شده‌اید. آنچه روی این دستگاه ذخیره شده نمایش داده می‌شود.</string>
     <string name="InuSaveEditedMessages">ذخیره تاریخچه ویرایش</string>
     <string name="InuSaveEditedMessagesInfo">نسخه‌های قبلی پیام‌ها را ذخیره می‌کند و مشاهده تاریخچه ویرایش را ممکن می‌سازد</string>
     <string name="InuSaveFilenameDate">تاریخ پیام در نام فایل‌ها</string>
