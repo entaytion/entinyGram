@@ -199,6 +199,9 @@
     <string name="InuArchiveLimitInfo">Larger files are not saved. If the media of a deleted message is not on the device, it is downloaded, in public groups and channels only if enabled below. Default: downloads up to 64 MB on Wi-Fi and 16 MB on mobile data, files already on the device up to 50 MB.</string>
     <string name="InuArchiveLimitMobile">Size limit on mobile data</string>
     <string name="InuArchiveLimitWifi">Size limit on Wi-Fi</string>
+    <string name="InuArchiveQuota">Archive size limit</string>
+    <string name="InuArchiveQuotaOff">Off</string>
+    <string name="InuArchiveQuotaInfo">When saved attachments of this account take more space, the oldest ones are removed. The messages and their text stay in the archive.</string>
     <string name="InuArchiveMediaDeleteSelected">Delete the selected files? They will be removed from the archive too.</string>
     <string name="InuArchiveMediaPublic">Download in public groups and channels</string>
     <string name="InuArchiveMediaPublicInfo">Off by default: public chats use the most traffic. Files already on the device are saved anyway</string>

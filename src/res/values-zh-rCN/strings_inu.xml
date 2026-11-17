@@ -196,6 +196,9 @@
     <string name="InuArchiveLimitInfo">超过限制的文件不会保存。如果已删除消息的媒体不在设备上，则会下载（公开群组和频道仅在下方开启时）。默认：下载在 Wi-Fi 下最多 64 MB，移动数据下最多 16 MB；设备上已有的文件最多 50 MB。</string>
     <string name="InuArchiveLimitMobile">移动数据下的大小限制</string>
     <string name="InuArchiveLimitWifi">Wi-Fi 下的大小限制</string>
+    <string name="InuArchiveQuota">存档大小上限</string>
+    <string name="InuArchiveQuotaOff">关闭</string>
+    <string name="InuArchiveQuotaInfo">当此账号保存的附件超出上限时，会删除最旧的附件。消息及其文本仍保留在存档中。</string>
     <string name="InuArchiveMediaPublic">在公开群组和频道中下载</string>
     <string name="InuArchiveMediaPublicInfo">默认关闭：公开聊天最耗流量。设备上已有的文件仍会保存</string>
     <string name="InuArchiveScope">保存位置</string>

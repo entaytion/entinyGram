@@ -198,6 +198,9 @@
     <string name="InuArchiveLimitInfo">Більші файли не зберігаються. Якщо медіа видаленого повідомлення немає на пристрої, воно завантажується, у публічних групах і каналах лише якщо це ввімкнено нижче. За замовчуванням: завантаження до 64 МБ у Wi-Fi і 16 МБ у мобільній мережі, файли з пристрою до 50 МБ.</string>
     <string name="InuArchiveLimitMobile">Ліміт розміру на мобільних даних</string>
     <string name="InuArchiveLimitWifi">Ліміт розміру в Wi-Fi</string>
+    <string name="InuArchiveQuota">Ліміт розміру архіву</string>
+    <string name="InuArchiveQuotaOff">Вимкнено</string>
+    <string name="InuArchiveQuotaInfo">Коли збережені вкладення цього акаунта займають більше, найстаріші видаляються. Повідомлення та їхній текст лишаються в архіві.</string>
     <string name="InuArchiveMediaDeleteSelected">Видалити вибрані файли? Вони зникнуть і з архіву.</string>
     <string name="InuArchiveMediaPublic">Завантажувати в публічних групах і каналах</string>
     <string name="InuArchiveMediaPublicInfo">За замовчуванням вимкнено: публічні чати витрачають найбільше трафіку. Файли, які вже є на пристрої, зберігаються однаково</string>

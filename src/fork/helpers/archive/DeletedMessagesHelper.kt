@@ -42,9 +42,7 @@ object DeletedMessagesHelper {
     @JvmStatic
     fun keepInChat(account: Int, dialogId: Long, message: TLRPC.Message?, userInitiated: Boolean): Boolean {
         if (message == null || !hasValidId(dialogId, message.id) || userInitiated) return false
-        if (DialogObject.isEncryptedDialog(dialogId) && message.ttl != 0) return false
         if (message.action != null && message.action !is TLRPC.TL_messageActionEmpty) return false
-        if (message.ttl_period != 0) return false
         if ((message.media?.ttl_seconds ?: 0) != 0) return false
         return shouldArchive(account, dialogId, message)
     }
@@ -63,6 +61,11 @@ object DeletedMessagesHelper {
             if (userInitiated) synchronized(ArchiveCache.cacheLock) { ArchiveCache.forgetKept(account, dialogId, id) }
             if (!userInitiated && keepInChat(account, dialogId, owner, false)) {
                 ArchiveCache.rememberKept(account, dialogId, id, now)
+                if (owner != null && DialogObject.isEncryptedDialog(dialogId)) {
+                    owner.ttl = 0
+                    owner.destroyTime = 0
+                    owner.destroyTimeMillis = 0
+                }
                 keptAny = true
                 continue
             }
@@ -180,6 +183,7 @@ object DeletedMessagesHelper {
         val was = ArchiveStore.isDeletedMessageArchived(db, dialogId, message.id)
         if (was && userInitiated) {
             ArchiveStore.deleteDeletedMessageEntries(db, dialogId, listOf(message.id))
+            KeptMedia.release(account, db)
             return false
         }
         val archived = was || archiveMessage(db, account, dialogId, message)
@@ -213,23 +217,86 @@ object DeletedMessagesHelper {
         if (!hasPreservableData(text, message)) return
         val fromId = message.from_id?.let { DialogObject.getPeerDialogId(it) } ?: 0L
         val deletedAt = (System.currentTimeMillis() / 1000L).toInt()
-        val savedPath = ArchiveStore.deletedMessageMediaPath(db, dialogId, msgId)?.takeIf { File(it).isFile }
+        val storedPath = ArchiveStore.deletedMessageMediaPath(db, dialogId, msgId)
+        val savedPath = storedPath?.takeIf { ArchiveMediaHelper.isUsable(File(it), message) }
+        if (storedPath != null && savedPath == null) {
+            ArchiveStore.clearDeletedMessageMediaPath(db, dialogId, msgId)
+            ArchiveCache.forgetDeletedMediaPath(account, dialogId, msgId)
+        }
         ArchiveStore.saveDeletedMessage(db, dialogId, msgId, fromId, text, date, deletedAt, savedPath, message)
         ArchiveCache.rememberKept(account, dialogId, msgId, deletedAt.toLong())
+        if (hasArchivableMedia(message)) KeptMedia.protect(account, db, dialogId, msgId, message)
         if (savedPath != null) {
             ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, savedPath)
             return
         }
+        if (!hasArchivableMedia(message)) return
+        ArchiveStore.putMediaTask(db, dialogId, msgId)
+        saveMedia(account, dialogId, msgId, message)
+    }
+
+    private fun hasArchivableMedia(message: TLRPC.Message): Boolean {
+        val media = MessageObject.getMedia(message) ?: return false
+        return InuConfig.ARCHIVE_MEDIA_ENABLED.value && media !is TLRPC.TL_messageMediaEmpty && media !is TLRPC.TL_messageMediaWebPage
+    }
+
+    // entiny: the task row is the intent to archive this attachment; it goes away on success, on a final no, or with the archive row
+    private fun saveMedia(account: Int, dialogId: Long, msgId: Int, message: TLRPC.Message) {
         val key = "d:$account:$dialogId:$msgId"
         val store = { copyDb: SQLiteDatabase, copied: String ->
-            val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id = $msgId", copied)
-            if (stored) ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, copied)
+            val stored = ArchiveStore.hasMediaTask(copyDb, dialogId, msgId) && ArchiveMediaHelper.updateMediaPath(copyDb, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id = $msgId", copied)
+            if (stored) {
+                ArchiveStore.deleteMediaTask(copyDb, dialogId, msgId)
+                ArchiveCache.rememberDeletedMediaPath(account, dialogId, msgId, copied)
+                File(copied).takeIf(ArchiveMediaHelper::isTelegramMediaFile)?.let { KeptMedia.recordPath(account, copyDb, dialogId, msgId, it) }
+                ArchiveQuota.schedule(account)
+            }
             stored
         }
         val mediaCopy = ArchiveMediaHelper.planMediaCopy(account, message, ArchiveScope.Kind.DELETED)
-        if (mediaCopy != null) ArchiveMediaHelper.copyThenStore(account, key, mediaCopy, store)
-        else ArchiveMediaHelper.fetchThenStore(account, key, message, store)
+        if (mediaCopy != null) {
+            ArchiveMediaHelper.keepOrCopy(account, key, mediaCopy, store)
+        } else if (!ArchiveMediaHelper.fetchThenStore(
+                account, key, message, store,
+                wanted = { db -> ArchiveStore.hasMediaTask(db, dialogId, msgId) },
+                onStart = { db -> ArchiveStore.bumpMediaTask(db, dialogId, msgId) },
+            )) {
+            val storage = MessagesStorage.getInstance(account)
+            storage.storageQueue.postRunnable { storage.database?.let { ArchiveStore.deleteMediaTask(it, dialogId, msgId) } }
+        }
     }
+
+    private const val MAX_MEDIA_ATTEMPTS = 3
+
+    // entiny: runs on the storage queue after startup; only work that was started and not finished comes back
+    @JvmStatic
+    fun resumePendingMedia(account: Int, db: SQLiteDatabase) {
+        if (!isSaveDeletedEnabled()) return
+        var after = 0L
+        while (true) {
+            val tasks = try {
+                ArchiveStore.loadMediaTasks(db, MEDIA_TASK_PAGE, after)
+            } catch (e: Throwable) {
+                return
+            }
+            for (task in tasks) {
+                after = task.rowId
+                val message = task.message
+                val done = message == null || task.attempts >= MAX_MEDIA_ATTEMPTS || !hasArchivableMedia(message) ||
+                    task.mediaPath?.let { ArchiveMediaHelper.isUsable(File(it), message) } == true
+                if (done) {
+                    ArchiveStore.deleteMediaTask(db, task.dialogId, task.msgId)
+                    continue
+                }
+                message!!.id = task.msgId
+                message.dialog_id = task.dialogId
+                saveMedia(account, task.dialogId, task.msgId, message)
+            }
+            if (tasks.size < MEDIA_TASK_PAGE) return
+        }
+    }
+
+    private const val MEDIA_TASK_PAGE = 100
 
     @JvmStatic
     fun purge(account: Int, dialogId: Long, msgIds: List<Int>, onDone: Runnable? = null) {
@@ -249,6 +316,7 @@ object DeletedMessagesHelper {
     fun purgeInStorage(account: Int, storage: MessagesStorage, db: SQLiteDatabase, dialogId: Long, msgIds: List<Int>) {
         if (msgIds.isEmpty()) return
         ArchiveStore.deleteDeletedMessageEntries(db, dialogId, msgIds)
+        KeptMedia.release(account, db)
         ArchiveStore.deleteSavedMessages(db, dialogId, msgIds)
         val channelId = ArchiveCache.getChannelId(account, dialogId)
         storage.updateDialogsWithDeletedMessages(dialogId, channelId, ArrayList(msgIds), null)

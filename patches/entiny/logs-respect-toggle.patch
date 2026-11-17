@@ -4,9 +4,10 @@ Date: Sat, 3 Oct 2026 21:44:32 +0300
 Subject: Respect the logs toggle and redact sensitive data in logs
 
 ---
- .../src/main/java/org/telegram/messenger/BuildVars.java       | 2 +-
- .../src/main/java/org/telegram/messenger/FileLog.java         | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ .../src/main/java/org/telegram/messenger/BuildVars.java    | 2 +-
+ .../src/main/java/org/telegram/messenger/FileLog.java      | 7 +++++--
+ .../main/java/org/telegram/ui/CacheControlActivity.java    | 3 ++-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java b/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
 index 0000000..0000000 100644
@@ -40,3 +41,27 @@ index 0000000..0000000 100644
              tlStreamWriter.write("-----start log " + date + "-----\n");
              tlStreamWriter.flush();
          } catch (Exception e) {
+@@ -635,6 +635,9 @@ public class FileLog {
+                 if (getInstance().tonlibFile != null && file.getAbsolutePath().equals(getInstance().tonlibFile.getAbsolutePath())) {
+                     continue;
+                 }
++                if (getInstance().tlRequestsFile != null && file.getAbsolutePath().equals(getInstance().tlRequestsFile.getAbsolutePath())) {
++                    continue;
++                }
+                 file.delete();
+             }
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
+@@ -1027,7 +1027,8 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             }
+             File file;
+             if (a == 9) {
+-                file = AndroidUtilities.getLogsDir();
++                FileLog.cleanupLogs();
++                file = null;
+             } else if (type == 100) {
+                 file = new File(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE), "acache");
+             } else {

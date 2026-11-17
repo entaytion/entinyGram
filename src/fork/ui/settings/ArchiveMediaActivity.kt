@@ -6,6 +6,7 @@ import android.widget.FrameLayout
 import desu.inugram.helpers.archive.ArchiveCache
 import desu.inugram.helpers.archive.ArchiveMediaHelper
 import desu.inugram.helpers.archive.ArchiveStore
+import desu.inugram.helpers.archive.KeptMedia
 import java.io.File
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -78,13 +79,14 @@ class ArchiveMediaActivity : BaseFragment() {
     }
 
     private fun load() {
-        val dir = ArchiveMediaHelper.getSavedMediaDir(currentAccount)
-        Utilities.globalQueue.postRunnable {
+        val account = currentAccount
+        val storage = MessagesStorage.getInstance(account)
+        storage.storageQueue.postRunnable {
+            val files = storage.database?.let { ArchiveMediaHelper.savedMediaFiles(account, it) } ?: emptyList()
             val result = CacheModel(true)
-            dir.listFiles()
-                ?.filter { it.isFile && it.name != ".nomedia" && !it.name.endsWith(".partial") && it.length() > 0 }
-                ?.sortedByDescending { it.lastModified() }
-                ?.forEach { file ->
+            files
+                .sortedByDescending { it.lastModified() }
+                .forEach { file ->
                     val type = typeOf(file)
                     result.add(type, CacheModel.FileInfo(file).also {
                         it.type = type
@@ -134,8 +136,11 @@ class ArchiveMediaActivity : BaseFragment() {
         val account = currentAccount
         val storage = MessagesStorage.getInstance(account)
         storage.storageQueue.postRunnable {
-            storage.database?.let { db -> ArchiveStore.detachMediaPaths(db, files.map { it.file.absolutePath }) }
-            files.forEach { it.file.delete() }
+            storage.database?.let { db ->
+                ArchiveStore.detachMediaPaths(db, files.map { it.file.absolutePath })
+                KeptMedia.release(account, db)
+            }
+            files.forEach { ArchiveMediaHelper.deleteSavedMediaFile(it.file) }
             ArchiveCache.invalidateMediaCache(account)
             AndroidUtilities.runOnUIThread {
                 files.forEach(current::onFileDeleted)

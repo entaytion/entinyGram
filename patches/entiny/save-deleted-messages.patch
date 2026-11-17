@@ -193,7 +193,7 @@ index 0000000..0000000 100644
 +                        }
                          data.reuse();
 -                        addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
-+                        if (!inuArchived) {
++                        if ((DialogObject.isEncryptedDialog(did) || deleteFiles) && !inuArchived) {
 +                            addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
 +                        }
                      }

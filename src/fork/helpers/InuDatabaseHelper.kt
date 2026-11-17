@@ -166,6 +166,14 @@ object InuDatabaseHelper {
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_edit_history_media ON inu_edit_history(media_path)")
                 .stepThis().dispose();
         },
+        Migration(28) { db ->
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_archive_media_tasks(dialog_id INTEGER NOT NULL, msg_id INTEGER NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(dialog_id, msg_id))")
+                .stepThis().dispose()
+        },
+        Migration(29) { db ->
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_kept_media(dialog_id INTEGER NOT NULL, msg_id INTEGER NOT NULL, name TEXT NOT NULL, path TEXT, PRIMARY KEY(dialog_id, msg_id, name))")
+                .stepThis().dispose()
+        },
     )
 
     @JvmStatic

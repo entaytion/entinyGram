@@ -198,6 +198,9 @@
     <string name="InuArchiveLimitInfo">Более крупные файлы не сохраняются. Если медиа удалённого сообщения нет на устройстве, оно загружается, в публичных группах и каналах только если это включено ниже. По умолчанию: загрузка до 64 МБ по Wi-Fi и 16 МБ в мобильной сети, файлы с устройства до 50 МБ.</string>
     <string name="InuArchiveLimitMobile">Лимит размера на мобильных данных</string>
     <string name="InuArchiveLimitWifi">Лимит размера по Wi-Fi</string>
+    <string name="InuArchiveQuota">Лимит размера архива</string>
+    <string name="InuArchiveQuotaOff">Выключен</string>
+    <string name="InuArchiveQuotaInfo">Когда сохранённые вложения этого аккаунта занимают больше, самые старые удаляются. Сообщения и их текст остаются в архиве.</string>
     <string name="InuArchiveMediaDeleteSelected">Удалить выбранные файлы? Они пропадут и из архива.</string>
     <string name="InuArchiveMediaPublic">Загружать в публичных группах и каналах</string>
     <string name="InuArchiveMediaPublicInfo">По умолчанию выключено: публичные чаты тратят больше всего трафика. Файлы, которые уже есть на устройстве, сохраняются в любом случае</string>

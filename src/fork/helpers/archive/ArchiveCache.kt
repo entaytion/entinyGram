@@ -18,6 +18,12 @@ object ArchiveCache {
         }
     }
 
+    internal fun forgetDeletedMediaPath(account: Int, dialogId: Long, msgId: Int) {
+        synchronized(cacheLock) {
+            deletedMessageMediaPaths.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
+        }
+    }
+
     internal fun rememberKept(account: Int, dialogId: Long, msgId: Int, date: Long) {
         synchronized(cacheLock) {
             val dialogs = deletedMessageIds.get(account.toLong())
@@ -199,6 +205,7 @@ object ArchiveCache {
 
     @JvmStatic
     fun ensureAccountLoaded(account: Int) {
+        KeptMedia.prepare()
         val generation = synchronized(cacheLock) {
             if (loadedAccounts.contains(account) || loadingAccounts.contains(account)) return
             val failed = loadFailedAt[account]
@@ -385,6 +392,7 @@ object ArchiveCache {
                     DeletedMessagesHelper.purgeInStorage(account, storage, db, dialogId, mids)
                 }
                 ArchiveStore.clearDeletedMessages(db, dialogIds, !deletedOnly)
+                KeptMedia.release(account, db)
             }
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
                 resetAccount(account, true)

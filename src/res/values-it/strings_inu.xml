@@ -197,6 +197,9 @@
     <string name="InuArchiveLimitInfo">I file più grandi non vengono salvati. Se il contenuto di un messaggio eliminato non è sul dispositivo, viene scaricato, nei gruppi e canali pubblici solo se attivato qui sotto. Predefinito: download fino a 64 MB con Wi-Fi e 16 MB con dati mobili, file già sul dispositivo fino a 50 MB.</string>
     <string name="InuArchiveLimitMobile">Limite di dimensione con dati mobili</string>
     <string name="InuArchiveLimitWifi">Limite di dimensione con Wi-Fi</string>
+    <string name="InuArchiveQuota">Limite di dimensione dell\'archivio</string>
+    <string name="InuArchiveQuotaOff">Disattivato</string>
+    <string name="InuArchiveQuotaInfo">Quando gli allegati salvati di questo account occupano di più, vengono rimossi i più vecchi. I messaggi e il loro testo restano nell\'archivio.</string>
     <string name="InuArchiveMediaPublic">Scarica nei gruppi e canali pubblici</string>
     <string name="InuArchiveMediaPublicInfo">Disattivato per impostazione predefinita: le chat pubbliche consumano più dati. I file già sul dispositivo vengono salvati comunque</string>
     <string name="InuArchiveScope">Dove salvare</string>

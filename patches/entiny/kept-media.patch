@@ -1,0 +1,114 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 17 Nov 2026 12:41:45 +0200
+Subject: Keep the media of archived deleted messages out of the stock cache cleanup.
+
+---
+ .../org/telegram/messenger/AutoDeleteMediaTask.java  | 12 ++++++++----
+ .../main/java/org/telegram/messenger/FileLoader.java |  3 +++
+ .../java/org/telegram/ui/CacheControlActivity.java   |  6 +++---
+ 3 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AutoDeleteMediaTask.java b/TMessagesProj/src/main/java/org/telegram/messenger/AutoDeleteMediaTask.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AutoDeleteMediaTask.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AutoDeleteMediaTask.java
+@@ -21,6 +21,9 @@ public class AutoDeleteMediaTask {
+         if (Math.abs(time - SharedConfig.lastKeepMediaCheckTime) < 24 * 60 * 60) {
+             return;
+         }
++        if (!desu.inugram.helpers.archive.KeptMedia.prepare()) {
++            return;
++        }
+         SharedConfig.lastKeepMediaCheckTime = time;
+         File cacheDir = FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE);
+ 
+@@ -81,7 +84,7 @@ public class AutoDeleteMediaTask {
+                         ArrayList<CacheByChatsController.KeepMediaFile> keepMediaFiles = new ArrayList<>();
+                         if (files != null) {
+                             for (int i = 0; i < files.length; i++) {
+-                                if (files[i].isDirectory() || usingFilePaths.contains(files[i].getAbsolutePath())) {
++                                if (files[i].isDirectory() || usingFilePaths.contains(files[i].getAbsolutePath()) || desu.inugram.helpers.archive.KeptMedia.isProtected(files[i])) {
+                                     continue;
+                                 }
+                                 keepMediaFiles.add(new CacheByChatsController.KeepMediaFile(files[i]));
+@@ -127,7 +130,7 @@ public class AutoDeleteMediaTask {
+                                     if (BuildVars.DEBUG_PRIVATE_VERSION) {
+                                         FileLog.d("delete file " + file.file.getPath() + " last_usage_time=" + lastUsageTime + " time_local=" + timeLocal + " story=" + file.isStory);
+                                     }
+-                                    file.file.delete();
++                                    if (!desu.inugram.helpers.archive.KeptMedia.isProtected(file.file)) file.file.delete();
+                                 } catch (Exception exception) {
+                                     FileLog.e(exception);
+                                 }
+@@ -151,6 +154,7 @@ public class AutoDeleteMediaTask {
+                 for (int a = 0; a < paths.size(); a++) {
+                     totalSize += Utilities.getDirSize(paths.valueAt(a).getAbsolutePath(), 0, true);
+                 }
++                totalSize -= desu.inugram.helpers.archive.KeptMedia.protectedBytes(paths);
+                 if (totalSize > maxCacheSize) {
+                     ArrayList<FileInfoInternal> allFiles = new ArrayList<>();
+                     for (int a = 0; a < paths.size(); a++) {
+@@ -183,7 +187,7 @@ public class AutoDeleteMediaTask {
+                         try {
+                             deletedFilesBySize++;
+                             deletedFilesBySizeSize += size;
+-                            allFiles.get(i).file.delete();
++                            if (!desu.inugram.helpers.archive.KeptMedia.isProtected(allFiles.get(i).file)) allFiles.get(i).file.delete();
+                         } catch (Exception e) {
+ 
+                         }
+@@ -229,7 +233,7 @@ public class AutoDeleteMediaTask {
+                 if (fileEntry.getName().equals(".nomedia")) {
+                     continue;
+                 }
+-                if (usingFilePaths.contains(fileEntry.getAbsolutePath())) {
++                if (usingFilePaths.contains(fileEntry.getAbsolutePath()) || desu.inugram.helpers.archive.KeptMedia.isProtected(fileEntry)) {
+                     continue;
+                 }
+                 fileInfoList.add(new FileInfoInternal(fileEntry));
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+@@ -1800,6 +1800,9 @@ public class FileLoader extends BaseController {
+         fileLoaderQueue.postRunnable(() -> {
+             for (int a = 0; a < files.size(); a++) {
+                 File file = files.get(a);
++                if (desu.inugram.helpers.archive.KeptMedia.isKnownProtected(file)) {
++                    continue;
++                }
+                 File encrypted = new File(file.getAbsolutePath() + ".enc");
+                 if (encrypted.exists()) {
+                     try {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
+@@ -588,7 +588,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             if (fileEntry.isDirectory()) {
+                 fillDialogsEntitiesRecursive(fileEntry, type, dilogsFilesEntities, cacheModel);
+             } else {
+-                if (fileEntry.getName().equals(".nomedia")) {
++                if (fileEntry.getName().equals(".nomedia") || desu.inugram.helpers.archive.KeptMedia.isKnownProtected(fileEntry)) {
+                     continue;
+                 }
+                 FilePathDatabase.FileMeta fileMetadata = getFileLoader().getFileDatabase().getFileDialogId(fileEntry, null);
+@@ -947,7 +947,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+                     }
+                     cleanDirJava(fileName + "/" + name, docType, p, onProgress);
+                 } else {
+-                    entry.delete();
++                    if (!desu.inugram.helpers.archive.KeptMedia.isProtected(entry)) entry.delete();
+ 
+                     p[0]++;
+                     if (onProgress != null) {
+@@ -1602,7 +1602,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+         getFileLoader().cancelLoadAllFiles();
+         getFileLoader().getFileLoaderQueue().postRunnable(() -> {
+             for (int i = 0; i < fileInfos.size(); i++) {
+-                fileInfos.get(i).file.delete();
++                if (!desu.inugram.helpers.archive.KeptMedia.isProtected(fileInfos.get(i).file)) fileInfos.get(i).file.delete();
+             }
+ 
+             AndroidUtilities.runOnUIThread(() -> {

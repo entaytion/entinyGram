@@ -196,6 +196,9 @@
     <string name="InuArchiveLimitInfo">上限を超えるファイルは保存されません。削除されたメッセージのメディアが端末にない場合は、公開グループと公開チャンネルでは下の設定がオンの場合のみダウンロードされます。デフォルト: ダウンロードはWi-Fiで64 MB、モバイルデータで16 MBまで、端末にあるファイルは50 MBまで。</string>
     <string name="InuArchiveLimitMobile">モバイルデータのサイズ上限</string>
     <string name="InuArchiveLimitWifi">Wi-Fiのサイズ上限</string>
+    <string name="InuArchiveQuota">アーカイブのサイズ上限</string>
+    <string name="InuArchiveQuotaOff">オフ</string>
+    <string name="InuArchiveQuotaInfo">このアカウントで保存した添付ファイルが上限を超えると、古いものから削除されます。メッセージとその本文はアーカイブに残ります。</string>
     <string name="InuArchiveMediaPublic">公開グループとチャンネルでもダウンロード</string>
     <string name="InuArchiveMediaPublicInfo">デフォルトはオフ: 公開チャットは最も通信量を使います。端末にあるファイルはどちらでも保存されます</string>
     <string name="InuArchiveScope">保存先</string>

@@ -18,7 +18,22 @@ object ArchiveStore {
         db.executeFast("DELETE FROM inu_deleted_reactions").stepThis().dispose()
     }
 
+    // entiny: a removed attachment drops its pending task and its protection too, so a restart does not bring it back
     fun detachMediaPaths(db: SQLiteDatabase, paths: Collection<String>) {
+        for (table in arrayOf("inu_archive_media_tasks", "inu_kept_media")) {
+            val state = db.executeFast(
+                "DELETE FROM $table WHERE EXISTS (SELECT 1 FROM inu_deleted_messages d WHERE d.dialog_id = $table.dialog_id AND d.msg_id = $table.msg_id AND d.media_path = ?)"
+            )
+            try {
+                for (path in paths) {
+                    state.requery()
+                    state.bindString(1, path)
+                    state.step()
+                }
+            } finally {
+                state.dispose()
+            }
+        }
         for (table in arrayOf("inu_deleted_messages", "inu_edit_history")) {
             val state = db.executeFast("UPDATE $table SET media_path = NULL WHERE media_path = ?")
             try {
@@ -33,7 +48,55 @@ object ArchiveStore {
         }
     }
 
+    fun putMediaTask(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
+        db.executeFast("INSERT OR IGNORE INTO inu_archive_media_tasks(dialog_id, msg_id, attempts) VALUES($dialogId, $msgId, 0)").stepThis().dispose()
+    }
+
+    fun hasMediaTask(db: SQLiteDatabase, dialogId: Long, msgId: Int): Boolean {
+        val cursor = db.queryFinalized("SELECT 1 FROM inu_archive_media_tasks WHERE dialog_id = ? AND msg_id = ?", dialogId, msgId)
+        return try { cursor.next() } finally { cursor.dispose() }
+    }
+
+    fun deleteMediaTask(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
+        db.executeFast("DELETE FROM inu_archive_media_tasks WHERE dialog_id = $dialogId AND msg_id = $msgId").stepThis().dispose()
+    }
+
+    fun bumpMediaTask(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
+        db.executeFast("UPDATE inu_archive_media_tasks SET attempts = attempts + 1 WHERE dialog_id = $dialogId AND msg_id = $msgId").stepThis().dispose()
+    }
+
+    class MediaTask(val rowId: Long, val dialogId: Long, val msgId: Int, val attempts: Int, val mediaPath: String?, val message: TLRPC.Message?)
+
+    fun loadMediaTasks(db: SQLiteDatabase, limit: Int, afterRowId: Long): List<MediaTask> {
+        val tasks = ArrayList<MediaTask>()
+        val cursor = db.queryFinalized(
+            "SELECT t.dialog_id, t.msg_id, t.attempts, d.media_path, d.message, t.rowid FROM inu_archive_media_tasks t " +
+                "LEFT JOIN inu_deleted_messages d ON d.dialog_id = t.dialog_id AND d.msg_id = t.msg_id " +
+                "WHERE t.rowid > $afterRowId ORDER BY t.rowid LIMIT $limit"
+        )
+        try {
+            while (cursor.next()) {
+                val data = if (cursor.isNull(4)) null else cursor.byteBufferValue(4)
+                val message = data?.let {
+                    try {
+                        TLRPC.Message.TLdeserialize(it, it.readInt32(false), false)
+                    } catch (e: Throwable) {
+                        null
+                    } finally {
+                        it.reuse()
+                    }
+                }
+                tasks.add(MediaTask(cursor.longValue(5), cursor.longValue(0), cursor.intValue(1), cursor.intValue(2), if (cursor.isNull(3)) null else cursor.stringValue(3), message))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return tasks
+    }
+
     fun detachSavedMedia(db: SQLiteDatabase) {
+        db.executeFast("DELETE FROM inu_archive_media_tasks").stepThis().dispose()
+        db.executeFast("DELETE FROM inu_kept_media").stepThis().dispose()
         db.executeFast("UPDATE inu_deleted_messages SET media_path = NULL WHERE media_path IS NOT NULL").stepThis().dispose()
         db.executeFast("UPDATE inu_edit_history SET media_path = NULL WHERE media_path IS NOT NULL").stepThis().dispose()
     }
@@ -81,6 +144,17 @@ object ArchiveStore {
             if (cursor.next()) cursor.stringValue(0)?.takeIf { it.isNotBlank() } else null
         } finally {
             cursor.dispose()
+        }
+    }
+
+    fun clearDeletedMessageMediaPath(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
+        val query = db.executeFast("UPDATE inu_deleted_messages SET media_path = NULL WHERE dialog_id = ? AND msg_id = ?")
+        try {
+            query.bindLong(1, dialogId)
+            query.bindInteger(2, msgId)
+            query.step()
+        } finally {
+            query.dispose()
         }
     }
 
@@ -559,6 +633,8 @@ object ArchiveStore {
         val where = dialogFilter(dialogIds)
         val mediaPaths = collectMediaPaths(db, "inu_deleted_messages", where) + collectMediaPaths(db, "inu_edit_history", where)
         db.executeFast("DELETE FROM inu_deleted_messages WHERE $where").stepThis().dispose()
+        db.executeFast("DELETE FROM inu_archive_media_tasks WHERE $where").stepThis().dispose()
+        db.executeFast("DELETE FROM inu_kept_media WHERE $where").stepThis().dispose()
         if (includeHistory) {
             db.executeFast("DELETE FROM inu_edit_history WHERE $where").stepThis().dispose()
             db.executeFast("DELETE FROM inu_deleted_reactions WHERE $where").stepThis().dispose()
@@ -651,6 +727,8 @@ object ArchiveStore {
         val idsStr = mids.joinToString(",")
         val mediaPaths = collectMediaPaths(db, "inu_deleted_messages", "dialog_id = $dialogId AND msg_id IN ($idsStr)")
         db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
+        db.executeFast("DELETE FROM inu_archive_media_tasks WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
+        db.executeFast("DELETE FROM inu_kept_media WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
         deleteUnreferencedMediaFiles(db, mediaPaths)
     }
 

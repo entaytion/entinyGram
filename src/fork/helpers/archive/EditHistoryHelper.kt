@@ -122,7 +122,10 @@ object EditHistoryHelper {
                 val mediaCopy = ArchiveMediaHelper.planMediaCopy(account, source, ArchiveScope.Kind.EDITED) ?: return@Runnable
                 ArchiveMediaHelper.copyThenStore(account, "e:$account:$rowId", mediaCopy.pin()) { copyDb, copied ->
                     val stored = ArchiveMediaHelper.updateMediaPath(copyDb, "inu_edit_history", "rowid = $rowId", copied)
-                    if (stored) synchronized(ArchiveCache.cacheLock) { ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong()) }
+                    if (stored) {
+                        synchronized(ArchiveCache.cacheLock) { ArchiveCache.editHistoryCache.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong()) }
+                        ArchiveQuota.schedule(account)
+                    }
                     stored
                 }
             } catch (e: Throwable) {

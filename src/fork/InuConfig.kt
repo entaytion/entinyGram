@@ -1797,6 +1797,13 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ARCHIVE_SCOPE_MIGRATED = BoolItem("archive_scope_migrated", false)
 
     @JvmField
+    val ARCHIVE_MEDIA_QUOTA_GB = IntItem("archive_media_quota_gb", 0)
+
+    // entiny: set once a deleted message's file is kept in place; protection then outlives the toggles
+    @JvmField
+    val ARCHIVE_KEPT_MEDIA_PRESENT = BoolItem("archive_kept_media_present", false, exportable = false)
+
+    @JvmField
     val ARCHIVE_SCOPE_KINDS_MIGRATED = BoolItem("archive_scope_kinds_migrated", false)
 
     @JvmField
@@ -1848,7 +1855,7 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     // #endif
 
     @JvmField
-    val MASK_SERVER_APP_NAME = BoolItem("mask_server_app_name", true)
+    val MASK_SERVER_APP_NAME = BoolItem("mask_server_app_name", false)
 
     class DeletedMessagesTtlItem : IntItem("deleted_messages_ttl", NEVER) {
         companion object {

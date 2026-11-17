@@ -29,7 +29,7 @@ object CacheStatsHelper {
             val reactions = InuDatabaseHelper.getTableStat(db, "inu_deleted_reactions", null, 40L)
             val recent = InuDatabaseHelper.getTableStat(db, "inu_recent_dialogs", null, 16L)
             val presence = InuDatabaseHelper.getPresenceLogsStats(db)
-            val media = ArchiveMediaHelper.getSavedMediaDir(account).let(::filesIn)
+            val media = ArchiveMediaHelper.savedMediaFiles(account, db)
             val temp = tempDirs().flatMap(::filesIn)
             val logs = logFiles()
             val pills = listOf(InuConfig.PILL_STACK_RATE_CACHE.value, InuConfig.PILL_STACK_GOLD_CACHE.value).filter { it.isNotEmpty() }
@@ -54,8 +54,10 @@ object CacheStatsHelper {
             Kind.EDITS -> ArchiveCache.clearEditHistory(account, onDone)
             Kind.REACTIONS -> onStorage(account, onDone) { ArchiveStore.clearDeletedReactions(it) }
             Kind.MEDIA -> onStorage(account, onDone) {
+                val files = ArchiveMediaHelper.savedMediaFiles(account, it)
                 ArchiveStore.detachSavedMedia(it)
-                ArchiveMediaHelper.getSavedMediaDir(account).listFiles()?.filter { f -> f.isFile && f.name != ".nomedia" }?.forEach { f -> f.delete() }
+                desu.inugram.helpers.archive.KeptMedia.release(account, it)
+                files.forEach(ArchiveMediaHelper::deleteSavedMediaFile)
                 ArchiveCache.invalidateMediaCache(account)
             }
             Kind.PRESENCE -> PresenceHelper.clearLogs(account, null, onDone)
@@ -75,7 +77,7 @@ object CacheStatsHelper {
             Kind.TEMP -> onFiles(onDone) { tempDirs().flatMap(::filesIn).forEach { runCatching { it.delete() } } }
             Kind.LOGS -> onFiles(onDone) {
                 FileLog.cleanupLogs()
-                logFiles().forEach { runCatching { it.delete() } }
+                for (f in listOf(CrashReporter.getLogFile(), CrashReporter.getHeapDumpFile())) runCatching { f.delete() }
             }
         }
     }
