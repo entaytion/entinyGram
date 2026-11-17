@@ -240,7 +240,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -18062,6 +18062,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -18064,6 +18064,9 @@ public class ChatActivity extends BaseFragment implements
          if (sideControlsButtonsLayout == null) {
              return;
          }
@@ -250,7 +250,7 @@ index 0000000..0000000 100644
  
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_MENTION, show && !ChatObject.isMonoForum(currentChat), animated);
          if (!show) {
-@@ -25267,6 +25270,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -25269,6 +25272,9 @@ public class ChatActivity extends BaseFragment implements
              long topicId = (Long) args[1];
              if (dialog_id == dialogId && this.getTopicId() == topicId) {
                  int count = (int) args[2];
@@ -295,7 +295,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2873,6 +2873,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2880,6 +2880,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              currentConnectionState = getConnectionsManager().getConnectionState();
  
              observersGroup.addGlobal(NotificationCenter.emojiLoaded);
@@ -303,7 +303,7 @@ index 0000000..0000000 100644
              if (!onlySelect) {
                  observersGroup.addGlobal(NotificationCenter.closeSearchByActiveAction);
                  observersGroup.addGlobal(NotificationCenter.proxySettingsChanged);
-@@ -10827,6 +10828,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10834,6 +10835,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          } else if (id == NotificationCenter.proxySettingsChanged) {
              updateProxyButton(false, false);

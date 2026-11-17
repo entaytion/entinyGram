@@ -237,7 +237,7 @@ index 0000000..0000000 100644
          if (url instanceof URLSpanMono) {
              if (!noforwards || getDialogId() == UserObject.VERIFY) {
                  ((URLSpanMono) url).copyToClipboard();
-@@ -40764,7 +40765,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40790,7 +40791,7 @@ public class ChatActivity extends BaseFragment implements
                  && messageObject.messageOwner != null
                  && chatMode != MODE_SCHEDULED
                  && !isPeerNoForwards()
@@ -246,7 +246,7 @@ index 0000000..0000000 100644
                  && messageObject.type != MessageObject.TYPE_PAID_MEDIA;
          }
  
-@@ -46731,7 +46732,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46757,7 +46758,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
@@ -259,7 +259,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerA
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
-@@ -2271,7 +2271,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -2276,7 +2276,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
              final boolean noforwards = (
                  dialogId < 0 && MessagesController.getInstance(currentAccount).isPeerNoForwards(dialogId) ||
                  MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) ||

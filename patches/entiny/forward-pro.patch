@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12972,6 +12972,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -12973,6 +12973,10 @@ public class ChatActivity extends BaseFragment implements
          if (selectionReactionsOverlay != null && selectionReactionsOverlay.isVisible()) {
              selectionReactionsOverlay.setHiddenByScroll(true);
          }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          Bundle args = new Bundle();
          args.putBoolean("onlySelect", true);
          args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-@@ -34751,6 +34755,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -34753,6 +34757,12 @@ public class ChatActivity extends BaseFragment implements
                      selectedObjectGroup = null;
                      return;
                  }
@@ -329,7 +329,7 @@ index 0000000..0000000 100644
                      if (result != 0) {
                          removeKeys.add(key);
                      }
-@@ -2825,10 +2873,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2830,10 +2878,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  timestampFrameLayout.setVisibility(View.VISIBLE);
              }
              writeButtonContainer.setVisibility(View.VISIBLE);
@@ -342,7 +342,7 @@ index 0000000..0000000 100644
          }
          if (pickerBottom != null) {
              ViewCompat.setImportantForAccessibility(pickerBottom, show ? ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS : ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
-@@ -2911,7 +2961,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2916,7 +2966,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              writeButton.setStarsPrice(price, messagesCount, animated != 0);
              showCommentTextView(true);
  
@@ -352,7 +352,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -2921,6 +2972,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2926,6 +2977,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
              AndroidUtilities.hideKeyboard(commentTextView.getEditText());
          }
          fullyShown = false;
@@ -360,7 +360,7 @@ index 0000000..0000000 100644
          super.dismiss();
          NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.dialogsNeedReload);
      }
-@@ -2965,6 +3017,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2970,6 +3022,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  if (dialog.id == selfUserId) {
                      continue;
                  }
@@ -370,7 +370,7 @@ index 0000000..0000000 100644
                  if (!DialogObject.isEncryptedDialog(dialog.id)) {
                      if (DialogObject.isUserDialog(dialog.id)) {
                          if (dialog.folder_id == 1) {
-@@ -3049,7 +3104,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -3054,7 +3109,12 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  case 1:
                  default: {
                      view = new View(context);
@@ -384,7 +384,7 @@ index 0000000..0000000 100644
                      break;
                  }
              }
-@@ -3596,7 +3656,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -3601,7 +3661,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                  default:
                  case 1: {
                      view = new View(context);

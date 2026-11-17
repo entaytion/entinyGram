@@ -943,7 +943,7 @@ object PluginJvm : SessionResource {
 
     private class MemberTable(cls: Class<*>) {
         val methods: Map<String, List<MemberInfo>>
-        val constructors: List<MemberInfo> = cls.declaredConstructors.map { MemberInfo(it) }
+        val constructors: List<MemberInfo> = cls.declaredConstructors.filter(::isLinkable).map { MemberInfo(it) }
         val fields: Map<String, Field> = cls.declaredFields.associateBy { it.name }
         val superclass: Class<*>? = cls.superclass
         val interfaces: Array<Class<*>> = cls.interfaces
@@ -963,6 +963,7 @@ object PluginJvm : SessionResource {
                 emptyArray()
             }
             for (method in declaredMethods) {
+                if (!isLinkable(method)) continue
                 try {
                     methods.getOrPut(method.name) { ArrayList() }.add(MemberInfo(method))
                 } catch (e: LinkageError) {
@@ -1031,6 +1032,15 @@ object PluginJvm : SessionResource {
             ?: lineage.interfaces.firstNotNullOfOrNull { it.fields[name] }
         table.composedFields[name] = listOfNotNull(found)
         return found
+    }
+
+    /** ART resolves signature types lazily, so a member naming a class missing on this API level throws on first look */
+    internal fun isLinkable(member: Executable): Boolean = try {
+        member.parameterTypes
+        if (member is Method) member.returnType
+        true
+    } catch (e: LinkageError) {
+        false
     }
 
     private fun buildDescriptor(member: Executable): String {

@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          try {
              String host = AndroidUtilities.getHostAuthority(url);
              if ((currentEncryptedChat == null || getMessagesController().secretWebpagePreview == 1) && getMessagesController().authDomains.contains(host)) {
-@@ -43691,6 +43695,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -43717,6 +43721,11 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private boolean openLinkInternally(String urlFinal, ChatMessageCell cell, CharacterStyle span, int fromMessageId, int fromMessageProgressType) {

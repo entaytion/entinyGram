@@ -964,11 +964,6 @@ object Schemas {
                 onChange = { page, _ -> page.showRestart() },
             )
             toggle(
-                InuConfig.DRAWER_M3_SECTIONS, R.string.InuDrawerM3Sections, R.string.InuDrawerM3SectionsInfo,
-                visible = { InuConfig.NAVIGATION_DRAWER.value },
-                onChange = { _, _ -> DrawerHelper.reloadItems() },
-            )
-            toggle(
                 InuConfig.SHOW_DRAWER_ACCOUNTS, R.string.InuShowDrawerAccounts, R.string.InuShowDrawerAccountsInfo,
                 visible = { InuConfig.NAVIGATION_DRAWER.value },
                 onChange = { _, _ -> DrawerHelper.reloadItems() },

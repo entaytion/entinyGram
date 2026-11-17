@@ -6,15 +6,20 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.animation.TimeInterpolator
+import android.animation.ValueAnimator
 import android.graphics.Canvas
+import android.graphics.Outline
 import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.Property
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.view.ViewTreeObserver
 import android.view.accessibility.AccessibilityEvent
 import android.view.animation.DecelerateInterpolator
@@ -23,9 +28,9 @@ import androidx.annotation.Keep
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import desu.inugram.helpers.dialogs.DrawerHelper
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.DrawerLayoutContainer
 import org.telegram.ui.ActionBar.Theme
@@ -48,9 +53,17 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
     private var velocityTracker: VelocityTracker? = null
     private var beginTrackingSent: Boolean = false
     private var currentAnimation: AnimatorSet? = null
+    private var backAnimation: ValueAnimator? = null
+    private var backProgress = 0f
+    private var backLeftSwipeEdge = true
     private var scrimOpacity: Float = 0f
     private val scrimPaint = Paint()
-    private var shadowLeft: Drawable? = null
+    private val cornerOutlineProvider = object : ViewOutlineProvider() {
+        override fun getOutline(view: View, outline: Outline) {
+            val radius = AndroidUtilities.dpf2(CORNER_RADIUS_DP)
+            outline.setRoundRect(-radius.toInt(), 0, view.width, view.height, radius)
+        }
+    }
     private val exclusionRect = Rect()
     private val exclusionRects = listOf(exclusionRect)
 
@@ -91,12 +104,8 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         drawerListView = listView
         host.addView(drawerLayout, lp)
         drawerLayout!!.visibility = View.INVISIBLE
-        if (shadowLeft == null) {
-            try {
-                shadowLeft = ResourcesCompat.getDrawable(host.resources, R.drawable.header_shadow, null)
-            } catch (_: Exception) {
-            }
-        }
+        layout.outlineProvider = cornerOutlineProvider
+        layout.clipToOutline = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             host.addOnAttachStateChangeListener(attachListener)
             if (host.isAttachedToWindow) host.viewTreeObserver.addOnPreDrawListener(preDrawListener)
@@ -104,6 +113,8 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
     }
 
     fun detach() {
+        backAnimation?.cancel()
+        backAnimation = null
         cancelCurrentAnimation()
         setAllowOpenDrawer(false, false)
         host.removeView(drawerLayout)
@@ -135,7 +146,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         val layout = drawerLayout ?: return
         if (drawerPosition == 0f && value > 0f) DrawerHelper.notifyDataChanged()
         drawerPosition = maxOf(0f, minOf(value, layout.measuredWidth.toFloat()))
-        layout.translationX = drawerPosition
+        layout.translationX = layout.measuredWidth - (layout.measuredWidth - drawerPosition) * layout.scaleX
         if (drawerPosition > 0 && drawerListView != null && drawerListView!!.visibility != View.VISIBLE) {
             drawerListView!!.visibility = View.VISIBLE
         }
@@ -163,12 +174,103 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
 
     fun closeDrawer(fast: Boolean) {
         val layout = drawerLayout ?: return
+        val duration = if (fast) maxOf((200f / layout.measuredWidth * drawerPosition).toInt(), 50).toLong() else 250L
+        animateClose(duration, DecelerateInterpolator())
+    }
+
+    // mirrors MDC MaterialSideContainerBackHelper
+    fun updateBackProgress(progress: Float, leftSwipeEdge: Boolean) {
+        backAnimation?.cancel()
+        backAnimation = null
+        applyBackProgress(progress, leftSwipeEdge)
+    }
+
+    fun cancelBackProgress() {
+        backAnimation?.cancel()
+        backAnimation = ValueAnimator.ofFloat(backProgress, 0f).apply {
+            duration = BACK_CANCEL_DURATION
+            addUpdateListener { applyBackProgress(it.animatedValue as Float, backLeftSwipeEdge) }
+            start()
+        }
+    }
+
+    fun finishBackProgress(rawProgress: Float) {
+        backAnimation?.cancel()
+        backAnimation = null
+        val duration = BACK_HIDE_DURATION_MAX + (BACK_HIDE_DURATION_MIN - BACK_HIDE_DURATION_MAX) * rawProgress
+        animateClose(duration.toLong(), FastOutSlowInInterpolator())
+    }
+
+    private fun applyBackProgress(progress: Float, leftSwipeEdge: Boolean) {
+        backProgress = progress
+        backLeftSwipeEdge = leftSwipeEdge
+        val layout = drawerLayout ?: return
+        if (progress == 0f) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) layout.resetPivot()
+            layout.scaleX = 1f
+            layout.scaleY = 1f
+            for (i in 0 until layout.childCount) {
+                val child = layout.getChildAt(i)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) child.resetPivot()
+                child.scaleX = 1f
+                child.scaleY = 1f
+            }
+            setListOverscan(0)
+            setDrawerPosition(drawerPosition)
+            return
+        }
+        val width = layout.width
+        val height = layout.height
+        if (width <= 0 || height <= 0) return
+        if (leftSwipeEdge) {
+            setListOverscan(0)
+        } else {
+            val maxScaleX = 1f - AndroidUtilities.dpf2(BACK_SHRINK_X_DP) / width
+            val maxScaleY = 1f - AndroidUtilities.dpf2(BACK_SHRINK_Y_DP) / height
+            setListOverscan(maxOf(0, (height * (maxScaleY - maxScaleX) / maxScaleX).toInt() + 1))
+        }
+        val scaleXDelta = progress * if (leftSwipeEdge) {
+            AndroidUtilities.dpf2(BACK_GROW_X_DP) / width
+        } else {
+            -AndroidUtilities.dpf2(BACK_SHRINK_X_DP) / width
+        }
+        val scaleX = 1f + scaleXDelta
+        val scaleY = 1f - progress * AndroidUtilities.dpf2(BACK_SHRINK_Y_DP) / height
+        layout.pivotX = 0f
+        layout.pivotY = height / 2f
+        layout.scaleX = scaleX
+        layout.scaleY = scaleY
+        val childScaleX = if (leftSwipeEdge) 1f - scaleXDelta else 1f
+        for (i in 0 until layout.childCount) {
+            val child = layout.getChildAt(i)
+            child.pivotX = (width - child.right + child.width).toFloat()
+            val gravity = (child.layoutParams as? FrameLayout.LayoutParams)?.gravity ?: 0
+            child.pivotY = if (gravity and Gravity.VERTICAL_GRAVITY_MASK == Gravity.BOTTOM) {
+                (height - child.top).toFloat()
+            } else {
+                -child.top.toFloat()
+            }
+            child.scaleX = childScaleX
+            child.scaleY = scaleX / scaleY * childScaleX
+        }
+        setDrawerPosition(drawerPosition)
+    }
+
+    private fun setListOverscan(overscan: Int) {
+        val list = drawerListView ?: return
+        val lp = list.layoutParams as? ViewGroup.MarginLayoutParams ?: return
+        if (lp.bottomMargin == -overscan) return
+        lp.bottomMargin = -overscan
+        list.layoutParams = lp
+    }
+
+    private fun animateClose(duration: Long, interpolator: TimeInterpolator) {
         DrawerHelper.dismissStatusPopup()
         cancelCurrentAnimation()
         val animatorSet = AnimatorSet()
         animatorSet.playTogether(ObjectAnimator.ofFloat(this, DRAWER_POSITION, 0f))
-        animatorSet.interpolator = DecelerateInterpolator()
-        animatorSet.duration = if (fast) maxOf((200f / layout.measuredWidth * drawerPosition).toInt(), 50).toLong() else 250L
+        animatorSet.interpolator = interpolator
+        animatorSet.duration = duration
         animatorSet.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(a: Animator) {
                 onDrawerAnimationEnd(false)
@@ -184,6 +286,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
     }
 
     private fun onDrawerAnimationEnd(opened: Boolean) {
+        if (!opened && backProgress != 0f) applyBackProgress(0f, backLeftSwipeEdge)
         startedTracking = false
         currentAnimation = null
         drawerOpened = opened
@@ -195,12 +298,9 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
     private fun syncStatusBar(opened: Boolean) {
         val activity = host.context as? LaunchActivity ?: return
         if (opened) {
-            val bgKey = if (Theme.hasThemeKey(Theme.key_chats_menuTopBackground) &&
-                Theme.getColor(Theme.key_chats_menuTopBackground) != 0
-            ) Theme.key_chats_menuTopBackground else Theme.key_chats_menuTopBackgroundCats
             AndroidUtilities.setLightStatusBar(
                 activity.window,
-                ColorUtils.calculateLuminance(Theme.getColor(bgKey)) > 0.7,
+                ColorUtils.calculateLuminance(Theme.getColor(Theme.key_chats_menuBackground)) > 0.7,
             )
         } else {
             activity.checkSystemBarColors(false, true, false)
@@ -370,14 +470,15 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
                 if (v.visibility == View.VISIBLE && v != drawerLayout) {
                     lastVisibleChild = i
                 }
-                if (v == child || v.visibility != View.VISIBLE || v != drawerLayout || v.height < height) {
+                if (v == child || v.visibility != View.VISIBLE || v != drawerLayout || v.height < height || v.scaleY != 1f) {
                     continue
                 }
                 val vright = Math.ceil(v.x.toDouble()).toInt() + v.measuredWidth
                 if (vright > clipLeft) clipLeft = vright
             }
             if (clipLeft != 0) {
-                canvas.clipRect(clipLeft - AndroidUtilities.dp(1f), 0, clipRight, host.height)
+                clipLeft -= AndroidUtilities.dp(CORNER_RADIUS_DP)
+                canvas.clipRect(clipLeft, 0, clipRight, host.height)
             }
         }
         val result = host.inu_superDrawChild(canvas, child, drawingTime)
@@ -388,13 +489,6 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
                 scrimPaint.color = (0x99 * scrimOpacity).toInt() shl 24
                 canvas.drawRect(clipLeft.toFloat(), 0f, clipRight.toFloat(), host.height.toFloat(), scrimPaint)
             }
-        } else if (shadowLeft != null && drawerPosition > 0) {
-            val alpha = maxOf(0f, minOf(drawerPosition / AndroidUtilities.dp(20f).toFloat(), 1f))
-            if (alpha != 0f) {
-                shadowLeft!!.setBounds(drawerPosition.toInt(), child.top, drawerPosition.toInt() + shadowLeft!!.intrinsicWidth, child.bottom)
-                shadowLeft!!.alpha = (0xff * alpha).toInt()
-                shadowLeft!!.draw(canvas)
-            }
         }
         return result
     }
@@ -402,6 +496,13 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
     companion object {
         private const val EDGE_SAFE_ZONE_DP = 25
         private const val EXCLUSION_HEIGHT_DP = 200
+        private const val CORNER_RADIUS_DP = 16f
+        private const val BACK_GROW_X_DP = 12f
+        private const val BACK_SHRINK_X_DP = 24f
+        private const val BACK_SHRINK_Y_DP = 48f
+        private const val BACK_HIDE_DURATION_MAX = 300f
+        private const val BACK_HIDE_DURATION_MIN = 150f
+        private const val BACK_CANCEL_DURATION = 100L
 
         @JvmField
         val DRAWER_POSITION: Property<DrawerSwipeController, Float> =

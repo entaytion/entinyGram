@@ -1,5 +1,7 @@
 package desu.inugram.helpers.chat
 
+import android.content.Context
+import android.view.View
 import androidx.core.content.edit
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
@@ -80,7 +82,8 @@ object BlockedMessagesHelper {
     fun onFilteringChanged(activity: ChatActivity, adapter: ChatActivity.ChatActivityAdapter?) {
         ChatActionsHelper.updateRevealItem(activity)
         if (adapter == null) return
-        var changed = adapter.inu_filtering || isHideMode()
+        epoch++
+        var changed = adapter.inu_hiddenMessages.isNotEmpty() || hasHideFilter() || manualHidden.isNotEmpty()
         for (msg in activity.messages) changed = rebuildIfStale(msg) || changed
         if (changed) adapter.notifyDataSetChanged(true)
     }
@@ -301,27 +304,30 @@ object BlockedMessagesHelper {
         adapter.notifyDataSetChanged()
     }
 
+    const val VIEW_TYPE_HIDDEN = 1000
+
     @JvmStatic
-    fun refreshVisible(adapter: ChatActivity.ChatActivityAdapter): ArrayList<MessageObject> {
-        val source = adapter.inu_getSourceMessages()
+    fun refreshHidden(adapter: ChatActivity.ChatActivityAdapter, messages: ArrayList<MessageObject>) {
+        val hiddenSet = adapter.inu_hiddenMessages
         val state = stateFor(adapter)
-        val filtering = hasHideFilter() || manualHidden.isNotEmpty()
-        adapter.inu_filtering = filtering
-        if (!filtering) return source
-        val buffer = adapter.inu_visibleMessages
-        // entiny: getMessages() runs per adapter query, so rebuild only after the data actually changed
+        if (!hasHideFilter() && manualHidden.isEmpty()) {
+            hiddenSet.clear()
+            state.stale = true
+            return
+        }
+        // entiny: updateRows runs often, so rebuild only after the data or the filters changed
         val config = configStamp()
-        if (!state.stale && state.source === source && state.size == source.size && state.epoch == epoch && state.config == config) return buffer
-        buffer.clear()
-        val activeDays = HashSet<Int>()
-        val hidden = BooleanArray(source.size)
+        if (!state.stale && state.source === messages && state.size == messages.size && state.epoch == epoch && state.config == config) return
+        hiddenSet.clear()
+        val visibleDays = HashSet<Int>()
+        val hidden = BooleanArray(messages.size)
         var hiddenGroups: HashSet<Long>? = null
         val hideReplies = InuConfig.REGEX_FILTER_HIDE_REPLIES.value && RegexFilterHelper.isEnabled() &&
             RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.HIDE
         val hiddenIds = if (hideReplies) HashSet<Int>() else null
         // entiny: oldest first so a reply to a hidden reply is hidden too
-        for (i in source.size - 1 downTo 0) {
-            val msg = source[i] ?: continue
+        for (i in messages.size - 1 downTo 0) {
+            val msg = messages[i] ?: continue
             var hide = shouldHide(msg) || isManuallyHidden(msg)
             if (hiddenIds != null) {
                 if (hide) {
@@ -338,31 +344,41 @@ object BlockedMessagesHelper {
             // entiny: one hidden album member hides the whole album, otherwise the rest render as loose photos
             if (hide && msg.groupId != 0L) (hiddenGroups ?: HashSet<Long>().also { hiddenGroups = it }).add(msg.groupId)
         }
-        for (i in 0 until source.size) {
-            val msg = source[i]
-            if (msg != null && !hidden[i] && (hiddenGroups == null || msg.groupId == 0L || !hiddenGroups!!.contains(msg.groupId))) {
-                buffer.add(msg)
-                if (!msg.isDateObject && msg.contentType != 2) activeDays.add(msg.dateKeyInt)
+        for (i in 0 until messages.size) {
+            val msg = messages[i] ?: continue
+            if (hidden[i] || hiddenGroups != null && msg.groupId != 0L && hiddenGroups!!.contains(msg.groupId)) {
+                hiddenSet.add(msg)
+            } else if (!msg.isDateObject && msg.contentType != 2) {
+                visibleDays.add(msg.dateKeyInt)
             }
         }
-        // entiny: single reverse pass replaces O(n^2) nested scans for dropping empty date headers
-        var hasMessageAfter = false
-        for (i in buffer.indices.reversed()) {
-            val msg = buffer[i]
+        var hasVisibleBelow = false
+        for (msg in messages) {
+            if (msg in hiddenSet) continue
             if (msg.isDateObject) {
-                if (!activeDays.contains(msg.dateKeyInt)) buffer.removeAt(i)
+                if (msg.dateKeyInt !in visibleDays) hiddenSet.add(msg)
             } else if (msg.contentType == 2) {
-                if (!hasMessageAfter) buffer.removeAt(i)
+                if (!hasVisibleBelow) hiddenSet.add(msg)
             } else {
-                hasMessageAfter = true
+                hasVisibleBelow = true
             }
         }
-        state.source = source
-        state.size = source.size
+        state.source = messages
+        state.size = messages.size
         state.epoch = epoch
         state.config = config
         state.stale = false
-        return buffer
+    }
+
+    @JvmStatic
+    fun getViewType(adapter: ChatActivity.ChatActivityAdapter, msg: MessageObject): Int =
+        if (msg in adapter.inu_hiddenMessages) VIEW_TYPE_HIDDEN else msg.contentType
+
+    @JvmStatic
+    fun createHiddenView(context: Context): View = object : View(context) {
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), 0)
+        }
     }
 
     @JvmStatic
@@ -378,10 +394,10 @@ object BlockedMessagesHelper {
         if (messageObject?.messageOwner == null || messageObject.storyItem != null) return false
         // entiny: forwarded channel post carries peer id as both fromChatId and fwd_from.from_id; don't blackout real announcements
         if (messageObject.isForwardedChannelPost) return false
-        if (isBlockedPeer(messageObject.currentAccount, messageObject.fromChatId)) return true
+        if (isBlockedPeer(messageObject, messageObject.fromChatId)) return true
         if (InuConfig.BLOCKED_MESSAGES_HIDE_REPLIES.value && !messageObject.isOutOwner() && isReplyToBlocked(messageObject)) return true
         val forwardedFrom = messageObject.messageOwner.fwd_from?.from_id ?: return false
-        return isBlockedPeer(messageObject.currentAccount, MessageObject.getPeerId(forwardedFrom))
+        return isBlockedPeer(messageObject, MessageObject.getPeerId(forwardedFrom))
     }
 
     private fun isRegexFilteredMessage(messageObject: MessageObject?): Boolean {
@@ -391,15 +407,17 @@ object BlockedMessagesHelper {
     private fun isReplyToBlocked(messageObject: MessageObject): Boolean {
         val reply = messageObject.replyMessageObject
         if (reply != null && reply.messageOwner != null && reply.messageOwner !is TLRPC.TL_messageEmpty &&
-            isBlockedPeer(messageObject.currentAccount, reply.fromChatId)
+            isBlockedPeer(messageObject, reply.fromChatId)
         ) {
             return true
         }
         val from = messageObject.messageOwner.reply_to?.reply_from?.from_id ?: return false
-        return isBlockedPeer(messageObject.currentAccount, MessageObject.getPeerId(from))
+        return isBlockedPeer(messageObject, MessageObject.getPeerId(from))
     }
 
-    private fun isBlockedPeer(currentAccount: Int, peerId: Long): Boolean {
+    private fun isBlockedPeer(messageObject: MessageObject, peerId: Long): Boolean {
+        if (peerId == messageObject.dialogId) return false
+        val currentAccount = messageObject.currentAccount
         if (isExtraHidden(currentAccount, peerId)) return true
         val controller = MessagesController.getInstance(currentAccount)
         if (peerId > 0 && controller.getUser(peerId)?.bot == true) return false

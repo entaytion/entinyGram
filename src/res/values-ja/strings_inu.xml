@@ -703,8 +703,6 @@
     <string name="InuDrawerBots">ミニアプリ</string>
     <string name="InuDrawerKeepOptionsMenu">3点メニューを残す</string>
     <string name="InuDrawerKeepOptionsMenuInfo">サイドメニューと一緒にチャット一覧のメニューボタンを表示</string>
-    <string name="InuDrawerM3Sections">ナビゲーションドロワーのモジュラーセクション</string>
-    <string name="InuDrawerM3SectionsInfo">ドロワーメニューの行を角丸のMaterial 3カードとしてグループ化します。</string>
     <string name="InuDrawerMenuAddDivider">区切り線を追加</string>
     <string name="InuDrawerMenuItems">項目</string>
     <string name="InuDrawerMenuOrder">項目をカスタマイズ</string>
@@ -2310,4 +2308,8 @@
     <string name="InuWidgetPlaceholderTitle">インタラクティブウィジェット</string>
     <string name="InuWoof">ワン！</string>
     <string name="InuYes">はい</string>
+    <string name="InuQrNotFoundInImage">この画像に QR コードが見つかりません</string>
+    <string name="InuCrossAccountForwardDone">%1$s 経由で転送しました</string>
+    <string name="InuCrossAccountForwardFailed">%1$s 経由で転送できませんでした: %2$s</string>
+    <string name="InuCrossAccountForwardNotDelivered">メッセージがもう一方のアカウントに届きませんでした</string>
 </resources>

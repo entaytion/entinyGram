@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.helpers.dialogs.AccountOrderHelper
 import desu.inugram.helpers.dialogs.DialogsFabHelper
-import desu.inugram.helpers.dialogs.DrawerM3SectionsHelper
 import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.menu.DrawerMenuConfig
 import desu.inugram.helpers.security.GhostHelper
@@ -41,6 +40,9 @@ class DrawerLayoutAdapter(
 
     private val items = ArrayList<Item?>(11)
     public val accountNumbers = ArrayList<Int>()
+
+    // view types of the expandable account rows, between the header divider and the menu
+    private val accountBlock = ArrayList<Int>()
     private var accountsShown: Boolean
 
     @JvmField
@@ -53,11 +55,11 @@ class DrawerLayoutAdapter(
         resetItems()
     }
 
-    private fun getAccountRowsCount(): Int {
-        var count = accountNumbers.size + 1
-        if (canAddAccount()) count++
-        return count
-    }
+    private fun getAccountRowsCount(): Int = accountBlock.size
+
+    private fun getAccountIndex(position: Int): Int = position - 2
+
+    private fun getMenuIndex(position: Int): Int = position - 2 - (if (accountsShown) getAccountRowsCount() else 0)
 
     // entiny: gate against activated count rather than accountNumbers because accountNumbers excludes hidden accounts
     private fun canAddAccount(): Boolean =
@@ -98,16 +100,16 @@ class DrawerLayoutAdapter(
 
     override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean {
         val t = holder.itemViewType
-        return t == 3 || t == 4 || t == 5 || t == 6 || t == 7 || t == 8
+        return t == 3 || t == TYPE_ACCOUNT || t == TYPE_ADD_ACCOUNT || t == 6 || t == 7 || t == 8
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view: View = when (viewType) {
             0 -> DrawerProfileCell(mContext, mDrawerLayoutContainer, ::toggleAccountsShown).also { profileCell = it }
-            2 -> DividerCell(mContext)
+            2 -> DividerCell(mContext).apply { setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(8f), AndroidUtilities.dp(16f), AndroidUtilities.dp(8f)) }
             3 -> DrawerActionCell(mContext)
-            4 -> DrawerUserCell(mContext)
-            5 -> DrawerAddCell(mContext)
+            TYPE_ACCOUNT -> DrawerUserCell(mContext)
+            TYPE_ADD_ACCOUNT -> DrawerAddCell(mContext)
             7 -> DrawerProxyCell(mContext)
             8 -> DrawerGhostCell(mContext)
             else -> EmptyCell(mContext, AndroidUtilities.dp(8f))
@@ -127,86 +129,46 @@ class DrawerLayoutAdapter(
                 )
             }
 
-            2 -> DrawerM3SectionsHelper.applySeparator(holder.itemView)
-
             3 -> {
                 val cell = holder.itemView as DrawerActionCell
-                var pos = position - 2
-                if (accountsShown) pos -= getAccountRowsCount()
-                items[pos]!!.bind(cell)
+                items[getMenuIndex(position)]!!.bind(cell)
                 cell.setPadding(0, 0, 0, 0)
-                if (DrawerM3SectionsHelper.isEnabled()) {
-                    m3GroupFor(position)?.let { DrawerM3SectionsHelper.styleMenuRow(cell, it.first, it.second) }
-                } else {
-                    DrawerM3SectionsHelper.resetMenuRow(cell)
-                }
             }
 
-            4 -> {
+            TYPE_ACCOUNT -> {
                 val cell = holder.itemView as DrawerUserCell
-                cell.setAccount(accountNumbers[position - 2])
+                cell.setAccount(accountNumbers[getAccountIndex(position)])
             }
 
             5 -> (holder.itemView as DrawerAddCell).bind()
 
             7 -> {
                 val cell = holder.itemView as DrawerProxyCell
-                var pos = position - 2
-                if (accountsShown) pos -= getAccountRowsCount()
-                val item = items[pos]
+                val item = items[getMenuIndex(position)]
                 if (item != null) cell.bind(item.text ?: "", item.icon)
                 val hasProxies = SharedConfig.proxyList.isNotEmpty()
                 cell.setSwitchVisible(hasProxies)
                 cell.setChecked(SharedConfig.isProxyEnabled())
                 cell.onSwitchToggled = onProxySwitchToggled
-                if (DrawerM3SectionsHelper.isEnabled()) {
-                    m3GroupFor(position)?.let { DrawerM3SectionsHelper.styleMenuRow(cell, it.first, it.second) }
-                } else {
-                    DrawerM3SectionsHelper.resetMenuRow(cell)
-                }
             }
 
             8 -> {
                 val cell = holder.itemView as DrawerGhostCell
-                var pos = position - 2
-                if (accountsShown) pos -= getAccountRowsCount()
-                val item = items[pos]
+                val item = items[getMenuIndex(position)]
                 if (item != null) cell.bind(item.text ?: "", item.icon)
                 cell.setChecked(GhostHelper.isGhostActive())
                 cell.onSwitchToggled = onGhostSwitchToggled
-                if (DrawerM3SectionsHelper.isEnabled()) {
-                    m3GroupFor(position)?.let { DrawerM3SectionsHelper.styleMenuRow(cell, it.first, it.second) }
-                } else {
-                    DrawerM3SectionsHelper.resetMenuRow(cell)
-                }
             }
         }
     }
 
-    private fun m3GroupFor(position: Int): Pair<Int, Int>? {
-        var idx = position - 2
-        if (accountsShown) idx -= getAccountRowsCount()
-        if (idx < 0 || idx >= items.size || items[idx] == null) return null
-        var start = idx
-        while (start > 0 && items[start - 1] != null) start--
-        var end = idx
-        while (end < items.size - 1 && items[end + 1] != null) end++
-        return (idx - start) to (end - start + 1)
-    }
-
     override fun getItemViewType(i: Int): Int {
         if (i == 0) return 0
-        if (i == 1) return 1
+        if (i == 1) return 2
         var idx = i - 2
         if (accountsShown) {
-            if (idx < accountNumbers.size) return 4
-            if (canAddAccount()) {
-                if (idx == accountNumbers.size) return 5
-                if (idx == accountNumbers.size + 1) return 2
-            } else {
-                if (idx == accountNumbers.size) return 2
-            }
-            idx -= getAccountRowsCount()
+            if (idx < accountBlock.size) return accountBlock[idx]
+            idx -= accountBlock.size
         }
         if (idx < 0 || idx >= items.size) return 2
         val id = items[idx]?.id ?: return 2
@@ -216,22 +178,20 @@ class DrawerLayoutAdapter(
     }
 
     fun getId(position: Int): Int {
-        var pos = position - 2
-        if (accountsShown) pos -= getAccountRowsCount()
+        val pos = getMenuIndex(position)
         if (pos < 0 || pos >= items.size) return -1
         return items[pos]?.id ?: -1
     }
 
     fun getAttachMenuBot(position: Int): TLRPC.TL_attachMenuBot? {
-        var pos = position - 2
-        if (accountsShown) pos -= getAccountRowsCount()
+        val pos = getMenuIndex(position)
         if (pos < 0 || pos >= items.size) return null
         return items[pos]?.bot
     }
 
     fun swapAccounts(fromPosition: Int, toPosition: Int): Boolean {
-        val from = fromPosition - 2
-        val to = toPosition - 2
+        val from = getAccountIndex(fromPosition)
+        val to = getAccountIndex(toPosition)
         if (from < 0 || to < 0 || from >= accountNumbers.size || to >= accountNumbers.size) return false
         val tmp = accountNumbers[from]
         accountNumbers[from] = accountNumbers[to]
@@ -250,6 +210,10 @@ class DrawerLayoutAdapter(
             }
         }
         AccountOrderHelper.sort(accountNumbers)
+        accountBlock.clear()
+        repeat(accountNumbers.size) { accountBlock.add(TYPE_ACCOUNT) }
+        if (canAddAccount()) accountBlock.add(TYPE_ADD_ACCOUNT)
+        accountBlock.add(2)
 
         items.clear()
         if (!UserConfig.getInstance(UserConfig.selectedAccount).isClientActivated()) return
@@ -329,6 +293,8 @@ class DrawerLayoutAdapter(
     }
 
     companion object {
+        const val TYPE_ACCOUNT = 4
+        const val TYPE_ADD_ACCOUNT = 5
         const val ITEM_PROXY = 9
         const val ITEM_ARCHIVE = 18
         const val ITEM_GHOST = 19

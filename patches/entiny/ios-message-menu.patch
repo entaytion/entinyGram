@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      private Bitmap scrimBlurBitmap;
      private BitmapShader scrimBlurBitmapShader;
      private Paint scrimBlurBitmapPaint;
-@@ -11510,6 +11513,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -11511,6 +11514,9 @@ public class ChatActivity extends BaseFragment implements
                      if (cell != null) {
                          cell.invalidate();
                      }
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
                      setScrimView(null);
                      scrimViewTask = null;
                      scrimViewReaction = null;
-@@ -18958,6 +18964,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -18960,6 +18966,11 @@ public class ChatActivity extends BaseFragment implements
                      }
                  } else {
                      float listTop = chatListView.getY() + chatListViewPaddingTop - chatListViewPaddingVisibleOffset - AndroidUtilities.dp(4);
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                      MessageObject.GroupedMessages scrimGroup;
                      if (scrimView instanceof ChatMessageCell) {
                          scrimGroup = ((ChatMessageCell) scrimView).getCurrentMessagesGroup();
-@@ -19056,6 +19067,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -19058,6 +19069,10 @@ public class ChatActivity extends BaseFragment implements
                          }
                          viewClipTop += clipTop;
                          viewClipBottom -= clipBottom;
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
  
                          if (cell == null || !cell.getTransitionParams().animateBackgroundBoundsInner) {
                              viewClipLeft = Math.max(viewClipLeft, chatListView.getLeft() + child.getX());
-@@ -19260,6 +19275,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19262,6 +19277,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                          drawReactionsAfter.clear();
                      }
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
                  }
  
                  if (scrimViewReaction == null && scrimViewAlpha < 1f) {
-@@ -32679,7 +32695,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32681,7 +32697,7 @@ public class ChatActivity extends BaseFragment implements
  
              popupLayout.setBackground(scrimBlur3Factory.create(popupLayout, true)
                  .setColorProvider(BlurredBackgroundProviderImpl.messageMenuBackground(resourceProvider))
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
                  .setPadding(dp(8)));
  
              boolean addGap = false;
-@@ -33854,7 +33870,17 @@ public class ChatActivity extends BaseFragment implements
+@@ -33856,7 +33872,17 @@ public class ChatActivity extends BaseFragment implements
              if (reactionsLayout != null) {
                  reactionsLayout.setParentLayout(scrimPopupContainerLayout);
              }
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
                  @Override
                  public void dismiss() {
                      super.dismiss();
-@@ -33956,10 +33982,20 @@ public class ChatActivity extends BaseFragment implements
+@@ -33958,10 +33984,20 @@ public class ChatActivity extends BaseFragment implements
                  if (scrimPopupWindow == null || fragmentView == null || scrimPopupWindow.isShowing() || !AndroidUtilities.isActivityRunning(getParentActivity())) {
                      return;
                  }
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
                  }
                  AndroidUtilities.runOnUIThread(() -> {
                      if (scrimPopupWindowItems != null && scrimPopupWindowItems.length > 0 && scrimPopupWindowItems[0] != null) {
-@@ -33977,7 +34013,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33979,7 +34015,7 @@ public class ChatActivity extends BaseFragment implements
              }
              chatListView.stopScroll();
              chatLayoutManager.setCanScrollVertically(false);

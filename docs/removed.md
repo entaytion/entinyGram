@@ -13,6 +13,7 @@ what entinygram used to have and no longer ships, and why. one row per feature, 
 | download queue | large files downloaded one at a time in request order, with a downloads list in the chats menu and cancel | the author does not use it and some of its parts caused download problems. the file reference and download patches it touched were rolled back to the upstream versions |
 | keep downloads in background | downloads kept running when you scrolled away or left the chat, with an optional wake lock while downloading | the author does not use it and some of its parts caused problems with downloads. the wake lock option only worked under it and went with it |
 | custom edited and deleted marks | your own text for the "edited" and "deleted" labels on messages | too narrow for the core app. it lives in the [custom marks](https://github.com/entinyGram/plugins/tree/main/plugins/features/custom-marks) plugin instead |
+| drawer material 3 sections | grouped side drawer rows into rounded cards | inugram shipped its own material 3 drawer redesign, kept as the base after the merge so the two styles do not stack |
 | raise fab buttons | a toggle that lifted the chat-list buttons a few dp | it had no effect: the code that read it was never called |
 
 ## how to add a row

@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sat, 14 Nov 2026 14:59:55 +0200
+Date: Tue, 17 Nov 2026 22:30:33 +0200
 Subject: Optional return to the reading position after jumping to a pinned message.
 
 ---
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
      private boolean hideForwardEndReached;
      private boolean loading = true;
      private boolean firstLoading = true;
-@@ -12370,7 +12370,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12371,7 +12371,7 @@ public class ChatActivity extends BaseFragment implements
                  if (!forceScrollToFirst) {
                      forceNextPinnedMessageId = -forceNextPinnedMessageId;
                  }
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
                  updateMessagesVisiblePart(false);
              }
          });
-@@ -12620,7 +12620,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12621,7 +12621,7 @@ public class ChatActivity extends BaseFragment implements
          fragment.chatActivityDelegate = new ChatActivityDelegate() {
              @Override
              public void openReplyMessage(int mid) {
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -39599,7 +39599,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39605,7 +39605,7 @@ public class ChatActivity extends BaseFragment implements
          private int botForumStartThreadRow = -5;
  
          public int messagesStartRow;
@@ -55,4 +55,4 @@ index 0000000..0000000 100644
 +        public int messagesEndRow;
  
          public ArrayList<MessageObject> getMessages() {
-             return inu_filtering ? inu_visibleMessages : inu_getSourceMessages();
+             if (isFrozen) {

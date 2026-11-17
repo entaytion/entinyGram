@@ -703,8 +703,6 @@
     <string name="InuDrawerBots">小程序</string>
     <string name="InuDrawerKeepOptionsMenu">保留三点菜单</string>
     <string name="InuDrawerKeepOptionsMenuInfo">启用侧边菜单时仍显示聊天列表的菜单按钮</string>
-    <string name="InuDrawerM3Sections">导航抽屉中的模块化分区</string>
-    <string name="InuDrawerM3SectionsInfo">将抽屉菜单行分组为圆角 Material 3 卡片。</string>
     <string name="InuDrawerMenuAddDivider">添加分隔线</string>
     <string name="InuDrawerMenuItems">项目</string>
     <string name="InuDrawerMenuOrder">自定义项目</string>
@@ -2310,4 +2308,8 @@
     <string name="InuWidgetPlaceholderTitle">交互式小组件</string>
     <string name="InuWoof">汪！</string>
     <string name="InuYes">是</string>
+    <string name="InuQrNotFoundInImage">此图片中未找到二维码</string>
+    <string name="InuCrossAccountForwardDone">已通过 %1$s 转发</string>
+    <string name="InuCrossAccountForwardFailed">无法通过 %1$s 转发：%2$s</string>
+    <string name="InuCrossAccountForwardNotDelivered">消息未送达另一个账号</string>
 </resources>

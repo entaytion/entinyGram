@@ -29,16 +29,6 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
 
     private val parentRecyclerView: RecyclerListView = view
 
-    init {
-        view.setChildDrawingOrderCallback { childCount, i ->
-            when {
-                i == childCount - 1 -> 0
-                i >= 0 -> i + 1
-                else -> i
-            }
-        }
-    }
-
     private class MoveInfo(
         val holder: RecyclerView.ViewHolder,
         val fromX: Int, val fromY: Int,
@@ -62,9 +52,7 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
         val additionsPending = mPendingAdditions.isNotEmpty()
         if (!removalsPending && !movesPending && !additionsPending && !changesPending) return
 
-        var animatingHeight = 0
-        for (holder in mPendingRemovals) animatingHeight += holder.itemView.measuredHeight
-        for (holder in mPendingRemovals) animateRemoveImpl(holder, animatingHeight)
+        for (holder in mPendingRemovals) animateRemoveImpl(holder)
         mPendingRemovals.clear()
 
         if (movesPending) {
@@ -89,11 +77,7 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
             val additions = ArrayList(mPendingAdditions)
             mAdditionsList.add(additions)
             mPendingAdditions.clear()
-            animatingHeight = 0
-            for (holder in additions) animatingHeight += holder.itemView.measuredHeight
-            for ((i, holder) in additions.withIndex()) {
-                animateAddImpl(holder, i, additions.size, animatingHeight)
-            }
+            for (holder in additions) animateAddImpl(holder)
             additions.clear()
             mAdditionsList.remove(additions)
         }
@@ -107,16 +91,17 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
         return true
     }
 
-    private fun animateRemoveImpl(holder: RecyclerView.ViewHolder, totalHeight: Int) {
+    private fun animateRemoveImpl(holder: RecyclerView.ViewHolder) {
         val view = holder.itemView
         val animation = view.animate()
         mRemoveAnimations.add(holder)
-        animation.setDuration(220).translationY(-totalHeight.toFloat())
-            .setInterpolator(CubicBezierInterpolator.EASE_OUT)
+        animation.setDuration(DURATION).alpha(0f)
+            .setInterpolator(INTERPOLATOR)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animator: Animator) = dispatchRemoveStarting(holder)
                 override fun onAnimationEnd(animator: Animator) {
                     animation.setListener(null)
+                    view.alpha = 1f
                     dispatchRemoveFinished(holder)
                     mRemoveAnimations.remove(holder)
                     dispatchFinishedWhenDone()
@@ -131,16 +116,14 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
         return true
     }
 
-    private fun animateAddImpl(holder: RecyclerView.ViewHolder, num: Int, addCount: Int, totalHeight: Int) {
+    private fun animateAddImpl(holder: RecyclerView.ViewHolder) {
         val view = holder.itemView
         val animation = view.animate()
         mAddAnimations.add(holder)
-        view.alpha = 1f
-        view.translationY = -totalHeight.toFloat()
-        animation.translationY(0f).setDuration(220).setInterpolator(CubicBezierInterpolator.EASE_OUT)
+        animation.alpha(1f).setDuration(DURATION).setInterpolator(INTERPOLATOR)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animator: Animator) = dispatchAddStarting(holder)
-                override fun onAnimationCancel(animator: Animator) { view.translationY = 0f }
+                override fun onAnimationCancel(animator: Animator) { view.alpha = 1f }
                 override fun onAnimationEnd(animator: Animator) {
                     animation.setListener(null)
                     dispatchAddFinished(holder)
@@ -178,7 +161,7 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
         if (deltaY != 0) view.animate().translationY(0f)
         val animation = view.animate()
         mMoveAnimations.add(holder)
-        animation.setDuration(220).setInterpolator(CubicBezierInterpolator.EASE_OUT)
+        animation.setDuration(DURATION).setInterpolator(INTERPOLATOR)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animator: Animator) = dispatchMoveStarting(holder)
                 override fun onAnimationCancel(animator: Animator) {
@@ -310,11 +293,11 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
         }
         endChangeAnimation(mPendingChanges, item)
         if (mPendingRemovals.remove(item)) {
-            view.translationY = 0f
+            view.alpha = 1f
             dispatchRemoveFinished(item)
         }
         if (mPendingAdditions.remove(item)) {
-            view.translationY = 0f
+            view.alpha = 1f
             dispatchAddFinished(item)
         }
         for (i in mChangesList.indices.reversed()) {
@@ -339,7 +322,7 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
         for (i in mAdditionsList.indices.reversed()) {
             val additions = mAdditionsList[i]
             if (additions.remove(item)) {
-                view.translationY = 0f
+                view.alpha = 1f
                 dispatchAddFinished(item)
                 if (additions.isEmpty()) mAdditionsList.removeAt(i)
             }
@@ -384,13 +367,14 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
         count = mPendingRemovals.size
         for (i in count - 1 downTo 0) {
             val item = mPendingRemovals[i]
+            item.itemView.alpha = 1f
             dispatchRemoveFinished(item)
             mPendingRemovals.removeAt(i)
         }
         count = mPendingAdditions.size
         for (i in count - 1 downTo 0) {
             val item = mPendingAdditions[i]
-            item.itemView.translationY = 0f
+            item.itemView.alpha = 1f
             dispatchAddFinished(item)
             mPendingAdditions.removeAt(i)
         }
@@ -419,7 +403,7 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
             count = additions.size
             for (j in count - 1 downTo 0) {
                 val item = additions[j]
-                item.itemView.translationY = 0f
+                item.itemView.alpha = 1f
                 dispatchAddFinished(item)
                 additions.removeAt(j)
                 if (additions.isEmpty()) mAdditionsList.remove(additions)
@@ -453,6 +437,10 @@ class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
         payloads.isNotEmpty() || super.canReuseUpdatedViewHolder(viewHolder, payloads)
 
     companion object {
+        const val DURATION = 250L
+        // easeOutCubic
+        @JvmField
+        val INTERPOLATOR: TimeInterpolator = CubicBezierInterpolator(0.33, 1.0, 0.68, 1.0)
         private var sDefaultInterpolator: TimeInterpolator? = null
     }
 }

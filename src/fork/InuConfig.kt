@@ -285,7 +285,7 @@ object InuConfig {
     @JvmField
     val MONET_STYLE = IntItem("monet_style", 0)
 
-    class PredictiveBackModeItem : IntItem("predictive_back_mode", OFF) {
+    class PredictiveBackModeItem : IntItem("predictive_back_mode", MATERIAL3) {
         // entiny: predictive back mode migrated from boolean to 3-way; old disable flag maps to OFF
         override fun read(prefs: SharedPreferences): Int {
             if (prefs.contains(key)) return prefs.getInt(key, default)
@@ -513,9 +513,6 @@ object InuConfig {
 
     @JvmField
     val DRAWER_KEEP_OPTIONS_MENU = BoolItem("drawer_keep_options_menu", false)
-
-    @JvmField
-    val DRAWER_M3_SECTIONS = BoolItem("drawer_m3_sections", true)
 
     @JvmField
     val SHOW_DRAWER_ACCOUNTS = BoolItem("show_drawer_accounts", true)

@@ -704,8 +704,6 @@
     <string name="InuDrawerBots">Mini uygulamalar</string>
     <string name="InuDrawerKeepOptionsMenu">Üç nokta menüsünü koru</string>
     <string name="InuDrawerKeepOptionsMenuInfo">Yan menüyle birlikte sohbet listesi menü düğmesini göster</string>
-    <string name="InuDrawerM3Sections">Yan menüde modüler bölümler</string>
-    <string name="InuDrawerM3SectionsInfo">Yan menü öğelerini yuvarlatılmış Material 3 kartları olarak gruplar.</string>
     <string name="InuDrawerMenuAddDivider">Ayırıcı ekle</string>
     <string name="InuDrawerMenuItems">Ögeler</string>
     <string name="InuDrawerMenuOrder">Ögeleri özelleştir</string>
@@ -2313,4 +2311,8 @@
     <string name="InuWidgetPlaceholderTitle">Etkileşimli widget</string>
     <string name="InuWoof">Hav!</string>
     <string name="InuYes">Evet</string>
+    <string name="InuQrNotFoundInImage">Bu görselde QR kodu bulunamadı</string>
+    <string name="InuCrossAccountForwardDone">%1$s üzerinden iletildi</string>
+    <string name="InuCrossAccountForwardFailed">%1$s üzerinden iletilemedi: %2$s</string>
+    <string name="InuCrossAccountForwardNotDelivered">mesajlar diğer hesaba ulaşmadı</string>
 </resources>

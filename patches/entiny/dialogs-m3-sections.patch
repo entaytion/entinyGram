@@ -33,7 +33,7 @@ index 0000000..0000000 100644
                          view.draw(canvas);
                          canvas.restore();
                      }
-@@ -4156,6 +4156,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4163,6 +4163,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPage.listView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
              viewPage.listView.setClipToPadding(false);
              viewPage.listView.setPivotY(0);

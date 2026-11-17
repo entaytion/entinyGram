@@ -711,8 +711,6 @@
     <string name="InuDrawerBots">Mini apps</string>
     <string name="InuDrawerKeepOptionsMenu">Keep three-dot menu</string>
     <string name="InuDrawerKeepOptionsMenuInfo">Show the chats list menu button next to the side menu</string>
-    <string name="InuDrawerM3Sections">Modular sections in navigation drawer</string>
-    <string name="InuDrawerM3SectionsInfo">Groups the navigation drawer menu rows into rounded Material 3 cards.</string>
     <string name="InuDrawerMenuAddDivider">Add divider</string>
     <string name="InuDrawerMenuItems">Items</string>
     <string name="InuDrawerMenuOrder">Menu items</string>
@@ -2333,4 +2331,8 @@
     <string name="InuWidgetPlaceholderTitle">Interactive widget</string>
     <string name="InuWoof">Woof!</string>
     <string name="InuYes">Yes</string>
+    <string name="InuQrNotFoundInImage">No QR code found in this image</string>
+    <string name="InuCrossAccountForwardDone">Forwarded via %1$s</string>
+    <string name="InuCrossAccountForwardFailed">Couldn\'t forward via %1$s: %2$s</string>
+    <string name="InuCrossAccountForwardNotDelivered">messages didn\'t reach the other account</string>
 </resources>

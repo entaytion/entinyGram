@@ -106,7 +106,7 @@ index 0000000..0000000 100644
                  if (filter.pendingUnreadCount < 0) {
                      continue;
                  }
-@@ -18332,8 +18344,9 @@ public class MessagesStorage extends BaseController {
+@@ -18337,8 +18349,9 @@ public class MessagesStorage extends BaseController {
  
      public void resetAllUnreadCounters(boolean muted) {
          if (muted && FolderHelper.isMuteFilteringActive()) muted = false;

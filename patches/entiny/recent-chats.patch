@@ -67,7 +67,7 @@ index 0000000..0000000 100644
              if (t != topPadding || b != getPaddingBottom()) {
                  setTopGlowOffset(t);
                  setPadding(0, t, 0, b);
-@@ -5699,6 +5703,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5706,6 +5710,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          glassEngine.setPositionsMerger(new GlassPositionsMerger(Float.POSITIVE_INFINITY, dp(48)));
  
          ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);

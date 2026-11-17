@@ -10,6 +10,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,8 +31,11 @@ import desu.inugram.helpers.update.UpdateHelper
 import desu.inugram.ui.drawer.DrawerAddCell
 import desu.inugram.ui.drawer.DrawerLayoutAdapter
 import desu.inugram.ui.drawer.DrawerProfileCell
-import desu.inugram.ui.drawer.DrawerSwipeController
+import desu.inugram.ui.drawer.DrawerThemeButton
+import org.telegram.ui.Components.chat.layouts.ChatActivityFadeView
 import desu.inugram.ui.drawer.DrawerUserCell
+import desu.inugram.ui.drawer.DrawerProxyCell
+import desu.inugram.ui.drawer.DrawerSwipeController
 import desu.inugram.ui.drawer.SideMenultItemAnimator
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.ParanoiaActivity
@@ -89,6 +93,8 @@ object DrawerHelper {
     private var adapter: DrawerLayoutAdapter? = null
     private var sideMenu: RecyclerListView? = null
     private var sideMenuContainer: FrameLayout? = null
+    private var themeButton: DrawerThemeButton? = null
+    private var bottomFadeView: ChatActivityFadeView? = null
     private var themeObserver: NotificationCenter.NotificationCenterDelegate? = null
     private var proxyObserver: NotificationCenter.NotificationCenterDelegate? = null
     private var updateLayout: IUpdateLayout? = null
@@ -123,6 +129,8 @@ object DrawerHelper {
         adapter = null
         sideMenu = null
         sideMenuContainer = null
+        themeButton = null
+        bottomFadeView = null
         updateLayout = null
         menuDrawableRef = null
     }
@@ -157,6 +165,10 @@ object DrawerHelper {
                 return super.findChildViewUnder(x, y)
             }
         }
+        sm.setItemSelectorColorProvider { position ->
+            val type = sm.adapter?.getItemViewType(position)
+            if (type == DrawerLayoutAdapter.TYPE_ACCOUNT || type == DrawerLayoutAdapter.TYPE_ADD_ACCOUNT) 0 else null
+        }
         sm.layoutManager = LinearLayoutManager(context)
         val itemAnimator = SideMenultItemAnimator(sm)
         val newAdapter = DrawerLayoutAdapter(
@@ -172,6 +184,8 @@ object DrawerHelper {
         sm.adapter = newAdapter
         sm.setVerticalScrollBarEnabled(false)
         sm.clipToPadding = false
+        sm.setPadding(dp(12f), 0, dp(12f), 0)
+        sm.setSelectorRadius(dp(24f))
         applySideMenuColors(sm)
 
         sm.setOnItemClickListener { view, position ->
@@ -199,6 +213,18 @@ object DrawerHelper {
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
         )
+        val fade = ChatActivityFadeView(context)
+        fade.setupColorKey(Theme.key_chats_menuBackground)
+        fade.setFadeHeightBottom(dp(24f))
+        bottomFadeView = fade
+        container.addView(fade, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.BOTTOM))
+        val button = DrawerThemeButton(context, drawerLayoutContainer)
+        themeButton = button
+        container.addView(
+            button,
+            FrameLayout.LayoutParams(dp(DrawerThemeButton.SIZE_DP.toFloat()), dp(DrawerThemeButton.SIZE_DP.toFloat()), Gravity.LEFT or Gravity.BOTTOM),
+        )
+        applySideMenuBottomPadding(sm)
 
         val width = minOf(
             dp(320f),
@@ -354,17 +380,32 @@ object DrawerHelper {
     }
 
     private fun applySideMenuBottomPadding(sm: RecyclerListView) {
-        val extra = if (SharedConfig.isAppUpdateAvailable()) {
-            dp(44f) + AndroidUtilities.navigationBarHeight
-        } else 0
-        sm.setPadding(sm.paddingLeft, sm.paddingTop, sm.paddingRight, extra)
+        val bottomInset = AndroidUtilities.navigationBarHeight + if (SharedConfig.isAppUpdateAvailable()) dp(44f) else 0
+        val buttonMargin = dp(THEME_BUTTON_MARGIN_DP)
+        themeButton?.let { button ->
+            val lp = button.layoutParams as FrameLayout.LayoutParams
+            lp.leftMargin = buttonMargin
+            lp.bottomMargin = bottomInset + buttonMargin
+            button.layoutParams = lp
+        }
+        val reserved = bottomInset + dp(DrawerThemeButton.SIZE_DP.toFloat()) + buttonMargin * 2
+        bottomFadeView?.setFadeZoneBottom(reserved)
+        sm.setPadding(sm.paddingLeft, sm.paddingTop, sm.paddingRight, reserved)
     }
+
+    /** Tint for drawer surfaces that sit on the menu background (current account, theme button). */
+    @JvmStatic
+    fun getTonalColor(): Int = ColorUtils.blendARGB(
+        Theme.getColor(Theme.key_chats_menuBackground),
+        Theme.getColor(Theme.key_chats_menuItemText),
+        0.08f,
+    )
 
     private fun applySideMenuColors(sm: RecyclerListView) {
         val bg = Theme.getColor(Theme.key_chats_menuBackground)
         sm.setBackgroundColor(bg)
         sm.setGlowColor(bg)
-        sm.setListSelectorColor(if (DrawerM3SectionsHelper.isEnabled()) 0 else Theme.getColor(Theme.key_listSelector))
+        sm.setSelectorDrawableColor(Theme.getColor(Theme.key_listSelector))
     }
 
     private fun installThemeObserver() {
@@ -425,7 +466,9 @@ object DrawerHelper {
         sideMenu?.let { applySideMenuColors(it) }
         adapter?.notifyDataSetChanged()
         // entiny: sync sunDrawable frame on theme change because static drawable persists across rebinding
-        adapter?.profileCell?.updateSunDrawable(Theme.isCurrentThemeDark())
+        themeButton?.updateSunDrawable(Theme.isCurrentThemeDark())
+        themeButton?.updateColors()
+        bottomFadeView?.updateColors()
     }
 
     fun dismissStatusPopup() {
@@ -707,6 +750,7 @@ object DrawerHelper {
         drawerLayoutContainer.inu_drawer?.closeDrawer(false)
     }
 
+    private const val THEME_BUTTON_MARGIN_DP = 16f
     private const val ITEM_MY_PROFILE = 16
     private const val ITEM_NEW_GROUP = 2
     private const val ITEM_NEW_MESSAGE = 17

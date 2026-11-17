@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                  Bundle args = new Bundle();
                  long dialogId = getSavedDialogId();
                  if (dialogId >= 0) {
-@@ -14885,6 +14911,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -14887,6 +14913,14 @@ public class ChatActivity extends BaseFragment implements
              return;
          }
  
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
          AndroidUtilities.runOnUIThread(() -> {
              if (totalItemCount - firstVisibleItemFinal - visibleItemCountFinal <= checkLoadCount && !loading) {
                  if (!endReached[0]) {
-@@ -16990,6 +17024,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -16992,6 +17026,12 @@ public class ChatActivity extends BaseFragment implements
              fakePostponedScroll = false;
              postponedScrollMessageId = 0;
              postponedScrollIsCanceled = false;
@@ -123,7 +123,7 @@ index 0000000..0000000 100644
              waitingForLoad.clear();
  
              waitingForLoad.add(lastLoadIndex);
-@@ -17465,7 +17505,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -17467,7 +17507,7 @@ public class ChatActivity extends BaseFragment implements
                          maxUnreadDate = Math.max(maxUnreadDate, messageObject.messageOwner.date);
                      }
                  }
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
                      pollsToCheck.add(messageObject);
                  }
              }
-@@ -18245,6 +18285,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -18247,6 +18287,9 @@ public class ChatActivity extends BaseFragment implements
              query = true;
          }
  
@@ -142,7 +142,7 @@ index 0000000..0000000 100644
          if (query) {
              if (isThreadChat() && id == threadMessageId) {
                  scrollToThreadMessage = true;
-@@ -20268,7 +20311,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20270,7 +20313,7 @@ public class ChatActivity extends BaseFragment implements
              if (avatarContainer != null) {
                  avatarContainer.hideTimeItem(animated);
              }
@@ -151,7 +151,7 @@ index 0000000..0000000 100644
              if (timeItem2 != null) {
                  timeItem2.setVisibility(View.GONE);
              }
-@@ -20558,6 +20601,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -20560,6 +20603,13 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
          }
@@ -165,7 +165,7 @@ index 0000000..0000000 100644
          if (last && actionBar.isActionModeShowed() && !isReport()) {
              int selectedCount = selectedMessagesIds[0].size() + selectedMessagesIds[1].size();
              if (selectedCount == 0) {
-@@ -20926,6 +20976,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -20928,6 +20978,8 @@ public class ChatActivity extends BaseFragment implements
              avatarContainer.setTitle(LocaleController.getString(R.string.RepliesTitle));
          } else if (UserObject.isAnonymous(currentUser)) {
              avatarContainer.setTitle(LocaleController.getString(R.string.AnonymousForward));
@@ -174,7 +174,7 @@ index 0000000..0000000 100644
          } else if (chatMode == MODE_SCHEDULED) {
              if (UserObject.isUserSelf(currentUser)) {
                  avatarContainer.setTitle(LocaleController.getString(R.string.Reminders));
-@@ -22245,6 +22297,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -22247,6 +22299,11 @@ public class ChatActivity extends BaseFragment implements
                      startLoadFromMessageId = startLoadFrom;
                      needSelectFromMessageId = needSelect;
                  }
@@ -186,7 +186,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -23491,6 +23548,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -23493,6 +23550,9 @@ public class ChatActivity extends BaseFragment implements
                  headerItem.setSubItemShown(open_direct, ChatObject.isChannel(currentChat) && !ChatObject.isMonoForum(currentChat) && currentChat.linked_monoforum_id != 0 && (ChatObject.canManageMonoForum(currentAccount, -currentChat.linked_monoforum_id) || ChatHelper.shouldForceHideBottomBar(this)));
              }
          } else if (id == NotificationCenter.didReceiveNewMessages) {
@@ -196,7 +196,7 @@ index 0000000..0000000 100644
              FileLog.d("ChatActivity didReceiveNewMessages start");
              long did = (Long) args[0];
              ArrayList<MessageObject> arr = (ArrayList<MessageObject>) args[1];
-@@ -29519,6 +29579,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -29521,6 +29581,10 @@ public class ChatActivity extends BaseFragment implements
              if (chatActivityEnterView != null) {
                  chatActivityEnterView.hidePopup(false);
              }
@@ -207,7 +207,7 @@ index 0000000..0000000 100644
          } else if (chatMode == MODE_SAVED && getSavedDialogId() != getUserConfig().getClientUserId()) {
              if (getSavedDialogId() == UserObject.ANONYMOUS) {
                  forceNoBottom = true;
-@@ -29803,6 +29867,23 @@ public class ChatActivity extends BaseFragment implements
+@@ -29805,6 +29869,23 @@ public class ChatActivity extends BaseFragment implements
              } else if (isInsideContainer || forceNoBottom) {
                  bottomChannelButtonsLayout.setVisibility(View.GONE);
                  chatActivityEnterView.setVisibility(View.GONE);
@@ -231,7 +231,7 @@ index 0000000..0000000 100644
              } else if (isReport()) {
                  bottomChannelButtonsLayout.setVisibility(View.VISIBLE);
                  chatActivityEnterView.setVisibility(View.INVISIBLE);
-@@ -34757,6 +34838,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -34759,6 +34840,9 @@ public class ChatActivity extends BaseFragment implements
              AccountFrozenAlert.show(currentAccount);
              return;
          }
@@ -241,7 +241,7 @@ index 0000000..0000000 100644
          if (visibleReaction != null && visibleReaction.isStar) {
              closeMenu();
              if (cell == null) {
-@@ -38052,6 +38136,15 @@ public class ChatActivity extends BaseFragment implements
+@@ -38058,6 +38142,15 @@ public class ChatActivity extends BaseFragment implements
          return UserObject.isBotForum(currentUser);
      }
  
@@ -257,7 +257,7 @@ index 0000000..0000000 100644
      public MessageObject getThreadMessage() {
          return threadMessageObject;
      }
-@@ -40195,6 +40288,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40220,6 +40313,7 @@ public class ChatActivity extends BaseFragment implements
                      messageCell.setSponsoredMessageVisible(true, false);
                      messageCell.isBotForum = UserObject.isBotForum(currentUser);
                      messageCell.isReportChat = isReport();

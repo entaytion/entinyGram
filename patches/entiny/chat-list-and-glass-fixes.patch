@@ -46,7 +46,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-@@ -2940,6 +2940,38 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -2945,6 +2945,38 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
          return true;
      }
  
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
              int fromIndex = source.getAdapterPosition();
              int toIndex = target.getAdapterPosition();
              if (parentPage.listView.getItemAnimator() == null) {
-@@ -4533,6 +4536,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4540,6 +4543,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                              dialogCell.avatarImage.getImageX(), dialogCell.avatarImage.getImageY(),
                              dialogCell.avatarImage.getImageX2(), dialogCell.avatarImage.getImageY2()
                      );
@@ -150,7 +150,7 @@ index 0000000..0000000 100644
                  }
                  onItemClick(view, position, viewPage.dialogsAdapter, x, y);
              });
-@@ -7262,6 +7276,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7269,6 +7283,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      @Override
      public void onResume() {
          super.onResume();
@@ -158,7 +158,7 @@ index 0000000..0000000 100644
          if (desu.inugram.helpers.security.ArchiveLockHelper.shouldGate(this, folderId)) {
              if (fragmentView != null) {
                  fragmentView.setAlpha(0f);
-@@ -14321,10 +14336,27 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14328,10 +14343,27 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          final float factor1 = 1f - animatorSearchVisible.getFloatValue();
          final float factor2 = 1f - getRightSlidingProgress();
          final float factor3 = 1f - animatorDoneButtonVisible.getFloatValue();

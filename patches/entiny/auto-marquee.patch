@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -98,6 +98,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -100,6 +100,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
      private BlurredBackgroundDrawable glassDrawable;
      private BlurredBackgroundDrawable glassDrawableBack;
      private BlurredBackgroundDrawable glassDrawableMenu;
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
      public boolean inu_nonIsland;
      private INavigationLayout.BackButtonState backButtonState = INavigationLayout.BackButtonState.BACK;
      public ImageView backButtonImageView;
-@@ -206,6 +207,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -208,6 +209,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      private ChatAvatarContainer chatAvatarContainer;
      public boolean doNotDrawCenterGlass;
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
  
      public void setGlassOnlyBack() {
          glassOnlyBack = true;
-@@ -215,6 +220,51 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -217,6 +222,51 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          this.chatAvatarContainer = chatAvatarContainer;
      }
  
@@ -89,7 +89,7 @@ index 0000000..0000000 100644
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
          setupGlass(factory, colorProvider, false);
      }
-@@ -605,8 +655,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -607,8 +657,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (subtitleTextView != null) {
              return;
          }
@@ -102,7 +102,7 @@ index 0000000..0000000 100644
          subtitleTextView.setVisibility(GONE);
          ThemeBind.textColor(subtitleTextView, Theme.key_actionBarDefaultSubtitle, resourcesProvider);
          addView(subtitleTextView, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP));
-@@ -658,7 +711,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -660,7 +713,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (titleTextView[i] != null) {
              return;
          }
@@ -117,7 +117,7 @@ index 0000000..0000000 100644
          titleTextView[i].setGravity(isCenterTitle || centerTitleAndGlass ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
          if (titleColorToSet != 0) {
              titleTextView[i].setTextColor(titleColorToSet);
-@@ -711,6 +771,46 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -713,6 +773,46 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          invalidate();
      }
  
@@ -164,7 +164,7 @@ index 0000000..0000000 100644
      public void setTitleRightMargin(int value) {
          titleRightMargin = value;
      }
-@@ -1574,6 +1674,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1576,6 +1676,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          int actionBarHeight = getCurrentActionBarHeight();
          int actionBarHeightSpec = MeasureSpec.makeMeasureSpec(actionBarHeight, MeasureSpec.EXACTLY);
  
@@ -178,7 +178,7 @@ index 0000000..0000000 100644
          ignoreLayoutRequest = true;
          if (actionModeTop != null) {
              FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) actionModeTop.getLayoutParams();
-@@ -1586,6 +1693,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1588,6 +1695,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          setMeasuredDimension(width, actionBarHeight + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0) + extraHeight);
  
@@ -190,7 +190,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.measure(MeasureSpec.makeMeasureSpec(dp(54), MeasureSpec.EXACTLY), actionBarHeightSpec);
-@@ -1593,6 +1705,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1595,6 +1707,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
          // textLeft += additionalTextLeft;
  
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1658,6 +1773,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1660,6 +1775,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  }
  
                  if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
@@ -210,7 +210,7 @@ index 0000000..0000000 100644
                      titleTextView[i].measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24) + titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom(), MeasureSpec.AT_MOST));
                      if (centerScale) {
                          CharSequence text = titleTextView[i].getText();
-@@ -1705,12 +1823,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1707,12 +1825,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -227,7 +227,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
-@@ -1718,11 +1840,30 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1720,11 +1842,30 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -258,7 +258,7 @@ index 0000000..0000000 100644
          }
  
          for (int i = 0; i < 2; i++) {
-@@ -1737,6 +1878,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1739,6 +1880,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                          textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
                      }
                  }
@@ -273,7 +273,7 @@ index 0000000..0000000 100644
                  int titleLeft = centerTitleAndGlass ? (getMeasuredWidth() - titleTextView[i].getMeasuredWidth()) / 2 : textLeft;
                  titleTextView[i].layout(titleLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), titleLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
              }
-@@ -1747,13 +1896,27 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1749,13 +1898,27 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
@@ -302,7 +302,7 @@ index 0000000..0000000 100644
          }
  
          if (avatarSearchImageView != null) {
-@@ -1811,6 +1974,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1813,6 +1976,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              child.layout(childLeft, childTop, childLeft + width, childTop + height);
          }
@@ -311,7 +311,7 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2451,8 +2616,163 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2453,8 +2618,163 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          super.draw(canvas);
      }
  
@@ -475,7 +475,7 @@ index 0000000..0000000 100644
          if (drawSectionsBackground) {
              final int color = Theme.multAlpha(getThemedColor(Theme.key_windowBackgroundGray), customHeaderAlpha / 255f);
  
-@@ -2509,33 +2829,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2511,33 +2831,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                      glassDrawable.draw(canvas);
                  }
              } else {
@@ -825,7 +825,7 @@ index 0000000..0000000 100644
          chatInputViewsContainer = new ChatInputViewsContainer(context);
          chatInputViewsContainer.setClipChildren(false);
          chatInputViewsContainer.setWindowInsetsProvider(windowInsetsStateHolder);
-@@ -31367,10 +31417,45 @@ public class ChatActivity extends BaseFragment implements
+@@ -31369,10 +31419,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  
@@ -1468,7 +1468,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3227,6 +3227,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3234,6 +3234,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  

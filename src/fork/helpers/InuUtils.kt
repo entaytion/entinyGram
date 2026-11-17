@@ -13,6 +13,7 @@ import android.text.style.ClickableSpan
 import android.text.style.URLSpan
 import android.view.View
 import androidx.core.content.FileProvider
+import org.lsposed.hiddenapibypass.HiddenApiBypass
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
@@ -24,6 +25,7 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.DialogsActivity
 import desu.inugram.ui.feed.FeedActivity
 import java.io.File
+import java.lang.reflect.Field
 import kotlin.system.exitProcess
 
 public object InuUtils {
@@ -42,6 +44,30 @@ public object InuUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             view.setAutofillHints(hint)
             view.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+        }
+    }
+
+    // Android 17 ViewRootImpl decrements this on every insets animation end, including animations
+    // cancelled before their start was dispatched; once it goes negative, onProgress is never
+    // dispatched to the window again
+    private val windowInsetsAnimationCountField: Field? by lazy {
+        if (Build.VERSION.SDK_INT < 37) return@lazy null
+        try {
+            HiddenApiBypass.addHiddenApiExemptions("Landroid/view/ViewRootImpl;")
+            Class.forName("android.view.ViewRootImpl").getDeclaredField("mWindowInsetsAnimationCount").apply { isAccessible = true }
+        } catch (e: Throwable) {
+            FileLog.e(e)
+            null
+        }
+    }
+
+    @JvmStatic
+    fun restoreWindowInsetsAnimationCount(view: View, startedAnimations: Int) {
+        val field = windowInsetsAnimationCountField ?: return
+        val viewRoot = view.rootView.parent
+        if (!field.declaringClass.isInstance(viewRoot)) return
+        if (field.getInt(viewRoot) < startedAnimations) {
+            field.setInt(viewRoot, startedAnimations)
         }
     }
 

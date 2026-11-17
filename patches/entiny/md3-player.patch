@@ -30,7 +30,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -38233,7 +38233,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38239,7 +38239,7 @@ public class ChatActivity extends BaseFragment implements
                      cell.resetPressedLink(-1);
                  }
                  if (!messageObject.isVoice()) {
@@ -112,7 +112,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9074,8 +9074,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9081,8 +9081,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
@@ -123,7 +123,7 @@ index 0000000..0000000 100644
          final float baseTranslationY = top
              - floatingButtonPanOffset;
  
-@@ -14246,7 +14246,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14253,7 +14253,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else if (communityId != 0) {
              return navigationBarHeight + dp(12 + 48 + 12);
          } else {
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -14304,7 +14304,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14311,7 +14311,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  

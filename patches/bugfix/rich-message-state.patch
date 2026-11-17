@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
-Date: Sun, 11 Oct 2026 23:46:34 +0200
+Date: Tue, 17 Nov 2026 22:19:55 +0200
 Subject: preserve rich message state on message object replace
 
 ---
@@ -153,7 +153,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -28051,6 +28051,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28053,6 +28053,9 @@ public class ChatActivity extends BaseFragment implements
                      messageObject.reactionsChanged |= old.isBotPendingDraft && !messageObject.isBotPendingDraft;
                      desu.inugram.helpers.chat.ReactionDebugHelper.onMessageObjectReplaced(old, messageObject);
                      messageObject.copyStableParams(old);

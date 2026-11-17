@@ -3,12 +3,12 @@ package desu.inugram.ui.drawer
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import android.widget.TextView
-import desu.inugram.helpers.dialogs.DrawerM3SectionsHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -32,10 +32,12 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
     init {
         imageView = BackupImageView(context)
         imageView.setImageResource(R.drawable.inu_ghost)
-        imageView.setColorFilter(PorterDuffColorFilter(DrawerM3SectionsHelper.menuIconColor(), PorterDuff.Mode.SRC_IN))
+        imageView.setColorFilter(PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuItemIcon), PorterDuff.Mode.SRC_IN))
 
         textView = TextView(context)
-        DrawerM3SectionsHelper.styleMenuLabel(textView, 15f, AndroidUtilities.bold())
+        textView.setTextColor(Theme.getColor(Theme.key_chats_menuItemText))
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+        textView.typeface = AndroidUtilities.bold()
         textView.gravity = Gravity.CENTER_VERTICAL or (if (isRTL) Gravity.RIGHT else Gravity.LEFT)
 
         checkBox = Switch(context)
@@ -45,9 +47,9 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
 
         val startGravity = if (isRTL) Gravity.RIGHT else Gravity.LEFT
         val endGravity = if (isRTL) Gravity.LEFT else Gravity.RIGHT
-        addView(imageView, LayoutHelper.createFrame(24, 24f, startGravity or Gravity.CENTER_VERTICAL, if (isRTL) 0f else 16f, 0f, if (isRTL) 16f else 0f, 0f))
-        addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat(), startGravity or Gravity.TOP, if (isRTL) 16f else 56f, 0f, if (isRTL) 56f else 16f, 0f))
-        addView(checkBox, LayoutHelper.createFrame(37, 24f, endGravity or Gravity.CENTER_VERTICAL, if (isRTL) 22f else 0f, 0f, if (isRTL) 0f else 22f, 0f))
+        addView(imageView, LayoutHelper.createFrame(24, 24f, startGravity or Gravity.TOP, if (isRTL) 0f else 16f, 12f, if (isRTL) 16f else 0f, 0f))
+        addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat(), startGravity or Gravity.TOP, if (isRTL) 70f else 60f, 0f, if (isRTL) 60f else 70f, 0f))
+        addView(checkBox, LayoutHelper.createFrame(37, 24f, endGravity or Gravity.CENTER_VERTICAL, if (isRTL) 20f else 0f, 0f, if (isRTL) 0f else 20f, 0f))
 
         setClipChildren(false)
     }
@@ -55,7 +57,7 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(
             MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(DrawerM3SectionsHelper.menuItemHeight(), MeasureSpec.EXACTLY)
+            MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48f), MeasureSpec.EXACTLY)
         )
     }
 
@@ -72,11 +74,11 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
 
     private fun updateIconColor(checked: Boolean) {
         imageView.setImageResource(if (checked) R.drawable.inu_ghost_filled else R.drawable.inu_ghost)
-        imageView.setColorFilter(PorterDuffColorFilter(DrawerM3SectionsHelper.menuIconColor(), PorterDuff.Mode.SRC_IN))
+        imageView.setColorFilter(PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuItemIcon), PorterDuff.Mode.SRC_IN))
     }
 
     private fun updateColors() {
-        DrawerM3SectionsHelper.styleMenuLabel(textView, 15f, AndroidUtilities.bold())
+        textView.setTextColor(Theme.getColor(Theme.key_chats_menuItemText))
         updateIconColor(checkBox.isChecked)
         checkBox.setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_chats_menuBackground, Theme.key_chats_menuBackground)
     }

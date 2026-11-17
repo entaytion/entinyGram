@@ -705,8 +705,6 @@
     <string name="InuDrawerBots">التطبيقات المصغّرة</string>
     <string name="InuDrawerKeepOptionsMenu">إبقاء قائمة النقاط الثلاث</string>
     <string name="InuDrawerKeepOptionsMenuInfo">إظهار زر قائمة قائمة الدردشات بجانب القائمة الجانبية</string>
-    <string name="InuDrawerM3Sections">أقسام معيارية في القائمة الجانبية</string>
-    <string name="InuDrawerM3SectionsInfo">تجمّع عناصر القائمة الجانبية في بطاقات مستديرة بنمط Material 3.</string>
     <string name="InuDrawerMenuAddDivider">إضافة فاصل</string>
     <string name="InuDrawerMenuItems">العناصر</string>
     <string name="InuDrawerMenuOrder">عناصر القائمة</string>
@@ -2323,4 +2321,8 @@
     <string name="InuWidgetPlaceholderTitle">أداة تفاعلية</string>
     <string name="InuWoof">هاو!</string>
     <string name="InuYes">نعم</string>
+    <string name="InuQrNotFoundInImage">لم يُعثر على رمز QR في هذه الصورة</string>
+    <string name="InuCrossAccountForwardDone">تمت إعادة التوجيه عبر %1$s</string>
+    <string name="InuCrossAccountForwardFailed">تعذّرت إعادة التوجيه عبر %1$s: %2$s</string>
+    <string name="InuCrossAccountForwardNotDelivered">لم تصل الرسائل إلى الحساب الآخر</string>
 </resources>

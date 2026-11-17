@@ -708,8 +708,6 @@
     <string name="InuDrawerBots">Мини-приложения</string>
     <string name="InuDrawerKeepOptionsMenu">Оставить меню с тремя точками</string>
     <string name="InuDrawerKeepOptionsMenuInfo">Показывать кнопку меню списка чатов вместе с боковым меню</string>
-    <string name="InuDrawerM3Sections">Модульные секции в боковом меню</string>
-    <string name="InuDrawerM3SectionsInfo">Группирует пункты бокового меню в карточки Material 3.</string>
     <string name="InuDrawerMenuAddDivider">Добавить разделитель</string>
     <string name="InuDrawerMenuItems">Пункты</string>
     <string name="InuDrawerMenuOrder">Настроить пункты</string>
@@ -2336,4 +2334,8 @@
     <string name="InuWidgetPlaceholderTitle">Интерактивный виджет</string>
     <string name="InuWoof">Гав!</string>
     <string name="InuYes">Да</string>
+    <string name="InuQrNotFoundInImage">На этом изображении нет QR-кода</string>
+    <string name="InuCrossAccountForwardDone">Переслано через %1$s</string>
+    <string name="InuCrossAccountForwardFailed">Не удалось переслать через %1$s: %2$s</string>
+    <string name="InuCrossAccountForwardNotDelivered">сообщения не дошли до другого аккаунта</string>
 </resources>

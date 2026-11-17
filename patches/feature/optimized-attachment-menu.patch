@@ -270,7 +270,7 @@ index 0000000..0000000 100644
          desu.inugram.helpers.media.AttachmentPreviewHelper.clearAttachmentPreviews(this);
          if (doneButtonPressed) {
              releasePlayer(true);
-@@ -20685,14 +20754,18 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -20714,14 +20783,18 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          if (!fancyShadows) {
              return;
          }
@@ -292,7 +292,7 @@ index 0000000..0000000 100644
          if (clipFancyShadows == null) {
              clipFancyShadows = new Path();
              topFancyShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-@@ -22353,6 +22426,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22382,6 +22455,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      private final LongSparseArray<RenderNode> matrixRenderNodes = new LongSparseArray<>();
  
      public boolean BLUR_RENDERNODE() {
@@ -303,7 +303,7 @@ index 0000000..0000000 100644
          return !textureViewSkipRender
              && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
              && SharedConfig.useNewBlur
-@@ -22433,7 +22510,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22462,7 +22539,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      public void drawCaptionBlur(Canvas canvas, BlurringShader.StoryBlurDrawer drawer, int bgColor, int overlayColor, boolean clip, boolean allowTransparent, boolean allowCrossfade, boolean glass) {
@@ -314,7 +314,7 @@ index 0000000..0000000 100644
              bgColor = Theme.multAlpha(bgColor, 0.75f);
          }
          if (BLUR_RENDERNODE()) {
-@@ -22454,7 +22533,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22483,7 +22562,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              }
              return;
          }
@@ -323,7 +323,7 @@ index 0000000..0000000 100644
  
          drawer.paint.setShader(null);
          if (bgColor != 0) {
-@@ -22463,7 +22542,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22492,7 +22571,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              canvas.drawPaint(drawer.paint);
          }
  
@@ -332,7 +332,7 @@ index 0000000..0000000 100644
              blurAlpha.set(0, true);
              if (overlayColor != 0) {
                  drawer.paint.setColor(overlayColor);
-@@ -23021,6 +23100,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -23050,6 +23129,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          if (stickerMakerView != null && stickerMakerView.isThanosInProgress) {
              return;
          }
@@ -342,7 +342,7 @@ index 0000000..0000000 100644
          if (!BLUR_RENDERNODE() && !SharedConfig.photoViewerBlurEnabled()) {
              return;
          }
-@@ -24329,6 +24411,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -24358,6 +24440,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              // setMeasuredDimension(widthSize, heightSize);
              ViewGroup.LayoutParams layoutParams = animatingImageView.getLayoutParams();
              animatingImageView.measure(MeasureSpec.makeMeasureSpec(layoutParams.width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(layoutParams.height, MeasureSpec.AT_MOST));

@@ -703,8 +703,6 @@
     <string name="InuDrawerBots">برنامه‌های کوچک</string>
     <string name="InuDrawerKeepOptionsMenu">حفظ منوی سه‌نقطه</string>
     <string name="InuDrawerKeepOptionsMenuInfo">نمایش دکمهٔ منوی فهرست گفتگوها در کنار منوی کناری</string>
-    <string name="InuDrawerM3Sections">بخش‌های ماژولار در منوی کناری</string>
-    <string name="InuDrawerM3SectionsInfo">ردیف‌های منوی کناری را در کارت‌های گرد Material 3 گروه‌بندی می‌کند.</string>
     <string name="InuDrawerMenuAddDivider">افزودن جداکننده</string>
     <string name="InuDrawerMenuItems">موارد</string>
     <string name="InuDrawerMenuOrder">موارد منو</string>
@@ -2312,4 +2310,8 @@
     <string name="InuWidgetPlaceholderTitle">ابزارک تعاملی</string>
     <string name="InuWoof">هاپ!</string>
     <string name="InuYes">بله</string>
+    <string name="InuQrNotFoundInImage">هیچ کد QR در این تصویر پیدا نشد</string>
+    <string name="InuCrossAccountForwardDone">از طریق %1$s هدایت شد</string>
+    <string name="InuCrossAccountForwardFailed">هدایت از طریق %1$s ممکن نشد: %2$s</string>
+    <string name="InuCrossAccountForwardNotDelivered">پیام‌ها به حساب دیگر نرسیدند</string>
 </resources>

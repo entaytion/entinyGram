@@ -1309,7 +1309,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (selectedObject != null && selectedObject.messageOwner != null && selectedObject.messageOwner.video_processing_pending) {
-@@ -47008,7 +46847,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47034,7 +46873,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }
@@ -1318,7 +1318,7 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.TranslateMessage));
                      options.add(OPTION_TRANSLATE);
                      icons.add(R.drawable.msg_translate);
-@@ -47364,7 +47203,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47390,7 +47229,7 @@ public class ChatActivity extends BaseFragment implements
                          icons.add(R.drawable.msg_cancel);
                      }
                  }

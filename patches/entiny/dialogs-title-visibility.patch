@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -2079,6 +2079,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2081,6 +2081,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  ellipsizeSpanAnimator.removeView(titleTextView[0]);
              }
          } else if (titleTextView[0] != null) {
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              titleTextView[0].animate().cancel();
              if (titleTextView[1] != null) {
                  titleTextView[1].animate().cancel();
-@@ -2098,7 +2099,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2100,7 +2101,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              overlayTitleAnimationInProgress = true;
              // the new title keeps the alpha the title had, e.g. hidden under the topics opened in the side panel

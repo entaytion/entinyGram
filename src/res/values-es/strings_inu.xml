@@ -716,8 +716,6 @@ Sistema: %6$s
     <string name="InuDrawerBots">Miniaplicaciones</string>
     <string name="InuDrawerKeepOptionsMenu">Mantener menú de tres puntos</string>
     <string name="InuDrawerKeepOptionsMenuInfo">Muestra el botón de menú de la lista de chats junto al menú lateral</string>
-    <string name="InuDrawerM3Sections">Secciones modulares en el menú lateral</string>
-    <string name="InuDrawerM3SectionsInfo">Agrupa las filas del menú lateral en tarjetas redondeadas de Material 3.</string>
     <string name="InuDrawerMenuAddDivider">Añadir separador</string>
     <string name="InuDrawerMenuItems">Elementos</string>
     <string name="InuDrawerMenuOrder">Elementos del menú</string>
@@ -2334,4 +2332,8 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuWidgetPlaceholderTitle">Widget interactivo</string>
     <string name="InuWoof">¡Guau!</string>
     <string name="InuYes">Sí</string>
+    <string name="InuQrNotFoundInImage">No se encontró ningún código QR en esta imagen</string>
+    <string name="InuCrossAccountForwardDone">Reenviado mediante %1$s</string>
+    <string name="InuCrossAccountForwardFailed">No se pudo reenviar mediante %1$s: %2$s</string>
+    <string name="InuCrossAccountForwardNotDelivered">los mensajes no llegaron a la otra cuenta</string>
 </resources>
