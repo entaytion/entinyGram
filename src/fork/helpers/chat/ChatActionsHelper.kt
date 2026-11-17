@@ -265,6 +265,12 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InuDeleteMyMessages),
             )
         }
+        if (notEncrypted && dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
+            headerItem.lazilyAddSubItem(
+                ChatMenuConfig.Item.CHAT_DELETE_MY_REACTIONS.id, R.drawable.msg_reactions2,
+                LocaleController.getString(R.string.InuDeleteMyReactions),
+            )
+        }
         if (notEncrypted) {
             headerItem.lazilyAddSubItem(
                 ChatMenuConfig.Item.CHAT_FORWARD_ALL.id, R.drawable.msg_forward,
@@ -614,6 +620,7 @@ object ChatActionsHelper {
             ChatMenuConfig.Item.CHAT_LOCAL_NAME.id -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EDIT_LOCAL_NAME, null, activity.currentAccount, activity.dialogId)
             ChatMenuConfig.Item.CHAT_MARK_READ.id -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_MARK_AS_READ, null, activity.currentAccount, activity.dialogId)
             ChatMenuConfig.Item.CHAT_DELETE_MY_MESSAGES.id -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_DELETE_MY_MESSAGES, null, activity.currentAccount, activity.dialogId)
+            ChatMenuConfig.Item.CHAT_DELETE_MY_REACTIONS.id -> SelfReactionWipeHelper.confirmAndDelete(activity, activity.currentAccount, activity.dialogId)
             ChatMenuConfig.Item.CHAT_FORWARD_ALL.id -> ForwardAllHelper.confirmAndPick(activity)
             ChatMenuConfig.Item.REGEX_CHAT_FILTERS.id -> activity.presentFragment(desu.inugram.ui.settings.RegexChatFilterSettingsActivity(activity.dialogId))
             ChatMenuConfig.Item.GHOST_MODE.id -> GhostHelper.showChatOverridesDialog(activity, activity.currentAccount, activity.dialogId) {

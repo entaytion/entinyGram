@@ -91,7 +91,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **developer badges** in chat headers and profiles
 - **mutual contact icon** left of the avatar
 - **estimated registration date & dc** in profiles
-- **cleanup** — delete profile photos (all or selected), delete your own messages in any chat
+- **cleanup** — delete profile photos (all or selected), delete your own messages in any chat, remove all your reactions in a chat or channel, its comments included
 - **identity tools** — open a chat by numeric id
 - **bot accounts stay in sync** — bot tokens keep receiving new messages after long offline gaps
 

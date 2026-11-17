@@ -557,6 +557,12 @@
     <string name="InuDeleteMyMessagesDone">%1$d mesajın silindi</string>
     <string name="InuDeleteMyMessagesStarted">Mesajların siliniyor…</string>
     <string name="InuDeleteMyMessagesTitle">Mesajlarım silinsin mi?</string>
+    <string name="InuDeleteMyReactions">Tepkilerimi sil</string>
+    <string name="InuDeleteMyReactionsTitle">Tepkilerim silinsin mi?</string>
+    <string name="InuDeleteMyReactionsConfirm">Bu sohbette bıraktığınız tüm tepkiler kaldırılacak. Kanallarda yorumlardaki tepkiler de kaldırılır. Ücretli tepkiler kalır.</string>
+    <string name="InuDeleteMyReactionsStarted">Tepkileriniz kaldırılıyor…</string>
+    <string name="InuDeleteMyReactionsDone">%1$d tepkiniz kaldırıldı</string>
+    <string name="InuDeleteMyReactionsNone">Size ait tepki bulunamadı</string>
     <string name="InuDeleteProfilePhotos">Profil fotoğraflarını sil</string>
     <string name="InuDeleteProfilePhotosInfo">Tüm profil fotoğraflarını veya yalnızca seçilenleri tek dokunuşla silin</string>
     <string name="InuDeleteSelectedProfilePhotos">Seçilenleri sil (%1$d)</string>

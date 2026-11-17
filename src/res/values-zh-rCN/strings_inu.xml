@@ -557,6 +557,12 @@
     <string name="InuDeleteMyMessagesDone">已删除 %1$d 条你的消息</string>
     <string name="InuDeleteMyMessagesStarted">正在删除你的消息…</string>
     <string name="InuDeleteMyMessagesTitle">删除我的消息？</string>
+    <string name="InuDeleteMyReactions">删除我的回应</string>
+    <string name="InuDeleteMyReactionsTitle">删除我的回应？</string>
+    <string name="InuDeleteMyReactionsConfirm">你在此聊天中的所有回应都将被移除。在频道中，评论里的回应也会被移除。付费回应会保留。</string>
+    <string name="InuDeleteMyReactionsStarted">正在移除你的回应…</string>
+    <string name="InuDeleteMyReactionsDone">已移除 %1$d 个回应</string>
+    <string name="InuDeleteMyReactionsNone">未找到你的回应</string>
     <string name="InuDeleteProfilePhotos">删除个人头像</string>
     <string name="InuDeleteProfilePhotosInfo">一键删除全部个人头像或仅删除选中的头像</string>
     <string name="InuDeleteSelectedProfilePhotos">删除选中的头像 (%1$d)</string>

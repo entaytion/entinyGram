@@ -560,6 +560,12 @@ Questa azione non può essere annullata.</string>
     <string name="InuDeleteMyMessagesDone">Eliminati %1$d dei tuoi messaggi</string>
     <string name="InuDeleteMyMessagesStarted">Eliminazione dei tuoi messaggi…</string>
     <string name="InuDeleteMyMessagesTitle">Eliminare i miei messaggi?</string>
+    <string name="InuDeleteMyReactions">Elimina le mie reazioni</string>
+    <string name="InuDeleteMyReactionsTitle">Eliminare le mie reazioni?</string>
+    <string name="InuDeleteMyReactionsConfirm">Tutte le tue reazioni in questa chat verranno rimosse. In un canale vengono rimosse anche quelle nei commenti. Le reazioni a pagamento restano.</string>
+    <string name="InuDeleteMyReactionsStarted">Rimozione delle tue reazioni…</string>
+    <string name="InuDeleteMyReactionsDone">Rimosse %1$d tue reazioni</string>
+    <string name="InuDeleteMyReactionsNone">Nessuna tua reazione trovata</string>
     <string name="InuDeleteProfilePhotos">Elimina le foto del profilo</string>
     <string name="InuDeleteProfilePhotosInfo">Elimina tutte le foto del profilo o solo quelle selezionate con un tocco</string>
     <string name="InuDeleteSelectedProfilePhotos">Elimina selezionate (%1$d)</string>

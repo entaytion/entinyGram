@@ -559,6 +559,12 @@
     <string name="InuDeleteMyMessagesDone">تم حذف %1$d من رسائلك</string>
     <string name="InuDeleteMyMessagesStarted">جارٍ حذف رسائلك…</string>
     <string name="InuDeleteMyMessagesTitle">حذف رسائلي؟</string>
+    <string name="InuDeleteMyReactions">حذف تفاعلاتي</string>
+    <string name="InuDeleteMyReactionsTitle">حذف تفاعلاتي؟</string>
+    <string name="InuDeleteMyReactionsConfirm">ستُزال كل تفاعلاتك في هذه المحادثة. في القناة تُزال تفاعلات التعليقات أيضًا. تبقى التفاعلات المدفوعة.</string>
+    <string name="InuDeleteMyReactionsStarted">جارٍ إزالة تفاعلاتك…</string>
+    <string name="InuDeleteMyReactionsDone">تمت إزالة %1$d من تفاعلاتك</string>
+    <string name="InuDeleteMyReactionsNone">لم يُعثر على تفاعلات لك</string>
     <string name="InuDeleteProfilePhotos">حذف صور الملف الشخصي</string>
     <string name="InuDeleteProfilePhotosInfo">احذف جميع صور الملف الشخصي أو المحددة فقط بنقرة واحدة</string>
     <string name="InuDeleteSelectedProfilePhotos">حذف المحدد (%1$d)</string>

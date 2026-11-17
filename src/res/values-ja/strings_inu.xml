@@ -557,6 +557,12 @@
     <string name="InuDeleteMyMessagesDone">%1$d件のメッセージを削除しました</string>
     <string name="InuDeleteMyMessagesStarted">メッセージを削除しています…</string>
     <string name="InuDeleteMyMessagesTitle">自分のメッセージを削除しますか？</string>
+    <string name="InuDeleteMyReactions">自分のリアクションを削除</string>
+    <string name="InuDeleteMyReactionsTitle">自分のリアクションを削除しますか？</string>
+    <string name="InuDeleteMyReactionsConfirm">このチャットでのあなたのリアクションがすべて取り消されます。チャンネルではコメントのリアクションも取り消されます。有料リアクションは残ります。</string>
+    <string name="InuDeleteMyReactionsStarted">リアクションを取り消しています…</string>
+    <string name="InuDeleteMyReactionsDone">%1$d 件のリアクションを取り消しました</string>
+    <string name="InuDeleteMyReactionsNone">あなたのリアクションは見つかりませんでした</string>
     <string name="InuDeleteProfilePhotos">プロフィール写真を削除</string>
     <string name="InuDeleteProfilePhotosInfo">すべてのプロフィール写真、または選択した写真をワンタップで削除します</string>
     <string name="InuDeleteSelectedProfilePhotos">選択した写真を削除 (%1$d)</string>

@@ -562,6 +562,12 @@
     <string name="InuDeleteMyMessagesDone">Видалено %1$d твоїх повідомлень</string>
     <string name="InuDeleteMyMessagesStarted">Видалення твоїх повідомлень…</string>
     <string name="InuDeleteMyMessagesTitle">Видалити мої повідомлення?</string>
+    <string name="InuDeleteMyReactions">Видалити мої реакції</string>
+    <string name="InuDeleteMyReactionsTitle">Видалити мої реакції?</string>
+    <string name="InuDeleteMyReactionsConfirm">Усі ваші реакції в цьому чаті буде прибрано. У каналі також прибираються реакції в коментарях. Платні реакції лишаються.</string>
+    <string name="InuDeleteMyReactionsStarted">Прибираємо ваші реакції…</string>
+    <string name="InuDeleteMyReactionsDone">Прибрано ваших реакцій: %1$d</string>
+    <string name="InuDeleteMyReactionsNone">Ваших реакцій не знайдено</string>
     <string name="InuDeleteProfilePhotos">Видалити фото профілю</string>
     <string name="InuDeleteProfilePhotosInfo">Видалення всіх фото профілю або лише вибраних в один дотик</string>
     <string name="InuDeleteSelectedProfilePhotos">Видалити вибрані (%1$d)</string>

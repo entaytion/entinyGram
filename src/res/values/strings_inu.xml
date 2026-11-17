@@ -564,6 +564,12 @@
     <string name="InuDeleteMyMessagesDone">Deleted %1$d of your messages</string>
     <string name="InuDeleteMyMessagesStarted">Deleting your messages…</string>
     <string name="InuDeleteMyMessagesTitle">Delete my messages?</string>
+    <string name="InuDeleteMyReactions">Delete my reactions</string>
+    <string name="InuDeleteMyReactionsTitle">Delete my reactions?</string>
+    <string name="InuDeleteMyReactionsConfirm">Every reaction you left in this chat will be removed. In a channel, reactions in its comments are removed too. Paid reactions stay.</string>
+    <string name="InuDeleteMyReactionsStarted">Removing your reactions…</string>
+    <string name="InuDeleteMyReactionsDone">Removed %1$d of your reactions</string>
+    <string name="InuDeleteMyReactionsNone">No reactions of yours found</string>
     <string name="InuDeleteProfilePhotos">Delete profile photos</string>
     <string name="InuDeleteProfilePhotosInfo">Delete all profile photos or only selected ones with one tap</string>
     <string name="InuDeleteSelectedProfilePhotos">Delete selected (%1$d)</string>

@@ -557,6 +557,12 @@
     <string name="InuDeleteMyMessagesDone">%1$d پیام شما حذف شد</string>
     <string name="InuDeleteMyMessagesStarted">در حال حذف پیام‌های شما…</string>
     <string name="InuDeleteMyMessagesTitle">پیام‌های من حذف شوند؟</string>
+    <string name="InuDeleteMyReactions">حذف واکنش‌های من</string>
+    <string name="InuDeleteMyReactionsTitle">واکنش‌های من حذف شوند؟</string>
+    <string name="InuDeleteMyReactionsConfirm">همه واکنش‌های شما در این گفتگو برداشته می‌شوند. در کانال، واکنش‌های بخش نظرات هم برداشته می‌شوند. واکنش‌های پولی می‌مانند.</string>
+    <string name="InuDeleteMyReactionsStarted">در حال برداشتن واکنش‌های شما…</string>
+    <string name="InuDeleteMyReactionsDone">%1$d واکنش شما برداشته شد</string>
+    <string name="InuDeleteMyReactionsNone">واکنشی از شما پیدا نشد</string>
     <string name="InuDeleteProfilePhotos">حذف عکس‌های نمایه</string>
     <string name="InuDeleteProfilePhotosInfo">همه عکس‌های نمایه یا فقط موارد انتخابی را با یک ضربه حذف کنید</string>
     <string name="InuDeleteSelectedProfilePhotos">حذف انتخاب‌شده‌ها (%1$d)</string>

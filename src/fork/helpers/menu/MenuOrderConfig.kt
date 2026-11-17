@@ -186,6 +186,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         CHAT_LOCAL_NAME("chat_local_name", R.string.InuLocalName, R.drawable.msg_edit),
         CHAT_MARK_READ("chat_mark_read", R.string.InuMarkChatAsRead, R.drawable.msg_markread),
         CHAT_DELETE_MY_MESSAGES("chat_delete_my_messages", R.string.InuDeleteMyMessages, R.drawable.msg_delete),
+        CHAT_DELETE_MY_REACTIONS("chat_delete_my_reactions", R.string.InuDeleteMyReactions, R.drawable.msg_reactions2),
         CHAT_FORWARD_ALL("chat_forward_all", R.string.InuForwardAll, R.drawable.msg_forward),
         ENTINY_MENU("entiny_menu", R.string.InuChatMenuEntinyGram, R.drawable.icon_settings_inu),
         ACTIONS("actions", R.string.InuActions, R.drawable.msg_settings_old);
@@ -240,7 +241,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
             Item.STATISTICS, Item.ADMINISTRATORS, Item.PERMISSIONS, Item.INVITE_LINKS,
             Item.LINKED_CHAT, Item.HIDE_TITLE, Item.CLEAR_DELETED,
             Item.CHAT_EXPORT, Item.CHAT_LOCAL_NAME, Item.CHAT_MARK_READ, Item.CHAT_DELETE_MY_MESSAGES, Item.CHAT_PROXY,
-            Item.CHAT_FORWARD_ALL,
+            Item.CHAT_FORWARD_ALL, Item.CHAT_DELETE_MY_REACTIONS,
         )
     }
 }
