@@ -206,6 +206,7 @@ object Md3OnlineLyrics {
                     memory.put(key, lyrics)
                     missing.remove(key)
                 } else if (status == NOT_FOUND) {
+                    if (missing.size >= 256) missing.clear()
                     missing.add(key)
                 }
                 callback(lyrics, status)

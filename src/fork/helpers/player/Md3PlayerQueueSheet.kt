@@ -159,12 +159,7 @@ class Md3PlayerQueueSheet(context: Context, private val colors: Md3PlayerColors,
         super.show()
         if (!observing) {
             observing = true
-            val nc = NotificationCenter.getInstance(account)
-            nc.addObserver(this, NotificationCenter.messagePlayingDidStart)
-            nc.addObserver(this, NotificationCenter.messagePlayingPlayStateChanged)
-            nc.addObserver(this, NotificationCenter.messagePlayingDidReset)
-            nc.addObserver(this, NotificationCenter.moreMusicDidLoad)
-            nc.addObserver(this, NotificationCenter.musicDidLoad)
+            Md3PlayerHelper.observe(this, true, IDS, account)
         }
         AndroidUtilities.setLightNavigationBar(this, ColorUtils.calculateLuminance(colors.surfaceLow) > 0.5)
     }
@@ -173,12 +168,7 @@ class Md3PlayerQueueSheet(context: Context, private val colors: Md3PlayerColors,
         super.dismiss()
         if (observing) {
             observing = false
-            val nc = NotificationCenter.getInstance(account)
-            nc.removeObserver(this, NotificationCenter.messagePlayingDidStart)
-            nc.removeObserver(this, NotificationCenter.messagePlayingPlayStateChanged)
-            nc.removeObserver(this, NotificationCenter.messagePlayingDidReset)
-            nc.removeObserver(this, NotificationCenter.moreMusicDidLoad)
-            nc.removeObserver(this, NotificationCenter.musicDidLoad)
+            Md3PlayerHelper.observe(this, false, IDS, account)
         }
     }
 
@@ -362,5 +352,15 @@ class Md3PlayerQueueSheet(context: Context, private val colors: Md3PlayerColors,
             }
             if (playing) postInvalidateOnAnimation() else lastFrame = 0L
         }
+    }
+
+    private companion object {
+        val IDS = intArrayOf(
+            NotificationCenter.messagePlayingDidStart,
+            NotificationCenter.messagePlayingPlayStateChanged,
+            NotificationCenter.messagePlayingDidReset,
+            NotificationCenter.moreMusicDidLoad,
+            NotificationCenter.musicDidLoad,
+        )
     }
 }

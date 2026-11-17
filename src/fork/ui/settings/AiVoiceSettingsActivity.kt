@@ -11,43 +11,28 @@ import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-class AiVoiceSettingsActivity : SettingsPageActivity() {
+class AiVoiceSettingsActivity : AiTaskSettingsActivity(
+    true,
+    InuConfig.AI_VOICE_PROVIDER_ID,
+    InuConfig.AI_VOICE_MODEL,
+    BUTTON_PROVIDER,
+    BUTTON_MODEL,
+) {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAiTranscribe)
 
-    override fun onResume() {
-        super.onResume()
-        listView?.adapter?.update(true)
-    }
-
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val provider = AiFeatureSupport.effectiveProvider(InuConfig.AI_VOICE_PROVIDER_ID.value, true)
-        items.add(
+        val provider = taskProvider()
+        addTaskItems(
+            items,
             mkTwoLineCheckItem(
                 TOGGLE_ENABLED,
                 R.string.InuAiTranscribe,
                 R.string.InuAiTranscribeInfo,
                 InuConfig.AI_TRANSCRIBE_ENABLED.value,
-            )
+            ),
+            provider,
         )
-        items.add(UItem.asShadow(if (provider == null) LocaleController.getString(R.string.InuAiAddProviderFirst) else null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionProvider)))
-        items.add(
-            UItem.asButton(
-                BUTTON_PROVIDER,
-                LocaleController.getString(R.string.InuAiFeatureProvider),
-                AiFeatureSupport.providerLabel(InuConfig.AI_VOICE_PROVIDER_ID.value, true),
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_MODEL,
-                LocaleController.getString(R.string.InuAiTranscribeModel),
-                AiFeatureSupport.modelLabel(InuConfig.AI_VOICE_MODEL.value, provider, true),
-            ).setEnabled(provider != null)
-        )
-        items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionRecognition)))
         items.add(
@@ -68,21 +53,9 @@ class AiVoiceSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (onTaskClick(item.id)) return
         when (item.id) {
             TOGGLE_ENABLED -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_TRANSCRIBE_ENABLED.toggle()
-            BUTTON_PROVIDER -> AiFeatureSupport.pickProvider(this, true, InuConfig.AI_VOICE_PROVIDER_ID.value) {
-                InuConfig.AI_VOICE_PROVIDER_ID.value = it
-                InuConfig.AI_VOICE_MODEL.value = ""
-                listView?.adapter?.update(true)
-            }
-            BUTTON_MODEL -> AiFeatureSupport.pickModel(
-                this,
-                AiFeatureSupport.effectiveProvider(InuConfig.AI_VOICE_PROVIDER_ID.value, true),
-                true,
-                InuConfig.AI_VOICE_MODEL.value,
-            ) {
-                InuConfig.AI_VOICE_MODEL.value = it
-            }
             BUTTON_LANGUAGE -> showInputDialog(
                 this,
                 LocaleController.getString(R.string.InuAiTranscribeLanguage),

@@ -1,12 +1,10 @@
 package desu.inugram.helpers.spoof
 
 import android.content.Context
-import android.util.Log
 import desu.inugram.InuConfig
 import org.telegram.messenger.ApplicationLoader
 
 object DeviceIdentityProvider {
-    private const val TAG = "DeviceSpoof"
     private const val PREFS = "inu_device_pin"
     private val FIELDS = listOf("model", "system", "app", "installer", "tz")
 
@@ -122,7 +120,6 @@ object DeviceIdentityProvider {
     fun timezoneOffset(real: Int): Int =
         try {
             if (active?.hideTz == true) {
-                Log.d(TAG, "tz_offset=0")
                 0
             } else {
                 real
@@ -134,7 +131,6 @@ object DeviceIdentityProvider {
     private inline fun safe(name: String, real: String, block: () -> String?): String =
         try {
             val value = block() ?: real
-            if (value != real) Log.d(TAG, "$name=$value")
             value
         } catch (_: Throwable) {
             real

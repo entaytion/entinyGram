@@ -2,11 +2,9 @@ package desu.inugram.helpers.dialogs
 
 import android.graphics.Canvas
 import android.graphics.ColorFilter
-import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.Pair
-import android.view.View
 import androidx.core.content.edit
 import androidx.core.graphics.withSave
 import desu.inugram.InuConfig
@@ -326,33 +324,6 @@ object FolderHelper {
 
     @JvmStatic
     fun bottomReservedHeightDp(): Int = getTabBarHeightDp() + TAB_BAR_BOTTOM_MARGIN_DP
-
-    // entiny: with the share bar open the bottom tabs sit above it instead of covering its send button
-    @JvmStatic
-    fun shareBarLift(barHeightPx: Int, navigationBarHeight: Int, factor: Float): Float =
-        if (!atBottom()) 0f else maxOf(0f, barHeightPx - navigationBarHeight - AndroidUtilities.dp(2f).toFloat()) * factor
-
-    @JvmStatic
-    @JvmOverloads
-    fun bottomTabsTranslationY(
-        navigationBarHeight: Int,
-        additionFloatingButtonOffset: Int,
-        additionalFloatingTranslation: Float = 0f,
-        floatingButtonPanOffset: Float = 0f
-    ): Float {
-        val baseOffset = additionFloatingButtonOffset - AndroidUtilities.dp(bottomReservedHeightDp().toFloat())
-        return -navigationBarHeight - baseOffset - floatingButtonPanOffset
-    }
-
-    @JvmStatic
-    fun extendBottomBlur(zone: RectF, tabs: View?, hasBottomBlur: Boolean, width: Int): Boolean {
-        if (!atBottom() || tabs == null || tabs.visibility != View.VISIBLE || tabs.height == 0) return hasBottomBlur
-        val top = tabs.y
-        val bottom = tabs.y + tabs.height
-        if (hasBottomBlur) zone.set(zone.left, minOf(zone.top, top), zone.right, maxOf(zone.bottom, bottom))
-        else zone.set(0f, top, width.toFloat(), bottom)
-        return true
-    }
 
     // entiny: entering a folder can skip the list rebuild, leaving the tab empty until the next switch
     @JvmStatic

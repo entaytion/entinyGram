@@ -12,7 +12,7 @@ description: Add, move, or retire an entinyGram settings toggle or page. Covers 
 | config item | `src/fork/InuConfig.kt` | the stored value: `BoolItem`, `IntItem`, `StringItem`, `StringSetItem` |
 | page schema | `src/fork/ui/settings/Schemas.kt` | the layout DSL: `schema(slug, titleRes, iconRes) { section(...) { toggle(...) } }` |
 | settings page | `*SettingsActivity` extending `SettingsPageActivity` | pages that are not schema-driven |
-| search and deeplinks | `src/fork/SearchRegistry.kt` | `pages` list, `entries`, slugs, `LEGACY_ENTRY_SLUGS`, `LEGACY_PAGE_SLUGS` |
+| search and deeplinks | `src/fork/SearchRegistry.kt`, `src/fork/ui/settings/Schemas.kt` | `pages` list, `entries`, slugs in the registry; `LEGACY_ENTRY_SLUGS`, `LEGACY_PAGE_SLUGS` in `Schemas.kt` |
 | strings | `src/res/values*/strings_inu.xml` | `Inu*` titles, `*Info` subtitles |
 
 ## add a toggle
@@ -55,7 +55,7 @@ toggle(InuConfig.HIDE_STORIES, R.string.InuHideStories, R.string.InuHideStoriesI
 1. remove the item from `InuConfig` and its row from `Schemas.kt`.
 2. remove its strings from every locale (`bun run tsx assets/scripts/entinychecker.ts` reports dead strings).
 3. if the slug was public, keep a `LEGACY_*` alias.
-4. record the removal in `assets/CLEANUP.md` with the reason.
+4. record the removal in `docs/removed.md` with the reason.
 5. remove the matching `FEATURES.md` row and changelog line when the feature goes.
 
 ## check

@@ -15,6 +15,7 @@ import desu.inugram.helpers.plugins.PluginManager
 import desu.inugram.helpers.plugins.PluginRepo
 import desu.inugram.helpers.plugins.PluginRepoPost
 import desu.inugram.helpers.plugins.PluginRepos
+import desu.inugram.helpers.plugins.market.MarketEntry
 import desu.inugram.helpers.plugins.ui.PluginManifestIcons
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -39,7 +40,6 @@ class PluginRepoActivity(private val repo: PluginRepo) : SettingsPageActivity() 
 
     override fun getTitle(): CharSequence = repo.title
 
-    private val installer = RepoInstaller(this)
 
     private val onPluginsChanged: () -> Unit = {
         listView?.adapter?.update(true)
@@ -93,7 +93,7 @@ class PluginRepoActivity(private val repo: PluginRepo) : SettingsPageActivity() 
     }
 
     private fun fromDeveloper(manifest: PluginManifest): Boolean =
-        manifest.id?.startsWith("entinygram.") == true || manifest.author?.contains("entinygram", ignoreCase = true) == true
+        manifest.id?.startsWith(MarketEntry.OFFICIAL_PREFIX) == true || manifest.author?.contains("entinygram", ignoreCase = true) == true
 
     private fun sortLabel(): String = LocaleController.getString(
         when (InuConfig.PLUGIN_REPO_SORT.value) {
@@ -153,7 +153,7 @@ class PluginRepoActivity(private val repo: PluginRepo) : SettingsPageActivity() 
             active = update,
             onUsernameClick = { messagesController.openByUserName(it, this, 0) },
         ) {
-            presentFragment(PluginRepoPluginActivity(post, manifest, posts, installer))
+            presentFragment(PluginRepoPluginActivity(post, manifest, posts))
         }
         return UItem.asCustom(row).apply { id = ITEM_BASE + (post.messageId and 0xffff) }
     }
@@ -200,11 +200,6 @@ internal fun installRepoPost(fragment: BaseFragment, post: PluginRepoPost) {
             PluginImportHelper.startImport(fragment, source, post.origin)
         }
     }
-}
-
-/** installs a plugin of a repository. One per screen */
-internal class RepoInstaller(private val fragment: BaseFragment) {
-    fun install(post: PluginRepoPost) = installRepoPost(fragment, post)
 }
 
 @SuppressLint("ViewConstructor")

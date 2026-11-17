@@ -52,6 +52,11 @@ check with `gh variable list --repo entaytion/entinyGram`. an empty `INU_TRACK_S
 - a caption is cut to 1000 characters by keeping the first and last lines. a main post above 3800 splits into a reply.
 - no emoji in the layout.
 
+`RICH_POST=1` switches `send.ts` to one rich markdown message per channel, sent with `sendRichMessage` over mtproto (files up to 2 GB).
+- layout: `##` title, `<footer>` with the tag, one `![](tg://document?id=apkN "variant")` per apk (`arm64`, `arm7`, `· plugins`), then two collapsed `<details>`: `Що нового` (uk) and `What's new` (en), each group as `### Title` with a list. a beta has only `What's new` with the commit list.
+- the main post reuses the ci uploads through `uploadCache`. the limit is 32000 characters, cut like the caption, headings kept.
+- the updater reads both formats. old installed clients read only the caption format, so keep the old mode while they still update from the channel. the rich path is untested on a device.
+
 ## updater contract
 
 `UpdateHelper.kt` relies on these. never change them without changing it too.
@@ -60,8 +65,9 @@ check with `gh variable list --repo entaytion/entinyGram`. an empty `INU_TRACK_S
 | --- | --- |
 | file name | `entinygram[-beta][-plugins]-arm64-<base>-<versionCode>.apk`. the arm7 build is invisible to the updater |
 | tags in the post | `#release` or `#prerelease`, exactly |
-| notes | the first blockquote of the caption is the update dialog |
-| release changelog | fetched from `changelogs/<versionCode / 100>.md` on `main` |
+| notes | caption post: the first blockquote is the update dialog. rich post: the `Що нового` details for `uk`, `What's new` for other languages, falling back to the other one. the `Plugins` group is dropped for pluginless builds |
+| rich apk | documents of `rich_message`, same file name rule. a truncated (`part`) post is loaded with `getRichMessage` |
+| release changelog | fetched from `changelogs/<versionCode / 100>.md` on `main`, unless the rich post carries its own |
 
 ## checks without a build
 

@@ -4,6 +4,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.Executors
 import org.telegram.messenger.ApplicationLoader
 
 object PluginCrashLog {
@@ -15,18 +16,27 @@ object PluginCrashLog {
 
     private val dir: File get() = File(ApplicationLoader.applicationContext.filesDir, "inu_plugins_guard")
 
-    @Synchronized
+    private val writer = Executors.newSingleThreadExecutor { Thread(it, "inuPluginCrashLog").apply { isDaemon = true } }
+    private val timeFormat = SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.US)
+    private var dirReady = false
+
     fun record(tag: String, level: String, message: String) {
+        val now = System.currentTimeMillis()
+        writer.execute { write(now, tag, level, message) }
+    }
+
+    @Synchronized
+    private fun write(now: Long, tag: String, level: String, message: String) {
         try {
-            dir.mkdirs()
+            if (!dirReady) dirReady = dir.mkdirs() || dir.isDirectory
             val file = File(dir, LOG)
             if (file.length() > MAX_BYTES) {
                 val tail = file.readText().takeLast(MAX_BYTES / 2)
                 file.writeText(tail.substringAfter('\n', tail))
             }
-            val time = SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.US).format(Date())
-            file.appendText("$time $level/$tag: $message\n")
+            file.appendText("${timeFormat.format(Date(now))} $level/$tag: $message\n")
         } catch (_: Throwable) {
+            dirReady = false
         }
     }
 

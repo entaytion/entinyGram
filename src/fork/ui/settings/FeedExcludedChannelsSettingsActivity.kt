@@ -2,7 +2,6 @@ package desu.inugram.ui.settings
 
 import android.content.Context
 import android.view.View
-import android.widget.EditText
 import desu.inugram.helpers.feed.FeedConfig
 import desu.inugram.helpers.feed.FeedController
 import desu.inugram.InuConfig
@@ -43,29 +42,20 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
                 }
             }
         })
-        val menu = simpleActionBar.createMenu()
-        menu.addItem(MENU_SEARCH, R.drawable.outline_header_search)
-            .setIsSearchField(true)
-            .setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
-                override fun onSearchExpand() {
-                    searching = true
-                    otherItem?.visibility = View.GONE
-                }
-
-                override fun onSearchCollapse() {
-                    searching = false
-                    query = null
-                    otherItem?.visibility = View.VISIBLE
-                    listView?.adapter?.update(true)
-                }
-
-                override fun onTextChanged(editText: EditText) {
-                    query = editText.text.toString().trim().lowercase(Locale.ROOT)
-                    listView?.adapter?.update(true)
-                }
-            })
-            .setSearchFieldHint(LocaleController.getString(R.string.Search))
-        otherItem = menu.addItem(MENU_OTHER, R.drawable.ic_ab_other).also {
+        addSearch(MENU_SEARCH, Locale.ROOT, trim = true, onExpand = { expanded ->
+            searching = expanded
+            if (expanded) {
+                otherItem?.visibility = View.GONE
+            } else {
+                query = null
+                otherItem?.visibility = View.VISIBLE
+                listView?.adapter?.update(true)
+            }
+        }) {
+            query = it
+            listView?.adapter?.update(true)
+        }
+        otherItem = simpleActionBar.createMenu().addItem(MENU_OTHER, R.drawable.ic_ab_other).also {
             it.addSubItem(MENU_SELECT_ALL, R.drawable.msg_select, LocaleController.getString(R.string.SelectAll))
             it.addSubItem(MENU_DESELECT_ALL, R.drawable.msg_cancel, LocaleController.getString(R.string.DeselectAll))
         }

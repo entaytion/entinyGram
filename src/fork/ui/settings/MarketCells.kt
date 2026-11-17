@@ -36,7 +36,6 @@ internal fun marketActionText(action: MarketAction): String = LocaleController.g
     }
 )
 
-/** a rounded button: filled for what the person can do, outlined for what is already done */
 internal fun styleMarketAction(view: TextView, action: MarketAction, compact: Boolean = true) {
     val accent = Theme.getColor(Theme.key_featuredStickers_addButton)
     view.text = marketActionText(action)
@@ -125,7 +124,6 @@ private fun bindMarketPillIcon(view: TextView, iconRes: Int, sizeDp: Float) {
     view.setCompoundDrawablesRelative(drawable, null, null, null)
 }
 
-/** the line above the list that says there is something to update */
 @SuppressLint("ViewConstructor")
 internal class MarketBannerCell(context: Context) : LinearLayout(context) {
     private val title = TextView(context).apply {
@@ -195,7 +193,6 @@ internal class MarketTagPills(context: Context) : HorizontalScrollView(context) 
     }
 }
 
-/** the shelf of the developer's own plugins: big cards that scroll sideways */
 @SuppressLint("ViewConstructor")
 internal class MarketFeaturedCell(context: Context) : LinearLayout(context) {
     private val title = TextView(context).apply {

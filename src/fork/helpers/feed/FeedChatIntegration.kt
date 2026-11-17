@@ -1,8 +1,6 @@
 package desu.inugram.helpers.feed
 
-import android.graphics.RectF
 import androidx.collection.LongSparseArray
-import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -663,15 +661,6 @@ class FeedChatIntegration(
                 host.setPagedownButtonVisible(false)
             }
         }
-    }
-
-    fun addTabsGlassPosition(positions: MutableList<RectF>, index: Int, width: Int, height: Int): Int {
-        if (MainTabsHelper.isHidden) return 0
-        val rect = if (index < positions.size) positions[index] else RectF().also { positions.add(it) }
-        val tabs = AndroidUtilities.dp(MainTabsHelper.mainTabsHeightWithMargins.toFloat())
-        rect.set(0f, (height - tabs).toFloat(), width.toFloat(), height.toFloat())
-        rect.inset(0f, -AndroidUtilities.dp(48f).toFloat())
-        return 1
     }
 
     fun onVisiblePartInvalidated() {

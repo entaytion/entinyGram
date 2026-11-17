@@ -359,7 +359,6 @@ object RoundRecorderHelper {
         button.setImageResource(resId)
     }
 
-    // entiny: fixed EV stops, only the ones this device can hit exactly within CONTROL_AE_COMPENSATION_RANGE
     private val EXPOSURE_EV_CANDIDATES = floatArrayOf(-2f, -1f, 0f, 1f, 2f)
 
     @JvmStatic

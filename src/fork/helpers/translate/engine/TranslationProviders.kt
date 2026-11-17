@@ -20,10 +20,8 @@ interface TranslationProvider {
     val id: Int
     val nameRes: Int
 
-    /** a provider that comes from a plugin has no string resource for its name */
     fun displayName(): String = LocaleController.getString(nameRes)
 
-    /** what the choice is stored as when the provider comes from a plugin, null for the built-in ones */
     val pluginKey: String? get() = null
 
     fun isConfigured(): Boolean = true
@@ -49,7 +47,6 @@ object TranslationProviders {
     const val PROVIDER_MYMEMORY = 6
     const val PROVIDER_BING = 9
 
-    /** the choice is one of the plugin providers, named by `InuConfig.TRANSLATION_PROVIDER` */
     const val PROVIDER_PLUGIN = 100
 
     val all: List<TranslationProvider> = listOf(
@@ -61,7 +58,6 @@ object TranslationProviders {
         MyMemoryProvider,
     )
 
-    /** providers installed plugins registered with `inu.registerTranslationProvider` */
     fun plugins(): List<TranslationProvider> {
         // #if PLUGINS
         return desu.inugram.helpers.plugins.telegram.PluginTranslation.providers
@@ -191,9 +187,7 @@ object GoogleWebProvider : TranslationProvider {
         return try {
             translateViaGtx(text, tl)
         } catch (e: ProviderRateLimitException) {
-            // entiny: only an actual detected block (HTTP 429) should trip the cooldown+fallback
-            // chain - a plain IOException (offline, DNS, timeout) used to trip it too, which then
-            // mislabeled every unrelated network error as "Google blocked this network"
+            // entiny: only a real 429 trips the cooldown, plain network errors must not read as "Google blocked"
             blockedUntil = System.currentTimeMillis() + BLOCK_COOLDOWN_MS
             translateViaApp(text, tl)
                 ?: translateViaDictionary(text, tl)
@@ -361,11 +355,7 @@ object DeepLProvider : TranslationProvider {
     override fun translate(text: String, toLang: String): String {
         val key = InuConfig.TRANSLATE_DEEPL_KEY.value.trim()
         val host = if (key.endsWith(":fx")) "https://api-free.deepl.com" else "https://api.deepl.com"
-        // entiny: `ignore_tags` tells DeepL to skip translating the CONTENT of those tags, which is
-        // the opposite of what we want (we want the enclosed text translated, just re-wrapped in the
-        // same marker) - and "inu" never matched the actual "inue0"/"inux0" tag names anyway. Plain
-        // tag_handling=xml already preserves inline tag positions around translated text, which is
-        // the behavior EntityKeeper's markers need.
+        // entiny: no ignore_tags, it skips the tag content; tag_handling=xml alone keeps marker positions
         val body = "auth_key=" + encodeURIComponent(key) +
             "&text=" + encodeURIComponent(escapeXmlKeepingMarkers(text)) +
             "&target_lang=" + encodeURIComponent(normalizeToLang(toLang)) +
@@ -381,8 +371,7 @@ object DeepLProvider : TranslationProvider {
         return translations.getJSONObject(0).optString("text", "")
     }
 
-    // entiny: tag_handling=xml means DeepL parses the body as XML - a literal '<', '>' or '&' in the
-    // user's own text (outside our own markers) would otherwise break the parse or corrupt the round trip
+    // entiny: DeepL parses xml, a raw < > & outside our markers would break the round trip
     private fun escapeXmlKeepingMarkers(text: String): String {
         if (text.isEmpty()) return text
         val sb = StringBuilder(text.length + 16)
@@ -672,7 +661,7 @@ object BingProvider : TranslationProvider {
 }
 
 // #if PLUGINS
-/** Runs the text through the plugin, waiting for the answer: the engine calls providers off the main thread. */
+// entiny: blocks until the plugin answers, the engine calls providers off the main thread
 class PluginTranslationProvider(val key: String, private val name: String) : TranslationProvider {
     override val id: Int = TranslationProviders.PROVIDER_PLUGIN
     override val pluginKey: String get() = key

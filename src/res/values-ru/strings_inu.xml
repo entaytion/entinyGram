@@ -605,7 +605,6 @@
     <string name="InuDialogsFabMainAction">Основное действие</string>
     <string name="InuDialogsFabOffsetForBottomBar">Отступ для нижней панели</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">Отключение может работать некорректно на некоторых размерах экрана</string>
-    <string name="InuDialogsFabRaise">Поднять кнопки FAB чуть выше</string>
     <string name="InuDialogsFabSecondaryAction">Дополнительное действие</string>
     <string name="InuDialogsMenuItems">Пункты</string>
     <string name="InuDialogsMenuOrder">Меню опций</string>

@@ -8,7 +8,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.plugins.PluginManager
 import desu.inugram.helpers.plugins.market.MarketEntry
-import desu.inugram.helpers.plugins.market.MarketInstaller
+import desu.inugram.helpers.plugins.market.installMarketEntry
 import desu.inugram.helpers.plugins.market.MarketSource
 import desu.inugram.helpers.plugins.market.MarketStore
 import desu.inugram.helpers.plugins.market.MarketTags
@@ -21,7 +21,6 @@ import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import java.util.Locale
 
-/** the plugin Market: the developer's plugins and the ones posted to the repository channels, filed under categories */
 class MarketActivity(private val openSlug: String? = null, private val officialOnly: Boolean = false) : SettingsPageActivity() {
     private enum class Lens { ALL, UPDATES, INSTALLED }
 
@@ -31,7 +30,6 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
     private var pendingSlug = openSlug
     private var fullyVisible = false
 
-    private val installer = MarketInstaller(this)
     private val rows = HashMap<String, MarketRow>()
     private val adapterIds = HashMap<String, Int>()
     private var pills: MarketPillsCell? = null
@@ -53,6 +51,7 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
         pills = null
         banner = null
         featured = null
+        rows.clear()
         return super.createView(context).also {
             val menu = simpleActionBar.createMenu()
             val search = menu.addItem(MENU_SEARCH, R.drawable.outline_header_search).setIsSearchField(true)
@@ -141,14 +140,8 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
             if (!fullyVisible || isPaused) return@post
             val slug = pendingSlug ?: return@post
             val entry = MarketStore.find(slug) ?: return@post
-            if (presentFragment(MarketPluginActivity(entry, installer))) pendingSlug = null
+            if (presentFragment(MarketPluginActivity(entry))) pendingSlug = null
         }
-    }
-
-    private fun actionOf(entry: MarketEntry): MarketAction = when {
-        MarketStore.installed(entry) == null -> MarketAction.INSTALL
-        MarketStore.hasUpdate(entry) -> MarketAction.UPDATE
-        else -> MarketAction.INSTALLED
     }
 
     private fun idOf(entry: MarketEntry): Int = adapterIds.getOrPut(entry.id) { InuUtils.generateId() }
@@ -167,7 +160,6 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val all = if (officialOnly) MarketStore.entries.filter { it.official } else MarketStore.entries
         val updates = all.filter { MarketStore.hasUpdate(it) }
-        // plugins put on the phone by hand or from elsewhere are installed too, whether or not the Market lists them
         val installed = all.filter { MarketStore.installed(it) != null } + localEntries(all).filter { !officialOnly || it.official }
 
         val inLens = when (lens) {
@@ -227,7 +219,7 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
                 str(R.string.InuMarketFeaturedTitle),
                 LocaleController.formatString(R.string.InuMarketCount, shelf.size),
                 shelf,
-                ::actionOf,
+                MarketStore::actionOf,
                 { open(it) },
                 { act(it) },
                 { presentFragment(MarketActivity(officialOnly = true)) },
@@ -276,7 +268,7 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
             items.add(UItem.asHeader(headerText))
             for (entry in list) {
                 val row = rows.getOrPut(entry.id) { MarketRow(context) }
-                row.bind(entry, actionOf(entry), { open(entry) }, { act(entry) })
+                row.bind(entry, MarketStore.actionOf(entry), { open(entry) }, { act(entry) })
                 items.add(UItem.asCustom(idOf(entry), row).apply { intValue = LayoutHelper.WRAP_CONTENT })
             }
         }
@@ -304,12 +296,12 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
     }
 
     private fun open(entry: MarketEntry) {
-        presentFragment(MarketPluginActivity(entry, installer))
+        presentFragment(MarketPluginActivity(entry))
     }
 
     private fun act(entry: MarketEntry) {
-        when (actionOf(entry)) {
-            MarketAction.INSTALL, MarketAction.UPDATE -> installer.install(entry)
+        when (MarketStore.actionOf(entry)) {
+            MarketAction.INSTALL, MarketAction.UPDATE -> installMarketEntry(this, entry)
             MarketAction.INSTALLED -> open(entry)
         }
     }

@@ -98,3 +98,82 @@ export function mainPost(info: PostInfo, notes: Sections, downloadUrl: string, e
     reply: join([html`<b>entinyGram ${info.base} · ${info.label}</b> · English\n\n<blockquote expandable>${en}</blockquote>`, tags], '\n\n'),
   }
 }
+
+export const RICH_LIMIT = 32000
+
+const MD_DONATE = 'Підтримати / Donate: [Telegram](https://t.me/sendgrams?to=entaytion&amount=0.1&text=thx+for+entiny) · [monobank](https://send.monobank.ua/jar/RGYa8zo8y) · [Website](https://entaytion.is-a.dev/donate)'
+const MD_BETA_WARNING = '*Pre-release build for testing. It is unstable and may crash or misbehave.*'
+
+export interface RichSection { title: string, lines: string[] }
+export interface RichApk { id: string, file: string, variant: string }
+
+const mdEsc = (s: string) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+export function richSections(s: Sections[Lang], lang: Lang, links: boolean): RichSection[] {
+  return GROUPS.filter(g => s[g]?.length).map(g => ({ title: GROUP_TITLE[lang][g], lines: s[g].map(b => (links ? b : stripLinks(b))) }))
+}
+
+export function apkVariant(file: string): string {
+  const m = file.match(/-(plugins-)?(arm64|armeabi-v7a)-/)
+  if (!m) return file
+  return `${m[2] === 'arm64' ? 'arm64' : 'arm7'}${m[1] ? ' · plugins' : ''}`
+}
+
+export const richApks = (files: string[]): RichApk[] => files.map((file, i) => ({ id: `apk${i}`, file, variant: apkVariant(file) }))
+
+const mdHeadings = (sections: RichSection[]) => sections
+  .filter(s => s.lines.length)
+  .map(s => `### ${s.title}\n${s.lines.map(l => `- ${mdEsc(l)}`).join('\n')}`)
+  .join('\n\n')
+
+const changelog = (title: string, sections: RichSection[]) => `<details><summary>${title}</summary>\n\n${mdHeadings(sections) || '- ...'}\n\n</details>`
+
+function cutSections(sections: RichSection[], n: number): RichSection[] {
+  return sections.map(s => ({ ...s, lines: s.lines.length > n * 2 ? [...s.lines.slice(0, n), '...', ...s.lines.slice(-n)] : s.lines }))
+}
+
+function fitRich(render: (cut: (s: RichSection[]) => RichSection[]) => string, longest: number, limit: number): string {
+  const full = render(s => s)
+  if (full.length <= limit) return full
+  for (let n = Math.floor(longest / 2); n >= 1; n--) {
+    const cut = render(s => cutSections(s, n))
+    if (cut.length <= limit) return cut
+  }
+  return render(s => s.map(x => ({ ...x, lines: ['...'] })))
+}
+
+const richTitle = (info: PostInfo) => `## entinyGram ${info.base} · ${info.label}`
+const richTags = (tag: string) => `<footer>${tag} · @entinyGram · @entinyGramChat</footer>`
+const richFiles = (apks: RichApk[]) => apks.map(a => `![](tg://document?id=${a.id} "${a.variant}")`).join('\n')
+const richDiff = (info: PostInfo) => info.tag && info.prevTag && info.tag !== info.prevTag
+  ? `[Full diff on GitHub](https://github.com/${info.repo}/compare/${info.prevTag}...${info.tag})`
+  : null
+const longestOf = (...groups: RichSection[][]) => Math.max(0, ...groups.flat().map(s => s.lines.length))
+
+export function richCiPost(info: PostInfo, sections: RichSection[], apks: RichApk[], limit = RICH_LIMIT, uk: RichSection[] = []): string {
+  return fitRich(cut => [
+    richTitle(info),
+    richTags(TAG[info.track]),
+    info.track === 'beta' ? MD_BETA_WARNING : null,
+    richFiles(apks),
+    ...(uk.length ? [changelog('Що нового', cut(uk)), changelog("What's new", cut(sections))] : [changelog("What's new", cut(sections))]),
+    richDiff(info),
+    MD_DONATE,
+  ].filter(Boolean).join('\n\n'), longestOf(sections), limit)
+}
+
+export function richMainPost(info: PostInfo, notes: Sections, apks: RichApk[], extra: string, limit = RICH_LIMIT): string {
+  const uk = richSections(notes.uk, 'uk', true)
+  const en = richSections(notes.en, 'en', false)
+  return fitRich(cut => [
+    richTitle(info),
+    richTags(TAG.release),
+    extra ? mdEsc(extra) : null,
+    richFiles(apks),
+    changelog('Що нового', cut(uk)),
+    changelog("What's new", cut(en)),
+    `[Усі нові функції на сайті / All new features on the website](${SITE_URL})`,
+    richDiff(info),
+    MD_DONATE,
+  ].filter(Boolean).join('\n\n'), longestOf(uk, en), limit)
+}

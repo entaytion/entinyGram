@@ -76,7 +76,7 @@ object LinkedChatsHelper {
 
     private val requestedDialogs = HashSet<String>()
     private val pendingRecents = HashSet<Link>()
-    private val resumedFragments = HashSet<BaseFragment>()
+    private val resumedFragments: MutableSet<BaseFragment> = java.util.Collections.newSetFromMap(java.util.WeakHashMap())
 
     private fun findAccount(userId: Long): Int? = (0 until UserConfig.MAX_ACCOUNT_COUNT).firstOrNull {
         val config = UserConfig.getInstance(it)

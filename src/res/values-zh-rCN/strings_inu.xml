@@ -600,7 +600,6 @@
     <string name="InuDialogsFabMainAction">主要操作</string>
     <string name="InuDialogsFabOffsetForBottomBar">为底部栏留出偏移</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">禁用后在部分屏幕尺寸下可能效果不佳</string>
-    <string name="InuDialogsFabRaise">略微抬高 FAB 按钮</string>
     <string name="InuDialogsFabSecondaryAction">次要操作</string>
     <string name="InuDialogsMenuItems">项目</string>
     <string name="InuDialogsMenuOrder">选项菜单</string>

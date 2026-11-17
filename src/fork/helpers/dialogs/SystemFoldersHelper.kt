@@ -60,14 +60,6 @@ object SystemFoldersHelper {
             if (list.isEmpty()) EMPTY_MARK else list.joinToString(",") { "${it.type.name}:${if (it.enabled) 1 else 0}:${it.pos}" }
     }
 
-    fun setEnabled(type: Type, enabled: Boolean) {
-        val list = entries()
-        val entry = list.firstOrNull { it.type == type } ?: return
-        entry.enabled = enabled
-        save(list)
-        syncAll()
-    }
-
     fun delete(type: Type) {
         val list = entries()
         if (!list.removeAll { it.type == type }) return

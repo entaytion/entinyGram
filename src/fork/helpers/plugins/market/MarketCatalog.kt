@@ -11,7 +11,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.ApplicationLoader
 
-/** the entinyGram plugins: `catalog.json` of the plugins repository's release, built by its CI from the bundles' headers */
 object MarketCatalog {
     const val CATALOG_URL = "https://github.com/entinyGram/plugins/releases/download/plugins/catalog.json"
 
@@ -19,7 +18,7 @@ object MarketCatalog {
     private const val MAX_BYTES = 8 * 1024 * 1024
     private val cacheFile by lazy { File(ApplicationLoader.applicationContext.cacheDir, "market_catalog.json") }
 
-    /** off the ui thread. The network's answer, or the last one that arrived when the network has none */
+    // entiny: blocking, call off the ui thread; falls back to the last cached answer
     fun load(): List<MarketEntry>? {
         val fresh = runCatching { download(CATALOG_URL, MAX_BYTES).toString(Charsets.UTF_8) }
             .onFailure { PluginLog.HOST.w("market", "catalog download failed: ${it.message}") }
@@ -34,7 +33,7 @@ object MarketCatalog {
         return runCatching { parse(cacheFile.readText()) }.getOrNull()
     }
 
-    /** off the ui thread; follows redirects (release assets live on another host) */
+    // entiny: blocking, follows redirects because release assets live on another host
     fun download(address: String, limit: Int): ByteArray {
         val connection = URL(address).openConnection() as HttpURLConnection
         connection.connectTimeout = TIMEOUT_MS

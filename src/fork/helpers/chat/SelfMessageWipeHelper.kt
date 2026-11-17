@@ -1,11 +1,8 @@
 package desu.inugram.helpers.chat
 
-import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
-import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BaseFragment
@@ -41,51 +38,31 @@ object SelfMessageWipeHelper {
     private val deletedSoFar = HashMap<Long, Int>()
 
     private fun searchNextPage(fragmentRef: WeakReference<BaseFragment>, currentAccount: Int, dialogId: Long, offsetId: Int) {
-        val controller = MessagesController.getInstance(currentAccount)
-        val peer = controller.getInputPeer(dialogId)
-        if (peer == null) {
-            finish(fragmentRef, dialogId)
-            return
-        }
-        val req = TLRPC.TL_messages_search()
-        req.peer = peer
-        req.q = ""
-        req.from_id = TLRPC.TL_inputPeerSelf()
-        req.filter = TLRPC.TL_inputMessagesFilterEmpty()
-        req.offset_id = offsetId
-        req.limit = PAGE_SIZE
+        MessageSearchPager.searchPage(
+            currentAccount, dialogId, offsetId, PAGE_SIZE, "SelfMessageWipeHelper",
+            configure = { it.from_id = TLRPC.TL_inputPeerSelf() },
+            onEnd = { finish(fragmentRef, dialogId) },
+        ) { response ->
+            val ids = ArrayList<Int>()
+            var minId = Int.MAX_VALUE
+            for (message in response.messages) {
+                if (message is TLRPC.TL_messageEmpty || message.action is TLRPC.TL_messageActionHistoryClear) continue
+                ids.add(message.id)
+                if (message.id < minId) minId = message.id
+            }
 
-        ConnectionsManager.getInstance(currentAccount).sendRequest(req) { response, error ->
-            AndroidUtilities.runOnUIThread {
-                if (error != null || response !is TLRPC.messages_Messages) {
-                    FileLog.e("SelfMessageWipeHelper: search failed for $dialogId: ${error?.text}")
-                    finish(fragmentRef, dialogId)
-                    return@runOnUIThread
-                }
-                controller.putUsers(response.users, false)
-                controller.putChats(response.chats, false)
+            if (ids.isEmpty()) {
+                finish(fragmentRef, dialogId)
+                return@searchPage
+            }
 
-                val ids = ArrayList<Int>()
-                var minId = Int.MAX_VALUE
-                for (message in response.messages) {
-                    if (message is TLRPC.TL_messageEmpty || message.action is TLRPC.TL_messageActionHistoryClear) continue
-                    ids.add(message.id)
-                    if (message.id < minId) minId = message.id
-                }
+            deletedSoFar[dialogId] = (deletedSoFar[dialogId] ?: 0) + ids.size
+            MessagesController.getInstance(currentAccount).deleteMessages(ids, null, null, dialogId, 0, true, ChatActivity.MODE_DEFAULT)
 
-                if (ids.isEmpty()) {
-                    finish(fragmentRef, dialogId)
-                    return@runOnUIThread
-                }
-
-                deletedSoFar[dialogId] = (deletedSoFar[dialogId] ?: 0) + ids.size
-                controller.deleteMessages(ids, null, null, dialogId, 0, true, ChatActivity.MODE_DEFAULT)
-
-                if (response.messages.size < PAGE_SIZE) {
-                    finish(fragmentRef, dialogId)
-                } else {
-                    searchNextPage(fragmentRef, currentAccount, dialogId, minId)
-                }
+            if (response.messages.size < PAGE_SIZE) {
+                finish(fragmentRef, dialogId)
+            } else {
+                searchNextPage(fragmentRef, currentAccount, dialogId, minId)
             }
         }
     }

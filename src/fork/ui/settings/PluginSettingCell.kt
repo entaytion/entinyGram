@@ -27,7 +27,6 @@ class PluginSettingCell(
     }
 
     fun setSplit(value: Boolean) {
-        android.util.Log.d("InuSplit", "setSplit $value was=$split ${textView.text}")
         if (split == value) return
         split = value
         requestLayout()
@@ -39,7 +38,6 @@ class PluginSettingCell(
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-        android.util.Log.d("InuSplit", "dispatchDraw split=$split w=$measuredWidth h=$measuredHeight color=${Integer.toHexString(Theme.dividerPaint.color)} key=${Integer.toHexString(Theme.getColor(Theme.key_divider))} ${textView.text}")
         if (!split) return
         val x = if (LocaleController.isRTL) AndroidUtilities.dp(SPLIT_LINE_OFFSET) else measuredWidth - AndroidUtilities.dp(SPLIT_LINE_OFFSET) - 1
         val height = AndroidUtilities.dp(22f)

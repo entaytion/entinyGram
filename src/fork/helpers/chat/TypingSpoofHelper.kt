@@ -104,9 +104,6 @@ object TypingSpoofHelper {
     fun activeAction(dialogId: Long): Int = active[dialogId]?.action ?: -1
 
     @JvmStatic
-    fun getActiveDialogIds(): List<Long> = active.keys.toList()
-
-    @JvmStatic
     @JvmOverloads
     fun showPicker(fragment: BaseFragment, account: Int, dialogId: Long, threadId: Long, onChanged: (() -> Unit)? = null) {
         val parent = fragment.parentActivity ?: return

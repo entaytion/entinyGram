@@ -157,12 +157,10 @@ object ChatExportHelper {
         BulletinFactory.of(session.fragment).createErrorBulletin(msg).show()
     }
 
-    // ------------------------------------------------------------------ media
-
     private fun startMediaPhase(session: ExportSession) {
         val controller = MessagesController.getInstance(session.account)
         Utilities.globalQueue.postRunnable {
-            val items = buildItems(session, controller)
+            val items = buildItems(session)
             attachLocalPaths(session, items)
             AndroidUtilities.runOnUIThread {
                 if (session.aborted) return@runOnUIThread
@@ -217,7 +215,7 @@ object ChatExportHelper {
         AndroidUtilities.runOnUIThread(check, STALL_CHECK_INTERVAL_MS)
     }
 
-    private fun buildItems(session: ExportSession, controller: MessagesController): ArrayList<ExportItem> {
+    private fun buildItems(session: ExportSession): ArrayList<ExportItem> {
         val usedNames = HashSet<String>()
         val items = ArrayList<ExportItem>()
         var index = 0
@@ -378,12 +376,12 @@ object ChatExportHelper {
             if (outstanding >= MAX_CONCURRENT_DOWNLOADS) return
             item.requested = true
             outstanding++
-            triggerDownload(session, loader, item)
+            triggerDownload(loader, item)
         }
         if (outstanding == 0) finishMediaPhase(session)
     }
 
-    private fun triggerDownload(session: ExportSession, loader: FileLoader, item: ExportItem) {
+    private fun triggerDownload(loader: FileLoader, item: ExportItem) {
         val media = item.message.media ?: run { item.failed = true; return }
         try {
             if (media.photo != null) {
@@ -466,10 +464,6 @@ object ChatExportHelper {
             }
         }
     }
-
-    // ------------------------------------------------------------------- html
-
-    // ------------------------------------------------------------------- json
 
     private fun writeAndShareJson(session: ExportSession) {
         if (session.finished) return

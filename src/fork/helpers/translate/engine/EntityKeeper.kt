@@ -5,8 +5,7 @@ import org.telegram.tgnet.TLRPC
 
 object EntityKeeper {
 
-    // entiny: OPEN/CLOSE must not be a prefix of VAULT_OPEN (or vice versa) - a mangled vault
-    // token surviving into unmark() must never be misread as an entity marker
+    // entiny: OPEN/CLOSE and VAULT_OPEN must not prefix each other or a mangled vault token reads as an entity marker
     private const val OPEN = "<inue"
     private const val CLOSE = "</inue"
     private const val TAG_END = '>'
@@ -15,8 +14,7 @@ object EntityKeeper {
     private const val VAULT_OPEN = "<inux"
     private val VAULT_TOKEN = Regex("<inux(\\d+)>")
 
-    // entiny: matches every marker this file ever emits (entity + vault) - providers that need to
-    // XML-escape the surrounding text (DeepL's tag_handling=xml) must skip exactly these spans
+    // entiny: every marker emitted here, xml-escaping providers (DeepL) must skip exactly these spans
     val MARKER_PATTERN = Regex("</?inue\\d+>|<inux\\d+>")
 
     private val PROTECTED = listOf(
@@ -57,9 +55,7 @@ object EntityKeeper {
 
     private const val MAX_PROTECTED = 64
 
-    // entiny: returns the marked text plus the exact (filtered, index-stable) entity list the
-    // markers reference - unmark() MUST be given this same list, never the caller's raw entities,
-    // or marker index N resolves against the wrong entity once anything gets dropped/reordered
+    // entiny: unmark() must get the returned list, never the raw entities, or marker indexes hit the wrong entity
     fun mark(text: String, entities: List<TLRPC.MessageEntity>?): Pair<String, List<TLRPC.MessageEntity>> {
         if (text.isEmpty() || entities.isNullOrEmpty()) return text to emptyList()
 
@@ -106,7 +102,6 @@ object EntityKeeper {
         return sb.toString() to kept
     }
 
-    // entiny: `kept` must be the exact list mark() returned alongside `marked` - see mark() doc
     fun unmark(marked: String, kept: List<TLRPC.MessageEntity>?): Pair<String, ArrayList<TLRPC.MessageEntity>> {
         if (marked.isEmpty() || kept.isNullOrEmpty()) return marked to ArrayList()
         if (marked.indexOf(OPEN) < 0) return marked to ArrayList()
@@ -138,9 +133,7 @@ object EntityKeeper {
             }
             out.append(marked, i, nextTag)
 
-            // entiny: anything that isn't a well-formed <inueN>/</inueN> marker is dropped rather
-            // than re-appended - a provider-mangled marker leaking into the visible message is
-            // worse than losing the few stray characters of a malformed tag
+            // entiny: malformed markers are dropped, a mangled tag in the visible text is worse than a few lost chars
             var j = nextTag + (if (isClose) CLOSE.length else OPEN.length)
             if (j >= n || !marked[j].isDigit()) {
                 i = j

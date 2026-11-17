@@ -59,7 +59,9 @@ object GhostScheduleHelper {
     @JvmStatic
     fun justScheduled(dialogId: Long): Boolean {
         val at = scheduledAt[dialogId] ?: return false
-        return SystemClock.elapsedRealtime() - at < QUIET_MS
+        if (SystemClock.elapsedRealtime() - at < QUIET_MS) return true
+        scheduledAt.remove(dialogId, at)
+        return false
     }
 
     // entiny: a message waits for its media upload or a retry, so its time can pass; move it ahead again

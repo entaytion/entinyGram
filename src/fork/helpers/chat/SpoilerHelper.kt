@@ -43,6 +43,7 @@ object SpoilerHelper {
     private val solidPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val tempPath = Path()
     private val tempRect = RectF()
+    private val tempRadii = FloatArray(8)
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
         textSize = dp(12f).toFloat()
@@ -83,7 +84,9 @@ object SpoilerHelper {
 
         tempPath.rewind()
         tempRect.set(bounds)
-        tempPath.addRoundRect(tempRect, floatArrayOf(tlR, tlR, trR, trR, brR, brR, blR, blR), Path.Direction.CW)
+        tempRadii[0] = tlR; tempRadii[1] = tlR; tempRadii[2] = trR; tempRadii[3] = trR
+        tempRadii[4] = brR; tempRadii[5] = brR; tempRadii[6] = blR; tempRadii[7] = blR
+        tempPath.addRoundRect(tempRect, tempRadii, Path.Direction.CW)
         canvas.drawPath(tempPath, solidPaint)
 
         if (state.prevLeft < bounds.left)

@@ -556,10 +556,6 @@
     <string name="InuDeleteMyMessagesDone">تم حذف %1$d من رسائلك</string>
     <string name="InuDeleteMyMessagesStarted">جارٍ حذف رسائلك…</string>
     <string name="InuDeleteMyMessagesTitle">حذف رسائلي؟</string>
-    <string name="InuDeleteOwnMessagesConfirm_two">حذف رسالتين منك؟ لا يمكن التراجع عن هذا.</string>
-    <string name="InuDeleteOwnMessagesConfirm_zero">حذف %d رسالة منك؟ لا يمكن التراجع عن هذا.</string>
-    <string name="InuDeleteOwnMessagesDone_two">حُذفت رسالتان</string>
-    <string name="InuDeleteOwnMessagesDone_zero">لم تُحذف أي رسالة</string>
     <string name="InuDeleteProfilePhotos">حذف صور الملف الشخصي</string>
     <string name="InuDeleteProfilePhotosInfo">احذف جميع صور الملف الشخصي أو المحددة فقط بنقرة واحدة</string>
     <string name="InuDeleteSelectedProfilePhotos">حذف المحدد (%1$d)</string>
@@ -606,7 +602,6 @@
     <string name="InuDialogsFabMainAction">الإجراء الأساسي</string>
     <string name="InuDialogsFabOffsetForBottomBar">إزاحة للشريط السفلي</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">قد لا يعمل تعطيل هذا جيداً على جميع أحجام الشاشات</string>
-    <string name="InuDialogsFabRaise">رفع أزرار FAB قليلاً</string>
     <string name="InuDialogsFabSecondaryAction">الإجراء الثانوي</string>
     <string name="InuDialogsMenuItems">العناصر</string>
     <string name="InuDialogsMenuOrder">قائمة الخيارات</string>

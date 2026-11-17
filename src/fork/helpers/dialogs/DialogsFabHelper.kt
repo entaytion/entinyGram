@@ -12,8 +12,6 @@ import org.telegram.ui.ChatActivity
 import org.telegram.ui.DialogsActivity
 
 object DialogsFabHelper {
-    private const val FAB_BASE_DP = 38
-    private const val FAB_RAISE_DP = 16
 
     enum class Action(
         val value: Int,
@@ -52,19 +50,6 @@ object DialogsFabHelper {
 
     @JvmStatic
     fun offsetForBottomBar(): Boolean = InuConfig.DIALOGS_FAB_OFFSET_FOR_BOTTOM_BAR.value
-
-    @JvmStatic
-    fun floatingButtonOffset(hasMainTabs: Boolean): Int {
-        var offset = if (!hasMainTabs) {
-            0
-        } else if (!offsetForBottomBar()) {
-            dp(FAB_BASE_DP.toFloat()) + MainTabsHelper.bottomLiftPx
-        } else {
-            dp((MainTabsHelper.mainTabsHeight + MainTabsHelper.mainTabsMargin + MainTabsHelper.bottomLiftDp).toFloat())
-        }
-        if (InuConfig.DIALOGS_FAB_RAISE.value) offset += dp(FAB_RAISE_DP.toFloat())
-        return offset
-    }
 
     @JvmStatic
     fun leftSide(): Boolean = InuConfig.DIALOGS_FAB_LEFT_SIDE.value

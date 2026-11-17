@@ -87,6 +87,7 @@ object PresenceHelper {
             val set = watched.get(account) ?: HashSet<Long>().also { watched.put(account, it) }
             nowWatched = if (set.remove(userId)) false else { set.add(userId); true }
         }
+        if (!nowWatched) synchronized(lastType) { lastType.remove(account to userId) }
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
             if (nowWatched) InuDatabaseHelper.saveWatch(db, userId) else InuDatabaseHelper.removeWatch(db, userId)

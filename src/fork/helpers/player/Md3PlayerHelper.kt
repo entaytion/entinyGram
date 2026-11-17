@@ -10,6 +10,8 @@ import desu.inugram.helpers.dialogs.MainTabsHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
+import org.telegram.messenger.NotificationCenter
+import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.BottomSheet
 import org.telegram.ui.ActionBar.Theme
@@ -63,6 +65,16 @@ object Md3PlayerHelper {
             sheet.setTransitionSource(source)
         }
         fragment.showDialog(sheet)
+    }
+
+    fun observe(delegate: NotificationCenter.NotificationCenterDelegate, add: Boolean, ids: IntArray, account: Int = -1) {
+        val accounts = if (account >= 0) account..account else 0 until UserConfig.MAX_ACCOUNT_COUNT
+        for (a in accounts) {
+            val nc = NotificationCenter.getInstance(a)
+            for (id in ids) {
+                if (add) nc.addObserver(delegate, id) else nc.removeObserver(delegate, id)
+            }
+        }
     }
 
     @JvmStatic

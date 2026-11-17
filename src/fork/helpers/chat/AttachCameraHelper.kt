@@ -155,7 +155,7 @@ object AttachCameraHelper {
         layout.openCameraByClick()
     }
 
-    // entiny: экспозиция attach-камеры; в 13.1.1 CameraView жёстко на Camera1, поэтому путь только через Camera.Parameters
+    // entiny: attach CameraView is hard-wired to Camera1, so exposure goes through Camera.Parameters only
     @JvmStatic
     fun attachExposureButtons(parent: FrameLayout, onLevel: Utilities.Callback<Float>): ExposureLevelButtonsView? {
         if (!InuConfig.ATTACH_CAMERA_EXPOSURE_LEVELS.value) return null
@@ -211,7 +211,7 @@ object AttachCameraHelper {
     private fun exposureItem(info: org.telegram.messenger.camera.CameraInfo) =
         if (info.isFrontface()) InuConfig.ATTACH_CAMERA_EXPOSURE_FRONT else InuConfig.ATTACH_CAMERA_EXPOSURE_BACK
 
-    // вызывается из CameraSession.configurePhotoCamera; Camera1 отдаёт шаг как float — подбираем дробь и кладём Rational в CameraInfo
+    // entiny: Camera1 gives the step as a float, so a Rational is fitted and stored in CameraInfo
     @JvmStatic
     fun applyExposure(params: Camera.Parameters, info: org.telegram.messenger.camera.CameraInfo, ev: Float) {
         if (!InuConfig.ATTACH_CAMERA_EXPOSURE_LEVELS.value) return
@@ -234,7 +234,6 @@ object AttachCameraHelper {
         }
     }
 
-    // null = оставить стоковый выбор (chooseOptimalSize 720x480)
     @JvmStatic
     fun pickRecorderVideoSize(sizes: ArrayList<Size>?, session: CameraSession): Size? {
         if (!session.inu_attachRecorder) return null

@@ -6,10 +6,6 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.SharedConfig
 import org.telegram.ui.LaunchActivity
 
-/**
- * `tg://entinyPlugin/<slug>` and `https://t.me/entinyPlugins/<slug>` open a plugin's page in the Market. Other clients open
- * the channel on the second one, so a post that links to it still works for everybody.
- */
 object MarketLinks {
     @JvmStatic
     fun tryHandleDeepLink(activity: LaunchActivity, intent: Intent?): Boolean {

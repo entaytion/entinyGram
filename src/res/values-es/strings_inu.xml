@@ -612,7 +612,6 @@ Sistema: %6$s
     <string name="InuDialogsFabMainAction">Acción principal</string>
     <string name="InuDialogsFabOffsetForBottomBar">Desplazamiento para barra inferior</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">Desactivar esto podría no funcionar bien en todos los tamaños de pantalla</string>
-    <string name="InuDialogsFabRaise">Elevar un poco los botones FAB</string>
     <string name="InuDialogsFabSecondaryAction">Acción secundaria</string>
     <string name="InuDialogsMenuItems">Elementos</string>
     <string name="InuDialogsMenuOrder">Menú de opciones</string>

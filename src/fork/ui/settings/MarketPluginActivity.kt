@@ -10,10 +10,9 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.plugins.PluginDependencies
 import desu.inugram.helpers.plugins.PluginManager
 import desu.inugram.helpers.plugins.market.MarketEntry
-import desu.inugram.helpers.plugins.market.MarketInstaller
+import desu.inugram.helpers.plugins.market.installMarketEntry
 import desu.inugram.helpers.plugins.market.MarketStore
 import desu.inugram.helpers.plugins.market.MarketTags
 import desu.inugram.helpers.plugins.ui.PluginManifestIcons
@@ -30,10 +29,8 @@ import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.messenger.browser.Browser
 
-/** a plugin of the Market: what it is, what it asks for, what is new in it when it is the developer's own, and the button */
 internal class MarketPluginActivity(
     private val entry: MarketEntry,
-    private val installer: MarketInstaller,
 ) : SettingsPageActivity() {
     private var hero: MarketHeroCell? = null
     private val grantRows = HashMap<Int, GrantRowView>()
@@ -81,22 +78,16 @@ internal class MarketPluginActivity(
 
     private fun str(res: Int): String = LocaleController.getString(res)
 
-    private fun actionOf(): MarketAction = when {
-        MarketStore.installed(entry) == null -> MarketAction.INSTALL
-        MarketStore.hasUpdate(entry) -> MarketAction.UPDATE
-        else -> MarketAction.INSTALLED
-    }
-
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val manifest = entry.manifest
         val installed = MarketStore.installed(entry)
-        val action = actionOf()
+        val action = MarketStore.actionOf(entry)
         val lang = LocaleController.getInstance().currentLocaleInfo?.langCode
 
         val heroCell = hero ?: MarketHeroCell(context).also { hero = it }
         heroCell.bind(entry, action) {
             if (action == MarketAction.INSTALLED) installed?.let { presentFragment(PluginInfoActivity(it)) }
-            else installer.install(entry)
+            else installMarketEntry(this, entry)
         }
         items.add(UItem.asCustom(HERO, heroCell))
         items.add(UItem.asShadow(null))
@@ -107,7 +98,6 @@ internal class MarketPluginActivity(
             items.add(UItem.asShadow(null))
         }
 
-        // what is new comes from the developer's own releases only: other channels do not give us that
         entry.changelog?.let { notes ->
             items.add(UItem.asHeader(LocaleController.formatString(R.string.InuMarketWhatsNew, manifest.version.orEmpty())))
             items.add(mkTwoLineEntry(CHANGELOG, R.drawable.msg_calendar, str(R.string.InuMarketWhatsNewTitle), notes.lineSequence().joinToString("\n") { it.trim().removePrefix("- ").let { l -> if (l.isEmpty()) l else "• $l" } }))
@@ -130,31 +120,15 @@ internal class MarketPluginActivity(
         val source = if (entry.official) str(R.string.InuMarketSourceOfficial) else entry.post?.repo?.let { "${it.title} (@${it.username})" }.orEmpty()
         if (source.isNotEmpty()) items.add(mkTwoLineEntry(SOURCE, R.drawable.msg_channel, str(R.string.InuPluginRepoSource), source))
         items.add(mkTwoLineEntry(PLUGIN_ID, R.drawable.msg_link, str(R.string.InuPluginRepoId), entry.id))
-        val needs = PluginDependencies.needs(manifest)
-        if (needs.isNotEmpty()) {
-            val value = needs.joinToString(", ") { need -> need.minVersion?.let { "${need.id} >=$it" } ?: need.id }
-            items.add(mkTwoLineEntry(DEPENDENCIES, R.drawable.msg_secret, str(R.string.InuPluginRepoDependencies), value))
-        }
+        addPluginDependencies(items, manifest)
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(str(R.string.InuPluginsPermissions)))
-        val grants = sortedGrants(manifest.grants)
-        if (grants.isEmpty()) {
-            items.add(UItem.asShadow(str(R.string.InuPluginsPermissionsNone)))
-        } else {
-            grants.forEachIndexed { i, (name, scopes) ->
-                val row = grantRows.getOrPut(i) { GrantRowView(context) }
-                row.bind(name, scopes, divider = i != grants.lastIndex)
-                items.add(UItem.asCustom(GRANT_BASE + i, row))
-            }
-            items.add(UItem.asShadow(null))
-        }
+        addPluginPermissions(items, context, manifest, grantRows)
 
         entry.post?.let {
             items.add(mkTwoLineEntry(DISCUSSION, R.drawable.msg_discussion, str(R.string.InuMarketDiscussion), str(R.string.InuMarketDiscussionInfo)))
             items.add(UItem.asShadow(null))
         }
-        // an installed plugin is opened from here too, not only from the big button
         if (installed != null) {
             items.add(mkTwoLineEntry(OPEN, R.drawable.msg_customize, str(R.string.InuMarketOpenSettings), str(R.string.InuMarketOpenSettingsInfo)))
             items.add(UItem.asShadow(null))
@@ -177,7 +151,6 @@ internal class MarketPluginActivity(
 
     private companion object {
         const val MENU_SHARE = 1
-        const val GRANT_BASE = 20000
         val HERO = InuUtils.generateId()
         val DESCRIPTION = InuUtils.generateId()
         val CHANGELOG = InuUtils.generateId()
@@ -186,13 +159,11 @@ internal class MarketPluginActivity(
         val TAGS = InuUtils.generateId()
         val SOURCE = InuUtils.generateId()
         val PLUGIN_ID = InuUtils.generateId()
-        val DEPENDENCIES = InuUtils.generateId()
         val DISCUSSION = InuUtils.generateId()
         val OPEN = InuUtils.generateId()
     }
 }
 
-/** the top of a plugin's page: a big icon, the name, who made it, its categories and the one button */
 @SuppressLint("ViewConstructor")
 internal class MarketHeroCell(context: Context) : LinearLayout(context) {
     private val icon = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(20f)) }

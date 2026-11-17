@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.util.SparseArray
 import android.util.TypedValue
 import android.view.Gravity
@@ -42,7 +41,6 @@ import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicReference
 
 object RecentChatsHelper {
-    private const val TAG = "EntinyRecent"
 
     private val cache = SparseArray<LinkedList<Long>>()
     private val listeners = ArrayList<Runnable>()
@@ -63,11 +61,9 @@ object RecentChatsHelper {
     @JvmStatic
     fun load(account: Int) {
         val storage = MessagesStorage.getInstance(account) ?: return
-        Log.d(TAG, "load called for account=$account enabled=${isEnabled()}")
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
             val loaded = LinkedList(InuDatabaseHelper.loadRecentDialogs(db))
-            Log.d(TAG, "loaded ${loaded.size} ids from db for account=$account")
             synchronized(cache) {
                 cache.put(account, loaded)
             }
@@ -103,10 +99,8 @@ object RecentChatsHelper {
     @JvmStatic
     fun addToRecentDialogs(account: Int, dialogId: Long) {
         if (!isEnabled() || dialogId == 0L) {
-            Log.d(TAG, "skip record account=$account dialog=$dialogId enabled=${isEnabled()}")
             return
         }
-        Log.d(TAG, "record account=$account dialog=$dialogId limit=${limit()}")
         synchronized(cache) {
             val list = listFor(account)
             list.remove(dialogId)
@@ -126,7 +120,6 @@ object RecentChatsHelper {
 
     @JvmStatic
     fun clearRecentDialogs(account: Int) {
-        Log.d(TAG, "clear all for account=$account")
         synchronized(cache) {
             listFor(account).clear()
         }
@@ -187,7 +180,6 @@ object RecentChatsHelper {
         val context = fragment.parentActivity ?: return
         val fragmentView = fragment.fragmentView ?: return
         val dialogs = synchronized(cache) { ArrayList(listFor(currentAccount)) }
-        Log.d(TAG, "popup: cache size=${dialogs.size}")
         if (dialogs.isEmpty()) return
 
         val layout = object : ActionBarPopupWindow.ActionBarPopupWindowLayout(context, R.drawable.popup_fixed_alert4, fragment.getResourceProvider()) {
@@ -318,7 +310,6 @@ object RecentChatsHelper {
             layout.addView(cell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48))
         }
 
-        Log.d(TAG, "popup: unresolved=$unresolved of ${dialogs.size}")
         val scrimPopupWindow = ActionBarPopupWindow(layout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT)
         scrimPopupWindowRef.set(scrimPopupWindow)
         scrimPopupWindow.setPauseNotifications(true)

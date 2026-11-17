@@ -848,7 +848,6 @@ object Schemas {
                 onChange = { page, _ -> page.rebuildAll() },
             )
             toggle(InuConfig.DIALOGS_FAB_LEFT_SIDE, R.string.InuDialogsFabLeftSide, onChange = { page, _ -> page.rebuildAll() })
-            toggle(InuConfig.DIALOGS_FAB_RAISE, R.string.InuDialogsFabRaise, onChange = { page, _ -> page.showRestart() })
         }
     }
 

@@ -60,7 +60,7 @@ internal object ExportHtml {
         val timeFmt = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())
         for (m in session.collected.sortedBy { it.date }) {
             if (m.action != null || m is TLRPC.TL_messageService) {
-                sb.append("<div class=\"service\">").append(esc(serviceLabel(controller, m))).append("</div>")
+                sb.append("<div class=\"service\">").append(esc(serviceLabel(m))).append("</div>")
                 continue
             }
             sb.append("<div class=\"msg").append(if (m.out) " out" else "").append("\" id=\"m")
@@ -147,7 +147,7 @@ internal object ExportHtml {
         ExportMediaKind.DOCUMENT -> "file"
     }
 
-    private fun serviceLabel(controller: MessagesController, m: TLRPC.Message): String {
+    private fun serviceLabel(m: TLRPC.Message): String {
         val action = m.action?.javaClass?.simpleName?.removePrefix("TL_") ?: return ""
         return action.replace(Regex("([a-z])([A-Z])"), "$1 $2").lowercase(Locale.getDefault())
     }

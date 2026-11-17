@@ -600,7 +600,6 @@
     <string name="InuDialogsFabMainAction">کنش اصلی</string>
     <string name="InuDialogsFabOffsetForBottomBar">فاصله برای نوار پایین</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">غیرفعال کردن این گزینه ممکن است روی همه اندازه‌های صفحه خوب کار نکند</string>
-    <string name="InuDialogsFabRaise">کمی بالا بردن دکمه‌های FAB</string>
     <string name="InuDialogsFabSecondaryAction">کنش ثانویه</string>
     <string name="InuDialogsMenuItems">موارد</string>
     <string name="InuDialogsMenuOrder">منوی گزینه‌ها</string>

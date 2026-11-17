@@ -2,6 +2,7 @@ package desu.inugram.helpers.ai
 
 import android.content.Context
 import desu.inugram.InuConfig
+import desu.inugram.helpers.Http
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
@@ -14,7 +15,6 @@ import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_aicompose
 import java.io.IOException
-import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
@@ -154,26 +154,14 @@ object AiComposeHelper {
                 }
 
                 val body = json.toString()
-                val conn = (URL(endpoint.url).openConnection() as HttpURLConnection).apply {
-                    requestMethod = "POST"
-                    connectTimeout = 20_000
-                    readTimeout = 60_000
-                    doOutput = true
-                    setRequestProperty("Content-Type", "application/json")
-                    if (endpoint.apiKey.isNotBlank()) {
-                        setRequestProperty("Authorization", "Bearer ${endpoint.apiKey}")
-                    }
-                }
-                val resp = try {
-                    conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
-                    val code = conn.responseCode
-                    val body2 = (if (code in 200..299) conn.inputStream else conn.errorStream)
-                        ?.bufferedReader(Charsets.UTF_8)?.use { it.readText() } ?: ""
-                    if (code !in 200..299) throw IOException("HTTP $code: ${body2.take(300)}")
-                    body2
-                } finally {
-                    conn.disconnect()
-                }
+                val headers = LinkedHashMap<String, String>()
+                headers["Content-Type"] = "application/json"
+                if (endpoint.apiKey.isNotBlank()) headers["Authorization"] = "Bearer ${endpoint.apiKey}"
+                val (code, resp) = Http.request(
+                    endpoint.url, "POST", headers, body.toByteArray(Charsets.UTF_8),
+                    connectTimeout = 20_000, readTimeout = 60_000,
+                )
+                if (code !in 200..299) throw IOException("HTTP $code: ${resp.take(300)}")
                 val msgObj = try {
                     JSONObject(resp).getJSONArray("choices").getJSONObject(0).getJSONObject("message")
                 } catch (_: Exception) {
@@ -203,14 +191,6 @@ object AiComposeHelper {
     private const val FIX_PROMPT = "Fix grammar, spelling and punctuation in the following text. Do not change the meaning. Return only the corrected text."
     private const val EMOJIFY_SUFFIX = " Additionally, weave relevant emojis into the text where appropriate."
     private const val STYLE_PROMPT = "Rewrite the following text in the style \"%s\". Return only the rewritten text."
-
-    private val STYLE_PROMPTS = mapOf(
-        "biblical" to "Rewrite in a biblical, archaic and solemn style using thee/thou language and scripture-like prose. Return only the rewritten text.",
-        "corp" to "Rewrite in a professional corporate style — formal, concise and business-appropriate. Return only the rewritten text.",
-        "zen" to "Rewrite in a calm, minimalist zen style — peaceful, contemplative, with short serene sentences. Return only the rewritten text.",
-        "viking" to "Rewrite in a bold Norse warrior style — heroic, dramatic and battle-ready. Return only the rewritten text.",
-        "short" to "Rewrite as an extremely short, punchy version keeping only the core message. Return only the rewritten text.",
-    )
 
     private class ComposeEntry {
         val cancelled = AtomicBoolean(false)
@@ -284,15 +264,9 @@ object AiComposeHelper {
 
     private fun tonePrompt(tone: TL_aicompose.InputAiComposeTone): String = when (tone) {
         is TL_aicompose.inputAiComposeToneSingleUse -> tone.custom_prompt.orEmpty().trim()
-        is TL_aicompose.TL_aiComposeToneDefault -> knownStyle(tone.tone) ?: STYLE_PROMPT.format(tone.title ?: tone.tone)
+        is TL_aicompose.TL_aiComposeToneDefault -> STYLE_PROMPT.format(tone.title ?: tone.tone)
         is TL_aicompose.TL_aiComposeTone -> tone.prompt?.trim()?.takeIf { it.isNotEmpty() }
-            ?: knownStyle(tone.slug) ?: STYLE_PROMPT.format(tone.title ?: tone.slug ?: "")
+            ?: STYLE_PROMPT.format(tone.title ?: tone.slug ?: "")
         else -> ""
-    }
-
-    private fun knownStyle(slug: String?): String? {
-        if (slug == null) return null
-        val key = slug.trim().lowercase()
-        return STYLE_PROMPTS[key] ?: STYLE_PROMPTS.entries.firstOrNull { key.contains(it.key) }?.value
     }
 }

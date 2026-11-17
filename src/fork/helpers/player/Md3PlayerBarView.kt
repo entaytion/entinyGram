@@ -16,7 +16,6 @@ import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
-import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.Theme
 
 private fun dp(value: Float): Int = AndroidUtilities.dp(value)
@@ -95,25 +94,13 @@ class Md3PlayerBarView(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        for (a in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
-            val nc = NotificationCenter.getInstance(a)
-            nc.addObserver(this, NotificationCenter.messagePlayingDidStart)
-            nc.addObserver(this, NotificationCenter.messagePlayingPlayStateChanged)
-            nc.addObserver(this, NotificationCenter.messagePlayingProgressDidChanged)
-            nc.addObserver(this, NotificationCenter.fileLoaded)
-        }
+        Md3PlayerHelper.observe(this, true, IDS)
         update()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        for (a in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
-            val nc = NotificationCenter.getInstance(a)
-            nc.removeObserver(this, NotificationCenter.messagePlayingDidStart)
-            nc.removeObserver(this, NotificationCenter.messagePlayingPlayStateChanged)
-            nc.removeObserver(this, NotificationCenter.messagePlayingProgressDidChanged)
-            nc.removeObserver(this, NotificationCenter.fileLoaded)
-        }
+        Md3PlayerHelper.observe(this, false, IDS)
     }
 
     override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
@@ -140,5 +127,14 @@ class Md3PlayerBarView(
         val paused = MediaController.getInstance().isMessagePaused
         playButton.setPlaying(!paused, isAttachedToWindow)
         playButton.contentDescription = LocaleController.getString(if (paused) R.string.AccActionPlay else R.string.AccActionPause)
+    }
+
+    private companion object {
+        val IDS = intArrayOf(
+            NotificationCenter.messagePlayingDidStart,
+            NotificationCenter.messagePlayingPlayStateChanged,
+            NotificationCenter.messagePlayingProgressDidChanged,
+            NotificationCenter.fileLoaded,
+        )
     }
 }

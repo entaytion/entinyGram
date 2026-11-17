@@ -600,7 +600,6 @@
     <string name="InuDialogsFabMainAction">Birincil eylem</string>
     <string name="InuDialogsFabOffsetForBottomBar">Alt çubuk için mesafe bırak</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">Bunu devre dışı bırakmak tüm ekran boyutlarında iyi çalışmayabilir</string>
-    <string name="InuDialogsFabRaise">FAB düğmelerini biraz yükselt</string>
     <string name="InuDialogsFabSecondaryAction">İkincil eylem</string>
     <string name="InuDialogsMenuItems">Öğeler</string>
     <string name="InuDialogsMenuOrder">Seçenekler menüsü</string>

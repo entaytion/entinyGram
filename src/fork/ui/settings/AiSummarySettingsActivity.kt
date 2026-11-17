@@ -11,45 +11,30 @@ import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-class AiSummarySettingsActivity : SettingsPageActivity() {
+class AiSummarySettingsActivity : AiTaskSettingsActivity(
+    false,
+    InuConfig.AI_SUMMARY_PROVIDER_ID,
+    InuConfig.AI_SUMMARY_MODEL,
+    BUTTON_PROVIDER,
+    BUTTON_MODEL,
+) {
 
     private var temperatureBar: AvatarCornerPreviewCell.AltSeekbar? = null
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAiSummary)
 
-    override fun onResume() {
-        super.onResume()
-        listView?.adapter?.update(true)
-    }
-
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val provider = AiFeatureSupport.effectiveProvider(InuConfig.AI_SUMMARY_PROVIDER_ID.value, false)
-        items.add(
+        val provider = taskProvider()
+        addTaskItems(
+            items,
             mkTwoLineCheckItem(
                 TOGGLE_ENABLED,
                 R.string.InuAiSummary,
                 R.string.InuAiSummaryInfo,
                 InuConfig.AI_SUMMARY_ENABLED.value,
-            )
+            ),
+            provider,
         )
-        items.add(UItem.asShadow(if (provider == null) LocaleController.getString(R.string.InuAiAddProviderFirst) else null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionProvider)))
-        items.add(
-            UItem.asButton(
-                BUTTON_PROVIDER,
-                LocaleController.getString(R.string.InuAiFeatureProvider),
-                AiFeatureSupport.providerLabel(InuConfig.AI_SUMMARY_PROVIDER_ID.value, false),
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_MODEL,
-                LocaleController.getString(R.string.InuAiTranscribeModel),
-                AiFeatureSupport.modelLabel(InuConfig.AI_SUMMARY_MODEL.value, provider, false),
-            ).setEnabled(provider != null)
-        )
-        items.add(UItem.asShadow(null))
 
         val ctx = context ?: return
         val bar = temperatureBar ?: AvatarCornerPreviewCell.AltSeekbar(
@@ -70,22 +55,8 @@ class AiSummarySettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        when (item.id) {
-            TOGGLE_ENABLED -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_SUMMARY_ENABLED.toggle()
-            BUTTON_PROVIDER -> AiFeatureSupport.pickProvider(this, false, InuConfig.AI_SUMMARY_PROVIDER_ID.value) {
-                InuConfig.AI_SUMMARY_PROVIDER_ID.value = it
-                InuConfig.AI_SUMMARY_MODEL.value = ""
-                listView?.adapter?.update(true)
-            }
-            BUTTON_MODEL -> AiFeatureSupport.pickModel(
-                this,
-                AiFeatureSupport.effectiveProvider(InuConfig.AI_SUMMARY_PROVIDER_ID.value, false),
-                false,
-                InuConfig.AI_SUMMARY_MODEL.value,
-            ) {
-                InuConfig.AI_SUMMARY_MODEL.value = it
-            }
-        }
+        if (onTaskClick(item.id)) return
+        if (item.id == TOGGLE_ENABLED) (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_SUMMARY_ENABLED.toggle()
     }
 
     companion object {

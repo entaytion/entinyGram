@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import desu.inugram.core.plugins.PluginManifest
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.plugins.PluginDependencies
 import desu.inugram.helpers.plugins.PluginManager
 import desu.inugram.helpers.plugins.PluginRepoPost
 import desu.inugram.helpers.plugins.PluginRepos
@@ -20,7 +19,6 @@ internal class PluginRepoPluginActivity(
     private val post: PluginRepoPost,
     private val manifest: PluginManifest,
     private val repoPosts: List<Pair<PluginRepoPost, PluginManifest>>,
-    private val installer: RepoInstaller,
 ) : SettingsPageActivity() {
     private var hero: PluginRepoRow? = null
     private val grantRows = HashMap<Int, GrantRowView>()
@@ -78,11 +76,7 @@ internal class PluginRepoPluginActivity(
         manifest.id?.let {
             items.add(mkTwoLineEntry(PLUGIN_ID, R.drawable.msg_link, str(R.string.InuPluginRepoId), it))
         }
-        val needs = PluginDependencies.needs(manifest)
-        if (needs.isNotEmpty()) {
-            val value = needs.joinToString(", ") { need -> need.minVersion?.let { "${need.id} >=$it" } ?: need.id }
-            items.add(mkTwoLineEntry(DEPENDENCIES, R.drawable.msg_secret, str(R.string.InuPluginRepoDependencies), value))
-        }
+        addPluginDependencies(items, manifest)
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(str(R.string.InuPluginRepoInstallation)))
@@ -96,18 +90,7 @@ internal class PluginRepoPluginActivity(
         )
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(str(R.string.InuPluginsPermissions)))
-        val grants = sortedGrants(manifest.grants)
-        if (grants.isEmpty()) {
-            items.add(UItem.asShadow(str(R.string.InuPluginsPermissionsNone)))
-        } else {
-            grants.forEachIndexed { i, (name, scopes) ->
-                val row = grantRows.getOrPut(i) { GrantRowView(context) }
-                row.bind(name, scopes, divider = i != grants.lastIndex)
-                items.add(UItem.asCustom(GRANT_BASE + i, row))
-            }
-            items.add(UItem.asShadow(null))
-        }
+        addPluginPermissions(items, context, manifest, grantRows)
 
         items.add(UItem.asHeader(str(R.string.InuPluginRepoVersions)))
         versions.forEachIndexed { i, (versionPost, versionManifest) ->
@@ -124,7 +107,7 @@ internal class PluginRepoPluginActivity(
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_INSTALL -> installer.install(post)
+            BUTTON_INSTALL -> installRepoPost(this, post)
             BUTTON_OPEN -> PluginManager.findUpdateTarget(manifest)?.let { presentFragment(PluginInfoActivity(it)) }
             SOURCE -> messagesController.openByUserName(post.repo.username, this, 0)
             PLUGIN_ID -> manifest.id?.let {
@@ -135,7 +118,7 @@ internal class PluginRepoPluginActivity(
                 val (versionPost, versionManifest) = versions[item.id - VERSION_BASE]
                 val installed = PluginManager.findUpdateTarget(versionManifest)
                 if (installed != null && installed.manifest.version == versionManifest.version) presentFragment(PluginInfoActivity(installed))
-                else installer.install(versionPost)
+                else installRepoPost(this, versionPost)
             }
         }
     }
@@ -146,10 +129,8 @@ internal class PluginRepoPluginActivity(
         private val AUTHOR = InuUtils.generateId()
         private val SOURCE = InuUtils.generateId()
         private val PLUGIN_ID = InuUtils.generateId()
-        private val DEPENDENCIES = InuUtils.generateId()
         private val BUTTON_INSTALL = InuUtils.generateId()
         private val BUTTON_OPEN = InuUtils.generateId()
-        private const val GRANT_BASE = 20000
         private const val VERSION_BASE = 30000
     }
 }

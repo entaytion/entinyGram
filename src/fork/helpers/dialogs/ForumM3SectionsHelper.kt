@@ -1,11 +1,8 @@
 package desu.inugram.helpers.dialogs
 
-import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
-import android.graphics.drawable.RippleDrawable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
@@ -16,10 +13,9 @@ import org.telegram.ui.Cells.DialogCell
 
 object ForumM3SectionsHelper {
 
-    private const val OUTER_DP = 20f
-    private const val INNER_DP = 4f
-    private const val GAP_DP = 1f
     private const val SIDE_MARGIN_DP = 8f
+
+    private val applied = java.util.WeakHashMap<View, Int>()
 
     @JvmStatic
     fun isEnabled(): Boolean = InuConfig.FORUM_M3_SECTIONS.value
@@ -38,7 +34,13 @@ object ForumM3SectionsHelper {
             return
         }
         val sec = sectionOf(topic)
-        view.background = cardBackground(sectionOf(prev) != sec, sectionOf(next) != sec)
+        val first = sectionOf(prev) != sec
+        val last = sectionOf(next) != sec
+        val code = DialogsM3SectionsHelper.appearanceKey(first, last)
+        if (applied[view] != code || view.background !is InsetDrawable) {
+            applied[view] = code
+            view.background = DialogsM3SectionsHelper.cardBackground(first, last)
+        }
     }
 
     @JvmStatic
@@ -57,29 +59,5 @@ object ForumM3SectionsHelper {
                 if (isEnabled()) c.drawColor(Theme.getColor(Theme.key_windowBackgroundGray))
             }
         })
-    }
-
-    private fun cardBackground(first: Boolean, last: Boolean): InsetDrawable {
-        val gap = AndroidUtilities.dp(GAP_DP)
-        val card = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            setColor(Theme.getColor(Theme.key_windowBackgroundWhite))
-            cornerRadii = radii(first, last)
-        }
-        val mask = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            setColor(-1)
-            cornerRadii = radii(first, last)
-        }
-        val ripple = RippleDrawable(ColorStateList.valueOf(Theme.getColor(Theme.key_listSelector)), card, mask)
-        return InsetDrawable(ripple, 0, if (first) gap * 3 else gap, 0, if (last) gap * 3 else 0)
-    }
-
-    private fun radii(first: Boolean, last: Boolean): FloatArray {
-        val o = AndroidUtilities.dp(OUTER_DP).toFloat()
-        val n = AndroidUtilities.dp(INNER_DP).toFloat()
-        val t = if (first) o else n
-        val b = if (last) o else n
-        return floatArrayOf(t, t, t, t, b, b, b, b)
     }
 }

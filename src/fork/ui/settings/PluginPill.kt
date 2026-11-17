@@ -6,7 +6,6 @@ import android.widget.TextView
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
 
-/** the small tinted tag in front of a plugin name: its version, or "official" in the accent color */
 internal class PluginPill(context: Context, accent: Boolean = false) : TextView(context) {
     init {
         textSize = 11.5f

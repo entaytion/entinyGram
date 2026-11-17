@@ -1,13 +1,10 @@
 package desu.inugram.helpers.plugins
 
 import desu.inugram.core.plugins.PluginManifest
+import desu.inugram.helpers.plugins.market.MarketStore
 import org.telegram.messenger.LocaleController.formatString
 import org.telegram.messenger.R
 
-/**
- * `@requires <plugin-id> [>=<version>]`, repeatable: the plugin installs and runs only while the named plugins
- * are installed and enabled. This is how a plugin depends on another.
- */
 object PluginDependencies {
     const val KEY = "requires"
 
@@ -19,37 +16,19 @@ object PluginDependencies {
         Need(id, parts.getOrNull(1)?.removePrefix(">="))
     }
 
-    /** why [manifest] cannot be installed or run right now, or null */
     fun unmet(manifest: PluginManifest): String? {
-        val problem = unmetFor(manifest.raw[KEY].orEmpty(), manifest.id) ?: return null
+        val problem = unmetFor(manifest) ?: return null
         return if (problem.contains(' ')) formatString(R.string.InuPluginsErrorRequiresVersion, problem.substringBefore(' '), problem.substringAfter(' '))
         else formatString(R.string.InuPluginsErrorRequires, problem)
     }
 
-    /**
-     * What is missing for plugins that need [lines] (`@requires` values), as the id or `id version`, or null when
-     * everything is there. A plugin never waits for itself.
-     */
-    fun unmetFor(lines: List<String>, selfId: String?): String? {
-        for (line in lines) {
-            val parts = line.trim().split(' ').filter { it.isNotEmpty() }
-            val id = parts.firstOrNull() ?: continue
-            if (id == selfId) continue
-            val wanted = parts.getOrNull(1)?.removePrefix(">=")
-            val installed = PluginManager.plugins().firstOrNull { it.manifest.id == id && it.enabled } ?: return id
-            if (wanted != null && compareVersions(installed.manifest.version, wanted) < 0) return "$id $wanted"
+    private fun unmetFor(manifest: PluginManifest): String? {
+        for (need in needs(manifest)) {
+            if (need.id == manifest.id) continue
+            val installed = PluginManager.plugins().firstOrNull { it.manifest.id == need.id && it.enabled } ?: return need.id
+            val wanted = need.minVersion
+            if (wanted != null && MarketStore.compareVersions(installed.manifest.version, wanted) < 0) return "${need.id} $wanted"
         }
         return null
-    }
-
-    /** dotted numbers; a missing part counts as 0, anything else as 0 too */
-    fun compareVersions(have: String?, want: String): Int {
-        val a = (have ?: "").split('.').map { it.takeWhile(Char::isDigit).toIntOrNull() ?: 0 }
-        val b = want.split('.').map { it.takeWhile(Char::isDigit).toIntOrNull() ?: 0 }
-        for (i in 0 until maxOf(a.size, b.size)) {
-            val d = a.getOrElse(i) { 0 }.compareTo(b.getOrElse(i) { 0 })
-            if (d != 0) return d
-        }
-        return 0
     }
 }

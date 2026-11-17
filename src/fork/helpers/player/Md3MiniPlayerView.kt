@@ -25,7 +25,6 @@ import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
-import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.MainTabsActivity
@@ -40,6 +39,14 @@ class Md3MiniPlayerView(
 
     companion object {
         const val HEIGHT_DP = 64
+
+        private val IDS = intArrayOf(
+            NotificationCenter.messagePlayingDidStart,
+            NotificationCenter.messagePlayingDidReset,
+            NotificationCenter.messagePlayingPlayStateChanged,
+            NotificationCenter.messagePlayingProgressDidChanged,
+            NotificationCenter.fileLoaded,
+        )
     }
 
     private var dark = Md3PlayerColors.isDark(resourcesProvider)
@@ -195,27 +202,13 @@ class Md3MiniPlayerView(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        for (a in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
-            val nc = NotificationCenter.getInstance(a)
-            nc.addObserver(this, NotificationCenter.messagePlayingDidStart)
-            nc.addObserver(this, NotificationCenter.messagePlayingDidReset)
-            nc.addObserver(this, NotificationCenter.messagePlayingPlayStateChanged)
-            nc.addObserver(this, NotificationCenter.messagePlayingProgressDidChanged)
-            nc.addObserver(this, NotificationCenter.fileLoaded)
-        }
+        Md3PlayerHelper.observe(this, true, IDS)
         update(false)
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        for (a in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
-            val nc = NotificationCenter.getInstance(a)
-            nc.removeObserver(this, NotificationCenter.messagePlayingDidStart)
-            nc.removeObserver(this, NotificationCenter.messagePlayingDidReset)
-            nc.removeObserver(this, NotificationCenter.messagePlayingPlayStateChanged)
-            nc.removeObserver(this, NotificationCenter.messagePlayingProgressDidChanged)
-            nc.removeObserver(this, NotificationCenter.fileLoaded)
-        }
+        Md3PlayerHelper.observe(this, false, IDS)
     }
 
     override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {

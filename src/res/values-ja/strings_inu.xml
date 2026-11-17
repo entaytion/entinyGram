@@ -600,7 +600,6 @@
     <string name="InuDialogsFabMainAction">メイン動作</string>
     <string name="InuDialogsFabOffsetForBottomBar">下部バーに合わせてオフセット</string>
     <string name="InuDialogsFabOffsetForBottomBarInfo">無効化すると画面サイズによってはうまく動作しない場合があります</string>
-    <string name="InuDialogsFabRaise">FABボタンを少し上げる</string>
     <string name="InuDialogsFabSecondaryAction">サブ動作</string>
     <string name="InuDialogsMenuItems">項目</string>
     <string name="InuDialogsMenuOrder">オプションメニュー</string>

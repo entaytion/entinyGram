@@ -393,6 +393,9 @@ class Md3LyricsView(context: Context) : FrameLayout(context) {
         private val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { typeface = AndroidUtilities.bold() }
         private val dotPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         private val fillMatrix = Matrix()
+        private var fillShader: LinearGradient? = null
+        private var fillFilled = 0
+        private var fillUnfilled = 0
         private val opacity = Md3Spring(opacityFuture, 260f, 1f, 0.004f)
         private val scale = Md3Spring(1f, 320f, 0.75f, 0.0005f)
         var index = -1
@@ -501,7 +504,13 @@ class Md3LyricsView(context: Context) : FrameLayout(context) {
                 val filled = ColorUtils.setAlphaComponent(colorActive, (alpha * baseAlpha).toInt())
                 val unfilled = ColorUtils.setAlphaComponent(colorActive, (alpha * baseAlpha * unfilledAlpha).toInt())
                 val h = built.height.toFloat()
-                val fill = LinearGradient(0f, 0f, 0f, 1f, filled, unfilled, Shader.TileMode.CLAMP)
+                var fill = fillShader
+                if (fill == null || fillFilled != filled || fillUnfilled != unfilled) {
+                    fill = LinearGradient(0f, 0f, 0f, 1f, filled, unfilled, Shader.TileMode.CLAMP)
+                    fillShader = fill
+                    fillFilled = filled
+                    fillUnfilled = unfilled
+                }
                 fillMatrix.setScale(1f, max(1f, h * 0.2f))
                 fillMatrix.postTranslate(0f, (progress * 1.2f - 0.2f) * h)
                 fill.setLocalMatrix(fillMatrix)

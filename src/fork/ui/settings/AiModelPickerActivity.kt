@@ -2,14 +2,12 @@ package desu.inugram.ui.settings
 
 import android.content.Context
 import android.view.View
-import android.widget.EditText
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.ai.AiModelsHelper
 import desu.inugram.helpers.ai.AiProviderStore
 import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
-import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
@@ -31,14 +29,10 @@ class AiModelPickerActivity : SettingsPageActivity() {
 
     override fun createView(context: Context): View {
         return super.createView(context).also {
-            val searchItem = simpleActionBar.createMenu().addItem(0, R.drawable.outline_header_search).setIsSearchField(true)
-            searchItem.setSearchFieldHint(LocaleController.getString(R.string.Search))
-            searchItem.setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
-                override fun onTextChanged(searchField: EditText) {
-                    query = searchField.text.toString().lowercase(Locale.getDefault())
-                    listView?.adapter?.update(false)
-                }
-            })
+            addSearch {
+                query = it
+                listView?.adapter?.update(false)
+            }
             load()
         }
     }

@@ -1,6 +1,5 @@
 package desu.inugram.helpers.translate.engine
 
-import android.util.Log
 import desu.inugram.InuConfig
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
@@ -39,24 +38,16 @@ object EntinyTranslate {
     @JvmStatic
     fun currentProviderName(): String {
         if (!isActive()) return LocaleController.getString(R.string.InuTranslateProviderTelegram)
-        // entiny: isActive()==true means the engine does the translating even when
-        // TRANSLATE_PROVIDER is still PROVIDER_TELEGRAM (that value doubles as "no third-party
-        // provider chosen", which for a non-premium account still routes through the engine as a
-        // premium bypass) - report whatever provider will actually receive the message text, never
-        // the raw preference, or the UI claims "Telegram API" while text goes to Google
+        // entiny: name the provider that really gets the text, PROVIDER_TELEGRAM on non-premium still goes to Google
         val provider = TranslationProviders.current() ?: GoogleWebProvider
         return provider.displayName()
     }
 
-    // entiny: single provider-resolution path shared by handle()/handlePoll()/handleWebPage() -
-    // previously each reimplemented this with a subtly different null-fallback, and the webpage
-    // path had none at all, so link previews silently used a different service than the message
-    // body for the same account/message
+    // entiny: the only provider resolution, text, polls and link previews must all use the same service
     private fun resolveProvider(dialogId: Long, account: Int): TranslationProvider? {
         if (!isActive(account)) return null
         val provider = TranslationProviders.current() ?: GoogleWebProvider
         if (!provider.isConfigured()) {
-            Log.d(TAG, "provider ${provider.displayName()} not configured; falling back to Telegram API")
             if (configBulletins.add(dialogId)) {
                 NotificationCenter.getGlobalInstance().postNotificationName(
                     NotificationCenter.showBulletin,
@@ -82,7 +73,6 @@ object EntinyTranslate {
         account: Int = UserConfig.selectedAccount,
     ): Boolean {
         val effective = resolveProvider(dialogId, account) ?: return false
-        Log.d(TAG, "handle dialog=$dialogId msg=$msgId to=$toLang provider=${effective.id}")
         return TranslateEngine.enqueueText(
             dialogId = dialogId,
             msgId = msgId,
@@ -126,7 +116,6 @@ object EntinyTranslate {
         account: Int = UserConfig.selectedAccount,
     ): Boolean {
         val effective = resolveProvider(dialogId, account) ?: return false
-        Log.d(TAG, "handlePoll dialog=$dialogId msg=$msgId to=$toLang provider=${effective.id}")
         return TranslateEngine.enqueuePoll(
             dialogId = dialogId,
             msgId = msgId,
@@ -146,11 +135,7 @@ object EntinyTranslate {
         toLang: String,
         callback: Utilities.Callback4<Boolean, Int, TLRPC.TL_webPage, String>,
     ): Boolean {
-        // entiny: was `TranslationProviders.current() ?: return false` - no Google fallback, so a
-        // non-premium account on PROVIDER_TELEGRAM got the message body via Google but the link
-        // preview not translated at all. resolveProvider() gives both the same fallback.
         val effective = resolveProvider(dialogId, UserConfig.selectedAccount) ?: return false
-        Log.d(TAG, "handleWebPage dialog=$dialogId msg=$msgId to=$toLang provider=${effective.id}")
         return TranslateEngine.enqueueWebPage(
             dialogId = dialogId,
             msgId = msgId,
@@ -164,7 +149,6 @@ object EntinyTranslate {
 
     @JvmStatic
     fun onProviderChanged() {
-        Log.d(TAG, "provider changed to ${currentProviderName()}; resetting engine failures")
         TranslateEngine.resetAll()
         configBulletins.clear()
     }
@@ -191,5 +175,4 @@ object EntinyTranslate {
 
     private val configBulletins = HashSet<Long>()
 
-    private const val TAG = "EntinyTranslate"
 }

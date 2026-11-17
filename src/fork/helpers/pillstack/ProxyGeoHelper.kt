@@ -1,10 +1,9 @@
 package desu.inugram.helpers.pillstack
 
+import desu.inugram.helpers.Http
 import org.json.JSONObject
 import org.telegram.messenger.Utilities
-import java.net.HttpURLConnection
 import java.net.InetAddress
-import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 
 // entiny: proxy host -> country flag through a free GeoIP service; asked once per host, remembered for the session
@@ -53,17 +52,9 @@ object ProxyGeoHelper {
     }.getOrNull()
 
     private fun get(url: String): String {
-        val conn = (URL(url).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = 8_000
-            readTimeout = 8_000
-        }
-        try {
-            if (conn.responseCode !in 200..299) throw IllegalStateException("HTTP ${conn.responseCode}")
-            return conn.inputStream.bufferedReader().use { it.readText() }
-        } finally {
-            conn.disconnect()
-        }
+        val (code, body) = Http.request(url, connectTimeout = 8_000, readTimeout = 8_000)
+        if (code !in 200..299) throw IllegalStateException("HTTP $code")
+        return body
     }
 
     private fun flag(code: String): String {

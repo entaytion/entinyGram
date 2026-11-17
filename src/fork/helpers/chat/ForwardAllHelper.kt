@@ -2,13 +2,10 @@ package desu.inugram.helpers.chat
 
 import android.os.Bundle
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
-import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.SendMessagesHelper
-import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ChatActivity
@@ -75,43 +72,27 @@ object ForwardAllHelper {
         offsetId: Int,
         acc: ArrayList<MessageObject>,
     ) {
-        val controller = MessagesController.getInstance(account)
-        val peer = controller.getInputPeer(dialogId)
-        if (peer == null) {
-            send(ref, account, targets, notify, acc)
-            return
-        }
-        val req = TLRPC.TL_messages_search()
-        req.peer = peer
-        req.q = ""
-        req.filter = TLRPC.TL_inputMessagesFilterEmpty()
-        req.offset_id = offsetId
-        req.limit = PAGE_SIZE
-        if (topicId != 0) {
-            req.flags = req.flags or 2
-            req.top_msg_id = topicId
-        }
-        ConnectionsManager.getInstance(account).sendRequest(req) { response, error ->
-            AndroidUtilities.runOnUIThread {
-                if (error != null || response !is TLRPC.messages_Messages) {
-                    FileLog.e("ForwardAllHelper: search failed for $dialogId: ${error?.text}")
-                    send(ref, account, targets, notify, acc)
-                    return@runOnUIThread
+        MessageSearchPager.searchPage(
+            account, dialogId, offsetId, PAGE_SIZE, "ForwardAllHelper",
+            configure = { req ->
+                if (topicId != 0) {
+                    req.flags = req.flags or 2
+                    req.top_msg_id = topicId
                 }
-                controller.putUsers(response.users, false)
-                controller.putChats(response.chats, false)
-                var minId = Int.MAX_VALUE
-                for (message in response.messages) {
-                    if (message.id < minId) minId = message.id
-                    if (message is TLRPC.TL_messageEmpty || message is TLRPC.TL_messageService) continue
-                    val obj = MessageObject(account, message, false, false)
-                    if (obj.canForwardMessage()) acc.add(obj)
-                }
-                if (response.messages.size < PAGE_SIZE || minId == Int.MAX_VALUE) {
-                    send(ref, account, targets, notify, acc)
-                } else {
-                    collect(ref, account, dialogId, topicId, targets, notify, minId, acc)
-                }
+            },
+            onEnd = { send(ref, account, targets, notify, acc) },
+        ) { response ->
+            var minId = Int.MAX_VALUE
+            for (message in response.messages) {
+                if (message.id < minId) minId = message.id
+                if (message is TLRPC.TL_messageEmpty || message is TLRPC.TL_messageService) continue
+                val obj = MessageObject(account, message, false, false)
+                if (obj.canForwardMessage()) acc.add(obj)
+            }
+            if (response.messages.size < PAGE_SIZE || minId == Int.MAX_VALUE) {
+                send(ref, account, targets, notify, acc)
+            } else {
+                collect(ref, account, dialogId, topicId, targets, notify, minId, acc)
             }
         }
     }

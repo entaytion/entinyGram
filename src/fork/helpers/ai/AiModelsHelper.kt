@@ -1,13 +1,12 @@
 package desu.inugram.helpers.ai
 
 import desu.inugram.InuConfig
+import desu.inugram.helpers.Http
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.Utilities
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
 
 object AiModelsHelper {
 
@@ -16,15 +15,7 @@ object AiModelsHelper {
         Utilities.globalQueue.postRunnable {
             val result = runCatching {
                 val url = "https://generativelanguage.googleapis.com/v1beta/models?key=$apiKey&pageSize=200"
-                val conn = (URL(url).openConnection() as HttpURLConnection).apply {
-                    requestMethod = "GET"
-                    connectTimeout = 15_000
-                    readTimeout = 15_000
-                }
-                val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
-                    ?.bufferedReader()?.use { it.readText() } ?: ""
-                conn.disconnect()
+                val (code, resp) = Http.request(url, connectTimeout = 15_000, readTimeout = 15_000)
                 if (code !in 200..299) {
                     val msg = try { JSONObject(resp).getJSONObject("error").optString("message", resp) } catch (_: Exception) { resp }
                     throw IOException("Gemini API error ($code): ${msg.take(300)}")
@@ -50,16 +41,7 @@ object AiModelsHelper {
                 val normalized = baseUrl.trimEnd('/')
                 val url = if (normalized.endsWith("/models")) normalized else "$normalized/models"
                 if (!AiComposeHelper.isEndpointSecure(url)) throw IOException("plain HTTP is not allowed: ${AiComposeHelper.host(url)}")
-                val conn = (URL(url).openConnection() as HttpURLConnection).apply {
-                    requestMethod = "GET"
-                    connectTimeout = 15_000
-                    readTimeout = 15_000
-                    if (apiKey.isNotBlank()) setRequestProperty("Authorization", "Bearer $apiKey")
-                }
-                val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
-                    ?.bufferedReader()?.use { it.readText() } ?: ""
-                conn.disconnect()
+                val (code, resp) = Http.request(url, headers = bearer(apiKey), connectTimeout = 15_000, readTimeout = 15_000)
                 if (code !in 200..299) {
                     val msg = try { JSONObject(resp).getJSONObject("error").optString("message", resp) } catch (_: Exception) { resp }
                     throw IOException("Models API error ($code): ${msg.take(300)}")
@@ -106,15 +88,10 @@ object AiModelsHelper {
     }
 
     private fun probeModels(base: String, apiKey: String): Boolean = runCatching {
-        val conn = (URL("$base/models").openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = 8_000
-            readTimeout = 8_000
-            if (apiKey.isNotBlank()) setRequestProperty("Authorization", "Bearer $apiKey")
-        }
-        val code = conn.responseCode
-        val resp = if (code in 200..299) conn.inputStream.bufferedReader().use { it.readText() } else ""
-        conn.disconnect()
+        val (code, resp) = Http.request("$base/models", headers = bearer(apiKey), connectTimeout = 8_000, readTimeout = 8_000)
         code in 200..299 && JSONObject(resp).let { it.optJSONArray("data") != null || it.optJSONArray("models") != null }
     }.getOrDefault(false)
+
+    private fun bearer(apiKey: String): Map<String, String> =
+        if (apiKey.isNotBlank()) mapOf("Authorization" to "Bearer $apiKey") else emptyMap()
 }

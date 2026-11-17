@@ -624,10 +624,7 @@ object TranslateHelper {
             .postNotificationName(NotificationCenter.messageTranslated, msg)
     }
 
-    // entiny: called from stock TranslateController.invalidateTranslation() too, so the fork's own
-    // shadow maps (webPages/bodies/manual/...) never outlive the stock translation fields they
-    // shadow - previously only revert() cleared these, so an edit-triggered stock invalidation left
-    // a stale translated link preview rendering via viewWebPage() for a message whose URL changed
+    // entiny: also called from stock TranslateController.invalidateTranslation() so shadow maps never outlive stock fields
     @JvmStatic
     fun clearState(msg: MessageObject) {
         manual[msg.dialogId]?.remove(msg.id)
@@ -640,11 +637,7 @@ object TranslateHelper {
         originals[msg.dialogId]?.remove(msg.id)
     }
 
-    // entiny: stock invalidates translations on every edit update, and reactions arrive as edit
-    // updates too. Gating on the originals snapshot alone (rather than requiring
-    // isManualTranslated/hasTranslatedWebPage first) protects whole-chat auto-translate the same
-    // way - it used to only protect messages translated via the manual long-press menu, so an
-    // auto-translated dialog lost its translations on every reaction to a translated message.
+    // entiny: reactions arrive as edit updates, so keep the translation while the text matches the baseline
     @JvmStatic
     fun shouldKeepTranslation(msg: MessageObject?): Boolean {
         if (msg == null || !InuConfig.IN_PLACE_TRANSLATION.value) return false
@@ -652,18 +645,12 @@ object TranslateHelper {
         return TextUtils.equals(original, msg.messageOwner?.message)
     }
 
-    // entiny: records the pre-translation text so shouldKeepTranslation() can tell a same-content
-    // "edit" update (reaction/view-count bump) apart from a real edit. Call this right before
-    // handing a message to pushToTranslate() - both the manual path (startTranslate, above) and
-    // stock's own auto/dialog-translate flow (TranslateController.checkTranslation) use it.
+    // entiny: call right before pushToTranslate(), manual and stock auto-translate paths alike
     @JvmStatic
     fun recordTranslationBaseline(msg: MessageObject) {
         originals.computeIfAbsent(msg.dialogId) { ConcurrentHashMap() }[msg.id] = msg.messageOwner?.message.orEmpty()
     }
 
-    // entiny: lets stock's auto/dialog-translate flow build the same "keep original" merged body
-    // as the manual path (storeMergedBody, below) - KEEP_ORIGINAL_AFTER_TRANSLATION used to only
-    // work for messages translated via the manual long-press menu.
     @JvmStatic
     fun recordAutoTranslatedBody(target: MessageObject, translated: TLRPC.TL_textWithEntities?) {
         if (translated != null) storeMergedBody(target, translated)

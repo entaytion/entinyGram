@@ -1455,7 +1455,6 @@ object ChatHelper {
         }
 
         MediaController.saveFile((scratch ?: source).absolutePath, parent, type, name, document?.mime_type) { uri ->
-            android.util.Log.d("InuViewed", "one-time mid=" + message.id + " saved uri=" + uri)
             scratch?.delete()
             if (!silent) BulletinFactory.of(activity).createDownloadBulletin(bulletinType, 1, activity.themeDelegate).show()
         }
@@ -1923,10 +1922,6 @@ object ChatHelper {
         if (!InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.value) return false
         if (chat.join_to_send) return false
         val linked = chat.megagroup && chat.has_link
-        // entiny: record the flags when the join bar is about to show for a megagroup so repro reports are actionable
-        if (!linked && chat.megagroup) {
-            android.util.Log.d("InuJoin", "megagroup=${chat.id} has_link=${chat.has_link} join_to_send=${chat.join_to_send} min=${chat.min} left=${chat.left}")
-        }
         return linked
     }
 
@@ -2302,6 +2297,7 @@ object ChatHelper {
             compactForwardBlankLayouts.clear()
             compactForwardBlankTextSize = size
         }
+        if (compactForwardBlankLayouts.size >= 64 && width !in compactForwardBlankLayouts) compactForwardBlankLayouts.clear()
         val blank = compactForwardBlankLayouts.getOrPut(width) {
             StaticLayout.Builder
                 .obtain("", 0, 0, Theme.chat_forwardNamePaint, width)
@@ -2404,9 +2400,7 @@ object ChatHelper {
         // entiny: also clears the engine's per-dialog failedAt/bulletinsShown cooldown entries -
         // without this they only ever grew, one per dialog ever touched, for the app's lifetime
         desu.inugram.helpers.translate.engine.EntinyTranslate.resetDialog(activity.dialogId)
-        // #if PLUGINS
         ChatActionsHelper.onFragmentDestroy(activity)
-        // #endif
         TranslateHelper.resetForDialog(activity.dialogId)
         TypingSpoofHelper.stop(activity.dialogId)
         BlockedMessagesHelper.forgetManual(activity.currentAccount, activity.dialogId)

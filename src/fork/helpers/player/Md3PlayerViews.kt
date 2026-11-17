@@ -527,6 +527,7 @@ class Md3WavySeekBar(context: Context) : View(context) {
     private var amplitude = 0f
     private var phase = 0f
     private var lastFrame = 0L
+    private val waveFrame = Runnable { invalidate() }
     private val maxAmplitude = dp(4f).toFloat()
 
     init {
@@ -654,7 +655,20 @@ class Md3WavySeekBar(context: Context) : View(context) {
         rect.set(x - thumbW / 2f, cy - dp(14f), x + thumbW / 2f, cy + dp(14f))
         canvas.drawRoundRect(rect, dpf(1.5f), dpf(1.5f), fillPaint)
 
-        if (amplitude > 0f || targetAmp != amplitude) postInvalidateOnAnimation() else lastFrame = 0L
+        removeCallbacks(waveFrame)
+        if (targetAmp != amplitude) {
+            postInvalidateOnAnimation()
+        } else if (amplitude > 0f && isShown) {
+            // entiny: steady wave runs at ~30 fps instead of the display rate
+            postDelayed(waveFrame, 33)
+        } else {
+            lastFrame = 0L
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        removeCallbacks(waveFrame)
     }
 
     override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {

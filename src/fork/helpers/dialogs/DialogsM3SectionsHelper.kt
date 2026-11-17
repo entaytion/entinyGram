@@ -80,7 +80,7 @@ object DialogsM3SectionsHelper {
         return floatArrayOf(t, t, t, t, b, b, b, b)
     }
 
-    private fun appearanceKey(first: Boolean, last: Boolean): Int {
+    internal fun appearanceKey(first: Boolean, last: Boolean): Int {
         val shape = (if (first) 1 else 0) or (if (last) 2 else 0)
         return 31 * (31 * shape + Theme.getColor(Theme.key_windowBackgroundWhite)) + Theme.getColor(Theme.key_listSelector)
     }

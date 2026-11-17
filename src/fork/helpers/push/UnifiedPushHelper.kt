@@ -14,9 +14,7 @@ import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.tl.TL_account
 import org.unifiedpush.android.connector.UnifiedPush
 
-// entiny: UnifiedPush as a push provider -- Telegram's "simple push" (token type 4) just wakes the app
-// through the user's distributor (ntfy etc.), then updates come over the normal connection.
-// Approach ported from Forkgram (https://github.com/forkgram/TelegramAndroid).
+// entiny: simple push (token type 4) only wakes the app, updates come over the normal connection; ported from Forkgram
 object UnifiedPushHelper {
 
     const val PUSH_TYPE_SIMPLE = 4

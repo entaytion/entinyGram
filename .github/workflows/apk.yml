@@ -528,6 +528,7 @@ jobs:
           MTPROTO_SESSION:       ${{ secrets.MTPROTO_SESSION }}
           GH_VARS_TOKEN:         ${{ secrets.GH_VARS_TOKEN }}
           PRE_RELEASE:           ${{ inputs.prerelease }}
+          RICH_POST:             '1'
           GH_TOKEN:              ${{ github.token }}
         run: |
           # Tags for the compare link. The release step is skipped for pre-releases,

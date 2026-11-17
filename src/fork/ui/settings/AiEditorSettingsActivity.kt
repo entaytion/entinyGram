@@ -12,16 +12,17 @@ import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-class AiEditorSettingsActivity : SettingsPageActivity() {
+class AiEditorSettingsActivity : AiTaskSettingsActivity(
+    false,
+    InuConfig.AI_EDITOR_PROVIDER_ID,
+    InuConfig.AI_EDITOR_MODEL,
+    BUTTON_PROVIDER,
+    BUTTON_MODEL,
+) {
 
     private var temperatureBar: AvatarCornerPreviewCell.AltSeekbar? = null
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAiEditorTitle)
-
-    override fun onResume() {
-        super.onResume()
-        listView?.adapter?.update(true)
-    }
 
     private fun reasoningLabel(): String = when {
         !InuConfig.AI_REASONING_ENABLED.value -> LocaleController.getString(R.string.PasswordOff)
@@ -31,41 +32,26 @@ class AiEditorSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val provider = AiFeatureSupport.effectiveProvider(InuConfig.AI_EDITOR_PROVIDER_ID.value, false)
+        val provider = taskProvider()
         val ready = AiComposeHelper.useOwnEditor()
-        items.add(
+        addTaskItems(
+            items,
             mkTwoLineCheckItem(
                 TOGGLE_ENABLED,
                 R.string.InuAiEditorTitle,
                 if (ready) R.string.InuAiEditorButtonInfo else R.string.InuAiEditorButtonSetupInfo,
                 !InuConfig.HIDE_AI_EDITOR.value,
+            ),
+            provider,
+        ) {
+            it.add(
+                UItem.asButton(
+                    BUTTON_ROLE,
+                    LocaleController.getString(R.string.InuAiRoles),
+                    AiRolesHelper.activeRoleText().trim().ifEmpty { LocaleController.getString(R.string.InuAiRolesAssistant) },
+                )
             )
-        )
-        items.add(UItem.asShadow(if (provider == null) LocaleController.getString(R.string.InuAiAddProviderFirst) else null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionProvider)))
-        items.add(
-            UItem.asButton(
-                BUTTON_PROVIDER,
-                LocaleController.getString(R.string.InuAiFeatureProvider),
-                AiFeatureSupport.providerLabel(InuConfig.AI_EDITOR_PROVIDER_ID.value, false),
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_MODEL,
-                LocaleController.getString(R.string.InuAiTranscribeModel),
-                AiFeatureSupport.modelLabel(InuConfig.AI_EDITOR_MODEL.value, provider, false),
-            ).setEnabled(provider != null)
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_ROLE,
-                LocaleController.getString(R.string.InuAiRoles),
-                AiRolesHelper.activeRoleText().trim().ifEmpty { LocaleController.getString(R.string.InuAiRolesAssistant) },
-            )
-        )
-        items.add(UItem.asShadow(null))
+        }
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionGeneration)))
         items.add(mkTwoLineCheckItem(TOGGLE_ONLY_ANSWER, R.string.InuAiOnlyAnswer, R.string.InuAiOnlyAnswerInfo, InuConfig.AI_ONLY_ANSWER.value))
@@ -92,23 +78,11 @@ class AiEditorSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (onTaskClick(item.id)) return
         when (item.id) {
             TOGGLE_ENABLED -> {
                 val hidden = InuConfig.HIDE_AI_EDITOR.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = !hidden
-            }
-            BUTTON_PROVIDER -> AiFeatureSupport.pickProvider(this, false, InuConfig.AI_EDITOR_PROVIDER_ID.value) {
-                InuConfig.AI_EDITOR_PROVIDER_ID.value = it
-                InuConfig.AI_EDITOR_MODEL.value = ""
-                listView?.adapter?.update(true)
-            }
-            BUTTON_MODEL -> AiFeatureSupport.pickModel(
-                this,
-                AiFeatureSupport.effectiveProvider(InuConfig.AI_EDITOR_PROVIDER_ID.value, false),
-                false,
-                InuConfig.AI_EDITOR_MODEL.value,
-            ) {
-                InuConfig.AI_EDITOR_MODEL.value = it
             }
             BUTTON_ROLE -> presentFragment(AiRolesSettingsActivity())
             TOGGLE_ONLY_ANSWER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_ONLY_ANSWER.toggle()

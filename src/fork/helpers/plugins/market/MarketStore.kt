@@ -4,14 +4,12 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.plugins.Plugin
 import desu.inugram.helpers.plugins.PluginManager
 import desu.inugram.helpers.plugins.PluginRepos
+import desu.inugram.ui.settings.MarketAction
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.Utilities
 import java.text.Collator
 
-/**
- * What the Market lists: the entinyGram catalog plus the latest plugin of every post of the repositories (channels).
- * The catalog wins over a channel's post of the same id. Ui thread only, listeners included
- */
+// entiny: ui thread only, listeners included; the catalog wins over a channel post with the same id
 object MarketStore {
     enum class State { IDLE, LOADING, READY, FAILED }
 
@@ -32,7 +30,6 @@ object MarketStore {
 
     fun find(slug: String): MarketEntry? = entries.firstOrNull { it.slug.equals(slug, ignoreCase = true) || it.id.equals(slug, ignoreCase = true) }
 
-    /** loads once; [force] reads everything again */
     fun ensureLoaded(account: Int, force: Boolean = false) {
         if (state == State.LOADING || (state == State.READY && !force)) return
         state = State.LOADING
@@ -50,7 +47,7 @@ object MarketStore {
             state = if (catalog == null && posts == null) State.FAILED else State.READY
             notifyListeners()
         }
-        Utilities.globalQueue.postRunnable {
+        Utilities.externalNetworkQueue.postRunnable {
             val loaded = MarketCatalog.load()
             AndroidUtilities.runOnUIThread {
                 catalog = loaded
@@ -112,6 +109,12 @@ object MarketStore {
         }
     }
 
+    internal fun actionOf(entry: MarketEntry): MarketAction = when {
+        installed(entry) == null -> MarketAction.INSTALL
+        hasUpdate(entry) -> MarketAction.UPDATE
+        else -> MarketAction.INSTALLED
+    }
+
     fun hasUpdate(entry: MarketEntry): Boolean {
         val plugin = installed(entry) ?: return false
         return when (entry.source) {
@@ -121,7 +124,6 @@ object MarketStore {
         }
     }
 
-    /** > 0 when [a] is newer; `1.10` is above `1.9`, anything after a dash counts as lower */
     fun compareVersions(a: String?, b: String?): Int {
         fun parts(v: String?) = (v ?: "").substringBefore('-').split('.', '+').map { it.toIntOrNull() ?: 0 }
         val x = parts(a)

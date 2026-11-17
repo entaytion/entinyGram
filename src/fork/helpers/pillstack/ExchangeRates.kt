@@ -2,7 +2,6 @@ package desu.inugram.helpers.pillstack
 
 import desu.inugram.InuConfig
 import org.telegram.PhoneFormat.PhoneFormat
-import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
@@ -41,70 +40,20 @@ object ExchangeRates {
         }
     }
 
-    private val sync = Any()
-    private val pendingCallbacks = ArrayList<Utilities.Callback<State?>>()
-    private var requestInFlight = false
-    private var cacheValue: State? = null
-    private var cacheTimestamp = 0L
+    private val cache = CachedFetch(
+        ttlMs = CACHE_TTL_MS,
+        storedRaw = { InuConfig.PILL_STACK_RATE_CACHE.value },
+        storedTime = { InuConfig.PILL_STACK_RATE_CACHE_TIME.value },
+        decode = ::deserialize,
+        persist = ::saveCache,
+        fetchBlocking = ::fetchBlocking,
+    )
 
-    fun clearCache() {
-        cacheTimestamp = 0
-    }
+    fun clearCache() = cache.clearCache()
 
-    private fun isStale(): Boolean =
-        getCached() == null || cacheTimestamp == 0L || System.currentTimeMillis() - cacheTimestamp >= CACHE_TTL_MS
+    fun getCached(): State? = cache.getCached()
 
-    fun getCached(): State? {
-        if (cacheValue == null) {
-            val raw = InuConfig.PILL_STACK_RATE_CACHE.value
-            if (raw.isNotEmpty()) {
-                cacheValue = deserialize(raw)
-                cacheTimestamp = InuConfig.PILL_STACK_RATE_CACHE_TIME.value
-            }
-        }
-        return cacheValue
-    }
-
-    fun fetch(callback: Utilities.Callback<State?>) {
-        val cached = getCached()
-        if (cached != null && !isStale()) {
-            AndroidUtilities.runOnUIThread { callback.run(cached) }
-            return
-        }
-        var startRequest: Boolean
-        synchronized(sync) {
-            pendingCallbacks.add(callback)
-            startRequest = !requestInFlight
-            requestInFlight = true
-        }
-        if (!startRequest) return
-        Utilities.globalQueue.postRunnable {
-            val state = try {
-                fetchBlocking()
-            } catch (e: Exception) {
-                FileLog.e(e)
-                null
-            }
-            if (state != null) {
-                cacheValue = state
-                cacheTimestamp = System.currentTimeMillis()
-                saveCache(state)
-            }
-            complete(state ?: getCached())
-        }
-    }
-
-    private fun complete(state: State?) {
-        val callbacks: List<Utilities.Callback<State?>>
-        synchronized(sync) {
-            requestInFlight = false
-            callbacks = ArrayList(pendingCallbacks)
-            pendingCallbacks.clear()
-        }
-        AndroidUtilities.runOnUIThread {
-            for (callback in callbacks) callback.run(state)
-        }
-    }
+    fun fetch(callback: Utilities.Callback<State?>) = cache.fetch(callback)
 
     private fun fetchBlocking(): State? {
         val connection = URL(URL_STRING).openConnection() as HttpURLConnection

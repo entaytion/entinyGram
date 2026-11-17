@@ -157,7 +157,6 @@ object RecentChatsSidebar {
             val obj: Any = (if (dialogId < 0) controller.getChat(-dialogId) else controller.getUser(dialogId)) ?: return@mapNotNull null
             dialogId to obj
         }
-        android.util.Log.d("EntinyRecent", "bar: cache size=${ids.size} resolved=${items.size}")
         return items
     }
 

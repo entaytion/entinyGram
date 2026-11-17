@@ -13,6 +13,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import desu.inugram.InuConfig
@@ -26,6 +27,7 @@ import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.ActionBar
+import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.SimpleTextView
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -42,6 +44,7 @@ import org.telegram.ui.Components.UniversalFragment
 import org.telegram.ui.Components.UniversalRecyclerView
 import org.telegram.ui.LaunchActivity
 import org.telegram.utils.glass.BaseFragmentSimpleGlass
+import java.util.Locale
 
 abstract class SettingsPageActivity : UniversalFragment() {
     @Suppress("OVERRIDE_DEPRECATION")
@@ -166,6 +169,32 @@ abstract class SettingsPageActivity : UniversalFragment() {
 
     protected fun softRebuild() {
         LaunchActivity.instance?.rebuildAllFragments(false)
+    }
+
+    protected fun addSearch(
+        id: Int = 0,
+        locale: Locale = Locale.getDefault(),
+        trim: Boolean = false,
+        onExpand: ((Boolean) -> Unit)? = null,
+        onQuery: (String) -> Unit,
+    ): ActionBarMenuItem {
+        val item = simpleActionBar.createMenu().addItem(id, R.drawable.outline_header_search).setIsSearchField(true)
+        item.setSearchFieldHint(LocaleController.getString(R.string.Search))
+        item.setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
+            override fun onSearchExpand() {
+                onExpand?.invoke(true)
+            }
+
+            override fun onSearchCollapse() {
+                onExpand?.invoke(false)
+            }
+
+            override fun onTextChanged(editText: EditText) {
+                val text = editText.text.toString()
+                onQuery((if (trim) text.trim() else text).lowercase(locale))
+            }
+        })
+        return item
     }
 
     protected fun mkTwoLineEntry(id: Int, iconRes: Int, title: CharSequence, subtitle: CharSequence, chevron: Boolean = false): UItem =

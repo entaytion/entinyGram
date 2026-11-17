@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -288,20 +287,12 @@ object MainTabsHelper {
 
     @JvmStatic
     fun resolveBulletinContainer(fragment: BaseFragment?): FrameLayout? {
-        Log.d(
-            "InuBulletin", "resolveBulletinContainer: fragment=${fragment?.javaClass?.simpleName} " +
-                "isDialogs=${fragment is DialogsActivity} hasMainTabs=${(fragment as? DialogsActivity)?.hasMainTabs} " +
-                "isHidden=$isHidden offsetDp=$mainTabsHeightWithMargins existingDelegate=${fragment?.bulletinDelegate}"
-        )
         if (fragment is DialogsActivity && fragment.hasMainTabs && fragment.bulletinDelegate == null) {
             fragment.bulletinDelegate = object : Bulletin.Delegate {
                 override fun getBottomOffset(tag: Int): Int {
-                    val offset = if (isHidden) 0 else dp(mainTabsHeightWithMargins.toFloat())
-                    Log.d("InuBulletin", "getBottomOffset -> $offset (isHidden=$isHidden)")
-                    return offset
+                    return if (isHidden) 0 else dp(mainTabsHeightWithMargins.toFloat())
                 }
             }
-            Log.d("InuBulletin", "attached delegate to $fragment")
         }
         return null
     }

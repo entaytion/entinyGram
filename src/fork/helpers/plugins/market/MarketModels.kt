@@ -8,7 +8,6 @@ enum class MarketSource { OFFICIAL, CHANNEL, LOCAL }
 
 class MarketFile(val url: String, val size: Long, val sha256: String)
 
-/** one plugin in the Market, whether it comes from the entinyGram catalog or from a post in a channel */
 class MarketEntry(
     val id: String,
     val manifest: PluginManifest,
@@ -20,7 +19,6 @@ class MarketEntry(
 ) {
     val slug: String = id.removePrefix(OFFICIAL_PREFIX)
     val name: String get() = manifest.name
-    /** the developer's own: the catalog, or a channel post of a plugin in the developer's namespace */
     val official: Boolean get() = source == MarketSource.OFFICIAL || id.startsWith(OFFICIAL_PREFIX)
 
     companion object {
@@ -48,7 +46,7 @@ object MarketTags {
 
     private val byId = ALL.associateBy { it.id }
 
-    // other spellings of the tags as people write them in hashtags; mirrors ALIASES of sdk/entiny/src/tags.ts
+    // entiny: keep in sync with ALIASES in sdk/entiny/src/tags.ts
     private val aliases: Map<String, String> = mapOf(
         "приватность" to "privacy", "приватність" to "privacy", "ghost" to "privacy",
         "чаты" to "chat", "чати" to "chat", "chats" to "chat", "messages" to "chat", "folders" to "chat", "папки" to "chat",
@@ -70,17 +68,14 @@ object MarketTags {
 
     fun get(id: String): MarketTag? = byId[id]
 
-    /** the tag a hashtag word stands for, or null */
     fun of(word: String): String? {
         val key = word.removePrefix("#").lowercase()
         return if (byId.containsKey(key)) key else aliases[key]
     }
 
-    /** the tags of the hashtags in a post, in the order they appear, without repeats */
     fun fromText(text: String): List<String> =
         hashtag.findAll(text).mapNotNull { of(it.groupValues[1]) }.distinct().take(MAX_PER_PLUGIN).toList()
 
-    /** the tags a plugin names in its header, `@entiny-tags media calls` */
     fun fromHeader(raw: List<String>?): List<String> =
         raw.orEmpty().flatMap { it.split(Regex("\\s+")) }.mapNotNull { of(it) }.distinct().take(MAX_PER_PLUGIN)
 }

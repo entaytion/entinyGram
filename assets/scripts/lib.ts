@@ -340,6 +340,22 @@ async function linkForkEntry(repoDir: string, entry: ResolvedLink, skip = false)
   return created
 }
 
+async function pruneDeadForkLinks(dir: string) {
+  const names = await fs.readdir(dir).catch(() => [] as string[])
+  let pruned = false
+  for (const name of names) {
+    const path = join(dir, name)
+    const stat = await fs.lstat(path).catch(() => null)
+    if (!stat?.isSymbolicLink() || existsSync(path)) continue
+    const target = resolve(dirname(path), await fs.readlink(path))
+    if (!target.startsWith(rootDir)) continue
+    await fs.unlink(path)
+    step(`Removing dead link ${path}`)
+    pruned = true
+  }
+  return pruned
+}
+
 export async function linkForkSource(repoDir: string, pluginless = false) {
   let dirty = false
   const oldSourceRoot = join(repoDir, 'TMessagesProj/src/main/kotlin/desu/inugram')
@@ -362,6 +378,7 @@ export async function linkForkSource(repoDir: string, pluginless = false) {
       continue
     }
 
+    dirty ||= await pruneDeadForkLinks(join(repoDir, entry.target))
     const matches = await glob(entry.source, { cwd: rootDir, absolute: true, onlyFiles: true })
     for (const sourcePath of matches) {
       const created = await linkForkEntry(repoDir, {

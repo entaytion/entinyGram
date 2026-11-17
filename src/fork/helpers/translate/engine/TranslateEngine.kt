@@ -123,9 +123,7 @@ object TranslateEngine {
                     if (r.second.isNotEmpty()) this.entities = r.second
                 }
             }
-            // entiny: one bad answer/question/solution used to throw away every other field's
-            // completed translation (translateField below keeps the original text for that one
-            // field instead) - only surface a hard failure when literally nothing came through
+            // entiny: fail only when no field translated, failed fields keep their original text
             if (attempted && !succeeded) throw IOException("All poll fields failed to translate")
             return out
         }
@@ -158,7 +156,6 @@ object TranslateEngine {
                     }
                 )
             }
-            // entiny: same reasoning as PollJob - one field failing must not blank out the rest
             if (parts.isNotEmpty() && !succeeded) throw IOException("All webpage parts failed to translate")
             if (clone != null) {
                 for ((tag, twe) in translated) {
@@ -218,8 +215,7 @@ object TranslateEngine {
             if (inFlight.contains(key)) return true
             val failedAtTs = failedAt[key]
             if (failedAtTs != null && System.currentTimeMillis() - failedAtTs < FAIL_RETRY_WINDOW_MS) {
-                // entiny: still deliver failure so the caller's "translating" UI state clears
-                // instead of getting stuck until the cooldown window happens to be retried
+                // entiny: still deliver the failure or the caller's "translating" state never clears
                 AndroidUtilities.runOnUIThread { callback.run(transcription, msgId, null, toLang) }
                 return true
             }
@@ -230,7 +226,6 @@ object TranslateEngine {
                 }
                 return true
             }
-            Log.d(TAG, "enqueue dialog=$dialogId msg=$msgId kind=$kind to=$toLang provider=${provider.id} chars=${text.length}")
             beforeEnqueueLocked()
             inFlight.add(key)
             queue.addLast(TextJob(key, provider, text, entities, toLang, epochs[dialogId] ?: 0, context, callback))
@@ -257,7 +252,6 @@ object TranslateEngine {
                 return true
             }
             if (failedAtTs != null) failedAt.remove(key)
-            Log.d(TAG, "enqueue webpage dialog=$dialogId msg=$msgId to=$toLang provider=${provider.id} parts=${parts.size}")
             beforeEnqueueLocked()
             inFlight.add(key)
             queue.addLast(WebPageJob(key, provider, original, parts, toLang, epochs[dialogId] ?: 0, callback))
@@ -283,7 +277,6 @@ object TranslateEngine {
                 return true
             }
             if (failedAtTs != null) failedAt.remove(key)
-            Log.d(TAG, "enqueue poll dialog=$dialogId msg=$msgId to=$toLang provider=${provider.id}")
             beforeEnqueueLocked()
             inFlight.add(key)
             queue.addLast(PollJob(key, provider, poll, toLang, epochs[dialogId] ?: 0, callback))
@@ -342,9 +335,7 @@ object TranslateEngine {
 
     private fun pump() {
         synchronized(lock) {
-            // entiny: cap spawned workers to actual queue depth - `queue.isNotEmpty()` alone
-            // doesn't shrink as workers are submitted (pump() never dequeues), so it used to
-            // spin up all WORKER_COUNT threads for a single queued job
+            // entiny: cap workers to queue depth, pump() never dequeues so isNotEmpty() would spawn them all
             val toSpawn = minOf(queue.size, WORKER_COUNT - activeWorkers.get())
             repeat(toSpawn) {
                 activeWorkers.incrementAndGet()
@@ -359,8 +350,7 @@ object TranslateEngine {
             failedAt.entries.removeIf { it.value < cutoff }
             if (failedAt.size > MAX_FAILED) failedAt.clear()
         }
-        // entiny: the oldest pending job is the least likely on screen - deliver a failure
-        // so its caller's "translating" state clears instead of hanging
+        // entiny: drop the oldest job but deliver its failure so the "translating" state clears
         while (queue.size >= MAX_QUEUE) {
             val dropped = queue.removeFirst()
             inFlight.remove(dropped.key)
@@ -386,7 +376,6 @@ object TranslateEngine {
 
             val result: Any?
             try {
-                Log.d(TAG, "start dialog=${job.key.dialogId} msg=${job.key.msgId} provider=${job.provider.id}")
                 result = job.run()
             } catch (e: Exception) {
                 val error = e.message ?: e.javaClass.simpleName
@@ -397,16 +386,13 @@ object TranslateEngine {
                 continue
             }
 
-            Log.d(TAG, "ok dialog=${job.key.dialogId} msg=${job.key.msgId} provider=${job.provider.id}")
             synchronized(lock) { failedAt.remove(job.key) }
             finish(job, result, cancelled = false)
         }
     }
 
     private fun finish(job: Job, result: Any?, cancelled: Boolean) {
-        // entiny: re-check the epoch here, not just before run() - cancelDialog() can bump it
-        // while the job's HTTP call is in flight, and a stale result must not land on a dialog
-        // whose state was already reset
+        // entiny: re-check the epoch, cancelDialog() can bump it while the request is in flight
         val stale = synchronized(lock) {
             inFlight.remove(job.key)
             job.epoch != (epochs[job.key.dialogId] ?: 0)
@@ -467,10 +453,6 @@ object TranslateEngine {
         }
     }
 
-    // entiny: used by PollJob/WebPageJob for their per-field sub-translations - a single field
-    // failing (rate limit, empty result, whatever) falls back to the original text for that one
-    // field instead of throwing away every other field's already-completed translation. Callers
-    // pass onSuccess to track whether *anything* in the batch actually translated.
     private fun translateField(
         provider: TranslationProvider,
         text: String,
