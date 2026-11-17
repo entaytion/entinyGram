@@ -4,17 +4,26 @@ Date: Sun, 16 Aug 2026 13:59:50 +0300
 Subject: Unlock local premium features and client restrictions
 
 ---
- .../java/org/telegram/messenger/MessagesController.java   | 8 +++++++-
- .../src/main/java/org/telegram/messenger/UserConfig.java  | 4 ++++
- .../org/telegram/ui/Components/StatusBadgeComponent.java  | 2 +-
- .../src/main/java/org/telegram/ui/PeerColorActivity.java  | 4 +++-
- .../src/main/java/org/telegram/ui/SettingsActivity.java   | 2 +-
- 5 files changed, 16 insertions(+), 4 deletions(-)
+ .../org/telegram/messenger/MessagesController.java     | 10 ++++++++--
+ .../main/java/org/telegram/messenger/UserConfig.java   |  4 ++++
+ .../telegram/ui/Components/StatusBadgeComponent.java   |  2 +-
+ .../main/java/org/telegram/ui/PeerColorActivity.java   |  4 +++-
+ .../main/java/org/telegram/ui/SettingsActivity.java    |  2 +-
+ 5 files changed, 17 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -909,7 +909,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public int getMaxUserReactionsCount() {
+-        return getUserConfig().isPremium() ? reactionsUserMaxPremium : reactionsUserMaxDefault;
++        return getUserConfig().isPremium() && !desu.inugram.InuConfig.LOCAL_PREMIUM.getValue() ? reactionsUserMaxPremium : reactionsUserMaxDefault;
+     }
+ 
+     public int getChatReactionsCount() {
 @@ -925,10 +925,13 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
