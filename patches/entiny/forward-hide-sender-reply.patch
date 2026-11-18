@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 01:46:07 +0200
+Subject: Drop the reply quote from forwarded copies when the sender is hidden.
+
+---
+ .../main/java/org/telegram/messenger/SendMessagesHelper.java  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -2696,7 +2696,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                         newMsg.media_unread = true;
+                     }
+                 }
+-                if (replyToTopMsg == null && suggestionParams == null && msgObj.messageOwner.reply_to != null) {
++                if (!forwardFromMyName && replyToTopMsg == null && suggestionParams == null && msgObj.messageOwner.reply_to != null) {
+                     if (
+                         !(msgObj.messageOwner.reply_to.reply_to_peer_id == null || MessageObject.peersEqual(msgObj.messageOwner.reply_to.reply_to_peer_id, msgObj.messageOwner.peer_id)) ||
+                         ids != null && (msgObj.messageOwner.reply_to.flags & 16) != 0 && ids.contains(msgObj.messageOwner.reply_to.reply_to_msg_id)
+@@ -2726,7 +2726,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 arr.add(newMsg);
+                 StarsController.getInstance(currentAccount).beforeSendingMessage(newMsgObj);
+ 
+-                if (msgObj.replyMessageObject != null) {
++                if (!forwardFromMyName && msgObj.replyMessageObject != null) {
+                     for (int i = 0; i < messages.size(); i++) {
+                         if (messages.get(i).getId() == msgObj.replyMessageObject.getId()) {
+                             newMsgObj.messageOwner.replyMessage = msgObj.replyMessageObject.messageOwner;
