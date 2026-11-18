@@ -677,3 +677,4 @@ entiny/regex-text-cleaner.patch
 entiny/sticker-shape.patch
 entiny/kept-media.patch
 entiny/keep-removed-chats.patch
+entiny/regex-hidden-read.patch

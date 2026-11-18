@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 18 Nov 2026 16:08:46 +0200
+Subject: Chat list preview shows the last unfiltered message in hide mode, and hidden unread posts no longer keep the chat unread.
+
+---
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java     | 1 +
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 ++++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -3402,6 +3402,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                         groupMessages = MessagesController.getInstance(currentAccount).dialogMessage.get(dialog.id);
+                         message = groupMessages != null && groupMessages.size() > 0 ? groupMessages.get(0) : null;
+                         lastUnreadState = message != null && message.isUnread();
++                        message = desu.inugram.helpers.chat.BlockedMessagesHelper.dialogPreviewMessage(message);
+                         TLRPC.Chat localChat = MessagesController.getInstance(currentAccount).getChat(-dialog.id);
+                         boolean isForumCell = localChat != null && localChat.forum && !isTopic;
+                         if (localChat != null && (localChat.forum || localChat.monoforum && ChatObject.canManageMonoForum(currentAccount, localChat))) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -17828,6 +17828,12 @@ public class ChatActivity extends BaseFragment implements
+         invalidateChatListViewTopPadding();
+         if (!firstLoading && !paused && !inPreviewMode && (chatMode == 0 || chatMode == MODE_SUGGESTIONS) && !getMessagesController().ignoreSetOnline) {
+             int scheduledRead = 0;
++            if (chatAdapter != null && forwardEndReached[0] && threadId == 0) {
++                maxPositiveUnreadId = desu.inugram.helpers.chat.BlockedMessagesHelper.readHiddenTail(chatAdapter, messages, maxPositiveUnreadId, chatLayoutManager.findFirstVisibleItemPosition() <= chatAdapter.messagesStartRow + chatAdapter.inu_hiddenMessages.size());
++                if (maxPositiveUnreadId != Integer.MIN_VALUE && maxUnreadDate == Integer.MIN_VALUE) {
++                    maxUnreadDate = maxDate[0];
++                }
++            }
+             if ((maxPositiveUnreadId != Integer.MIN_VALUE || maxNegativeUnreadId != Integer.MAX_VALUE)) {
+                 int counterDecrement = 0;
+                 for (int a = 0; a < messages.size(); a++) {

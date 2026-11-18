@@ -306,6 +306,24 @@ object BlockedMessagesHelper {
 
     const val VIEW_TYPE_HIDDEN = 1000
 
+    private val lastVisible = object : LinkedHashMap<String, MessageObject>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, MessageObject>?) = size > 300
+    }
+
+    // entiny: dialog list keeps only the newest message, so remember the last unfiltered one per dialog
+    @JvmStatic
+    fun dialogPreviewMessage(message: MessageObject?): MessageObject? {
+        if (message == null || message.isDateObject || !hasHideFilter()) return message
+        val key = manualKey(message)
+        synchronized(lastVisible) {
+            if (!shouldHide(message)) {
+                lastVisible[key] = message
+                return message
+            }
+            return lastVisible[key] ?: message
+        }
+    }
+
     @JvmStatic
     fun refreshHidden(adapter: ChatActivity.ChatActivityAdapter, messages: ArrayList<MessageObject>) {
         val hiddenSet = adapter.inu_hiddenMessages
@@ -352,6 +370,12 @@ object BlockedMessagesHelper {
                 visibleDays.add(msg.dateKeyInt)
             }
         }
+        for (i in 0 until messages.size) {
+            val msg = messages[i] ?: continue
+            if (msg.isDateObject || msg.contentType == 2 || msg in hiddenSet) continue
+            synchronized(lastVisible) { lastVisible[manualKey(msg)] = msg }
+            break
+        }
         var hasVisibleBelow = false
         for (msg in messages) {
             if (msg in hiddenSet) continue
@@ -368,6 +392,24 @@ object BlockedMessagesHelper {
         state.epoch = epoch
         state.config = config
         state.stale = false
+    }
+
+    // entiny: hidden messages have no visible cell, so cover the hidden tail once the newest visible message is read
+    @JvmStatic
+    fun readHiddenTail(adapter: ChatActivity.ChatActivityAdapter, messages: List<MessageObject>, maxPositive: Int, atBottom: Boolean): Int {
+        val hiddenSet = adapter.inu_hiddenMessages
+        if (hiddenSet.isEmpty()) return maxPositive
+        var tailMax = Integer.MIN_VALUE
+        for (msg in messages) {
+            if (msg.isDateObject || msg.contentType == 2) continue
+            if (msg in hiddenSet) {
+                if (msg.id > 0 && !msg.isOut && msg.isUnread) tailMax = maxOf(tailMax, msg.id)
+                continue
+            }
+            if (!(msg.id <= maxPositive || atBottom && !msg.isUnread)) return maxPositive
+            break
+        }
+        return maxOf(maxPositive, tailMax)
     }
 
     @JvmStatic
