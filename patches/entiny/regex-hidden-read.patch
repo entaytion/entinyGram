@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17828,6 +17828,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -17832,6 +17832,12 @@ public class ChatActivity extends BaseFragment implements
          invalidateChatListViewTopPadding();
          if (!firstLoading && !paused && !inPreviewMode && (chatMode == 0 || chatMode == MODE_SUGGESTIONS) && !getMessagesController().ignoreSetOnline) {
              int scheduledRead = 0;

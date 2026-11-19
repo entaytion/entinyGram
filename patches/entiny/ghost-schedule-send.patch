@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -23568,7 +23568,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -23572,7 +23572,7 @@ public class ChatActivity extends BaseFragment implements
                  boolean scheduled = (Boolean) args[2];
                  int mode = (Integer) args[3];
                  if (mode != chatMode && chatMode != MODE_SAVED && chatMode != MODE_SUGGESTIONS) {

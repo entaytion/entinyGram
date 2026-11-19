@@ -806,8 +806,6 @@
     <string name="InuFontStyles_many">%1$d سبک</string>
     <string name="InuFontStyles_one">%1$d سبک</string>
     <string name="InuFontStyles_other">%1$d سبک</string>
-    <string name="InuFontSyntheticBold">ضخیم‌تر کردن متن پررنگ</string>
-    <string name="InuFontSyntheticBoldInfo">وقتی قلم وزن پررنگ ندارد، آن را شبیه‌سازی می‌کند. برای استفاده از وزن خود قلم خاموش کنید. نیازمند راه‌اندازی دوباره است.</string>
     <string name="InuFontSystem">سیستم</string>
     <string name="InuFontTagCustom">سفارشی</string>
     <string name="InuFontTagStock">پایه</string>

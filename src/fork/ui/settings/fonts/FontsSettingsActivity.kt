@@ -98,15 +98,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             )
         }
 
-        items.add(
-            mkTwoLineCheckItem(
-                BUTTON_SYNTHETIC_BOLD,
-                R.string.InuFontSyntheticBold,
-                R.string.InuFontSyntheticBoldInfo,
-                FontConfig.FONT_SYNTHETIC_BOLD.value,
-            )
-        )
-
         reorderSectionId = adapter.reorderSectionStart()
         for (font in FontLibrary.getCachedRoster()) {
             val token = font.token()
@@ -150,12 +141,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             BUTTON_RESET -> {
                 FontLibrary.resetOrder()
                 FontLibrary.invalidateEditorRoster()
-                listView.adapter.update(true)
-            }
-
-            BUTTON_SYNTHETIC_BOLD -> {
-                FontConfig.FONT_SYNTHETIC_BOLD.toggle()
-                showRestartBulletin()
                 listView.adapter.update(true)
             }
 
@@ -335,7 +320,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
 
         private val BUTTON_APP_FONT = InuUtils.generateId()
         private val BUTTON_INCLUDE_SYSTEM = InuUtils.generateId()
-        private val BUTTON_SYNTHETIC_BOLD = InuUtils.generateId()
         private val BUTTON_ADD = InuUtils.generateId()
         private val BUTTON_RESET = InuUtils.generateId()
         private val BUTTON_IMPORT_PROGRESS = InuUtils.generateId()
@@ -347,10 +331,10 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             titleRes = R.string.InuFonts,
             iconRes = R.drawable.msg_text_outlined,
             factory = ::FontsSettingsActivity,
+            aliases = listOf("thicken-bold-text"),
             entries = listOf(
                 SearchRegistry.Entry("app-font", R.string.InuAppFont, BUTTON_APP_FONT),
                 SearchRegistry.Entry("include-system-fonts", R.string.InuFontIncludeSystem, BUTTON_INCLUDE_SYSTEM),
-                SearchRegistry.Entry("thicken-bold-text", R.string.InuFontSyntheticBold, BUTTON_SYNTHETIC_BOLD),
                 SearchRegistry.Entry("add-font", R.string.InuFontAdd, BUTTON_ADD),
             ),
         )

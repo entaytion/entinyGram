@@ -235,6 +235,7 @@ object TranscribeHelper {
     }
 
     private fun showError(msg: String) {
+        if (!org.telegram.ui.LaunchActivity.isActive || org.telegram.ui.LaunchActivity.getSafeLastFragment() == null) return
         BulletinFactory.global().createSimpleBulletin(
             R.raw.error,
             LocaleController.formatString(R.string.InuAiTranscribeFailed, msg)

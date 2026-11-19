@@ -27,7 +27,7 @@ object FolderMembershipHelper {
     @JvmStatic
     fun serverLimit(account: Int): Int {
         val controller = MessagesController.getInstance(account)
-        val premium = org.telegram.messenger.UserConfig.getInstance(account).isPremium && !InuConfig.LOCAL_PREMIUM.value
+        val premium = org.telegram.messenger.UserConfig.getInstance(account).isPremium && !(InuConfig.LOCAL_PREMIUM.value && InuConfig.UNLIMITED_FOLDER_CHATS.value)
         return if (premium) controller.dialogFiltersChatsLimitPremium else controller.dialogFiltersChatsLimitDefault
     }
 

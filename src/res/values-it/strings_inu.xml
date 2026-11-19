@@ -819,8 +819,6 @@ Sistema: %6$s
     <string name="InuFontStyles_many">%1$d stili</string>
     <string name="InuFontStyles_one">%1$d stile</string>
     <string name="InuFontStyles_other">%1$d stili</string>
-    <string name="InuFontSyntheticBold">Ispessisci il testo in grassetto</string>
-    <string name="InuFontSyntheticBoldInfo">Simula il grassetto se il carattere non lo include. Disattiva per usare il peso originale. Richiede il riavvio.</string>
     <string name="InuFontSystem">Sistema</string>
     <string name="InuFontTagCustom">Personalizzato</string>
     <string name="InuFontTagStock">Originale</string>

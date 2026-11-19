@@ -807,8 +807,6 @@
     <string name="InuFontStyles_many">%1$d stil</string>
     <string name="InuFontStyles_one">%1$d stil</string>
     <string name="InuFontStyles_other">%1$d stil</string>
-    <string name="InuFontSyntheticBold">Kalın metni kalınlaştır</string>
-    <string name="InuFontSyntheticBoldInfo">Yazı tipinde kalın stil yoksa kalınlığı taklit eder. Yazı tipinin kendi kalınlığını kullanmak için kapatın. Yeniden başlatma gerekir.</string>
     <string name="InuFontSystem">Sistem</string>
     <string name="InuFontTagCustom">Özel</string>
     <string name="InuFontTagStock">Varsayılan</string>

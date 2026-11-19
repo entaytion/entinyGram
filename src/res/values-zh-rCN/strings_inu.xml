@@ -806,8 +806,6 @@
     <string name="InuFontStyles_many">%1$d 种样式</string>
     <string name="InuFontStyles_one">%1$d 种样式</string>
     <string name="InuFontStyles_other">%1$d 种样式</string>
-    <string name="InuFontSyntheticBold">加粗粗体文字</string>
-    <string name="InuFontSyntheticBoldInfo">字体没有粗体字重时模拟粗体。关闭后使用字体自带字重。需要重启。</string>
     <string name="InuFontSystem">系统</string>
     <string name="InuFontTagCustom">自定义</string>
     <string name="InuFontTagStock">原版</string>

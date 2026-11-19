@@ -819,8 +819,6 @@ Sistema: %6$s
     <string name="InuFontStyles_many">%1$d estilos</string>
     <string name="InuFontStyles_one">%1$d estilo</string>
     <string name="InuFontStyles_other">%1$d estilos</string>
-    <string name="InuFontSyntheticBold">Engrosar texto en negrita</string>
-    <string name="InuFontSyntheticBoldInfo">Simula la negrita si la fuente no tiene ese grosor. Desactívalo para usar el grosor propio de la fuente. Requiere reiniciar.</string>
     <string name="InuFontSystem">Sistema</string>
     <string name="InuFontTagCustom">Personalizada</string>
     <string name="InuFontTagStock">Original</string>

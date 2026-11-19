@@ -16,7 +16,7 @@ index 0000000..0000000 100644
  
      public int getMaxUserReactionsCount() {
 -        return getUserConfig().isPremium() && !desu.inugram.InuConfig.LOCAL_PREMIUM.getValue() ? reactionsUserMaxPremium : reactionsUserMaxDefault;
-+        return (desu.inugram.InuConfig.LOCAL_PREMIUM.getValue() ? desu.inugram.helpers.LocalPremiumHelper.isRealPremium(currentAccount) : getUserConfig().isPremium()) ? reactionsUserMaxPremium : reactionsUserMaxDefault;
++        return getUserConfig().isPremium() ? reactionsUserMaxPremium : reactionsUserMaxDefault;
      }
  
      public int getChatReactionsCount() {

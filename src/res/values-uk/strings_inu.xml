@@ -811,8 +811,6 @@
     <string name="InuFontStyles_many">%1$d стилів</string>
     <string name="InuFontStyles_one">%1$d стиль</string>
     <string name="InuFontStyles_other">%1$d стилів</string>
-    <string name="InuFontSyntheticBold">Потовщувати жирний текст</string>
-    <string name="InuFontSyntheticBoldInfo">Імітує жирний шрифт, якщо в шрифті немає жирного накреслення. Вимкніть, щоб жирний текст малювався власною товщиною шрифту. Потрібен перезапуск.</string>
     <string name="InuFontSystem">Системний</string>
     <string name="InuFontTagCustom">Власний</string>
     <string name="InuFontTagStock">Стандартний</string>

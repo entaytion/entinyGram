@@ -806,8 +806,6 @@
     <string name="InuFontStyles_many">%1$d 個のスタイル</string>
     <string name="InuFontStyles_one">%1$d 個のスタイル</string>
     <string name="InuFontStyles_other">%1$d 個のスタイル</string>
-    <string name="InuFontSyntheticBold">太字をさらに太くする</string>
-    <string name="InuFontSyntheticBoldInfo">フォントに太字がない場合に疑似的に太くします。オフにするとフォント本来の太さを使います。再起動が必要です。</string>
     <string name="InuFontSystem">システム</string>
     <string name="InuFontTagCustom">カスタム</string>
     <string name="InuFontTagStock">標準</string>

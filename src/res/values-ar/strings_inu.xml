@@ -810,8 +810,6 @@
     <string name="InuFontStyles_other">%1$d نمط</string>
     <string name="InuFontStyles_two">نمطان</string>
     <string name="InuFontStyles_zero">لا أنماط</string>
-    <string name="InuFontSyntheticBold">زيادة سماكة النص الغامق</string>
-    <string name="InuFontSyntheticBoldInfo">يحاكي الخط الغامق إذا لم يوفره الخط. عطّله لاستخدام وزن الخط الأصلي. يتطلب إعادة التشغيل.</string>
     <string name="InuFontSystem">النظام</string>
     <string name="InuFontTagCustom">مخصص</string>
     <string name="InuFontTagStock">أساسي</string>

@@ -811,8 +811,6 @@
     <string name="InuFontStyles_many">%1$d стилей</string>
     <string name="InuFontStyles_one">%1$d стиль</string>
     <string name="InuFontStyles_other">%1$d стиля</string>
-    <string name="InuFontSyntheticBold">Утолщать жирный текст</string>
-    <string name="InuFontSyntheticBoldInfo">Имитирует жирный шрифт, если в шрифте нет жирного начертания. Выключите, чтобы жирный текст рисовался собственной толщиной шрифта. Нужен перезапуск.</string>
     <string name="InuFontSystem">Системный</string>
     <string name="InuFontTagCustom">Свой</string>
     <string name="InuFontTagStock">Стандартный</string>
