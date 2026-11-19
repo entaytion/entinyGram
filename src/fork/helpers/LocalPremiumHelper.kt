@@ -3,12 +3,15 @@ package desu.inugram.helpers
 import android.content.SharedPreferences
 import desu.inugram.InuConfig
 import org.telegram.messenger.DialogObject
+import org.telegram.messenger.MessagesController
+import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 
 public object LocalPremiumHelper {
 
     private const val PREFS = "inupremium_local"
 
+    private const val KEY_REAL_PREMIUM = "real_premium_"
     private const val KEY_EMOJI_DOC = "emoji_doc_"
     private const val KEY_EMOJI_UNTIL = "emoji_until_"
     private const val KEY_EMOJI_CLEARED = "emoji_cleared_"
@@ -48,8 +51,33 @@ public object LocalPremiumHelper {
     }
 
     @JvmStatic
-    fun applyToSelfUser(user: TLRPC.User?, accountId: Int) {
+    fun isRealPremium(accountId: Int): Boolean = prefs().getBoolean(KEY_REAL_PREMIUM + accountId, false)
+
+    @JvmStatic
+    fun seedRealPremium(user: TLRPC.User?, accountId: Int) {
         if (user == null || !user.self) return
+        prefs().edit().putBoolean(KEY_REAL_PREMIUM + accountId, user.premium).apply()
+    }
+
+    // entiny: we only ever write premium=true, so false is real; true counts only from a fresh server object
+    private fun recordRealPremium(user: TLRPC.User, accountId: Int, fromCache: Boolean) {
+        if (!user.premium) {
+            seedRealPremium(user, accountId)
+            return
+        }
+        if (fromCache) return
+        val current = UserConfig.getInstance(accountId).getCurrentUser()
+        if (user === current || user === MessagesController.getInstance(accountId).getUser(user.id)) return
+        seedRealPremium(user, accountId)
+    }
+
+    @JvmStatic
+    fun applyToSelfUser(user: TLRPC.User?, accountId: Int) = applyToSelfUser(user, accountId, true)
+
+    @JvmStatic
+    fun applyToSelfUser(user: TLRPC.User?, accountId: Int, fromCache: Boolean) {
+        if (user == null || !user.self) return
+        recordRealPremium(user, accountId, fromCache)
         if (!InuConfig.LOCAL_PREMIUM.value) return
         user.premium = true
         val o = cached(accountId)
@@ -94,9 +122,9 @@ public object LocalPremiumHelper {
 
     // entiny: clear spoofed fields explicitly because turning toggle off does not trigger a user refetch
     @JvmStatic
-    fun clearSelfUser(user: TLRPC.User?) {
+    fun clearSelfUser(user: TLRPC.User?, accountId: Int) {
         if (user == null || !user.self) return
-        user.premium = false
+        user.premium = isRealPremium(accountId)
         user.emoji_status = null
         user.color = null
         user.profile_color = null

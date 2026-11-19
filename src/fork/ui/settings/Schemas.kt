@@ -607,9 +607,10 @@ object Schemas {
                     val account = page.currentAccount
                     val userConfig = UserConfig.getInstance(account)
                     if (on) {
+                        LocalPremiumHelper.seedRealPremium(userConfig.getCurrentUser(), account)
                         LocalPremiumHelper.applyToSelfUser(userConfig.getCurrentUser(), account)
                     } else {
-                        LocalPremiumHelper.clearSelfUser(userConfig.getCurrentUser())
+                        LocalPremiumHelper.clearSelfUser(userConfig.getCurrentUser(), account)
                     }
                     NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.currentUserPremiumStatusChanged)
                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal)

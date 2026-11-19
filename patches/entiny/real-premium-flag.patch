@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 02:13:31 +0200
+Subject: Keep real Premium apart from local Premium so reaction limits follow the server.
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -920,7 +920,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public int getMaxUserReactionsCount() {
+-        return getUserConfig().isPremium() && !desu.inugram.InuConfig.LOCAL_PREMIUM.getValue() ? reactionsUserMaxPremium : reactionsUserMaxDefault;
++        return (desu.inugram.InuConfig.LOCAL_PREMIUM.getValue() ? desu.inugram.helpers.LocalPremiumHelper.isRealPremium(currentAccount) : getUserConfig().isPremium()) ? reactionsUserMaxPremium : reactionsUserMaxDefault;
+     }
+ 
+     public int getChatReactionsCount() {
+@@ -6864,7 +6864,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (user == null) {
+             return false;
+         }
+-        desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
++        desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount, fromCache);
+         desu.inugram.helpers.badges.BadgeRegistry.applyTo(user);
+         desu.inugram.helpers.profile.LocalNameHelper.applyTo(user, currentAccount);
+         fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;

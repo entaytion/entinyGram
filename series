@@ -679,3 +679,4 @@ entiny/kept-media.patch
 entiny/keep-removed-chats.patch
 entiny/regex-hidden-read.patch
 entiny/forward-hide-sender-reply.patch
+entiny/real-premium-flag.patch
