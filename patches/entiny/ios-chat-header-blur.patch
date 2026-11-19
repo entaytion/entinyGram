@@ -1,0 +1,150 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 16:58:36 +0200
+Subject: Fade the shared chat blur beneath the iOS header.
+
+---
+ .../java/org/telegram/ui/ChatActivity.java    |  4 ++
+ .../chat/layouts/ChatActivityFadeView.java    | 70 ++++++++++++++++++-
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -7266,6 +7266,10 @@ public class ChatActivity extends BaseFragment implements
+         chatActivityFadeView = new ChatActivityFadeView(context);
+         chatActivityFadeView.setResourcesProvider(themeDelegate);
+         chatActivityFadeView.setup(navbarContentDrawableFactory);
++        if (glassBackgroundSourceFrostedRenderNode != null && InuConfig.IOS_CHAT_HEADER.getValue()
++                && !NonIslandHelper.chatElements() && !isCompactMode() && !isInsideContainer && !inPreviewMode) {
++            chatActivityFadeView.inu_setupTopBlur(getGlassEngine(), glassBackgroundSourceFrostedRenderNode);
++        }
+         chatActivityFadeView.setFadeHeightTop(dp(48));
+         chatActivityFadeView.setFadeHeightBottom(dp(48));
+         contentView.addView(chatActivityFadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityFadeView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityFadeView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityFadeView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityFadeView.java
+@@ -7,6 +7,7 @@ import android.graphics.Canvas;
+ import android.graphics.Color;
+ import android.graphics.LinearGradient;
+ import android.graphics.Paint;
++import android.graphics.Rect;
+ import android.graphics.Shader;
+ import android.view.View;
+ 
+@@ -19,11 +20,19 @@ import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
+ import org.telegram.ui.Components.blur3.BlurredBackgroundWithFadeDrawable;
+ import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProvider;
+ import org.telegram.utils.glass.source.GlassSourceColor;
++import org.telegram.utils.glass.source.GlassSourceRenderNode;
++import org.telegram.utils.glass.GlassEngine;
++import org.telegram.utils.glass.GlassSettings;
++import org.telegram.utils.glass.fade.GlassFadeBlurredDrawable;
++import org.telegram.utils.glass.fade.GlassFadeRangeParams;
+ import java.util.HashSet;
+ 
+ public class ChatActivityFadeView extends View implements Theme.Colorable {
+     private BlurredBackgroundWithFadeDrawable fadeDrawableTop;
+     private BlurredBackgroundWithFadeDrawable fadeDrawableBottom;
++    private GlassFadeBlurredDrawable inu_topBlur;
++    private GlassSourceRenderNode inu_topBlurSource;
++    private boolean inu_drewTopBlur;
+     private int fadeZoneTop, fadeZoneBottom;
+ 
+     public ChatActivityFadeView(Context context) {
+@@ -70,6 +79,53 @@ public class ChatActivityFadeView extends View implements Theme.Colorable {
+         fadeDrawableBottom.setFadeHeight(height, true);
+     }
+ 
++    public void inu_setupTopBlur(GlassEngine engine, GlassSourceRenderNode source) {
++        inu_topBlurSource = source;
++        inu_topBlur = new GlassFadeBlurredDrawable(source) {
++            private boolean waitingForSource;
++
++            @Override
++            public void getBoundsWithPaddingInset(@NonNull Rect rect) {
++                if (!inu_canCaptureTopBlur()) {
++                    waitingForSource = false;
++                    rect.setEmpty();
++                } else if (waitingForSource && !source.isDownsampledSourceSupported()) {
++                    rect.setEmpty();
++                } else {
++                    super.getBoundsWithPaddingInset(rect);
++                }
++            }
++
++            @Override
++            protected void onBoundsChange(@NonNull Rect bounds) {
++                super.onBoundsChange(bounds);
++                waitingForSource = false;
++            }
++
++            @Override
++            public void buildDisplayList() {
++                if (!source.isDownsampledSourceSupported()) {
++                    waitingForSource = true;
++                    ChatActivityFadeView.this.invalidate();
++                    return;
++                }
++                waitingForSource = false;
++                super.buildDisplayList();
++                if (!inu_drewTopBlur && hasDisplayList()) ChatActivityFadeView.this.invalidate();
++            }
++        };
++        inu_topBlur.setMaskRange(new GlassFadeRangeParams(dp(44), GlassFadeRangeParams.Gravity.START, 0, 0));
++        engine.registerDrawable(this, inu_topBlur);
++        checkBounds();
++    }
++
++    private boolean inu_canCaptureTopBlur() {
++        final GlassSettings settings = GlassEngine.getCurrentGlassSettings();
++        return settings.isBlurEnabled && settings.isLiquidGlassEnabled && isHardwareAccelerated()
++                && desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue() && !desu.inugram.helpers.theme.NonIslandHelper.chatElements()
++                && !Theme.isCompactMode(resourcesProvider) && !desu.inugram.helpers.chat.ChatHelper.shouldHideFadeView();
++    }
++
+     @Override
+     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+         super.onSizeChanged(w, h, oldw, oldh);
+@@ -95,12 +151,17 @@ public class ChatActivityFadeView extends View implements Theme.Colorable {
+     public void setFadeTopAlpha(int alpha) {
+         if (fadeDrawableTop.getAlpha() != alpha) {
+             fadeDrawableTop.setAlpha(alpha);
++            if (inu_topBlur != null) inu_topBlur.setAlpha(alpha);
+             invalidate();
+         }
+     }
+     
+     private void checkBounds() {
+         fadeDrawableTop.setBounds(0, 0, getMeasuredWidth(), fadeZoneTop);
++        if (inu_topBlur != null) {
++            final int bottom = fadeZoneTop == 0 ? 0 : Math.min(getMeasuredHeight(), fadeZoneTop + dp(12));
++            inu_topBlur.setBounds(0, 0, getMeasuredWidth(), bottom);
++        }
+         fadeDrawableBottom.setBounds(0, getMeasuredHeight() - fadeZoneBottom, getMeasuredWidth(), getMeasuredHeight());
+         overlayShaderTop = overlayShaderBottom = null;
+     }
+@@ -164,12 +225,19 @@ public class ChatActivityFadeView extends View implements Theme.Colorable {
+ 
+     @Override
+     protected void onDraw(@NonNull Canvas canvas) {
++        inu_drewTopBlur = false;
+         if (desu.inugram.helpers.chat.ChatHelper.shouldHideFadeView()) return;
+         super.onDraw(canvas);
+         if (Theme.isCompactMode(resourcesProvider)) {
+             drawCompactFades(canvas);
+         } else {
+-            fadeDrawableTop.draw(canvas);
++            if (inu_topBlur != null && canvas.isHardwareAccelerated() && inu_canCaptureTopBlur()
++                    && inu_topBlurSource.isDownsampledSourceSupported() && inu_topBlur.hasDisplayList()) {
++                inu_topBlur.draw(canvas);
++                inu_drewTopBlur = true;
++            } else {
++                fadeDrawableTop.draw(canvas);
++            }
+             fadeDrawableBottom.draw(canvas);
+         }
+         drawOverlay(canvas);
