@@ -1,0 +1,115 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 17:26:08 +0200
+Subject: Apply the chosen action button style to the send button, the voice button and the rich editor send button.
+
+---
+ .../ui/Components/ChatActivityEnterView.java  | 28 +++++++++++++++----
+ .../org/telegram/ui/MessageSendPreview.java   |  4 +++
+ .../java/org/telegram/ui/iv/RichEditor.java   |  2 +-
+ .../org/telegram/ui/iv/RichEditorToolbar.java |  2 +-
+ 4 files changed, 29 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -3459,7 +3459,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         desu.inugram.helpers.chat.IosInputGlass.drawCorner(canvas, inu_glass.voice, getMeasuredWidth(), getMeasuredHeight(), DEFAULT_HEIGHT, s * audioVideoSendButton.getAlpha(), audioVideoSendButton.getScaleX());
+                     } else {
+                         final float r = dpf2(19);
+-                        paint.setColor(getThemedColor(Theme.key_chat_messagePanelSend));
++                        paint.setColor(desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(resourcesProvider));
+                         final float margin = dpf2(3);
+                         final float height = dpf2(38);
+                         final float width = dpf2(38);
+@@ -11030,7 +11030,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         if (!isIosInputAppearance() && (audioVideoButtonContainerForbidden || desu.inugram.helpers.theme.NonIslandHelper.chatElements())) {
+             return getThemedColor(Theme.key_glass_defaultIcon);
+         }
+-        return Color.WHITE;
++        return desu.inugram.helpers.chat.ActionButtonStyle.resolveIconColor(resourcesProvider);
+     }
+ 
+     private void updateAudioVideoSendButtonColor() {
+@@ -16181,10 +16181,26 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+         private int drawableColor, inactiveDrawableColor, drawableInverseColor;
+ 
++        public int resolveSendIconColor(int themeColor) {
++            if (desu.inugram.helpers.chat.ActionButtonStyle.getCurrentStyle() == desu.inugram.helpers.chat.ActionButtonStyle.ACCENT) {
++                return isNewDesignSendButton || desu.inugram.helpers.chat.IosInputHelper.isAppearance() ? Color.WHITE : themeColor;
++            }
++            if (shouldUseActionStyleColors()) {
++                return desu.inugram.helpers.chat.ActionButtonStyle.resolveIconColor(resourcesProvider);
++            }
++            return themeColor;
++        }
++
++        private boolean shouldUseActionStyleColors() {
++            return isNewDesignSendButton || shouldDrawBackground();
++        }
++
+         public void updateColors() {
+-            int color = isNewDesignSendButton || desu.inugram.helpers.chat.IosInputHelper.isAppearance() ? Color.WHITE : Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider);
++            int color = resolveSendIconColor(Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider));
+             int c = Theme.getColor(Theme.key_glass_defaultIcon, resourcesProvider);
+-            int inverseColor = Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider);
++            int inverseColor = desu.inugram.helpers.chat.ActionButtonStyle.getCurrentStyle() != desu.inugram.helpers.chat.ActionButtonStyle.ACCENT && shouldUseActionStyleColors()
++                ? color
++                : Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider);
+             if (color != drawableColor || c != inactiveDrawableColor || inverseColor != drawableInverseColor) {
+                 drawableColor = color;
+                 inactiveDrawableColor = c;
+@@ -16193,7 +16209,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 inactiveDrawable.setColorFilter(new PorterDuffColorFilter(Color.argb(0xb4, Color.red(c), Color.green(c), Color.blue(c)), PorterDuff.Mode.SRC_IN));
+                 drawableInverse.setColorFilter(new PorterDuffColorFilter(inverseColor, PorterDuff.Mode.SRC_IN));
+             }
+-            if (isNewDesignSendButton) {
++            if (desu.inugram.helpers.chat.ActionButtonStyle.getCurrentStyle() != desu.inugram.helpers.chat.ActionButtonStyle.ACCENT && shouldUseActionStyleColors()) {
++                backgroundPaint.setColor(desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(resourcesProvider));
++            } else if (isNewDesignSendButton) {
+                 backgroundPaint.setColor(Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider));
+             } else if (shouldDrawBackground()) {
+                 backgroundPaint.setColor(getFillColor());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
+@@ -1258,6 +1258,10 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+                 return anchorSendButton.shouldDrawInternalCircle() || anchorSendButton.getActionBubbleColorProvider() == null;
+             }
+             @Override
++            public int resolveSendIconColor(int themeColor) {
++                return sendButton.resolveSendIconColor(themeColor);
++            }
++            @Override
+             public int getFillColor() {
+                 return sendButton.getFillColor();
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
+@@ -1001,7 +1001,7 @@ public class RichEditor extends BaseFragment implements NotificationCenter.Notif
+                 return !desu.inugram.helpers.chat.IosInputHelper.isAppearance();
+             }
+         };
+-        sendButton.setBackground(withShadow(Theme.createRoundRectDrawable(dp(22), getThemedColor(Theme.key_chat_messagePanelSend))));
++        sendButton.setBackground(withShadow(Theme.createRoundRectDrawable(dp(22), desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(getResourceProvider()))));
+         ScaleStateListAnimator.apply(sendButton);
+         bottomPanel.addView(sendButton, LayoutHelper.createLinear(44, 44, 0, Gravity.RIGHT, 8, 0, 0, 0));
+         sendButton.setContentDescription(getString(R.string.Send));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorToolbar.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorToolbar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorToolbar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorToolbar.java
+@@ -418,7 +418,7 @@ public class RichEditorToolbar extends FrameLayout implements Theme.Colorable {
+                 return !desu.inugram.helpers.chat.IosInputHelper.isAppearance();
+             }
+         };
+-        sendButton.setBackground(RichEditor.withShadow(trackFill(sendButton, Theme.key_chat_messagePanelSend, Theme.createRoundRectDrawable(dp(22), color(Theme.key_chat_messagePanelSend)))));
++        sendButton.setBackground(RichEditor.withShadow(trackFill(sendButton, Theme.key_chat_messagePanelSend, Theme.createRoundRectDrawable(dp(22), desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(resourcesProvider)))));
+         ScaleStateListAnimator.apply(sendButton);
+         bottomPanel.addView(sendButton, LayoutHelper.createLinear(44, 44, 0, Gravity.RIGHT, 8, 0, 0, 0));
+         sendButton.setContentDescription("Send");

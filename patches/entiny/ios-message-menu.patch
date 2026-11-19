@@ -1,12 +1,47 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 28 Oct 2026 22:35:59 +0200
-Subject: iOS-style message menu
+Subject: Show the message menu as an iOS-style card over a blurred chat, keep its actions reachable in short windows and fade it on close.
 
 ---
- .../java/org/telegram/ui/ChatActivity.java    | 46 +++++++++++++++++--
- 1 file changed, 41 insertions(+), 5 deletions(-)
+ .../ui/ActionBar/ActionBarPopupWindow.java    |  7 +--
+ .../java/org/telegram/ui/ChatActivity.java    | 54 ++++++++++++++++---
+ 2 files changed, 51 insertions(+), 10 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
+@@ -476,11 +476,13 @@ public class ActionBarPopupWindow extends PopupWindow {
+                 setTranslationY(getMeasuredHeight() * (1f - backScaleY));
+             }
+             if (backgroundDrawable != null) {
++                boolean inu_pinning = swipeBackLayout != null && swipeBackLayout.inu_isCurrentForegroundPinningScrim();
++                int gapStartY = inu_pinning ? -1000000 : this.gapStartY;
+                 int start = gapStartY - (scrollView == null ? 0 : scrollView.getScrollY());
+                 int end = gapEndY - (scrollView == null ? 0 : scrollView.getScrollY());
+                 boolean hasGap = false;
+                 for (int i = 0; i < linearLayout.getChildCount(); i++) {
+-                    if (linearLayout.getChildAt(i) instanceof GapView && linearLayout.getChildAt(i).getVisibility() == View.VISIBLE) {
++                    if (!inu_pinning && linearLayout.getChildAt(i) instanceof GapView && linearLayout.getChildAt(i).getVisibility() == View.VISIBLE) {
+                         hasGap = true;
+                         break;
+                     }
+@@ -499,7 +501,6 @@ public class ActionBarPopupWindow extends PopupWindow {
+                         canvas.clipRect(0, bgPaddings.top, getMeasuredWidth(), getMeasuredHeight());
+                     }
+                     backgroundDrawable.setAlpha(applyAlpha ? backAlpha : 255);
+-                    boolean inu_pinning = swipeBackLayout != null && swipeBackLayout.inu_isCurrentForegroundPinningScrim();
+                     if (shownFromBottom && !inu_pinning) {
+                         final int height = getMeasuredHeight();
+                         AndroidUtilities.rectTmp2.set(0, (int) (height * (1.0f - backScaleY)), (int) (getMeasuredWidth() * backScaleX), height);
+@@ -1160,4 +1161,4 @@ public class ActionBarPopupWindow extends PopupWindow {
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
@@ -71,13 +106,15 @@ index 0000000..0000000 100644
                  .setPadding(dp(8)));
  
              boolean addGap = false;
-@@ -33856,7 +33872,17 @@ public class ChatActivity extends BaseFragment implements
+@@ -33856,7 +33872,19 @@ public class ChatActivity extends BaseFragment implements
              if (reactionsLayout != null) {
                  reactionsLayout.setParentLayout(scrimPopupContainerLayout);
              }
 -            scrimPopupWindow = new ActionBarPopupWindow(scrimPopupContainerLayout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT) {
++            final int inu_menuTop = AndroidUtilities.statusBarHeight + dp(12);
++            final int inu_menuBottom = contentView.getMeasuredHeight() - windowInsetsStateHolder.getCurrentMaxBottomInset() - dp(8);
 +            final desu.inugram.helpers.chat.MessageMenuPreviewHelper.Column inu_column = v instanceof ChatMessageCell && scrimViewReaction == null && scrimViewTask == null
-+                    ? desu.inugram.helpers.chat.MessageMenuPreviewHelper.create(contentView.getContext(), (ChatMessageCell) v, scrimPopupContainerLayout, reactionsLayout, this::closeMenu)
++                    ? desu.inugram.helpers.chat.MessageMenuPreviewHelper.create(contentView.getContext(), (ChatMessageCell) v, scrimPopupContainerLayout, reactionsLayout, chatListView.getWidth(), inu_menuBottom - inu_menuTop, this::closeMenu)
 +                    : null;
 +            if (inu_column != null) {
 +                inu_column.onChanged = () -> {
@@ -90,13 +127,33 @@ index 0000000..0000000 100644
                  @Override
                  public void dismiss() {
                      super.dismiss();
-@@ -33958,10 +33984,20 @@ public class ChatActivity extends BaseFragment implements
+@@ -33883,7 +33911,8 @@ public class ChatActivity extends BaseFragment implements
+ 
+                 @Override
+                 public void dismiss(boolean animated) {
+-                    super.dismiss(animated);
++                    final boolean inu_fading = animated && inu_column != null && inu_column.close(() -> super.dismiss(false));
++                    if (!inu_fading) super.dismiss(animated);
+                     if (finalReactionsLayout1 != null) {
+                         finalReactionsLayout1.dismissParent(animated);
+                     }
+@@ -33947,7 +33976,7 @@ public class ChatActivity extends BaseFragment implements
+             } else {
+                 popupY = inBubbleMode ? 0 : AndroidUtilities.statusBarHeight;
+             }
+-            if (!inBubbleMode && !AndroidUtilities.isTablet()) {
++            if (inu_column == null && !inBubbleMode && !AndroidUtilities.isTablet()) {
+                 popupY = ChatHelper.reserveMenuRoomAbove(scrimPopupContainerLayout, popupY);
+             }
+             final int finalPopupX = scrimPopupX = popupX;
+@@ -33958,10 +33987,21 @@ public class ChatActivity extends BaseFragment implements
                  if (scrimPopupWindow == null || fragmentView == null || scrimPopupWindow.isShowing() || !AndroidUtilities.isActivityRunning(getParentActivity())) {
                      return;
                  }
 -                scrimPopupWindow.showAtLocation(chatListView, Gravity.LEFT | Gravity.TOP, finalPopupX, finalPopupY);
 +                if (inu_column != null) {
-+                    inu_column.show(scrimPopupWindow, chatListView, contentView, AndroidUtilities.statusBarHeight + dp(12), contentView.getMeasuredHeight() - windowInsetsStateHolder.getCurrentMaxBottomInset() - dp(8));
++                    final int menuBottom = contentView.getMeasuredHeight() - windowInsetsStateHolder.getCurrentMaxBottomInset() - dp(8);
++                    inu_column.show(scrimPopupWindow, chatListView, contentView, inu_menuTop, menuBottom);
 +                    inu_menuShift = inu_column.shift;
 +                    inu_menuClipTop = inu_column.clipTop;
 +                    inu_menuColumn = true;
@@ -113,12 +170,12 @@ index 0000000..0000000 100644
                  }
                  AndroidUtilities.runOnUIThread(() -> {
                      if (scrimPopupWindowItems != null && scrimPopupWindowItems.length > 0 && scrimPopupWindowItems[0] != null) {
-@@ -33979,7 +34015,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33979,7 +34019,7 @@ public class ChatActivity extends BaseFragment implements
              }
              chatListView.stopScroll();
              chatLayoutManager.setCanScrollVertically(false);
 -            dimBehindView(v, true);
-+            dimBehindView(v, desu.inugram.InuConfig.IOS_MESSAGE_MENU.getValue(), true);
++            dimBehindView(v, inu_column != null && !desu.inugram.InuConfig.DISABLE_SCRIM_BLUR.getValue(), true);
              hideHints(false);
              if (topUndoView != null) {
                  topUndoView.hide(true, 1);

@@ -13,17 +13,36 @@ import org.telegram.ui.Components.ChatScrimPopupContainerLayout
 import org.telegram.ui.Components.ReactionsContainerLayout
 
 object MessageMenuPreviewHelper {
+    private const val MIN_MENU_HEIGHT_DP = 56f
+
     @JvmStatic
     fun create(
         context: Context,
         cell: ChatMessageCell,
         menu: ChatScrimPopupContainerLayout,
         reactions: ReactionsContainerLayout?,
+        listWidth: Int,
+        availableHeight: Int,
         dismiss: Runnable,
     ): Column? {
         if (!InuConfig.IOS_MESSAGE_MENU.value) return null
         if (cell.messageObject == null) return null
-        return Column(context, cell, menu, reactions?.takeIf { it.parent != null }, dismiss)
+        val attachedReactions = reactions?.takeIf { it.parent != null }
+        val reactionsInset = attachedReactions?.let { MessageMenuOverlay.reactionBarHeight(it) + dp(4f) } ?: 0
+        val minMenuHeight = dp(MIN_MENU_HEIGHT_DP) + measureInfoHeight(menu, menuWidthSpec(listWidth))
+        if (availableHeight < reactionsInset + minMenuHeight) return null
+        return Column(context, cell, menu, attachedReactions, minMenuHeight, dismiss)
+    }
+
+    private fun menuWidthSpec(listWidth: Int): Int =
+        View.MeasureSpec.makeMeasureSpec((listWidth - dp(12f)).coerceAtLeast(1), View.MeasureSpec.AT_MOST)
+
+    private fun measureInfoHeight(menu: ChatScrimPopupContainerLayout, widthSpec: Int): Int {
+        val info = menu.bottomView ?: return 0
+        if (info.parent !== menu) return 0
+        info.measure(widthSpec, View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        val params = info.layoutParams as? ViewGroup.MarginLayoutParams
+        return (info.measuredHeight + (params?.topMargin ?: 0) + (params?.bottomMargin ?: 0)).coerceAtLeast(0)
     }
 
     class Column(
@@ -31,6 +50,7 @@ object MessageMenuPreviewHelper {
         private val cell: ChatMessageCell,
         private val menu: ChatScrimPopupContainerLayout,
         private val reactions: ReactionsContainerLayout?,
+        private val minMenuHeight: Int,
         private val dismiss: Runnable,
     ) {
         @JvmField
@@ -151,14 +171,11 @@ object MessageMenuPreviewHelper {
         private fun reserveInfoBox(menu: ChatScrimPopupContainerLayout, room: Int, widthSpec: Int) {
             val info = menu.bottomView ?: return
             if (info.parent !== menu) return
-            info.measure(widthSpec, View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
-            val infoParams = info.layoutParams as? ViewGroup.MarginLayoutParams
-            val extra = info.measuredHeight + (infoParams?.topMargin ?: 0) + (infoParams?.bottomMargin ?: 0)
+            val limit = room - measureInfoHeight(menu, widthSpec)
             for (i in 0 until menu.childCount) {
                 val child = menu.getChildAt(i)
                 if (child === info) continue
                 val params = child.layoutParams as? ViewGroup.MarginLayoutParams ?: continue
-                val limit = room - extra
                 if (limit > 0 && params.height != limit) params.height = limit
             }
         }
@@ -205,9 +222,9 @@ object MessageMenuPreviewHelper {
                 }
             }
 
-            menu.setMaxHeight(Math.round(viewportBottom - viewportTop))
+            menu.setMaxHeight(Math.round(viewportBottom - viewportTop).coerceAtLeast(1))
             menu.inu_setMaxHeight(0)
-            val widthSpec = View.MeasureSpec.makeMeasureSpec((list.width - dp(12f)).coerceAtLeast(1), View.MeasureSpec.AT_MOST)
+            val widthSpec = menuWidthSpec(list.width)
             val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
             menu.measure(widthSpec, heightSpec)
             var menuWidth = menu.measuredWidth
@@ -221,8 +238,7 @@ object MessageMenuPreviewHelper {
             val barBelow = reactionsInset > 0 && InuConfig.REACTION_BAR_BELOW.value
             viewTop = viewportTop + if (barBelow) 0 else reactionsInset
             viewBottom = viewportBottom - if (barBelow) reactionsInset else 0
-            val gap = 0f
-            val total = postHeight + gap + menuHeight
+            val total = postHeight + menuHeight
             val available = viewBottom - viewTop
             val menuAbove = originalTop + total > viewBottom &&
                 originalTop - menuHeight >= viewTop &&
@@ -240,8 +256,10 @@ object MessageMenuPreviewHelper {
                 viewTop = columnTop
                 scroll = 0f
             } else {
-                val visiblePost = minOf(postHeight, maxOf(available * 0.25f, dp(120f).toFloat()))
-                val room = Math.round(available - visiblePost)
+                val minimumMenu = minOf(menuHeight, minMenuHeight)
+                val previewBudget = (available - minimumMenu).coerceAtLeast(0f)
+                val visiblePost = minOf(postHeight, maxOf(available * 0.25f, dp(120f).toFloat()), previewBudget)
+                val room = Math.round(available - visiblePost).coerceAtLeast(1)
                 if (menuHeight > room) {
                     ChatHelper.moveQuickRowToTop()
                     menu.setMaxHeight(room)
@@ -264,9 +282,8 @@ object MessageMenuPreviewHelper {
 
             view.setMenuPosition(
                 location[0] + Math.round(menuLeft),
-                location[1] + Math.round(if (menuAbove) viewTop - (if (barBelow) 0 else reactionsInset) - menuHeight else viewTop + postHeight + gap),
+                location[1] + Math.round(if (menuAbove) viewTop - (if (barBelow) 0 else reactionsInset) - menuHeight else viewTop + postHeight),
                 menuWidth,
-                menuHeight,
             )
             view.setMenuTranslation(scroll)
             if (reactionsHeight > 0) {

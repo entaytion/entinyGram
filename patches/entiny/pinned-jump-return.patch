@@ -47,7 +47,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -39605,7 +39605,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39608,7 +39608,7 @@ public class ChatActivity extends BaseFragment implements
          private int botForumStartThreadRow = -5;
  
          public int messagesStartRow;

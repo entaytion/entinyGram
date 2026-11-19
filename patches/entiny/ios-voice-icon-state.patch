@@ -1,0 +1,70 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 17:26:09 +0200
+Subject: Keep the voice and video icon in sync when its state is reapplied without animation.
+
+---
+ ...ChatActivityEnterViewAnimatedIconView.java | 28 +++++++++++++++----
+ 1 file changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterViewAnimatedIconView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterViewAnimatedIconView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterViewAnimatedIconView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterViewAnimatedIconView.java
+@@ -31,16 +31,20 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
+     private Drawable formatDrawable;
+     private final AnimatedFloat formatProgress = new AnimatedFloat(this, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
+ 
+-    private final Map<TransitState, RLottieDrawable> stateMap = new HashMap<TransitState, RLottieDrawable>() {
++    private final Map<Object, RLottieDrawable> stateMap = new HashMap<Object, RLottieDrawable>() {
+         @Nullable
+         @Override
+         public RLottieDrawable get(@Nullable Object key) {
+-            RLottieDrawable obj = super.get(key);
++            TransitState state = (TransitState) key;
++            if (state == null) {
++                return null;
++            }
++            int res = inu_resource(state);
++            Object mapKey = inu_legacy || !desu.inugram.helpers.chat.IosInputHelper.isAppearance() ? state : res;
++            RLottieDrawable obj = super.get(mapKey);
+             if (obj == null) {
+-                TransitState state = (TransitState) key;
+-                int res = inu_resource(state);
+                 RLottieDrawable rLottieDrawable = new RLottieDrawable(res, AndroidUtilities.dp(sizeDp), AndroidUtilities.dp(sizeDp));
+-                put(state, rLottieDrawable);
++                put(mapKey, rLottieDrawable);
+                 return rLottieDrawable;
+             }
+             return obj;
+@@ -63,17 +67,29 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
+     }
+ 
+     public void setState(State state, boolean animate) {
+-        if (animate && state == currentState) {
++        final boolean ios = desu.inugram.helpers.chat.IosInputHelper.isAppearance();
++        if (state == currentState && (animate || ios && getDrawable() != null)) {
+             return;
+         }
+         State fromState = currentState;
+         currentState = state;
+         if (!animate || fromState == null || getState(fromState, currentState) == null) {
++            if (ios) {
++                animatingState = null;
++            }
+             RLottieDrawable drawable = stateMap.get(getAnyState(currentState));
+             drawable.stop();
++            if (ios) {
++                drawable.setAutoRepeat(0);
++            }
+ 
+             drawable.setProgress(!inu_legacy && state == State.VOICE ? 0.5f : 0, false);
+             setAnimation(drawable);
++            if (ios) {
++                drawable.setAllowDecodeSingleFrame(true);
++                setImageDrawable(drawable);
++                invalidate();
++            }
+         } else {
+             TransitState transitState = getState(fromState, currentState);
+             if (transitState == animatingState) {

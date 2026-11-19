@@ -15,6 +15,10 @@ class MessageMenuOverlay(
     private val reactions: ReactionsContainerLayout?,
     private val listener: Listener,
 ) : FrameLayout(context) {
+    companion object {
+        fun reactionBarHeight(reactions: ReactionsContainerLayout): Int = dp(74f) + Math.round(reactions.topOffset)
+    }
+
     interface Listener {
         fun contains(screenX: Float, screenY: Float): Boolean
         fun canScroll(): Boolean
@@ -28,7 +32,6 @@ class MessageMenuOverlay(
     private var menuX = 0
     private var menuY = 0
     private var menuWidth = 1
-    private var menuHeight = 1
     private var reactionsX = 0
     private var reactionsY = 0
     var reactionsWidth = 0
@@ -50,15 +53,17 @@ class MessageMenuOverlay(
         clipChildren = false
     }
 
-    fun setMenuPosition(x: Int, y: Int, width: Int, height: Int) {
+    fun setMenuPosition(x: Int, y: Int, width: Int) {
+        val nextWidth = width.coerceAtLeast(1)
+        if (menuX == x && menuY == y && menuWidth == nextWidth) return
         menuX = x
         menuY = y
-        menuWidth = width.coerceAtLeast(1)
-        menuHeight = height.coerceAtLeast(1)
+        menuWidth = nextWidth
         requestLayout()
     }
 
     fun setReactionsPosition(x: Int, y: Int) {
+        if (reactionsX == x && reactionsY == y) return
         reactionsX = x
         reactionsY = y
         requestLayout()
@@ -68,7 +73,7 @@ class MessageMenuOverlay(
         val r = reactions ?: return 0
         reactionsWidth = availableWidth.coerceAtMost(r.totalWidth.coerceAtLeast(dp(48f))).coerceAtLeast(1)
         r.layoutParams.width = reactionsWidth
-        r.layoutParams.height = dp(74f) + Math.round(r.topOffset)
+        r.layoutParams.height = reactionBarHeight(r)
         r.measure(
             MeasureSpec.makeMeasureSpec(reactionsWidth, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(r.layoutParams.height, MeasureSpec.EXACTLY),

@@ -131,7 +131,7 @@ class InputBarPreviewCell(
         buildGlassFactory()
         isPlacementEnabled = InuConfig.IOS_INPUT_BUTTON_PLACEMENT.value
         isAppearanceEnabled = desu.inugram.helpers.chat.IosInputHelper.isAppearance()
-        isCompactEnabled = InuConfig.COMPACT_INPUT_SIZE.value && isAppearanceEnabled
+        isCompactEnabled = desu.inugram.helpers.chat.IosInputHelper.isCompact()
         val gapDp = if (isCompactEnabled) GAP_COMPACT_DP else GAP_NORMAL_DP
         gapPx = AndroidUtilities.dp(gapDp.toFloat())
 

@@ -76,6 +76,7 @@ object IosInputHelper {
 
     @JvmStatic
     fun updateSlowModeContainer(enterView: ChatActivityEnterView, visible: Boolean, isPremiumMode: Boolean) {
+        if (!isAppearance() && !isButtonPlacement() && slowModePill.remove(enterView) == null) return
         val container = enterView.messageEditTextContainer ?: return
         val lp = container.layoutParams as? FrameLayout.LayoutParams ?: return
         val targetMarginPx = if (visible && (isAppearance() || isButtonPlacement())) {

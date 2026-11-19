@@ -630,6 +630,8 @@ entiny/glass-glare-styles.patch
 bugfix/reaction-read-sync.patch
 entiny/feed-chatactivity.patch
 entiny/ios-input-bar.patch
+entiny/action-button-style.patch
+entiny/ios-voice-icon-state.patch
 entiny/no-vibration.patch
 entiny/avatar-delete-draw.patch
 entiny/timed-profile-media.patch
@@ -639,7 +641,7 @@ entiny/system-message-font-scale.patch
 entiny/menu-backdrop-blur-strength.patch
 entiny/stories-premium-badge-overlap.patch
 entiny/quiet-voice-locked.patch
-entiny/ios-design-fixes.patch
+entiny/ios-header-alignment.patch
 entiny/chat-list-and-glass-fixes.patch
 bugfix/stale-wallpaper-load.patch
 feature/wallet_explorer_links.patch

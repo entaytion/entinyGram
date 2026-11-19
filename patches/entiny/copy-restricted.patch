@@ -47,7 +47,7 @@ index 0000000..0000000 100644
                      newCopyVisible = copyItem.getVisibility();
                  }
                  if (starItem != null) {
-@@ -48365,6 +48365,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48368,6 +48368,7 @@ public class ChatActivity extends BaseFragment implements
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
          boolean noforwards = (isEphemeral && !desu.inugram.helpers.security.SelfDestructHelper.shouldBypassOneTimeGate(message.getDialogId())) || isPeerNoForwards() || desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(message.messageOwner) || getDialogId() == UserObject.VERIFY;
          boolean noforwardsOrPaidMedia = noforwards || message.type == MessageObject.TYPE_PAID_MEDIA;
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          boolean allowUnpin = !isEphemeral && message.getDialogId() != mergeDialogId && allowPin && (pinnedMessageObjects.containsKey(message.getId()) || groupedMessages != null && !groupedMessages.messages.isEmpty() && pinnedMessageObjects.containsKey(groupedMessages.messages.get(0).getId())) && !message.isExpiredStory();
          boolean allowEdit = !isEphemeral && message.canEditMessage(currentChat) && !chatActivityEnterView.hasAudioToSend() && message.getDialogId() != mergeDialogId && message.type != MessageObject.TYPE_STORY && message.type != MessageObject.TYPE_POLL;
          if (allowEdit && groupedMessages != null) {
-@@ -48433,7 +48434,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48436,7 +48437,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          if (type == -1) {
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
                  items.add(LocaleController.getString(R.string.Copy));
                  options.add(OPTION_COPY);
                  icons.add(R.drawable.msg_copy);
-@@ -48530,7 +48531,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48533,7 +48534,7 @@ public class ChatActivity extends BaseFragment implements
              items.add(LocaleController.getString(R.string.Retry));
              options.add(OPTION_RETRY);
              icons.add(R.drawable.msg_retry);
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
                  items.add(LocaleController.getString(R.string.Copy));
                  options.add(OPTION_COPY);
                  icons.add(R.drawable.msg_copy);
-@@ -48561,7 +48562,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48564,7 +48565,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_REPLY);
                      icons.add(R.drawable.menu_reply);
                  }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.Copy));
                      options.add(OPTION_COPY);
                      icons.add(R.drawable.msg_copy);
-@@ -48879,7 +48880,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48882,7 +48883,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_REPLY);
                      icons.add(R.drawable.menu_reply);
                  }

@@ -178,7 +178,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -45055,22 +45048,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -45059,22 +45052,26 @@ public class ChatActivity extends BaseFragment implements
                      return compactColor;
                  }
              }
