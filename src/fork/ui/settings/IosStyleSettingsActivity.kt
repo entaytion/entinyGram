@@ -1,7 +1,7 @@
 package desu.inugram.ui.settings
 
-import android.os.Build
 import android.view.View
+import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
@@ -15,10 +15,8 @@ import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
 class IosStyleSettingsActivity : SettingsPageActivity() {
-    private var angleSlider: SliderCell? = null
-    private var intensitySlider: SliderCell? = null
-    private var tintSlider: SliderCell? = null
-    private var blurSlider: SliderCell? = null
+    private val glassSliders = mutableMapOf<InuConfig.IntItem, SliderCell>()
+    private var glassPreview: GlassPreviewCell? = null
 
     private var inputBarPreviewCell: InputBarPreviewCell? = null
 
@@ -91,6 +89,12 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
 
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLiquidGlass)))
+        if (glassPreview?.context !== context) {
+            glassPreview = GlassPreviewCell(context, getResourceProvider())
+            glassSliders.clear()
+        }
+        items.add(UItem.asCustom(glassPreview))
+        addGlassSlider(items, SLIDER_BOTTOM_BAR_TRANSPARENCY, R.string.InuIosBottomBarTransparency, InuConfig.IOS_BOTTOM_BAR_TRANSPARENCY, 0..InuConfig.IOS_BOTTOM_BAR_MAX_TRANSPARENCY)
         items.add(
             UItem.asButton(
                 BUTTON_GLASS_GLARE,
@@ -98,73 +102,48 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(GLASS_GLARE_MODES[GlassGlareHelper.mode]),
             )
         )
-        if (angleSlider == null) {
-            angleSlider = SliderCell(
-                context, min = 0f, max = 360f,
-                defaultValue = InuConfig.LIQUID_GLASS_ANGLE.default.toFloat(),
-                initialValue = InuConfig.LIQUID_GLASS_ANGLE.value.toFloat(),
-                step = 1f,
-                title = LocaleController.getString(R.string.InuLiquidGlassAngle),
-                format = { "${it.toInt()}°" },
-                onChanged = {
-                    InuConfig.LIQUID_GLASS_ANGLE.value = it.toInt()
-                    refreshLiquidGlassEffects()
-                },
-            )
-        } else {
-            angleSlider?.updateColors()
-        }
-        items.add(UItem.asCustom(angleSlider))
-        if (intensitySlider == null) {
-            intensitySlider = SliderCell(
-                context, min = 0f, max = 150f,
-                defaultValue = InuConfig.LIQUID_GLASS_INTENSITY.default.toFloat(),
-                initialValue = InuConfig.LIQUID_GLASS_INTENSITY.value.toFloat(),
-                step = 1f,
-                title = LocaleController.getString(R.string.InuLiquidGlassIntensity),
-                format = { "${it.toInt()}%" },
-                onChanged = {
-                    InuConfig.LIQUID_GLASS_INTENSITY.value = it.toInt()
-                    refreshLiquidGlassEffects()
-                },
-            )
-        } else {
-            intensitySlider?.updateColors()
-        }
-        items.add(UItem.asCustom(intensitySlider))
-        if (tintSlider == null) {
-            tintSlider = SliderCell(
-                context, min = 0f, max = 100f,
-                defaultValue = InuConfig.LIQUID_GLASS_TINT.default.toFloat(),
-                initialValue = InuConfig.LIQUID_GLASS_TINT.value.toFloat(),
-                step = 1f,
-                title = LocaleController.getString(R.string.InuLiquidGlassTint),
-                format = { "${it.toInt()}%" },
-                onChanged = {
-                    InuConfig.LIQUID_GLASS_TINT.value = it.toInt()
-                    refreshLiquidGlassEffects()
-                },
-            )
-        } else {
-            tintSlider?.updateColors()
-        }
-        items.add(UItem.asCustom(tintSlider))
-        if (blurSlider == null) {
-            blurSlider = SliderCell(
-                context, min = 10f, max = 200f,
-                defaultValue = InuConfig.LIQUID_GLASS_BLUR.default.toFloat(),
-                initialValue = InuConfig.LIQUID_GLASS_BLUR.value.toFloat(),
-                step = 1f,
-                title = LocaleController.getString(R.string.InuLiquidGlassBlur),
-                format = { "${it.toInt()}%" },
-                onChanged = { InuConfig.LIQUID_GLASS_BLUR.value = it.toInt() },
-                onReleased = { showRestartBulletin() },
-            )
-        } else {
-            blurSlider?.updateColors()
-        }
-        items.add(UItem.asCustom(blurSlider))
+        addGlassSlider(items, SLIDER_GLASS_ANGLE, R.string.InuLiquidGlassAngle, InuConfig.LIQUID_GLASS_ANGLE, 0..360, "°")
+        addGlassSlider(items, SLIDER_GLASS_INTENSITY, R.string.InuLiquidGlassIntensity, InuConfig.LIQUID_GLASS_INTENSITY, 0..150)
+        addGlassSlider(items, SLIDER_GLASS_TINT, R.string.InuLiquidGlassTint, InuConfig.LIQUID_GLASS_TINT, 0..100)
+        addGlassSlider(items, SLIDER_GLASS_BLUR, R.string.InuLiquidGlassBlur, InuConfig.LIQUID_GLASS_BLUR, 10..200)
+        items.add(UItem.asButton(BUTTON_RESET_GLASS, LocaleController.getString(R.string.InuLiquidGlassReset)))
         items.add(UItem.asShadow(null))
+    }
+
+    private fun addGlassSlider(
+        items: ArrayList<UItem>,
+        id: Int,
+        title: Int,
+        setting: InuConfig.IntItem,
+        range: IntRange,
+        unit: String = "%",
+    ) {
+        val context = context ?: return
+        val slider = glassSliders.getOrPut(setting) {
+            var changed = false
+            SliderCell(
+                context, min = range.first.toFloat(), max = range.last.toFloat(),
+                defaultValue = setting.default.toFloat(),
+                initialValue = setting.value.coerceIn(range).toFloat(),
+                step = 1f,
+                title = LocaleController.getString(title),
+                format = { "${it.toInt()}$unit" },
+                onChanged = {
+                    setting.value = it.toInt()
+                    changed = true
+                    glassPreview?.refreshGlass()
+                },
+                onReleased = {
+                    if (changed) {
+                        changed = false
+                        refreshLiquidGlassEffects()
+                        if (setting === InuConfig.LIQUID_GLASS_BLUR) showRestartBulletin()
+                    }
+                },
+            )
+        }
+        slider.updateColors()
+        items.add(UItem.asCustom(id, slider))
     }
 
     private fun onIosOptionsChanged(changed: List<ExpandableBoolGroup.Option>) {
@@ -229,10 +208,13 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
                             if (GlassGlareHelper.mode == which) return@setItems
                             GlassGlareHelper.setMode(which)
                             inputBarPreviewCell?.invalidate()
+                            glassPreview?.refreshGlass()
                             listView.adapter.update(true)
                         }.create()
                 )
             }
+
+            BUTTON_RESET_GLASS -> resetGlassSettings()
 
             BUTTON_ACTION_BUTTON_STYLE -> {
                 val ctx = context ?: return
@@ -256,13 +238,33 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
     }
 
     private fun refreshLiquidGlassEffects() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            GlassGlareHelper.invalidateLiquidGlass()
+        GlassGlareHelper.invalidateLiquidGlass()
+        inputBarPreviewCell?.invalidate()
+        glassPreview?.refreshGlass()
+    }
+
+    private fun resetGlassSettings() {
+        val blurChanged = InuConfig.LIQUID_GLASS_BLUR.value != InuConfig.LIQUID_GLASS_BLUR.default
+        InuConfig.prefs.edit {
+            for (setting in glassSliders.keys) setting.unsafeSet(setting.default, this)
+            InuConfig.DISABLE_GLASS_GLARE.unsafeSet(InuConfig.DISABLE_GLASS_GLARE.default, this)
+            InuConfig.GLASS_GLARE_SOLID.unsafeSet(InuConfig.GLASS_GLARE_SOLID.default, this)
         }
+        for ((setting, slider) in glassSliders) {
+            slider.updateValue(setting.default.toFloat())
+        }
+        refreshLiquidGlassEffects()
+        if (blurChanged) showRestartBulletin()
     }
 
     companion object {
         private val BUTTON_GLASS_GLARE = InuUtils.generateId()
+        private val BUTTON_RESET_GLASS = InuUtils.generateId()
+        private val SLIDER_GLASS_ANGLE = InuUtils.generateId()
+        private val SLIDER_GLASS_INTENSITY = InuUtils.generateId()
+        private val SLIDER_GLASS_TINT = InuUtils.generateId()
+        private val SLIDER_GLASS_BLUR = InuUtils.generateId()
+        private val SLIDER_BOTTOM_BAR_TRANSPARENCY = InuUtils.generateId()
         private val GLASS_GLARE_MODES = intArrayOf(R.string.Disable, R.string.Default, R.string.InuGlassGlareSolid)
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
@@ -283,6 +285,8 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             factory = ::IosStyleSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("disable-glass-glare", R.string.InuGlassGlare, BUTTON_GLASS_GLARE),
+                SearchRegistry.Entry("liquid-glass-reset", R.string.InuLiquidGlassReset, BUTTON_RESET_GLASS),
+                SearchRegistry.Entry("ios-bottom-bar-transparency", R.string.InuIosBottomBarTransparency, SLIDER_BOTTOM_BAR_TRANSPARENCY),
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("ios-bottom-bar", R.string.InuIosBottomBar, TOGGLE_IOS_BOTTOM_BAR),
                 SearchRegistry.Entry("ios-chat-list", R.string.InuIosChatList, TOGGLE_IOS_CHAT_LIST),

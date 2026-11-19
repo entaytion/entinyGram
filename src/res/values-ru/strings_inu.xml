@@ -1062,6 +1062,7 @@
     <string name="InuInstantTranslateBannerInfo">Показывать панель перевода после одного сообщения на иностранном языке.</string>
     <string name="InuInstantViewShowOriginal">Показать оригинал</string>
     <string name="InuIosBottomBar">Нижняя панель в стиле iOS</string>
+    <string name="InuIosBottomBarTransparency">Дополнительная прозрачность нижней панели</string>
     <string name="InuIosButtonPlacement">Расположение кнопок как в iOS</string>
     <string name="InuIosChatHeader">Компактная таблетка</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
@@ -1105,6 +1106,7 @@
     <string name="InuLiquidGlassAngle">Угол Liquid Glass</string>
     <string name="InuLiquidGlassBlur">Сила размытия</string>
     <string name="InuLiquidGlassIntensity">Интенсивность Liquid Glass</string>
+    <string name="InuLiquidGlassReset">Сбросить настройки стекла</string>
     <string name="InuLiquidGlassTint">Тонировка жидкого стекла</string>
     <string name="InuLocalCustomEmoji">Локальные авторские эмодзи</string>
     <string name="InuLocalCustomEmojiInfo">Отправляет Premium-эмодзи как скрытые ссылки, чтобы другие клиенты тоже могли их показывать. Используйте вместе с локальным Telegram Premium.</string>

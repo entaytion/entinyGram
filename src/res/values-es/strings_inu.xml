@@ -1069,6 +1069,7 @@ Toca para personalizar…</string>
     <string name="InuInstantTranslateBannerInfo">Mostrar la barra de traducción tras un solo mensaje en otro idioma.</string>
     <string name="InuInstantViewShowOriginal">Mostrar original</string>
     <string name="InuIosBottomBar">Barra inferior estilo iOS</string>
+    <string name="InuIosBottomBarTransparency">Transparencia adicional de la barra inferior</string>
     <string name="InuIosButtonPlacement">Ubicación de botones (iOS)</string>
     <string name="InuIosChatHeader">Píldora compacta</string>
     <string name="InuIosChatHeaderAvatarSlot">Mover avatar al botón de menú</string>
@@ -1112,6 +1113,7 @@ Toca para personalizar…</string>
     <string name="InuLiquidGlassAngle">Ángulo de cristal líquido</string>
     <string name="InuLiquidGlassBlur">Intensidad del desenfoque</string>
     <string name="InuLiquidGlassIntensity">Intensidad de cristal líquido</string>
+    <string name="InuLiquidGlassReset">Restablecer ajustes del cristal</string>
     <string name="InuLiquidGlassTint">Tinte de cristal líquido</string>
     <string name="InuLocalCustomEmoji">Emoji personalizado local</string>
     <string name="InuLocalCustomEmojiInfo">Envía emojis Premium como enlaces ocultos para que otros clientes los vean.</string>

@@ -1370,6 +1370,10 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val LIQUID_GLASS_BLUR = IntItem("liquid_glass_blur", 100)
 
     @JvmField
+    val IOS_BOTTOM_BAR_TRANSPARENCY = IntItem("ios_bottom_bar_transparency", 0)
+    const val IOS_BOTTOM_BAR_MAX_TRANSPARENCY = 75
+
+    @JvmField
     val DISABLE_PROFILE_AVATAR_BLUR = BoolItem("disable_profile_avatar_blur", false)
 
     @JvmField

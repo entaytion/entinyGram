@@ -1055,6 +1055,7 @@
     <string name="InuInstantTranslateBannerInfo">نوار ترجمه را پس از یک پیام به زبان خارجی نشان بده.</string>
     <string name="InuInstantViewShowOriginal">نمایش اصل</string>
     <string name="InuIosBottomBar">نوار پایین به سبک iOS</string>
+    <string name="InuIosBottomBarTransparency">شفافیت بیشتر نوار پایین</string>
     <string name="InuIosButtonPlacement">جایگاه دکمه‌ها (iOS)</string>
     <string name="InuIosChatHeader">قرص فشرده</string>
     <string name="InuIosChatHeaderAvatarSlot">انتقال آواتار به دکمه منو</string>
@@ -1098,6 +1099,7 @@
     <string name="InuLiquidGlassAngle">زاویه شیشه مایع</string>
     <string name="InuLiquidGlassBlur">شدت تاری</string>
     <string name="InuLiquidGlassIntensity">شدت شیشه مایع</string>
+    <string name="InuLiquidGlassReset">بازنشانی تنظیمات شیشه</string>
     <string name="InuLiquidGlassTint">رنگ‌مایه شیشه مایع</string>
     <string name="InuLocalCustomEmoji">ایموجی سفارشی محلی</string>
     <string name="InuLocalCustomEmojiInfo">ایموجی پریمیوم را به‌صورت پیوند پنهان می‌فرستد تا کلاینت‌های دیگر هم بتوانند نمایشش دهند. با پریمیوم تلگرام محلی ترکیب کنید.</string>

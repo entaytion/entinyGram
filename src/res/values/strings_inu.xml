@@ -1063,6 +1063,7 @@
     <string name="InuInstantTranslateBannerInfo">Show the translate bar after a single foreign-language message.</string>
     <string name="InuInstantViewShowOriginal">Show original</string>
     <string name="InuIosBottomBar">iOS-style bottom bar</string>
+    <string name="InuIosBottomBarTransparency">Extra bottom bar transparency</string>
     <string name="InuIosButtonPlacement">Button placement (iOS)</string>
     <string name="InuIosChatHeader">Compact pill</string>
     <string name="InuIosChatHeaderAvatarSlot">Move avatar to the menu button</string>
@@ -1106,6 +1107,7 @@
     <string name="InuLiquidGlassAngle">Liquid Glass angle</string>
     <string name="InuLiquidGlassBlur">Blur strength</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass intensity</string>
+    <string name="InuLiquidGlassReset">Reset glass settings</string>
     <string name="InuLiquidGlassTint">Liquid Glass tint</string>
     <string name="InuLocalCustomEmoji">Local Custom Emoji</string>
     <string name="InuLocalCustomEmojiInfo">Sends Premium emoji as hidden links so other clients can still show them. Pair with Local Telegram Premium.</string>

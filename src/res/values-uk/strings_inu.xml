@@ -1062,6 +1062,7 @@
     <string name="InuInstantTranslateBannerInfo">Показувати панель перекладу після одного повідомлення іноземною мовою.</string>
     <string name="InuInstantViewShowOriginal">Показати оригінал</string>
     <string name="InuIosBottomBar">Нижня панель у стилі iOS</string>
+    <string name="InuIosBottomBarTransparency">Додаткова прозорість нижньої панелі</string>
     <string name="InuIosButtonPlacement">Розташування кнопок як в iOS</string>
     <string name="InuIosChatHeader">Компактна пілюля</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туди, де меню</string>
@@ -1105,6 +1106,7 @@
     <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
     <string name="InuLiquidGlassBlur">Сила розмиття</string>
     <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>
+    <string name="InuLiquidGlassReset">Скинути налаштування скла</string>
     <string name="InuLiquidGlassTint">Тонування рідкого скла</string>
     <string name="InuLocalCustomEmoji">Локальні кастомні емодзі</string>
     <string name="InuLocalCustomEmojiInfo">Надсилає Premium-емодзі як приховані посилання, щоб інші клієнти теж їх показували. Вмикайте разом із локальним Premium.</string>

@@ -1069,6 +1069,7 @@ Tocca per personalizzare…</string>
     <string name="InuInstantTranslateBannerInfo">Mostra la barra di traduzione dopo un solo messaggio in lingua straniera.</string>
     <string name="InuInstantViewShowOriginal">Mostra originale</string>
     <string name="InuIosBottomBar">Barra inferiore stile iOS</string>
+    <string name="InuIosBottomBarTransparency">Trasparenza aggiuntiva della barra inferiore</string>
     <string name="InuIosButtonPlacement">Posizione dei pulsanti (iOS)</string>
     <string name="InuIosChatHeader">Pillola compatta</string>
     <string name="InuIosChatHeaderAvatarSlot">Sposta l\'avatar sul pulsante del menu</string>
@@ -1112,6 +1113,7 @@ Tocca per personalizzare…</string>
     <string name="InuLiquidGlassAngle">Angolo del Liquid Glass</string>
     <string name="InuLiquidGlassBlur">Intensità della sfocatura</string>
     <string name="InuLiquidGlassIntensity">Intensità del Liquid Glass</string>
+    <string name="InuLiquidGlassReset">Ripristina le impostazioni del vetro</string>
     <string name="InuLiquidGlassTint">Tinta del Liquid Glass</string>
     <string name="InuLocalCustomEmoji">Emoji personalizzate locali</string>
     <string name="InuLocalCustomEmojiInfo">Invia le emoji Premium come link nascosti così gli altri client possono comunque mostrarle. Da usare con Telegram Premium locale.</string>

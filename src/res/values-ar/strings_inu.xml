@@ -1063,6 +1063,7 @@
     <string name="InuInstantTranslateBannerInfo">إظهار شريط الترجمة بعد رسالة واحدة بلغة أجنبية.</string>
     <string name="InuInstantViewShowOriginal">إظهار الأصل</string>
     <string name="InuIosBottomBar">شريط سفلي بنمط iOS</string>
+    <string name="InuIosBottomBarTransparency">شفافية إضافية للشريط السفلي</string>
     <string name="InuIosButtonPlacement">موضع الأزرار (iOS)</string>
     <string name="InuIosChatHeader">كبسولة مضغوطة</string>
     <string name="InuIosChatHeaderAvatarSlot">نقل الصورة الرمزية إلى زر القائمة</string>
@@ -1106,6 +1107,7 @@
     <string name="InuLiquidGlassAngle">زاوية الزجاج السائل</string>
     <string name="InuLiquidGlassBlur">قوة الضبابية</string>
     <string name="InuLiquidGlassIntensity">شدة الزجاج السائل</string>
+    <string name="InuLiquidGlassReset">إعادة ضبط إعدادات الزجاج</string>
     <string name="InuLiquidGlassTint">تظليل الزجاج السائل</string>
     <string name="InuLocalCustomEmoji">إيموجي مخصص محلي</string>
     <string name="InuLocalCustomEmojiInfo">يرسل إيموجي Premium كروابط مخفية ليتمكن العملاء الآخرون من عرضه. اجمعه مع Telegram Premium المحلي.</string>

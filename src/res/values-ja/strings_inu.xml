@@ -1054,6 +1054,7 @@
     <string name="InuInstantTranslateBannerInfo">外国語のメッセージが1件あった時点で翻訳バーを表示します。</string>
     <string name="InuInstantViewShowOriginal">原文を表示</string>
     <string name="InuIosBottomBar">iOS風のボトムバー</string>
+    <string name="InuIosBottomBarTransparency">ボトムバーの追加透明度</string>
     <string name="InuIosButtonPlacement">ボタンの配置（iOS）</string>
     <string name="InuIosChatHeader">コンパクトなピル</string>
     <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
@@ -1097,6 +1098,7 @@
     <string name="InuLiquidGlassAngle">Liquid Glassの角度</string>
     <string name="InuLiquidGlassBlur">ぼかしの強さ</string>
     <string name="InuLiquidGlassIntensity">Liquid Glassの強度</string>
+    <string name="InuLiquidGlassReset">ガラス設定をリセット</string>
     <string name="InuLiquidGlassTint">リキッドグラスの色味</string>
     <string name="InuLocalCustomEmoji">ローカルカスタム絵文字</string>
     <string name="InuLocalCustomEmojiInfo">Premium絵文字を非表示リンクとして送信し、他のクライアントでも表示できるようにします。ローカルTelegram Premiumと併用してください。</string>

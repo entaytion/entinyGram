@@ -1,0 +1,100 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 16:58:31 +0200
+Subject: Apply bottom bar transparency and glass blur customization.
+
+---
+ .../impl/BlurredBackgroundProviderImpl.java   | 11 ++++++++++-
+ .../org/telegram/ui/MainTabsActivity.java     |  4 ++--
+ .../utils/glass/GlassCaptureSourceCanvas.java | 19 +++++++++++--------
+ 3 files changed, 23 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/color/impl/BlurredBackgroundProviderImpl.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/color/impl/BlurredBackgroundProviderImpl.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/color/impl/BlurredBackgroundProviderImpl.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/color/impl/BlurredBackgroundProviderImpl.java
+@@ -20,12 +20,21 @@ import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundProvider
+ 
+ public class BlurredBackgroundProviderImpl {
+     public static BlurredBackgroundProvider mainTabs(Theme.ResourcesProvider resourcesProvider) {
++        return inu_mainTabs(resourcesProvider, false);
++    }
++
++    public static BlurredBackgroundProvider inu_mainTabs(Theme.ResourcesProvider resourcesProvider, boolean adjustTransparency) {
+         return new BlurredBackgroundProviderBuilder(resourcesProvider)
+             .setBackgroundColor((r, isDark) -> {
+                 final float alpha = LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) ? 0.85f : 0.76f;
+                 final int colorBg = Theme.getColor(Theme.key_windowBackgroundWhite, r);
+                 final int colorTarget = Theme.getColor(Theme.key_glass_targetMainTabs, r);
+-                return solveSrcColor(colorBg, colorTarget, alpha);
++                final int color = solveSrcColor(colorBg, colorTarget, alpha);
++                if (!adjustTransparency) return color;
++                final int transparency = Utilities.clamp(
++                        desu.inugram.InuConfig.IOS_BOTTOM_BAR_TRANSPARENCY.getValue(),
++                        desu.inugram.InuConfig.IOS_BOTTOM_BAR_MAX_TRANSPARENCY, 0);
++                return Theme.multAlpha(color, 1f - transparency / 100f);
+             })
+             .setStrokeColorTop(0x11000000, 0x06FFFFFF)
+             .setStrokeColorBottom(0x20000000, 0x11FFFFFF)
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -456,7 +456,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         iBlur3FactoryGlass.setSourceRootView(viewPositionWatcher, contentView);
+         iBlur3FactoryGlass.setLiquidGlassEffectAllowed(true);
+ 
+-        tabsViewBackground = iBlur3FactoryGlass.create(tabsView, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
++        tabsViewBackground = iBlur3FactoryGlass.create(tabsView, BlurredBackgroundProviderImpl.inu_mainTabs(resourceProvider, MainTabsHelper.isIos()));
+         tabsViewBackground.setRadius(dp(MainTabsHelper.getMainTabsHeight() / 2f));
+         tabsViewBackground.setPadding(dp(mainTabsMargin - 0.334f));
+         M3MainTabsHelper.applyTabsBackground(tabsViewBackground);
+@@ -469,7 +469,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             searchTabButton = new FrameLayout(context);
+             searchTabButton.setClipChildren(false);
+             searchTabButton.setClipToPadding(false);
+-            searchTabBackground = iBlur3FactoryGlass.create(searchTabButton, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
++            searchTabBackground = iBlur3FactoryGlass.create(searchTabButton, BlurredBackgroundProviderImpl.inu_mainTabs(resourceProvider, MainTabsHelper.isIos()));
+             searchTabBackground.setRadius(dp(26));
+             searchTabBackground.setPadding(dp(0.334f));
+             searchTabButton.setBackground(searchTabBackground);
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/glass/GlassCaptureSourceCanvas.java b/TMessagesProj/src/main/java/org/telegram/utils/glass/GlassCaptureSourceCanvas.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/glass/GlassCaptureSourceCanvas.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/glass/GlassCaptureSourceCanvas.java
+@@ -425,24 +425,27 @@ public class GlassCaptureSourceCanvas {
+                 int frostedGlassDownsample,
+                 int normalizationDownsample
+         ) {
++            final float blurScale = Math.max(10, Math.min(200, desu.inugram.InuConfig.LIQUID_GLASS_BLUR.getValue())) / 100f;
+             if (this.glassDownsample != glassDownsample) {
+                 this.glassDownsample = glassDownsample;
+-                glassRadius = blurRadiusForDownsample(dpf2(7), glassDownsample);
+-                renderNode.setRenderEffect(RenderEffect.createBlurEffect(
+-                        glassRadius, glassRadius, Shader.TileMode.CLAMP));
++                glassRadius = blurRadiusForDownsample(dpf2(7) * blurScale, glassDownsample);
++                renderNode.setRenderEffect(inu_blurEffect(glassRadius));
+             }
+             if (this.frostedGlassDownsample != frostedGlassDownsample) {
+                 this.frostedGlassDownsample = frostedGlassDownsample;
+                 frostedGlassRadius = blurRadiusForDownsample(
+-                        dpf2(36), frostedGlassDownsample);
+-                renderNodeGlassFrosted.setRenderEffect(RenderEffect.createBlurEffect(
+-                        frostedGlassRadius, frostedGlassRadius, Shader.TileMode.CLAMP));
+-                renderNodeFrostedFiltered.setRenderEffect(RenderEffect.createBlurEffect(
+-                        frostedGlassRadius, frostedGlassRadius, Shader.TileMode.CLAMP));
++                        dpf2(36) * blurScale, frostedGlassDownsample);
++                final RenderEffect effect = inu_blurEffect(frostedGlassRadius);
++                renderNodeGlassFrosted.setRenderEffect(effect);
++                renderNodeFrostedFiltered.setRenderEffect(effect);
+             }
+             this.normalizationDownsample = normalizationDownsample;
+         }
+ 
++        private static RenderEffect inu_blurEffect(float radius) {
++            return radius > 0f ? RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP) : null;
++        }
++
+         public void setFilteredColorFilter(@Nullable ColorFilter colorFilter) {
+             if (filteredColorFilter != colorFilter) {
+                 filteredColorFilter = colorFilter;

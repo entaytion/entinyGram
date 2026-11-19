@@ -1056,6 +1056,7 @@
     <string name="InuInstantTranslateBannerInfo">Tek bir yabancı dilde mesajdan sonra çeviri çubuğunu göster.</string>
     <string name="InuInstantViewShowOriginal">Orijinali göster</string>
     <string name="InuIosBottomBar">iOS tarzı alt çubuk</string>
+    <string name="InuIosBottomBarTransparency">Alt çubuğun ek şeffaflığı</string>
     <string name="InuIosButtonPlacement">Düğme yerleşimi (iOS)</string>
     <string name="InuIosChatHeader">Kompakt hap</string>
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
@@ -1099,6 +1100,7 @@
     <string name="InuLiquidGlassAngle">Liquid Glass açısı</string>
     <string name="InuLiquidGlassBlur">Bulanıklık gücü</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass yoğunluğu</string>
+    <string name="InuLiquidGlassReset">Cam ayarlarını sıfırla</string>
     <string name="InuLiquidGlassTint">Liquid Glass renk tonu</string>
     <string name="InuLocalCustomEmoji">Yerel Özel Emoji</string>
     <string name="InuLocalCustomEmojiInfo">Premium emojiler, diğer istemcilerin gösterebilmesi için gizli bağlantı olarak gönderilir. Yerel Telegram Premium ile birlikte kullanın.</string>

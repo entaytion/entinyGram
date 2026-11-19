@@ -1054,6 +1054,7 @@
     <string name="InuInstantTranslateBannerInfo">收到一条外语消息后即显示翻译栏。</string>
     <string name="InuInstantViewShowOriginal">显示原文</string>
     <string name="InuIosBottomBar">iOS 风格底部栏</string>
+    <string name="InuIosBottomBarTransparency">底部栏额外透明度</string>
     <string name="InuIosButtonPlacement">按钮布局 (iOS)</string>
     <string name="InuIosChatHeader">紧凑胶囊</string>
     <string name="InuIosChatHeaderAvatarSlot">将头像移到菜单按钮处</string>
@@ -1097,6 +1098,7 @@
     <string name="InuLiquidGlassAngle">Liquid Glass 角度</string>
     <string name="InuLiquidGlassBlur">模糊强度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass 强度</string>
+    <string name="InuLiquidGlassReset">重置玻璃设置</string>
     <string name="InuLiquidGlassTint">液态玻璃色调</string>
     <string name="InuLocalCustomEmoji">本地自定义表情</string>
     <string name="InuLocalCustomEmojiInfo">将 Premium 表情作为隐藏链接发送，其他客户端也能显示。需搭配本地 Telegram Premium。</string>
