@@ -683,3 +683,4 @@ entiny/regex-hidden-read.patch
 entiny/forward-hide-sender-reply.patch
 entiny/real-premium-flag.patch
 entiny/ios-tab-glint.patch
+entiny/ios-message-menu-glass.patch

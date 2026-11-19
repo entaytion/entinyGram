@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 16:58:29 +0200
+Subject: Make the iOS message action card easier to read.
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java        | 6 ++++--
+ .../drawable/color/impl/BlurredBackgroundProviderImpl.java | 7 +++++++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -33138,10 +33138,11 @@ public class ChatActivity extends BaseFragment implements
+ 
+             updateScrimSourceBitmap();
+ 
+-            popupLayout.setBackground(scrimBlur3Factory.create(popupLayout, true)
++            final BlurredBackgroundDrawable inu_messageMenuBackground = scrimBlur3Factory.create(popupLayout, true)
+                 .setColorProvider(BlurredBackgroundProviderImpl.messageMenuBackground(resourceProvider))
+                 .setRadius(dp(InuConfig.IOS_MESSAGE_MENU.getValue() ? 24 : 12))
+-                .setPadding(dp(8)));
++                .setPadding(dp(8));
++            popupLayout.setBackground(inu_messageMenuBackground);
+ 
+             boolean addGap = false;
+ 
+@@ -34321,6 +34322,7 @@ public class ChatActivity extends BaseFragment implements
+                     ? desu.inugram.helpers.chat.MessageMenuPreviewHelper.create(contentView.getContext(), (ChatMessageCell) v, scrimPopupContainerLayout, reactionsLayout, chatListView.getWidth(), inu_menuBottom - inu_menuTop, this::closeMenu)
+                     : null;
+             if (inu_column != null) {
++                inu_messageMenuBackground.setColorProvider(BlurredBackgroundProviderImpl.inu_messageMenuBackground(resourceProvider, true));
+                 inu_column.onChanged = () -> {
+                     inu_menuShift = inu_column.shift;
+                     inu_menuClipTop = inu_column.clipTop;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/color/impl/BlurredBackgroundProviderImpl.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/color/impl/BlurredBackgroundProviderImpl.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/color/impl/BlurredBackgroundProviderImpl.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/color/impl/BlurredBackgroundProviderImpl.java
+@@ -100,8 +100,15 @@ public class BlurredBackgroundProviderImpl {
+     }
+ 
+     public static BlurredBackgroundProvider messageMenuBackground(Theme.ResourcesProvider resourcesProvider) {
++        return inu_messageMenuBackground(resourcesProvider, false);
++    }
++
++    public static BlurredBackgroundProvider inu_messageMenuBackground(Theme.ResourcesProvider resourcesProvider, boolean dense) {
+         return new BlurredBackgroundProviderBuilder(resourcesProvider)
+                 .setBackgroundColor((r, isDark) -> {
++                    if (dense && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BLUR)) {
++                        return Theme.multAlpha(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, r), isDark ? 0.94f : 0.92f);
++                    }
+                     if (!LiteMode.isEnabled(LiteMode.FLAG_CHAT_BLUR)) {
+                         return Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground);
+                     }
