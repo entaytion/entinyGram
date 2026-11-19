@@ -16,7 +16,7 @@ export interface PostInfo {
 /** The updater (UpdateHelper.kt) searches for these exact tags and clips its dialog to the first blockquote. */
 export const TAG = { beta: '#prerelease', release: '#release' } as const
 
-const DONATE = html`Підтримати / Donate: <a href="https://t.me/sendgrams?to=entaytion&amp;amount=0.1&amp;text=thx+for+entiny">Telegram</a> · <a href="https://send.monobank.ua/jar/RGYa8zo8y">monobank</a> · <a href="https://entaytion.is-a.dev/donate">Website</a>`
+const DONATE = html`Підтримати / Donate: <a href="https://boosty.to/entaytion/donate">Boosty</a> · <a href="https://t.me/sendgrams?to=entaytion&amp;amount=0.1&amp;text=thx+for+entiny">Telegram</a> · <a href="https://send.monobank.ua/jar/RGYa8zo8y">monobank</a> · <a href="https://entaytion.is-a.dev/donate">Website</a>`
 const BETA_WARNING = html`<i>Pre-release build for testing. It is unstable and may crash or misbehave.</i>`
 const SITE_URL = process.env.SITE_CHANGELOG_URL ?? 'https://entaytion.is-a.dev/entinygram/changelog'
 
@@ -52,7 +52,7 @@ function footer(info: PostInfo): Rich {
   const diff = info.tag && info.prevTag && info.tag !== info.prevTag
     ? html`<a href="https://github.com/${info.repo}/compare/${info.prevTag}...${info.tag}">Full diff on GitHub</a>`
     : null
-  return join([diff, DONATE, html`${TAG[info.track]} · @entinyGram · @entinyGramChat`], '\n')
+  return join([diff, html`${TAG[info.track]} · @entinyGram · @entinyGramChat`, DONATE], '\n')
 }
 
 /** Caption under the APK. The notes sit in the first blockquote, which is what the updater shows. */
@@ -91,17 +91,17 @@ export function mainPost(info: PostInfo, notes: Sections, downloadUrl: string, e
   const en = rich(noteLines(notes.en, 'en', false).join('\n'))
   const note = extra ? html`${esc(extra)}` : null
 
-  const whole = join([head, note, uk, html`English:\n<blockquote expandable>${en}</blockquote>`, site, DONATE, tags], '\n\n')
+  const whole = join([head, note, uk, html`English:\n<blockquote expandable>${en}</blockquote>`, site, tags, DONATE], '\n\n')
   if (whole.text.length <= maxChars) return { first: whole, reply: null }
   return {
-    first: join([head, note, uk, site, DONATE, tags], '\n\n'),
+    first: join([head, note, uk, site, tags, DONATE], '\n\n'),
     reply: join([html`<b>entinyGram ${info.base} · ${info.label}</b> · English\n\n<blockquote expandable>${en}</blockquote>`, tags], '\n\n'),
   }
 }
 
 export const RICH_LIMIT = 32000
 
-const MD_DONATE = 'Підтримати / Donate: [Telegram](https://t.me/sendgrams?to=entaytion&amount=0.1&text=thx+for+entiny) · [monobank](https://send.monobank.ua/jar/RGYa8zo8y) · [Website](https://entaytion.is-a.dev/donate)'
+const MD_DONATE = 'Підтримати / Donate: [Boosty](https://boosty.to/entaytion/donate) · [Telegram](https://t.me/sendgrams?to=entaytion&amount=0.1&text=thx+for+entiny) · [monobank](https://send.monobank.ua/jar/RGYa8zo8y) · [Website](https://entaytion.is-a.dev/donate)'
 const MD_BETA_WARNING = '*Pre-release build for testing. It is unstable and may crash or misbehave.*'
 
 export interface RichSection { title: string, lines: string[] }
@@ -154,11 +154,11 @@ export function richCiPost(info: PostInfo, sections: RichSection[], apks: RichAp
   return fitRich(cut => [
     richTitle(info),
     richTags(TAG[info.track]),
+    MD_DONATE,
     info.track === 'beta' ? MD_BETA_WARNING : null,
     richFiles(apks),
     ...(uk.length ? [changelog('Що нового', cut(uk)), changelog("What's new", cut(sections))] : [changelog("What's new", cut(sections))]),
     richDiff(info),
-    MD_DONATE,
   ].filter(Boolean).join('\n\n'), longestOf(sections), limit)
 }
 
@@ -168,12 +168,12 @@ export function richMainPost(info: PostInfo, notes: Sections, apks: RichApk[], e
   return fitRich(cut => [
     richTitle(info),
     richTags(TAG.release),
+    MD_DONATE,
     extra ? mdEsc(extra) : null,
     richFiles(apks),
     changelog('Що нового', cut(uk)),
     changelog("What's new", cut(en)),
     `[Усі нові функції на сайті / All new features on the website](${SITE_URL})`,
     richDiff(info),
-    MD_DONATE,
   ].filter(Boolean).join('\n\n'), longestOf(uk, en), limit)
 }
