@@ -18,6 +18,7 @@ class DonateActivity : SettingsPageActivity() {
     }
 
     private val cards = listOf(
+        Method(R.drawable.inu_tabler_credit_card, "Boosty", "boosty.to/entaytion", BOOSTY),
         Method(R.drawable.inu_tabler_pig_money, str(R.string.InuDonateMonobankJar), "send.monobank.ua", MONOBANK_JAR),
         Method(R.drawable.inu_tabler_credit_card, str(R.string.InuDonateMonobankCard), "4874 1000 3949 4128"),
     )
@@ -77,7 +78,8 @@ class DonateActivity : SettingsPageActivity() {
     private fun str(res: Int) = LocaleController.getString(res)
 
     companion object {
-        private const val MONOBANK_JAR = "https://send.monobank.ua/jar/RGYa8zo8y"
+        private const val BOOSTY = "https://boosty.to/entaytion/donate"
+        private const val MONOBANK_JAR ="https://send.monobank.ua/jar/RGYa8zo8y"
         private const val CRYPTO_BOT = "https://t.me/send?start=IVncNnKfmByl"
         private const val TELEGRAM_SEND = "https://t.me/sendgrams?to=entaytion&amount=0.1&text=thx+for+entiny"
         private const val SITE = "https://entaytion.is-a.dev/donate"
