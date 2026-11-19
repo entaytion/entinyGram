@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 16:58:34 +0200
+Subject: Limit the first folder action to the iOS bottom bar.
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -14556,7 +14556,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     @Override
+     public void onParentScrollToTop() {
+-        if (desu.inugram.InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.getValue()
++        if (MainTabsHelper.isIos() && desu.inugram.InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.getValue()
+                 && filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE
+                 && !tabsAnimationInProgress && !filterTabsView.isAnimatingIndicator() && !startedTracking
+                 && !filterTabsView.isFirstTabSelected()
