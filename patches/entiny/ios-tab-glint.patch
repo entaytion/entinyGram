@@ -1,0 +1,104 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 19 Nov 2026 16:50:51 +0200
+Subject: Flash the selected iOS tab briefly when tapped.
+
+---
+ .../ui/Components/glass/GlassTabView.java     | 41 +++++++++++++++++++
+ .../org/telegram/ui/MainTabsActivity.java     |  3 ++
+ 2 files changed, 44 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+@@ -4,6 +4,7 @@ import static org.telegram.messenger.AndroidUtilities.dp;
+ import static org.telegram.messenger.AndroidUtilities.dpf2;
+ import static org.telegram.messenger.AndroidUtilities.lerp;
+ 
++import android.animation.ValueAnimator;
+ import android.content.Context;
+ import android.graphics.Canvas;
+ import android.graphics.Color;
+@@ -12,6 +13,8 @@ import android.graphics.PorterDuff;
+ import android.graphics.PorterDuffColorFilter;
+ import android.graphics.RectF;
+ import android.graphics.drawable.Drawable;
++import android.graphics.drawable.GradientDrawable;
++import android.os.Build;
+ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+@@ -34,6 +37,7 @@ import org.telegram.messenger.LocaleController;
+ import org.telegram.messenger.MediaDataController;
+ import org.telegram.messenger.MessagesController;
+ import org.telegram.messenger.R;
++import org.telegram.messenger.SharedConfig;
+ import org.telegram.messenger.UserConfig;
+ import org.telegram.tgnet.TLRPC;
+ import org.telegram.ui.ActionBar.Theme;
+@@ -60,6 +64,37 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     private BackupImageView backupImageView;
+     private Theme.ResourcesProvider resourcesProvider;
+     private final Paint paintCounterBackground = new Paint(Paint.ANTI_ALIAS_FLAG);
++    private GradientDrawable inu_selectionGlint;
++    private ValueAnimator inu_glintAnimator;
++
++    public void inu_flashSelection() {
++        if (!SharedConfig.animationsEnabled() || (Build.VERSION.SDK_INT >= 26 && !ValueAnimator.areAnimatorsEnabled())) {
++            return;
++        }
++        if (inu_selectionGlint == null) {
++            inu_selectionGlint = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
++                    new int[] {0x80FFFFFF, 0x18FFFFFF, Color.TRANSPARENT});
++            inu_selectionGlint.setCornerRadius(dp(32));
++            inu_glintAnimator = ValueAnimator.ofInt(140, 0);
++            inu_glintAnimator.setDuration(140);
++            inu_glintAnimator.setInterpolator(AnimatorUtils.DECELERATE_INTERPOLATOR);
++            inu_glintAnimator.addUpdateListener(animation -> {
++                inu_selectionGlint.setAlpha((int) animation.getAnimatedValue());
++                invalidate();
++            });
++        }
++        inu_glintAnimator.cancel();
++        inu_glintAnimator.start();
++    }
++
++    @Override
++    protected void onDetachedFromWindow() {
++        if (inu_glintAnimator != null) {
++            inu_glintAnimator.cancel();
++            inu_selectionGlint.setAlpha(0);
++        }
++        super.onDetachedFromWindow();
++    }
+     private final AnimatedTextView.AnimatedTextDrawable counter;
+ 
+     private static final int ANIMATOR_ID_IS_SELECTED = 0;
+@@ -172,6 +207,12 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             M3MainTabsHelper.drawIndicator(canvas, paintCounterBackground, viewWidth, colorSelected, selectedFactor);
+         }
+ 
++        if (inu_selectionGlint != null && inu_selectionGlint.getAlpha() > 0 && isTabSelected() && !skipDrawSelector) {
++            final int inset = dp(2);
++            inu_selectionGlint.setBounds(inset, inset, (int) viewWidth - inset, getHeight() - inset);
++            inu_selectionGlint.draw(canvas);
++        }
++
+         final float hasCounter = (usePremiumCounter ? 1f : isHasCounterAnimator.getFloatValue()) * attachScale;
+         final boolean saveLayer = hasCounter > 0;
+         if (saveLayer) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -422,6 +422,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+                     return;
+                 }
+ 
++                if (MainTabsHelper.isIos()) {
++                    view.inu_flashSelection();
++                }
+                 if (viewPager.getCurrentPosition() == position) {
+                     final BaseFragment fragment = getCurrentVisibleFragment();
+                     if (fragment instanceof MainTabsActivity.TabFragmentDelegate) {
