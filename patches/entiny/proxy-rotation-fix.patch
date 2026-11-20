@@ -1,0 +1,76 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 20 Nov 2026 23:25:40 +0200
+Subject: Keep proxy rotation alive when a check never returns or every proxy fails, and fix the enabled condition.
+
+---
+ .../messenger/ProxyRotationController.java    | 27 ++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ProxyRotationController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ProxyRotationController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ProxyRotationController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ProxyRotationController.java
+@@ -19,8 +19,15 @@ public class ProxyRotationController implements NotificationCenter.NotificationC
+     );
+ 
+     private boolean isCurrentlyChecking;
++    private long checkingStartedAt;
+     private Runnable checkProxyAndSwitchRunnable = () -> {
++        if (isCurrentlyChecking && SystemClock.elapsedRealtime() - checkingStartedAt > Math.max(ROTATION_TIMEOUTS.get(SharedConfig.proxyRotationTimeout) * 3000L, 15000L)) {
++            for (SharedConfig.ProxyInfo info : SharedConfig.proxyList) {
++                info.checking = false;
++            }
++        }
+         isCurrentlyChecking = true;
++        checkingStartedAt = SystemClock.elapsedRealtime();
+ 
+         int currentAccount = UserConfig.selectedAccount;
+         boolean startedCheck = false;
+@@ -48,6 +55,8 @@ public class ProxyRotationController implements NotificationCenter.NotificationC
+         if (!startedCheck) {
+             isCurrentlyChecking = false;
+             switchToAvailable();
++        } else {
++            rescheduleIfStillConnecting();
+         }
+     };
+ 
+@@ -79,7 +88,19 @@ public class ProxyRotationController implements NotificationCenter.NotificationC
+             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
+             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxyChangedByRotation);
+             ConnectionsManager.setProxySettings(true, SharedConfig.currentProxy.settings);
+-            break;
++            return;
++        }
++        rescheduleIfStillConnecting();
++    }
++
++    private void rescheduleIfStillConnecting() {
++        if (!SharedConfig.proxyRotationEnabled || SharedConfig.proxyList.size() <= 1) {
++            return;
++        }
++        int account = UserConfig.selectedAccount;
++        if (ConnectionsManager.getInstance(account).getConnectionState() == ConnectionsManager.ConnectionStateConnectingToProxy) {
++            AndroidUtilities.cancelRunOnUIThread(checkProxyAndSwitchRunnable);
++            AndroidUtilities.runOnUIThread(checkProxyAndSwitchRunnable, ROTATION_TIMEOUTS.get(SharedConfig.proxyRotationTimeout) * 1000L);
+         }
+     }
+ 
+@@ -102,14 +123,14 @@ public class ProxyRotationController implements NotificationCenter.NotificationC
+         } else if (id == NotificationCenter.proxySettingsChanged) {
+             AndroidUtilities.cancelRunOnUIThread(checkProxyAndSwitchRunnable);
+         } else if (id == NotificationCenter.didUpdateConnectionState && account == UserConfig.selectedAccount) {
+-            if (!SharedConfig.isProxyEnabled() && !SharedConfig.proxyRotationEnabled || SharedConfig.proxyList.size() <= 1) {
++            if (!SharedConfig.isProxyEnabled() || !SharedConfig.proxyRotationEnabled || SharedConfig.proxyList.size() <= 1) {
+                 return;
+             }
+ 
+             int state = ConnectionsManager.getInstance(account).getConnectionState();
+ 
+             if (state == ConnectionsManager.ConnectionStateConnectingToProxy) {
+-                if (!isCurrentlyChecking) {
++                if (!isCurrentlyChecking || SystemClock.elapsedRealtime() - checkingStartedAt > 30000L) {
+                     AndroidUtilities.runOnUIThread(checkProxyAndSwitchRunnable, ROTATION_TIMEOUTS.get(SharedConfig.proxyRotationTimeout) * 1000L);
+                 }
+             } else {

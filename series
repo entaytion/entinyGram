@@ -613,7 +613,6 @@ bugfix/video-quality-menu-check-color.patch
 bugfix/glass-lite-mode-blur.patch
 feature/dont-autoplay-widgets.patch
 feature/compact-mode-per-chat-type.patch
-bugfix/ipv6-proxy.patch
 feature/folder-tabs-bottom.patch
 feature/bottom-tabs-hide-on-scroll.patch
 bugfix/bitmaps-cache-recycled-shared-bitmaps.patch
@@ -687,3 +686,4 @@ entiny/ios-message-menu-glass.patch
 entiny/ios-glass-customization.patch
 entiny/ios-tabs-first-folder.patch
 entiny/ios-chat-header-blur.patch
+entiny/proxy-rotation-fix.patch

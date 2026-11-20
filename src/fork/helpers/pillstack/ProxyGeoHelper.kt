@@ -2,9 +2,9 @@ package desu.inugram.helpers.pillstack
 
 import desu.inugram.helpers.Http
 import org.json.JSONObject
-import org.telegram.messenger.Utilities
 import java.net.InetAddress
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
 
 // entiny: proxy host -> country flag through a free GeoIP service; asked once per host, remembered for the session
 object ProxyGeoHelper {
@@ -13,6 +13,9 @@ object ProxyGeoHelper {
     private val flags = ConcurrentHashMap<String, String>()
     private val failedAt = ConcurrentHashMap<String, Long>()
     private val inFlight = ConcurrentHashMap.newKeySet<String>()
+
+    // entiny: own thread, a slow dns or http here must never stall the shared globalQueue
+    private val executor = Executors.newSingleThreadExecutor { r -> Thread(r, "proxy-geo").apply { isDaemon = true; priority = Thread.MIN_PRIORITY } }
 
     // entiny: returns the cached flag immediately and starts a lookup in the background when none is known yet
     @JvmStatic
@@ -23,7 +26,7 @@ object ProxyGeoHelper {
         val failed = failedAt[key]
         if (failed != null && System.currentTimeMillis() - failed < NEGATIVE_TTL_MS) return null
         if (inFlight.add(key)) {
-            Utilities.globalQueue.postRunnable {
+            executor.execute {
                 try {
                     val code = lookup(key)
                     if (code != null) flags[key] = flag(code) else failedAt[key] = System.currentTimeMillis()

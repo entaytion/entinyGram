@@ -2357,7 +2357,7 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val PILL_STACK_IN_HEADER = BoolItem("pill_stack_in_header", false)
 
     @JvmField
-    val PILL_STACK_PROXY_COUNTRY = BoolItem("pill_stack_proxy_country", true)
+    val PILL_STACK_PROXY_COUNTRY = BoolItem("pill_stack_proxy_country", false)
 
     // entiny: weather pill location -- the device position by default, or a point picked on the map (no location permission)
     @JvmField
