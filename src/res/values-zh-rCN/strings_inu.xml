@@ -1824,6 +1824,8 @@
     <string name="InuProxyListHeader">代理列表</string>
     <string name="InuProxyListTools">全部 Ping 并删除失效代理</string>
     <string name="InuProxyListToolsInfo">在代理列表中添加“Ping 所有代理”和“删除失效代理”两项</string>
+    <string name="InuProxyListMenu">代理列表菜单</string>
+    <string name="InuProxyListMenuInfo">在代理列表中添加三点菜单：从剪贴板导入、复制或分享全部链接、全部测速、删除失败的代理或全部代理。替代“全部测速”和“删除失败”两行</string>
     <string name="InuProxyConnectChoice">连接或仅保存</string>
     <string name="InuProxyConnectChoiceInfo">手动添加代理时显示“立即连接”开关，可以只保存而不连接</string>
     <string name="InuProxyLinksHeader">代理链接</string>
@@ -1837,6 +1839,8 @@
     <string name="InuDeleteFailedProxies">删除失效代理</string>
     <string name="InuDeleteFailedProxiesConfirm">确定要删除所有不可用的代理吗？</string>
     <string name="InuConnectProxyImmediately">立即连接</string>
+    <string name="InuCopyAllProxies">全部复制</string>
+    <string name="InuShareAllProxies">全部分享</string>
     <string name="InuPublicPhotoMark">公开照片</string>
     <string name="InuPullDownAction">下拉操作</string>
     <string name="InuPullDownActionDisabled">禁用</string>

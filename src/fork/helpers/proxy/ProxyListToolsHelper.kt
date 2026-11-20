@@ -21,11 +21,14 @@ object ProxyListToolsHelper {
 
     @JvmStatic
     fun showPingAll(list: List<SharedConfig.ProxyInfo>): Boolean =
-        InuConfig.PROXY_LIST_TOOLS.value && list.size >= 2
+        rowsEnabled() && list.size >= 2
 
     @JvmStatic
     fun showDeleteFailed(list: List<SharedConfig.ProxyInfo>): Boolean =
-        InuConfig.PROXY_LIST_TOOLS.value && list.any(::isFailed)
+        rowsEnabled() && list.any(::isFailed)
+
+    private fun rowsEnabled(): Boolean =
+        InuConfig.PROXY_LIST_TOOLS.value && !InuConfig.PROXY_LIST_MENU.value
 
     @JvmStatic
     fun resetCheckTimes(list: List<SharedConfig.ProxyInfo>) {
@@ -49,6 +52,22 @@ object ProxyListToolsHelper {
                     SharedConfig.deleteProxy(info)
                 }
                 onDeleted.run(removedCurrent)
+            }
+            .create()
+        fragment.showDialog(dialog)
+        (dialog.getButton(DialogInterface.BUTTON_POSITIVE) as? TextView)?.setTextColor(Theme.getColor(Theme.key_text_RedBold))
+    }
+
+    @JvmStatic
+    fun confirmDeleteAll(fragment: BaseFragment, list: List<SharedConfig.ProxyInfo>, onDeleted: Utilities.Callback<Boolean>) {
+        val activity = fragment.parentActivity ?: return
+        val dialog = AlertDialog.Builder(activity)
+            .setTitle(LocaleController.getString(R.string.DeleteProxyTitle))
+            .setMessage(LocaleController.getString(R.string.DeleteAllProxiesConfirm))
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .setPositiveButton(LocaleController.getString(R.string.Delete)) { _, _ ->
+                for (info in list.toList()) SharedConfig.deleteProxy(info)
+                onDeleted.run(true)
             }
             .create()
         fragment.showDialog(dialog)

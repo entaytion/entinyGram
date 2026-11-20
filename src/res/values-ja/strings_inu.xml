@@ -1824,6 +1824,8 @@
     <string name="InuProxyListHeader">プロキシ一覧</string>
     <string name="InuProxyListTools">一括 Ping と接続不可の削除</string>
     <string name="InuProxyListToolsInfo">プロキシ一覧に「すべてのプロキシに Ping」と「接続できないプロキシを削除」を追加します</string>
+    <string name="InuProxyListMenu">プロキシ一覧のメニュー</string>
+    <string name="InuProxyListMenuInfo">プロキシ一覧に三点メニューを追加します: クリップボードからインポート、すべてのリンクをコピーまたは共有、すべてをping、失敗したプロキシまたはすべてを削除。「すべてping」と「失敗を削除」の行の代わりになります</string>
     <string name="InuProxyConnectChoice">接続するか保存のみか</string>
     <string name="InuProxyConnectChoiceInfo">プロキシを手動で追加するときに「すぐに接続」スイッチが表示され、接続せずに保存できます</string>
     <string name="InuProxyLinksHeader">プロキシリンク</string>
@@ -1837,6 +1839,8 @@
     <string name="InuDeleteFailedProxies">接続できないプロキシを削除</string>
     <string name="InuDeleteFailedProxiesConfirm">利用できないすべてのプロキシを削除してもよろしいですか？</string>
     <string name="InuConnectProxyImmediately">すぐに接続</string>
+    <string name="InuCopyAllProxies">すべてコピー</string>
+    <string name="InuShareAllProxies">すべて共有</string>
     <string name="InuPublicPhotoMark">公開写真</string>
     <string name="InuPullDownAction">プルダウン操作</string>
     <string name="InuPullDownActionDisabled">無効</string>

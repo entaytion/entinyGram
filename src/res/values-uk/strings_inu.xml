@@ -1837,6 +1837,8 @@
     <string name="InuProxyListHeader">Список проксі</string>
     <string name="InuProxyListTools">Пінг усіх і видалення недоступних</string>
     <string name="InuProxyListToolsInfo">Додає до списку проксі кнопки «Пінг усіх проксі» та «Видалити недоступні проксі»</string>
+    <string name="InuProxyListMenu">Меню списку проксі</string>
+    <string name="InuProxyListMenuInfo">Додає до списку проксі меню з трьома крапками: імпорт із буфера обміну, копіювання або надсилання всіх посилань, пінг усіх, видалення недоступних або всіх проксі. Замінює кнопки «Пінг усіх» і «Видалити недоступні»</string>
     <string name="InuProxyConnectChoice">Підключатися чи просто зберігати</string>
     <string name="InuProxyConnectChoiceInfo">Під час ручного додавання проксі з\'являється перемикач «Підключитися одразу», щоб зберегти проксі без підключення</string>
     <string name="InuProxyLinksHeader">Посилання на проксі</string>
@@ -1850,6 +1852,8 @@
     <string name="InuDeleteFailedProxies">Видалити недоступні проксі</string>
     <string name="InuDeleteFailedProxiesConfirm">Ви впевнені, що хочете видалити всі недоступні проксі?</string>
     <string name="InuConnectProxyImmediately">Підключитися одразу</string>
+    <string name="InuCopyAllProxies">Копіювати всі</string>
+    <string name="InuShareAllProxies">Поділитися всіма</string>
     <string name="InuPublicPhotoMark">публічне фото</string>
     <string name="InuPullDownAction">Дія при потягуванні вниз</string>
     <string name="InuPullDownActionDisabled">Вимкнено</string>

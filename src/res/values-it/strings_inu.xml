@@ -1847,6 +1847,8 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuProxyListHeader">Elenco proxy</string>
     <string name="InuProxyListTools">Ping a tutti ed elimina i non riusciti</string>
     <string name="InuProxyListToolsInfo">Aggiunge all\'elenco proxy le righe Fai il ping a tutti i proxy ed Elimina i proxy non riusciti</string>
+    <string name="InuProxyListMenu">Menu della lista proxy</string>
+    <string name="InuProxyListMenuInfo">Aggiunge un menu a tre punti alla lista proxy: importa dagli appunti, copia o condividi tutti i link, ping di tutti, elimina i proxy non funzionanti o tutti. Sostituisce le righe Ping di tutti ed Elimina non funzionanti</string>
     <string name="InuProxyConnectChoice">Connetti o salva soltanto</string>
     <string name="InuProxyConnectChoiceInfo">Quando aggiungi un proxy a mano, l\'interruttore Connetti subito permette di salvarlo senza connettersi</string>
     <string name="InuProxyLinksHeader">Link proxy</string>
@@ -1860,6 +1862,8 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuDeleteFailedProxies">Elimina i proxy non riusciti</string>
     <string name="InuDeleteFailedProxiesConfirm">Sei sicuro di voler eliminare tutti i proxy non disponibili?</string>
     <string name="InuConnectProxyImmediately">Connetti subito</string>
+    <string name="InuCopyAllProxies">Copia tutto</string>
+    <string name="InuShareAllProxies">Condividi tutto</string>
     <string name="InuPublicPhotoMark">foto pubblica</string>
     <string name="InuPullDownAction">Azione di trascinamento verso il basso</string>
     <string name="InuPullDownActionDisabled">Disattivato</string>

@@ -5,10 +5,10 @@ Subject: Add the optional proxy toolkit: list tools, connect choice, link alert 
 
 ---
  .../telegram/messenger/AndroidUtilities.java  |  1 +
- .../messenger/ProxyRotationController.java    |  9 +++++
- .../org/telegram/ui/ProxyListActivity.java    | 34 +++++++++++++++++--
- .../telegram/ui/ProxySettingsActivity.java    | 13 +++++++
- 4 files changed, 55 insertions(+), 2 deletions(-)
+ .../messenger/ProxyRotationController.java    |  9 ++++
+ .../org/telegram/ui/ProxyListActivity.java    | 50 ++++++++++++++++++-
+ .../telegram/ui/ProxySettingsActivity.java    | 13 +++++
+ 4 files changed, 71 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 index 0000000..0000000 100644
@@ -53,16 +53,17 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
-@@ -105,6 +105,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -105,6 +105,9 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
      private int rotationTimeoutInfoRow;
      private int deleteAllRow;
      private int inu_importRow;
 +    private int inu_pingAllRow = -1;
 +    private int inu_deleteFailedRow = -1;
++    private ActionBarMenuItem inu_moreMenuItem;
  
      private ItemTouchHelper itemTouchHelper;
      private ActionBarMenuItem shareMenuItem;
-@@ -493,6 +495,23 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -493,6 +496,11 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                  presentFragment(new ProxySettingsActivity());
              } else if (position == inu_importRow) {
                  desu.inugram.helpers.ProxyImportHelper.importFromClipboard(this);
@@ -70,23 +71,39 @@ index 0000000..0000000 100644
 +                desu.inugram.helpers.proxy.ProxyListToolsHelper.resetCheckTimes(proxyList);
 +                updateRows(true);
 +            } else if (position == inu_deleteFailedRow) {
-+                desu.inugram.helpers.proxy.ProxyListToolsHelper.confirmDeleteFailed(this, proxyList, removedCurrent -> {
-+                    if (removedCurrent) {
-+                        useProxySettings = false;
-+                    }
-+                    NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
-+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
-+                    NotificationCenter.getGlobalInstance().addWeakObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
-+                    updateRows(true);
-+                    if (listAdapter != null) {
-+                        listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
-+                        listAdapter.clearSelected();
-+                    }
-+                });
++                desu.inugram.helpers.proxy.ProxyListToolsHelper.confirmDeleteFailed(this, proxyList, this::inu_onProxiesDeleted);
              } else if (position == deleteAllRow) {
                  AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
                  builder.setMessage(getString(R.string.DeleteAllProxiesConfirm));
-@@ -679,6 +698,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -528,6 +536,9 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+             return false;
+         });
+ 
++        inu_moreMenuItem = desu.inugram.helpers.proxy.ProxyListMenuHelper.create(simpleActionBar);
++        desu.inugram.helpers.proxy.ProxyListMenuHelper.update(inu_moreMenuItem, proxyList);
++
+         SimpleActionBarMenu actionMode = simpleActionBar.createActionMode();
+ 
+         shareMenuItem = actionMode.addItemWithWidth(MENU_SHARE, R.drawable.msg_share, AndroidUtilities.dp(54));
+@@ -596,8 +607,17 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                             listAdapter.clearSelected();
+                         }
+                         break;
++                    default:
++                        desu.inugram.helpers.proxy.ProxyListMenuHelper.handle(ProxyListActivity.this, id, proxyList, () -> updateRows(true), ProxyListActivity.this::inu_onProxiesDeleted);
++                        break;
+                 }
+             }
++
++            @Override
++            public boolean canOpenMenu() {
++                desu.inugram.helpers.proxy.ProxyListMenuHelper.update(inu_moreMenuItem, proxyList);
++                return true;
++            }
+         });
+ 
+         return fragmentView;
+@@ -679,17 +699,34 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
          proxyAddRow = rowCount++;
          inu_importRow = rowCount++;
          proxyShadowRow = rowCount++;
@@ -95,7 +112,33 @@ index 0000000..0000000 100644
          if (proxyList.size() >= 10) {
              deleteAllRow = rowCount++;
          } else {
-@@ -864,6 +885,11 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+             deleteAllRow = -1;
+         }
+         checkProxyList();
++        desu.inugram.helpers.proxy.ProxyListMenuHelper.update(inu_moreMenuItem, proxyList);
+         if (notify && listAdapter != null) {
+             listAdapter.notifyDataSetChanged();
+         }
+     }
+ 
++    private void inu_onProxiesDeleted(boolean removedCurrent) {
++        if (removedCurrent) {
++            useProxySettings = false;
++        }
++        NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
++        NotificationCenter.getGlobalInstance().addWeakObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++        updateRows(true);
++        if (listAdapter != null) {
++            listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
++            listAdapter.clearSelected();
++        }
++    }
++
+     private void checkProxyList() {
+         for (int a = 0, count = proxyList.size(); a < count; a++) {
+             final SharedConfig.ProxyInfo proxyInfo = proxyList.get(a);
+@@ -864,6 +901,11 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                          textCell.setText(getString(R.string.AddProxy), true);
                      } else if (position == inu_importRow) {
                          textCell.setText(getString(R.string.InuProxyImportFromClipboard), deleteAllRow != -1);
@@ -107,7 +150,7 @@ index 0000000..0000000 100644
                      } else if (position == deleteAllRow) {
                          ThemeBind.textColor(textCell.getTextView(), Theme.key_text_RedRegular);
                          textCell.setText(getString(R.string.DeleteAllProxies), false);
-@@ -961,7 +987,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -961,7 +1003,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
          @Override
          public boolean isEnabled(RecyclerView.ViewHolder holder) {
              int position = holder.getAdapterPosition();
@@ -116,7 +159,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -1018,6 +1044,10 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -1018,6 +1060,10 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                  return -11;
              } else if (position == inu_importRow) {
                  return -12;
@@ -127,7 +170,7 @@ index 0000000..0000000 100644
              } else if (position >= proxyStartRow && position < proxyEndRow) {
                  return proxyList.get(position - proxyStartRow).hashCode();
              } else {
-@@ -1029,7 +1059,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -1029,7 +1075,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
          public int getItemViewType(int position) {
              if (position == useProxyShadowRow || position == proxyShadowRow) {
                  return VIEW_TYPE_SHADOW;

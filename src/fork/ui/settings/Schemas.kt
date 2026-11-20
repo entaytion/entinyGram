@@ -1137,6 +1137,7 @@ object Schemas {
         notice(R.string.InuProxyDisclaimer)
         section(R.string.InuProxyListHeader) {
             toggle(InuConfig.PROXY_LIST_TOOLS, R.string.InuProxyListTools, R.string.InuProxyListToolsInfo)
+            toggle(InuConfig.PROXY_LIST_MENU, R.string.InuProxyListMenu, R.string.InuProxyListMenuInfo)
             toggle(InuConfig.PROXY_CONNECT_CHOICE, R.string.InuProxyConnectChoice, R.string.InuProxyConnectChoiceInfo)
         }
         section(R.string.InuProxyLinksHeader) {

@@ -482,6 +482,9 @@ object InuConfig {
     val PROXY_LIST_TOOLS = BoolItem("proxy_list_tools", false)
 
     @JvmField
+    val PROXY_LIST_MENU = BoolItem("proxy_list_menu", false)
+
+    @JvmField
     val PROXY_CONNECT_CHOICE = BoolItem("proxy_connect_choice", false)
 
     @JvmField

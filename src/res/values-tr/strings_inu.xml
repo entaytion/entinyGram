@@ -1827,6 +1827,8 @@
     <string name="InuProxyListHeader">Proxy listesi</string>
     <string name="InuProxyListTools">Tümüne ping ve başarısızları sil</string>
     <string name="InuProxyListToolsInfo">Proxy listesine Tüm proxy\'lere ping at ve Kullanılamayan proxy\'leri sil satırlarını ekler</string>
+    <string name="InuProxyListMenu">Proxy listesi menüsü</string>
+    <string name="InuProxyListMenuInfo">Proxy listesine üç noktalı bir menü ekler: panodan içe aktar, tüm bağlantıları kopyala veya paylaş, tümüne ping at, başarısız ya da tüm proxyleri sil. Tümüne ping at ve Başarısızları sil satırlarının yerini alır</string>
     <string name="InuProxyConnectChoice">Bağlan veya sadece kaydet</string>
     <string name="InuProxyConnectChoiceInfo">Proxy\'yi elle eklerken Hemen bağlan anahtarı, bağlanmadan kaydetmeni sağlar</string>
     <string name="InuProxyLinksHeader">Proxy bağlantıları</string>
@@ -1840,6 +1842,8 @@
     <string name="InuDeleteFailedProxies">Kullanılamayan Vekil Sunucuları Sil</string>
     <string name="InuDeleteFailedProxiesConfirm">Tüm kullanılamayan vekil sunucuları silmek istediğinizden emin misiniz?</string>
     <string name="InuConnectProxyImmediately">Hemen bağlan</string>
+    <string name="InuCopyAllProxies">Tümünü kopyala</string>
+    <string name="InuShareAllProxies">Tümünü paylaş</string>
     <string name="InuPublicPhotoMark">genel fotoğraf</string>
     <string name="InuPullDownAction">Aşağı çekme eylemi</string>
     <string name="InuPullDownActionDisabled">Devre dışı</string>

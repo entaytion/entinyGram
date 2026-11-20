@@ -1834,6 +1834,8 @@
     <string name="InuProxyListHeader">Proxy list</string>
     <string name="InuProxyListTools">Ping all and delete failed</string>
     <string name="InuProxyListToolsInfo">Adds Ping all proxies and Delete failed proxies rows to the proxy list</string>
+    <string name="InuProxyListMenu">Proxy list menu</string>
+    <string name="InuProxyListMenuInfo">Adds a three-dot menu to the proxy list: import from clipboard, copy or share all links, ping all, delete failed or all proxies. Replaces the Ping all and Delete failed rows</string>
     <string name="InuProxyConnectChoice">Connect or just save</string>
     <string name="InuProxyConnectChoiceInfo">When you add a proxy by hand, a Connect immediately switch lets you save it without connecting</string>
     <string name="InuProxyLinksHeader">Proxy links</string>
@@ -1847,6 +1849,8 @@
     <string name="InuDeleteFailedProxies">Delete Failed Proxies</string>
     <string name="InuDeleteFailedProxiesConfirm">Are you sure you want to delete all unavailable proxies?</string>
     <string name="InuConnectProxyImmediately">Connect immediately</string>
+    <string name="InuCopyAllProxies">Copy all</string>
+    <string name="InuShareAllProxies">Share all</string>
     <string name="InuPublicPhotoMark">public photo</string>
     <string name="InuPullDownAction">Pull-down action</string>
     <string name="InuPullDownActionDisabled">Disabled</string>

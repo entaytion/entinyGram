@@ -1826,6 +1826,8 @@
     <string name="InuProxyListHeader">فهرست پروکسی</string>
     <string name="InuProxyListTools">پینگ همه و حذف ناموفق‌ها</string>
     <string name="InuProxyListToolsInfo">گزینه‌های پینگ همه پروکسی‌ها و حذف پروکسی‌های ناموفق را به فهرست پروکسی اضافه می‌کند</string>
+    <string name="InuProxyListMenu">منوی فهرست پروکسی</string>
+    <string name="InuProxyListMenuInfo">یک منوی سه‌نقطه به فهرست پروکسی اضافه می‌کند: وارد کردن از کلیپ‌بورد، کپی یا اشتراک‌گذاری همه پیوندها، پینگ همه، حذف پروکسی‌های ناموفق یا همه. جایگزین ردیف‌های پینگ همه و حذف ناموفق‌ها می‌شود</string>
     <string name="InuProxyConnectChoice">اتصال یا فقط ذخیره</string>
     <string name="InuProxyConnectChoiceInfo">هنگام افزودن دستی پروکسی، کلید اتصال فوری اجازه می‌دهد آن را بدون اتصال ذخیره کنید</string>
     <string name="InuProxyLinksHeader">لینک‌های پروکسی</string>
@@ -1839,6 +1841,8 @@
     <string name="InuDeleteFailedProxies">حذف پروکسی‌های ناموفق</string>
     <string name="InuDeleteFailedProxiesConfirm">مطمئن هستید که می‌خواهید همه پروکسی‌های در دسترس‌نبودنی را حذف کنید؟</string>
     <string name="InuConnectProxyImmediately">اتصال فوری</string>
+    <string name="InuCopyAllProxies">کپی همه</string>
+    <string name="InuShareAllProxies">اشتراک‌گذاری همه</string>
     <string name="InuPublicPhotoMark">عکس عمومی</string>
     <string name="InuPullDownAction">کنش کشیدن به پایین</string>
     <string name="InuPullDownActionDisabled">غیرفعال</string>
