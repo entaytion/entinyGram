@@ -319,6 +319,8 @@
     <string name="InuBottomTabsLift">抬高底部导航栏</string>
     <string name="InuBottomTabsSeparateSearch">独立搜索按钮</string>
     <string name="InuBottomTabsSeparateSearchInfo">在底部导航栏旁边显示一个圆形搜索按钮</string>
+    <string name="InuBottomTabsV2">悬浮胶囊样式</string>
+    <string name="InuBottomTabsV2Info">当前标签展开为图标与文字同行的胶囊，其余标签只显示图标。会取代 Material 3、iOS 与紧凑样式，并关闭标签拖动</string>
     <string name="InuBubbles">气泡</string>
     <string name="InuBubbleTails">气泡尾巴</string>
     <string name="InuBusinessBot">商务机器人</string>

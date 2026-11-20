@@ -319,6 +319,8 @@
     <string name="InuBottomTabsLift">بالا بردن نوار پایین</string>
     <string name="InuBottomTabsSeparateSearch">دکمه جستجوی جداگانه</string>
     <string name="InuBottomTabsSeparateSearchInfo">جستجو را به‌صورت دکمه‌ای گرد کنار زبانه‌های پایین نشان بده</string>
+    <string name="InuBottomTabsV2">سبک قرص شناور</string>
+    <string name="InuBottomTabsV2Info">زبانه فعال به شکل قرصی با نماد و عنوان در یک خط کشیده می‌شود و بقیه فقط نماد نشان می‌دهند. ظاهر Material 3، iOS و فشرده را جایگزین می‌کند و کشیدن زبانه‌ها خاموش است</string>
     <string name="InuBubbles">حباب‌ها</string>
     <string name="InuBubbleTails">دنباله حباب‌ها</string>
     <string name="InuBusinessBot">ربات کسب‌وکار</string>

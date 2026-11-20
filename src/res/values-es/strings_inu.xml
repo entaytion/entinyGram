@@ -322,6 +322,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuBottomTabsLift">Elevar la barra de navegación</string>
     <string name="InuBottomTabsSeparateSearch">Botón de búsqueda separado</string>
     <string name="InuBottomTabsSeparateSearchInfo">Muestra la búsqueda como un botón redondo junto a las pestañas inferiores</string>
+    <string name="InuBottomTabsV2">Estilo de píldora flotante</string>
+    <string name="InuBottomTabsV2Info">La pestaña activa se estira en una píldora con icono y texto en una fila; las demás solo muestran iconos. Sustituye el aspecto de Material 3, iOS y compacto; arrastrar pestañas está desactivado</string>
     <string name="InuBubbles">Burbujas</string>
     <string name="InuBubbleTails">Colas de las burbujas</string>
     <string name="InuBusinessBot">Bot de empresa</string>

@@ -321,6 +321,8 @@
     <string name="InuBottomTabsLift">رفع شريط التنقل</string>
     <string name="InuBottomTabsSeparateSearch">زر بحث منفصل</string>
     <string name="InuBottomTabsSeparateSearchInfo">إظهار البحث كزر دائري بجانب علامات التبويب السفلية</string>
+    <string name="InuBottomTabsV2">نمط الحبة العائمة</string>
+    <string name="InuBottomTabsV2Info">يتمدد التبويب النشط إلى حبة تعرض الأيقونة والعنوان في سطر واحد، وتعرض بقية التبويبات الأيقونات فقط. يستبدل مظهر Material 3 وiOS والمضغوط، وسحب التبويبات متوقف</string>
     <string name="InuBubbles">الفقاعات</string>
     <string name="InuBubbleTails">ذيول الفقاعات</string>
     <string name="InuBusinessBot">بوت الأعمال</string>

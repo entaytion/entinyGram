@@ -530,6 +530,9 @@ object InuConfig {
     val BOTTOM_TABS_COMPACT_MODE = BoolItem("bottom_tabs_hide_compact_mode", false)
 
     @JvmField
+    val BOTTOM_TABS_V2 = BoolItem("bottom_tabs_v2", false)
+
+    @JvmField
     val BOTTOM_TABS_LIFT = IntItem("bottom_tabs_lift", 0)
 
     val START_TAB = IntItem("start_tab", 0)

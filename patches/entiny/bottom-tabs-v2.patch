@@ -1,0 +1,245 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 20 Nov 2026 23:29:22 +0200
+Subject: Add the floating pill bottom bar: the active tab stretches into a pill with icon and label in one row.
+
+---
+ .../ui/Components/AnimatedLinearLayout.java   |  4 ++
+ .../ui/Components/glass/GlassTabView.java     | 46 +++++++++++++++++--
+ .../org/telegram/ui/MainTabsActivity.java     |  4 +-
+ .../java/org/telegram/ui/MainTabsLayout.java  |  8 +++-
+ 4 files changed, 56 insertions(+), 6 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedLinearLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedLinearLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedLinearLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedLinearLayout.java
+@@ -34,6 +34,10 @@ public class AnimatedLinearLayout extends LinearLayout {
+         super(context);
+     }
+ 
++    protected final void inu_remeasureItems() {
++        listAnimator.measure(true);
++    }
++
+     public boolean isViewVisible(View child) {
+         final Holder holder = viewHolders.get(child);
+         return holder != null && holder.isVisible;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+@@ -18,6 +18,7 @@ import android.os.Build;
+ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
++import android.view.View;
+ import android.view.Gravity;
+ import android.widget.FrameLayout;
+ import android.widget.TextView;
+@@ -53,6 +54,7 @@ import org.telegram.ui.Components.ScaleStateListAnimator;
+ import org.telegram.ui.MainTabsLayout;
+ 
+ import desu.inugram.helpers.theme.M3MainTabsHelper;
++import desu.inugram.helpers.theme.MainTabsV2Helper;
+ 
+ import me.vkryl.android.AnimatorUtils;
+ import me.vkryl.android.animator.BoolAnimator;
+@@ -110,6 +112,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     private boolean usePremiumCounter;
+     public float inu_radiusOverride = -1;
+     public boolean inu_materialTabs;
++    public boolean inu_v2;
+ 
+     private TabAnimation tabAnimation;
+     private TLRPC.TL_attachMenuBot tabAnimationBot;
+@@ -160,6 +163,10 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     }
+ 
+     private void checkVisualWidth() {
++        if (inu_v2) {
++            MainTabsV2Helper.layoutContent(backupImageView != null ? backupImageView : imageView, textView, hasVisualWidth ? visualWidth : getMeasuredWidth(), isSelectedAnimator.getFloatValue(), measureTextWidth());
++            return;
++        }
+         if (hasVisualWidth) {
+             final float offset = (visualWidth - getMeasuredWidth()) / 2f;
+             imageView.setTranslationX(offset);
+@@ -174,6 +181,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     private boolean skipDrawSelector;
+ 
+     public void setGestureSelectedOverride(float gestureSelectedOverride, boolean allow) {
++        if (inu_v2) return;
+         this.gestureSelectedOverride = gestureSelectedOverride;
+         this.hasGestureSelectedOverride = allow;
+         invalidate();
+@@ -190,7 +198,11 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     protected void dispatchDraw(@NonNull Canvas canvas) {
+         final float viewWidth = hasVisualWidth ? visualWidth : getWidth();
+         final float selectedFactor = hasGestureSelectedOverride ? gestureSelectedOverride : isSelectedAnimator.getFloatValue();
+-        if (selectedFactor > 0 && !skipDrawSelector && !inu_materialTabs) {
++        if (selectedFactor > 0 && !skipDrawSelector && inu_v2) {
++            MainTabsV2Helper.drawPill(canvas, paintCounterBackground, viewWidth, getHeight(), colorSelected, selectedFactor);
++        }
++
++        if (selectedFactor > 0 && !skipDrawSelector && !inu_materialTabs && !inu_v2) {
+             final float alpha = AnimatorUtils.DECELERATE_INTERPOLATOR.getInterpolation(selectedFactor);
+ 
+             paintCounterBackground.setColor(Theme.multAlpha(colorSelected, 0.09f * alpha));
+@@ -225,8 +237,8 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             canvas.save();
+ 
+             final float gap = dpf2(1.33f);
+-            final float cx = viewWidth / 2f + dpf2(inu_materialTabs ? M3MainTabsHelper.BADGE_CENTER_X_OFFSET : 11);
+-            final float cy = dpf2(inu_materialTabs ? M3MainTabsHelper.getBadgeCenterY() : 10);
++            final float cx = inu_v2 ? MainTabsV2Helper.badgeCenterX(viewWidth, selectedFactor, measureTextWidth()) : viewWidth / 2f + dpf2(inu_materialTabs ? M3MainTabsHelper.BADGE_CENTER_X_OFFSET : 11);
++            final float cy = inu_v2 ? MainTabsV2Helper.badgeCenterY(getHeight()) : dpf2(inu_materialTabs ? M3MainTabsHelper.getBadgeCenterY() : 10);
+             final float height = dpf2(16);
+             final float width = Math.max(height, counter.getCurrentWidth() + dp(8));
+             final float rOuter = dpf2(9.333f);
+@@ -282,8 +294,9 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     public void setSelected(boolean selected, boolean animated) {
+         isSelectedAnimator.setValue(selected, animated);
+         checkPlayAnimation(animated);
++        if (inu_v2) requestLayout();
+ 
+-        textView.setTypeface(selected && !inu_materialTabs ? AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_EXTRA_BOLD) : AndroidUtilities.bold());
++        textView.setTypeface(selected && !inu_materialTabs && !inu_v2 ? AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_EXTRA_BOLD) : AndroidUtilities.bold());
+     }
+ 
+     public boolean isTabSelected() {
+@@ -294,6 +307,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     public void onFactorChanged(int id, float factor, float fraction, FactorAnimator callee) {
+         if (id == ANIMATOR_ID_IS_SELECTED) {
+             applyColors();
++            if (inu_v2) checkVisualWidth();
+         }
+         invalidate();
+     }
+@@ -605,6 +619,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+ 
+     @Override
+     public void setTextSizeDp(float textSizeDp) {
++        if (inu_v2) return;
+         final float px = dp(textSizeDp);
+         if (textView.getTextSize() != px) {
+             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSizeDp);
+@@ -783,6 +798,22 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         M3MainTabsHelper.applyTabRipple(this, colorSelected);
+     }
+ 
++    public void inu_setV2() {
++        inu_v2 = true;
++        setClipChildren(false);
++        final View icon = backupImageView != null ? backupImageView : imageView;
++        final int iconSize = (int) MainTabsV2Helper.ICON_SIZE;
++        if (backupImageView != null) {
++            backupImageView.setRoundRadius(dp(iconSize / 2f));
++        }
++        icon.setLayoutParams(LayoutHelper.createFrame(iconSize, iconSize, Gravity.LEFT | Gravity.CENTER_VERTICAL));
++        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, MainTabsV2Helper.LABEL_TEXT_SIZE);
++        defaultTextPaint.setTextSize(dp(MainTabsV2Helper.LABEL_TEXT_SIZE));
++        textView.setEllipsize(null);
++        textView.setLayoutParams(new FrameLayout.LayoutParams((int) Math.ceil(measureTextWidth()) + dp(2), LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL));
++        checkVisualWidth();
++    }
++
+     public void setMainTabsCompact(boolean compact) {
+         if (textView.getVisibility() == (compact ? GONE : VISIBLE)) {
+             return;
+@@ -796,6 +827,13 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             setContentDescription(null);
+         }
+ 
++        if (inu_v2) {
++            inu_setV2();
++            requestLayout();
++            invalidate();
++            return;
++        }
++
+         if (inu_materialTabs) {
+             inu_setMaterialTabs();
+             requestLayout();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -355,6 +355,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsView.setMaxWidth(dp(tabsViewWidth));
+         M3MainTabsHelper.applyTabsLayout(tabsView);
+         MainTabsHelper.applyIosTabsLayout(tabsView);
++        desu.inugram.helpers.theme.MainTabsV2Helper.applyTabsLayout(tabsView);
+ 
+         tabs = new GlassTabView[7];
+         tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
+@@ -389,6 +390,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsView.addTabToIgnoreClick(tabs[INDEX_CALLS]);
+         for (GlassTabView tab : tabs) {
+             if (MainTabsHelper.isMaterial()) tab.inu_setMaterialTabs();
++            if (MainTabsHelper.isV2()) tab.inu_setV2();
+             tab.setMainTabsCompact(compact || !MainTabsHelper.getShowTitles());
+         }
+ 
+@@ -511,7 +513,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsBarContainer.setClipToPadding(false);
+         tabsBarContainer.setPadding(dp(2), 0, dp(2), 0);
+         M3MainTabsHelper.applyTabsBar(tabsBarContainer);
+-        tabsBarContainer.addView(tabsView, M3MainTabsHelper.tabsLayoutParams(new LinearLayout.LayoutParams(dp(tabsViewWidth), LayoutHelper.MATCH_PARENT)));
++        tabsBarContainer.addView(tabsView, desu.inugram.helpers.theme.MainTabsV2Helper.tabsLayoutParams(M3MainTabsHelper.tabsLayoutParams(new LinearLayout.LayoutParams(dp(tabsViewWidth), LayoutHelper.MATCH_PARENT))));
+         if (searchTabContainer != null) {
+             LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(52), dp(52));
+             searchParams.setMarginStart(-dp(Math.max(0, mainTabsMargin - 4)));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
+@@ -48,6 +48,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+ 
+     private int maxWidthPx;
+     public boolean inu_materialTabs;
++    public boolean inu_v2Tabs;
+ 
+     public void setMaxWidth(int maxWidthPx) {
+         if (this.maxWidthPx != maxWidthPx) {
+@@ -145,6 +146,8 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+             }
+         }
+ 
++        if (inu_v2Tabs) desu.inugram.helpers.theme.MainTabsV2Helper.fillWidths(this, tabsTextWidthWithMargin, maxTotalWidthForTabs);
++
+         int l = 0;
+         for (int a = 0, N = getChildCount(); a < N; a++) {
+             if (!isViewVisible(getChildAt(a))) {
+@@ -156,6 +159,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+             l += tabsWidth[a];
+         }
+         setMeasuredDimension(l + getPaddingLeft() + getPaddingRight(), height);
++        if (inu_v2Tabs) setMeasuredDimension(desu.inugram.helpers.theme.MainTabsV2Helper.animatedWidth(getMetadata().getTotalWidth(), l) + getPaddingLeft() + getPaddingRight(), height);
+         for (int a = 0, N = getChildCount(); a < N; a++) {
+             final View child = getChildAt(a);
+             child.measure(
+@@ -244,6 +248,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+     @Override
+     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+         super.onLayout(changed, l, t, r, b);
++        if (inu_v2Tabs) inu_remeasureItems();
+         checkVisualWidth();
+     }
+ 
+@@ -251,6 +256,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+     protected void onItemsChanged() {
+         super.onItemsChanged();
+         checkVisualWidth();
++        if (inu_v2Tabs && desu.inugram.helpers.theme.MainTabsV2Helper.needsRelayout(getMetadata().getTotalWidth(), getPaddingLeft() + getPaddingRight(), getMeasuredWidth())) requestLayout();
+     }
+ 
+     private void checkVisualWidth() {
+@@ -465,7 +471,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+ 
+         @Override
+         public boolean needLongPress(float x, float y) {
+-            return !inu_materialTabs;
++            return !inu_materialTabs && !inu_v2Tabs;
+         }
+ 
+         @Override

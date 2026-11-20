@@ -322,6 +322,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuBottomTabsLift">Solleva la barra di navigazione</string>
     <string name="InuBottomTabsSeparateSearch">Pulsante di ricerca separato</string>
     <string name="InuBottomTabsSeparateSearchInfo">Mostra la Ricerca come pulsante rotondo accanto alle schede in basso</string>
+    <string name="InuBottomTabsV2">Stile pillola fluttuante</string>
+    <string name="InuBottomTabsV2Info">La scheda attiva si allunga in una pillola con icona e testo sulla stessa riga, le altre mostrano solo icone. Sostituisce l’aspetto Material 3, iOS e compatto, il trascinamento delle schede è disattivato</string>
     <string name="InuBubbles">Fumetti</string>
     <string name="InuBubbleTails">Code dei fumetti</string>
     <string name="InuBusinessBot">Bot aziendale</string>

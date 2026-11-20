@@ -325,6 +325,8 @@
     <string name="InuBottomTabsLift">Raise navigation bar</string>
     <string name="InuBottomTabsSeparateSearch">Separate Search button</string>
     <string name="InuBottomTabsSeparateSearchInfo">Show Search as a round button beside the bottom tabs</string>
+    <string name="InuBottomTabsV2">Floating pill style</string>
+    <string name="InuBottomTabsV2Info">The active tab stretches into a pill with icon and label in one row, others show icons only. Replaces the Material 3, iOS and compact bar looks, tab dragging is off</string>
     <string name="InuBubbles">Bubbles</string>
     <string name="InuBubbleTails">Bubble tails</string>
     <string name="InuBusinessBot">Business bot</string>

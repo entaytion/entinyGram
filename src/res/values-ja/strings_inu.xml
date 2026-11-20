@@ -319,6 +319,8 @@
     <string name="InuBottomTabsLift">ナビゲーションバーを上げる</string>
     <string name="InuBottomTabsSeparateSearch">検索ボタンを分離</string>
     <string name="InuBottomTabsSeparateSearchInfo">検索を下部タブの横に丸いボタンとして表示します</string>
+    <string name="InuBottomTabsV2">フローティングピル スタイル</string>
+    <string name="InuBottomTabsV2Info">選択中のタブはアイコンとラベルを1行に並べたピルに広がり、他はアイコンのみ表示されます。Material 3、iOS、コンパクトの表示を置き換え、タブのドラッグは無効です</string>
     <string name="InuBubbles">バブル</string>
     <string name="InuBubbleTails">吹き出しのしっぽ</string>
     <string name="InuBusinessBot">ビジネスボット</string>

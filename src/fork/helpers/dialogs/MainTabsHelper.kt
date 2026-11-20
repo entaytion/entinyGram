@@ -29,6 +29,7 @@ import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.security.PasscodeHelper
 import desu.inugram.helpers.theme.M3MainTabsHelper
+import desu.inugram.helpers.theme.MainTabsV2Helper
 
 
 object MainTabsHelper {
@@ -44,16 +45,20 @@ object MainTabsHelper {
     private const val TABS_SIDE_PADDING_EXTRA_IOS: Int = 8
 
     @JvmStatic
+    val isV2: Boolean
+        get() = MainTabsV2Helper.isEnabled
+
+    @JvmStatic
     val isCompact: Boolean
-        get() = InuConfig.BOTTOM_TABS_COMPACT_MODE.value
+        get() = InuConfig.BOTTOM_TABS_COMPACT_MODE.value && !isV2
 
     @JvmStatic
     val isMaterial: Boolean
-        get() = InuConfig.M3_BOTTOM_TABS.value
+        get() = InuConfig.M3_BOTTOM_TABS.value && !isV2
 
     @JvmStatic
     val isIos: Boolean
-        get() = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value && !isMaterial
+        get() = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value && !isMaterial && !isV2
 
     @JvmStatic
     fun createTabScrimBackground(anchor: View, color: Int): Drawable {
@@ -90,7 +95,7 @@ object MainTabsHelper {
 
     @JvmStatic
     val showTitles: Boolean
-        get() = !isCompact && InuConfig.BOTTOM_TABS_SHOW_TITLES.value
+        get() = isV2 || (!isCompact && InuConfig.BOTTOM_TABS_SHOW_TITLES.value)
 
     // entiny: snapshot order for process lifetime so mid-session toggle preview does not desync ViewPager and crash
     private val cachedEnabledOrder: List<MainTabsMenuConfig.Item> by lazy {

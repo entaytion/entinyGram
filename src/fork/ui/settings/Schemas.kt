@@ -766,6 +766,16 @@ object Schemas {
                     page.showRestart()
                 },
             )
+            toggle(
+                InuConfig.BOTTOM_TABS_V2, R.string.InuBottomTabsV2, R.string.InuBottomTabsV2Info,
+                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
+                onChange = { page, _ ->
+                    page.refresh()
+                    page.rebuildAll()
+                    DialogsSettingsHelper.refreshMainTabsPreview(page)
+                    page.showRestart()
+                },
+            )
             slider(
                 InuConfig.BOTTOM_TABS_LIFT, R.string.InuBottomTabsLift, 0f, 48f,
                 format = { "${it.toInt()} dp" },
@@ -774,7 +784,7 @@ object Schemas {
             )
             toggle(
                 InuConfig.BOTTOM_TABS_SHOW_TITLES, R.string.InuShowTabTitles,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value && !InuConfig.BOTTOM_TABS_COMPACT_MODE.value },
+                visible = { !InuConfig.BOTTOM_TABS_HIDE.value && !InuConfig.BOTTOM_TABS_COMPACT_MODE.value && !InuConfig.BOTTOM_TABS_V2.value },
                 onChange = { page, _ ->
                     DialogsSettingsHelper.refreshMainTabsPreview(page)
                     page.showRestart()

@@ -324,6 +324,8 @@
     <string name="InuBottomTabsLift">Поднять нижнюю панель</string>
     <string name="InuBottomTabsSeparateSearch">Отдельная кнопка поиска</string>
     <string name="InuBottomTabsSeparateSearchInfo">Показывать поиск круглой кнопкой рядом с нижней панелью</string>
+    <string name="InuBottomTabsV2">Стиль плавающей пилюли</string>
+    <string name="InuBottomTabsV2Info">Активная вкладка растягивается в пилюлю с иконкой и подписью в одну строку, остальные показывают только иконки. Заменяет вид Material 3, iOS и компактной панели, перетаскивание вкладок отключено</string>
     <string name="InuBubbles">Пузыри</string>
     <string name="InuBubbleTails">Хвостики у сообщений</string>
     <string name="InuBusinessBot">Бизнес-бот</string>

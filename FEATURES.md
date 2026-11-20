@@ -72,6 +72,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **chat headers** — live preview, choice of centered titles, auto marquee for long names
 - **bottom tabs** — custom layout, optional separate search button, any tab first, hide on scroll, sliders for bar and fab height
 - **profile swipe** — disable swipe-up on profile to open the account menu, long press still works
+- **floating pill bottom bar** — the active tab stretches into a pill with icon and label in one row, the rest show icons only; replaces the material 3, ios and compact bar looks, off by default
 - **system folders** — administrator, bots, unread, groups and channels tabs in the folder bar, each switchable on this device
 - **pill stack** — interactive status pills in the chats search bar
 - **recent chats** — popup, side panel or full page with tabs, search and a history limit
