@@ -11,6 +11,7 @@ import desu.inugram.helpers.icons.IconPackHelper
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import desu.inugram.helpers.LocalPremiumHelper
 import desu.inugram.helpers.ProxyVpnHelper
+import desu.inugram.helpers.proxy.ProxyRotationHelper
 import desu.inugram.helpers.push.UnifiedPushHelper
 import desu.inugram.helpers.UrlCleanerHelper
 import desu.inugram.helpers.security.BiometricHelper
@@ -55,6 +56,7 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.HintsController
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.GroupCreateActivity
+import org.telegram.ui.ProxyListActivity
 
 object Schemas {
     // entiny: pre-schema deeplink slugs (tg://entinySettings/<slug>) that must keep resolving
@@ -1130,6 +1132,39 @@ object Schemas {
             toggle(InuConfig.SAVE_FILENAME_DATE, R.string.InuSaveFilenameDate, R.string.InuSaveFilenameDateInfo)
         }
     }
+
+    val PROXY = schema("proxy", R.string.InuProxyPage, R.drawable.proxy_on_solar) {
+        notice(R.string.InuProxyDisclaimer)
+        section(R.string.InuProxyListHeader) {
+            toggle(InuConfig.PROXY_LIST_TOOLS, R.string.InuProxyListTools, R.string.InuProxyListToolsInfo)
+            toggle(InuConfig.PROXY_CONNECT_CHOICE, R.string.InuProxyConnectChoice, R.string.InuProxyConnectChoiceInfo)
+        }
+        section(R.string.InuProxyLinksHeader) {
+            toggle(InuConfig.PROXY_LINK_ALERT, R.string.InuProxyLinkAlert, R.string.InuProxyLinkAlertInfo)
+        }
+        section(R.string.InuProxyRotationHeader) {
+            toggle(
+                InuConfig.PROXY_AGGRESSIVE_ROTATION, R.string.InuProxyAggressiveRotation, R.string.InuProxyAggressiveRotationInfo,
+                onChange = { _, _ -> ProxyRotationHelper.onToggle() },
+            )
+        }
+        section(R.string.InuProxyRelatedHeader) {
+            custom(
+                "", R.string.ProxySettings,
+                build = { _, id -> UItem.asButton(id, LocaleController.getString(R.string.ProxySettings)) },
+                click = { page, _ -> page.presentFragment(ProxyListActivity()) },
+            )
+            link(R.string.InuAutoDisableProxyOnVpn) {
+                SchemaPageActivity(NETWORK).withHighlight(toggleId(NETWORK, InuConfig.AUTO_DISABLE_PROXY_ON_VPN))
+            }
+            link(R.string.InuHideProxySponsorChat) {
+                SchemaPageActivity(RESTRICTED).withHighlight(toggleId(RESTRICTED, InuConfig.HIDE_PROXY_SPONSOR_CHAT))
+            }
+        }
+    }
+
+    private fun toggleId(schema: Schema, item: InuConfig.BoolItem): Int =
+        schema.rows.firstOrNull { it is Row.Toggle && it.item === item }?.id ?: -1
 
     private val AVATAR_PREVIEW_KEY = InuUtils.generateId()
 

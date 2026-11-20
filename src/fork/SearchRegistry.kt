@@ -71,6 +71,7 @@ object SearchRegistry {
             Schemas.PRIVACY.page,
             Schemas.RESTRICTED.page,
             Schemas.NETWORK.page,
+            Schemas.PROXY.page,
             Schemas.PROFILE.page,
             Schemas.HOME.page,
             Schemas.SYSTEM.page,

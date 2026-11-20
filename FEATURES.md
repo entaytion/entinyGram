@@ -145,6 +145,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 
 ### proxy, plugins & performance
 
+- **experimental proxy page** — ping all and delete failed proxies, save a proxy without connecting, custom proxy link sheet with status check, aggressive rotation, all off by default
 - **plugin market** — themed catalog with filters, version badges, authors and tags, a dedicated page and automatic sdk installation
 - **osmdroid map view** — pure-java openstreetmap renderer replacing maplibre, about 12 MB less native code
 - **faster cold start**, locale caching and a smaller apk without android auto

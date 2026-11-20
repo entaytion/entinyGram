@@ -80,6 +80,7 @@ class Section(
     val footerRes: Int,
     val rows: List<Row>,
     val visible: (() -> Boolean)? = null,
+    val notice: Boolean = false,
 ) {
     val id: Int = InuUtils.generateId()
 }
@@ -187,6 +188,10 @@ class SchemaBuilder {
     ) {
         sections.add(Section(headerRes, footerRes, SectionBuilder().apply(build).rows, visible))
     }
+
+    fun notice(textRes: Int) {
+        sections.add(Section(0, textRes, emptyList(), notice = true))
+    }
 }
 
 fun schema(slug: String, titleRes: Int, iconRes: Int, build: SchemaBuilder.() -> Unit): Schema =
@@ -247,7 +252,7 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
         for (section in schema.sections) {
             if (section.visible?.invoke() == false) continue
             val rows = section.rows.filter { it.visible?.invoke() != false }
-            if (rows.isEmpty()) continue
+            if (rows.isEmpty() && !section.notice) continue
             if (section.headerRes != 0) {
                 items.add(UItem.asHeader(section.id, LocaleController.getString(section.headerRes)))
             }

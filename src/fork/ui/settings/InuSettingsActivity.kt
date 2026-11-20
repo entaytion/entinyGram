@@ -81,6 +81,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_RESTRICTED, R.drawable.inu_ghost_filled, LocaleController.getString(R.string.InuRestrictedFeatures)))
         items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_mood_annoyed, LocaleController.getString(R.string.InuAnnoyances)))
         items.add(mkSubPageButton(CAT_NETWORK, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuNetworkAndNotifications)))
+        items.add(mkSubPageButton(CAT_PROXY, R.drawable.proxy_on_solar, LocaleController.getString(R.string.InuProxyPage)))
         items.add(mkSubPageButton(BUTTON_AI, R.drawable.inu_tabler_sparkles, LocaleController.getString(R.string.InuAiAndTranslator)))
         items.add(UItem.asShadow(null))
 
@@ -112,6 +113,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             CAT_PRIVACY -> presentFragment(SchemaPageActivity(Schemas.PRIVACY))
             CAT_RESTRICTED -> presentFragment(SchemaPageActivity(Schemas.RESTRICTED))
             CAT_NETWORK -> presentFragment(SchemaPageActivity(Schemas.NETWORK))
+            CAT_PROXY -> presentFragment(SchemaPageActivity(Schemas.PROXY))
             CAT_ANNOYANCES -> presentFragment(SchemaPageActivity(Schemas.ANNOYANCES))
             CAT_SYSTEM -> presentFragment(SchemaPageActivity(Schemas.SYSTEM))
             CAT_ABOUT -> presentFragment(AdditionalSettingsActivity())
@@ -131,6 +133,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val CAT_ANNOYANCES = InuUtils.generateId()
         private val CAT_RESTRICTED = InuUtils.generateId()
         private val CAT_NETWORK = InuUtils.generateId()
+        private val CAT_PROXY = InuUtils.generateId()
         private val CAT_HOME = InuUtils.generateId()
         private val CAT_SYSTEM = InuUtils.generateId()
         private val BUTTON_PLUGINS = InuUtils.generateId()

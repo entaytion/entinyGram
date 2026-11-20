@@ -479,6 +479,18 @@ object InuConfig {
     val PROXY_SUPPRESSED_BY_VPN = BoolItem("proxy_suppressed_by_vpn", false, exportable = false)
 
     @JvmField
+    val PROXY_LIST_TOOLS = BoolItem("proxy_list_tools", false)
+
+    @JvmField
+    val PROXY_CONNECT_CHOICE = BoolItem("proxy_connect_choice", false)
+
+    @JvmField
+    val PROXY_LINK_ALERT = BoolItem("proxy_link_alert", false)
+
+    @JvmField
+    val PROXY_AGGRESSIVE_ROTATION = BoolItem("proxy_aggressive_rotation", false)
+
+    @JvmField
     val SHOW_ALL_RECENT_STICKERS = BoolItem("show_all_recent_stickers", true)
 
     @JvmField
