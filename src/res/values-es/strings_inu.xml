@@ -2368,4 +2368,7 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuCrossAccountForwardNotDelivered">los mensajes no llegaron a la otra cuenta</string>
     <string name="InuZalgoFilter">Filtro zalgo</string>
     <string name="InuZalgoFilterInfo">Elimina las marcas combinadas apiladas (texto glitch) de los mensajes. El texto original no cambia.</string>
+    <string name="InuPinLimitTitle">Límite de fijados alcanzado</string>
+    <string name="InuPinLimitText">Telegram permite 5 chats fijados sin Premium. Activa los chats fijados ilimitados para fijar más, los fijados extra se quedan en este dispositivo.</string>
+    <string name="InuPinLimitEnable">Activar</string>
 </resources>

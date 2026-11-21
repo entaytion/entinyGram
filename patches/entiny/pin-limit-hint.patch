@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 21 Nov 2026 15:34:33 +0200
+Subject: Offer to enable unlimited pinned chats when the pin limit is hit instead of the Premium upsell.
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -9661,6 +9661,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 boolean anySecret = newPinnedSecretCount > 0;
+                 if (desu.inugram.InuConfig.UNLIMITED_PINNED_CHATS.getValue()) {
+                     bulkUseLocalPin = true;
++                } else if (desu.inugram.helpers.dialogs.PinHelper.showLimitHint(this)) {
++                    return;
+                 } else if (folderId != 0 || filter != null) {
+                     AlertsCreator.showSimpleAlert(DialogsActivity.this, LocaleController.formatString("PinFolderLimitReached", R.string.PinFolderLimitReached, LocaleController.formatPluralString("Chats", maxPinnedCount)));
+                     return;

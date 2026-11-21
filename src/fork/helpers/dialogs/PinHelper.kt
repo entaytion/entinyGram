@@ -4,6 +4,10 @@ import android.util.SparseArray
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.R
+import org.telegram.ui.ActionBar.BaseFragment
+import org.telegram.ui.Components.AlertsCreator
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
@@ -60,6 +64,18 @@ object PinHelper {
             bulk -> controller.dialogFiltersPinnedLimitDefault
             else -> controller.maxPinnedDialogsCountDefault
         }
+    }
+
+    @JvmStatic
+    fun showLimitHint(fragment: BaseFragment): Boolean {
+        AlertsCreator.showSimpleConfirmAlert(
+            fragment,
+            LocaleController.getString(R.string.InuPinLimitTitle),
+            LocaleController.getString(R.string.InuPinLimitText),
+            LocaleController.getString(R.string.InuPinLimitEnable),
+            false,
+        ) { InuConfig.UNLIMITED_PINNED_CHATS.value = true }
+        return true
     }
 
     @JvmStatic

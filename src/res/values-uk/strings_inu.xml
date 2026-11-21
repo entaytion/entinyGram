@@ -2370,4 +2370,7 @@
     <string name="InuCrossAccountForwardNotDelivered">повідомлення не дійшли до іншого акаунта</string>
     <string name="InuZalgoFilter">Залго-фільтр</string>
     <string name="InuZalgoFilterInfo">Прибирає нагромаджені комбіновані знаки (глітч-текст) з повідомлень. Оригінальний текст не змінюється.</string>
+    <string name="InuPinLimitTitle">Ліміт закріплень досягнуто</string>
+    <string name="InuPinLimitText">Telegram дозволяє 5 закріплених чатів без Premium. Увімкни необмежені закріплення, щоб закріпити більше, додаткові закріплення лишаються на цьому пристрої.</string>
+    <string name="InuPinLimitEnable">Увімкнути</string>
 </resources>

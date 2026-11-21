@@ -2369,4 +2369,7 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuCrossAccountForwardNotDelivered">i messaggi non sono arrivati all\'altro account</string>
     <string name="InuZalgoFilter">Filtro zalgo</string>
     <string name="InuZalgoFilterInfo">Rimuove i segni combinati impilati (testo glitch) dai messaggi. Il testo originale non viene modificato.</string>
+    <string name="InuPinLimitTitle">Limite di chat fissate raggiunto</string>
+    <string name="InuPinLimitText">Telegram consente 5 chat fissate senza Premium. Attiva le chat fissate illimitate per fissarne di più, quelle extra restano su questo dispositivo.</string>
+    <string name="InuPinLimitEnable">Attiva</string>
 </resources>

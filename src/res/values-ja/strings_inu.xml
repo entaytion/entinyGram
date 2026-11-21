@@ -2344,4 +2344,7 @@
     <string name="InuCrossAccountForwardNotDelivered">メッセージがもう一方のアカウントに届きませんでした</string>
     <string name="InuZalgoFilter">Zalgoフィルター</string>
     <string name="InuZalgoFilterInfo">メッセージから重ねられた結合文字（グリッチテキスト）を取り除きます。元のテキストは変更されません。</string>
+    <string name="InuPinLimitTitle">ピン留めの上限に達しました</string>
+    <string name="InuPinLimitText">Premiumなしでピン留めできるチャットは5件までです。無制限ピン留めを有効にするとさらにピン留めできます。追加分はこの端末にのみ保存されます。</string>
+    <string name="InuPinLimitEnable">有効にする</string>
 </resources>

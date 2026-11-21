@@ -2357,4 +2357,7 @@
     <string name="InuCrossAccountForwardNotDelivered">لم تصل الرسائل إلى الحساب الآخر</string>
     <string name="InuZalgoFilter">مرشح زالغو</string>
     <string name="InuZalgoFilterInfo">يزيل علامات الدمج المتراكمة (نص الغليتش) من الرسائل. لا يتغير النص الأصلي.</string>
+    <string name="InuPinLimitTitle">تم بلوغ حد التثبيت</string>
+    <string name="InuPinLimitText">يسمح Telegram بتثبيت 5 محادثات دون Premium. فعّل التثبيت غير المحدود لتثبيت المزيد، وتبقى التثبيتات الإضافية على هذا الجهاز.</string>
+    <string name="InuPinLimitEnable">تفعيل</string>
 </resources>

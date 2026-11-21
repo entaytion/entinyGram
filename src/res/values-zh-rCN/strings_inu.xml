@@ -2344,4 +2344,7 @@
     <string name="InuCrossAccountForwardNotDelivered">消息未送达另一个账号</string>
     <string name="InuZalgoFilter">Zalgo 过滤器</string>
     <string name="InuZalgoFilterInfo">移除消息中堆叠的组合符号（故障文字）。原始文本不会改变。</string>
+    <string name="InuPinLimitTitle">已达到置顶上限</string>
+    <string name="InuPinLimitText">没有 Premium 时 Telegram 最多允许置顶 5 个聊天。开启无限置顶可置顶更多，额外的置顶只保存在本设备上。</string>
+    <string name="InuPinLimitEnable">开启</string>
 </resources>

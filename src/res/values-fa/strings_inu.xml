@@ -2346,4 +2346,7 @@
     <string name="InuCrossAccountForwardNotDelivered">پیام‌ها به حساب دیگر نرسیدند</string>
     <string name="InuZalgoFilter">فیلتر زالگو</string>
     <string name="InuZalgoFilterInfo">نشانه‌های ترکیبی انباشته (متن گلیچ) را از پیام‌ها حذف می‌کند. متن اصلی تغییر نمی‌کند.</string>
+    <string name="InuPinLimitTitle">به سقف سنجاق رسیدید</string>
+    <string name="InuPinLimitText">تلگرام بدون Premium فقط ۵ چت سنجاق‌شده را مجاز می‌کند. سنجاق نامحدود را روشن کنید تا بیشتر سنجاق کنید، سنجاق‌های اضافه روی همین دستگاه می‌مانند.</string>
+    <string name="InuPinLimitEnable">روشن کردن</string>
 </resources>

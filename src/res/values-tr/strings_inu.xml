@@ -2347,4 +2347,7 @@
     <string name="InuCrossAccountForwardNotDelivered">mesajlar diğer hesaba ulaşmadı</string>
     <string name="InuZalgoFilter">Zalgo filtresi</string>
     <string name="InuZalgoFilterInfo">Mesajlardaki üst üste yığılmış birleştirici işaretleri (glitch metin) kaldırır. Orijinal metin değişmez.</string>
+    <string name="InuPinLimitTitle">Sabitleme sınırına ulaşıldı</string>
+    <string name="InuPinLimitText">Telegram Premium olmadan 5 sabitlenmiş sohbete izin verir. Daha fazlasını sabitlemek için sınırsız sabitlemeyi aç, fazladan sabitlemeler bu cihazda kalır.</string>
+    <string name="InuPinLimitEnable">Aç</string>
 </resources>
