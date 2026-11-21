@@ -2302,6 +2302,8 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuUnreadBadgeOnBackButtonIos">Contatore in stile iOS</string>
     <string name="InuUnreadChatsFirst">Chat non lette per prime</string>
     <string name="InuUnreadChatsFirstPinned">Non letti per primi tra i fissati</string>
+    <string name="InuUnreadChatsAlphabetical">Non letti dalla A alla Z</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">Ordina le chat non lette per nome, quelle lette mantengono l\'ordine abituale</string>
     <string name="InuUpdateFailedToInstall">Installazione non riuscita (%1$d)</string>
     <string name="InuUpdateInstalledNotification">Aggiornamento installato, tocca per riavviare</string>
     <string name="InuUpdateInstalling">Installazione dell\'aggiornamento</string>

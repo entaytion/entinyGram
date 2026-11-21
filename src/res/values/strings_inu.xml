@@ -2300,6 +2300,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">iOS-styled counter</string>
     <string name="InuUnreadChatsFirst">Unread chats first</string>
     <string name="InuUnreadChatsFirstPinned">Unread first among pinned</string>
+    <string name="InuUnreadChatsAlphabetical">Unread chats A–Z</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">Sort unread chats by name, read ones keep the usual order</string>
     <string name="InuUpdateFailedToInstall">Install failed (%1$d)</string>
     <string name="InuUpdateInstalledNotification">Update installed, tap to relaunch</string>
     <string name="InuUpdateInstalling">Installing update</string>

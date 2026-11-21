@@ -2290,6 +2290,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">عدّاد بأسلوب iOS</string>
     <string name="InuUnreadChatsFirst">المحادثات غير المقروءة أولاً</string>
     <string name="InuUnreadChatsFirstPinned">غير المقروءة أولاً بين المثبتة</string>
+    <string name="InuUnreadChatsAlphabetical">غير المقروءة أبجديًا</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">ترتيب المحادثات غير المقروءة حسب الاسم، وتبقى المقروءة بترتيبها المعتاد</string>
     <string name="InuUpdateFailedToInstall">فشل التثبيت (%1$d)</string>
     <string name="InuUpdateInstalledNotification">تم تثبيت التحديث، انقر لإعادة التشغيل</string>
     <string name="InuUpdateInstalling">جارٍ تثبيت التحديث</string>

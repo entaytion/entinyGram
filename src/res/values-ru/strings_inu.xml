@@ -2303,6 +2303,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">Счётчик в стиле iOS</string>
     <string name="InuUnreadChatsFirst">Непрочитанные чаты первыми</string>
     <string name="InuUnreadChatsFirstPinned">Непрочитанные первыми среди закреплённых</string>
+    <string name="InuUnreadChatsAlphabetical">Непрочитанные по алфавиту</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">Непрочитанные чаты сортируются по названию, прочитанные остаются в обычном порядке</string>
     <string name="InuUpdateFailedToInstall">Не удалось установить (%1$d)</string>
     <string name="InuUpdateInstalledNotification">Обновление установлено, нажмите для перезапуска</string>
     <string name="InuUpdateInstalling">Установка обновления</string>

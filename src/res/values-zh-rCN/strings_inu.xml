@@ -2277,6 +2277,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">iOS 风格计数器</string>
     <string name="InuUnreadChatsFirst">未读聊天优先显示</string>
     <string name="InuUnreadChatsFirstPinned">置顶聊天中未读优先</string>
+    <string name="InuUnreadChatsAlphabetical">未读聊天按名称排序</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">未读聊天按名称排序，已读聊天保持原有顺序</string>
     <string name="InuUpdateFailedToInstall">安装失败 (%1$d)</string>
     <string name="InuUpdateInstalledNotification">更新已安装，点击重启</string>
     <string name="InuUpdateInstalling">正在安装更新</string>

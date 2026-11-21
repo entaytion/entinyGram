@@ -2279,6 +2279,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">شمارنده به سبک iOS</string>
     <string name="InuUnreadChatsFirst">گفتگوهای نخوانده در ابتدا</string>
     <string name="InuUnreadChatsFirstPinned">خوانده‌نشده‌ها اول در میان سنجاق‌شده‌ها</string>
+    <string name="InuUnreadChatsAlphabetical">خوانده‌نشده‌ها به ترتیب الفبا</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">گفتگوهای خوانده‌نشده بر اساس نام مرتب می‌شوند و خوانده‌شده‌ها ترتیب معمول را حفظ می‌کنند</string>
     <string name="InuUpdateFailedToInstall">نصب ناموفق بود (%1$d)</string>
     <string name="InuUpdateInstalledNotification">به‌روزرسانی نصب شد، برای اجرای مجدد ضربه بزنید</string>
     <string name="InuUpdateInstalling">در حال نصب به‌روزرسانی</string>

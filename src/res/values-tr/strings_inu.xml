@@ -2280,6 +2280,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">iOS tarzı sayaç</string>
     <string name="InuUnreadChatsFirst">Okunmamış sohbetler önce</string>
     <string name="InuUnreadChatsFirstPinned">Sabitlenenler arasında okunmamışlar önce</string>
+    <string name="InuUnreadChatsAlphabetical">Okunmamışlar A–Z</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">Okunmamış sohbetleri ada göre sıralar, okunmuşlar olağan sırasını korur</string>
     <string name="InuUpdateFailedToInstall">Yükleme başarısız oldu (%1$d)</string>
     <string name="InuUpdateInstalledNotification">Güncelleme yüklendi, yeniden başlatmak için dokunun</string>
     <string name="InuUpdateInstalling">Güncelleme yükleniyor</string>

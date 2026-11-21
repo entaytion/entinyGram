@@ -2277,6 +2277,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">iOS 風のカウンター</string>
     <string name="InuUnreadChatsFirst">未読チャットを先頭に表示</string>
     <string name="InuUnreadChatsFirstPinned">ピン留めの中でも未読を先頭に</string>
+    <string name="InuUnreadChatsAlphabetical">未読チャットを名前順に</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">未読チャットを名前順に並べ、既読は通常の順序のままにします</string>
     <string name="InuUpdateFailedToInstall">インストール失敗 (%1$d)</string>
     <string name="InuUpdateInstalledNotification">アップデートをインストールしました。タップして再起動。</string>
     <string name="InuUpdateInstalling">アップデートをインストール中</string>
