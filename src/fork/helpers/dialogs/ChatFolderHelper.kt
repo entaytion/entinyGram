@@ -5,7 +5,7 @@ import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.FiltersListBottomSheet
-import org.telegram.ui.Components.LimitReachedBottomSheet
+import org.telegram.ui.Components.Premium.LimitReachedBottomSheet
 import org.telegram.ui.Components.UndoView
 import org.telegram.ui.FilterCreateActivity
 
