@@ -135,7 +135,7 @@ index 0000000..0000000 100644
          PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview, boolean closing);
          ImageReceiver.BitmapHolder getThumbForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
          void willSwitchFromPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
-@@ -7537,6 +7538,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7539,6 +7540,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      entry.hasSpoiler = !entry.hasSpoiler;
                      if (placeProvider != null) placeProvider.inu_spoilerToggled();
                  });

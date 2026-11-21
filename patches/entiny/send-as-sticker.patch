@@ -48,7 +48,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -7515,6 +7515,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7517,6 +7517,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              final ItemOptions options = ItemOptions.makeOptions(containerView, new DarkThemeResourceProvider(), view)
                  .addIf(showSendAsFile, R.drawable.msg_sendfile, getString(multipleSelected ? R.string.SendAsFiles : R.string.SendAsFile), () -> sendPressed(true, 0, 0, false, true, false))
                  .addIf(showSendAsRound, R.drawable.entiny_circle, getString(R.string.InuSendAsRoundVideo), this::inu_sendAsRoundVideoPressed)

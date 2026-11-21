@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          public int viewX;
          public int viewY;
          public int viewY2;
-@@ -16088,6 +16090,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16090,6 +16092,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  currentPlaceObject.imageReceiver.setVisible(false, true);
              } else {
                  hideAfterAnimation = currentPlaceObject;
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -18003,7 +18006,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18005,7 +18008,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          if (showAfterAnimation != null) {
                              showAfterAnimation.imageReceiver.setVisible(true, true);
                          }
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
                              hideAfterAnimation.imageReceiver.setVisible(false, true);
                          }
                          if (photos != null && sendPhotoType != 3 && sendPhotoType != SELECT_TYPE_AVATAR) {
-@@ -18083,9 +18086,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18085,9 +18088,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                              photoCropView.setAlpha(1.0f);
                          }
                      }
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
                              object.imageReceiver.setVisible(false, true);
                          }
                      };
-@@ -18838,6 +18843,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18840,6 +18845,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
      }
  
@@ -106,7 +106,7 @@ index 0000000..0000000 100644
      private ClippingImageView[] getAnimatingImageViews(PlaceProviderObject object) {
          final boolean hasSecondAnimatingImageView = !AndroidUtilities.isTablet() && object != null && object.animatingImageView != null;
          final ClippingImageView[] animatingImageViews = new ClippingImageView[1 + (hasSecondAnimatingImageView ? 1 : 0)];
-@@ -18993,6 +19013,19 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18995,6 +19015,19 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          shownControlsByEnd = false;
          videoCutStart = 0;
          videoCutEnd = 1f;

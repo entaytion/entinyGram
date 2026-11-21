@@ -43,7 +43,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -4992,7 +4992,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -4994,7 +4994,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                  showDownloadAlert();
                              }
                          } else if (f != null && f.exists()) {
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
                          } else {
                              showDownloadAlert();
                          }
-@@ -5050,7 +5050,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -5052,7 +5052,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                              showDownloadAlert();
                                          }
                                      } else if (f != null && f.exists()) {
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                                      } else {
                                          showDownloadAlert();
                                      }
-@@ -5096,11 +5096,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -5098,11 +5098,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                              if (videoFileForLivePhoto != null && videoFileForLivePhoto.exists()) {
                                                  MediaController.saveFile(f.toString(), videoFileForLivePhoto.toString(), parentActivity, uri -> AndroidUtilities.runOnUIThread(bulletin));
                                              } else {

@@ -421,7 +421,7 @@ index 0000000..0000000 100644
          if (parentActivity == null || !allowShare) {
              return;
          }
-@@ -5813,6 +5813,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -5815,6 +5815,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          editItem.setContentDescription(getString(R.string.AccDescrPhotoEditor));
          sendItem = menu.addItem(gallery_menu_send, R.drawable.msg_header_share);
          sendItem.setContentDescription(getString(R.string.Forward));
