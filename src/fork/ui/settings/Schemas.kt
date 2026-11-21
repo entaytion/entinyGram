@@ -415,6 +415,10 @@ object Schemas {
             }
             toggle(InuConfig.SHOW_SECONDS, R.string.InuShowSeconds)
             toggle(InuConfig.DISABLE_ROUNDING, R.string.InuDisableRounding, R.string.InuDisableRoundingInfo)
+            toggle(
+                InuConfig.ZALGO_FILTER, R.string.InuZalgoFilter, R.string.InuZalgoFilterInfo,
+                onChange = { _, _ -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface) },
+            )
         }
     }
 

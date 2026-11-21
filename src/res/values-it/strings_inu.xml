@@ -2367,4 +2367,6 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuCrossAccountForwardDone">Inoltrato tramite %1$s</string>
     <string name="InuCrossAccountForwardFailed">Impossibile inoltrare tramite %1$s: %2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">i messaggi non sono arrivati all\'altro account</string>
+    <string name="InuZalgoFilter">Filtro zalgo</string>
+    <string name="InuZalgoFilterInfo">Rimuove i segni combinati impilati (testo glitch) dai messaggi. Il testo originale non viene modificato.</string>
 </resources>

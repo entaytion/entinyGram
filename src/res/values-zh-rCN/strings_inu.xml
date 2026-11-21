@@ -2342,4 +2342,6 @@
     <string name="InuCrossAccountForwardDone">已通过 %1$s 转发</string>
     <string name="InuCrossAccountForwardFailed">无法通过 %1$s 转发：%2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">消息未送达另一个账号</string>
+    <string name="InuZalgoFilter">Zalgo 过滤器</string>
+    <string name="InuZalgoFilterInfo">移除消息中堆叠的组合符号（故障文字）。原始文本不会改变。</string>
 </resources>

@@ -2355,4 +2355,6 @@
     <string name="InuCrossAccountForwardDone">تمت إعادة التوجيه عبر %1$s</string>
     <string name="InuCrossAccountForwardFailed">تعذّرت إعادة التوجيه عبر %1$s: %2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">لم تصل الرسائل إلى الحساب الآخر</string>
+    <string name="InuZalgoFilter">مرشح زالغو</string>
+    <string name="InuZalgoFilterInfo">يزيل علامات الدمج المتراكمة (نص الغليتش) من الرسائل. لا يتغير النص الأصلي.</string>
 </resources>

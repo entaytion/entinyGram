@@ -20,25 +20,27 @@ object TextCleanerHelper {
     }
 
     private fun clean(message: MessageObject): TLRPC.TL_textWithEntities? {
-        if (!InuConfig.REGEX_FILTER_ENABLED.value) return null
+        val regex = InuConfig.REGEX_FILTER_ENABLED.value
+        val zalgo = InuConfig.ZALGO_FILTER.value
+        if (!regex && !zalgo) return null
         val owner = message.messageOwner ?: return null
         val text = owner.message
         if (text.isNullOrEmpty() || owner.action != null) return null
-        val version = RegexFilterHelper.cleanVersion
+        val version = (if (regex) RegexFilterHelper.cleanVersion else 0) * 4 + (if (regex) 2 else 0) + (if (zalgo) 1 else 0)
         synchronized(cache) {
             cache[owner]?.let {
                 if (it.version == version && it.editDate == owner.edit_date && it.text == text) return it.result
             }
         }
-        val result = compute(message, owner, text)
+        val result = compute(message, owner, text, regex, zalgo)
         synchronized(cache) { cache[owner] = Cached(version, text, owner.edit_date, result) }
         return result
     }
 
-    private fun compute(message: MessageObject, owner: TLRPC.Message, text: String): TLRPC.TL_textWithEntities? {
-        val patterns = RegexFilterHelper.cleanPatterns(message.dialogId)
-        if (patterns.isEmpty()) return null
-        val cut = findCuts(text, patterns) ?: return null
+    private fun compute(message: MessageObject, owner: TLRPC.Message, text: String, regex: Boolean, zalgo: Boolean): TLRPC.TL_textWithEntities? {
+        val patterns = if (regex) RegexFilterHelper.cleanPatterns(message.dialogId) else emptyList()
+        if (patterns.isEmpty() && !zalgo) return null
+        val cut = findCuts(text, patterns, zalgo) ?: return null
         val cleaned = applyCuts(text, cut)
         if (cleaned.isBlank() && (message.type == MessageObject.TYPE_TEXT || message.type == MessageObject.TYPE_EMOJIS)) return null
         val result = TLRPC.TL_textWithEntities()
@@ -50,7 +52,7 @@ object TextCleanerHelper {
     fun preview(text: String, patterns: List<java.util.regex.Pattern>): String? =
         findCuts(text, patterns)?.let { applyCuts(text, it) }
 
-    private fun findCuts(text: String, patterns: List<java.util.regex.Pattern>): List<IntArray>? {
+    private fun findCuts(text: String, patterns: List<java.util.regex.Pattern>, zalgo: Boolean = false): List<IntArray>? {
         val ranges = ArrayList<IntArray>()
         for (pattern in patterns) {
             try {
@@ -61,9 +63,33 @@ object TextCleanerHelper {
             } catch (_: Exception) {
             }
         }
-        if (ranges.isEmpty()) return null
-        return mergeRanges(ranges.map { widen(text, it) })
+        val widened = ranges.map { widen(text, it) }.toMutableList()
+        if (zalgo) zalgoRanges(text, widened)
+        if (widened.isEmpty()) return null
+        return mergeRanges(widened)
     }
+
+    // entiny: only the combining diacritics blocks, past two in a row, so real accents, emoji selectors and keycaps stay
+    private fun zalgoRanges(text: String, out: MutableList<IntArray>) {
+        var run = 0
+        var start = -1
+        for (i in text.indices) {
+            if (isCombining(text[i])) {
+                run++
+                if (run == ZALGO_KEEP + 1) start = i
+            } else {
+                if (start >= 0) out.add(intArrayOf(start, i))
+                run = 0
+                start = -1
+            }
+        }
+        if (start >= 0) out.add(intArrayOf(start, text.length))
+    }
+
+    private fun isCombining(c: Char): Boolean =
+        c in '̀'..'ͯ' || c in '᪰'..'᫿' || c in '᷀'..'᷿' || (c in '⃐'..'⃿' && c != '⃣') || c in '︠'..'︯'
+
+    private const val ZALGO_KEEP = 2
 
     private fun applyCuts(text: String, cut: List<IntArray>): String {
         val out = StringBuilder(text.length)

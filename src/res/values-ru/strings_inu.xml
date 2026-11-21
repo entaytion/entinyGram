@@ -2368,4 +2368,6 @@
     <string name="InuCrossAccountForwardDone">Переслано через %1$s</string>
     <string name="InuCrossAccountForwardFailed">Не удалось переслать через %1$s: %2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">сообщения не дошли до другого аккаунта</string>
+    <string name="InuZalgoFilter">Залго-фильтр</string>
+    <string name="InuZalgoFilterInfo">Убирает нагромождённые комбинируемые знаки (глитч-текст) из сообщений. Оригинальный текст не меняется.</string>
 </resources>

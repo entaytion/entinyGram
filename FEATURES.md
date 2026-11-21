@@ -117,6 +117,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **long-press to close the pinned panel** — until a new pin, or always in this chat
 - **return after a pinned jump** — the down button takes you back to where you were reading after jumping to a pinned message
 - **no confirmation for links** — external links open without the "Open link" dialog
+- **zalgo filter** — strips stacked combining marks (glitch text) from message text and captions, under chats and messages, formatting; the original message is not changed
 
 ### media, camera & player
 

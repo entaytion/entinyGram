@@ -2365,4 +2365,6 @@
     <string name="InuCrossAccountForwardDone">Forwarded via %1$s</string>
     <string name="InuCrossAccountForwardFailed">Couldn\'t forward via %1$s: %2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">messages didn\'t reach the other account</string>
+    <string name="InuZalgoFilter">Zalgo filter</string>
+    <string name="InuZalgoFilterInfo">Strips stacked combining marks (glitch text) from messages. The original text is not changed.</string>
 </resources>

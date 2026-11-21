@@ -2366,4 +2366,6 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuCrossAccountForwardDone">Reenviado mediante %1$s</string>
     <string name="InuCrossAccountForwardFailed">No se pudo reenviar mediante %1$s: %2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">los mensajes no llegaron a la otra cuenta</string>
+    <string name="InuZalgoFilter">Filtro zalgo</string>
+    <string name="InuZalgoFilterInfo">Elimina las marcas combinadas apiladas (texto glitch) de los mensajes. El texto original no cambia.</string>
 </resources>

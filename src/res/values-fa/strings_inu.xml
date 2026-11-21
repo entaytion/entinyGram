@@ -2344,4 +2344,6 @@
     <string name="InuCrossAccountForwardDone">از طریق %1$s هدایت شد</string>
     <string name="InuCrossAccountForwardFailed">هدایت از طریق %1$s ممکن نشد: %2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">پیام‌ها به حساب دیگر نرسیدند</string>
+    <string name="InuZalgoFilter">فیلتر زالگو</string>
+    <string name="InuZalgoFilterInfo">نشانه‌های ترکیبی انباشته (متن گلیچ) را از پیام‌ها حذف می‌کند. متن اصلی تغییر نمی‌کند.</string>
 </resources>

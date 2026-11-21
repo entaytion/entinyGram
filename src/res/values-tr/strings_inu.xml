@@ -2345,4 +2345,6 @@
     <string name="InuCrossAccountForwardDone">%1$s üzerinden iletildi</string>
     <string name="InuCrossAccountForwardFailed">%1$s üzerinden iletilemedi: %2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">mesajlar diğer hesaba ulaşmadı</string>
+    <string name="InuZalgoFilter">Zalgo filtresi</string>
+    <string name="InuZalgoFilterInfo">Mesajlardaki üst üste yığılmış birleştirici işaretleri (glitch metin) kaldırır. Orijinal metin değişmez.</string>
 </resources>

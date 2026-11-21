@@ -2342,4 +2342,6 @@
     <string name="InuCrossAccountForwardDone">%1$s 経由で転送しました</string>
     <string name="InuCrossAccountForwardFailed">%1$s 経由で転送できませんでした: %2$s</string>
     <string name="InuCrossAccountForwardNotDelivered">メッセージがもう一方のアカウントに届きませんでした</string>
+    <string name="InuZalgoFilter">Zalgoフィルター</string>
+    <string name="InuZalgoFilterInfo">メッセージから重ねられた結合文字（グリッチテキスト）を取り除きます。元のテキストは変更されません。</string>
 </resources>
