@@ -58,6 +58,7 @@ object InuHooks {
         TabletModeHelper.sync()
         AndroidUtilities.inu_resetTabletCache()
         CrashReporter.collectNativeExit(context)
+        desu.inugram.helpers.proxy.CensorshipHelper.init()
     }
 
     /**

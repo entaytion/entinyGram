@@ -1834,6 +1834,11 @@
     <string name="InuProxyRotationHeader">ローテーション</string>
     <string name="InuProxyAggressiveRotation">積極的なローテーション</string>
     <string name="InuProxyAggressiveRotationInfo">接続中はチェックの完了を待たず、ローテーションのタイムアウトごとに次のプロキシへ切り替えます。プロキシ一覧でローテーションをオンにする必要があります</string>
+    <string name="InuProxyTunnelHeader">トンネル</string>
+    <string name="InuWsTunnel">WebSocketトンネル</string>
+    <string name="InuWsTunnelInfo">Telegram Webのエンドポイント経由で接続します。外部サーバーは使いません。有効中はプロキシの代わりに使われます。</string>
+    <string name="InuLeakGuard">直接接続をブロック</string>
+    <string name="InuLeakGuardInfo">追加リクエストはSOCKS5プロキシ経由のみで送信されます。メディア、プレビュー、アップデートが読み込めなくなることがあるので、何かが読み込まれない場合はオフにしてください</string>
     <string name="InuProxyRelatedHeader">関連する設定</string>
     <string name="InuPingAllProxies">すべてのプロキシに Ping</string>
     <string name="InuDeleteFailedProxies">接続できないプロキシを削除</string>

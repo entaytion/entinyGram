@@ -1847,6 +1847,11 @@
     <string name="InuProxyRotationHeader">Ротация</string>
     <string name="InuProxyAggressiveRotation">Агрессивная ротация</string>
     <string name="InuProxyAggressiveRotationInfo">Пока идёт подключение, переключает на следующий прокси по каждому таймауту ротации, не дожидаясь проверок. Нужна включённая ротация в списке прокси</string>
+    <string name="InuProxyTunnelHeader">Туннель</string>
+    <string name="InuWsTunnel">WebSocket-туннель</string>
+    <string name="InuWsTunnelInfo">Подключается через узлы Telegram Web, без сторонних серверов. Заменяет ваш прокси, пока включено</string>
+    <string name="InuLeakGuard">Блокировать прямые соединения</string>
+    <string name="InuLeakGuardInfo">Дополнительные запросы идут только через ваш SOCKS5-прокси. Может сломать загрузку медиа, превью и обновлений, так что выключите, если что-то не грузится</string>
     <string name="InuProxyRelatedHeader">Связанные настройки</string>
     <string name="InuPingAllProxies">Пинг всех прокси</string>
     <string name="InuDeleteFailedProxies">Удалить недоступные прокси</string>

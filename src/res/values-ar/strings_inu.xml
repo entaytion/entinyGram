@@ -1847,6 +1847,11 @@
     <string name="InuProxyRotationHeader">التدوير</string>
     <string name="InuProxyAggressiveRotation">تدوير قوي</string>
     <string name="InuProxyAggressiveRotationInfo">أثناء الاتصال ينتقل إلى البروكسي التالي عند كل مهلة تدوير حتى قبل انتهاء الفحص. يتطلب تفعيل تدوير البروكسي في قائمة البروكسي</string>
+    <string name="InuProxyTunnelHeader">النفق</string>
+    <string name="InuWsTunnel">نفق WebSocket</string>
+    <string name="InuWsTunnelInfo">يتصل عبر نقاط نهاية Telegram Web، بلا خوادم طرف ثالث. يحل محل البروكسي الخاص بك أثناء التشغيل</string>
+    <string name="InuLeakGuard">حظر الاتصالات المباشرة</string>
+    <string name="InuLeakGuardInfo">الطلبات الإضافية تمر فقط عبر بروكسي SOCKS5 الخاص بك. قد يعطّل تحميل الوسائط والمعاينات والتحديثات، لذا أوقفه إذا لم يُحمَّل شيء</string>
     <string name="InuProxyRelatedHeader">إعدادات ذات صلة</string>
     <string name="InuPingAllProxies">فحص جميع البروكسيات</string>
     <string name="InuDeleteFailedProxies">حذف البروكسيات الفاشلة</string>

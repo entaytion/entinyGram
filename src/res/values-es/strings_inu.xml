@@ -1856,6 +1856,11 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuProxyRotationHeader">Rotación</string>
     <string name="InuProxyAggressiveRotation">Rotación agresiva</string>
     <string name="InuProxyAggressiveRotationInfo">Mientras conecta, pasa al siguiente proxy en cada tiempo de rotación, incluso antes de que terminen las comprobaciones. Requiere la rotación de proxies activada en la lista</string>
+    <string name="InuProxyTunnelHeader">Túnel</string>
+    <string name="InuWsTunnel">Túnel WebSocket</string>
+    <string name="InuWsTunnelInfo">Se conecta a través de los endpoints de Telegram Web, sin servidores de terceros. Sustituye tu proxy mientras está activo</string>
+    <string name="InuLeakGuard">Bloquear conexiones directas</string>
+    <string name="InuLeakGuardInfo">Las solicitudes adicionales van solo por tu proxy SOCKS5. Puede impedir la carga de multimedia, vistas previas y actualizaciones, así que desactívalo si algo no carga</string>
     <string name="InuProxyRelatedHeader">Ajustes relacionados</string>
     <string name="InuPingAllProxies">Hacer ping a todos los proxies</string>
     <string name="InuDeleteFailedProxies">Eliminar proxies fallidos</string>

@@ -1836,6 +1836,11 @@
     <string name="InuProxyRotationHeader">چرخش</string>
     <string name="InuProxyAggressiveRotation">چرخش تهاجمی</string>
     <string name="InuProxyAggressiveRotationInfo">هنگام اتصال، با هر مهلت چرخش به پروکسی بعدی می‌رود، حتی پیش از پایان بررسی‌ها. نیاز به روشن بودن چرخش پروکسی در فهرست پروکسی دارد</string>
+    <string name="InuProxyTunnelHeader">تونل</string>
+    <string name="InuWsTunnel">تونل WebSocket</string>
+    <string name="InuWsTunnelInfo">از طریق نقاط پایانی Telegram Web متصل می‌شود، بدون سرور شخص ثالث. تا وقتی روشن است جایگزین پروکسی شما می‌شود</string>
+    <string name="InuLeakGuard">مسدود کردن اتصال‌های مستقیم</string>
+    <string name="InuLeakGuardInfo">درخواست‌های اضافی فقط از طریق پروکسی SOCKS5 شما می‌روند. ممکن است بارگیری رسانه، پیش‌نمایش‌ها و به‌روزرسانی‌ها را خراب کند، پس اگر چیزی بار نشد خاموشش کنید</string>
     <string name="InuProxyRelatedHeader">تنظیمات مرتبط</string>
     <string name="InuPingAllProxies">پینگ همه پروکسی‌ها</string>
     <string name="InuDeleteFailedProxies">حذف پروکسی‌های ناموفق</string>

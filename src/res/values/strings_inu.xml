@@ -1844,6 +1844,11 @@
     <string name="InuProxyRotationHeader">Rotation</string>
     <string name="InuProxyAggressiveRotation">Aggressive rotation</string>
     <string name="InuProxyAggressiveRotationInfo">While connecting, switches to the next proxy on every rotation timeout, even before checks finish. Needs proxy rotation on in the proxy list</string>
+    <string name="InuProxyTunnelHeader">Tunnel</string>
+    <string name="InuWsTunnel">WebSocket tunnel</string>
+    <string name="InuWsTunnelInfo">Connects through Telegram Web endpoints, no third-party servers. Replaces your proxy while on</string>
+    <string name="InuLeakGuard">Block direct connections</string>
+    <string name="InuLeakGuardInfo">Extra requests go only through your SOCKS5 proxy. Can break loading of media, previews and updates, so turn it off if something does not load</string>
     <string name="InuProxyRelatedHeader">Related settings</string>
     <string name="InuPingAllProxies">Ping All Proxies</string>
     <string name="InuDeleteFailedProxies">Delete Failed Proxies</string>

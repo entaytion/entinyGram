@@ -11,6 +11,7 @@ import desu.inugram.helpers.icons.IconPackHelper
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import desu.inugram.helpers.LocalPremiumHelper
 import desu.inugram.helpers.ProxyVpnHelper
+import desu.inugram.helpers.proxy.CensorshipHelper
 import desu.inugram.helpers.proxy.ProxyRotationHelper
 import desu.inugram.helpers.push.UnifiedPushHelper
 import desu.inugram.helpers.UrlCleanerHelper
@@ -63,6 +64,7 @@ object Schemas {
     val LEGACY_ENTRY_SLUGS: Map<String, List<String>> = mapOf(
         "always-show-downloads" to listOf("hide-downloads-button"),
         "allow-screenshots" to listOf("disable-flag-secure"),
+        "anticensor-ws-tunnel" to listOf("ws-tunnel"),
         "blocked-messages-hide-replies" to listOf("blocked-messages-replies"),
         "chat-presence-dots" to listOf("chat-online-dots"),
         "confirm-before-sending" to listOf("confirm-send-sticker", "confirm-send-gif"),
@@ -1136,17 +1138,30 @@ object Schemas {
     val PROXY = schema("proxy", R.string.InuProxyPage, R.drawable.proxy_on_solar) {
         notice(R.string.InuProxyDisclaimer)
         section(R.string.InuProxyListHeader) {
-            toggle(InuConfig.PROXY_LIST_TOOLS, R.string.InuProxyListTools, R.string.InuProxyListToolsInfo)
-            toggle(InuConfig.PROXY_LIST_MENU, R.string.InuProxyListMenu, R.string.InuProxyListMenuInfo)
-            toggle(InuConfig.PROXY_CONNECT_CHOICE, R.string.InuProxyConnectChoice, R.string.InuProxyConnectChoiceInfo)
+            toggle(InuConfig.PROXY_LIST_TOOLS, R.string.InuProxyListTools, R.string.InuProxyListToolsInfo, experimental = true)
+            toggle(InuConfig.PROXY_LIST_MENU, R.string.InuProxyListMenu, R.string.InuProxyListMenuInfo, experimental = true)
+            toggle(InuConfig.PROXY_CONNECT_CHOICE, R.string.InuProxyConnectChoice, R.string.InuProxyConnectChoiceInfo, experimental = true)
         }
         section(R.string.InuProxyLinksHeader) {
-            toggle(InuConfig.PROXY_LINK_ALERT, R.string.InuProxyLinkAlert, R.string.InuProxyLinkAlertInfo)
+            toggle(InuConfig.PROXY_LINK_ALERT, R.string.InuProxyLinkAlert, R.string.InuProxyLinkAlertInfo, experimental = true)
         }
         section(R.string.InuProxyRotationHeader) {
             toggle(
                 InuConfig.PROXY_AGGRESSIVE_ROTATION, R.string.InuProxyAggressiveRotation, R.string.InuProxyAggressiveRotationInfo,
+                experimental = true,
                 onChange = { _, _ -> ProxyRotationHelper.onToggle() },
+            )
+        }
+        section(R.string.InuProxyTunnelHeader) {
+            toggle(
+                InuConfig.ANTICENSOR_WS_TUNNEL, R.string.InuWsTunnel, R.string.InuWsTunnelInfo,
+                experimental = true,
+                onChange = { _, on -> CensorshipHelper.setTunnelEnabled(on) },
+            )
+            toggle(
+                InuConfig.LEAK_GUARD, R.string.InuLeakGuard, R.string.InuLeakGuardInfo,
+                experimental = true,
+                onChange = { _, on -> CensorshipHelper.setLeakGuardEnabled(on) },
             )
         }
         section(R.string.InuProxyRelatedHeader) {

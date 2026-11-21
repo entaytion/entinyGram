@@ -1834,6 +1834,11 @@
     <string name="InuProxyRotationHeader">轮换</string>
     <string name="InuProxyAggressiveRotation">激进轮换</string>
     <string name="InuProxyAggressiveRotationInfo">连接过程中，每到轮换超时就切换到下一个代理，即使检测尚未完成。需要在代理列表中开启代理轮换</string>
+    <string name="InuProxyTunnelHeader">隧道</string>
+    <string name="InuWsTunnel">WebSocket 隧道</string>
+    <string name="InuWsTunnelInfo">通过 Telegram Web 端点连接，不使用第三方服务器。启用时会替代你的代理。</string>
+    <string name="InuLeakGuard">阻止直接连接</string>
+    <string name="InuLeakGuardInfo">额外请求只经由你的 SOCKS5 代理发送。可能导致媒体、预览和更新无法加载，如有内容加载不出来请关闭</string>
     <string name="InuProxyRelatedHeader">相关设置</string>
     <string name="InuPingAllProxies">Ping 所有代理</string>
     <string name="InuDeleteFailedProxies">删除失效代理</string>

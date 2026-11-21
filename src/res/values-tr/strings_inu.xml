@@ -1837,6 +1837,11 @@
     <string name="InuProxyRotationHeader">Rotasyon</string>
     <string name="InuProxyAggressiveRotation">Agresif rotasyon</string>
     <string name="InuProxyAggressiveRotationInfo">Bağlanırken, kontroller bitmeden bile her rotasyon zaman aşımında sonraki proxy\'ye geçer. Proxy listesinde rotasyonun açık olması gerekir</string>
+    <string name="InuProxyTunnelHeader">Tünel</string>
+    <string name="InuWsTunnel">WebSocket tüneli</string>
+    <string name="InuWsTunnelInfo">Telegram Web uç noktaları üzerinden bağlanır, üçüncü taraf sunucu yok. Açıkken proxy\'nizin yerine geçer</string>
+    <string name="InuLeakGuard">Doğrudan bağlantıları engelle</string>
+    <string name="InuLeakGuardInfo">Ek istekler yalnızca SOCKS5 proxy\'nizden geçer. Medya, önizleme ve güncellemelerin yüklenmesini bozabilir, bir şey yüklenmezse kapatın</string>
     <string name="InuProxyRelatedHeader">İlgili ayarlar</string>
     <string name="InuPingAllProxies">Tüm proxy\'lere ping at</string>
     <string name="InuDeleteFailedProxies">Kullanılamayan Vekil Sunucuları Sil</string>
