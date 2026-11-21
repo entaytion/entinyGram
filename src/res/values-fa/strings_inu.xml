@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">تبلیغات</string>
     <string name="InuAddToFolderInFolder">افزودن به پوشه از هر پوشه</string>
     <string name="InuAddToFolderInFolderInfo">«افزودن به پوشه» را در منوی انتخاب گفتگو داخل پوشه‌ها هم نشان می‌دهد، نه فقط در همه گفتگوها.</string>
+    <string name="InuAddToFolderInChat">افزودن به پوشه از منوی گفتگو</string>
+    <string name="InuAddToFolderInChatInfo">«افزودن به پوشه» را در منوی سه‌نقطه داخل گفتگو نشان می‌دهد.</string>
     <string name="InuAddToStickersGifs">افزودن به استیکرها/گیف‌ها</string>
     <string name="InuAiAddProviderFirst">هنوز ارائه‌دهنده آماده‌ای نیست. ابتدا در بخش ارائه‌دهندگان یکی اضافه کنید.</string>
     <string name="InuAiAllowInsecure">اجازه نقاط پایانی ناامن هوش مصنوعی</string>

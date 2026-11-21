@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">Реклама</string>
     <string name="InuAddToFolderInFolder">Добавление в папку из любой папки</string>
     <string name="InuAddToFolderInFolderInfo">Показывать «Добавить в папку» в меню выбора чатов внутри папок, а не только во вкладке «Все чаты».</string>
+    <string name="InuAddToFolderInChat">Добавление в папку из меню чата</string>
+    <string name="InuAddToFolderInChatInfo">Показывать «Добавить в папку» в меню с тремя точками внутри чата.</string>
     <string name="InuAddToStickersGifs">Добавить в стикеры/GIF</string>
     <string name="InuAiAddProviderFirst">Готового провайдера пока нет. Сначала добавьте его в разделе «Провайдеры».</string>
     <string name="InuAiAllowInsecure">Разрешить небезопасные AI-эндпоинты</string>

@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">Pubblicità</string>
     <string name="InuAddToFolderInFolder">Aggiungi a cartella da qualsiasi cartella</string>
     <string name="InuAddToFolderInFolderInfo">Mostra «Aggiungi alla cartella» nel menu di selezione delle chat dentro le cartelle, non solo in Tutte le chat.</string>
+    <string name="InuAddToFolderInChat">Aggiungi a cartella dal menu della chat</string>
+    <string name="InuAddToFolderInChatInfo">Mostra «Aggiungi alla cartella» nel menu a tre puntini dentro la chat.</string>
     <string name="InuAddToStickersGifs">Aggiungi a Sticker/GIF</string>
     <string name="InuAiAddProviderFirst">Nessun fornitore è ancora pronto. Aggiungine prima uno in Fornitori.</string>
     <string name="InuAiAllowInsecure">Consenti endpoint AI non sicuri</string>

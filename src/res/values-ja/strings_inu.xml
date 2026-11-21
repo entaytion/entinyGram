@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">広告</string>
     <string name="InuAddToFolderInFolder">どのフォルダからでもフォルダに追加</string>
     <string name="InuAddToFolderInFolderInfo">フォルダ内のチャット選択メニューにも、「すべてのチャット」だけでなく「フォルダに追加」を表示します。</string>
+    <string name="InuAddToFolderInChat">チャットメニューからフォルダに追加</string>
+    <string name="InuAddToFolderInChatInfo">チャット内の三点メニューに「フォルダに追加」を表示します。</string>
     <string name="InuAddToStickersGifs">ステッカー/GIFに追加</string>
     <string name="InuAiAddProviderFirst">利用可能なプロバイダーがありません。先に「プロバイダー」で追加してください。</string>
     <string name="InuAiAllowInsecure">安全でないAIエンドポイントを許可</string>

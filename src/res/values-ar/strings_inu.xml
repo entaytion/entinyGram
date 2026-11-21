@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">الإعلانات</string>
     <string name="InuAddToFolderInFolder">إضافة إلى مجلد من أي مجلد</string>
     <string name="InuAddToFolderInFolderInfo">يعرض «إضافة إلى مجلد» في قائمة تحديد المحادثات داخل المجلدات، وليس في كل المحادثات فقط.</string>
+    <string name="InuAddToFolderInChat">إضافة إلى مجلد من قائمة المحادثة</string>
+    <string name="InuAddToFolderInChatInfo">يعرض «إضافة إلى مجلد» في قائمة النقاط الثلاث داخل المحادثة.</string>
     <string name="InuAddToStickersGifs">إضافة إلى الملصقات/الصور المتحركة</string>
     <string name="InuAiAddProviderFirst">لا يوجد مزوّد جاهز بعد. أضف واحداً أولاً من قسم المزوّدين.</string>
     <string name="InuAiAllowInsecure">السماح بنقاط نهاية الذكاء الاصطناعي غير الآمنة</string>

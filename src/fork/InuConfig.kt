@@ -521,6 +521,9 @@ object InuConfig {
     val ADD_TO_FOLDER_IN_FOLDER = BoolItem("add_to_folder_in_folder", true)
 
     @JvmField
+    val ADD_TO_FOLDER_IN_CHAT = BoolItem("add_to_folder_in_chat", false)
+
+    @JvmField
     val SYSTEM_FOLDERS_STATE = StringItem("system_folders_state", "")
 
     @JvmField

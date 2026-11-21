@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">Reklamlar</string>
     <string name="InuAddToFolderInFolder">Herhangi bir klasörden klasöre ekle</string>
     <string name="InuAddToFolderInFolderInfo">Klasörlerin içindeki sohbet seçim menüsünde yalnızca Tüm sohbetlerde değil, \"Klasöre ekle\" öğesini gösterir.</string>
+    <string name="InuAddToFolderInChat">Sohbet menüsünden klasöre ekle</string>
+    <string name="InuAddToFolderInChatInfo">Sohbetin içindeki üç nokta menüsünde \"Klasöre ekle\" seçeneğini gösterir.</string>
     <string name="InuAddToStickersGifs">Çıkartmalara/GIF\'lere ekle</string>
     <string name="InuAiAddProviderFirst">Henüz hazır bir sağlayıcı yok. Önce Sağlayıcılar bölümünden ekleyin.</string>
     <string name="InuAiAllowInsecure">Güvensiz yapay zekâ uç noktalarına izin ver</string>
