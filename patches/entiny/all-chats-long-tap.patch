@@ -1,0 +1,130 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 21 Nov 2026 22:25:13 +0200
+Subject: Long tap on the chats title opens the hidden all chats tab and hides it again after switching to another folder.
+
+---
+ .../java/org/telegram/ui/DialogsActivity.java | 55 ++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -534,6 +534,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     private int undoViewIndex;
+     private UndoView[] undoView = new UndoView[2];
+     public FilterTabsView filterTabsView;
++    private boolean inu_revealAllChats;
+     private boolean askingForPermissions;
+     private int searchViewPagerIndex;
+     @Nullable
+@@ -3159,6 +3160,25 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     @Override
+     public ActionBar createActionBar(Context context) {
+         ActionBar actionBar = new ActionBar(context, resourceProvider) {
++            @Override
++            public boolean onTouchEvent(MotionEvent event) {
++                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
++                    SimpleTextView title = getTitleTextView();
++                    boolean overTitle = false;
++                    if (title != null && title.getVisibility() == View.VISIBLE
++                            && filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE
++                            && filterTabsView.getDefaultTabId() < 0
++                            && FolderHelper.shouldSkipDefaultTab(getMessagesController().getDialogFilters().size())) {
++                        Rect bounds = new Rect();
++                        title.getDrawingRect(bounds);
++                        offsetDescendantRectToMyCoords(title, bounds);
++                        overTitle = bounds.contains((int) event.getX(), (int) event.getY());
++                    }
++                    setOnLongClickListener(overTitle ? v -> inu_openHiddenAllChats() : null);
++                    setLongClickable(overTitle);
++                }
++                return super.onTouchEvent(event);
++            }
+ 
+             @Override
+             public void setTranslationY(float translationY) {
+@@ -7032,6 +7052,24 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         switchToCurrentSelectedMode(false);
+     }
+ 
++    private boolean inu_openHiddenAllChats() {
++        if (onlySelect || initialDialogsType != DIALOGS_TYPE_DEFAULT || inPreviewMode || searchIsShowed
++                || actionBar.isSearchFieldVisible() || actionBar.isActionModeShowed()
++                || filterTabsView == null || filterTabsView.getVisibility() != View.VISIBLE
++                || filterTabsView.getDefaultTabId() >= 0
++                || filterTabsView.isEditing() || filterTabsView.isAnimatingIndicator()
++                || startedTracking || tabsAnimationInProgress || storiesOverscroll != 0
++                || rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
++            return false;
++        }
++        if (!FolderHelper.shouldSkipDefaultTab(getMessagesController().getDialogFilters().size())) {
++            return false;
++        }
++        inu_revealAllChats = true;
++        updateFilterTabs(true, false);
++        return inu_revealAllChats;
++    }
++
+     public MessagesController.DialogFilter inu_getCurrentFilter() {
+         if (viewPages == null || viewPages.length == 0 || viewPages[0] == null) {
+             return null;
+@@ -7047,13 +7085,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         if (filter == null) {
+             return;
+         }
+-        if (folderId == 0 && communityId == 0) {
++        if (folderId == 0 && communityId == 0 && !(inu_revealAllChats && filter.isDefault())) {
+             FolderHelper.saveSelectedFolder(currentAccount, filter.id);
+         }
+         inu_applyDialogsTitle();
+         if (dialogStoriesCell != null) {
+             dialogStoriesCell.updateItems(true, false);
+         }
++        if (inu_revealAllChats && !filter.isDefault()) {
++            inu_revealAllChats = false;
++            updateFilterTabs(true, false);
++        }
+     }
+ 
+     private void inu_applyDialogsTitle() {
+@@ -7152,10 +7194,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     selectWithStableId = true;
+                 }
+                 filterTabsView.removeTabs();
+-                boolean skipDefault = FolderHelper.shouldSkipDefaultTab(filters.size());
++                boolean hideDefault = FolderHelper.shouldSkipDefaultTab(filters.size());
++                inu_revealAllChats &= hideDefault;
++                boolean skipDefault = hideDefault && !inu_revealAllChats;
++                int defaultTab = -1;
+                 for (int a = 0, N = filters.size(); a < N; a++) {
+                     if (filters.get(a).isDefault()) {
+                         if (skipDefault) continue;
++                        defaultTab = a;
+                         filterTabsView.inu_addTab(a, 0, LocaleController.getString(R.string.FilterAllChats), null, false, true, filters.get(a).locked, "\uD83D\uDCAC");
+                     } else {
+                         final MessagesController.DialogFilter filter = filters.get(a);
+@@ -7179,11 +7225,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         viewPages[0].selectedType = id;
+                     }
+                 }
++                inu_revealAllChats &= defaultTab >= 0;
+                 for (int a = 0; a < viewPages.length; a++) {
+                     if (viewPages[a].selectedType >= filters.size()) {
+                         viewPages[a].selectedType = filters.size() - 1;
+                     }
+-                    int snapped = FolderHelper.resolveInitialFolder(filters, viewPages[a].selectedType, currentAccount, stableId);
++                    int snapped = a == 0 && inu_revealAllChats ? defaultTab
++                            : FolderHelper.resolveInitialFolder(filters, viewPages[a].selectedType, currentAccount, stableId);
+                     if (snapped != viewPages[a].selectedType) {
+                         viewPages[a].selectedType = snapped;
+                         if (a == 0) updateCurrentTab = true;
+@@ -7202,6 +7250,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 }
+             }
+         } else {
++            inu_revealAllChats = false;
+             if (filterTabsView.getVisibility() != View.GONE) {
+                 filterTabsView.setIsEditing(false);
+                 showDoneItem(false);

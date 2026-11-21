@@ -693,3 +693,4 @@ entiny/anticensorship.patch
 entiny/pin-limit-hint.patch
 entiny/local-reactions.patch
 entiny/cache-cleanup.patch
+entiny/all-chats-long-tap.patch
