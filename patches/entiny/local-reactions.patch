@@ -1,0 +1,124 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 21 Nov 2026 15:34:37 +0200
+Subject: Keep reactions beyond the server limit on this device and merge them back into message reactions when the local reactions toggle is on.
+
+---
+ .../src/main/java/org/telegram/messenger/MessageObject.java | 6 ++++++
+ .../java/org/telegram/messenger/MessagesController.java     | 6 +++---
+ .../main/java/org/telegram/messenger/MessagesStorage.java   | 2 +-
+ .../java/org/telegram/messenger/SendMessagesHelper.java     | 1 +
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 +++---
+ 5 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -2122,6 +2122,7 @@ public class MessageObject {
+         currentAccount = accountNum;
+         messageOwner = message;
+         desu.inugram.helpers.chat.LocalEditHelper.apply(this);
++        desu.inugram.helpers.chat.LocalReactionsHelper.apply(accountNum, message);
+         replyMessageObject = replyToMessage;
+         eventId = eid;
+         wasUnread = !messageOwner.out && messageOwner.unread;
+@@ -4241,6 +4242,11 @@ public class MessageObject {
+         message.flags |= 1048576;
+     }
+ 
++    public static void updateReactions(int account, TLRPC.Message message, TLRPC.TL_messageReactions reactions) {
++        updateReactions(message, reactions);
++        desu.inugram.helpers.chat.LocalReactionsHelper.apply(account, message);
++    }
++
+     public boolean hasReactions() {
+         return messageOwner.reactions != null && !messageOwner.reactions.results.isEmpty();
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -920,7 +920,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public int getMaxUserReactionsCount() {
+-        return getUserConfig().isPremium() ? reactionsUserMaxPremium : reactionsUserMaxDefault;
++        return desu.inugram.helpers.chat.LocalReactionsHelper.maxCount(this, getUserConfig().isPremium() ? reactionsUserMaxPremium : reactionsUserMaxDefault);
+     }
+ 
+     public int getChatReactionsCount() {
+@@ -15086,7 +15086,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (desu.inugram.helpers.chat.ReactionDebugHelper.isEnabled()) {
+             FileLog.d("InuRx edit kept recent reactions did=" + message.dialog_id + " mid=" + message.id + " edit=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(message.reactions) + " recent=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(reactions));
+         }
+-        MessageObject.updateReactions(message, reactions);
++        MessageObject.updateReactions(currentAccount, message, reactions);
+     }
+ 
+     public void inu_ignoreStaleUnreadReactions(long dialogId, int messageId, TLRPC.TL_messageReactions reactions, boolean willCheck) {
+@@ -18522,7 +18522,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                         if (desu.inugram.helpers.chat.ReactionDebugHelper.isEnabled()) {
+                             FileLog.d("InuRx merge edit reactions did=" + dialogId + " mid=" + message.id + " edit=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(message.reactions) + " update=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(update.reactions));
+                         }
+-                        MessageObject.updateReactions(message, update.reactions);
++                        MessageObject.updateReactions(currentAccount, message, update.reactions);
+                     }
+                 }
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -5533,7 +5533,7 @@ public class MessagesStorage extends BaseController {
+                                 if (desu.inugram.helpers.chat.ReactionDebugHelper.isEnabled()) {
+                                     FileLog.d("InuRx db update reactions did=" + dialogId + " mid=" + msgId + " table=" + i + " stored=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(message.reactions) + " incoming=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(reactions));
+                                 }
+-                                MessageObject.updateReactions(message, reactions);
++                                MessageObject.updateReactions(currentAccount, message, reactions);
+                                 SQLitePreparedStatement state;
+                                 if (i == 0) {
+                                     state = database.executeFast("UPDATE messages_v2 SET data = ? WHERE mid = ? AND uid = ?");
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -4046,6 +4046,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             return;
+         }
+         messageObject.reactionsLastCheckTime = System.currentTimeMillis();
++        visibleReactions = desu.inugram.helpers.chat.LocalReactionsHelper.splitForSend(currentAccount, messageObject, visibleReactions);
+         TLRPC.TL_messages_sendReaction req = new TLRPC.TL_messages_sendReaction();
+         if (messageObject.messageOwner.isThreadMessage && messageObject.messageOwner.fwd_from != null) {
+             req.peer = getMessagesController().getInputPeer(messageObject.getFromChatId());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -24840,7 +24840,7 @@ public class ChatActivity extends BaseFragment implements
+                 if (!isFeedSearch() && filteredMessagesDict != null) {
+                     MessageObject messageObject = filteredMessagesDict.get(msgId);
+                     if (messageObject != null) {
+-                        MessageObject.updateReactions(messageObject.messageOwner, (TLRPC.TL_messageReactions) args[2]);
++                        MessageObject.updateReactions(currentAccount, messageObject.messageOwner, (TLRPC.TL_messageReactions) args[2]);
+                         messageObject.forceUpdate = true;
+                         messageObject.reactionsChanged = true;
+                     }
+@@ -24850,7 +24850,7 @@ public class ChatActivity extends BaseFragment implements
+                     FileLog.d("InuRx[" + classGuid + "] apply reactions did=" + did + " mid=" + msgId + " found=" + (messageObject != null) + " old=" + (messageObject == null ? null : desu.inugram.helpers.chat.ReactionDebugHelper.describe(messageObject.messageOwner.reactions)) + " new=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe((TLRPC.TL_messageReactions) args[2]));
+                 }
+                 if (messageObject != null) {
+-                    MessageObject.updateReactions(messageObject.messageOwner, (TLRPC.TL_messageReactions) args[2]);
++                    MessageObject.updateReactions(currentAccount, messageObject.messageOwner, (TLRPC.TL_messageReactions) args[2]);
+                     updateChangedMessageObject(messageObject, true);
+                     invalidateMessagesVisiblePart();
+                     if (did == dialog_id) {
+@@ -34827,7 +34827,7 @@ public class ChatActivity extends BaseFragment implements
+     Runnable updateReactionRunnable;
+ 
+     private void showMultipleReactionsPromo(View cell, ReactionsLayoutInBubble.VisibleReaction visibleReaction, int currentChosenReactions) {
+-        if (SharedConfig.multipleReactionsPromoShowed || cell == null || visibleReaction == null || getUserConfig().isPremium()) {
++        if (SharedConfig.multipleReactionsPromoShowed || cell == null || visibleReaction == null || getUserConfig().isPremium() || desu.inugram.InuConfig.LOCAL_REACTIONS.getValue()) {
+             return;
+         }
+         if (currentChosenReactions == 1) {

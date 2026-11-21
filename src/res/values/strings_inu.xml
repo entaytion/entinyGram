@@ -2370,4 +2370,6 @@
     <string name="InuPinLimitTitle">Pin limit reached</string>
     <string name="InuPinLimitText">Telegram allows 5 pinned chats without Premium. Enable Unlimited Pinned Chats to pin more, extra pins stay on this device.</string>
     <string name="InuPinLimitEnable">Enable</string>
+    <string name="InuLocalReactions">Local reactions</string>
+    <string name="InuLocalReactionsInfo">Lets you put up to 3 reactions on a message without Premium. Telegram only accepts one, so the extra ones are kept on this device and nobody else sees them.</string>
 </resources>

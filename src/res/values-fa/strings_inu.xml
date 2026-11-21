@@ -2349,4 +2349,6 @@
     <string name="InuPinLimitTitle">به سقف سنجاق رسیدید</string>
     <string name="InuPinLimitText">تلگرام بدون Premium فقط ۵ چت سنجاق‌شده را مجاز می‌کند. سنجاق نامحدود را روشن کنید تا بیشتر سنجاق کنید، سنجاق‌های اضافه روی همین دستگاه می‌مانند.</string>
     <string name="InuPinLimitEnable">روشن کردن</string>
+    <string name="InuLocalReactions">واکنش‌های محلی</string>
+    <string name="InuLocalReactionsInfo">بدون Premium تا ۳ واکنش روی یک پیام می‌گذارید. تلگرام فقط یکی را می‌پذیرد، پس بقیه روی همین دستگاه می‌مانند و کسی آن‌ها را نمی‌بیند.</string>
 </resources>

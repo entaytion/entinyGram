@@ -2347,4 +2347,6 @@
     <string name="InuPinLimitTitle">ピン留めの上限に達しました</string>
     <string name="InuPinLimitText">Premiumなしでピン留めできるチャットは5件までです。無制限ピン留めを有効にするとさらにピン留めできます。追加分はこの端末にのみ保存されます。</string>
     <string name="InuPinLimitEnable">有効にする</string>
+    <string name="InuLocalReactions">ローカルリアクション</string>
+    <string name="InuLocalReactionsInfo">Premiumなしでも1つのメッセージに最大3つのリアクションを付けられます。Telegramが受け付けるのは1つだけなので、残りはこの端末にのみ保存され、他の人には見えません。</string>
 </resources>

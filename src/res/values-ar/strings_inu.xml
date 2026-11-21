@@ -2360,4 +2360,6 @@
     <string name="InuPinLimitTitle">تم بلوغ حد التثبيت</string>
     <string name="InuPinLimitText">يسمح Telegram بتثبيت 5 محادثات دون Premium. فعّل التثبيت غير المحدود لتثبيت المزيد، وتبقى التثبيتات الإضافية على هذا الجهاز.</string>
     <string name="InuPinLimitEnable">تفعيل</string>
+    <string name="InuLocalReactions">تفاعلات محلية</string>
+    <string name="InuLocalReactionsInfo">يتيح لك وضع حتى 3 تفاعلات على الرسالة دون Premium. يقبل Telegram تفاعلاً واحدًا فقط، لذا تُحفظ البقية على هذا الجهاز ولا يراها أحد غيرك.</string>
 </resources>

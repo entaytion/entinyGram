@@ -2371,4 +2371,6 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuPinLimitTitle">Límite de fijados alcanzado</string>
     <string name="InuPinLimitText">Telegram permite 5 chats fijados sin Premium. Activa los chats fijados ilimitados para fijar más, los fijados extra se quedan en este dispositivo.</string>
     <string name="InuPinLimitEnable">Activar</string>
+    <string name="InuLocalReactions">Reacciones locales</string>
+    <string name="InuLocalReactionsInfo">Permite poner hasta 3 reacciones en un mensaje sin Premium. Telegram solo acepta una, así que las demás se guardan en este dispositivo y nadie más las ve.</string>
 </resources>

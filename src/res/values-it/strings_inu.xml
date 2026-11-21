@@ -2372,4 +2372,6 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuPinLimitTitle">Limite di chat fissate raggiunto</string>
     <string name="InuPinLimitText">Telegram consente 5 chat fissate senza Premium. Attiva le chat fissate illimitate per fissarne di più, quelle extra restano su questo dispositivo.</string>
     <string name="InuPinLimitEnable">Attiva</string>
+    <string name="InuLocalReactions">Reazioni locali</string>
+    <string name="InuLocalReactionsInfo">Permette di mettere fino a 3 reazioni a un messaggio senza Premium. Telegram ne accetta solo una, quindi le altre restano su questo dispositivo e nessun altro le vede.</string>
 </resources>

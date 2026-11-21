@@ -2373,4 +2373,6 @@
     <string name="InuPinLimitTitle">Ліміт закріплень досягнуто</string>
     <string name="InuPinLimitText">Telegram дозволяє 5 закріплених чатів без Premium. Увімкни необмежені закріплення, щоб закріпити більше, додаткові закріплення лишаються на цьому пристрої.</string>
     <string name="InuPinLimitEnable">Увімкнути</string>
+    <string name="InuLocalReactions">Локальні реакції</string>
+    <string name="InuLocalReactionsInfo">Дає змогу поставити до 3 реакцій на повідомлення без Premium. Telegram приймає лише одну, тож решта зберігаються на цьому пристрої, і ніхто інший їх не бачить.</string>
 </resources>

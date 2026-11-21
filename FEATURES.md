@@ -43,6 +43,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **protected content** — copy text and select messages in protected chats, save any story or auto-save viewed ones, copy and forward from protected channels with background bulk download, forward without the "Forwarded from" header, re-send saved view-once media
 - **quote protected posts** into another chat as a bold title and blockquote
 - **share button action** — the round button next to channel posts can forward, forward pro, save, edit, delete, translate, copy or show details
+- **local reactions** — up to 3 reactions on a message without premium: the server keeps only the newest one, the older ones stay on this device and nobody else sees them, toggle under local premium
 - **local unlocks** — premium ui and limits on the client, premium custom emoji without premium, local names (name, username, photo, bio, badges, emoji status) visible only to you, with export and import
 - **local message edit** — full-screen editor with a live bubble preview, resettable anytime
 - **official-app emulation** — purchases and premium checkout without official-app blocks

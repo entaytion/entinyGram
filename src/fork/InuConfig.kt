@@ -1477,6 +1477,8 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val ZALGO_FILTER = BoolItem("zalgo_filter", false)
 
+    @JvmField
+    val LOCAL_REACTIONS = BoolItem("local_reactions", false)
 
     @JvmField
     val PINNED_REACTIONS_ENABLED = BoolItem("pinned_reactions_enabled", false)

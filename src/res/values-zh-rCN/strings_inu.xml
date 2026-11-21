@@ -2347,4 +2347,6 @@
     <string name="InuPinLimitTitle">已达到置顶上限</string>
     <string name="InuPinLimitText">没有 Premium 时 Telegram 最多允许置顶 5 个聊天。开启无限置顶可置顶更多，额外的置顶只保存在本设备上。</string>
     <string name="InuPinLimitEnable">开启</string>
+    <string name="InuLocalReactions">本地回应</string>
+    <string name="InuLocalReactionsInfo">没有 Premium 也能给一条消息添加最多 3 个回应。Telegram 只接受一个，其余的只保存在本设备上，其他人看不到。</string>
 </resources>

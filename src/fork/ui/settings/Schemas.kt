@@ -625,6 +625,7 @@ object Schemas {
                 },
             )
             toggle(InuConfig.LOCAL_CUSTOM_EMOJI, R.string.InuLocalCustomEmoji, R.string.InuLocalCustomEmojiInfo)
+            toggle(InuConfig.LOCAL_REACTIONS, R.string.InuLocalReactions, R.string.InuLocalReactionsInfo)
         }
         section(R.string.InuUnlimitedLimits) {
             toggle(

@@ -2350,4 +2350,6 @@
     <string name="InuPinLimitTitle">Sabitleme sınırına ulaşıldı</string>
     <string name="InuPinLimitText">Telegram Premium olmadan 5 sabitlenmiş sohbete izin verir. Daha fazlasını sabitlemek için sınırsız sabitlemeyi aç, fazladan sabitlemeler bu cihazda kalır.</string>
     <string name="InuPinLimitEnable">Aç</string>
+    <string name="InuLocalReactions">Yerel tepkiler</string>
+    <string name="InuLocalReactionsInfo">Premium olmadan bir mesaja en fazla 3 tepki koymanı sağlar. Telegram yalnızca birini kabul eder, fazlası bu cihazda kalır ve kimse görmez.</string>
 </resources>
