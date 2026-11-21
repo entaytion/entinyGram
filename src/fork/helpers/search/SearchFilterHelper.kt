@@ -68,7 +68,7 @@ class SearchFilterHelper(
 
     val button: ImageView = ImageView(searchContainer.context).also { b ->
         b.scaleType = ImageView.ScaleType.CENTER
-        b.setImageResource(R.drawable.inu_tabler_filter)
+        b.setImageResource(R.drawable.entiny_regex_filter)
         b.colorFilter = PorterDuffColorFilter(
             fragment.getThemedColor(Theme.key_chat_searchPanelIcons),
             PorterDuff.Mode.MULTIPLY,

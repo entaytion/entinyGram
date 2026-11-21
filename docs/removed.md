@@ -8,7 +8,6 @@ what entinygram used to have and no longer ships, and why. one row per feature, 
 | --- | --- | --- |
 | dc status page | showed the state and ping of every telegram datacenter | rarely used and hard to find. the code is deleted: `DatacenterStatusActivity`, `DatacenterPing`, `TelegramDc`, `Obfuscated2` |
 | old config migrations | imported legacy keys for ghost mode, self-destruct, regex filter, translation language and feed | old keys are no longer read. `ConfigSanitizer` resets a broken value to its default on load. only recent migrations stay: archive scope, dialogs fab, center title |
-| censorship bypass and websocket tunnel | routed the connection through a websocket tunnel with a leak guard | removed until it can come back with better proxy support |
 | own icon packs | entinygram's own phosphor and vkui icon sets | upstream `.icons` packs from inugram are used instead |
 | download queue | large files downloaded one at a time in request order, with a downloads list in the chats menu and cancel | the author does not use it and some of its parts caused download problems. the file reference and download patches it touched were rolled back to the upstream versions |
 | keep downloads in background | downloads kept running when you scrolled away or left the chat, with an optional wake lock while downloading | the author does not use it and some of its parts caused problems with downloads. the wake lock option only worked under it and went with it |

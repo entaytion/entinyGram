@@ -17,7 +17,7 @@ index 0000000..0000000 100644
                  });
 +                Long inuUserId = desu.inugram.helpers.search.UserIdOpenHelper.parseUserId(phone);
 +                if (inuUserId != null && inuUserId > 0 && desu.inugram.InuConfig.OPEN_BY_USER_ID.getValue()) {
-+                    options.add(R.drawable.inu_tabler_id, LocaleController.getString(R.string.InuOpenAsUserId), () -> {
++                    options.add(R.drawable.entiny_id_card, LocaleController.getString(R.string.InuOpenAsUserId), () -> {
 +                        dialog.dismiss();
 +                        desu.inugram.helpers.search.UserIdOpenHelper.openProfile(ChatActivity.this, inuUserId, currentAccount);
 +                    });

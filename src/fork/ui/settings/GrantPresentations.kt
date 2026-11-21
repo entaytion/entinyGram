@@ -27,7 +27,7 @@ internal val KNOWN_GRANTS: Map<String, GrantPresentation> = mapOf(
     "takeout" to GrantPresentation(R.string.InuPluginGrantTakeout, R.drawable.msg_download),
     "unsafe.fs" to GrantPresentation(R.string.InuPluginGrantUnsafeFs, R.drawable.files_storage),
     "unsafe.invokeRaw" to GrantPresentation(R.string.InuPluginGrantUnsafeInvokeRaw, R.drawable.msg_bot),
-    "unsafe.jvm" to GrantPresentation(R.string.InuPluginGrantUnsafeJvm, R.drawable.inu_tabler_code),
+    "unsafe.jvm" to GrantPresentation(R.string.InuPluginGrantUnsafeJvm, R.drawable.entiny_code),
     "unsafe.xposed" to GrantPresentation(R.string.InuPluginGrantUnsafeXposed, R.drawable.msg_replace),
     "unsafe.notificationCenter" to GrantPresentation(R.string.InuPluginGrantUnsafeNotificationCenter, R.drawable.msg_notifications),
     "unsafe.disableApiFiltering" to GrantPresentation(R.string.InuPluginGrantUnsafeDisableApiFiltering, R.drawable.msg_block),

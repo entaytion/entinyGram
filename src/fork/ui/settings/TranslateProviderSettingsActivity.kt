@@ -110,12 +110,12 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
     }
 
     private val deeplKey = Field(R.string.InuTranslateDeepLApiKey, InuConfig.TRANSLATE_DEEPL_KEY, R.drawable.msg_secret, secret = true, inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
-    private val llmUrl = Field(R.string.InuTranslateLlmEndpointUrl, InuConfig.TRANSLATE_LLM_URL, R.drawable.inu_tabler_world, inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
+    private val llmUrl = Field(R.string.InuTranslateLlmEndpointUrl, InuConfig.TRANSLATE_LLM_URL, R.drawable.entiny_globe, inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
     private val llmKey = Field(R.string.InuTranslateLlmApiKey, InuConfig.TRANSLATE_LLM_KEY, R.drawable.msg_secret, secret = true, inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
-    private val llmModel = Field(R.string.InuTranslateLlmModel, InuConfig.TRANSLATE_LLM_MODEL, R.drawable.inu_tabler_sparkles)
-    private val llmPrompt = Field(R.string.InuTranslateLlmPrompt, InuConfig.TRANSLATE_LLM_PROMPT, R.drawable.inu_tabler_code, multiline = true)
+    private val llmModel = Field(R.string.InuTranslateLlmModel, InuConfig.TRANSLATE_LLM_MODEL, R.drawable.entiny_sparkles)
+    private val llmPrompt = Field(R.string.InuTranslateLlmPrompt, InuConfig.TRANSLATE_LLM_PROMPT, R.drawable.entiny_message_design, multiline = true)
     private val microsoftKey = Field(R.string.InuTranslateMicrosoftApiKey, InuConfig.TRANSLATE_MICROSOFT_KEY, R.drawable.msg_secret, secret = true, inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
-    private val microsoftRegion = Field(R.string.InuTranslateMicrosoftRegion, InuConfig.TRANSLATE_MICROSOFT_REGION, R.drawable.inu_tabler_world)
+    private val microsoftRegion = Field(R.string.InuTranslateMicrosoftRegion, InuConfig.TRANSLATE_MICROSOFT_REGION, R.drawable.entiny_globe)
     private val fields = listOf(deeplKey, llmUrl, llmKey, llmModel, llmPrompt, microsoftKey, microsoftRegion)
 
     private fun fieldRow(items: ArrayList<UItem>, field: Field) {

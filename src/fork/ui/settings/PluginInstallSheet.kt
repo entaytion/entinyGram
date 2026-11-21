@@ -236,7 +236,7 @@ class PluginInstallSheet(
                 ),
             )
         }
-        items.add(UItem.asButton(BUTTON_SOURCE, R.drawable.inu_tabler_code, LocaleController.getString(R.string.InuPluginsViewSource)))
+        items.add(UItem.asButton(BUTTON_SOURCE, R.drawable.entiny_code, LocaleController.getString(R.string.InuPluginsViewSource)))
         items.add(UItem.asShadow(null))
     }
 

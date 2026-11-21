@@ -66,7 +66,7 @@ class AiProviderEditActivity(private val existingId: String?, private val kind: 
         items.add(UItem.asShadow(null))
 
         if (saved) {
-            items.add(UItem.asButton(BUTTON_DELETE, R.drawable.inu_tabler_trash, LocaleController.getString(R.string.Delete)))
+            items.add(UItem.asButton(BUTTON_DELETE, R.drawable.entiny_trash, LocaleController.getString(R.string.Delete)))
             items.add(UItem.asShadow(null))
         }
     }

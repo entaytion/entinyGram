@@ -71,7 +71,7 @@ sealed class SearchTopAction {
     }
 
     class UserId(val id: Long) : SearchTopAction() {
-        override val iconRes: Int = R.drawable.inu_tabler_id
+        override val iconRes: Int = R.drawable.entiny_user_badge
         override val label: CharSequence
             get() = LocaleController.formatString(R.string.InuSearchOpenUserId, id.toString())
 

@@ -114,14 +114,14 @@ async function generateIconDrawables(repoDir: string) {
   const outDir = join(repoDir, 'TMessagesProj/src/main/res/drawable')
   await ensureDir(outDir)
   let dirty = false
-  for (const [prefix, { options, icons }] of Object.entries(ICON_SETS)) {
+  for (const [prefix, { options, icons, filePrefix }] of Object.entries(ICON_SETS)) {
     const pack = loadIconPack(prefix)
     for (const name of icons) {
       const icon = pack.icons[name]
       if (!icon) throw new Error(`Icon not found: ${prefix}:${name}`)
 
       const xml = svgBodyToVectorDrawable(icon.body, icon.width ?? pack.width ?? 16, icon.height ?? pack.height ?? 16, options)
-      const fileName = `inu_${prefix.replaceAll('-', '_')}_${name.replaceAll('-', '_')}.xml`
+      const fileName = `${filePrefix ?? `inu_${prefix.replaceAll('-', '_')}`}_${name.replaceAll('-', '_')}.xml`
       const absPath = join(outDir, fileName)
       const stat = await fs.lstat(absPath).catch(() => null)
 

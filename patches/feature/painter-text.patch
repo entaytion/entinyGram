@@ -183,7 +183,7 @@ index 0000000..0000000 100644
          addView(alignView, LayoutHelper.createFrame(28, 28, Gravity.CENTER_VERTICAL, 0, 0, 16, 0));
  
 +        inu_noWrapView = new ImageView(context);
-+        inu_noWrapView.setImageResource(R.drawable.inu_tabler_text_wrap);
++        inu_noWrapView.setImageResource(R.drawable.entiny_text_wrap);
 +        inu_noWrapView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
 +        inu_noWrapView.setPadding(AndroidUtilities.dp(2), AndroidUtilities.dp(2), AndroidUtilities.dp(2), AndroidUtilities.dp(2));
 +        inu_noWrapView.setOnClickListener(v -> delegate.inu_onTextNoWrapSelected(v));
@@ -205,7 +205,7 @@ index 0000000..0000000 100644
      }
  
 +    public void inu_setNoWrap(boolean noWrap) {
-+        inu_noWrapView.setImageResource(noWrap ? R.drawable.inu_tabler_text_wrap_disabled : R.drawable.inu_tabler_text_wrap);
++        inu_noWrapView.setImageResource(noWrap ? R.drawable.entiny_text_wrap_off : R.drawable.entiny_text_wrap);
 +    }
 +
      public void setOutlineType(int type) {

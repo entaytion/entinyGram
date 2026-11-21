@@ -129,7 +129,7 @@ class AiEditorSettingsActivity : AiTaskSettingsActivity(
         val PAGE = SearchRegistry.Page(
             slug = "ai-editor",
             titleRes = R.string.InuAiEditorTitle,
-            iconRes = R.drawable.inu_tabler_sparkles,
+            iconRes = R.drawable.entiny_ai_editor,
             factory = ::AiEditorSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("ai-editor-button", R.string.InuAiEditorTitle, TOGGLE_ENABLED),

@@ -119,7 +119,7 @@ class PillStackSettingsActivity : SettingsPageActivity() {
         if (active.contains(PillType.WEATHER.id)) {
             val weatherItem = UItem.asButton(
                 BUTTON_WEATHER_LOCATION,
-                R.drawable.inu_tabler_cloud,
+                R.drawable.entiny_cloud,
                 LocaleController.getString(R.string.InuPillStackWeather),
                 WeatherLocationHelper.label()
             )

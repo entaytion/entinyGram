@@ -170,7 +170,7 @@ class DeviceSpoofSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "device-spoof",
             titleRes = R.string.InuDeviceSpoof,
-            iconRes = R.drawable.inu_tabler_device_mobile,
+            iconRes = R.drawable.entiny_device_spoof,
             factory = ::DeviceSpoofSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("device-spoof-toggle", R.string.InuDeviceSpoof, TOGGLE_SPOOF),

@@ -842,7 +842,7 @@ object DrawerHelper {
                 DialogsMenuConfig.Item.BOOKMARKS -> io.add(R.drawable.msg_fave, getString(R.string.InuBookmarks)) {
                     instance.presentFragment(desu.inugram.ui.BookmarksManagerActivity())
                 }
-                DialogsMenuConfig.Item.CLEAR_CACHE -> io.add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearCache)) {
+                DialogsMenuConfig.Item.CLEAR_CACHE -> io.add(R.drawable.entiny_trash, getString(R.string.InuClearCache)) {
                     showClearCacheOptions(instance)
                 }
                 DialogsMenuConfig.Item.FEED -> io.add(R.drawable.msg_channel, getString(R.string.InuFeed)) {
@@ -856,7 +856,7 @@ object DrawerHelper {
                         BulletinFactory.of(instance).createImageBulletin(if (isGhost) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)).show()
                     }
                 }
-                DialogsMenuConfig.Item.PARANOIA -> if (!ParanoiaHelper.isParanoia()) io.add(R.drawable.inu_tabler_spy, getString(R.string.InuParanoiaMode)) {
+                DialogsMenuConfig.Item.PARANOIA -> if (!ParanoiaHelper.isParanoia()) io.add(R.drawable.entiny_paranoia, getString(R.string.InuParanoiaMode)) {
                     instance.presentFragment(ParanoiaActivity())
                 }
                 DialogsMenuConfig.Item.RESTART_APP -> io.add(R.drawable.msg_retry, getString(R.string.InuRestartApp)) {
@@ -909,7 +909,7 @@ object DrawerHelper {
             .add(R.drawable.msg_filled_storageusage, getString(R.string.StorageUsage)) {
                 instance.presentFragment(org.telegram.ui.CacheControlActivity())
             }
-            .add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearDeletedCache)) {
+            .add(R.drawable.entiny_trash, getString(R.string.InuClearDeletedCache)) {
                 confirmClearDeletedMessagesCache(instance)
             }
             .show()

@@ -26,7 +26,7 @@ object PluginTrustSheet {
             features = listOf(
                 PluginConsentSheet.Feature(R.drawable.msg_permissions, R.string.InuPluginTrust1Title, R.string.InuPluginTrust1Text),
                 PluginConsentSheet.Feature(R.drawable.files_storage, R.string.InuPluginTrust2Title, R.string.InuPluginTrust2Text),
-                PluginConsentSheet.Feature(R.drawable.inu_tabler_code, R.string.InuPluginTrust3Title, R.string.InuPluginTrust3Text),
+                PluginConsentSheet.Feature(R.drawable.entiny_code, R.string.InuPluginTrust3Title, R.string.InuPluginTrust3Text),
             ),
             warningRes = R.string.InuPluginTrustWarning,
             acceptRes = R.string.InuPluginTrustAccept,

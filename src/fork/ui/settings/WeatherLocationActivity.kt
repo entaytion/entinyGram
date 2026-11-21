@@ -125,7 +125,7 @@ class WeatherLocationActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "weather-location",
             titleRes = R.string.InuWeatherLocation,
-            iconRes = R.drawable.inu_tabler_cloud,
+            iconRes = R.drawable.entiny_cloud,
             factory = ::WeatherLocationActivity,
             entries = listOf(
                 SearchRegistry.Entry("weather-use-current-location", R.string.InuWeatherUseCurrentLocation, ROW_USE_CURRENT),

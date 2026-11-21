@@ -18,30 +18,31 @@ class DonateActivity : SettingsPageActivity() {
     }
 
     private val cards = listOf(
-        Method(R.drawable.inu_tabler_credit_card, "Boosty", "boosty.to/entaytion", BOOSTY),
-        Method(R.drawable.inu_tabler_pig_money, str(R.string.InuDonateMonobankJar), "send.monobank.ua", MONOBANK_JAR),
-        Method(R.drawable.inu_tabler_credit_card, str(R.string.InuDonateMonobankCard), "4874 1000 3949 4128"),
+        Method(R.drawable.entiny_boosty, "Boosty", "boosty.to/entaytion", BOOSTY),
+        Method(R.drawable.entiny_patreon, "Patreon", "patreon.com/Entaytion", PATREON),
+        Method(R.drawable.entiny_monobank, str(R.string.InuDonateMonobankJar), "send.monobank.ua", MONOBANK_JAR),
+        Method(R.drawable.entiny_credit_card, str(R.string.InuDonateMonobankCard), "4874 1000 3949 4128"),
     )
     private val crypto = listOf(
-        Method(R.drawable.inu_tabler_send, str(R.string.InuDonateDirect), "@entaytion · 0.1 GRAM", TELEGRAM_SEND),
-        Method(R.drawable.inu_tabler_brand_telegram, "CryptoBot", "t.me/send", CRYPTO_BOT),
+        Method(R.drawable.entiny_send, str(R.string.InuDonateDirect), "@entaytion · 0.1 GRAM", TELEGRAM_SEND),
+        Method(R.drawable.entiny_telegram, "CryptoBot", "t.me/send", CRYPTO_BOT),
     )
     private val usdt = listOf(
-        Method(R.drawable.inu_cryptocurrency_trx, "USDT · TRON (TRC-20)", TRON),
-        Method(R.drawable.inu_simple_icons_ton, "USDT · TON", TON),
-        Method(R.drawable.inu_tabler_currency_solana, "USDT · Solana", SOLANA),
-        Method(R.drawable.inu_simple_icons_tether, "USDT · Ethereum, BSC, Base", EVM),
+        Method(R.drawable.entiny_trx, "USDT · TRON (TRC-20)", TRON),
+        Method(R.drawable.entiny_ton, "USDT · TON", TON),
+        Method(R.drawable.entiny_solana, "USDT · Solana", SOLANA),
+        Method(R.drawable.entiny_tether, "USDT · Ethereum, BSC, Base", EVM),
     )
     private val coins = listOf(
-        Method(R.drawable.inu_simple_icons_ton, "GRAM (TON)", TON),
-        Method(R.drawable.inu_simple_icons_bitcoin, "BTC", BITCOIN),
-        Method(R.drawable.inu_simple_icons_ethereum, "ETH · Ethereum, Base", EVM),
-        Method(R.drawable.inu_simple_icons_bnbchain, "BNB · BSC", EVM),
-        Method(R.drawable.inu_tabler_currency_solana, "SOL", SOLANA),
-        Method(R.drawable.inu_cryptocurrency_trx, "TRX", TRON),
+        Method(R.drawable.entiny_ton, "GRAM (TON)", TON),
+        Method(R.drawable.entiny_bitcoin, "BTC", BITCOIN),
+        Method(R.drawable.entiny_ethereum, "ETH · Ethereum, Base", EVM),
+        Method(R.drawable.entiny_bnb_chain, "BNB · BSC", EVM),
+        Method(R.drawable.entiny_solana, "SOL", SOLANA),
+        Method(R.drawable.entiny_trx, "TRX", TRON),
     )
     private val other = listOf(
-        Method(R.drawable.inu_tabler_world, str(R.string.InuDonateWebsite), "entaytion.is-a.dev/donate", SITE),
+        Method(R.drawable.entiny_globe, str(R.string.InuDonateWebsite), "entaytion.is-a.dev/donate", SITE),
     )
 
     override fun getTitle(): CharSequence = str(R.string.InuDonateSheetTitle)
@@ -79,6 +80,7 @@ class DonateActivity : SettingsPageActivity() {
 
     companion object {
         private const val BOOSTY = "https://boosty.to/entaytion/donate"
+        private const val PATREON = "https://www.patreon.com/c/Entaytion"
         private const val MONOBANK_JAR ="https://send.monobank.ua/jar/RGYa8zo8y"
         private const val CRYPTO_BOT = "https://t.me/send?start=IVncNnKfmByl"
         private const val TELEGRAM_SEND = "https://t.me/sendgrams?to=entaytion&amount=0.1&text=thx+for+entiny"

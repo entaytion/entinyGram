@@ -51,7 +51,7 @@ index 0000000..0000000 100644
 @@ -7515,6 +7515,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              final ItemOptions options = ItemOptions.makeOptions(containerView, new DarkThemeResourceProvider(), view)
                  .addIf(showSendAsFile, R.drawable.msg_sendfile, getString(multipleSelected ? R.string.SendAsFiles : R.string.SendAsFile), () -> sendPressed(true, 0, 0, false, true, false))
-                 .addIf(showSendAsRound, R.drawable.inu_tabler_circle, getString(R.string.InuSendAsRoundVideo), this::inu_sendAsRoundVideoPressed)
+                 .addIf(showSendAsRound, R.drawable.entiny_circle, getString(R.string.InuSendAsRoundVideo), this::inu_sendAsRoundVideoPressed)
 +                .addIf(!canEdit && desu.inugram.helpers.chat.StickerSendHelper.canSendPhoto(parentChatActivity, currentObject), R.drawable.msg_sticker, getString(R.string.InuSendAsSticker), () -> {
 +                    desu.inugram.helpers.chat.StickerSendHelper.arm();
 +                    sendPressed(true, 0, 0);

@@ -263,7 +263,7 @@ object ProfileHelper {
             val label = if (watching) R.string.InuPresenceUnwatchUser else R.string.InuPresenceWatchUser
             otherItem.addSubItem(
                 ACTION_TOGGLE_PRESENCE_WATCH,
-                R.drawable.inu_tabler_user_scan,
+                R.drawable.entiny_eye,
                 LocaleController.getString(label),
             )
         }
@@ -287,7 +287,7 @@ object ProfileHelper {
         if (InuConfig.SAVE_USER_INFO.value && !isSelf && dialogId > 0L) {
             otherItem.addSubItem(
                 ACTION_SHOW_CONTACT_CHANGES,
-                R.drawable.inu_tabler_file_diff,
+                R.drawable.entiny_ai_summary,
                 LocaleController.getString(R.string.InuContactChanges),
             )
         }
@@ -308,7 +308,7 @@ object ProfileHelper {
         if (isSelf) {
             otherItem.addSubItem(
                 ACTION_DELETE_PROFILE_PHOTOS,
-                R.drawable.inu_tabler_photo_x,
+                R.drawable.entiny_trash,
                 LocaleController.getString(R.string.InuDeleteProfilePhotos),
             )
         } else {
@@ -575,7 +575,7 @@ object ProfileHelper {
                         LocaleController.getString(R.string.InuProfileIdCopied)
                     ).show()
                 }
-            }.add(R.drawable.inu_tabler_code, LocaleController.getString(R.string.InuShowJson)) {
+            }.add(R.drawable.entiny_code, LocaleController.getString(R.string.InuShowJson)) {
                 val items = arrayListOf<TLObject>()
                 if (userId != 0L) {
                     val user = messagesController.getUser(userId)

@@ -92,7 +92,7 @@ class AiVoiceSettingsActivity : AiTaskSettingsActivity(
         val PAGE = SearchRegistry.Page(
             slug = "ai-voice",
             titleRes = R.string.InuAiTranscribe,
-            iconRes = R.drawable.inu_tabler_microphone,
+            iconRes = R.drawable.entiny_voice_to_text,
             factory = ::AiVoiceSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("ai-transcribe-enabled", R.string.InuAiTranscribe, TOGGLE_ENABLED),

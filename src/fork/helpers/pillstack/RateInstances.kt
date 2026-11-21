@@ -131,12 +131,13 @@ object RateInstances {
     fun getBaseLabel(code: String): String = if (code == "XAU") "Gold" else code
 
     fun getBaseIcon(code: String): Int = when (code) {
-        "XAU" -> R.drawable.inu_tabler_coins
-        "BTC" -> R.drawable.inu_simple_icons_bitcoin
-        "ETH" -> R.drawable.inu_simple_icons_ethereum
+        "XAU" -> R.drawable.entiny_dollar_coin
+        "BTC" -> R.drawable.entiny_bitcoin
+        "ETH" -> R.drawable.entiny_ethereum
         "TON" -> R.drawable.mini_gram_16
-        "EUR" -> R.drawable.inu_bi_currency_euro
-        else -> R.drawable.inu_bi_currency_dollar
+        "EUR" -> R.drawable.entiny_currency_euro
+        "UAH" -> R.drawable.entiny_currency_hryvnia
+        else -> R.drawable.entiny_currency_dollar
     }
 
     fun getBaseColorTop(code: String): Int = when (code) {

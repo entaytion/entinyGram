@@ -71,7 +71,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 )
             )
             items.add(UItem.asCustom(deletedMarkCell).apply { id = CELL_DELETED_MARK })
-            items.add(UItem.asButton(BUTTON_ARCHIVE_SCOPE, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuArchiveScope), ArchiveScopeActivity.summary(ArchiveScope.Kind.DELETED)))
+            items.add(UItem.asButton(BUTTON_ARCHIVE_SCOPE, R.drawable.entiny_search, LocaleController.getString(R.string.InuArchiveScope), ArchiveScopeActivity.summary(ArchiveScope.Kind.DELETED)))
             items.add(UItem.asCheck(TOGGLE_SAVE_DELETED_OWN, LocaleController.getString(R.string.InuSaveDeletedOwn)).setChecked(InuConfig.SAVE_DELETED_OWN.value))
             items.add(mkSplitCheckItem(TOGGLE_ARCHIVE_MEDIA_ENABLED, R.string.InuArchiveAttachmentsSave, R.string.InuArchiveAttachmentsInfo, InuConfig.ARCHIVE_MEDIA_ENABLED.value))
         }
@@ -88,7 +88,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             )
         )
         if (InuConfig.SAVE_EDITED_MESSAGES.value) {
-            items.add(UItem.asButton(BUTTON_SCOPE_EDITED, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuArchiveScope), ArchiveScopeActivity.summary(ArchiveScope.Kind.EDITED)))
+            items.add(UItem.asButton(BUTTON_SCOPE_EDITED, R.drawable.entiny_search, LocaleController.getString(R.string.InuArchiveScope), ArchiveScopeActivity.summary(ArchiveScope.Kind.EDITED)))
             items.add(
                 mkTwoLineCheckItem(
                     TOGGLE_EDIT_HISTORY_DIFF,
@@ -184,7 +184,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "anti-deletion",
             titleRes = R.string.InuAntiDeletion,
-            iconRes = R.drawable.inu_tabler_trash_off,
+            iconRes = R.drawable.entiny_saved_messages,
             factory = ::AntiDeletionSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("archive-scope", R.string.InuArchiveScope, BUTTON_ARCHIVE_SCOPE),

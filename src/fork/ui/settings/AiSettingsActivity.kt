@@ -26,7 +26,7 @@ class AiSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_PROVIDERS,
-                R.drawable.inu_tabler_cpu,
+                R.drawable.entiny_ai_providers,
                 LocaleController.getString(R.string.InuAiProvidersTitle),
                 providersSummary(),
             )
@@ -34,9 +34,9 @@ class AiSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiProvidersSubtitle)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiFeatures)))
-        items.add(mkTwoLineEntry(ENTRY_VOICE, R.drawable.inu_tabler_microphone, LocaleController.getString(R.string.InuAiTranscribe), voiceSummary()))
-        items.add(mkTwoLineEntry(ENTRY_EDITOR, R.drawable.inu_tabler_sparkles, LocaleController.getString(R.string.InuAiEditorTitle), editorSummary()))
-        items.add(mkTwoLineEntry(ENTRY_SUMMARY, R.drawable.msg_text_outlined, LocaleController.getString(R.string.InuAiSummary), summarySummary()))
+        items.add(mkTwoLineEntry(ENTRY_VOICE, R.drawable.entiny_voice_to_text, LocaleController.getString(R.string.InuAiTranscribe), voiceSummary()))
+        items.add(mkTwoLineEntry(ENTRY_EDITOR, R.drawable.entiny_ai_editor, LocaleController.getString(R.string.InuAiEditorTitle), editorSummary()))
+        items.add(mkTwoLineEntry(ENTRY_SUMMARY, R.drawable.entiny_ai_summary, LocaleController.getString(R.string.InuAiSummary), summarySummary()))
         items.add(mkTwoLineCheckItem(TOGGLE_INSECURE, R.string.InuAiAllowInsecure, R.string.InuAiAllowInsecureInfo, InuConfig.AI_ALLOW_INSECURE.value))
         items.add(UItem.asShadow(null))
 
@@ -44,7 +44,7 @@ class AiSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asButton(BUTTON_ROLE, LocaleController.getString(R.string.InuAiRoles), roleSummary()))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiRolesSubtitle)))
 
-        items.add(mkSubPageButton(BUTTON_TRANSLATOR, R.drawable.msg_translate, LocaleController.getString(R.string.InuTranslator)))
+        items.add(mkSubPageButton(BUTTON_TRANSLATOR, R.drawable.entiny_translator, LocaleController.getString(R.string.InuTranslator)))
         items.add(UItem.asShadow(null))
     }
 
@@ -111,7 +111,7 @@ class AiSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "ai-compose",
             titleRes = R.string.InuAiChatTitle,
-            iconRes = R.drawable.inu_tabler_sparkles,
+            iconRes = R.drawable.entiny_ai_translation,
             factory = ::AiSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("ai-providers", R.string.InuAiProvidersTitle, BUTTON_PROVIDERS),

@@ -1,6 +1,7 @@
 package desu.inugram.ui.settings
 
 import android.content.Context
+import android.graphics.Canvas
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -25,6 +26,7 @@ class WrapCheckCell(context: Context) : LinearLayout(context) {
     }
     private val label = TextView(context)
     private var boundId = -1
+    private var labelColor = 0
 
     init {
         orientation = HORIZONTAL
@@ -35,13 +37,28 @@ class WrapCheckCell(context: Context) : LinearLayout(context) {
         setPaddingRelative(dp(61f), dp(12f), dp(21f), dp(12f))
         addView(box, LayoutHelper.createLinear(21, 21, 0f, 0f, 18f, 0f))
         label.textSize = 16f
-        label.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
         addView(label, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
+        syncColors()
+    }
+
+    // entiny: the label color follows the live theme, a monet or m3 switch recolors it on the next frame
+    private fun syncColors() {
+        val color = Theme.getColor(Theme.key_windowBackgroundWhiteBlackText)
+        if (color != labelColor) {
+            labelColor = color
+            label.setTextColor(color)
+        }
+    }
+
+    override fun dispatchDraw(canvas: Canvas) {
+        syncColors()
+        super.dispatchDraw(canvas)
     }
 
     fun setChecked(checked: Boolean, animated: Boolean) = box.setChecked(checked, animated)
 
     fun set(id: Int, text: CharSequence?, checked: Boolean, enabled: Boolean) {
+        syncColors()
         label.text = text
         box.setChecked(checked, boundId == id)
         boundId = id

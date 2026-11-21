@@ -2,6 +2,7 @@ package desu.inugram.ui.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.view.Gravity
@@ -24,19 +25,32 @@ class NotificationIconCell(
 ) : LinearLayout(context) {
 
     private val row = LinearLayout(context)
+    private val title = TextView(context)
+    private var themeColor = 0
 
     init {
         orientation = VERTICAL
         setPadding(AndroidUtilities.dp(21f), AndroidUtilities.dp(12f), AndroidUtilities.dp(21f), AndroidUtilities.dp(16f))
-        addView(TextView(context).apply {
-            text = LocaleController.getString(R.string.InuNotificationIcon)
-            textSize = 16f
-            setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
-        })
+        title.text = LocaleController.getString(R.string.InuNotificationIcon)
+        title.textSize = 16f
+        themeColor = Theme.getColor(Theme.key_windowBackgroundWhiteBlackText)
+        title.setTextColor(themeColor)
+        addView(title)
         row.gravity = Gravity.CENTER
         row.setPadding(0, AndroidUtilities.dp(12f), 0, 0)
         addView(row, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
         rebuild()
+    }
+
+    // entiny: chips and title are built with the colors of the moment, so a theme switch rebuilds them on the next frame
+    override fun dispatchDraw(canvas: Canvas) {
+        val color = Theme.getColor(Theme.key_windowBackgroundWhiteBlackText)
+        if (color != themeColor) {
+            themeColor = color
+            title.setTextColor(color)
+            post { rebuild() }
+        }
+        super.dispatchDraw(canvas)
     }
 
     private fun rebuild() {

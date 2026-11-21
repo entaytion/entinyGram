@@ -63,10 +63,10 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             .setEnabled(stats.any { it.count > 0 || it.size > 0 }))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuCacheManagementInfo)))
 
-        items.add(UItem.asButton(BUTTON_MESSAGES_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuCacheTtl)).also {
+        items.add(UItem.asButton(BUTTON_MESSAGES_TTL, R.drawable.entiny_clock, LocaleController.getString(R.string.InuCacheTtl)).also {
             it.subtext = ttlLabel(InuConfig.DELETED_MESSAGES_TTL.value)
         })
-        items.add(UItem.asButton(BUTTON_LOGS_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuPresenceLogsTtl)).also {
+        items.add(UItem.asButton(BUTTON_LOGS_TTL, R.drawable.entiny_clock, LocaleController.getString(R.string.InuPresenceLogsTtl)).also {
             it.subtext = ttlLabel(InuConfig.PRESENCE_LOGS_TTL.value)
         })
         items.add(UItem.asShadow(null))
@@ -334,7 +334,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "cache-management",
             titleRes = R.string.InuCacheManagement,
-            iconRes = R.drawable.inu_tabler_trash_x,
+            iconRes = R.drawable.entiny_trash,
             factory = ::CacheManagementSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_MESSAGES_TTL),

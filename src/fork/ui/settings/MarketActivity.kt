@@ -68,8 +68,8 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
                 }
             })
             val more = menu.addItem(MENU_MORE, R.drawable.ic_ab_other)
-            more.addSubItem(MENU_FILTERS, R.drawable.inu_tabler_filter, str(R.string.InuMarketFilters))
-            more.addSubItem(MENU_SORT, R.drawable.inu_tabler_arrows_sort, LocaleController.getString(R.string.InuPluginRepoSort))
+            more.addSubItem(MENU_FILTERS, R.drawable.entiny_regex_filter, str(R.string.InuMarketFilters))
+            more.addSubItem(MENU_SORT, R.drawable.entiny_options_menu, LocaleController.getString(R.string.InuPluginRepoSort))
             more.addSubItem(MENU_REFRESH, R.drawable.msg_retry, LocaleController.getString(R.string.InuMarketRefresh))
             if (!officialOnly) more.addSubItem(MENU_CHANNELS, R.drawable.msg_channel, LocaleController.getString(R.string.InuMarketOwnChannels))
             simpleActionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
@@ -177,8 +177,8 @@ class MarketActivity(private val openSlug: String? = null, private val officialO
         val pillsCell = pills ?: MarketPillsCell(context).also { pills = it }
         pillsCell.bind(
             listOf(
-                MarketChip("all", "${str(R.string.InuMarketAll)} · ${inLens.size}", R.drawable.inu_tabler_layout_cards, tag == null) { select(lens, null) },
-                MarketChip(OFFICIAL_TAG, "${str(R.string.InuMarketGroupOfficial)} · ${inLens.count { it.official }}", R.drawable.inu_tabler_brand_telegram, tag == OFFICIAL_TAG) { select(lens, OFFICIAL_TAG) },
+                MarketChip("all", "${str(R.string.InuMarketAll)} · ${inLens.size}", R.drawable.entiny_grid, tag == null) { select(lens, null) },
+                MarketChip(OFFICIAL_TAG, "${str(R.string.InuMarketGroupOfficial)} · ${inLens.count { it.official }}", R.drawable.entiny_telegram, tag == OFFICIAL_TAG) { select(lens, OFFICIAL_TAG) },
             ) + MarketTags.ALL.map { t ->
                 val count = inLens.count { t.id in it.tags }
                 marketTagChip(t, count, tag == t.id) { select(lens, t.id) }

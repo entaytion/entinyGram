@@ -248,7 +248,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "material3",
             titleRes = R.string.InuMaterial3,
-            iconRes = R.drawable.inu_tabler_layout_cards,
+            iconRes = R.drawable.entiny_grid,
             factory = ::Material3SettingsActivity,
             entries = listOf(
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving

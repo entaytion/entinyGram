@@ -221,7 +221,7 @@ class DeletedMarkCell(
             Triple(InuConfig.DeletedMarkStyleItem.NOTHING, R.drawable.msg_cancel, 22f),
             Triple(InuConfig.DeletedMarkStyleItem.TEXT, 0, 0f),
             Triple(InuConfig.DeletedMarkStyleItem.TRASH_BIN, R.drawable.ic_deleted_mark_trash, 16f),
-            Triple(InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE, R.drawable.inu_tabler_trash, 15f),
+            Triple(InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE, R.drawable.entiny_trash, 15f),
             Triple(InuConfig.DeletedMarkStyleItem.CROSS, R.drawable.ic_deleted_mark_cross, 16f),
             Triple(InuConfig.DeletedMarkStyleItem.EYE_CROSSED, R.drawable.ic_deleted_mark_eye_off, 16f),
         )

@@ -22,7 +22,7 @@ import kotlin.math.max
 
 /** a list row's name, with an optional warning sign right after it; lay it out wrap_content */
 internal class RowTitle(context: Context) : TextView(context) {
-    private val warningDrawable = ResourcesCompat.getDrawable(resources, R.drawable.inu_tabler_alert_triangle_filled, null)
+    private val warningDrawable = ResourcesCompat.getDrawable(resources, R.drawable.entiny_warning, null)
         ?.mutate()
         ?.apply {
             // bounds keep their height, so the offset only nudges the glyph off the text's optical center

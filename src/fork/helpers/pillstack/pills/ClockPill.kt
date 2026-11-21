@@ -12,7 +12,7 @@ import java.util.Date
 class ClockPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) : BasePill(context, resourcesProvider) {
 
     init {
-        setupPill(R.drawable.inu_tabler_clock)
+        setupPill(R.drawable.entiny_clock)
         onUpdateData(false)
     }
 

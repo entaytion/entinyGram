@@ -30,16 +30,16 @@ class MarketTag(val id: String, val iconRes: Int, val nameRes: Int, val aboutRes
 
 object MarketTags {
     val ALL = listOf(
-        MarketTag("privacy", R.drawable.inu_tabler_shield_check, R.string.InuMarketTagPrivacy, R.string.InuMarketTagPrivacyAbout),
-        MarketTag("chat", R.drawable.inu_tabler_message_dots, R.string.InuMarketTagChat, R.string.InuMarketTagChatAbout),
-        MarketTag("media", R.drawable.inu_tabler_camera_bolt, R.string.InuMarketTagMedia, R.string.InuMarketTagMediaAbout),
-        MarketTag("ui", R.drawable.inu_tabler_app_window, R.string.InuMarketTagUi, R.string.InuMarketTagUiAbout),
-        MarketTag("calls", R.drawable.inu_tabler_microphone, R.string.InuMarketTagCalls, R.string.InuMarketTagCallsAbout),
-        MarketTag("ai", R.drawable.inu_tabler_sparkles, R.string.InuMarketTagAi, R.string.InuMarketTagAiAbout),
-        MarketTag("tools", R.drawable.inu_tabler_stack_2, R.string.InuMarketTagTools, R.string.InuMarketTagToolsAbout),
-        MarketTag("integrations", R.drawable.inu_tabler_world, R.string.InuMarketTagIntegrations, R.string.InuMarketTagIntegrationsAbout),
-        MarketTag("fun", R.drawable.inu_tabler_mood_smile, R.string.InuMarketTagFun, R.string.InuMarketTagFunAbout),
-        MarketTag("dev", R.drawable.inu_tabler_code, R.string.InuMarketTagDev, R.string.InuMarketTagDevAbout),
+        MarketTag("privacy", R.drawable.entiny_permissions, R.string.InuMarketTagPrivacy, R.string.InuMarketTagPrivacyAbout),
+        MarketTag("chat", R.drawable.entiny_chat_more, R.string.InuMarketTagChat, R.string.InuMarketTagChatAbout),
+        MarketTag("media", R.drawable.entiny_camera, R.string.InuMarketTagMedia, R.string.InuMarketTagMediaAbout),
+        MarketTag("ui", R.drawable.entiny_chat_header, R.string.InuMarketTagUi, R.string.InuMarketTagUiAbout),
+        MarketTag("calls", R.drawable.entiny_phone, R.string.InuMarketTagCalls, R.string.InuMarketTagCallsAbout),
+        MarketTag("ai", R.drawable.entiny_sparkles, R.string.InuMarketTagAi, R.string.InuMarketTagAiAbout),
+        MarketTag("tools", R.drawable.entiny_layers, R.string.InuMarketTagTools, R.string.InuMarketTagToolsAbout),
+        MarketTag("integrations", R.drawable.entiny_globe, R.string.InuMarketTagIntegrations, R.string.InuMarketTagIntegrationsAbout),
+        MarketTag("fun", R.drawable.entiny_smile, R.string.InuMarketTagFun, R.string.InuMarketTagFunAbout),
+        MarketTag("dev", R.drawable.entiny_code, R.string.InuMarketTagDev, R.string.InuMarketTagDevAbout),
     )
 
     const val MAX_PER_PLUGIN = 3

@@ -172,7 +172,7 @@ object AdminLogHelper {
         (activity.avatarContainer.layoutParams as FrameLayout.LayoutParams).rightMargin = AndroidUtilities.dp(48f + 48f + 9f)
         headerItem.addSubItem(
             MENU_TOGGLE_DIFF,
-            R.drawable.inu_tabler_file_diff,
+            R.drawable.entiny_ai_summary,
             LocaleController.getString(R.string.InuEventLogShowDiff),
             false,
         ).apply {

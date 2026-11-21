@@ -107,7 +107,7 @@ object Schemas {
 
     private val DOWNLOAD_DIRECTORIES = listOf("entinyGram", "Telegram")
 
-    val CHATS = schema("chats-messages", R.string.InuChatsAndMessages, R.drawable.msg_discussion) {
+    val CHATS = schema("chats-messages", R.string.InuChatsAndMessages, R.drawable.entiny_message_menu) {
         section(R.string.InuMessageInput) {
             custom(
                 "formatting-popup", R.string.InuFormattingPopup,
@@ -131,8 +131,8 @@ object Schemas {
             toggle(InuConfig.DISABLE_LINK_PREVIEWS, R.string.InuDisableLinkPreviews, R.string.InuDisableLinkPreviewsInfo)
         }
         section(R.string.InuMenus) {
-            link(R.string.InuChatMenuOrder, R.drawable.inu_tabler_arrows_sort, slug = "chat-menu-order") { ChatMenuOrderActivity() }
-            link(R.string.InuMessageMenuOrder, R.drawable.inu_tabler_message_dots, slug = "message-menu-order") { MessageMenuOrderActivity() }
+            link(R.string.InuChatMenuOrder, R.drawable.entiny_options_menu, slug = "chat-menu-order") { ChatMenuOrderActivity() }
+            link(R.string.InuMessageMenuOrder, R.drawable.entiny_message_menu, slug = "message-menu-order") { MessageMenuOrderActivity() }
         }
         section(R.string.InuChatNavigation) {
             toggle(InuConfig.DISABLE_PULL_TO_NEXT, R.string.InuDisablePullToNext)
@@ -257,7 +257,7 @@ object Schemas {
             ) { page -> MapsHelper.syncMapProvider(page.messagesController) }
         }
         section(R.string.InuReactions) {
-            link(R.string.InuPinnedReactions, R.drawable.inu_tabler_mood_smile, slug = "pinned-reactions") { PinnedReactionsActivity() }
+            link(R.string.InuPinnedReactions, R.drawable.entiny_smile, slug = "pinned-reactions") { PinnedReactionsActivity() }
             toggle(InuConfig.INSTANT_MARK_REACTIONS_READ, R.string.InuInstantMarkReactionsRead)
             toggle(InuConfig.HIDE_REACTIONS_DISPLAY, R.string.InuHideReactionsDisplay, R.string.InuHideReactionsDisplayInfo)
             toggle(InuConfig.HIDE_REACTIONS_SET, R.string.InuHideReactionsSet, R.string.InuHideReactionsSetInfo)
@@ -315,7 +315,7 @@ object Schemas {
                 build = { page, id ->
                     UItem.asButton(
                         id,
-                        R.drawable.inu_tabler_user_x,
+                        R.drawable.entiny_user_x,
                         LocaleController.getString(R.string.InuBlockedMessagesExtra),
                         LocaleController.formatString(R.string.InuBlockedMessagesExtraCount, BlockedMessagesHelper.getExtraHidden(page.currentAccount).size),
                     )
@@ -418,9 +418,9 @@ object Schemas {
         }
     }
 
-    val MEDIA = schema("media-calls", R.string.InuMediaAndCalls, R.drawable.msg_calls) {
+    val MEDIA = schema("media-calls", R.string.InuMediaAndCalls, R.drawable.entiny_phone) {
         section {
-            link(R.string.InuCameraSound, R.drawable.msg_camera, slug = "camera-sound-open") { CameraSoundSettingsActivity() }
+            link(R.string.InuCameraSound, R.drawable.entiny_camera_sound, slug = "camera-sound-open") { CameraSoundSettingsActivity() }
         }
         section(R.string.InuMediaVideoGif) {
             toggle(InuConfig.GIF_SEEKBAR, R.string.InuGifSeekbar, R.string.InuGifSeekbarInfo)
@@ -460,7 +460,7 @@ object Schemas {
         }
     }
 
-    val PROFILE = schema("profile-accounts", R.string.InuProfileAndAccounts, R.drawable.msg_contacts) {
+    val PROFILE = schema("profile-accounts", R.string.InuProfileAndAccounts, R.drawable.entiny_profile_accounts) {
         section(R.string.InuUserProfile) {
             toggle(InuConfig.PROFILE_PHOTO_GRADIENT_FADE, R.string.InuProfilePhotoGradientFade)
             toggle(InuConfig.REDUCE_PROFILE_MOTION, R.string.InuReduceProfileMotion)
@@ -490,8 +490,8 @@ object Schemas {
         section(R.string.InuMenus) {
             toggle(InuConfig.ACCENT_ICONS, R.string.InuAccentIcons) { page, _ -> page.rebuildAll() }
             toggle(InuConfig.COMPACT_SETTINGS, R.string.InuCompactSettings) { page, _ -> page.rebuildAll() }
-            link(R.string.InuProfileSettingsRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-settings-rows-order") { ProfileSettingsMenuOrderActivity() }
-            link(R.string.InuProfileInfoRowsOrder, R.drawable.inu_tabler_arrows_sort, slug = "profile-info-rows-order") { ProfileInfoMenuOrderActivity() }
+            link(R.string.InuProfileSettingsRowsOrder, R.drawable.entiny_profile_settings_order, slug = "profile-settings-rows-order") { ProfileSettingsMenuOrderActivity() }
+            link(R.string.InuProfileInfoRowsOrder, R.drawable.entiny_profile_info_order, slug = "profile-info-rows-order") { ProfileInfoMenuOrderActivity() }
         }
         section(R.string.InuAccountsSection) {
             toggle(InuConfig.SETTINGS_SHOW_ACCOUNTS, R.string.InuSettingsShowAccounts)
@@ -503,10 +503,10 @@ object Schemas {
         }
     }
 
-    val PRIVACY = schema("privacy-freedom", R.string.InuPrivacyAndFreedom, R.drawable.inu_tabler_shield_check) {
+    val PRIVACY = schema("privacy-freedom", R.string.InuPrivacyAndFreedom, R.drawable.entiny_privacy) {
         section {
-            link(R.string.InuPerAccountPasscode, R.drawable.inu_tabler_key, visible = { !PasscodeHelper.isSettingsHidden() }) { PasscodeSettingsActivity() }
-            link(R.string.InuParanoiaMode, R.drawable.inu_tabler_spy, visible = { !ParanoiaHelper.isParanoia() }) { ParanoiaActivity() }
+            link(R.string.InuPerAccountPasscode, R.drawable.entiny_account_passcode, visible = { !PasscodeHelper.isSettingsHidden() }) { PasscodeSettingsActivity() }
+            link(R.string.InuParanoiaMode, R.drawable.entiny_paranoia, visible = { !ParanoiaHelper.isParanoia() }) { ParanoiaActivity() }
         }
         section(R.string.PrivacyTitle) {
             toggle(InuConfig.HIDE_MY_PHONE_NUMBER, R.string.InuHideMyPhoneNumber)
@@ -559,12 +559,12 @@ object Schemas {
         }
     }
 
-    val RESTRICTED = schema("restricted-features", R.string.InuRestrictedFeatures, R.drawable.inu_ghost_filled) {
+    val RESTRICTED = schema("restricted-features", R.string.InuRestrictedFeatures, R.drawable.entiny_ghost) {
         section {
-            link(R.string.InuGhostMode, R.drawable.inu_ghost_filled) { GhostModeSettingsActivity() }
-            link(R.string.InuAntiDeletion, R.drawable.inu_tabler_trash_off) { AntiDeletionSettingsActivity() }
-            link(R.string.InuDeviceSpoof, R.drawable.inu_tabler_device_mobile) { DeviceSpoofSettingsActivity() }
-            link(R.string.InuTypingSpoof, R.drawable.inu_tabler_keyboard) { TypingSpoofQuickListSettingsActivity() }
+            link(R.string.InuGhostMode, R.drawable.entiny_ghost) { GhostModeSettingsActivity() }
+            link(R.string.InuAntiDeletion, R.drawable.entiny_saved_messages) { AntiDeletionSettingsActivity() }
+            link(R.string.InuDeviceSpoof, R.drawable.entiny_device_spoof) { DeviceSpoofSettingsActivity() }
+            link(R.string.InuTypingSpoof, R.drawable.entiny_typing_status) { TypingSpoofQuickListSettingsActivity() }
         }
         section(R.string.InuContentProtectionBypass) {
             toggle(InuConfig.SAVE_ANY_STORY, R.string.InuSaveAnyStory, R.string.InuSaveAnyStoryInfo)
@@ -601,7 +601,7 @@ object Schemas {
             toggle(InuConfig.SAVE_LAST_SEEN, R.string.InuSaveLastSeen, R.string.InuSaveLastSeenInfo, experimental = true)
         }
         section(R.string.InuStalkerPresence) {
-            link(R.string.InuPresenceWatchList, R.drawable.inu_tabler_user_search) { PresenceWatchListSettingsActivity() }
+            link(R.string.InuPresenceWatchList, R.drawable.entiny_watch_list) { PresenceWatchListSettingsActivity() }
             toggle(InuConfig.PRESENCE_LOGGER_NOTIFY, R.string.InuPresenceLoggerNotify, R.string.InuPresenceLoggerNotifyInfo)
         }
         section(R.string.InuPremiumUnlock) {
@@ -642,7 +642,7 @@ object Schemas {
         }
     }
 
-    val DIALOGS = schema("dialogs", R.string.InuChatList, R.drawable.msg_viewchats) {
+    val DIALOGS = schema("dialogs", R.string.InuChatList, R.drawable.entiny_chat_list) {
         section(R.string.InuFolders) {
             custom(
                 "folders-preview", R.string.InuFolders,
@@ -722,7 +722,7 @@ object Schemas {
                 build = { _, id ->
                     UItem.asButton(
                         id,
-                        R.drawable.inu_tabler_users_group,
+                        R.drawable.entiny_profile_accounts,
                         LocaleController.getString(R.string.InuCommunityDisplayMode),
                         DialogsSettingsHelper.communityDisplayModeLabel(InuConfig.COMMUNITY_DISPLAY_MODE.value),
                     )
@@ -824,7 +824,7 @@ object Schemas {
             custom(
                 "bottom-tabs-reset", R.string.InuMainTabsCustomizeReset,
                 visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
-                build = { _, id -> UItem.asButton(id, R.drawable.msg_reset, LocaleController.getString(R.string.InuMainTabsCustomizeReset)) },
+                build = { _, id -> UItem.asButton(id, R.drawable.entiny_backup_reset, LocaleController.getString(R.string.InuMainTabsCustomizeReset)) },
                 click = { page, _ -> DialogsSettingsHelper.resetMainTabs(page) },
             )
             toggle(
@@ -839,7 +839,7 @@ object Schemas {
                 build = { _, id ->
                     UItem.asButton(
                         id,
-                        R.drawable.inu_tabler_circle_plus,
+                        R.drawable.entiny_add,
                         LocaleController.getString(R.string.InuDialogsFabMainAction),
                         DialogsFabHelper.Action.fromValue(InuConfig.DIALOGS_FAB_MAIN_ACTION.value).label(),
                     )
@@ -866,16 +866,16 @@ object Schemas {
         }
     }
 
-    val HOME = schema("home", R.string.InuHomeAndChatList, R.drawable.msg_home_solar) {
+    val HOME = schema("home", R.string.InuHomeAndChatList, R.drawable.entiny_home) {
         section {
-            link(R.string.InuChatList, R.drawable.msg_viewchats) { SchemaPageActivity(DIALOGS) }
-            link(R.string.InuPillStack, R.drawable.inu_tabler_stack_2, slug = "pill-stack-open") { PillStackSettingsActivity() }
-            link(R.string.InuBookmarks, R.drawable.msg_fave, slug = "bookmarks-open") { BookmarksManagerActivity() }
-            link(R.string.InuFeed, R.drawable.msg_channel, slug = "feed-open") { FeedExcludedChannelsSettingsActivity() }
+            link(R.string.InuChatList, R.drawable.entiny_chat_list) { SchemaPageActivity(DIALOGS) }
+            link(R.string.InuPillStack, R.drawable.entiny_layers, slug = "pill-stack-open") { PillStackSettingsActivity() }
+            link(R.string.InuBookmarks, R.drawable.entiny_bookmarks, slug = "bookmarks-open") { BookmarksManagerActivity() }
+            link(R.string.InuFeed, R.drawable.entiny_feed, slug = "feed-open") { FeedExcludedChannelsSettingsActivity() }
         }
         section(R.string.InuMenus) {
-            link(R.string.InuSideMenu, R.drawable.inu_tabler_layout_sidebar) { DrawerMenuOrderActivity() }
-            link(R.string.InuDialogsMenuOrder, R.drawable.inu_tabler_list_details, slug = "dialogs-menu-order") { DialogsMenuOrderActivity() }
+            link(R.string.InuSideMenu, R.drawable.entiny_side_menu) { DrawerMenuOrderActivity() }
+            link(R.string.InuDialogsMenuOrder, R.drawable.entiny_compact_view, slug = "dialogs-menu-order") { DialogsMenuOrderActivity() }
         }
         section(R.string.InuRecentChats, R.string.InuRecentChatsStyleInfo) {
             toggle(
@@ -920,7 +920,7 @@ object Schemas {
                 "clear-recent-chats", R.string.InuClearRecentChats,
                 visible = { InuConfig.RECENT_CHATS_ENABLED.value },
                 build = { _, id ->
-                    UItem.asButton(id, R.drawable.msg_delete, LocaleController.getString(R.string.InuClearRecentChats)).also { it.red = true }
+                    UItem.asButton(id, R.drawable.entiny_clear_recent_chats, LocaleController.getString(R.string.InuClearRecentChats)).also { it.red = true }
                 },
                 click = { page, _ ->
                     val ctx = page.parentActivity
@@ -991,11 +991,11 @@ object Schemas {
         }
     }
 
-    val SYSTEM = schema("system", R.string.InuRootSystem, R.drawable.inu_tabler_device_desktop_cog) {
+    val SYSTEM = schema("system", R.string.InuRootSystem, R.drawable.entiny_app_controls) {
         section {
-            link(R.string.InuBackupSettings, R.drawable.inu_tabler_cloud) { BackupSettingsActivity() }
+            link(R.string.InuBackupSettings, R.drawable.entiny_cloud) { BackupSettingsActivity() }
             toggle(InuConfig.SYSTEM_MESSAGE_FONT_SCALE, R.string.InuSystemMessageFontScale, R.string.InuSystemMessageFontScaleInfo)
-            link(R.string.InuCacheManagement, R.drawable.inu_tabler_trash_x, slug = "additional-cache-management") { CacheManagementSettingsActivity() }
+            link(R.string.InuCacheManagement, R.drawable.entiny_trash, slug = "additional-cache-management") { CacheManagementSettingsActivity() }
         }
         section(R.string.InuDeviceSection) {
             toggle(InuConfig.MASK_SERVER_APP_NAME, R.string.InuMaskServerAppName, R.string.InuMaskServerAppNameInfo)
@@ -1046,7 +1046,7 @@ object Schemas {
         }
     }
 
-    val NETWORK = schema("network-notifications", R.string.InuNetworkAndNotifications, R.drawable.inu_tabler_cloud) {
+    val NETWORK = schema("network-notifications", R.string.InuNetworkAndNotifications, R.drawable.entiny_network_notifications) {
         section(R.string.InuPushHeader) {
             custom(
                 "additional-unified-push", R.string.InuUnifiedPush,
@@ -1068,6 +1068,7 @@ object Schemas {
                 build = { _, id ->
                     UItem.asButton(
                         id,
+                        R.drawable.entiny_service_notification,
                         LocaleController.getString(R.string.InuBackgroundServiceHideNotification),
                         LocaleController.getString(R.string.InuBackgroundServiceHideNotificationInfo),
                     )
@@ -1080,6 +1081,7 @@ object Schemas {
                 build = { _, id ->
                     UItem.asButton(
                         id,
+                        R.drawable.entiny_push_distributor,
                         LocaleController.getString(R.string.InuUnifiedPushDistributor),
                         UnifiedPushHelper.currentDistributor()?.let(PushSettingsHelper::appLabel)
                             ?: LocaleController.getString(R.string.InuUnifiedPushNoDistributor),
@@ -1097,7 +1099,7 @@ object Schemas {
                         gw == UnifiedPushHelper.DEFAULT_GATEWAY -> "${LocaleController.getString(R.string.InuUnifiedPushGatewayDefault)} ($gw)"
                         else -> gw
                     }
-                    UItem.asButton(id, LocaleController.getString(R.string.InuUnifiedPushGateway), subtitle)
+                    UItem.asButton(id, R.drawable.entiny_push_gateway, LocaleController.getString(R.string.InuUnifiedPushGateway), subtitle)
                 },
                 click = { page, _ -> PushSettingsHelper.editGateway(page) },
             )
@@ -1116,7 +1118,7 @@ object Schemas {
             custom(
                 "download-directory", R.string.InuDownloadDirectory,
                 build = { _, id ->
-                    UItem.asButton(id, LocaleController.getString(R.string.InuDownloadDirectory), InuConfig.DOWNLOAD_DIRECTORY.value)
+                    UItem.asButton(id, R.drawable.entiny_download_folder, LocaleController.getString(R.string.InuDownloadDirectory), InuConfig.DOWNLOAD_DIRECTORY.value)
                 },
                 click = { page, view ->
                     RadioItemOptions.show(
@@ -1135,45 +1137,42 @@ object Schemas {
         }
     }
 
-    val PROXY = schema("proxy", R.string.InuProxyPage, R.drawable.proxy_on_solar) {
+    val PROXY = schema("proxy", R.string.InuProxyPage, R.drawable.entiny_proxy) {
         notice(R.string.InuProxyDisclaimer)
         section(R.string.InuProxyListHeader) {
-            toggle(InuConfig.PROXY_LIST_TOOLS, R.string.InuProxyListTools, R.string.InuProxyListToolsInfo, experimental = true)
-            toggle(InuConfig.PROXY_LIST_MENU, R.string.InuProxyListMenu, R.string.InuProxyListMenuInfo, experimental = true)
-            toggle(InuConfig.PROXY_CONNECT_CHOICE, R.string.InuProxyConnectChoice, R.string.InuProxyConnectChoiceInfo, experimental = true)
+            toggle(InuConfig.PROXY_LIST_TOOLS, R.string.InuProxyListTools, R.string.InuProxyListToolsInfo)
+            toggle(InuConfig.PROXY_LIST_MENU, R.string.InuProxyListMenu, R.string.InuProxyListMenuInfo)
+            toggle(InuConfig.PROXY_CONNECT_CHOICE, R.string.InuProxyConnectChoice, R.string.InuProxyConnectChoiceInfo)
         }
         section(R.string.InuProxyLinksHeader) {
-            toggle(InuConfig.PROXY_LINK_ALERT, R.string.InuProxyLinkAlert, R.string.InuProxyLinkAlertInfo, experimental = true)
+            toggle(InuConfig.PROXY_LINK_ALERT, R.string.InuProxyLinkAlert, R.string.InuProxyLinkAlertInfo)
         }
         section(R.string.InuProxyRotationHeader) {
             toggle(
                 InuConfig.PROXY_AGGRESSIVE_ROTATION, R.string.InuProxyAggressiveRotation, R.string.InuProxyAggressiveRotationInfo,
-                experimental = true,
                 onChange = { _, _ -> ProxyRotationHelper.onToggle() },
             )
         }
         section(R.string.InuProxyTunnelHeader) {
             toggle(
                 InuConfig.ANTICENSOR_WS_TUNNEL, R.string.InuWsTunnel, R.string.InuWsTunnelInfo,
-                experimental = true,
                 onChange = { _, on -> CensorshipHelper.setTunnelEnabled(on) },
             )
             toggle(
                 InuConfig.LEAK_GUARD, R.string.InuLeakGuard, R.string.InuLeakGuardInfo,
-                experimental = true,
                 onChange = { _, on -> CensorshipHelper.setLeakGuardEnabled(on) },
             )
         }
         section(R.string.InuProxyRelatedHeader) {
             custom(
                 "", R.string.ProxySettings,
-                build = { _, id -> UItem.asButton(id, LocaleController.getString(R.string.ProxySettings)) },
+                build = { _, id -> UItem.asButton(id, R.drawable.entiny_proxy_list, LocaleController.getString(R.string.ProxySettings)) },
                 click = { page, _ -> page.presentFragment(ProxyListActivity()) },
             )
-            link(R.string.InuAutoDisableProxyOnVpn) {
+            link(R.string.InuAutoDisableProxyOnVpn, R.drawable.entiny_proxy_vpn) {
                 SchemaPageActivity(NETWORK).withHighlight(toggleId(NETWORK, InuConfig.AUTO_DISABLE_PROXY_ON_VPN))
             }
-            link(R.string.InuHideProxySponsorChat) {
+            link(R.string.InuHideProxySponsorChat, R.drawable.entiny_proxy_sponsor) {
                 SchemaPageActivity(RESTRICTED).withHighlight(toggleId(RESTRICTED, InuConfig.HIDE_PROXY_SPONSOR_CHAT))
             }
         }
@@ -1184,10 +1183,10 @@ object Schemas {
 
     private val AVATAR_PREVIEW_KEY = InuUtils.generateId()
 
-    val APPEARANCE = schema("appearance", R.string.InuCategoryAppearance, R.drawable.msg_settings_old) {
+    val APPEARANCE = schema("appearance", R.string.InuCategoryAppearance, R.drawable.entiny_appearance) {
         section(R.string.InuTypographyAndIcons) {
-            link(R.string.InuFonts, slug = "font") { FontsSettingsActivity() }
-            link(R.string.InuIconReplacement, R.drawable.inu_tabler_palette, value = { IconPackHelper.getActivePacksSummary() }, slug = "icon-replacement") { IconPacksActivity() }
+            link(R.string.InuFonts, R.drawable.entiny_fonts, slug = "font") { FontsSettingsActivity() }
+            link(R.string.InuIconReplacement, R.drawable.entiny_icon_pack, value = { IconPackHelper.getActivePacksSummary() }, slug = "icon-replacement") { IconPacksActivity() }
             custom(
                 "notification-icon", R.string.InuNotificationIcon,
                 build = { page, id ->
@@ -1196,10 +1195,10 @@ object Schemas {
             )
         }
         section(R.string.InuDesignStyle) {
-            link(R.string.InuIosSettings, R.drawable.msg_newphone, value = { LocaleController.getString(R.string.InuIosSettingsInfo) }) { IosStyleSettingsActivity() }
-            link(R.string.InuMaterial3, R.drawable.inu_tabler_layout_cards, value = { LocaleController.getString(R.string.InuMaterial3SettingsInfo) }) { Material3SettingsActivity() }
-            link(R.string.InuChatHeaderSettings, R.drawable.inu_tabler_app_window, slug = "chat-header-settings") { ChatHeaderSettingsActivity() }
-            link(R.string.InuMessageDesign, R.drawable.msg_palette) { MessageDesignSettingsActivity() }
+            link(R.string.InuIosSettings, R.drawable.entiny_ios_settings, value = { LocaleController.getString(R.string.InuIosSettingsInfo) }) { IosStyleSettingsActivity() }
+            link(R.string.InuMaterial3, R.drawable.entiny_material_three, value = { LocaleController.getString(R.string.InuMaterial3SettingsInfo) }) { Material3SettingsActivity() }
+            link(R.string.InuChatHeaderSettings, R.drawable.entiny_chat_header, slug = "chat-header-settings") { ChatHeaderSettingsActivity() }
+            link(R.string.InuMessageDesign, R.drawable.entiny_message_design) { MessageDesignSettingsActivity() }
             group("center-titles", R.string.InuCenterTitles, onChange = { page, changed ->
                 if (InuConfig.CENTER_TITLE_CHATS in changed && !InuConfig.CENTER_TITLE_CHATS.value) InuConfig.IOS_CHAT_HEADER.value = false
                 if (InuConfig.CENTER_TITLE_PAGES in changed) page.rebuildAll()
@@ -1315,9 +1314,9 @@ object Schemas {
         }
     }
 
-    val ANNOYANCES = schema("annoyances", R.string.InuAnnoyances, R.drawable.inu_tabler_mood_annoyed) {
+    val ANNOYANCES = schema("annoyances", R.string.InuAnnoyances, R.drawable.entiny_hide_clutter) {
         section {
-            link(R.string.InuRegexFilter, R.drawable.inu_tabler_filter) { RegexFilterSettingsActivity() }
+            link(R.string.InuRegexFilter, R.drawable.entiny_regex_filter) { RegexFilterSettingsActivity() }
         }
         section(R.string.InuAnnoyancesChats) {
             group("hide-bottom-bar", R.string.InuHideBottomBar) { id ->

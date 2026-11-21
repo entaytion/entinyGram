@@ -279,7 +279,7 @@ class PluginsActivity : SettingsPageActivity() {
                         features = listOf(
                             PluginConsentSheet.Feature(R.drawable.msg2_devices, R.string.InuPluginsDevMode1Title, R.string.InuPluginsDevMode1Text),
                             PluginConsentSheet.Feature(R.drawable.msg_permissions, R.string.InuPluginsDevMode2Title, R.string.InuPluginsDevMode2Text),
-                            PluginConsentSheet.Feature(R.drawable.inu_tabler_code, R.string.InuPluginsDevMode3Title, R.string.InuPluginsDevMode3Text),
+                            PluginConsentSheet.Feature(R.drawable.entiny_code, R.string.InuPluginsDevMode3Title, R.string.InuPluginsDevMode3Text),
                         ),
                         warningRes = R.string.InuPluginsDevModeSheetWarning,
                         acceptRes = R.string.InuPluginsDevModeSheetAccept,

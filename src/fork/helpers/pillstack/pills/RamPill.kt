@@ -9,7 +9,7 @@ import org.telegram.ui.ActionBar.Theme
 
 @SuppressLint("ViewConstructor")
 class RamPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
-    TelemetryPill(context, resourcesProvider, R.drawable.inu_tabler_cpu) {
+    TelemetryPill(context, resourcesProvider, R.drawable.entiny_microchip) {
 
     override fun getPillId(): Int = PillType.RAM.id
 

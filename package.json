@@ -26,11 +26,11 @@
   },
   "dependencies": {
     "@fuman/utils": "^0.0.19",
-    "@iconify/json": "^2.2.554",
+    "@inugram/plugin-types": "workspace:*",
     "@mtcute/node": "^0.31.0",
+    "entiny-icons": "github:lezneve/entiny-icons#v0.4.0",
     "tinyglobby": "^0.2.16",
-    "zx": "^8.8.4",
-    "@inugram/plugin-types": "workspace:*"
+    "zx": "^8.8.4"
   },
   "devDependencies": {
     "@types/node": "^24.6.1",

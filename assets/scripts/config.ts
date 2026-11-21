@@ -2,7 +2,6 @@ import type { SvgToDrawableOptions } from './svg-to-vector.js'
 import { readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { locate } from '@iconify/json'
 
 export const upstreamUrl = 'https://github.com/DrKLO/Telegram'
 export const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -143,6 +142,7 @@ export const forkSyncFiles: ForkSyncFile[] = [
 
 export interface IconSet {
   options?: SvgToDrawableOptions
+  filePrefix?: string
   icons: string[]
 }
 
@@ -152,112 +152,9 @@ export interface IconPack {
   height?: number
 }
 
-export const loadIconPack = (prefix: string): IconPack => JSON.parse(readFileSync(locate(prefix), 'utf8'))
+export const loadIconPack = (_prefix: string): IconPack => JSON.parse(readFileSync(join(rootDir, 'node_modules/entiny-icons/icons.json'), 'utf8'))
 
 // every glyph here becomes a vector drawable `inu_<set>_<name>` when `bun run setup` runs
 export const ICON_SETS: Record<string, IconSet> = {
-  'tabler': {
-    options: { overrideStrokeWidth: 1.67, paddingInset: 1 }, // to match Telegram
-    icons: [
-      // text editing
-      'bold',
-      'italic',
-      'underline',
-      'strikethrough',
-      'quote',
-      'code',
-      'link',
-      'background',
-      'clear-formatting',
-      'select-all',
-      'scissors',
-      'copy',
-      'clipboard',
-      'text-wrap',
-      'text-wrap-disabled',
-      // people and chat
-      'message-dots',
-      'mood-smile',
-      'mood-annoyed',
-      'users-group',
-      'user-search',
-      'user-scan',
-      'user-x',
-      'id',
-      'spy',
-      'heart',
-      'pin',
-      // privacy and security
-      'lock-password',
-      'key',
-      'shield-check',
-      'eye',
-      'eye-off',
-      'trash',
-      'trash-x',
-      'trash-off',
-      // files and media
-      'cloud',
-      'cloud-download',
-      'cloud-x',
-      'file-diff',
-      'file-search',
-      'photo-x',
-      'microphone',
-      'camera-bolt',
-      // layout and navigation
-      'app-window',
-      'layout-sidebar',
-      'layout-align-center',
-      'list-details',
-      'arrows-sort',
-      'arrow-bar-to-right',
-      'dots-vertical',
-      'focus-2',
-      'marquee-2',
-      'filter',
-      'adjustments-horizontal',
-      'layout-cards',
-      'stack-2',
-      'dashboard',
-      'radar',
-      // system
-      'cpu',
-      'server',
-      'terminal-2',
-      'keyboard',
-      'device-desktop-cog',
-      'device-mobile',
-      'battery-charging',
-      'clock',
-      'clock-hour-4',
-      'sun',
-      'palette',
-      'language',
-      'language-off',
-      'world',
-      'sparkles',
-      'info-circle',
-      'info-square',
-      'circle',
-      'circle-plus',
-      'alert-triangle-filled',
-      // money
-      'coins',
-      'send',
-      'credit-card',
-      'pig-money',
-      'diamond',
-      'currency-bitcoin',
-      'currency-ethereum',
-      'currency-solana',
-      // brands
-      'brand-github',
-      'brand-telegram',
-    ],
-  },
-  'bi': { icons: ['currency-dollar', 'currency-euro', 'openai'] },
-  'bxl': { icons: ['groq-ai'] },
-  'simple-icons': { icons: ['bitcoin', 'ethereum', 'tether', 'bnbchain', 'ton', 'cloudflare', 'googlegemini', 'openrouter'] },
-  'cryptocurrency': { icons: ['trx'] },
+  'entiny': { filePrefix: 'entiny', icons: Object.keys(loadIconPack('entiny').icons) },
 }

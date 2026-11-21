@@ -47,7 +47,7 @@ class WarningBanner(
             gravity = Gravity.CENTER_VERTICAL
         }
         val icon = ImageView(context).apply {
-            setImageResource(R.drawable.inu_tabler_alert_triangle_filled)
+            setImageResource(R.drawable.entiny_warning)
             setColorFilter(accent)
         }
         titleRow.addView(icon, LayoutHelper.createLinear(20, 20))

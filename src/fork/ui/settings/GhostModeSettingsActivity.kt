@@ -190,7 +190,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "ghost-mode",
             titleRes = R.string.InuGhostMode,
-            iconRes = R.drawable.inu_ghost_filled,
+            iconRes = R.drawable.entiny_ghost,
             factory = ::GhostModeSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("ghost-mode-master", R.string.InuGhostModeMaster, TOGGLE_MASTER),

@@ -68,7 +68,7 @@ class AiSummarySettingsActivity : AiTaskSettingsActivity(
         val PAGE = SearchRegistry.Page(
             slug = "ai-summary-page",
             titleRes = R.string.InuAiSummary,
-            iconRes = R.drawable.msg_text_outlined,
+            iconRes = R.drawable.entiny_ai_summary,
             factory = ::AiSummarySettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("ai-summary", R.string.InuAiSummary, TOGGLE_ENABLED),

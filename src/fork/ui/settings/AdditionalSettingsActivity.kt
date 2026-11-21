@@ -54,7 +54,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         items.add(
             UItem.asButton(
                 BUTTON_CHANNEL_LINK,
-                R.drawable.inu_tabler_brand_telegram,
+                R.drawable.entiny_telegram,
                 LocaleController.getString(R.string.InuAboutChannel),
                 "@entinyGram"
             )
@@ -62,12 +62,12 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         items.add(
             UItem.asButton(
                 BUTTON_GITHUB,
-                R.drawable.inu_tabler_brand_github,
+                R.drawable.entiny_github,
                 LocaleController.getString(R.string.InuAboutGitHub),
                 "Entaytion/entinyGram"
             )
         )
-        items.add(mkTwoLineEntry(BUTTON_DONATE, R.drawable.inu_tabler_heart, LocaleController.getString(R.string.InuDonateRow), LocaleController.getString(R.string.InuDonateRowInfo), chevron = true))
+        items.add(mkTwoLineEntry(BUTTON_DONATE, R.drawable.entiny_support, LocaleController.getString(R.string.InuDonateRow), LocaleController.getString(R.string.InuDonateRowInfo), chevron = true))
         items.add(UItem.asShadow(null))
         items.add(
             mkTwoLineCheckItem(
@@ -121,7 +121,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.inu_tabler_info_square, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
+        items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.entiny_about, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
         items.add(UItem.asShadow(null))
     }
 
@@ -291,7 +291,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         logsSizeText = size
         row.addView(size, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        row.addView(buildLogsIconButton(ctx, R.drawable.msg_clear, R.string.InuLogsClear) {
+        row.addView(buildLogsIconButton(ctx, R.drawable.entiny_cache_clear, R.string.InuLogsClear) {
             FileLog.cleanupLogs()
             refreshLogsSize()
             BulletinFactory.of(this).createSimpleBulletin(
@@ -299,7 +299,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 LocaleController.getString(R.string.InuLogsCleared),
             ).show()
         })
-        row.addView(buildLogsIconButton(ctx, R.drawable.msg_shareout, R.string.InuLogsShare) { anchor ->
+        row.addView(buildLogsIconButton(ctx, R.drawable.entiny_share_logs, R.string.InuLogsShare) { anchor ->
             showShareMenu(anchor)
         })
         logsRow = row
@@ -377,13 +377,13 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         heapUsageText = usage
         row.addView(usage, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        row.addView(buildLogsIconButton(ctx, R.drawable.msg_calls_minimize, R.string.InuLogsRunGc) {
+        row.addView(buildLogsIconButton(ctx, R.drawable.entiny_cache_temp, R.string.InuLogsRunGc) {
             val rt = Runtime.getRuntime()
             rt.gc()
             BulletinFactory.of(this).createErrorBulletin("Runtime GC finished").show()
             refreshHeapUsage()
         })
-        row.addView(buildLogsIconButton(ctx, R.drawable.msg_download, R.string.InuLogsMakeHeapDump) {
+        row.addView(buildLogsIconButton(ctx, R.drawable.entiny_backup_export, R.string.InuLogsMakeHeapDump) {
             confirmAndMakeHeapDump()
         })
         heapRow = row
@@ -468,7 +468,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             slug = "about",
             aliases = listOf("additional"),
             titleRes = R.string.InuAbout,
-            iconRes = R.drawable.inu_tabler_info_circle,
+            iconRes = R.drawable.entiny_about,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("channel", R.string.InuAboutChannel, BUTTON_CHANNEL_LINK),

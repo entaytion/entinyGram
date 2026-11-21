@@ -10,12 +10,12 @@ import org.telegram.ui.ActionBar.BaseFragment
 object AiFeatureSupport {
 
     fun iconFor(kind: Int): Int = when (kind) {
-        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> R.drawable.inu_simple_icons_googlegemini
-        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> R.drawable.inu_bi_openai
-        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> R.drawable.inu_bxl_groq_ai
-        InuConfig.AI_PROVIDER_OPENROUTER -> R.drawable.inu_simple_icons_openrouter
-        InuConfig.TRANSCRIBE_PROVIDER_CF -> R.drawable.inu_simple_icons_cloudflare
-        else -> R.drawable.inu_tabler_cpu
+        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> R.drawable.entiny_gemini
+        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> R.drawable.entiny_openai
+        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> R.drawable.entiny_groq_ai
+        InuConfig.AI_PROVIDER_OPENROUTER -> R.drawable.entiny_openrouter
+        InuConfig.TRANSCRIBE_PROVIDER_CF -> R.drawable.entiny_cloudflare
+        else -> R.drawable.entiny_microchip
     }
 
     fun providerLabel(providerId: String, voice: Boolean): String {

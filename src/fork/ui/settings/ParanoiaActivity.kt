@@ -34,7 +34,7 @@ class ParanoiaActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 SET_CODE,
-                R.drawable.inu_tabler_lock_password,
+                R.drawable.entiny_exit_code,
                 LocaleController.getString(
                     if (ParanoiaHelper.hasExitCode()) R.string.InuParanoiaExitCodeChange
                     else R.string.InuParanoiaExitCodeSet
@@ -52,7 +52,7 @@ class ParanoiaActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 SELECT_CHATS,
-                R.drawable.inu_tabler_eye_off,
+                R.drawable.entiny_hidden_chats,
                 LocaleController.getString(
                     if (whitelist) R.string.InuParanoiaSelectWhitelist
                     else R.string.InuParanoiaSelect
@@ -232,7 +232,7 @@ class ParanoiaActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "paranoia",
             titleRes = R.string.InuParanoiaMode,
-            iconRes = R.drawable.inu_tabler_spy,
+            iconRes = R.drawable.entiny_paranoia,
             factory = ::ParanoiaActivity,
             entries = listOf(
                 SearchRegistry.Entry("paranoia-whitelist", R.string.InuParanoiaWhitelist, TOGGLE_WHITELIST),

@@ -33,7 +33,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_ROUND_DEFAULT_CAMERA,
-                R.drawable.inu_tabler_camera_bolt,
+                R.drawable.entiny_camera,
                 LocaleController.getString(R.string.InuRoundDefaultCamera),
                 when (InuConfig.ROUND_DEFAULT_CAMERA.value) {
                     2 -> LocaleController.getString(R.string.InuRoundCameraRear)
@@ -422,7 +422,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "camera-sound",
             titleRes = R.string.InuCameraSound,
-            iconRes = R.drawable.inu_tabler_camera_bolt,
+            iconRes = R.drawable.entiny_camera,
             factory = ::CameraSoundSettingsActivity,
             aliases = listOf("camera", "round video", "voice"),
             entries = listOf(

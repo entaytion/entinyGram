@@ -143,14 +143,14 @@ class BackupSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_RESTORE,
-                R.drawable.inu_tabler_cloud_download,
+                R.drawable.entiny_backup_restore,
                 LocaleController.getString(R.string.InuCloudRestore),
             ).setEnabled(opsEnabled)
         )
         items.add(
             UItem.asButton(
                 BUTTON_DELETE,
-                R.drawable.inu_tabler_cloud_x,
+                R.drawable.entiny_cloud_off,
                 LocaleController.getString(R.string.InuCloudDelete),
             ).red().setEnabled(opsEnabled)
         )
@@ -456,7 +456,7 @@ class BackupSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "backup",
             titleRes = R.string.InuBackupSettings,
-            iconRes = R.drawable.inu_tabler_cloud,
+            iconRes = R.drawable.entiny_cloud,
             factory = ::BackupSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),

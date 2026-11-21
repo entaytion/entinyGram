@@ -37,7 +37,7 @@ class AiRoleEditActivity(roleId: String?) : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         if (saved) {
-            items.add(UItem.asButton(BUTTON_DELETE, R.drawable.inu_tabler_trash, LocaleController.getString(R.string.Delete)).red())
+            items.add(UItem.asButton(BUTTON_DELETE, R.drawable.entiny_trash, LocaleController.getString(R.string.Delete)).red())
             items.add(UItem.asShadow(null))
         }
     }

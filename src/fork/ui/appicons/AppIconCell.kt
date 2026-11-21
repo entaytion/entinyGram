@@ -49,7 +49,7 @@ class AppIconCell(context: Context, private val resourcesProvider: Theme.Resourc
         previewContainer.setWillNotDraw(false)
         previewContainer.clipChildren = false
         previewContainer.addView(preview, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.NO_GRAVITY))
-        lock.setImageResource(R.drawable.inu_tabler_lock_password)
+        lock.setImageResource(R.drawable.entiny_app_passcode)
         lock.setColorFilter(0xFFFFFFFF.toInt())
         lock.setPadding(AndroidUtilities.dp(4f), AndroidUtilities.dp(4f), AndroidUtilities.dp(4f), AndroidUtilities.dp(4f))
         lock.background = Theme.createCircleDrawable(AndroidUtilities.dp(22f), 0xCC000000.toInt())

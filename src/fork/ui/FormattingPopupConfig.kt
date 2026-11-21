@@ -8,21 +8,21 @@ import org.telegram.messenger.R
 
 class FormattingPopupConfig(key: String) : InuConfig.Item<List<FormattingPopupConfig.Entry>>(key, DEFAULT) {
     enum class Item(val key: String, val labelRes: Int, val iconRes: Int) {
-        SELECT_ALL("select_all", R.string.SelectAll, R.drawable.inu_tabler_select_all),
-        COPY("copy", R.string.Copy, R.drawable.inu_tabler_copy),
-        CUT("cut", R.string.InuCut, R.drawable.inu_tabler_scissors),
-        PASTE("paste", R.string.Paste, R.drawable.inu_tabler_clipboard),
+        SELECT_ALL("select_all", R.string.SelectAll, R.drawable.entiny_select_all),
+        COPY("copy", R.string.Copy, R.drawable.entiny_copy),
+        CUT("cut", R.string.InuCut, R.drawable.entiny_scissors),
+        PASTE("paste", R.string.Paste, R.drawable.entiny_clipboard),
         DIVIDER("divider", R.string.InuFormattingPopupDivider, 0),
-        BOLD("bold", R.string.Bold, R.drawable.inu_tabler_bold),
-        ITALIC("italic", R.string.Italic, R.drawable.inu_tabler_italic),
-        UNDERLINE("underline", R.string.Underline, R.drawable.inu_tabler_underline),
-        STRIKE("strike", R.string.Strike, R.drawable.inu_tabler_strikethrough),
-        MONO("mono", R.string.Mono, R.drawable.inu_tabler_code),
-        CODE_BLOCK("code_block", R.string.InuCodeBlock, R.drawable.inu_tabler_terminal_2),
-        SPOILER("spoiler", R.string.Spoiler, R.drawable.inu_tabler_background),
-        QUOTE("quote", R.string.Quote, R.drawable.inu_tabler_quote),
-        LINK("link", R.string.CreateLink, R.drawable.inu_tabler_link),
-        CLEAR("clear", R.string.Regular, R.drawable.inu_tabler_clear_formatting);
+        BOLD("bold", R.string.Bold, R.drawable.entiny_bold),
+        ITALIC("italic", R.string.Italic, R.drawable.entiny_italic),
+        UNDERLINE("underline", R.string.Underline, R.drawable.entiny_underline),
+        STRIKE("strike", R.string.Strike, R.drawable.entiny_strikethrough),
+        MONO("mono", R.string.Mono, R.drawable.entiny_code),
+        CODE_BLOCK("code_block", R.string.InuCodeBlock, R.drawable.entiny_terminal),
+        SPOILER("spoiler", R.string.Spoiler, R.drawable.entiny_eye_off),
+        QUOTE("quote", R.string.Quote, R.drawable.entiny_quote),
+        LINK("link", R.string.CreateLink, R.drawable.entiny_link),
+        CLEAR("clear", R.string.Regular, R.drawable.entiny_remove_formatting);
     }
 
     data class Entry(val item: Item, val enabled: Boolean)

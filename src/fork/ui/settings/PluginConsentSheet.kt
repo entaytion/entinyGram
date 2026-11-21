@@ -52,7 +52,7 @@ object PluginConsentSheet {
         val dangerFill = Theme.multAlpha(danger, if (Theme.isCurrentThemeDark()) 0.22f else 0.14f)
 
         val icon = ImageView(context).apply {
-            setImageResource(R.drawable.inu_tabler_alert_triangle_filled)
+            setImageResource(R.drawable.entiny_warning)
             colorFilter = PorterDuffColorFilter(danger, PorterDuff.Mode.SRC_IN)
             scaleType = ImageView.ScaleType.FIT_CENTER
         }

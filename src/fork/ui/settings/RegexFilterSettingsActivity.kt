@@ -88,14 +88,14 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
         items.add(
             UItem.asButton(
                 BUTTON_ADD_FILTER,
-                R.drawable.inu_tabler_circle_plus,
+                R.drawable.entiny_add_filter,
                 LocaleController.getString(R.string.InuRegexFilterAdd),
             )
         )
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asButton(BUTTON_EXPORT_FILTERS, R.drawable.inu_tabler_clipboard, LocaleController.getString(R.string.InuRegexFilterExport)))
-        items.add(UItem.asButton(BUTTON_IMPORT_FILTERS, R.drawable.inu_tabler_file_diff, LocaleController.getString(R.string.InuRegexFilterImport)))
+        items.add(UItem.asButton(BUTTON_EXPORT_FILTERS, R.drawable.entiny_export_filters, LocaleController.getString(R.string.InuRegexFilterExport)))
+        items.add(UItem.asButton(BUTTON_IMPORT_FILTERS, R.drawable.entiny_import_filters, LocaleController.getString(R.string.InuRegexFilterImport)))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuRegexFilterHint)))
     }
 
@@ -224,7 +224,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.N
         val PAGE = SearchRegistry.Page(
             slug = "regex-filter",
             titleRes = R.string.InuRegexFilter,
-            iconRes = R.drawable.inu_tabler_filter,
+            iconRes = R.drawable.entiny_regex_filter,
             factory = ::RegexFilterSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("regex-filter-enabled", R.string.InuRegexFilterEnabled, TOGGLE_REGEX_FILTER_ENABLED),

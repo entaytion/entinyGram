@@ -6,9 +6,9 @@
       "name": "entinygram",
       "dependencies": {
         "@fuman/utils": "^0.0.19",
-        "@iconify/json": "^2.2.554",
         "@inugram/plugin-types": "workspace:*",
         "@mtcute/node": "^0.31.0",
+        "entiny-icons": "github:lezneve/entiny-icons#v0.4.0",
         "tinyglobby": "^0.2.16",
         "zx": "^8.8.4",
       },
@@ -126,10 +126,6 @@
     "@fuman/node": ["@fuman/node@0.0.21", "", { "dependencies": { "@fuman/io": "^0.0.21", "@fuman/net": "^0.0.21", "@fuman/utils": "^0.0.21" }, "peerDependencies": { "ws": "^8.18.1" }, "optionalPeers": ["ws"] }, "sha512-5WS/REgANmPKoqWNAEkEeiw6DlU/7spCOGJ1s+p1eMetkwHlJFA5ZEeoIR9outisBD54EUZxAbAkWIdSbVXK5Q=="],
 
     "@fuman/utils": ["@fuman/utils@0.0.19", "", {}, "sha512-4qVrZ9AjKYztLJsNr1Tp7kL48b22dvVLN1iVW+Me8ZSQ0ILN0qknoxjsczVPReF7+GDWgknNxR2l6ggrA4SZyw=="],
-
-    "@iconify/json": ["@iconify/json@2.2.554", "", { "dependencies": { "@iconify/types": "*", "pathe": "^2.0.3" } }, "sha512-HAiIOhC5LT1zCT3OXASrkISRGaWAECply3G8vFn6IycY3mUIDLlUXOI4JU7CBzQpr++yuM53aUyz9xjs/1WjiA=="],
-
-    "@iconify/types": ["@iconify/types@2.0.0", "", {}, "sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg=="],
 
     "@inugram/cli": ["@inugram/cli@workspace:sdk/cli"],
 
@@ -326,6 +322,8 @@
     "domutils": ["domutils@3.2.2", "", { "dependencies": { "dom-serializer": "2.0.0", "domelementtype": "2.3.0", "domhandler": "5.0.3" } }, "sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw=="],
 
     "end-of-stream": ["end-of-stream@1.4.5", "", { "dependencies": { "once": "1.4.0" } }, "sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg=="],
+
+    "entiny-icons": ["entiny-icons@github:lezneve/entiny-icons#6c2e005", {}, "lezneve-entiny-icons-6c2e005", "sha512-iEDfwE1TDnNSoO+cRrMLLF7l5UZlB6IHJra/0iJ119wtxVMR6K7f8pYKpzO/djcwgmQNroDYRg1FH/ufeY034A=="],
 
     "entities": ["entities@7.0.1", "", {}, "sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA=="],
 

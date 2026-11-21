@@ -208,7 +208,7 @@ object ChatActionsHelper {
             )
         }
         headerItem.lazilyAddSubItem(
-            ChatMenuConfig.Item.HIDE_TITLE.id, R.drawable.inu_tabler_eye_off,
+            ChatMenuConfig.Item.HIDE_TITLE.id, R.drawable.entiny_eye_off,
             LocaleController.getString(R.string.InuHideTitle),
         )
         if (ChatObject.isBoostSupported(activity.currentChat) && ChatObject.hasAdminRights(activity.currentChat)) {

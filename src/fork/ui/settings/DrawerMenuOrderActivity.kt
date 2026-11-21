@@ -70,7 +70,7 @@ class DrawerMenuOrderActivity : MenuOrderActivity<DrawerMenuConfig.Item>() {
         val PAGE = SearchRegistry.Page(
             slug = "drawer-menu-order",
             titleRes = R.string.InuDrawerMenuOrder,
-            iconRes = R.drawable.inu_tabler_layout_sidebar,
+            iconRes = R.drawable.entiny_side_menu,
             factory = ::DrawerMenuOrderActivity,
             entries = listOf(
                 // entiny: legacy slug of the former standalone drawer toggle

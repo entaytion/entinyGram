@@ -115,7 +115,7 @@ internal class MarketPluginActivity(
         }
         val tags = entry.tags.mapNotNull { MarketTags.get(it) }
         if (tags.isNotEmpty()) {
-            items.add(mkTwoLineEntry(TAGS, R.drawable.inu_tabler_stack_2, str(R.string.InuMarketTags), tags.joinToString(" · ") { str(it.nameRes) }))
+            items.add(mkTwoLineEntry(TAGS, R.drawable.entiny_layers, str(R.string.InuMarketTags), tags.joinToString(" · ") { str(it.nameRes) }))
         }
         val source = if (entry.official) str(R.string.InuMarketSourceOfficial) else entry.post?.repo?.let { "${it.title} (@${it.username})" }.orEmpty()
         if (source.isNotEmpty()) items.add(mkTwoLineEntry(SOURCE, R.drawable.msg_channel, str(R.string.InuPluginRepoSource), source))

@@ -208,7 +208,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "chat-header",
             titleRes = R.string.InuChatHeaderSettings,
-            iconRes = R.drawable.inu_tabler_app_window,
+            iconRes = R.drawable.entiny_chat_header,
             factory = ::ChatHeaderSettingsActivity,
             entries = listOf(
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving

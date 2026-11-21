@@ -165,7 +165,7 @@ class PluginInfoActivity(private val plugin: Plugin) : SettingsPageActivity() {
         if (assets.isNotEmpty()) {
             items.add(UItem.asButton(BUTTON_ASSETS, R.drawable.msg_media, LocaleController.getString(R.string.InuPluginAssets), PluginAssetsSheet.describeAssets(assets)))
         }
-        items.add(UItem.asButton(BUTTON_SOURCE, R.drawable.inu_tabler_code, LocaleController.getString(R.string.InuPluginsViewSource)))
+        items.add(UItem.asButton(BUTTON_SOURCE, R.drawable.entiny_code, LocaleController.getString(R.string.InuPluginsViewSource)))
         items.add(UItem.asButton(BUTTON_SHARE, R.drawable.msg_share, LocaleController.getString(R.string.ShareFile)))
         // a reload only re-reads the file for a plugin that is going to run it
         if (plugin.enabled) {
@@ -504,7 +504,7 @@ internal class GrantRowView(context: Context) : LinearLayout(context) {
     private fun warn(text: CharSequence, color: Int): CharSequence {
         val sb = SpannableStringBuilder("\u200b  ")
         sb.setSpan(
-            ColoredImageSpan(R.drawable.inu_tabler_alert_triangle_filled, ColoredImageSpan.ALIGN_CENTER).apply {
+            ColoredImageSpan(R.drawable.entiny_warning, ColoredImageSpan.ALIGN_CENTER).apply {
                 setSize(AndroidUtilities.dp(13f))
                 setOverrideColor(color)
             },

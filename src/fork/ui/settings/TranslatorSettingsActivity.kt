@@ -56,7 +56,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_TARGET_LANG,
-                R.drawable.inu_tabler_language,
+                R.drawable.entiny_translation_target,
                 LocaleController.getString(R.string.InuTranslationTarget),
                 targetLangLabel(),
             )
@@ -64,7 +64,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_OUTGOING_LANG,
-                R.drawable.inu_tabler_language,
+                R.drawable.entiny_translation_outgoing,
                 LocaleController.getString(R.string.InuTranslationTargetOutgoing),
                 outgoingLangLabel(),
             )
@@ -72,7 +72,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_DO_NOT_TRANSLATE,
-                R.drawable.inu_tabler_language_off,
+                R.drawable.entiny_translation_exclude,
                 LocaleController.getString(R.string.DoNotTranslate),
                 doNotTranslateLabel(),
             )
@@ -94,7 +94,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_PROVIDER,
-                R.drawable.inu_tabler_world,
+                R.drawable.entiny_translation_provider,
                 LocaleController.getString(R.string.InuTranslateProvider),
                 EntinyTranslate.currentProviderName()
             )
@@ -211,7 +211,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "translator",
             titleRes = R.string.InuTranslator,
-            iconRes = R.drawable.msg_translate,
+            iconRes = R.drawable.entiny_translator,
             factory = ::TranslatorSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("translate-provider", R.string.InuTranslateProvider, BUTTON_PROVIDER),

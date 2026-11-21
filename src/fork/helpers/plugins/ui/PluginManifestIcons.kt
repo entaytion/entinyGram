@@ -29,7 +29,7 @@ object PluginManifestIcons {
     private const val FILTER = "56_56"
 
     fun createPlaceholder(context: Context): Drawable? =
-        ResourcesCompat.getDrawable(context.resources, R.drawable.inu_tabler_code, null)?.mutate()?.apply {
+        ResourcesCompat.getDrawable(context.resources, R.drawable.entiny_code, null)?.mutate()?.apply {
             colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.SRC_IN)
         }
 

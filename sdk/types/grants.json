@@ -238,7 +238,7 @@
       "tier": "dangerous",
       "title": "InuPluginGrantUnsafeJvm",
       "info": "InuPluginGrantUnsafeJvmInfo",
-      "icon": "inu_tabler_code",
+      "icon": "entiny_code",
       "description": "reach the jvm directly, unsandboxed"
     },
     {

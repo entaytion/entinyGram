@@ -328,7 +328,7 @@ object ChatHelper {
 
     @JvmStatic
     fun deletedMarkIconRes(): Int = when (InuConfig.DELETED_MARK_STYLE.value) {
-        InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE -> R.drawable.inu_tabler_trash
+        InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE -> R.drawable.entiny_trash
         InuConfig.DeletedMarkStyleItem.CROSS -> R.drawable.ic_deleted_mark_cross
         InuConfig.DeletedMarkStyleItem.EYE_CROSSED -> R.drawable.ic_deleted_mark_eye_off
         else -> R.drawable.ic_deleted_mark_trash
@@ -580,7 +580,7 @@ object ChatHelper {
         if (isMenuItemEnabled(MessageMenuConfig.Item.HIDE_MESSAGE)) {
             items.add(LocaleController.getString(R.string.InuHideMessage))
             options.add(OPTION_HIDE_MESSAGE)
-            icons.add(R.drawable.inu_tabler_eye_off)
+            icons.add(R.drawable.entiny_eye_off)
         }
 
         // entiny: with Forward Pro replacing Forward, its sheet toggles cover both extra entries

@@ -87,6 +87,9 @@ export interface SvgShape {
   strokeWidth?: string
   strokeLineCap?: string
   strokeLineJoin?: string
+  fillRule?: string
+  fillOpacity?: string
+  strokeOpacity?: string
 }
 
 export function parseSvgBody(body: string): SvgShape[] {
@@ -119,6 +122,9 @@ export function parseSvgBody(body: string): SvgShape[] {
       strokeWidth: merged['stroke-width'],
       strokeLineCap: merged['stroke-linecap'],
       strokeLineJoin: merged['stroke-linejoin'],
+      fillRule: merged['fill-rule'],
+      fillOpacity: merged['fill-opacity'] ?? merged.opacity,
+      strokeOpacity: merged['stroke-opacity'] ?? merged.opacity,
     })
   }
   return shapes
@@ -180,9 +186,12 @@ export function svgBodyToVectorDrawable(body: string, width: number, height: num
     const fill = resolveFillColor(shape.fill)
     const stroke = resolveStrokeColor(shape.stroke)
     if (fill) attrs.push(`android:fillColor="${fill}"`)
+    if (fill && shape.fillRule === 'evenodd') attrs.push('android:fillType="evenOdd"')
+    if (fill && shape.fillOpacity) attrs.push(`android:fillAlpha="${shape.fillOpacity}"`)
     if (stroke) {
       const baseStroke = options?.overrideStrokeWidth ?? Number(shape.strokeWidth ?? 1)
       attrs.push(`android:strokeColor="${stroke}"`)
+      if (shape.strokeOpacity) attrs.push(`android:strokeAlpha="${shape.strokeOpacity}"`)
       attrs.push(`android:strokeWidth="${fmtNum(baseStroke * strokeScale)}"`)
       if (shape.strokeLineCap) attrs.push(`android:strokeLineCap="${shape.strokeLineCap}"`)
       if (shape.strokeLineJoin) attrs.push(`android:strokeLineJoin="${shape.strokeLineJoin}"`)

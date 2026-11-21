@@ -27,7 +27,7 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
                 "🤖🏝️",
             )
         )
-        items.add(UItem.asButton(BUTTON_ADD, R.drawable.msg_add, LocaleController.getString(R.string.InuAiProviderAdd)))
+        items.add(UItem.asButton(BUTTON_ADD, R.drawable.entiny_add_provider, LocaleController.getString(R.string.InuAiProviderAdd)))
         items.add(UItem.asShadow(null))
 
         val providers = AiProviderStore.all()

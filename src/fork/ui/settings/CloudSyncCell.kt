@@ -37,7 +37,7 @@ class CloudSyncCell(
 
     private val badgeView = ImageView(context).apply {
         scaleType = ImageView.ScaleType.CENTER_INSIDE
-        setImageResource(R.drawable.inu_tabler_cloud)
+        setImageResource(R.drawable.entiny_cloud)
         setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider))
         background = Theme.createCircleDrawable(
             AndroidUtilities.dp(20f),
