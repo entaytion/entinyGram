@@ -30,6 +30,10 @@ object KeptMedia {
             prepare()
             return true
         }
+        return matchesSnapshot(file)
+    }
+
+    private fun matchesSnapshot(file: File): Boolean {
         val name = file.name
         val path = file.absolutePath
         for (snapshot in snapshots) {
@@ -38,9 +42,31 @@ object KeptMedia {
         return false
     }
 
-    // entiny: for listings, an unknown index hides nothing; deletion still goes through isProtected
     @JvmStatic
-    fun isKnownProtected(file: File?): Boolean = file != null && enabled() && isReady() && isProtected(file)
+    fun isKnownProtected(file: File?): Boolean = file != null && enabled() && matchesSnapshot(file)
+
+    @JvmStatic
+    fun hasProtectedFiles(): Boolean =
+        enabled() && snapshots.any { it != null && (it.names.isNotEmpty() || it.paths.isNotEmpty()) }
+
+    @JvmStatic
+    fun runWhenPrepared(action: Runnable) {
+        fun loadNext(start: Int) {
+            if (enabled()) {
+                for (account in start until UserConfig.MAX_ACCOUNT_COUNT) {
+                    if (snapshots[account] != null || !UserConfig.getInstance(account).isClientActivated) continue
+                    val storage = MessagesStorage.getInstance(account)
+                    storage.storageQueue.postRunnable {
+                        storage.database?.let { ensureLoaded(account, it) }
+                        loadNext(account + 1)
+                    }
+                    return
+                }
+            }
+            action.run()
+        }
+        loadNext(0)
+    }
 
     // entiny: the size limit counts only files the cleaner may delete
     @JvmStatic

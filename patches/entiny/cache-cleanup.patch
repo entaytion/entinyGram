@@ -1,0 +1,394 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 21 Nov 2026 21:29:49 +0200
+Subject: Fix clearable cache accounting and report bytes actually removed.
+
+---
+ .../java/org/telegram/messenger/FileLog.java  |  48 ++++---
+ .../org/telegram/ui/CacheControlActivity.java | 127 +++++++++---------
+ 2 files changed, 95 insertions(+), 80 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
+@@ -617,30 +617,44 @@ public class FileLog {
+     }
+ 
+     public static void cleanupLogs() {
++        inu_cleanupLogs();
++    }
++
++    public static long inu_cleanupLogs() {
+         ensureInitied();
+-        File dir = AndroidUtilities.getLogsDir();
+-        if (dir == null) {
+-            return;
++        long clearedSize = 0;
++        for (File file : inu_getCleanableLogs()) {
++            long size = file.length();
++            if (file.delete()) {
++                clearedSize += size;
++            }
+         }
+-        File[] files = dir.listFiles();
++        return clearedSize;
++    }
++
++    public static long inu_getCleanableLogsSize() {
++        long size = 0;
++        for (File file : inu_getCleanableLogs()) {
++            size += file.length();
++        }
++        return size;
++    }
++
++    private static ArrayList<File> inu_getCleanableLogs() {
++        ArrayList<File> cleanable = new ArrayList<>();
++        File dir = AndroidUtilities.getLogsDir();
++        File[] files = dir == null ? null : dir.listFiles();
+         if (files != null) {
+-            for (int a = 0; a < files.length; a++) {
+-                File file = files[a];
+-                if (getInstance().currentFile != null && file.getAbsolutePath().equals(getInstance().currentFile.getAbsolutePath())) {
+-                    continue;
+-                }
+-                if (getInstance().networkFile != null && file.getAbsolutePath().equals(getInstance().networkFile.getAbsolutePath())) {
+-                    continue;
+-                }
+-                if (getInstance().tonlibFile != null && file.getAbsolutePath().equals(getInstance().tonlibFile.getAbsolutePath())) {
+-                    continue;
+-                }
+-                if (getInstance().tlRequestsFile != null && file.getAbsolutePath().equals(getInstance().tlRequestsFile.getAbsolutePath())) {
++            FileLog log = Instance;
++            for (File file : files) {
++                if (log != null && (file.equals(log.currentFile) || file.equals(log.networkFile) ||
++                        file.equals(log.tonlibFile) || file.equals(log.tlRequestsFile))) {
+                     continue;
+                 }
+-                file.delete();
++                cleanable.add(file);
+             }
+         }
++        return cleanable;
+     }
+ 
+     public static class IgnoreSentException extends Exception{
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
+@@ -245,7 +245,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+                 return;
+             }
+         }
+-        Utilities.cacheClearQueue.postRunnable(() -> {
++        desu.inugram.helpers.archive.KeptMedia.runWhenPrepared(() -> Utilities.cacheClearQueue.postRunnable(() -> {
+             canceled = false;
+             long cacheSize = getDirectorySize(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE), 5);
+             long cacheTempSize = getDirectorySize(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE), 4);
+@@ -261,7 +261,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             stickersCacheSize += getDirectorySize(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE), 3);
+             long audioSize = getDirectorySize(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_AUDIO), 0);
+             long storiesSize = getDirectorySize(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_STORIES), 0);
+-            long logsSize = getDirectorySize(AndroidUtilities.getLogsDir(), 1);
++            long logsSize = FileLog.inu_getCleanableLogsSize();
+             if (!BuildVars.DEBUG_VERSION && logsSize < 1024 * 1024 * 256) {
+                 logsSize = 0;
+             }
+@@ -272,7 +272,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+                     onDone.run(totalSize);
+                 });
+             }
+-        });
++        }));
+     }
+ 
+     public static void resetCalculatedTotalSIze() {
+@@ -326,7 +326,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+         databaseSize = MessagesStorage.getInstance(currentAccount).getDatabaseSize();
+         loadingDialogs = true;
+ 
+-        Utilities.globalQueue.postRunnable(() -> {
++        desu.inugram.helpers.archive.KeptMedia.runWhenPrepared(() -> Utilities.globalQueue.postRunnable(() -> {
+             cacheSize = getDirectorySize(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE), 5);
+             if (canceled) {
+                 return;
+@@ -347,7 +347,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             if (canceled) {
+                 return;
+             }
+-            logsSize = getDirectorySize(AndroidUtilities.getLogsDir(), 1);
++            logsSize = FileLog.inu_getCleanableLogsSize();
+             if (!BuildVars.DEBUG_VERSION && logsSize < 1024 * 1024 * 256) {
+                 logsSize = 0;
+             }
+@@ -414,7 +414,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             });
+ 
+             loadDialogEntities();
+-        });
++        }));
+ 
+         fragmentCreateTime = System.currentTimeMillis();
+         updateRows(false);
+@@ -830,8 +830,19 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+         }
+         long size = 0;
+         if (dir.isDirectory()) {
+-            size = Utilities.getDirSize(dir.getAbsolutePath(), documentsMusicType, false);
+-        } else if (dir.isFile()) {
++            if (!desu.inugram.helpers.archive.KeptMedia.hasProtectedFiles()) {
++                return Utilities.getDirSize(dir.getAbsolutePath(), documentsMusicType, false);
++            }
++            File[] entries = dir.listFiles();
++            if (entries != null) {
++                for (File entry : entries) {
++                    if (!entry.getName().startsWith(".") && matchesCacheType(entry.getName(), documentsMusicType)
++                            && !entry.isDirectory() && !desu.inugram.helpers.archive.KeptMedia.isKnownProtected(entry)) {
++                        size += entry.length();
++                    }
++                }
++            }
++        } else if (dir.isFile() && !desu.inugram.helpers.archive.KeptMedia.isKnownProtected(dir)) {
+             size += dir.length();
+         }
+         return size;
+@@ -850,9 +861,9 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+ //        progressDialog.setCanCancel(false);
+ //        progressDialog.showDelayed(500);
+         getFileLoader().cancelLoadAllFiles();
+-        getFileLoader().getFileLoaderQueue().postRunnable(() -> Utilities.globalQueue.postRunnable(() -> {
++        getFileLoader().getFileLoaderQueue().postRunnable(() -> desu.inugram.helpers.archive.KeptMedia.runWhenPrepared(() -> Utilities.globalQueue.postRunnable(() -> {
+             cleanupFoldersInternal(onProgress, onDone);
+-        }));
++        })));
+         setCacheModel(null);
+         loadingDialogs = true;
+ //        updateRows();
+@@ -866,6 +877,22 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+     private static int LISTDIR_DOCTYPE2_TEMP = 4;
+     private static int LISTDIR_DOCTYPE2_OTHER = 5;
+ 
++    private static boolean matchesCacheType(String name, int docType) {
++        if (docType <= 0 || name.length() < 4) {
++            return true;
++        }
++        String lowerName = name.toLowerCase(java.util.Locale.ROOT);
++        boolean music = lowerName.endsWith(".mp3") || lowerName.endsWith(".m4a");
++        boolean emoji = lowerName.endsWith(".tgs") || lowerName.endsWith(".webm");
++        boolean temp = lowerName.endsWith(".tmp") || lowerName.endsWith(".temp") || lowerName.endsWith(".preload");
++        return !(music && docType == LISTDIR_DOCTYPE_OTHER_THAN_MUSIC ||
++                !music && docType == LISTDIR_DOCTYPE_MUSIC ||
++                emoji && docType == LISTDIR_DOCTYPE2_OTHER ||
++                !emoji && docType == LISTDIR_DOCTYPE2_EMOJI ||
++                temp && docType == LISTDIR_DOCTYPE2_OTHER ||
++                !temp && docType == LISTDIR_DOCTYPE2_TEMP);
++    }
++
+     public static int countDirJava(String fileName, int docType) {
+         int count = 0;
+         File dir = new File(fileName);
+@@ -879,22 +906,8 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+                     continue;
+                 }
+ 
+-                if (docType > 0 && name.length() >= 4) {
+-                    String namelc = name.toLowerCase();
+-                    boolean isMusic = namelc.endsWith(".mp3") || namelc.endsWith(".m4a");
+-                    boolean isEmoji = namelc.endsWith(".tgs") || namelc.endsWith(".webm");
+-                    boolean isTemp = namelc.endsWith(".tmp") || namelc.endsWith(".temp") || namelc.endsWith(".preload");
+-
+-                    if (
+-                            isMusic && docType == LISTDIR_DOCTYPE_OTHER_THAN_MUSIC ||
+-                                    !isMusic && docType == LISTDIR_DOCTYPE_MUSIC ||
+-                                    isEmoji && docType == LISTDIR_DOCTYPE2_OTHER ||
+-                                    !isEmoji && docType == LISTDIR_DOCTYPE2_EMOJI ||
+-                                    isTemp && docType == LISTDIR_DOCTYPE2_OTHER ||
+-                                    !isTemp && docType == LISTDIR_DOCTYPE2_TEMP
+-                    ) {
+-                        continue;
+-                    }
++                if (!matchesCacheType(name, docType)) {
++                    continue;
+                 }
+ 
+                 if (entry.isDirectory()) {
+@@ -907,7 +920,8 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+         return count;
+     }
+ 
+-    public static void cleanDirJava(String fileName, int docType, int[] p, Utilities.Callback<Float> onProgress) {
++    public static long cleanDirJava(String fileName, int docType, int[] p, Utilities.Callback<Float> onProgress) {
++        long clearedSize = 0;
+         int count = countDirJava(fileName, docType);
+         if (p == null) {
+             p = new int[] { 0 };
+@@ -915,7 +929,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+         File dir = new File(fileName);
+         if (dir.exists()) {
+             File[] entries = dir.listFiles();
+-            if (entries == null) return;
++            if (entries == null) return 0;
+             for (int i = 0; i < entries.length; ++i) {
+                 File entry = entries[i];
+                 String name = entry.getName();
+@@ -923,31 +937,22 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+                     continue;
+                 }
+ 
+-                if (docType > 0 && name.length() >= 4) {
+-                    String namelc = name.toLowerCase();
+-                    boolean isMusic = namelc.endsWith(".mp3") || namelc.endsWith(".m4a");
+-                    boolean isEmoji = namelc.endsWith(".tgs") || namelc.endsWith(".webm");
+-                    boolean isTemp = namelc.endsWith(".tmp") || namelc.endsWith(".temp") || namelc.endsWith(".preload");
+-
+-                    if (
+-                            isMusic && docType == LISTDIR_DOCTYPE_OTHER_THAN_MUSIC ||
+-                                    !isMusic && docType == LISTDIR_DOCTYPE_MUSIC ||
+-                                    isEmoji && docType == LISTDIR_DOCTYPE2_OTHER ||
+-                                    !isEmoji && docType == LISTDIR_DOCTYPE2_EMOJI ||
+-                                    isTemp && docType == LISTDIR_DOCTYPE2_OTHER ||
+-                                    !isTemp && docType == LISTDIR_DOCTYPE2_TEMP
+-                    ) {
+-                        continue;
+-                    }
++                if (!matchesCacheType(name, docType)) {
++                    continue;
+                 }
+ 
+                 if (entry.isDirectory()) {
+                     if ("drafts".equals(entry.getName())) {
+                         continue;
+                     }
+-                    cleanDirJava(fileName + "/" + name, docType, p, onProgress);
++                    clearedSize += cleanDirJava(fileName + "/" + name, docType, p, onProgress);
+                 } else {
+-                    if (!desu.inugram.helpers.archive.KeptMedia.isProtected(entry)) entry.delete();
++                    if (!desu.inugram.helpers.archive.KeptMedia.isProtected(entry)) {
++                        long size = entry.length();
++                        if (entry.delete()) {
++                            clearedSize += size;
++                        }
++                    }
+ 
+                     p[0]++;
+                     if (onProgress != null) {
+@@ -956,6 +961,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+                 }
+             }
+         }
++        return clearedSize;
+     }
+ 
+     private void cleanupFoldersInternal(Utilities.Callback2<Float, Boolean> onProgress, Runnable onDone) {
+@@ -981,37 +987,27 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             int documentsMusicType = 0;
+             if (a == 0) {
+                 type = FileLoader.MEDIA_DIR_IMAGE;
+-                clearedSize += photoSize;
+             } else if (a == 1) {
+                 type = FileLoader.MEDIA_DIR_VIDEO;
+-                clearedSize += videoSize;
+             } else if (a == 2) {
+                 type = FileLoader.MEDIA_DIR_DOCUMENT;
+                 documentsMusicType = 1;
+-                clearedSize += documentsSize;
+             } else if (a == 3) {
+                 type = FileLoader.MEDIA_DIR_DOCUMENT;
+                 documentsMusicType = 2;
+-                clearedSize += musicSize;
+             } else if (a == 4) {
+                 type = FileLoader.MEDIA_DIR_AUDIO;
+-                clearedSize += audioSize;
+             } else if (a == 5) {
+                 type = FileLoader.MEDIA_DIR_STORIES;
+-                clearedSize += storiesSize;
+             } else if (a == 6) {
+                 type = 100;
+-                clearedSize += stickersCacheSize;
+             } else if (a == 7) {
+-                clearedSize += cacheSize;
+                 documentsMusicType = 5;
+                 type = FileLoader.MEDIA_DIR_CACHE;
+             } else if (a == 8) {
+-                clearedSize += cacheTempSize;
+                 documentsMusicType = 4;
+                 type = FileLoader.MEDIA_DIR_CACHE;
+             } else if (a == 9) {
+-                clearedSize += logsSize;
+                 documentsMusicType = 1;
+                 type = 0;
+             }
+@@ -1020,14 +1016,17 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             }
+             if (a == 7) {
+                 try {
+-                    cleanDirJava(ApplicationLoader.getFilesDirFixed("rasterized/wallpaper").getAbsolutePath(), 0, null, null);
++                    clearedSize += cleanDirJava(ApplicationLoader.getFilesDirFixed("rasterized/wallpaper").getAbsolutePath(), 0, null, null);
+                 } catch (Exception e) {
+                     FileLog.e(e);
+                 }
+             }
+             File file;
+             if (a == 9) {
+-                FileLog.cleanupLogs();
++                long cleanedLogs = FileLog.inu_cleanupLogs();
++                if (logsSize > 0) {
++                    clearedSize += cleanedLogs;
++                }
+                 file = null;
+             } else if (type == 100) {
+                 file = new File(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE), "acache");
+@@ -1035,14 +1034,14 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+                 file = FileLoader.checkDirectory(type);
+             }
+             if (file != null) {
+-                cleanDirJava(file.getAbsolutePath(), documentsMusicType, null, updateProgress);
++                clearedSize += cleanDirJava(file.getAbsolutePath(), documentsMusicType, null, updateProgress);
+             }
+             clearDirI[0]++;
+             next.run();
+             if (type == 100) {
+                 file = FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE);
+                 if (file != null) {
+-                    cleanDirJava(file.getAbsolutePath(), 3, null, updateProgress);
++                    clearedSize += cleanDirJava(file.getAbsolutePath(), 3, null, updateProgress);
+                 }
+                 clearDirI[0]++;
+                 next.run();
+@@ -1057,7 +1056,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+                 file = FileLoader.checkDirectory(publicDirectoryType);
+ 
+                 if (file != null) {
+-                    cleanDirJava(file.getAbsolutePath(), documentsMusicType, null, updateProgress);
++                    clearedSize += cleanDirJava(file.getAbsolutePath(), documentsMusicType, null, updateProgress);
+                 }
+                 clearDirI[0]++;
+                 next.run();
+@@ -1065,14 +1064,14 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             if (type == FileLoader.MEDIA_DIR_DOCUMENT) {
+                 file = FileLoader.checkDirectory(FileLoader.MEDIA_DIR_FILES);
+                 if (file != null) {
+-                    cleanDirJava(file.getAbsolutePath(), documentsMusicType, null, updateProgress);
++                    clearedSize += cleanDirJava(file.getAbsolutePath(), documentsMusicType, null, updateProgress);
+                 }
+                 clearDirI[0]++;
+                 next.run();
+             }
+ 
+             if (a == 9) {
+-                logsSize = getDirectorySize(AndroidUtilities.getLogsDir(), 1);
++                logsSize = FileLog.inu_getCleanableLogsSize();
+             } else if (type == FileLoader.MEDIA_DIR_CACHE) {
+                 cacheSize = getDirectorySize(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE), 5);
+                 cacheTempSize = getDirectorySize(FileLoader.checkDirectory(FileLoader.MEDIA_DIR_CACHE), 4);
+@@ -1144,6 +1143,8 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+             }, 150);
+             MediaDataController.getInstance(currentAccount).checkAllMedia(true);
+ 
++            updateRows();
++            updateChart();
+             loadDialogEntities();
+ 
+             if (onDone != null) {
