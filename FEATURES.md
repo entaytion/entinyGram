@@ -83,7 +83,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **messages appearance** — hide reply background, custom reply colors, show spoilers directly, forum topics as material 3 cards, snowflakes over the chat
 - **wide channel posts** — posts and albums stretch to chat width with adjustable side padding - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - **tablet mode** — force tablet layout on or off, or follow screen size
-- **settings screen** — accent-colored row icons, compact rows without descriptions, reorder and hide rows, hide the accounts list, custom my profile rows, downloads button mode, full-screen app icon picker, clock format independent of telegram language
+- **settings screen** — accent-colored row icons, compact rows without descriptions, reorder and hide rows, hide the accounts list, custom my profile rows, downloads button mode, full-screen app icon picker with sections and a live preview, launch splash that follows the chosen icon, clock format independent of telegram language
 - **menu shortcuts** — clear cache and restart in the chats menu, restart and plugin settings in the side menu
 - **disable vibration** across the app, calls and notifications
 - **sticker shape** — crop stickers in chat to default, rounded or message-bubble corners

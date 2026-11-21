@@ -1,7 +1,5 @@
 package desu.inugram.ui.appicons
 
-// entiny: ported from exteraless (app.exteraless.appicons), GPL-3.0
-
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
@@ -9,14 +7,15 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.RadialGradient
 import android.graphics.Shader
 import android.graphics.drawable.GradientDrawable
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,17 +33,22 @@ import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
-import org.telegram.utils.glass.source.GlassSourceColor
 import org.telegram.ui.LauncherIconController.LauncherIcon
 import org.telegram.ui.PremiumPreviewFragment
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView
-import kotlin.math.abs
+import org.telegram.utils.glass.source.GlassSourceColor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
 class AppIconsActivity : BaseFragment() {
-    private val icons = ArrayList<LauncherIcon>()
+    private sealed class Entry {
+        object Hero : Entry()
+        class Header(val title: CharSequence) : Entry()
+        class Item(val icon: LauncherIcon) : Entry()
+    }
+
+    private val entries = ArrayList<Entry>()
     private var appliedIcon: LauncherIcon? = null
     private var previewIcon: LauncherIcon? = null
 
@@ -58,19 +62,15 @@ class AppIconsActivity : BaseFragment() {
     private var tint = 0
     private var tintAnimator: ValueAnimator? = null
     private var glassSource: GlassSourceColor? = null
-    private var heroHeight = 0
     private var bottomInset = 0
-    private var collapse = 0f
-    private var topFade = 0f
 
     override fun isSupportEdgeToEdge(): Boolean = true
 
     override fun createView(context: Context): View {
-        icons.clear()
-        icons.addAll(AppIcons.available(currentAccount))
         previewIcon = AppIcons.current()
         appliedIcon = previewIcon
         tint = AppIcons.tint(AppIcons.accent(context, previewIcon!!))
+        buildEntries()
 
         actionBar.setBackButtonImage(R.drawable.ic_ab_back)
         actionBar.setAllowOverlayTitle(false)
@@ -87,7 +87,7 @@ class AppIconsActivity : BaseFragment() {
         contentView = ContentView(context)
 
         val source = GlassSourceColor()
-        source.setColor(topColor())
+        source.setColor(baseColor())
         glassSource = source
         actionBar.setupGlass(
             BlurredBackgroundDrawableViewFactory(source),
@@ -97,21 +97,26 @@ class AppIconsActivity : BaseFragment() {
 
         heroView = AppIconHeroView(context, getResourceProvider())
         heroView.set(previewIcon!!)
-        contentView.addView(heroView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP))
+        heroView.setTint(tint)
 
         listView = RecyclerListView(context, getResourceProvider())
         layoutManager = GridLayoutManager(context, 4)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int =
+                if (entries[position] is Entry.Item) 1 else layoutManager.spanCount
+        }
         listView.layoutManager = layoutManager
         listView.adapter = Adapter()
         listView.clipToPadding = false
         listView.isVerticalScrollBarEnabled = false
+        listView.itemAnimator = null
         listView.setSelectorDrawableColor(Color.TRANSPARENT)
         listView.setOnItemClickListener { _, position ->
-            if (position >= 0 && position < icons.size) preview(icons[position])
+            (entries.getOrNull(position) as? Entry.Item)?.let { preview(it.icon) }
         }
         listView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                updateCollapse()
+                contentView.invalidate()
             }
         })
         contentView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.NO_GRAVITY))
@@ -127,8 +132,24 @@ class AppIconsActivity : BaseFragment() {
 
         contentView.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP))
         updateButtonFade()
+        updateListPadding()
         fragmentView = contentView
         return contentView
+    }
+
+    private fun buildEntries() {
+        val all = AppIcons.available(currentAccount)
+        entries.clear()
+        entries.add(Entry.Hero)
+        fun section(title: CharSequence, list: List<LauncherIcon>) {
+            if (list.isEmpty()) return
+            entries.add(Entry.Header(title))
+            list.forEach { entries.add(Entry.Item(it)) }
+        }
+        val own = setOf(LauncherIcon.DEFAULT, LauncherIcon.OLD)
+        section("entinyGram", all.filter { it in own })
+        section(LocaleController.getString(R.string.InuAppIconsConcepts), all.filter { it.concept && it !in own })
+        section("Telegram", all.filter { !it.concept && it !in own })
     }
 
     override fun onFragmentDestroy() {
@@ -151,7 +172,7 @@ class AppIconsActivity : BaseFragment() {
         updateListPadding()
     }
 
-    override fun isLightStatusBar(): Boolean = AndroidUtilities.computePerceivedBrightness(topColor()) > 0.6f
+    override fun isLightStatusBar(): Boolean = AndroidUtilities.computePerceivedBrightness(baseColor()) > 0.6f
 
     private fun preview(icon: LauncherIcon) {
         if (icon == previewIcon) return
@@ -188,11 +209,9 @@ class AppIconsActivity : BaseFragment() {
     }
 
     private fun baseColor(): Int {
-        val gray = getThemedColor(Theme.key_windowBackgroundGray)
-        return if (tint == 0) gray else ColorUtils.blendARGB(gray, tint, 0.25f)
+        val gray = getThemedColor(Theme.key_windowBackgroundWhite)
+        return if (tint == 0) gray else ColorUtils.blendARGB(gray, tint, 0.18f)
     }
-
-    private fun topColor(): Int = if (tint == 0) baseColor() else ColorUtils.blendARGB(baseColor(), tint, 0.7f)
 
     private fun animateTint(to: Int) {
         cancelTintAnimation()
@@ -200,35 +219,32 @@ class AppIconsActivity : BaseFragment() {
         val from = tint
         if (from == 0 || to == 0) {
             tint = to
-            invalidateTop()
-            updateStatusBar()
+            onTintChanged()
             return
         }
         tintAnimator = ValueAnimator.ofFloat(0f, 1f).setDuration(280).apply {
             interpolator = CubicBezierInterpolator.EASE_OUT_QUINT
             addUpdateListener {
                 tint = ColorUtils.blendARGB(from, to, it.animatedValue as Float)
-                invalidateTop()
+                onTintChanged()
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     tint = to
-                    updateStatusBar()
+                    onTintChanged()
                 }
             })
             start()
         }
     }
 
-    private fun invalidateTop() {
+    private fun onTintChanged() {
+        heroView.setTint(tint)
         contentView.invalidate()
         glassSource?.let {
-            it.setColor(topColor())
+            it.setColor(baseColor())
             actionBar.invalidate()
         }
-    }
-
-    private fun updateStatusBar() {
         parentActivity?.let { AndroidUtilities.setLightStatusBar(it.window, isLightStatusBar()) }
     }
 
@@ -243,150 +259,104 @@ class AppIconsActivity : BaseFragment() {
     private fun updateListPadding() {
         if (!::listView.isInitialized) return
         val side = AndroidUtilities.dp(8f)
-        val top = heroHeight + AndroidUtilities.dp(10f)
+        val top = AndroidUtilities.statusBarHeight + ActionBar.getCurrentActionBarHeight()
         val bottom = if (::buttonContainer.isInitialized && buttonContainer.height > 0) buttonContainer.height else bottomInset + AndroidUtilities.dp(72f)
         if (listView.paddingTop != top || listView.paddingBottom != bottom || listView.paddingLeft != side) {
             listView.setPadding(side, top, side, bottom)
         }
-        updateCollapse()
-    }
-
-    private fun collapseRange(): Int =
-        max(0, heroHeight - ActionBar.getCurrentActionBarHeight() - AndroidUtilities.statusBarHeight)
-
-    private fun updateCollapse() {
-        if (!::listView.isInitialized || !::heroView.isInitialized) return
-        var scrolled = if (listView.childCount > 0) Int.MAX_VALUE / 2 else 0
-        for (i in 0 until listView.childCount) {
-            val child = listView.getChildAt(i)
-            if (listView.getChildAdapterPosition(child) == 0) {
-                scrolled = listView.paddingTop - child.top
-                break
-            }
-        }
-        scrolled = max(0, scrolled)
-        val range = collapseRange()
-        val newCollapse = if (range <= 0) 0f else min(1f, scrolled / range.toFloat())
-        val newFade = min(1f, scrolled / AndroidUtilities.dp(16f).toFloat())
-        if (abs(newCollapse - collapse) > 0.0005f || abs(newFade - topFade) > 0.0005f) {
-            collapse = newCollapse
-            topFade = newFade
-            heroView.setCollapse(collapse)
-            contentView.invalidate()
-        }
     }
 
     private fun spanCount(width: Int): Int {
-        val available = width - AndroidUtilities.dp(8f) * 2
-        val count = max(3, min(8, (available / AndroidUtilities.dp(100f).toFloat()).roundToInt()))
-        return if (count < 8 && available / count.toFloat() > AndroidUtilities.dp(112f)) count + 1 else count
+        val available = width - AndroidUtilities.dp(16f)
+        return max(3, min(6, (available / AndroidUtilities.dp(92f).toFloat()).roundToInt()))
     }
 
     private inner class ContentView(context: Context) : FrameLayout(context) {
         private val glowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        private val panelPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        private val panelPath = Path()
-        private val radii = FloatArray(8)
         private var glowColor = 0
-        private var glowCy = 0f
         private var glowWidth = 0
-        private var topFadeDrawable: GradientDrawable? = null
-        private var topFadeColor = 0
+        private var glowCy = 0f
 
         init {
             setWillNotDraw(false)
         }
 
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-            heroView.setPadding(0, AndroidUtilities.statusBarHeight + AndroidUtilities.dp(28f), 0, AndroidUtilities.dp(40f))
-            val available = (MeasureSpec.getSize(heightMeasureSpec) * 0.45f).toInt() - AndroidUtilities.statusBarHeight -
-                AndroidUtilities.dp(68f) - heroView.getTextBlockHeight()
-            heroView.setPreviewSizeDp(max(64, min(AppIconHeroView.PREVIEW_DP, (available / AndroidUtilities.density).toInt())))
             buttonContainer.setPadding(0, 0, 0, bottomInset)
             val span = spanCount(MeasureSpec.getSize(widthMeasureSpec))
             if (layoutManager.spanCount != span) layoutManager.spanCount = span
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-            val height = heroView.measuredHeight
-            if (height > 0 && height != heroHeight) {
-                heroHeight = height
-                AndroidUtilities.runOnUIThread { updateListPadding() }
-            }
-        }
-
-        override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-            super.onLayout(changed, left, top, right, bottom)
-            updateCollapse()
         }
 
         override fun onDraw(canvas: Canvas) {
-            canvas.drawColor(baseColor())
-            if (tint == 0 || collapse >= 1f || heroHeight <= 0) return
-            val cy = heroView.previewCenterY()
+            canvas.drawColor(getThemedColor(Theme.key_windowBackgroundWhite))
+            if (tint == 0) return
+            val hero = listView.getChildAt(0)?.takeIf { listView.getChildAdapterPosition(it) == 0 }
+            val scrolled = if (hero != null) max(0, listView.paddingTop - hero.top) else Int.MAX_VALUE / 2
+            val fade = 1f - min(1f, scrolled / AndroidUtilities.dp(280f).toFloat())
+            if (fade <= 0f) return
+            val cy = if (hero != null) (hero.top + AndroidUtilities.dp(AppIconHeroView.MOCK_DP / 2f)).toFloat() else 0f
             if (glowColor != tint || glowWidth != width || glowCy != cy) {
                 glowColor = tint
                 glowWidth = width
                 glowCy = cy
-                val radius = max(width, heroHeight) * 0.9f
                 glowPaint.shader = RadialGradient(
-                    width / 2f, cy, radius,
-                    intArrayOf(ColorUtils.setAlphaComponent(tint, 200), ColorUtils.setAlphaComponent(tint, 0)),
+                    width / 2f, cy, width * 0.95f,
+                    intArrayOf(ColorUtils.setAlphaComponent(tint, 190), ColorUtils.setAlphaComponent(tint, 0)),
                     floatArrayOf(0f, 1f), Shader.TileMode.CLAMP,
                 )
             }
-            glowPaint.alpha = ((1f - collapse) * 255).toInt()
+            glowPaint.alpha = (fade * 255).toInt()
             canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), glowPaint)
-        }
-
-        override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
-            if (child !== listView) return super.drawChild(canvas, child, drawingTime)
-            val radius = AndroidUtilities.dp(20f).toFloat()
-            radii[0] = radius
-            radii[1] = radius
-            radii[2] = radius
-            radii[3] = radius
-            val top = listView.y + heroHeight - collapseRange() * collapse
-            AndroidUtilities.rectTmp.set(0f, top, width.toFloat(), height.toFloat())
-            panelPath.rewind()
-            panelPath.addRoundRect(AndroidUtilities.rectTmp, radii, Path.Direction.CW)
-            val white = getThemedColor(Theme.key_windowBackgroundWhite)
-            panelPaint.color = white
-            canvas.drawPath(panelPath, panelPaint)
-            canvas.save()
-            canvas.clipPath(panelPath)
-            val result = super.drawChild(canvas, child, drawingTime)
-            if (topFade > 0f) {
-                var drawable = topFadeDrawable
-                if (drawable == null || topFadeColor != white) {
-                    topFadeColor = white
-                    drawable = GradientDrawable(
-                        GradientDrawable.Orientation.TOP_BOTTOM,
-                        intArrayOf(white, ColorUtils.setAlphaComponent(white, 0)),
-                    )
-                    topFadeDrawable = drawable
-                }
-                drawable.setBounds(0, top.toInt(), width, top.toInt() + AndroidUtilities.dp(24f))
-                drawable.alpha = (topFade * 255).toInt()
-                drawable.draw(canvas)
-            }
-            canvas.restore()
-            return result
         }
     }
 
     private inner class Adapter : RecyclerListView.SelectionAdapter() {
-        override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean = true
+        override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean = holder.itemViewType == TYPE_ITEM
 
-        override fun getItemCount(): Int = icons.size
+        override fun getItemCount(): Int = entries.size
+
+        override fun getItemViewType(position: Int): Int = when (entries[position]) {
+            is Entry.Hero -> TYPE_HERO
+            is Entry.Header -> TYPE_HEADER
+            is Entry.Item -> TYPE_ITEM
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val cell = AppIconCell(parent.context, getResourceProvider())
-            cell.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            return RecyclerListView.Holder(cell)
+            val context = parent.context
+            val view: View = when (viewType) {
+                TYPE_HERO -> {
+                    (heroView.parent as? ViewGroup)?.removeView(heroView)
+                    heroView.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    heroView.setPadding(0, AndroidUtilities.dp(12f), 0, AndroidUtilities.dp(8f))
+                    heroView
+                }
+                TYPE_HEADER -> TextView(context).apply {
+                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+                    typeface = AndroidUtilities.bold()
+                    setPadding(AndroidUtilities.dp(14f), AndroidUtilities.dp(18f), AndroidUtilities.dp(14f), AndroidUtilities.dp(4f))
+                    setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, getResourceProvider()))
+                    layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                }
+                else -> AppIconCell(context, getResourceProvider()).apply {
+                    layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                }
+            }
+            return RecyclerListView.Holder(view)
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val icon = icons[position]
-            (holder.itemView as AppIconCell).set(icon, icon == previewIcon, false)
+            when (val entry = entries[position]) {
+                is Entry.Hero -> {}
+                is Entry.Header -> (holder.itemView as TextView).text = entry.title
+                is Entry.Item -> (holder.itemView as AppIconCell).set(entry.icon, entry.icon == previewIcon, false)
+            }
         }
+    }
+
+    private companion object {
+        const val TYPE_HERO = 0
+        const val TYPE_HEADER = 1
+        const val TYPE_ITEM = 2
     }
 }

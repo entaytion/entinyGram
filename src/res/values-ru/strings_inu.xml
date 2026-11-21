@@ -185,6 +185,7 @@
     <string name="InuAppIconOrbit">Орбита</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconRadar">Радар</string>
+    <string name="InuAppIconsConcepts">Концепты</string>
     <string name="InuAppIconsKeep">Оставить текущую иконку</string>
     <string name="InuAppIconsSelect">Применить иконку</string>
     <string name="InuAppIconStock">Стандартная</string>

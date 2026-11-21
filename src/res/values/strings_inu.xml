@@ -186,6 +186,7 @@
     <string name="InuAppIconOrbit">Orbit</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconRadar">Radar</string>
+    <string name="InuAppIconsConcepts">Concepts</string>
     <string name="InuAppIconsKeep">Keep current icon</string>
     <string name="InuAppIconsSelect">Apply icon</string>
     <string name="InuAppIconStock">Stock</string>

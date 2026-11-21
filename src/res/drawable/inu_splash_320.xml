@@ -44,10 +44,10 @@
                         android:pathData="M 160 60 C 133.489 60 108.036 70.543 89.289 89.289 C 70.543 108.036 60 133.489 60 160 C 60 186.511 70.543 211.964 89.289 230.711 C 108.036 249.457 133.489 260 160 260 C 186.511 260 211.964 249.457 230.711 230.711 C 249.457 211.964 260 186.511 260 160 C 260 133.489 249.457 108.036 230.711 89.289 C 211.964 70.543 186.511 60 160 60 Z"/>
                     <group
                         android:name="glyph_pos"
-                        android:translateX="106"
-                        android:translateY="106"
-                        android:scaleX="4.5"
-                        android:scaleY="4.5">
+                        android:translateX="91.25"
+                        android:translateY="96.75"
+                        android:scaleX="5.5"
+                        android:scaleY="5.5">
                         <path
                             android:name="glyph1"
                             android:pathData="M4 10a7.31 7.31 0 0 0 10 10Z"

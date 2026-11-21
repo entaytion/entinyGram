@@ -7,8 +7,7 @@
             android:width="320dp"
             android:height="320dp"
             android:viewportWidth="320"
-            android:viewportHeight="320"
-            android:alpha="0">
+            android:viewportHeight="320">
             <group
                 android:name="icon"
                 android:pivotX="160"
@@ -47,6 +46,5 @@
             </group>
         </vector>
     </aapt:attr>
-    <target android:name="splash" android:animation="@animator/inu_splash_fade" />
     <target android:name="icon" android:animation="@animator/inu_splash_scale" />
 </animated-vector>

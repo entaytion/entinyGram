@@ -185,6 +185,7 @@
     <string name="InuAppIconOrbit">轨道</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconRadar">雷达</string>
+    <string name="InuAppIconsConcepts">概念图标</string>
     <string name="InuAppIconsKeep">保留当前图标</string>
     <string name="InuAppIconsSelect">应用图标</string>
     <string name="InuAppIconStock">原版</string>

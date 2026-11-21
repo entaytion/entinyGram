@@ -115,6 +115,7 @@ export const forkSyncFiles: ForkSyncFile[] = [
   res('animator/*.xml', 'animator'),
   ...splashColorDirs.map(dir => res(`${dir}/colors_inu_splash.xml`, dir)),
   res('values-v31/*_inu_splash.xml', 'values-v31'),
+  res('mipmap-anydpi-v26/inu_splash_concept_*.xml', 'mipmap-anydpi-v26'),
   res('values/strings_inu.xml', 'values'),
   res('values/ids_inu.xml', 'values'),
   res('values/styles_inu.xml', 'values'),

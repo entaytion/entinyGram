@@ -185,6 +185,7 @@
     <string name="InuAppIconOrbit">軌道</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconRadar">レーダー</string>
+    <string name="InuAppIconsConcepts">コンセプト</string>
     <string name="InuAppIconsKeep">現在のアイコンを維持</string>
     <string name="InuAppIconsSelect">アイコンを適用</string>
     <string name="InuAppIconStock">標準</string>

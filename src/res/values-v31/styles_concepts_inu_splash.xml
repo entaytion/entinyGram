@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- These names are persisted by Android; keep them stable across app updates. -->
+    <style name="InuSplashConceptRadar" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_radar</item>
+    </style>
+    <style name="InuSplashConceptConstellation" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_constellation</item>
+    </style>
+    <style name="InuSplashConceptOrbit" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_orbit</item>
+    </style>
+    <style name="InuSplashConceptAvatar" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_avatar</item>
+    </style>
+    <style name="InuSplashConceptNothing" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_nothing</item>
+    </style>
+    <style name="InuSplashConceptMono" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_mono</item>
+    </style>
+    <style name="InuSplashConceptSunset" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_sunset</item>
+    </style>
+    <style name="InuSplashConceptAmethyst" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_amethyst</item>
+    </style>
+    <style name="InuSplashConceptAurora" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_aurora</item>
+    </style>
+    <style name="InuSplashConceptGoogle26" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_google26</item>
+    </style>
+    <style name="InuSplashConceptLunar" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_lunar</item>
+    </style>
+    <style name="InuSplashConceptMathbook" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_mathbook</item>
+    </style>
+    <style name="InuSplashConceptJungle" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_jungle</item>
+    </style>
+    <style name="InuSplashConceptGold" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_gold</item>
+    </style>
+    <style name="InuSplashConceptDish" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_dish</item>
+    </style>
+    <style name="InuSplashConceptBlush" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_blush</item>
+    </style>
+    <style name="InuSplashConceptNoxSky" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_noxsky</item>
+    </style>
+    <style name="InuSplashConceptInverse" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_inverse</item>
+    </style>
+    <style name="InuSplashConceptOsu" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_osu</item>
+    </style>
+    <style name="InuSplashConceptAmongUs" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_amongus</item>
+    </style>
+    <style name="InuSplashConceptCrimson" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/inu_splash_concept_crimson</item>
+    </style>
+</resources>
