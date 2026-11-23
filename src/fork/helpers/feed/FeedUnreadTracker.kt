@@ -61,10 +61,9 @@ internal class FeedUnreadTracker(
     }
 
     fun getUnreadCount(): Int {
-        val unreadDialogs = collectUnreadFeedDialogs()
         var total = 0
-        for (i in unreadDialogs.indices) {
-            total += unreadDialogs[i].unread_count
+        forEachUnreadFeedDialog { dialog ->
+            total += dialog.unread_count
         }
         return total
     }
@@ -78,7 +77,8 @@ internal class FeedUnreadTracker(
         val messagesController = MessagesController.getInstance(currentAccount)
         val touchedDialogs = HashSet<Long>()
 
-        val unreadDialogs = collectUnreadFeedDialogs()
+        val unreadDialogs = ArrayList<TLRPC.Dialog>()
+        forEachUnreadFeedDialog { unreadDialogs.add(it) }
         for (i in unreadDialogs.indices) {
             val dialog = unreadDialogs[i]
             messagesController.markMentionsAsRead(dialog.id, 0L)
@@ -135,13 +135,12 @@ internal class FeedUnreadTracker(
         }
     }
 
-    private fun collectUnreadFeedDialogs(): ArrayList<TLRPC.Dialog> {
+    private inline fun forEachUnreadFeedDialog(action: (TLRPC.Dialog) -> Unit) {
         val messagesController = MessagesController.getInstance(currentAccount)
         val feedConfig = FeedConfig.getInstance(currentAccount)
         val includeArchived = feedConfig.includeArchived
 
         val dialogs = messagesController.dialogs_dict
-        val result = ArrayList<TLRPC.Dialog>()
         for (i in 0 until dialogs.size()) {
             val dialog = dialogs.valueAt(i)
             if (dialog == null || dialog.unread_count <= 0) {
@@ -155,10 +154,9 @@ internal class FeedUnreadTracker(
                 continue
             }
             if (FeedController.isEligibleChannel(messagesController.getChat(-dialogId))) {
-                result.add(dialog)
+                action(dialog)
             }
         }
-        return result
     }
 
     private fun countTimelineRows(dialogId: Long, fromIdExclusive: Int, toIdInclusive: Int): Int {
