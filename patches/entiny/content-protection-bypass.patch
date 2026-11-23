@@ -12,8 +12,8 @@ Subject: Bypass content protection and safely forward restricted messages
  .../java/org/telegram/ui/ChatActivity.java    | 25 ++++++++++---------
  .../ui/Components/AudioPlayerAlert.java       |  2 +-
  .../ui/Components/SharedMediaLayout.java      |  2 +-
- .../java/org/telegram/ui/PhotoViewer.java     |  8 +++---
- 9 files changed, 40 insertions(+), 26 deletions(-)
+ .../java/org/telegram/ui/PhotoViewer.java     | 14 +++++++----
+ 9 files changed, 45 insertions(+), 27 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -285,7 +285,18 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -14229,7 +14229,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -4635,8 +4635,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 if (f == null || !f.exists()) {
+                     f = FileLoader.getInstance(currentAccount).getPathToAttach(getFileLocation(currentFileLocationVideo), getFileLocationExt(currentFileLocationVideo), false);
+                 }
++                isVideo = "mp4".equals(getFileLocationExt(currentFileLocationVideo));
+             } else if (pageBlocksAdapter != null) {
+                 f = pageBlocksAdapter.getFile(currentIndex);
++                isVideo = pageBlocksAdapter.isVideo(currentIndex);
+             }
+             if (f != null && !f.exists()) {
+                 f = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), f.getName());
+@@ -14229,7 +14231,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
          animatorPollAttachButtonsVisibility.setValue(sendPhotoTypeIsPollMediaEdit, false);
  
@@ -294,7 +305,7 @@ index 0000000..0000000 100644
          if (messageObject != null && messages == null) {
              if (messageObject.messageOwner != null && MessageObject.getMedia(messageObject.messageOwner) instanceof TLRPC.TL_messageMediaWebPage && MessageObject.getMedia(messageObject.messageOwner).webpage != null) {
                  TLRPC.WebPage webPage = MessageObject.getMedia(messageObject.messageOwner).webpage;
-@@ -14678,7 +14678,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14678,7 +14680,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              desu.inugram.helpers.media.PhotoViewerHelper.setFooter(menuItem, newMessageObject);
  
              boolean isInvoice = newMessageObject.isInvoice();
@@ -303,7 +314,7 @@ index 0000000..0000000 100644
              if ((isVideo || desu.inugram.helpers.media.PhotoViewerHelper.gifAsVideo(newMessageObject)) && !isLivePhoto) {
                  bottomLayout.setVisibility(View.VISIBLE);
                  bottomLayout.setTag(1);
-@@ -15806,7 +15806,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15806,7 +15808,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  return;
              }
              MessageObject newMessageObject = imagesArr.get(currentIndex);
@@ -312,7 +323,7 @@ index 0000000..0000000 100644
              sameImage = (init || force) && currentMessageObject != null && currentMessageObject.getId() == newMessageObject.getId();
              if (sameImage) {
                  newMessageObject.putInDownloadsStore = currentMessageObject.putInDownloadsStore;
-@@ -17599,7 +17599,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -17599,7 +17601,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              if (chatActivity != null && chatActivity.getCurrentEncryptedChat() != null ||
                  avatarsDialogId != 0 && MessagesController.getInstance(currentAccount).isPeerNoForwards(avatarsDialogId) ||
                  messageObject != null && (MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) ||
@@ -321,3 +332,14 @@ index 0000000..0000000 100644
                  isPageBlocksNoForwards(pageBlocksAdapter)
              ) {
                  windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
+@@ -19700,7 +19702,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+         final Object parent = adapter.getParentObject();
+         if (parent instanceof MessageObject && ((MessageObject) parent).messageOwner != null) {
+             final MessageObject messageObject = (MessageObject) parent;
+-            return MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) || messageObject.messageOwner.noforwards || messageObject.hasRevealedExtendedMedia();
++            return MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId())
++                    || desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(messageObject.messageOwner)
++                    || messageObject.hasRevealedExtendedMedia();
+         }
+         return false;
+     }

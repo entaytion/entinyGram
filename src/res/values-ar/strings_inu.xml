@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">الإعلانات</string>
     <string name="InuAddToFolderInFolder">إضافة إلى مجلد من أي مجلد</string>
     <string name="InuAddToFolderInFolderInfo">يعرض «إضافة إلى مجلد» في قائمة تحديد المحادثات داخل المجلدات، وليس في كل المحادثات فقط.</string>
+    <string name="InuAddToFolderInChat">إضافة إلى مجلد من قائمة المحادثة</string>
+    <string name="InuAddToFolderInChatInfo">يعرض «إضافة إلى مجلد» في قائمة النقاط الثلاث داخل المحادثة.</string>
     <string name="InuAddToStickersGifs">إضافة إلى الملصقات/الصور المتحركة</string>
     <string name="InuAiAddProviderFirst">لا يوجد مزوّد جاهز بعد. أضف واحداً أولاً من قسم المزوّدين.</string>
     <string name="InuAiAllowInsecure">السماح بنقاط نهاية الذكاء الاصطناعي غير الآمنة</string>
@@ -2290,6 +2292,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">عدّاد بأسلوب iOS</string>
     <string name="InuUnreadChatsFirst">المحادثات غير المقروءة أولاً</string>
     <string name="InuUnreadChatsFirstPinned">غير المقروءة أولاً بين المثبتة</string>
+    <string name="InuUnreadChatsAlphabetical">غير المقروءة أبجديًا</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">ترتيب المحادثات غير المقروءة حسب الاسم، وتبقى المقروءة بترتيبها المعتاد</string>
     <string name="InuUpdateFailedToInstall">فشل التثبيت (%1$d)</string>
     <string name="InuUpdateInstalledNotification">تم تثبيت التحديث، انقر لإعادة التشغيل</string>
     <string name="InuUpdateInstalling">جارٍ تثبيت التحديث</string>

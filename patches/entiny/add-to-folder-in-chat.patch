@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 21 Nov 2026 22:38:55 +0200
+Subject: Add to folder in the chat three-dot menu, behind a toggle that is off by default.
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 ++++++
+ .../org/telegram/ui/Components/FiltersListBottomSheet.java  | 4 ++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -1733,6 +1733,7 @@ public class ChatActivity extends BaseFragment implements
+     private final static int chat_menu_search = -1;
+     private final static int chat_menu_options = -2;
+     public final static int clear_history = 15;
++    private final static int inu_add_to_folder = 9101;
+     public final static int delete_chat = 16;
+     public final static int share_contact = 17;
+     private final static int mute = 18;
+@@ -3971,6 +3972,8 @@ public class ChatActivity extends BaseFragment implements
+                             BulletinFactory.of(ChatActivity.this).createDownloadBulletin(isMusic ? BulletinFactory.FileType.AUDIOS : BulletinFactory.FileType.UNKNOWNS, count, themeDelegate).show();
+                         }
+                     });
++                } else if (id == inu_add_to_folder) {
++                    desu.inugram.helpers.dialogs.ChatFolderHelper.show(ChatActivity.this);
+                 } else if (id == chat_enc_timer) {
+                     if (getParentActivity() == null) {
+                         return;
+@@ -4599,6 +4602,9 @@ public class ChatActivity extends BaseFragment implements
+             if (currentUser != null && currentUser.self && getDialogId() != UserObject.VERIFY) {
+                 headerItem.lazilyAddSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
+             }
++            if (desu.inugram.helpers.dialogs.ChatFolderHelper.canShow(this)) {
++                headerItem.lazilyAddSubItem(inu_add_to_folder, R.drawable.msg_addfolder, LocaleController.getString(R.string.FilterAddTo));
++            }
+             if (!isTopic && !ChatObject.isMonoForum(currentChat)) {
+                 clearHistoryItem = headerItem.lazilyAddSubItem(clear_history, R.drawable.msg_clear,
+                     LocaleController.getString(UserObject.isBotForum(currentUser) ? R.string.ClearAllHistory : R.string.ClearHistory));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FiltersListBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FiltersListBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FiltersListBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FiltersListBottomSheet.java
+@@ -86,9 +86,9 @@ public class FiltersListBottomSheet extends BottomSheet implements NotificationC
+     }
+ 
+     private final ArrayList<Long> selectedDialogs;
+-    private final DialogsActivity fragment;
++    private final BaseFragment fragment;
+ 
+-    public FiltersListBottomSheet(DialogsActivity baseFragment, ArrayList<Long> selectedDialogs) {
++    public FiltersListBottomSheet(BaseFragment baseFragment, ArrayList<Long> selectedDialogs) {
+         super(baseFragment.getParentActivity(), false);
+         fixNavigationBar();
+         this.selectedDialogs = selectedDialogs;

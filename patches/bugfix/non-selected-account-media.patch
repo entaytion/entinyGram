@@ -233,7 +233,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -4738,7 +4738,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -4740,7 +4740,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          Theme.createChatResources(activity, false);
          this.resourcesProvider = resourcesProvider;
          this.parentFragment = fragment;

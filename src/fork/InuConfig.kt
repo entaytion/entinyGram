@@ -521,6 +521,9 @@ object InuConfig {
     val ADD_TO_FOLDER_IN_FOLDER = BoolItem("add_to_folder_in_folder", true)
 
     @JvmField
+    val ADD_TO_FOLDER_IN_CHAT = BoolItem("add_to_folder_in_chat", false)
+
+    @JvmField
     val SYSTEM_FOLDERS_STATE = StringItem("system_folders_state", "")
 
     @JvmField
@@ -1124,6 +1127,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val UNREAD_CHATS_FIRST_PINNED = BoolItem("unread_chats_first_pinned", false)
+
+    @JvmField
+    val UNREAD_CHATS_ALPHABETICAL = BoolItem("unread_chats_alphabetical", false)
 
     @JvmField
     val SHOW_ONLINE_INDICATOR = BoolItem("show_online_indicator", true)

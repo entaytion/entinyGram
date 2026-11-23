@@ -4,25 +4,9 @@ Date: Sun, 27 Sep 2026 21:50:04 +0300
 Subject: slow animated previews in chats
 
 ---
- TMessagesProj/jni/gifvideo.cpp                                | 4 +++-
- .../java/org/telegram/ui/Components/AnimatedFileDrawable.java | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ .../org/telegram/ui/Components/AnimatedFileDrawable.java  | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/TMessagesProj/jni/gifvideo.cpp b/TMessagesProj/jni/gifvideo.cpp
-index 0000000..0000000 100644
---- a/TMessagesProj/jni/gifvideo.cpp
-+++ b/TMessagesProj/jni/gifvideo.cpp
-@@ -636,7 +636,9 @@ extern "C" JNIEXPORT jlong JNICALL Java_org_telegram_ui_Components_AnimatedFileN
-                  */
-             }
-         }
--        dataArr[5] = (int32_t) ceil(fps);
-+        // entiny: ceil(fps) makes choreographer ticks land just before the frame-time gate each
-+        // time (23.976 -> 24), so every swap waits an extra tick and playback runs at half speed
-+        dataArr[5] = fps >= 1.0 ? (int32_t) fps : (int32_t) ceil(fps);
-         //(int32_t) (1000 * info->video_stream->duration * av_q2d(info->video_stream->time_base));
-         env->ReleaseIntArrayElements(data, dataArr, 0);
-     }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
@@ -38,3 +22,14 @@ index 0000000..0000000 100644
              || !isRunning && decodeSingleFrame;
  
          if (isRunning) {
+@@ -1334,7 +1336,9 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+         renderingBuffer = nextRenderingBuffer;
+         nextRenderingBuffer = nextRenderingBuffer2;
+         nextRenderingBuffer2 = null;
+-        lastFrameTime = now;
++        // entiny: carry the frame grid so vsync-aligned swaps do not drop 21-29 fps sources to 20 fps
++        final long target = lastFrameTime + invalidateAfter;
++        lastFrameTime = lastFrameTime != 0 && now >= target - 8 && now - target < 100 ? target : now;
+         swapBuffersAllowedByChoreographer = false;
+     }
+ 

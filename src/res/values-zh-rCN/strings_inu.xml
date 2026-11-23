@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">广告</string>
     <string name="InuAddToFolderInFolder">从任意文件夹添加到文件夹</string>
     <string name="InuAddToFolderInFolderInfo">在文件夹内的聊天选择菜单中也显示“添加到文件夹”，而不仅限于“所有聊天”。</string>
+    <string name="InuAddToFolderInChat">从聊天菜单添加到文件夹</string>
+    <string name="InuAddToFolderInChatInfo">在聊天内的三点菜单中显示“添加到文件夹”。</string>
     <string name="InuAddToStickersGifs">添加到贴纸/GIF</string>
     <string name="InuAiAddProviderFirst">还没有可用的提供商。请先在“提供商”中添加。</string>
     <string name="InuAiAllowInsecure">允许不安全的 AI 端点</string>
@@ -2277,6 +2279,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">iOS 风格计数器</string>
     <string name="InuUnreadChatsFirst">未读聊天优先显示</string>
     <string name="InuUnreadChatsFirstPinned">置顶聊天中未读优先</string>
+    <string name="InuUnreadChatsAlphabetical">未读聊天按名称排序</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">未读聊天按名称排序，已读聊天保持原有顺序</string>
     <string name="InuUpdateFailedToInstall">安装失败 (%1$d)</string>
     <string name="InuUpdateInstalledNotification">更新已安装，点击重启</string>
     <string name="InuUpdateInstalling">正在安装更新</string>

@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">Реклама</string>
     <string name="InuAddToFolderInFolder">Додавання в папку з будь-якої папки</string>
     <string name="InuAddToFolderInFolderInfo">Показувати «Додати в папку» в меню вибору чатів усередині папок, а не лише у вкладці «Усі чати».</string>
+    <string name="InuAddToFolderInChat">Додавання в папку з меню чату</string>
+    <string name="InuAddToFolderInChatInfo">Показувати «Додати в папку» в меню з трьома крапками всередині чату.</string>
     <string name="InuAddToStickersGifs">Додати до Наліпок/GIF</string>
     <string name="InuAiAddProviderFirst">Жодного готового провайдера ще немає. Спочатку додайте його в розділі «Провайдери».</string>
     <string name="InuAiAllowInsecure">Дозволити незахищені AI-ендпоінти</string>
@@ -2303,6 +2305,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">Лічильник у стилі iOS</string>
     <string name="InuUnreadChatsFirst">Непрочитані чати першими</string>
     <string name="InuUnreadChatsFirstPinned">Непрочитані першими серед закріплених</string>
+    <string name="InuUnreadChatsAlphabetical">Непрочитані за алфавітом</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">Непрочитані чати сортуються за назвою, прочитані лишаються в звичайному порядку</string>
     <string name="InuUpdateFailedToInstall">Помилка встановлення (%1$d)</string>
     <string name="InuUpdateInstalledNotification">Оновлення встановлено, натисніть для перезапуску</string>
     <string name="InuUpdateInstalling">Встановлення оновлення</string>

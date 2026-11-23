@@ -34,7 +34,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -10374,7 +10374,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10376,7 +10376,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          }
                          shouldSavePositionForCurrentVideoShortTerm = name;
                      }
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                          if (currentMessageObject.forceSeekTo < 0) {
                              SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
                              float pos = preferences.getFloat(name, -1);
-@@ -10874,7 +10874,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10876,7 +10876,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          }
                          shouldSavePositionForCurrentVideoShortTerm = name;
                      }
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
                          if (currentMessageObject.forceSeekTo < 0) {
                              SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
                              float pos = preferences.getFloat(name, -1);
-@@ -23840,7 +23840,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -23844,7 +23844,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      }
                  }
              }

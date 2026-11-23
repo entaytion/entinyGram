@@ -17,6 +17,8 @@
     <string name="InuAdBlockSection">Ads</string>
     <string name="InuAddToFolderInFolder">Add to folder from any folder</string>
     <string name="InuAddToFolderInFolderInfo">Show \"Add to folder\" in the chat selection menu inside folders, not only in All chats.</string>
+    <string name="InuAddToFolderInChat">Add to folder in chat menu</string>
+    <string name="InuAddToFolderInChatInfo">Show \"Add to folder\" in the three-dot menu inside a chat.</string>
     <string name="InuAddToStickersGifs">Add to Stickers/GIFs</string>
     <string name="InuAiAddProviderFirst">No provider is ready yet. Add one in Providers first.</string>
     <string name="InuAiAllowInsecure">Allow insecure AI endpoints</string>
@@ -2300,6 +2302,8 @@
     <string name="InuUnreadBadgeOnBackButtonIos">iOS-styled counter</string>
     <string name="InuUnreadChatsFirst">Unread chats first</string>
     <string name="InuUnreadChatsFirstPinned">Unread first among pinned</string>
+    <string name="InuUnreadChatsAlphabetical">Unread chats A–Z</string>
+    <string name="InuUnreadChatsAlphabeticalInfo">Sort unread chats by name, read ones keep the usual order</string>
     <string name="InuUpdateFailedToInstall">Install failed (%1$d)</string>
     <string name="InuUpdateInstalledNotification">Update installed, tap to relaunch</string>
     <string name="InuUpdateInstalling">Installing update</string>

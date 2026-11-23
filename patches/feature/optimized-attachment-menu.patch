@@ -105,7 +105,7 @@ index 0000000..0000000 100644
                  animatingImageView.getClippedVisibleRect(visibleRect);
                  if (!visibleRect.isEmpty()) {
                      visibleRect.inset(dp(1f), dp(1f));
-@@ -6344,7 +6346,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6346,7 +6348,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
              @Override
              public void invalidate() {
@@ -116,7 +116,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  super.invalidate();
-@@ -6800,6 +6804,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6802,6 +6806,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          captionEdit = new CaptionPhotoViewer(containerView.getContext(), windowView, containerView, containerView, resourcesProvider, blurManager, this::applyCaption) {
              private final Path path = new Path();
  
@@ -138,7 +138,7 @@ index 0000000..0000000 100644
              @Override
              protected boolean customBlur() {
                  return true;
-@@ -6899,7 +6918,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6901,7 +6920,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
              @Override
              public void invalidate() {
@@ -149,7 +149,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  super.invalidate();
-@@ -6965,6 +6986,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6967,6 +6988,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          topCaptionEdit = new CaptionPhotoViewer(activityContext, windowView, containerView, containerView, resourcesProvider, blurManager, this::applyCaption) {
              private final Path path = new Path();
  
@@ -171,7 +171,7 @@ index 0000000..0000000 100644
              @Override
              protected boolean customBlur() {
                  return true;
-@@ -7009,7 +7045,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7011,7 +7047,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
              @Override
              public void invalidate() {
@@ -182,7 +182,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  super.invalidate();
-@@ -14583,6 +14621,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14585,6 +14623,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  paintItem.setVisibility(View.GONE);
                  tuneItem.setVisibility(View.GONE);
              }
@@ -194,7 +194,7 @@ index 0000000..0000000 100644
              updateSelectedCount();
          } else {
              setImageIndex(index);
-@@ -16972,7 +17015,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16974,7 +17017,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          imageReceiver.setImage(ImageLocation.getForWebFile(webDocument), filter, placeHolder != null ? new BitmapDrawable(placeHolder.bitmap) : (isVideo && parentActivity != null ? parentActivity.getResources().getDrawable(R.drawable.nophotos) : null), null, object, cacheType);
                      }
                  } else {
@@ -203,7 +203,7 @@ index 0000000..0000000 100644
                  }
  
                  if (cropTransform != null) {
-@@ -17996,8 +18039,18 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -17998,8 +18041,18 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      if (provider != null) {
                          provider.onPreOpen();
                      }
@@ -222,7 +222,7 @@ index 0000000..0000000 100644
                          if (containerView == null || windowView == null) {
                              return;
                          }
-@@ -18055,8 +18108,18 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18057,8 +18110,18 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          if (animatingImageViews.length > 1) {
                              animators.add(ObjectAnimator.ofFloat(animatingImageView, View.ALPHA, 0f, 1f));
                          }
@@ -241,7 +241,7 @@ index 0000000..0000000 100644
                          animators.add(ObjectAnimator.ofFloat(navigationBar, View.ALPHA, 0.0f, 1.0f));
                          if (sendPhotoType == SELECT_TYPE_AVATAR) {
                              animators.add(ObjectAnimator.ofFloat(photoCropView, View.ALPHA, 0, 1.0f));
-@@ -18077,7 +18140,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18079,7 +18142,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                              }
                          });
  
@@ -254,7 +254,7 @@ index 0000000..0000000 100644
                          setCaptionHwLayerEnabled(false);
                          transitionAnimationStartTime = System.currentTimeMillis();
                          AndroidUtilities.runOnUIThread(() -> {
-@@ -18892,6 +18959,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18894,6 +18961,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      public void destroyPhotoViewer() {
@@ -262,7 +262,7 @@ index 0000000..0000000 100644
          desu.inugram.helpers.media.AttachmentPreviewHelper.clearAttachmentPreviews(this);
          if (parentActivity == null || windowView == null) {
              return;
-@@ -18936,6 +19004,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18938,6 +19006,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      private void onPhotoClosed(PlaceProviderObject object) {
@@ -270,7 +270,7 @@ index 0000000..0000000 100644
          desu.inugram.helpers.media.AttachmentPreviewHelper.clearAttachmentPreviews(this);
          if (doneButtonPressed) {
              releasePlayer(true);
-@@ -20714,14 +20783,18 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -20718,14 +20787,18 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          if (!fancyShadows) {
              return;
          }
@@ -292,7 +292,7 @@ index 0000000..0000000 100644
          if (clipFancyShadows == null) {
              clipFancyShadows = new Path();
              topFancyShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-@@ -22382,6 +22455,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22386,6 +22459,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      private final LongSparseArray<RenderNode> matrixRenderNodes = new LongSparseArray<>();
  
      public boolean BLUR_RENDERNODE() {
@@ -303,7 +303,7 @@ index 0000000..0000000 100644
          return !textureViewSkipRender
              && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
              && SharedConfig.useNewBlur
-@@ -22462,7 +22539,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22466,7 +22543,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      public void drawCaptionBlur(Canvas canvas, BlurringShader.StoryBlurDrawer drawer, int bgColor, int overlayColor, boolean clip, boolean allowTransparent, boolean allowCrossfade, boolean glass) {
@@ -314,7 +314,7 @@ index 0000000..0000000 100644
              bgColor = Theme.multAlpha(bgColor, 0.75f);
          }
          if (BLUR_RENDERNODE()) {
-@@ -22483,7 +22562,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22487,7 +22566,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              }
              return;
          }
@@ -323,7 +323,7 @@ index 0000000..0000000 100644
  
          drawer.paint.setShader(null);
          if (bgColor != 0) {
-@@ -22492,7 +22571,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22496,7 +22575,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              canvas.drawPaint(drawer.paint);
          }
  
@@ -332,7 +332,7 @@ index 0000000..0000000 100644
              blurAlpha.set(0, true);
              if (overlayColor != 0) {
                  drawer.paint.setColor(overlayColor);
-@@ -23050,6 +23129,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -23054,6 +23133,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          if (stickerMakerView != null && stickerMakerView.isThanosInProgress) {
              return;
          }
@@ -342,7 +342,7 @@ index 0000000..0000000 100644
          if (!BLUR_RENDERNODE() && !SharedConfig.photoViewerBlurEnabled()) {
              return;
          }
-@@ -24358,6 +24440,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -24362,6 +24444,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              // setMeasuredDimension(widthSize, heightSize);
              ViewGroup.LayoutParams layoutParams = animatingImageView.getLayoutParams();
              animatingImageView.measure(MeasureSpec.makeMeasureSpec(layoutParams.width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(layoutParams.height, MeasureSpec.AT_MOST));

@@ -62,7 +62,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -10950,7 +10950,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10952,7 +10952,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              setVideoPlayerControlVisible(!isCurrentVideo && !livePhoto, true);
          }
          if (!isCurrentVideo) {
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
          }
          if (currentMessageObject != null) {
              videoPlayer.setPlaybackSpeed(currentVideoSpeed);
-@@ -14700,7 +14700,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14702,7 +14702,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              }
          }
          if (currentMessageObject != null && currentMessageObject.isVideo() || desu.inugram.helpers.media.PhotoViewerHelper.gifAsVideo(currentMessageObject) || currentBotInlineResult != null && (currentBotInlineResult.type.equals("video") || MessageObject.isVideoDocument(currentBotInlineResult.document)) || (pageBlocksAdapter != null && (pageBlocksAdapter.isVideo(index) || pageBlocksAdapter.isHardwarePlayer(index))) || (sendPhotoType == SELECT_TYPE_NO_SELECT && ((MediaController.PhotoEntry)imagesArrLocals.get(index)).isVideo)) {
@@ -80,7 +80,7 @@ index 0000000..0000000 100644
              onActionClick(false);
          } else if (!imagesArrLocals.isEmpty()) {
              final Object entry = imagesArrLocals.get(index);
-@@ -18555,8 +18555,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18557,8 +18557,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          animation.seekTo(seekTo, !FileLoader.getInstance(currentAccount).isLoadingVideo(document, true), true);
                      }
                      if (object != null && object.imageReceiver != null) {

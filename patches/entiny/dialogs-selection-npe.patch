@@ -4,13 +4,31 @@ Date: Sat, 14 Nov 2026 23:46:36 +0200
 Subject: Fix a crash when selecting a chat in the dialogs list before the selection counter exists.
 
 ---
- .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../src/main/java/org/telegram/ui/DialogsActivity.java      | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -4148,7 +4148,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     }
+                     updateVisibleRows(MessagesController.UPDATE_MASK_SELECT_DIALOG);
+                     updateCounters(false);
+-                    selectedDialogsCountTextView.setNumber(selectedDialogs.size(), true);
++                    if (selectedDialogsCountTextView != null) selectedDialogsCountTextView.setNumber(selectedDialogs.size(), true);
+                 } else if (id == pin || id == read || id == delete || id == clear || id == mute || id == archive || id == block || id == archive2 || id == pin2) {
+                     performSelectedDialogsAction(selectedDialogs, id, true, false);
+                 }
+@@ -6945,7 +6945,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     private void createActionMode(String tag) {
+-        if (actionBar.actionModeIsExist(tag)) {
++        if (actionBar.actionModeIsExist(tag) && selectedDialogsCountTextView != null && selectedDialogsCountTextView.getParent() == actionBar.getActionMode()) {
+             return;
+         }
+         final ActionBarMenu actionMode = actionBar.createActionMode(false, tag);
 @@ -10560,7 +10560,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          }
