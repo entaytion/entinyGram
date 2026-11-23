@@ -6,6 +6,7 @@ import androidx.core.content.edit
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_stars
@@ -32,12 +33,17 @@ object ParanoiaHelper {
     @JvmStatic
     fun isHidden(account: Int, dialogId: Long): Boolean {
         if (!isParanoia()) return false
+        if (DialogObject.isFolderDialogId(dialogId)) return false
         if (DialogObject.isEncryptedDialog(dialogId)) return true
         // entiny: never hide Telegram service notifications (777000) to prevent login lockout
         if (dialogId == 777000L) return false
         val selected = getHidden(account).contains(dialogId)
         return if (whitelist) !selected else selected
     }
+
+    @JvmStatic
+    fun hidesArchiveFolder(account: Int, hasArchivedChats: Boolean): Boolean =
+        isParanoia() && !hasArchivedChats && !MessagesController.getInstance(account).getStoriesController().hasHiddenStories()
 
     fun getHidden(account: Int): Set<Long> {
         val cache = hiddenCache ?: loadAll().also { hiddenCache = it }

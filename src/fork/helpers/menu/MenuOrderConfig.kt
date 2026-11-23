@@ -530,7 +530,7 @@ class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key
         MY_PROFILE("my_profile", R.string.MyProfile, R.drawable.left_status_profile),
         BOTS("bots", R.string.InuDrawerBots, R.drawable.msg_bot),
         DIVIDER_1("divider_1", R.string.InuMenuDivider, R.drawable.msg_list),
-        COMPOSE("compose", R.string.NewMessageTitle, R.drawable.menu_topic_add),
+        COMPOSE("compose", R.string.NewMessageTitle, R.drawable.msg_topic_create),
         NEW_CHANNEL("new_channel", R.string.NewChannel, R.drawable.msg_channel),
         CONTACTS("contacts", R.string.Contacts, R.drawable.msg_contacts),
         CALLS("calls", R.string.Calls, R.drawable.msg_calls),

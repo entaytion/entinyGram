@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2696,7 +2696,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2697,7 +2697,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          newMsg.media_unread = true;
                      }
                  }
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                      if (
                          !(msgObj.messageOwner.reply_to.reply_to_peer_id == null || MessageObject.peersEqual(msgObj.messageOwner.reply_to.reply_to_peer_id, msgObj.messageOwner.peer_id)) ||
                          ids != null && (msgObj.messageOwner.reply_to.flags & 16) != 0 && ids.contains(msgObj.messageOwner.reply_to.reply_to_msg_id)
-@@ -2726,7 +2726,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2727,7 +2727,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  arr.add(newMsg);
                  StarsController.getInstance(currentAccount).beforeSendingMessage(newMsgObj);
  

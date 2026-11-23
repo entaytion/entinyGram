@@ -74,7 +74,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -4046,6 +4046,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4050,6 +4050,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return;
          }
          messageObject.reactionsLastCheckTime = System.currentTimeMillis();
@@ -86,7 +86,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -24840,7 +24840,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24856,7 +24856,7 @@ public class ChatActivity extends BaseFragment implements
                  if (!isFeedSearch() && filteredMessagesDict != null) {
                      MessageObject messageObject = filteredMessagesDict.get(msgId);
                      if (messageObject != null) {
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                          messageObject.forceUpdate = true;
                          messageObject.reactionsChanged = true;
                      }
-@@ -24850,7 +24850,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24866,7 +24866,7 @@ public class ChatActivity extends BaseFragment implements
                      FileLog.d("InuRx[" + classGuid + "] apply reactions did=" + did + " mid=" + msgId + " found=" + (messageObject != null) + " old=" + (messageObject == null ? null : desu.inugram.helpers.chat.ReactionDebugHelper.describe(messageObject.messageOwner.reactions)) + " new=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe((TLRPC.TL_messageReactions) args[2]));
                  }
                  if (messageObject != null) {
@@ -104,7 +104,7 @@ index 0000000..0000000 100644
                      updateChangedMessageObject(messageObject, true);
                      invalidateMessagesVisiblePart();
                      if (did == dialog_id) {
-@@ -34827,7 +34827,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34843,7 +34843,7 @@ public class ChatActivity extends BaseFragment implements
      Runnable updateReactionRunnable;
  
      private void showMultipleReactionsPromo(View cell, ReactionsLayoutInBubble.VisibleReaction visibleReaction, int currentChosenReactions) {

@@ -4,15 +4,29 @@ Date: Sat, 14 Nov 2026 18:31:03 +0400
 Subject: hiding messages from blocked users (with a spoiler or completely)
 
 ---
+ .../widget/LinearLayoutManager.java           |  2 +-
  .../messenger/MediaDataController.java        |  4 +--
- .../org/telegram/messenger/MessageObject.java |  5 ++--
- .../messenger/MessagesController.java         |  3 +++
- .../messenger/NotificationsController.java    | 27 +++++++++++++------
+ .../org/telegram/messenger/MessageObject.java |  5 +--
+ .../messenger/MessagesController.java         |  3 ++
+ .../messenger/NotificationsController.java    | 27 +++++++++++-----
  .../telegram/ui/Cells/ChatMessageCell.java    |  4 +--
  .../org/telegram/ui/Cells/DialogCell.java     |  4 +--
- .../java/org/telegram/ui/ChatActivity.java    | 13 +++++++--
- 7 files changed, 42 insertions(+), 18 deletions(-)
+ .../java/org/telegram/ui/ChatActivity.java    | 32 +++++++++++++++----
+ 8 files changed, 57 insertions(+), 24 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java b/TMessagesProj/src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java
++++ b/TMessagesProj/src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java
+@@ -2034,7 +2034,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
+     // fully visible depending on the arguments provided. Completely invisible children are not
+     // acceptable by this method, but could be returned
+     // using #findOnePartiallyOrCompletelyInvisibleChild
+-    View findOneVisibleChild(int fromIndex, int toIndex, boolean completelyVisible,
++    public View findOneVisibleChild(int fromIndex, int toIndex, boolean completelyVisible,
+             boolean acceptPartiallyVisible) {
+         ensureLayoutState();
+         @ViewBoundsCheck.ViewBounds int preferredBoundsFlag = 0;
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
@@ -213,6 +227,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -1848,7 +1848,7 @@ public class ChatActivity extends BaseFragment implements
+                 int i = position - chatAdapter.messagesStartRow;
+                 if (i >= 0 && i < messages.size()) {
+                     MessageObject messageObject = messages.get(i);
+-                    if (messageObject.contentType == 0) {
++                    if (messageObject.contentType == 0 && !desu.inugram.helpers.chat.BlockedMessagesHelper.shouldHide(messageObject)) {
+                         if (!unselect && alreadySelectedMessagesIds.get(messageObject.getId(), null) == null) {
+                             return true;
+                         }
 @@ -2984,6 +2984,8 @@ public class ChatActivity extends BaseFragment implements
              .addGlobal(NotificationCenter.didApplyNewTheme)
              .addGlobal(NotificationCenter.goingToPreviewTheme);
@@ -230,7 +253,19 @@ index 0000000..0000000 100644
                  }
  
                  @Override
-@@ -13043,7 +13046,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -6597,6 +6600,11 @@ public class ChatActivity extends BaseFragment implements
+ 
+             boolean computingScroll;
+ 
++            @Override
++            public View findOneVisibleChild(int fromIndex, int toIndex, boolean completelyVisible, boolean acceptPartiallyVisible) {
++                return desu.inugram.helpers.chat.BlockedMessagesHelper.findHiddenAtEdge(this, super.findOneVisibleChild(fromIndex, toIndex, completelyVisible, acceptPartiallyVisible), fromIndex, toIndex, getParentStart(), getHeight() - getPaddingBottom());
++            }
++
+             @Override
+             public int getStartForFixGap() {
+                 int padding = (int) chatListViewPaddingTop;
+@@ -13050,7 +13058,7 @@ public class ChatActivity extends BaseFragment implements
                  groupedMessages = null;
              }
          }
@@ -239,7 +274,25 @@ index 0000000..0000000 100644
      }
  
      public void jumpToDate(int date) {
-@@ -23833,6 +23836,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16884,7 +16892,7 @@ public class ChatActivity extends BaseFragment implements
+                 keyboardOffset = chatActivityEnterView.getEmojiPadding();
+             }
+ 
+-            final boolean visibleToBeRead = !BaseFragment.hasSheets(this) && (currentChat == null || !ChatObject.isChannelAndNotMegaGroup(currentChat) || view.getMeasuredHeight() > 0 && top + view.getMeasuredHeight() * (messageCell == null || messageCell.getCurrentPosition() == null ? .80f : 1f) < clipBottomFinal);
++            final boolean visibleToBeRead = !BaseFragment.hasSheets(this) && (currentChat == null || !ChatObject.isChannelAndNotMegaGroup(currentChat) || view instanceof desu.inugram.helpers.chat.BlockedMessagesHelper.HiddenMessageView || view.getMeasuredHeight() > 0 && top + view.getMeasuredHeight() * (messageCell == null || messageCell.getCurrentPosition() == null ? .80f : 1f) < clipBottomFinal);
+ 
+             final float visibleTop = getServiceTop(view);
+             final int visibleBackgroundHeight = getServiceHeight(view);
+@@ -17031,6 +17039,8 @@ public class ChatActivity extends BaseFragment implements
+                 }
+             } else if (view instanceof BotHelpCell) {
+                 view.invalidate();
++            } else if (view instanceof desu.inugram.helpers.chat.BlockedMessagesHelper.HiddenMessageView) {
++                messageObject = ((desu.inugram.helpers.chat.BlockedMessagesHelper.HiddenMessageView) view).messageObject;
+             } else if (view instanceof ChatLoadingCell) {
+                 ((ChatLoadingCell) view).setVisiblePart(visibleTop, visibleBackgroundHeight);
+             } else if (view instanceof UserInfoCell) {
+@@ -23842,6 +23852,7 @@ public class ChatActivity extends BaseFragment implements
          } else if (id == NotificationCenter.screenshotTook) {
              updateInformationForScreenshotDetector();
          } else if (id == NotificationCenter.blockedUsersDidLoad) {
@@ -247,7 +300,25 @@ index 0000000..0000000 100644
              if (currentUser != null && !UserObject.isReplyUser(currentUser)) {
                  boolean oldValue = userBlocked;
                  userBlocked = getMessagesController().blockePeers.indexOfKey(currentUser.id) >= 0;
-@@ -38192,6 +38196,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -26721,7 +26732,7 @@ public class ChatActivity extends BaseFragment implements
+                         newMentionsCount++;
+                     }
+                 }
+-                if (!isAd) {
++                if (!isAd && !desu.inugram.helpers.chat.BlockedMessagesHelper.shouldHide(obj)) {
+                     newUnreadMessageCount++;
+                 }
+                 if (obj.type == 10 || obj.type == MessageObject.TYPE_ACTION_PHOTO) {
+@@ -27096,7 +27107,7 @@ public class ChatActivity extends BaseFragment implements
+                         newMentionsCount++;
+                     }
+                 }
+-                if (!isAd) {
++                if (!isAd && !desu.inugram.helpers.chat.BlockedMessagesHelper.shouldHide(obj)) {
+                     newUnreadMessageCount++;
+                 }
+                 if (obj.type == 10 || obj.type == MessageObject.TYPE_ACTION_PHOTO) {
+@@ -38201,6 +38212,8 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  
@@ -256,7 +327,7 @@ index 0000000..0000000 100644
          public boolean isFrozen;
          public ArrayList<MessageObject> frozenMessages = new ArrayList<>();
  
-@@ -38265,6 +38271,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38274,6 +38287,7 @@ public class ChatActivity extends BaseFragment implements
              } else {
                  messages = ChatActivity.this.messages;
              }
@@ -264,16 +335,27 @@ index 0000000..0000000 100644
              if (chatMode == MODE_SAVED && isInsideContainer) {
                  hintRow = rowCount++;
              } else {
-@@ -38788,6 +38795,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -38797,6 +38811,8 @@ public class ChatActivity extends BaseFragment implements
                  ChatMessageUnsupportedCell cell = new ChatMessageUnsupportedCell(mContext, themeDelegate);
                  cell.setDelegate(getChatMessageCellDelegate());
                  view = cell;
 +            } else if (viewType == desu.inugram.helpers.chat.BlockedMessagesHelper.VIEW_TYPE_HIDDEN) {
-+                view = desu.inugram.helpers.chat.BlockedMessagesHelper.createHiddenView(mContext);
++                view = new desu.inugram.helpers.chat.BlockedMessagesHelper.HiddenMessageView(mContext);
              }
              view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
              return new RecyclerListView.Holder(view);
-@@ -39419,7 +39428,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38876,7 +38892,9 @@ public class ChatActivity extends BaseFragment implements
+                 MessageObject message = messages.get(position - messagesStartRow);
+                 View view = holder.itemView;
+ 
+-                if (view instanceof ChatMessageCell) {
++                if (view instanceof desu.inugram.helpers.chat.BlockedMessagesHelper.HiddenMessageView) {
++                    ((desu.inugram.helpers.chat.BlockedMessagesHelper.HiddenMessageView) view).messageObject = message;
++                } else if (view instanceof ChatMessageCell) {
+                     final ChatMessageCell messageCell = (ChatMessageCell) view;
+                     MessageObject.GroupedMessages groupedMessages = getValidGroupedMessage(message);
+                     messageCell.isChat = currentChat != null || UserObject.isUserSelf(currentUser) || UserObject.isReplyUser(currentUser) || (chatMode == MODE_SEARCH);
+@@ -39428,7 +39446,7 @@ public class ChatActivity extends BaseFragment implements
                  } else {
                      messages = ChatActivity.this.messages;
                  }

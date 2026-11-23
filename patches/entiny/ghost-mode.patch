@@ -170,7 +170,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -426,6 +426,9 @@ public class ConnectionsManager extends BaseController {
+@@ -452,6 +452,9 @@ public class ConnectionsManager extends BaseController {
          if (desu.inugram.helpers.ai.AiComposeHelper.maybeCompose(currentAccount, requestToken, object, onComplete, onCompleteTimestamp)) {
              return;
          }
@@ -180,7 +180,7 @@ index 0000000..0000000 100644
          try {
              NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
              object.serializeToStream(buffer);
-@@ -488,6 +491,7 @@ public class ConnectionsManager extends BaseController {
+@@ -514,6 +517,7 @@ public class ConnectionsManager extends BaseController {
                      final TLObject finalResponse = resp;
                      final TLRPC.TL_error finalError = error;
                      Utilities.stageQueue.postRunnable(() -> {
@@ -240,7 +240,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -18064,6 +18064,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -18080,6 +18080,9 @@ public class ChatActivity extends BaseFragment implements
          if (sideControlsButtonsLayout == null) {
              return;
          }
@@ -250,7 +250,7 @@ index 0000000..0000000 100644
  
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_MENTION, show && !ChatObject.isMonoForum(currentChat), animated);
          if (!show) {
-@@ -25269,6 +25272,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -25285,6 +25288,9 @@ public class ChatActivity extends BaseFragment implements
              long topicId = (Long) args[1];
              if (dialog_id == dialogId && this.getTopicId() == topicId) {
                  int count = (int) args[2];

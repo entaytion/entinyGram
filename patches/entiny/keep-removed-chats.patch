@@ -89,7 +89,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -24356,6 +24356,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24372,6 +24372,7 @@ public class ChatActivity extends BaseFragment implements
          } else if (id == NotificationCenter.chatInfoCantLoad) {
              long chatId = (Long) args[0];
              if (currentChat != null && currentChat.id == chatId) {

@@ -237,7 +237,7 @@ index 0000000..0000000 100644
  import android.view.TextureView;
  
  import androidx.annotation.MainThread;
-@@ -770,6 +772,47 @@ public final class RoundVideoSession {
+@@ -771,6 +773,47 @@ public final class RoundVideoSession {
          return true;
      }
  

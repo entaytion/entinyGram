@@ -825,7 +825,7 @@ index 0000000..0000000 100644
          chatInputViewsContainer = new ChatInputViewsContainer(context);
          chatInputViewsContainer.setClipChildren(false);
          chatInputViewsContainer.setWindowInsetsProvider(windowInsetsStateHolder);
-@@ -31369,10 +31419,45 @@ public class ChatActivity extends BaseFragment implements
+@@ -31385,10 +31435,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  

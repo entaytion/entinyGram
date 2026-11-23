@@ -107,7 +107,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/Round
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoOverlayRenderer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/round/RoundVideoOverlayRenderer.java
-@@ -255,6 +255,8 @@ final class RoundVideoOverlayRenderer {
+@@ -256,6 +256,8 @@ final class RoundVideoOverlayRenderer {
      private final Program watermarkProgram;
      private final FloatBuffer vertexBuffer;
      private final FloatBuffer textureBuffer;
@@ -116,7 +116,7 @@ index 0000000..0000000 100644
      private FloatBuffer cameraTextureBuffer;
      private FloatBuffer rotatedCameraTextureBuffer;
      /**
-@@ -312,6 +314,9 @@ final class RoundVideoOverlayRenderer {
+@@ -313,6 +315,9 @@ final class RoundVideoOverlayRenderer {
  
          float[] vertexData = new float[48];
          setVertexCoordinates(vertexData, VERTEX_NORMAL, -1f, 1f, 1f, -1f);
@@ -126,7 +126,7 @@ index 0000000..0000000 100644
          updateCameraTextureBuffers();
  
          GLES20.glGenTextures(textures.length, textures, 0);
-@@ -416,6 +421,10 @@ final class RoundVideoOverlayRenderer {
+@@ -417,6 +422,10 @@ final class RoundVideoOverlayRenderer {
          lastHistoryFrameNs = 0;
      }
  
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
      void captureSwitchFrame(
              int cameraTexture,
              @NonNull float[] textureMatrix,
-@@ -788,14 +797,15 @@ final class RoundVideoOverlayRenderer {
+@@ -789,14 +798,15 @@ final class RoundVideoOverlayRenderer {
  
      private void bindCameraProgram(CameraProgram program, float[] textureMatrix) {
          GLES20.glUseProgram(program.program);

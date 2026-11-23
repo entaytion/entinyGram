@@ -48,7 +48,7 @@ index 0000000..0000000 100644
          TLRPC.User fromUser = null;
          TLRPC.Chat fromChat = null;
          if (messageOwner.from_id instanceof TLRPC.TL_peerUser) {
-@@ -6388,6 +6391,9 @@ public class MessageObject {
+@@ -6384,6 +6387,9 @@ public class MessageObject {
                  } else {
                      messageText = messageOwner.message;
                  }
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -7936,6 +7942,11 @@ public class MessageObject {
+@@ -7932,6 +7938,11 @@ public class MessageObject {
          captionLinksHidden = hideLinks;
          String text = messageOwner.message;
          ArrayList<TLRPC.MessageEntity> entities = messageOwner.entities;
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
          boolean forceManualEntities = false;
          if (type == TYPE_STORY) {
              if (messageOwner.media != null && messageOwner.media.storyItem != null) {
-@@ -8319,6 +8330,9 @@ public class MessageObject {
+@@ -8315,6 +8326,9 @@ public class MessageObject {
                  return inu_tt != null ? inu_tt.entities : null;
              }
          }
@@ -97,7 +97,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -6244,7 +6244,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -6272,7 +6272,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  }
              }
          } else if (message.messageOwner.message != null) {

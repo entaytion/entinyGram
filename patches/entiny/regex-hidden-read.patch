@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -3402,6 +3402,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3425,6 +3425,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                          groupMessages = MessagesController.getInstance(currentAccount).dialogMessage.get(dialog.id);
                          message = groupMessages != null && groupMessages.size() > 0 ? groupMessages.get(0) : null;
                          lastUnreadState = message != null && message.isUnread();
@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17832,6 +17832,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -17846,6 +17846,12 @@ public class ChatActivity extends BaseFragment implements
          invalidateChatListViewTopPadding();
          if (!firstLoading && !paused && !inPreviewMode && (chatMode == 0 || chatMode == MODE_SUGGESTIONS) && !getMessagesController().ignoreSetOnline) {
              int scheduledRead = 0;

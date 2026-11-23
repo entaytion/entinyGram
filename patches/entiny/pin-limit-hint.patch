@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9661,6 +9661,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9674,6 +9674,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  boolean anySecret = newPinnedSecretCount > 0;
                  if (desu.inugram.InuConfig.UNLIMITED_PINNED_CHATS.getValue()) {
                      bulkUseLocalPin = true;

@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2258,6 +2258,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2259,6 +2259,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              return 0;
          }
          int sendResult = 0;
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
          long myId = getUserConfig().getClientUserId();
          boolean isChannel = false;
          if (!DialogObject.isEncryptedDialog(peer)) {
-@@ -4491,6 +4497,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -4495,6 +4501,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
                  sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
          String message = sendMessageParams.message;
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
          String caption = sendMessageParams.caption;
          TLRPC.MessageMedia location = sendMessageParams.location;
          TLRPC.TL_photo photo = sendMessageParams.photo;
-@@ -7810,6 +7817,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -7814,6 +7821,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      protected void performSendMessageRequestMulti(final TLObject request, final ArrayList<MessageObject> msgObjs, final ArrayList<String> originalPaths, final ArrayList<Object> parentObjects, DelayedMessage delayedMessage, boolean scheduled) {
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
          for (int a = 0, size = msgObjs.size(); a < size; a++) {
              putToSendingMessages(msgObjs.get(a).messageOwner, scheduled);
          }
-@@ -8159,6 +8167,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -8163,6 +8171,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      protected void performSendMessageRequest(final TLObject req, final MessageObject msgObj, final String originalPath, DelayedMessage parentMessage, boolean check, DelayedMessage delayedMessage, Object parentObject, HashMap<String, String> params, boolean scheduled) {
@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -23572,7 +23572,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -23588,7 +23588,7 @@ public class ChatActivity extends BaseFragment implements
                  boolean scheduled = (Boolean) args[2];
                  int mode = (Integer) args[3];
                  if (mode != chatMode && chatMode != MODE_SAVED && chatMode != MODE_SUGGESTIONS) {

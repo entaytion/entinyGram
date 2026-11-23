@@ -177,7 +177,7 @@ index 0000000..0000000 100644
      };
      private PhotoViewer.PhotoViewerProvider photoViewerPaidMediaProvider = new PhotoViewer.EmptyPhotoViewerProvider() {
  
-@@ -16498,10 +16507,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -16510,10 +16519,13 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -192,7 +192,7 @@ index 0000000..0000000 100644
          if (readNow) {
              final boolean delete = messageObject.messageOwner.ttl != 0x7FFFFFFF;
              final int ttl = messageObject.messageOwner.ttl == 0x7FFFFFFF ? 0 : messageObject.messageOwner.ttl;
-@@ -16527,10 +16539,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -16539,10 +16551,13 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -207,7 +207,7 @@ index 0000000..0000000 100644
          final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
          messageObject.forceExpired = true;
          if (messageObject.isOutOwner() || !messageObject.isRoundOnce() && !messageObject.isVoiceOnce()) {
-@@ -20111,6 +20126,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -20127,6 +20142,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -220,7 +220,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -20118,7 +20139,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20134,7 +20155,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -229,7 +229,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -34638,6 +34659,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -34654,6 +34675,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -242,7 +242,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -40882,7 +40909,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40900,7 +40927,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -251,7 +251,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -43072,6 +43099,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -43090,6 +43117,10 @@ public class ChatActivity extends BaseFragment implements
                      final int timestamp = message.getVideoStartsTimestamp();
                      message.forceSeekTo = (float) (timestamp / message.getDuration());
                  }
@@ -262,7 +262,7 @@ index 0000000..0000000 100644
                  openPhotoViewerForMessage(cell, message);
              } else if (message.type == MessageObject.TYPE_VIDEO) {
                  sendSecretMessageRead(message, true);
-@@ -47005,7 +47036,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -47023,7 +47054,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

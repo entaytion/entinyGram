@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9185,6 +9185,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9198,6 +9198,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              previewMenu[0].addView(deleteItem);
          }
  

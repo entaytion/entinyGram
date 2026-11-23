@@ -13,10 +13,10 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -22735,6 +22735,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22738,6 +22738,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (desu.inugram.helpers.security.ParanoiaHelper.hidesArchiveFolder(currentAccount, hasArchivedChats)) {
+             getDialogs(0).remove(dialogs_dict.get(DialogObject.makeFolderDialogId(1)));
          }
- 
-         hasArchivedChats = dialogsByFolder.get(1, null) != null;
 +        desu.inugram.helpers.dialogs.PinHelper.reorderLocalPins(this, currentAccount);
      }
  

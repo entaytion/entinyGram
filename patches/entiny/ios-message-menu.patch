@@ -56,7 +56,7 @@ index 0000000..0000000 100644
      private Bitmap scrimBlurBitmap;
      private BitmapShader scrimBlurBitmapShader;
      private Paint scrimBlurBitmapPaint;
-@@ -11511,6 +11514,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -11523,6 +11526,9 @@ public class ChatActivity extends BaseFragment implements
                      if (cell != null) {
                          cell.invalidate();
                      }
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                      setScrimView(null);
                      scrimViewTask = null;
                      scrimViewReaction = null;
-@@ -18960,6 +18966,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -18976,6 +18982,11 @@ public class ChatActivity extends BaseFragment implements
                      }
                  } else {
                      float listTop = chatListView.getY() + chatListViewPaddingTop - chatListViewPaddingVisibleOffset - AndroidUtilities.dp(4);
@@ -78,7 +78,7 @@ index 0000000..0000000 100644
                      MessageObject.GroupedMessages scrimGroup;
                      if (scrimView instanceof ChatMessageCell) {
                          scrimGroup = ((ChatMessageCell) scrimView).getCurrentMessagesGroup();
-@@ -19058,6 +19069,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -19074,6 +19085,10 @@ public class ChatActivity extends BaseFragment implements
                          }
                          viewClipTop += clipTop;
                          viewClipBottom -= clipBottom;
@@ -89,7 +89,7 @@ index 0000000..0000000 100644
  
                          if (cell == null || !cell.getTransitionParams().animateBackgroundBoundsInner) {
                              viewClipLeft = Math.max(viewClipLeft, chatListView.getLeft() + child.getX());
-@@ -19262,6 +19277,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19278,6 +19293,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                          drawReactionsAfter.clear();
                      }
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
                  }
  
                  if (scrimViewReaction == null && scrimViewAlpha < 1f) {
-@@ -32681,7 +32697,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32697,7 +32713,7 @@ public class ChatActivity extends BaseFragment implements
  
              popupLayout.setBackground(scrimBlur3Factory.create(popupLayout, true)
                  .setColorProvider(BlurredBackgroundProviderImpl.messageMenuBackground(resourceProvider))
@@ -106,7 +106,7 @@ index 0000000..0000000 100644
                  .setPadding(dp(8)));
  
              boolean addGap = false;
-@@ -33856,7 +33872,19 @@ public class ChatActivity extends BaseFragment implements
+@@ -33872,7 +33888,19 @@ public class ChatActivity extends BaseFragment implements
              if (reactionsLayout != null) {
                  reactionsLayout.setParentLayout(scrimPopupContainerLayout);
              }
@@ -127,7 +127,7 @@ index 0000000..0000000 100644
                  @Override
                  public void dismiss() {
                      super.dismiss();
-@@ -33883,7 +33911,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -33899,7 +33927,8 @@ public class ChatActivity extends BaseFragment implements
  
                  @Override
                  public void dismiss(boolean animated) {
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
                      if (finalReactionsLayout1 != null) {
                          finalReactionsLayout1.dismissParent(animated);
                      }
-@@ -33947,7 +33976,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33963,7 +33992,7 @@ public class ChatActivity extends BaseFragment implements
              } else {
                  popupY = inBubbleMode ? 0 : AndroidUtilities.statusBarHeight;
              }
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
                  popupY = ChatHelper.reserveMenuRoomAbove(scrimPopupContainerLayout, popupY);
              }
              final int finalPopupX = scrimPopupX = popupX;
-@@ -33958,10 +33987,21 @@ public class ChatActivity extends BaseFragment implements
+@@ -33974,10 +34003,21 @@ public class ChatActivity extends BaseFragment implements
                  if (scrimPopupWindow == null || fragmentView == null || scrimPopupWindow.isShowing() || !AndroidUtilities.isActivityRunning(getParentActivity())) {
                      return;
                  }
@@ -170,7 +170,7 @@ index 0000000..0000000 100644
                  }
                  AndroidUtilities.runOnUIThread(() -> {
                      if (scrimPopupWindowItems != null && scrimPopupWindowItems.length > 0 && scrimPopupWindowItems[0] != null) {
-@@ -33979,7 +34019,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33995,7 +34035,7 @@ public class ChatActivity extends BaseFragment implements
              }
              chatListView.stopScroll();
              chatLayoutManager.setCanScrollVertically(false);

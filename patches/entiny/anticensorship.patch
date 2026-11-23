@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -436,6 +436,7 @@ public class ConnectionsManager extends BaseController {
+@@ -462,6 +462,7 @@ public class ConnectionsManager extends BaseController {
              return;
          }
          desu.inugram.helpers.feed.FeedRequestNormalizer.normalize(currentAccount, object);
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          try {
              NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
              object.serializeToStream(buffer);
-@@ -713,6 +714,9 @@ public class ConnectionsManager extends BaseController {
+@@ -739,6 +740,9 @@ public class ConnectionsManager extends BaseController {
                          proxySettings.getUser(), proxySettings.getPassword(), proxySettings.getSecret());
              }
          }
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
          String installer = "";
          try {
              Context context = ApplicationLoader.applicationContext;
-@@ -1015,6 +1019,10 @@ public class ConnectionsManager extends BaseController {
+@@ -1041,6 +1045,10 @@ public class ConnectionsManager extends BaseController {
      }
  
      public static void setProxySettings(boolean enabled, ProxySettings settings) {

@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                  !DialogObject.isEncryptedDialog(chatActivity.getDialogId()) && chatActivity.isPeerNoForwards() ||
                  selectedView != null && selectedView.getMessageObject() != null && (selectedView.getMessageObject().messageOwner != null && desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(selectedView.getMessageObject().messageOwner))
              );
-@@ -11148,7 +11148,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -11153,7 +11153,7 @@ public class ChatActivity extends BaseFragment implements
          }
          ChatActionsHelper.addActionModeItems(this, actionMode, edit);
          actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
          actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -20576,7 +20576,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20592,7 +20592,7 @@ public class ChatActivity extends BaseFragment implements
              } else {
                  selectedMessagesIds[index].put(messageObject.getId(), messageObject);
                  if (!isReport()) {
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
                          selectedMessagesCanCopyIds[index].put(messageObject.getId(), messageObject);
                      }
                      if (!messageObject.isAnimatedEmoji() && (messageObject.isSticker() || messageObject.isAnimatedSticker()) && MessageObject.isStickerHasSet(messageObject.getDocument())) {
-@@ -20683,7 +20683,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20699,7 +20699,7 @@ public class ChatActivity extends BaseFragment implements
                  int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
                  if (copyItem != null) {
                      copyVisible = copyItem.getVisibility();
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
                      newCopyVisible = copyItem.getVisibility();
                  }
                  if (starItem != null) {
-@@ -48372,6 +48372,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48390,6 +48390,7 @@ public class ChatActivity extends BaseFragment implements
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
          boolean noforwards = (isEphemeral && !desu.inugram.helpers.security.SelfDestructHelper.shouldBypassOneTimeGate(message.getDialogId())) || isPeerNoForwards() || desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(message.messageOwner) || getDialogId() == UserObject.VERIFY;
          boolean noforwardsOrPaidMedia = noforwards || message.type == MessageObject.TYPE_PAID_MEDIA;
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          boolean allowUnpin = !isEphemeral && message.getDialogId() != mergeDialogId && allowPin && (pinnedMessageObjects.containsKey(message.getId()) || groupedMessages != null && !groupedMessages.messages.isEmpty() && pinnedMessageObjects.containsKey(groupedMessages.messages.get(0).getId())) && !message.isExpiredStory();
          boolean allowEdit = !isEphemeral && message.canEditMessage(currentChat) && !chatActivityEnterView.hasAudioToSend() && message.getDialogId() != mergeDialogId && message.type != MessageObject.TYPE_STORY && message.type != MessageObject.TYPE_POLL;
          if (allowEdit && groupedMessages != null) {
-@@ -48440,7 +48441,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48458,7 +48459,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          if (type == -1) {
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
                  items.add(LocaleController.getString(R.string.Copy));
                  options.add(OPTION_COPY);
                  icons.add(R.drawable.msg_copy);
-@@ -48537,7 +48538,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48560,7 +48561,7 @@ public class ChatActivity extends BaseFragment implements
              items.add(LocaleController.getString(R.string.Retry));
              options.add(OPTION_RETRY);
              icons.add(R.drawable.msg_retry);
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
                  items.add(LocaleController.getString(R.string.Copy));
                  options.add(OPTION_COPY);
                  icons.add(R.drawable.msg_copy);
-@@ -48568,7 +48569,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48591,7 +48592,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_REPLY);
                      icons.add(R.drawable.menu_reply);
                  }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.Copy));
                      options.add(OPTION_COPY);
                      icons.add(R.drawable.msg_copy);
-@@ -48886,7 +48887,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48909,7 +48910,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_REPLY);
                      icons.add(R.drawable.menu_reply);
                  }
