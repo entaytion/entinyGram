@@ -156,6 +156,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         SET_TIMER("set_timer", listOf(ChatActivity.chat_enc_timer), R.string.SetTimer, R.drawable.msg_autodelete),
         CHANGE_COLORS("change_colors", listOf(ChatActivity.change_colors), R.string.SetWallpapers, R.drawable.msg_background),
         ADD_SHORTCUT("add_shortcut", listOf(ChatActivity.add_shortcut), R.string.AddShortcut, R.drawable.msg_home),
+        ADD_TO_FOLDER("add_to_folder", listOf(9101), R.string.FilterAddTo, R.drawable.msg_addfolder),
         CLEAR_HISTORY("clear_history", listOf(ChatActivity.clear_history), R.string.ClearHistory, R.drawable.msg_clear),
         DELETE_CHAT("delete_chat", listOf(ChatActivity.delete_chat), R.string.DeleteChatUser, R.drawable.msg_delete),
         BOT_SETTINGS("bot_settings", listOf(ChatActivity.bot_settings), R.string.InuBotSettings, R.drawable.entiny_app_controls),
@@ -207,6 +208,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         override val isFeatureOn: Boolean
             get() = when (this) {
                 CHAT_LOCAL_NAME -> InuConfig.LOCAL_NAMES.value
+                ADD_TO_FOLDER -> InuConfig.ADD_TO_FOLDER_IN_CHAT.value
                 CHAT_EXPORT -> InuConfig.CHAT_EXPORT.value
                 SILENT_BROADCAST -> InuConfig.NOTIFY_BELL_IN_MENU.value
                 BUSINESS_BOT -> InuConfig.HIDE_BUSINESS_BOT_BANNER.value
