@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.dialogs.DialogsFabHelper
+import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.menu.MenuOrderEntry
@@ -30,8 +31,15 @@ object DialogsSettingsHelper {
     private fun tabsState(page: SchemaPageActivity): TabsState =
         page.remember(KEY_TABS_STATE) { TabsState(InuConfig.BOTTOM_TABS_ORDER.value.toMutableList()) }
 
-    fun searchTabEnabled(): Boolean =
-        InuConfig.BOTTOM_TABS_ORDER.value.any { it.item == MainTabsMenuConfig.Item.SEARCH && it.enabled }
+    fun onSeparateSearchChanged(page: SchemaPageActivity, separate: Boolean) {
+        val search = MainTabsMenuConfig.Item.SEARCH
+        if (separate && tabsState(page).entries.any { it.item == search && !it.enabled }) {
+            toggleMainTab(page, search)
+            return
+        }
+        refreshMainTabsPreview(page)
+        page.showRestart()
+    }
 
     fun filterPreview(page: SchemaPageActivity): FilterTabsPreviewCell? = page.peek(KEY_FILTER_PREVIEW)
 
@@ -60,7 +68,7 @@ object DialogsSettingsHelper {
         cell.setState(
             shown.map { it.item },
             shown.filter { it.enabled || it.item == MainTabsMenuConfig.Item.CHATS }.map { it.item }.toSet(),
-            InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value,
+            InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value && !MainTabsHelper.isMaterial,
         )
     }
 

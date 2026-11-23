@@ -813,11 +813,8 @@ object Schemas {
             )
             toggle(
                 InuConfig.BOTTOM_TABS_SEARCH_SEPARATE, R.string.InuBottomTabsSeparateSearch, R.string.InuBottomTabsSeparateSearchInfo,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value && DialogsSettingsHelper.searchTabEnabled() },
-                onChange = { page, _ ->
-                    DialogsSettingsHelper.refreshMainTabsPreview(page)
-                    page.showRestart()
-                },
+                visible = { !InuConfig.BOTTOM_TABS_HIDE.value && !MainTabsHelper.isMaterial },
+                onChange = DialogsSettingsHelper::onSeparateSearchChanged,
             )
             toggle(
                 InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL, R.string.InuBottomTabsHideOnScroll, R.string.InuBottomTabsHideOnScrollInfo,
