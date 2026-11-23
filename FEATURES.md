@@ -156,6 +156,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **plugin market** — themed catalog with filters, version badges, authors and tags, a dedicated page and automatic sdk installation
 - **osmdroid map view** — pure-java openstreetmap renderer replacing maplibre, about 12 MB less native code
 - **faster cold start**, locale caching and a smaller apk without android auto
+- **adaptive faster uploads** — adjusts the number of parallel upload requests based on how quickly the server acknowledges file parts
 - **memory** — image caches freed shortly after minimize, closed chats and photo viewers no longer leak through the emoji panel
 - **highest refresh rate** — keep the screen at its highest refresh rate - *inspired by Graniton*
 - **system emoji** — draw emoji with the system font
