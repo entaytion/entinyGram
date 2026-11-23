@@ -20,7 +20,6 @@ import org.telegram.ui.Components.BulletinFactory
 class FeedChatIntegration(
     private val currentAccount: Int,
     private val host: Host,
-    private val restoreDrawerScrollPosition: Boolean,
 ) {
     private var channelsChangedCallback: Runnable? = null
     private var destroyed = false
@@ -91,6 +90,8 @@ class FeedChatIntegration(
         fun reloadFeed()
 
         fun requestOlderFeedPage()
+
+        fun requestNewerFeedPage()
 
         fun restoreScrollAnchor(anchor: ScrollAnchor?)
 
@@ -576,7 +577,7 @@ class FeedChatIntegration(
 
         val feedController = FeedController.getInstance(currentAccount)
         val initialUnreadScroll = feedController.consumeInitialUnreadScroll()
-        val savedPosition = if (restoreDrawerScrollPosition) feedController.drawerScrollPosition else null
+        val savedPosition = feedController.savedScrollPosition
         val savedRow = if (savedPosition != null) feedController.getMessage(savedPosition.dialogId, savedPosition.messageId) else null
 
         if (savedRow == null || !host.getMessages().contains(savedRow)) {
@@ -671,6 +672,10 @@ class FeedChatIntegration(
         if (restore != null) {
             host.restoreScrollAnchor(restore)
             pendingInitialScrollRestore = null
+        } else if (initialScrollApplied && !pendingDividerScroll && FeedController.getInstance(currentAccount).canPageNewer() &&
+            host.getDistanceToNewerPx() <= NEAR_NEWEST_THRESHOLD
+        ) {
+            host.requestNewerFeedPage()
         }
         maybeScrollToDivider()
         updatePagedownCounter()
@@ -820,10 +825,11 @@ class FeedChatIntegration(
     }
 
     fun saveDrawerScrollPosition() {
+        if (!initialScrollApplied || hasPendingInitialPosition()) return
         val anchor = host.captureScrollAnchor()
         val row = anchor?.row ?: return
         FeedController.getInstance(currentAccount)
-            .saveDrawerScrollPosition(row.dialogId, row.realId, anchor.offsetTop)
+            .saveScrollPosition(row.dialogId, row.realId, anchor.offsetTop)
     }
 
     fun scrollToUnreadDividerIfAbove(): Boolean {
@@ -857,6 +863,7 @@ class FeedChatIntegration(
         if (viewportActive == active) {
             return
         }
+        if (!active) saveDrawerScrollPosition()
         viewportActive = active
         if (active) {
             onHostResumed()

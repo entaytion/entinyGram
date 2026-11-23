@@ -63,6 +63,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
 
     class OlderPage {
         var hasIncomplete = false
+        var hasMoreNewer = false
         var lastChunkRowCount = 0
         val messages = ArrayList<TLRPC.Message>()
         val users = ArrayList<TLRPC.User>()
@@ -198,6 +199,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
         page: OlderPage,
         usersToLoad: ArrayList<Long>,
         chatsToLoad: ArrayList<Long>,
+        includeCursor: Boolean = false,
     ): Int {
         val sql = StringBuilder("SELECT data, mid, date, uid FROM messages_v2 WHERE uid IN (")
         sql.append(dialogIds)
@@ -207,7 +209,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
             sql.append(minDate)
         }
         if (!page.last.isEmpty()) {
-            appendCursorBound(sql, page.last, Direction.OLDER, false)
+            appendCursorBound(sql, page.last, Direction.OLDER, includeCursor)
         }
         sql.append(" ORDER BY date DESC, uid DESC, mid DESC LIMIT ")
         sql.append(CHUNK_SIZE)
@@ -392,6 +394,47 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
         }
         clusterGroupedMessages(page.messages)
         return page
+    }
+
+    fun loadSavedPositionPage(channels: ArrayList<ChannelSnapshot>, position: FeedController.SavedScrollPosition): OlderPage? {
+        if (channels.none { it.dialogId == position.dialogId }) return null
+        val storage = MessagesStorage.getInstance(currentAccount)
+        val anchor = Cursor()
+        return try {
+            val cursor = storage.database.queryFinalized(
+                "SELECT date FROM messages_v2 WHERE uid = ${position.dialogId} AND mid = ${position.messageId}"
+            )
+            try {
+                if (!cursor.next()) return null
+                anchor.set(cursor.intValue(0), position.dialogId, position.messageId)
+            } finally {
+                cursor.dispose()
+            }
+            if (anchor.isEmpty()) return null
+            val page = OlderPage()
+            page.last.set(anchor.date, anchor.uid, anchor.mid)
+            val users = ArrayList<Long>()
+            val chats = ArrayList<Long>()
+            val dialogIds = channels.joinToString(",") { it.dialogId.toString() }
+            page.lastChunkRowCount = loadChunk(storage, dialogIds, 0, page, users, chats, includeCursor = true)
+            if (page.messages.none { it.dialog_id == anchor.uid && it.id == anchor.mid }) return null
+            completeTrailingAlbum(storage, page, users, chats)
+            if (users.isNotEmpty()) storage.getUsersInternal(users, page.users)
+            if (chats.isNotEmpty()) storage.getChatsInternal(chats.joinToString(","), page.chats)
+
+            val newer = loadNewerPage(channels, anchor)
+            page.messages.addAll(0, newer.messages.asReversed())
+            page.users.addAll(newer.users)
+            page.chats.addAll(newer.chats)
+            page.first.set(newer.first.date, newer.first.uid, newer.first.mid)
+            page.hasMoreNewer = newer.hasMore
+            page.hasIncomplete = true
+            clusterGroupedMessages(page.messages)
+            page
+        } catch (e: Exception) {
+            FileLog.e(e)
+            null
+        }
     }
 
     fun loadOlderPage(channels: ArrayList<ChannelSnapshot>, from: Cursor, completeDialogIds: HashSet<Long>): OlderPage {

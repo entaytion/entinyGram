@@ -44,11 +44,19 @@ class FeedController private constructor(
     private var initialUnreadScrollPending = true
     private var loading = false
     private var loadingNewer = false
+    private var hasMoreNewer = false
     private var newerPagingBoundsDirty = false
     private var olderPagingBoundsDirty = false
 
-    var drawerScrollPosition: SavedScrollPosition? = null
-        private set
+    val savedScrollPosition: SavedScrollPosition?
+        get() {
+            val fields = MessagesController.getMainSettings(currentAccount)
+                .getString(scrollPositionKey(), null)?.split(':', limit = 3) ?: return null
+            val dialogId = fields.getOrNull(0)?.toLongOrNull() ?: return null
+            val messageId = fields.getOrNull(1)?.toIntOrNull() ?: return null
+            val offsetTop = fields.getOrNull(2)?.toIntOrNull() ?: return null
+            return SavedScrollPosition(dialogId, messageId, offsetTop)
+        }
 
     fun interface ChannelsCallback {
         fun onChannels(channels: ArrayList<TLRPC.Chat>, includedCount: Int)
@@ -285,6 +293,7 @@ class FeedController private constructor(
         val loadIndex = heldLoadIndex
         val generation = sessionGeneration
         val firstPage = store.getOldestCursor().isEmpty()
+        val savedPosition = if (firstPage && attemptRounds == 0) savedScrollPosition else null
         val oldest = FeedTimelineLoader.Cursor()
         oldest.set(store.getOldestCursor().date, store.getOldestCursor().uid, store.getOldestCursor().mid)
         val exhausted = backfill.getExhaustedSnapshot()
@@ -295,7 +304,8 @@ class FeedController private constructor(
                 AndroidUtilities.runOnUIThread { applyEmptyOlderPage(generation, enumeration, classGuid, loadIndex) }
                 return@postRunnable
             }
-            val page = loader.loadOlderPage(enumeration.included, oldest, exhausted)
+            val page = savedPosition?.let { loader.loadSavedPositionPage(enumeration.included, it) }
+                ?: loader.loadOlderPage(enumeration.included, oldest, exhausted)
             val messageObjects = createMessageObjects(page.messages, page.users, page.chats)
             AndroidUtilities.runOnUIThread {
                 applyOlderPage(generation, enumeration, page, firstPage, messageObjects, classGuid, loadIndex)
@@ -346,6 +356,7 @@ class FeedController private constructor(
         store.getOldestCursor().set(page.last.date, page.last.uid, page.last.mid)
         if (firstPage && !page.first.isEmpty()) {
             store.getNewestCursor().set(page.first.date, page.first.uid, page.first.mid)
+            hasMoreNewer = page.hasMoreNewer
         }
         messagesController.putUsers(page.users, true)
         messagesController.putChats(page.chats, true)
@@ -392,6 +403,7 @@ class FeedController private constructor(
         }
         newerPagingBoundsDirty = false
         loadingNewer = false
+        hasMoreNewer = false
         postNewerMessagesLoaded(classGuid, loadIndex, null, false)
         postFeedCount(classGuid)
     }
@@ -419,6 +431,7 @@ class FeedController private constructor(
             return
         }
         loadingNewer = false
+        hasMoreNewer = page.hasMore
         applyEnumeration(enumeration)
         store.getNewestCursor().set(page.first.date, page.first.uid, page.first.mid)
         if (page.messages.isEmpty()) {
@@ -541,10 +554,10 @@ class FeedController private constructor(
         sessionGeneration++
         configGeneration = FeedConfig.getInstance(currentAccount).generation
         unreadTracker.clear()
-        drawerScrollPosition = null
         store.clear()
         loading = false
         loadingNewer = false
+        hasMoreNewer = false
         olderPagingBoundsDirty = false
         newerPagingBoundsDirty = false
         attemptRounds = 0
@@ -665,6 +678,13 @@ class FeedController private constructor(
 
     fun loadInitial(classGuid: Int, loadIndex: Int): Boolean {
         ensureCurrentConfig()
+        val position = savedScrollPosition
+        if (!store.isEmpty() && !loading && uiActiveClients <= 1 && position != null &&
+            !FeedConfig.getInstance(currentAccount).isHidden(currentAccount, position.dialogId) &&
+            store.getMessage(position.dialogId, position.messageId) == null
+        ) {
+            clear()
+        }
         if (store.isEmpty()) {
             if (!loadMore(classGuid, loadIndex)) {
                 initialLoadWaiters.add(intArrayOf(classGuid, loadIndex))
@@ -717,6 +737,8 @@ class FeedController private constructor(
         return true
     }
 
+    fun canPageNewer(): Boolean = hasMoreNewer && !loadingNewer && !store.getNewestCursor().isEmpty()
+
     fun markAllRead() {
         unreadTracker.markAllRead()
     }
@@ -753,11 +775,15 @@ class FeedController private constructor(
     fun resolveRealMessageId(dialogId: Long, syntheticMessageId: Int): Int =
         store.resolveRealMessageId(dialogId, syntheticMessageId)
 
-    fun saveDrawerScrollPosition(dialogId: Long, messageId: Int, offsetTop: Int) {
+    private fun scrollPositionKey(): String =
+        "inu_feed_scroll_${UserConfig.getInstance(currentAccount).clientUserId}_${FeedConfig.getInstance(currentAccount).folderFilterId}"
+
+    fun saveScrollPosition(dialogId: Long, messageId: Int, offsetTop: Int) {
         if (dialogId == 0L || messageId <= 0) {
             return
         }
-        drawerScrollPosition = SavedScrollPosition(dialogId, messageId, offsetTop)
+        MessagesController.getMainSettings(currentAccount).edit()
+            .putString(scrollPositionKey(), "$dialogId:$messageId:$offsetTop").apply()
     }
 
     fun setUiActive(active: Boolean) {
