@@ -65,7 +65,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 ### appearance & customization
 
 - **hide fab** — hide chat-list buttons with a separate toggle, keep your chosen actions
-- **ios-style design** — compact bottom bar, compact header pill with adjustable avatar placement, ios input bar, larger avatars in the chat list, message menu as a card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
+- **ios-style design** — compact bottom bar, compact header pill with adjustable avatar placement, ios input bar, taller chat list rows, message menu as a card over a blurred chat, unread counter on the header back button - *inspired by iOs_pop_up (Gabiitha)*
 - **liquid glass controls** — live preview, separate ios bottom-bar transparency, and a reset for glass settings - *inspired by LiquidGram and Easygram*
 - **ios glass details** — a brief highlight on the selected tab, denser glass behind message actions, and a soft blur under the chat header
 - **themes & chrome** — standalone amoled, material 3 colors for monet themes, liquid-glass refraction, tint and blur strength, avatar corner radius, action button colors, chat input text size, optional font scaling for messages
