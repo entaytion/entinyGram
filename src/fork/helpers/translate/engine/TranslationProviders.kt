@@ -164,6 +164,16 @@ object GoogleWebProvider : TranslationProvider {
     private val gate = java.util.concurrent.Semaphore(2)
 
     override fun translate(text: String, toLang: String): String {
+        if (text.length <= MAX_FALLBACK_CHARS) return translateChunk(text, toLang)
+        return buildString(text.length) {
+            for ((chunk, separator) in splitForProvider(text, MAX_FALLBACK_CHARS)) {
+                append(if (chunk.isBlank()) chunk else translateChunk(chunk, toLang))
+                append(separator)
+            }
+        }
+    }
+
+    private fun translateChunk(text: String, toLang: String): String {
         gate.acquire()
         try {
             return translateGated(text, toLang)
@@ -312,33 +322,31 @@ object GoogleWebProvider : TranslationProvider {
     }
 }
 
-// entiny: splits only on newlines/spaces so markers like <inue12> are never cut in half
 internal fun splitForProvider(text: String, maxChars: Int): List<Pair<String, String>> {
     val out = ArrayList<Pair<String, String>>()
-    val cur = StringBuilder()
-    fun flush(tail: String) {
-        if (cur.isEmpty()) return
-        out.add(cur.toString() to tail)
-        cur.setLength(0)
-    }
-    for (line in text.split('\n')) {
-        if (cur.isNotEmpty() && cur.length + 1 + line.length > maxChars) flush("\n")
-        if (line.length <= maxChars) {
-            if (cur.isNotEmpty()) cur.append('\n')
-            cur.append(line)
-            continue
+    var start = 0
+    var marker = EntityKeeper.MARKER_PATTERN.find(text)
+    while (text.length - start > maxChars) {
+        val limit = start + maxChars
+        val preferredStart = start + maxChars / 2
+        var end = text.lastIndexOf('\n', limit).takeIf { it >= preferredStart }
+            ?: text.lastIndexOf(' ', limit).takeIf { it > start }
+            ?: limit
+        while (marker != null && marker.range.last < end) marker = marker.next()
+        if (marker != null && marker.range.first in (start + 1) until end) {
+            end = marker.range.first
         }
-        flush("\n")
-        var rest = line
-        while (rest.length > maxChars) {
-            var cut = rest.lastIndexOf(' ', maxChars)
-            if (cut <= 0) cut = maxChars
-            out.add(rest.substring(0, cut) to if (rest[cut] == ' ') " " else "")
-            rest = rest.substring(cut).trimStart(' ')
+        if (Character.isSurrogatePair(text[end - 1], text[end])) end--
+
+        var next = end
+        if (text[end].isWhitespace()) {
+            while (end > start && text[end - 1].isWhitespace()) end--
+            while (next < text.length && text[next].isWhitespace()) next++
         }
-        cur.append(rest)
+        out.add(text.substring(start, end) to text.substring(end, next))
+        start = next
     }
-    flush("")
+    if (start < text.length) out.add(text.substring(start) to "")
     return out
 }
 
