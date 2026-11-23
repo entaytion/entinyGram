@@ -4,15 +4,47 @@ Date: Sat, 14 Nov 2026 14:19:42 +0200
 Subject: Optional remembered playback position for videos and audio longer than ten seconds.
 
 ---
- .../main/java/org/telegram/messenger/MediaController.java   | 4 ++--
- .../src/main/java/org/telegram/ui/PhotoViewer.java          | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ .../telegram/messenger/MediaController.java   | 22 ++++++++++++++-----
+ .../java/org/telegram/ui/PhotoViewer.java     |  6 ++---
+ 2 files changed, 19 insertions(+), 9 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -4130,7 +4130,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1772,10 +1772,16 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                                     if (value >= 0 && shouldSavePositionForCurrentAudio != null && SystemClock.elapsedRealtime() - lastSaveTime >= 1000) {
+                                         final String saveFor = shouldSavePositionForCurrentAudio;
+                                         lastSaveTime = SystemClock.elapsedRealtime();
+-                                        Utilities.globalQueue.postRunnable(() -> {
+-                                            SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE).edit();
+-                                            editor.putFloat(saveFor, value).commit();
+-                                        });
++                                        if (desu.inugram.helpers.media.ShortPositionHelper.remembersShortVoice(currentPlayingMessageObject)) {
++                                            if (currentPlayingMessageObject == playingMessageObject) {
++                                                ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE).edit().putFloat(saveFor, value).apply();
++                                            }
++                                        } else {
++                                            Utilities.globalQueue.postRunnable(() -> {
++                                                SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE).edit();
++                                                editor.putFloat(saveFor, value).commit();
++                                            });
++                                        }
+                                     }
+                                     NotificationCenter.getInstance(currentPlayingMessageObject.currentAccount).postNotificationName(NotificationCenter.messagePlayingProgressDidChanged, currentPlayingMessageObject.getId(), value);
+                                 } catch (Exception e) {
+@@ -4056,6 +4062,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                             return;
+                         }
+                         if (playbackState == ExoPlayer.STATE_ENDED || (playbackState == ExoPlayer.STATE_IDLE || playbackState == ExoPlayer.STATE_BUFFERING) && playWhenReady && messageObject.audioProgress >= 0.999f) {
++                            if (shouldSavePositionForCurrentAudio != null && desu.inugram.helpers.media.ShortPositionHelper.remembersShortVoice(messageObject)) {
++                                ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE).edit().remove(shouldSavePositionForCurrentAudio).apply();
++                                shouldSavePositionForCurrentAudio = null;
++                            }
+                             messageObject.audioProgress = 1f;
+                             NotificationCenter.getInstance(messageObject.currentAccount).postNotificationName(NotificationCenter.messagePlayingProgressDidChanged, messageObject.getId(), 0);
+                             if (desu.inugram.helpers.media.SleepTimerHelper.onTrackEnded()) {
+@@ -4130,7 +4140,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  }
                  if (messageObject.isVoice()) {
                      String name = messageObject.getFileName();
@@ -21,7 +53,7 @@ index 0000000..0000000 100644
                          SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
                          float pos = preferences.getFloat(name, -1);
                          if (pos > 0 && pos < 0.99f) {
-@@ -4152,7 +4152,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -4152,7 +4162,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                          FileLog.e(e);
                      }
                      String name = messageObject.getFileName();
