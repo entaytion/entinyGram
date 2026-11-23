@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -7271,6 +7271,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -7273,6 +7273,10 @@ public class ChatActivity extends BaseFragment implements
          chatActivityFadeView = new ChatActivityFadeView(context);
          chatActivityFadeView.setResourcesProvider(themeDelegate);
          chatActivityFadeView.setup(navbarContentDrawableFactory);

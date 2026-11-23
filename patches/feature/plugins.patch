@@ -826,7 +826,7 @@ index 0000000..0000000 100644
                      createUnreadMessageAfterId = unreadAfterId;
                      startLoadFromMessageId = startLoadFrom;
                      needSelectFromMessageId = needSelect;
-@@ -26512,7 +26573,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26511,7 +26572,7 @@ public class ChatActivity extends BaseFragment implements
      private Runnable updateStreamingTopic;
  
      private ArrayList<MessageObject> notPushedSponsoredMessages;
@@ -835,7 +835,7 @@ index 0000000..0000000 100644
          processNewMessages(arr, true);
      }
      private void processNewMessages(ArrayList<MessageObject> arr, final boolean animatedFromBottom) {
-@@ -27472,7 +27533,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -27471,7 +27532,7 @@ public class ChatActivity extends BaseFragment implements
          return sponsoredMessagesCount;
      }
  
@@ -844,7 +844,7 @@ index 0000000..0000000 100644
          processDeletedMessages(markAsDeletedMessages, channelId, sent, true);
      }
      private void processDeletedMessages(ArrayList<Integer> markAsDeletedMessages, long channelId, boolean sent, boolean thanos) {
-@@ -27834,7 +27895,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -27833,7 +27894,7 @@ public class ChatActivity extends BaseFragment implements
      private final BotForumHelper.BotDraftAnimationsPool botDraftAnimationsPool = new BotForumHelper.BotDraftAnimationsPool();
      private final ChatActivityDraftMessageMeasureController botDraftHeightController = new ChatActivityDraftMessageMeasureController();
  
@@ -853,7 +853,7 @@ index 0000000..0000000 100644
          replaceMessageObjects(messageObjects, loadIndex, remove, false);
      }
  
-@@ -28420,6 +28481,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28419,6 +28480,7 @@ public class ChatActivity extends BaseFragment implements
              progressDialogCurrent.cancel();
              progressDialogCurrent = null;
          }
@@ -861,7 +861,7 @@ index 0000000..0000000 100644
  
          flagSecure.detach();
  
-@@ -28975,6 +29037,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -28974,6 +29036,10 @@ public class ChatActivity extends BaseFragment implements
              }
          } else if (isReport()) {
              updateActionModeTitle();
@@ -872,7 +872,7 @@ index 0000000..0000000 100644
          } else if (chatMode == MODE_PINNED) {
              boolean allowPin;
              if (currentChat != null) {
-@@ -29234,7 +29300,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29233,7 +29299,7 @@ public class ChatActivity extends BaseFragment implements
              } else if (isReport()) {
                  bottomChannelButtonsLayout.setVisibility(View.VISIBLE);
                  chatActivityEnterView.setVisibility(View.INVISIBLE);
@@ -881,7 +881,7 @@ index 0000000..0000000 100644
                      currentChat != null && (!ChatObject.isMonoForum(currentChat) || !isSubscriberSuggestions) && ((!ChatHelper.isEffectivelyInChat(currentChat) && !UserObject.isBotForum(currentUser) || !ChatObject.canWriteToChat(currentChat)) && (currentChat.join_to_send || !isThreadChat() || ChatObject.isForum(currentChat)) || forumTopic != null && forumTopic.closed && !ChatObject.canManageTopic(currentAccount, currentChat, forumTopic) || shouldDisplaySwipeToLeftToReplyInForum()) ||
                      currentUser != null && (UserObject.isDeleted(currentUser) || userBlocked || UserObject.isReplyUser(currentUser))) {
                  if (chatActivityEnterView.isEditingMessage()) {
-@@ -33255,6 +33321,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33254,6 +33320,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      scrimPopupWindowItems[a] = cell;
@@ -889,7 +889,7 @@ index 0000000..0000000 100644
                      if (option == OPTION_REMOVE_ADS) {
                          popupLayout.addView(new ActionBarPopupWindow.GapView(contentView.getContext(), themeDelegate), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
                      }
-@@ -33303,6 +33370,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33302,6 +33369,7 @@ public class ChatActivity extends BaseFragment implements
                      popupLayout.addView(layout);
                  }
                  inu_addedBottomRegion = ChatHelper.addBottomRegion(this, popupLayout, contentView.getContext(), themeDelegate, inu_bottomMenuRow, inu_viewsBottomAdder, selectedObject, selectedObjectGroup);
@@ -897,7 +897,7 @@ index 0000000..0000000 100644
              }
  
              if (selectedObject != null && selectedObject.isEphemeral() && chatMode != MODE_WELCOME_MESSAGES && !showWelcomeMessageRevertOption(selectedObject)) {
-@@ -33704,10 +33772,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -33703,10 +33771,11 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }, 420);
              };
@@ -911,7 +911,7 @@ index 0000000..0000000 100644
              }
              chatListView.stopScroll();
              chatLayoutManager.setCanScrollVertically(false);
-@@ -34092,7 +34161,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34091,7 +34160,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      public void selectReaction(View cell, MessageObject primaryMessage, ReactionsContainerLayout reactionsLayout, View fromView, float x, float y, ReactionsLayoutInBubble.VisibleReaction visibleReaction, boolean fromDoubleTap, boolean bigEmoji, boolean addToRecent, boolean withoutAnimation) {
@@ -920,7 +920,7 @@ index 0000000..0000000 100644
              return;
          }
          if (getMessagesController().isFrozen()) {
-@@ -35279,6 +35348,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -35278,6 +35347,9 @@ public class ChatActivity extends BaseFragment implements
                  if (selectedObject == replyingMessageObject && isComments) {
                      req.id = replyOriginalMessageId;
                      req.channel = MessagesController.getInputChannel(replyOriginalChat);
@@ -930,7 +930,7 @@ index 0000000..0000000 100644
                  } else {
                      req.id = selectedObject.getId();
                      req.channel = MessagesController.getInputChannel(currentChat);
-@@ -35482,7 +35554,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -35481,7 +35553,9 @@ public class ChatActivity extends BaseFragment implements
              }
              case OPTION_VIEW_REPLIES_OR_THREAD: {
                  MessageObject message = selectedObjectGroup != null ? selectedObjectGroup.findPrimaryMessageObject() : selectedObject;
@@ -941,7 +941,7 @@ index 0000000..0000000 100644
                      openDiscussionMessageChat(currentChat.id, null, message.getId(), 0, -1, 0, null);
                  }
                  break;
-@@ -35723,6 +35797,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -35722,6 +35796,9 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
          }
@@ -951,7 +951,7 @@ index 0000000..0000000 100644
          final boolean inuCrossAccount = fragment.getCurrentAccount() != currentAccount;
          for (int j = 0; j < dids.size(); j++) {
              TLRPC.Chat chat = MessagesController.getInstance(fragment.getCurrentAccount()).getChat(-dids.get(j).dialogId);
-@@ -36749,6 +36826,22 @@ public class ChatActivity extends BaseFragment implements
+@@ -36748,6 +36825,22 @@ public class ChatActivity extends BaseFragment implements
          return chatMode;
      }
  
@@ -974,7 +974,7 @@ index 0000000..0000000 100644
      public boolean isInBotForumMode() {
          return UserObject.isBotForum(currentUser);
      }
-@@ -37611,7 +37704,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37610,7 +37703,7 @@ public class ChatActivity extends BaseFragment implements
                      if (chatMode != MODE_SEARCH) {
                          finishFragment();
                      }
@@ -983,7 +983,7 @@ index 0000000..0000000 100644
                      presentFragment(new HashtagActivity(str, resourceProvider));
                  } else {
                      openHashtagSearch(str);
-@@ -37891,6 +37984,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -37890,6 +37983,18 @@ public class ChatActivity extends BaseFragment implements
          if (url == null || getParentActivity() == null) {
              return;
          }
@@ -1002,7 +1002,7 @@ index 0000000..0000000 100644
          boolean noforwards = isPeerNoForwards() || (messageObject != null && messageObject.messageOwner != null && desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(messageObject.messageOwner));
          if (url instanceof URLSpanMono) {
              if (!noforwards || getDialogId() == UserObject.VERIFY) {
-@@ -38695,6 +38800,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -38694,6 +38799,9 @@ public class ChatActivity extends BaseFragment implements
  
                      @Override
                      public void didPressReplyMessage(ChatActionCell cell, int id) {
@@ -1012,7 +1012,7 @@ index 0000000..0000000 100644
                          Runnable scroll = () -> {
                              MessageObject messageObject = cell.getMessageObject();
                              scrollToMessageId(id, messageObject.getId(), true, messageObject.getDialogId() == mergeDialogId ? 1 : 0, true, 0);
-@@ -38876,7 +38984,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -38875,7 +38983,7 @@ public class ChatActivity extends BaseFragment implements
                  } else if (view instanceof ChatMessageCell) {
                      final ChatMessageCell messageCell = (ChatMessageCell) view;
                      MessageObject.GroupedMessages groupedMessages = getValidGroupedMessage(message);
@@ -1021,7 +1021,7 @@ index 0000000..0000000 100644
                      messageCell.setSponsoredMessageVisible(true, false);
                      messageCell.isBotForum = UserObject.isBotForum(currentUser);
                      messageCell.isReportChat = isReport();
-@@ -42235,7 +42343,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -42234,7 +42342,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean shouldShowDialogButton(ChatMessageCell cell) {
@@ -1030,7 +1030,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -42325,6 +42433,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -42324,6 +42432,9 @@ public class ChatActivity extends BaseFragment implements
                      getOrCreateStoryViewer().open(getContext(), storyItem, StoriesListPlaceProvider.of(chatListView));
                  }
              } else {
@@ -1040,7 +1040,7 @@ index 0000000..0000000 100644
                  String quote = null;
                  int quoteOffset = -1;
                  Integer task_id = null;
-@@ -45576,7 +45687,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -45575,7 +45686,7 @@ public class ChatActivity extends BaseFragment implements
  
      private boolean scrimOptionsShown;
  
@@ -1049,7 +1049,7 @@ index 0000000..0000000 100644
          if (chatListView == null) {
              showDialog(dialog);
              return;
-@@ -48156,7 +48267,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48155,7 +48266,7 @@ public class ChatActivity extends BaseFragment implements
          return createMenuTextOption(context, resourcesProvider, text, 14);
      }
  

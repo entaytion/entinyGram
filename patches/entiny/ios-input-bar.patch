@@ -43,7 +43,7 @@ index 0000000..0000000 100644
  
          if (textSelectionHelper == null) {
              Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
-@@ -8134,6 +8148,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8136,6 +8150,10 @@ public class ChatActivity extends BaseFragment implements
              public void setVisibility(int visibility) {
                  super.setVisibility(visibility);
                  bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -8346,7 +8364,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8348,7 +8366,10 @@ public class ChatActivity extends BaseFragment implements
          chatActivityEnterView.setViewParentForEmoji(chatInputInAppContainer);
          checkSendButtonBlockedByTyping(false);
  
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -49936,6 +49957,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -49942,6 +49963,12 @@ public class ChatActivity extends BaseFragment implements
          if (blurredBackgroundColorProviderWhite != null) {
              blurredBackgroundColorProviderWhite.updateColors();
          }
@@ -650,7 +650,7 @@ index 0000000..0000000 100644
          });
  
          final boolean containsSendMessage = audioToSendMessageObject != null || messageEditText != null && !TextUtils.isEmpty(messageEditText.getText());
-@@ -6221,6 +6465,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6224,6 +6468,9 @@ public class ChatActivityEnterView extends FrameLayout implements
              }
          }
          shownAiButton = show;
@@ -660,7 +660,7 @@ index 0000000..0000000 100644
          aiButton.setVisibility(View.VISIBLE);
          aiButton.animate()
              .alpha(show ? 1.0f : 0.0f)
-@@ -6228,6 +6475,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6231,6 +6478,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              .scaleY(show ? 1.0f : 0.6f)
              .setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT)
              .setDuration(420)
@@ -668,7 +668,7 @@ index 0000000..0000000 100644
              .withEndAction(() -> {
                  if (!show) {
                      aiButton.setVisibility(View.GONE);
-@@ -6269,7 +6517,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6272,7 +6520,7 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private boolean shownRichButton;
      private void showRichButton(boolean show_) {
@@ -677,7 +677,7 @@ index 0000000..0000000 100644
  
          if (shownRichButton == show) return;
          shownRichButton = show;
-@@ -6319,6 +6567,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6322,6 +6570,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              preferences.edit().putBoolean(isChannel ? "currentModeVideoChannel" : "currentModeVideo", visible).apply();
          }
          audioVideoSendButton.setState(isInVideoMode() ? ChatActivityEnterViewAnimatedIconView.State.VIDEO : ChatActivityEnterViewAnimatedIconView.State.VOICE, animated);
@@ -685,7 +685,7 @@ index 0000000..0000000 100644
          audioVideoSendButton.setContentDescription(getString(isInVideoMode() ? R.string.AccDescrVideoMessage : R.string.AccDescrVoiceMessage));
          audioVideoButtonContainer.setContentDescription(getString(isInVideoMode() ? R.string.AccDescrVideoMessage : R.string.AccDescrVoiceMessage));
          audioVideoSendButton.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
-@@ -6441,6 +6690,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6444,6 +6693,10 @@ public class ChatActivityEnterView extends FrameLayout implements
          return slowModeTimer > 0 && editingMessageObject == null ? slowModeButton.getText() : null;
      }
  
@@ -696,7 +696,7 @@ index 0000000..0000000 100644
      private void updateSlowModeText() {
          int serverTime = ConnectionsManager.getInstance(currentAccount).getCurrentTime();
          AndroidUtilities.cancelRunOnUIThread(updateSlowModeRunnable);
-@@ -6471,6 +6724,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6474,6 +6727,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              if (delegate != null) {
                  delegate.onUpdateSlowModeButton(slowModeButton, false, slowModeButton.getText());
              }
@@ -704,7 +704,7 @@ index 0000000..0000000 100644
              AndroidUtilities.runOnUIThread(updateSlowModeRunnable = this::updateSlowModeText, 100);
          } else {
              slowModeTimer = 0;
-@@ -6683,17 +6937,19 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6686,17 +6940,19 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private boolean resizeForTopViewLastShow;
      private void resizeForTopView(boolean show) {
@@ -729,7 +729,7 @@ index 0000000..0000000 100644
          if (stickersExpanded) {
              if (searchingType == 0) {
                  setStickersExpanded(false, true, false);
-@@ -6797,8 +7053,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6800,8 +7056,7 @@ public class ChatActivityEnterView extends FrameLayout implements
  
          audioVideoButtonContainer.setAlpha(audioVideoButtonContainerForbidden ? 0.5f : 1.0f);
          audioVideoButtonContainer.invalidate();
@@ -739,7 +739,7 @@ index 0000000..0000000 100644
          audioVideoSendButton.invalidate();
          updateFieldHint(false);
          if (!sendRoundEnabled && currentModeVideo) {
-@@ -6847,6 +7102,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6850,6 +7105,9 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      public void onResume() {
          isPaused = false;
@@ -749,7 +749,7 @@ index 0000000..0000000 100644
          if (hideKeyboardRunnable != null) {
              AndroidUtilities.cancelRunOnUIThread(hideKeyboardRunnable);
              hideKeyboardRunnable = null;
-@@ -6948,6 +7206,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6951,6 +7209,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          }
          if (slowModeButton != null) {
              slowModeButton.setPremiumMode(ChatObject.isPossibleRemoveChatRestrictionsByBoosts(chatInfo));
@@ -757,7 +757,7 @@ index 0000000..0000000 100644
          }
          if (ChatObject.isIgnoredChatRestrictionsForBoosters(chatInfo)) {
              return;
-@@ -8172,7 +8431,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8175,7 +8434,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                          attachButtonAnimator = null;
                      }
  
@@ -766,7 +766,7 @@ index 0000000..0000000 100644
                          runningAnimation2 = new AnimatorSet();
                          ArrayList<Animator> animators = new ArrayList<>();
                          animators.add(ObjectAnimator.ofFloat(attachLayout, ATTACH_LAYOUT_ALPHA, 0.0f));
-@@ -8252,6 +8511,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8255,6 +8514,11 @@ public class ChatActivityEnterView extends FrameLayout implements
                          animators.add(ObjectAnimator.ofFloat(cancelBotButton, View.SCALE_Y, 0.1f));
                          animators.add(ObjectAnimator.ofFloat(cancelBotButton, View.ALPHA, 0.0f));
                      }
@@ -778,7 +778,7 @@ index 0000000..0000000 100644
                      animators.add(ObjectAnimator.ofFloat(slowModeButton, View.SCALE_X, 1.0f));
                      animators.add(ObjectAnimator.ofFloat(slowModeButton, View.SCALE_Y, 1.0f));
                      animators.add(ObjectAnimator.ofFloat(slowModeButton, View.ALPHA, 1.0f));
-@@ -8309,7 +8573,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8312,7 +8576,12 @@ public class ChatActivityEnterView extends FrameLayout implements
                          expandStickersButton.setAlpha(0.0f);
                          expandStickersButton.setVisibility(GONE);
                      }
@@ -792,7 +792,7 @@ index 0000000..0000000 100644
                          attachLayout.setVisibility(GONE);
                          if (delegate != null && getVisibility() == VISIBLE) {
                              delegate.onAttachButtonHidden();
-@@ -8353,7 +8622,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8356,7 +8625,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              } else {
                  color = getThemedColor(Theme.key_chat_messagePanelSend);
              }
@@ -801,7 +801,7 @@ index 0000000..0000000 100644
              // a recording (paused too) has its own panel in the input: the attach button is neither in it nor over it
              final boolean recordShown = recordInterfaceState != 0 || audioToSend != null || videoToSendMessageObject != null;
              final boolean attachInInput = !captionNearAttach && !recordShown;
-@@ -8377,7 +8646,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8380,7 +8649,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                          runningAnimation2 = null;
                      }
  
@@ -810,7 +810,7 @@ index 0000000..0000000 100644
                          runningAnimation2 = new AnimatorSet();
                          ArrayList<Animator> animators = new ArrayList<>();
                          animators.add(ObjectAnimator.ofFloat(attachLayout, ATTACH_LAYOUT_ALPHA, 0.0f));
-@@ -8454,6 +8723,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8457,6 +8726,11 @@ public class ChatActivityEnterView extends FrameLayout implements
                          animators.add(ObjectAnimator.ofFloat(expandStickersButton, View.SCALE_Y, 0.1f));
                          animators.add(ObjectAnimator.ofFloat(expandStickersButton, View.ALPHA, 0.0f));
                      }
@@ -822,7 +822,7 @@ index 0000000..0000000 100644
                      if (slowModeButton.getVisibility() == VISIBLE) {
                          animators.add(ObjectAnimator.ofFloat(slowModeButton, View.SCALE_X, 0.1f));
                          animators.add(ObjectAnimator.ofFloat(slowModeButton, View.SCALE_Y, 0.1f));
-@@ -8546,7 +8820,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8549,7 +8823,12 @@ public class ChatActivityEnterView extends FrameLayout implements
                          expandStickersButton.setAlpha(0.0f);
                          expandStickersButton.setVisibility(GONE);
                      }
@@ -836,7 +836,7 @@ index 0000000..0000000 100644
                          attachLayout.setVisibility(GONE);
                          if (delegate != null && getVisibility() == VISIBLE) {
                              delegate.onAttachButtonHidden();
-@@ -8860,6 +9139,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8863,6 +9142,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                  }
  
                  audioVideoButtonContainer.setVisibility(VISIBLE);
@@ -844,7 +844,7 @@ index 0000000..0000000 100644
                  runningAnimation = new AnimatorSet();
                  runningAnimationType = 2;
  
-@@ -8901,6 +9181,13 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8904,6 +9184,13 @@ public class ChatActivityEnterView extends FrameLayout implements
                      @Override
                      public void onAnimationEnd(Animator animation) {
                          if (animation.equals(runningAnimation)) {
@@ -858,7 +858,7 @@ index 0000000..0000000 100644
                              setSlowModeButtonVisible(false);
                              runningAnimation = null;
                              runningAnimationType = 0;
-@@ -8908,6 +9195,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8911,6 +9198,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                              if (audioVideoButtonContainer != null) {
                                  audioVideoButtonContainer.setVisibility(VISIBLE);
                              }
@@ -866,7 +866,7 @@ index 0000000..0000000 100644
                          }
                      }
  
-@@ -8942,6 +9230,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8945,6 +9233,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                  audioVideoSendButton.setScaleY(1.0f);
                  audioVideoSendButton.setAlpha(1.0f);
                  audioVideoButtonContainer.setVisibility(VISIBLE);
@@ -874,7 +874,7 @@ index 0000000..0000000 100644
                  if (attachLayout != null) {
                      if (getVisibility() == VISIBLE) {
                          delegate.onAttachButtonShow();
-@@ -8990,20 +9279,29 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8993,20 +9282,29 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private void setSlowModeButtonVisible(boolean visible) {
          slowModeButton.setVisibility(visible ? VISIBLE : GONE);
@@ -906,7 +906,7 @@ index 0000000..0000000 100644
          if (isStories && isLiveComment) {
              layoutParams.rightMargin = dp(suggestButtonVisible ? 50 : 2) + Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT));
          } else if (attachVisible == 1 || attachVisible == 2/* && layoutParams.rightMargin != dp(2)*/) {
-@@ -9043,7 +9341,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -9046,7 +9344,9 @@ public class ChatActivityEnterView extends FrameLayout implements
          View inu_menuBtn = desu.inugram.helpers.chat.ChatInputMenuHelper.getMenuButton(this);
          if (inu_menuBtn != null) {
              boolean hasScheduled = scheduledButton != null && scheduledButton.getTag() != null;
@@ -917,7 +917,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -10667,12 +10967,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -10670,12 +10970,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              botKeyboardView.updateColors();
          }
          // emojiButton / deleteRichDraftButton / sendOutlineView icon colors are ThemeBind bindings
@@ -931,7 +931,7 @@ index 0000000..0000000 100644
          final int selectorColor = getThemedColor(Theme.key_listSelector);
          if (!emojiSelectorApplied || selectorColor != lastEmojiSelectorColor) {
              emojiSelectorApplied = true;
-@@ -10731,6 +11026,54 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -10734,6 +11029,54 @@ public class ChatActivityEnterView extends FrameLayout implements
          }
      }
  
@@ -986,7 +986,7 @@ index 0000000..0000000 100644
      private void updateRecordedDeleteIconColors() {
          int dotColor = getThemedColor(Theme.key_chat_recordedVoiceDot);
          int background = getThemedColor(Theme.key_chat_messagePanelBackground);
-@@ -14904,7 +15247,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -14907,7 +15250,8 @@ public class ChatActivityEnterView extends FrameLayout implements
      @Override
      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
          int wasHeight = textFieldContainer.getMeasuredHeight();
@@ -996,7 +996,7 @@ index 0000000..0000000 100644
              botCommandsMenuButton.measure(widthMeasureSpec, heightMeasureSpec);
              ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(10) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
              if (deleteRichDraftButton != null) {
-@@ -14968,6 +15312,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -14971,6 +15315,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                  view.animate()
                      .translationY(0)
                      .setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).setDuration(420)
@@ -1004,7 +1004,7 @@ index 0000000..0000000 100644
                      .start();
              }
              if (aiHint != null) {
-@@ -15107,7 +15452,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15110,7 +15455,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          emojiButtonPaddingAlpha = progress;
          updateEmojiButtonParams();
          emojiButton.setTranslationX(-leftPadding);
@@ -1013,7 +1013,7 @@ index 0000000..0000000 100644
          if (recordDeleteImageView != null) {
              recordDeleteImageView.setTranslationX(-leftPadding);
          }
-@@ -15172,7 +15517,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15175,7 +15520,7 @@ public class ChatActivityEnterView extends FrameLayout implements
      private void updateAttachLayoutParams() {
          updateAttachButtonTranslationX();
          if (attachLayout != null) {
@@ -1022,7 +1022,7 @@ index 0000000..0000000 100644
              attachLayout.setAlpha(attachLayoutAlpha * attachLayoutPaddingAlpha);
              attachLayout.setVisibility(attachLayout.getAlpha() > 0 ? View.VISIBLE : View.GONE);
              if (attachButton != null && isStories) {
-@@ -15190,6 +15535,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15193,6 +15538,10 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private void updateAttachButtonTranslationX() {
          if (attachButton == null || VoiceRecorderHelper.isMovedToAttach()) return;
@@ -1033,7 +1033,7 @@ index 0000000..0000000 100644
          attachButton.setTranslationX(VoiceRecorderHelper.attachTranslationXOffset() + attachLayoutPaddingTranslationX + attachLayoutTranslationX + (sendButton != null ? (
              -Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT + 12)) * sendButton.getAlpha()
          ) : 0));
-@@ -15556,7 +15905,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15559,7 +15908,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              }
              updateColors();
              checkBackgroundRect();
@@ -1042,7 +1042,7 @@ index 0000000..0000000 100644
                  canvas.drawRoundRect(backgroundRect, dp(RADIUS), dp(RADIUS), backgroundPaint);
              }
  
-@@ -15650,7 +15999,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15653,7 +16002,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                      blurredBackgroundDrawable.draw(canvas);
                  }
  
@@ -1051,7 +1051,7 @@ index 0000000..0000000 100644
                      canvas.drawPath(path, backgroundPaint);
                  }
                  canvas.clipPath(path);
-@@ -15778,6 +16127,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15781,6 +16130,15 @@ public class ChatActivityEnterView extends FrameLayout implements
          }
  
          private BlurredBackgroundDrawable blurredBackgroundDrawable;
@@ -1067,7 +1067,7 @@ index 0000000..0000000 100644
  
          public void setBlurredBackgroundDrawable(BlurredBackgroundDrawable blurredBackgroundDrawable) {
              this.blurredBackgroundDrawable = blurredBackgroundDrawable;
-@@ -15785,6 +16143,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15788,6 +16146,10 @@ public class ChatActivityEnterView extends FrameLayout implements
              this.blurredBackgroundDrawable.setPadding(dp(4));
          }
  
@@ -1078,7 +1078,7 @@ index 0000000..0000000 100644
          public boolean newCounterPos;
  
          public int width() {
-@@ -15820,7 +16182,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15823,7 +16185,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          private int drawableColor, inactiveDrawableColor, drawableInverseColor;
  
          public void updateColors() {
@@ -1087,7 +1087,7 @@ index 0000000..0000000 100644
              int c = Theme.getColor(Theme.key_glass_defaultIcon, resourcesProvider);
              int inverseColor = Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider);
              if (color != drawableColor || c != inactiveDrawableColor || inverseColor != drawableInverseColor) {
-@@ -15897,7 +16259,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15900,7 +16262,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          private static final int RADIUS = 19;
  
          private void checkBackgroundRect() {
@@ -1096,7 +1096,7 @@ index 0000000..0000000 100644
              final float height = dpf2(38);
              final float width = lerp(
                  Math.max(height, dpf2(10 + 10) + priceText.getCurrentWidth()),
-@@ -16085,7 +16447,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -16088,7 +16450,8 @@ public class ChatActivityEnterView extends FrameLayout implements
              (animatorTopViewVisibility.getValue() ? 1 : 0):
              animatorTopViewVisibility.getFloatValue();
  

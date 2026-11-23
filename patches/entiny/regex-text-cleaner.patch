@@ -97,7 +97,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -6272,7 +6272,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -6271,7 +6271,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  }
              }
          } else if (message.messageOwner.message != null) {

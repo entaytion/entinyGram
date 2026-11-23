@@ -23,7 +23,7 @@ index 0000000..0000000 100644
                          final float margin = dpf2(3);
                          final float height = dpf2(38);
                          final float width = dpf2(38);
-@@ -11030,7 +11030,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -11033,7 +11033,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          if (!isIosInputAppearance() && (audioVideoButtonContainerForbidden || desu.inugram.helpers.theme.NonIslandHelper.chatElements())) {
              return getThemedColor(Theme.key_glass_defaultIcon);
          }
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
      }
  
      private void updateAudioVideoSendButtonColor() {
-@@ -16181,10 +16181,26 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -16184,10 +16184,26 @@ public class ChatActivityEnterView extends FrameLayout implements
  
          private int drawableColor, inactiveDrawableColor, drawableInverseColor;
  
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
              if (color != drawableColor || c != inactiveDrawableColor || inverseColor != drawableInverseColor) {
                  drawableColor = color;
                  inactiveDrawableColor = c;
-@@ -16193,7 +16209,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -16196,7 +16212,9 @@ public class ChatActivityEnterView extends FrameLayout implements
                  inactiveDrawable.setColorFilter(new PorterDuffColorFilter(Color.argb(0xb4, Color.red(c), Color.green(c), Color.blue(c)), PorterDuff.Mode.SRC_IN));
                  drawableInverse.setColorFilter(new PorterDuffColorFilter(inverseColor, PorterDuff.Mode.SRC_IN));
              }

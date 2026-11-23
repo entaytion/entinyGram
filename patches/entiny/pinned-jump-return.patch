@@ -29,7 +29,7 @@ index 0000000..0000000 100644
      private boolean hideForwardEndReached;
      private boolean loading = true;
      private boolean firstLoading = true;
-@@ -12387,7 +12387,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12389,7 +12389,7 @@ public class ChatActivity extends BaseFragment implements
                  if (!forceScrollToFirst) {
                      forceNextPinnedMessageId = -forceNextPinnedMessageId;
                  }
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
                  updateMessagesVisiblePart(false);
              }
          });
-@@ -12637,7 +12637,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12639,7 +12639,7 @@ public class ChatActivity extends BaseFragment implements
          fragment.chatActivityDelegate = new ChatActivityDelegate() {
              @Override
              public void openReplyMessage(int mid) {
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -39628,7 +39628,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39634,7 +39634,7 @@ public class ChatActivity extends BaseFragment implements
          private int botForumStartThreadRow = -5;
  
          public int messagesStartRow;

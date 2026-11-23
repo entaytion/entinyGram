@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -3880,7 +3880,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3879,7 +3879,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
          }
          if (isSliding && !swipeCanceled) {
              boolean prevValue = drawRevealBackground;
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
                      return result;
                  }
                  processTouchEvent(e);
-@@ -5153,6 +5155,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -5155,6 +5157,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                          startedTrackingPointerId = e.getPointerId(0);
                          maybeStartTrackingSlidingView = true;
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                          startedTrackingX = (int) e.getX();
                          startedTrackingY = (int) e.getY();
                      }
-@@ -5172,7 +5175,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -5174,7 +5177,7 @@ public class ChatActivity extends BaseFragment implements
                              getParent().requestDisallowInterceptTouchEvent(true);
                          }
                      } else if (startedTrackingSlidingView) {
@@ -75,7 +75,7 @@ index 0000000..0000000 100644
                              if (!wasTrackingVibrate) {
                                  try {
                                      performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-@@ -5193,7 +5196,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -5195,7 +5198,7 @@ public class ChatActivity extends BaseFragment implements
                          invalidate();
                      }
                  } else if (slidingView != null && (e == null || e.getPointerId(0) == startedTrackingPointerId && (e.getAction() == MotionEvent.ACTION_CANCEL || e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP))) {
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
                          MessageObject message = getSlidingMessageObject();
                          final boolean allowReplyOnOpenTopic = canSendMessageToTopic(message);
                          if (
-@@ -5324,6 +5327,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -5326,6 +5329,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  boolean result = super.onTouchEvent(e);
                  if (actionBar.isActionModeShowed() || isReport()) {

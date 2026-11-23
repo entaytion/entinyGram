@@ -312,7 +312,7 @@ index 0000000..0000000 100644
  
              if (customDialog.unread_count != 0) {
                  drawCount = true;
-@@ -3272,6 +3319,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3271,6 +3318,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
      }
  
      public void setChecked(boolean checked, boolean animated) {
@@ -322,7 +322,7 @@ index 0000000..0000000 100644
          if (checkBox == null && !checked) {
              return;
          }
-@@ -3347,6 +3397,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3346,6 +3396,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              } else {
                  avatarImage.setImage(null, "50_50", avatarDrawable, null, 0);
              }
@@ -332,7 +332,7 @@ index 0000000..0000000 100644
  
              for (int i = 0; i < thumbImage.length; ++i) {
                  thumbImage[i].setImageBitmap((BitmapDrawable) null);
-@@ -3437,6 +3490,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3436,6 +3489,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              if (dialogsType == DialogsActivity.DIALOGS_TYPE_ADD_USERS_TO) {
                  drawPin = false;
              }
@@ -342,7 +342,7 @@ index 0000000..0000000 100644
  
              if (tags != null) {
                  final boolean tagsWereEmpty = tags.isEmpty();
-@@ -4886,6 +4942,12 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -4885,6 +4941,12 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  DrawableUtils.drawCommunityCardDrawable(canvas, Theme.dialogs_communityCardsDrawable,
                      avatarImage.getCenterX(), avatarImage.getCenterY(), dp(48));
                  avatarImage.draw(canvas);

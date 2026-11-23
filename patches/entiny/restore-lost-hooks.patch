@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -24891,7 +24891,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24893,7 +24893,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                  }
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
                      existMessageObject.setType();
                      if (chatAdapter != null) {
                          chatAdapter.updateRowWithMessageObject(existMessageObject, false, false);
-@@ -30188,7 +30188,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30189,7 +30189,7 @@ public class ChatActivity extends BaseFragment implements
          String callLink = callLink(pinnedMessageObject);
          pinnedMessageButtonShown = botButton != null || !TextUtils.isEmpty(callLink);
          SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);

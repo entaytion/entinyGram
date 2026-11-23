@@ -23,7 +23,7 @@ index 0000000..0000000 100644
                                      checkMessage = false;
                                      SpannableStringBuilder builder = (SpannableStringBuilder) messageString;
                                      builder.insert(0, " ");
-@@ -3142,14 +3140,13 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3141,14 +3139,13 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
          }
      }
  
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
      }
  
      int topMessageTopicStartIndex;
-@@ -6078,7 +6075,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -6077,7 +6074,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  stringBuilder = SpannableStringBuilder.valueOf(mess);
              }
              if (applyThumbs) {
@@ -54,7 +54,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12752,7 +12752,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12754,7 +12754,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          final float paddingBottom;
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              paddingBottom = AndroidUtilities.navigationBarHeight;
          } else {
              paddingBottom = blurredViewBottomOffset + dp(NonIslandHelper.chatElements() ? 3 : 9 + 7)
-@@ -46847,7 +46847,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46848,7 +46848,7 @@ public class ChatActivity extends BaseFragment implements
                  removeTag.setColorKeys(Theme.key_color_red, Theme.key_color_red);
                  popupLayout.addView(removeTag);
                  scrimPopupContainerLayout.addView(popupLayout);
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
                  final boolean canDeleteReactions = ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_DELETE_MESSAGES)
                      && (reaction.count > 1 || !reaction.chosen);
  
-@@ -48027,7 +48027,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48028,7 +48028,7 @@ public class ChatActivity extends BaseFragment implements
              parentChatActivity.checkUi_messagesSearchListPadding();
          }
  

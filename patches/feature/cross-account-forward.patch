@@ -20,7 +20,7 @@ index 0000000..0000000 100644
          DialogsActivity fragment = new DialogsActivity(args);
          fragment.setDelegate(ChatActivity.this);
          presentFragment(fragment);
-@@ -34655,6 +34656,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34654,6 +34655,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  args.putBoolean("hasInvoice", forwardingMessage.isInvoice());
                  args.putBoolean("canSelectTopics", true);
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
                  DialogsActivity fragment = new DialogsActivity(args);
                  fragment.setDelegate(this);
                  presentFragment(fragment);
-@@ -35721,8 +35723,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -35720,8 +35722,9 @@ public class ChatActivity extends BaseFragment implements
                  }
              }
          }
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
              if (chat != null) {
                  for (int i = 0; i < fmessages.size(); i++) {
                      int sendError = SendMessagesHelper.canSendMessageToChat(chat, fmessages.get(i));
-@@ -35734,8 +35737,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -35733,8 +35736,8 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  
@@ -50,7 +50,7 @@ index 0000000..0000000 100644
                  if (fragment.resetDelegate) {
                      fragment.setDelegate(null);
                  }
-@@ -35756,7 +35759,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -35755,7 +35758,9 @@ public class ChatActivity extends BaseFragment implements
  
                  messagePreviewParams = null;
                  hideFieldPanel(false);
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                      final long did = dids.get(a).dialogId;
                      final Long price = prices == null ? (Long) 0L : prices.get(did);
                      if (message != null) {
-@@ -35772,7 +35777,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -35771,7 +35776,7 @@ public class ChatActivity extends BaseFragment implements
                  ChatHelper.clearForwardFlags();
                  fragment.finishFragment();
                  createUndoView();

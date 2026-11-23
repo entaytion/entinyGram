@@ -437,7 +437,7 @@ index 0000000..0000000 100644
                      if (chatAdapter.isFiltered) {
                          updateFilteredMessages(true);
                      } else {
-@@ -28356,14 +28416,21 @@ public class ChatActivity extends BaseFragment implements
+@@ -28355,14 +28415,21 @@ public class ChatActivity extends BaseFragment implements
          searchLastIndex = num;
          updateSearchCountText();
          if (searchExpandList != null) {
@@ -461,7 +461,7 @@ index 0000000..0000000 100644
              if (searchLastCount < 0) {
                  searchCountText.setText("", animated);
              } else if (searchLastCount == 0) {
-@@ -39034,7 +39101,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39033,7 +39100,7 @@ public class ChatActivity extends BaseFragment implements
                  infoView.set(dialogId, getMessagesController().getPeerSettings(dialogId));
              } else if (position == loadingDownRow || position == loadingUpRow) {
                  ChatLoadingCell loadingCell = (ChatLoadingCell) holder.itemView;
@@ -470,7 +470,7 @@ index 0000000..0000000 100644
              } else if (position == userNameTimeRow) {
                  final TLRPC.PeerSettings settings = getMessagesController().getPeerSettings(getDialogId());
                  if (settings == null) return;
-@@ -40099,6 +40166,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40098,6 +40165,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public void onSearchFilterCleared(FiltersView.MediaFilterData filterData) {
@@ -478,7 +478,7 @@ index 0000000..0000000 100644
              super.onSearchFilterCleared(filterData);
              if (actionBarSearchTags != null) {
                  actionBarSearchTags.clear();
-@@ -40120,6 +40188,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -40119,6 +40187,10 @@ public class ChatActivity extends BaseFragment implements
              if (searchUserButton != null) {
                  searchUserButton.setVisibility(View.VISIBLE);
              }
@@ -489,7 +489,7 @@ index 0000000..0000000 100644
              if (searchingForUser) {
                  mentionContainer.getAdapter().searchUsernameOrHashtag(null, 0, null, false, true);
                  searchingForUser = false;
-@@ -40335,6 +40407,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40334,6 +40406,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public void onTextChanged(EditText editText) {
@@ -497,7 +497,7 @@ index 0000000..0000000 100644
              if (searchingHashtag == null) {
                  showMessagesSearchListView(false);
              }
-@@ -40369,6 +40442,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40368,6 +40441,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public void onCaptionCleared() {
@@ -505,7 +505,7 @@ index 0000000..0000000 100644
              createSearchContainer();
              if (searchingUserMessages != null || searchingChatMessages != null) {
                  if (searchUserButton != null) {
-@@ -42628,6 +42702,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -42627,6 +42701,8 @@ public class ChatActivity extends BaseFragment implements
                  } else if (chatMode == MODE_PINNED || chatMode == MODE_SCHEDULED) {
                      chatActivityDelegate.openReplyMessage(id);
                      finishFragment();
@@ -514,7 +514,7 @@ index 0000000..0000000 100644
                  } else {
                      if (option_id != null) {
                          highlightPollOptionId = option_id;
-@@ -45579,7 +45655,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -45578,7 +45654,7 @@ public class ChatActivity extends BaseFragment implements
          int lastBottom;
      }
  
@@ -523,7 +523,7 @@ index 0000000..0000000 100644
          public RecyclerListViewInternal(Context context, ThemeDelegate themeDelegate) {
              super(context, themeDelegate);
          }
-@@ -48635,7 +48711,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -48634,7 +48710,7 @@ public class ChatActivity extends BaseFragment implements
          );
      }
  
