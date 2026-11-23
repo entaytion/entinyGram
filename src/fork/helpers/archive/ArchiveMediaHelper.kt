@@ -6,6 +6,7 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
+import org.telegram.messenger.DownloadController
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.ImageLocation
 import org.telegram.messenger.MessageObject
@@ -309,6 +310,7 @@ object ArchiveMediaHelper {
         val limit = ArchiveScope.mediaLimitBytes(true)
         val name = FileLoader.getAttachFileName(document ?: photoSize)
         if (size <= 0 || size > limit || name.isNullOrEmpty()) return null
+        if (DownloadController.getInstance(account).canDownloadMedia(message) != 1) return null
         return FetchTarget(media, document, photoSize, name, limit)
     }
 
