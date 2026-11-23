@@ -134,6 +134,7 @@
     <string name="InuAnnoyancesStories">动态</string>
     <string name="InuAntiDeletion">消息保存</string>
     <string name="InuAppFont">应用字体</string>
+    <string name="InuFontResetAfterCrash">已关闭自定义字体：应用在应用字体后立即崩溃</string>
     <string name="InuAppFontInfo">整个应用界面使用的字体。只有自定义（导入的）字体才能设为应用字体。</string>
     <string name="InuAppFontStack">字体栈</string>
     <string name="InuAppFontStackInfo">最上方的字体是主界面字体；下方的是后备字体，用于主字体缺失的字符 (CJK 等)。拖动以重新排序。</string>

@@ -135,6 +135,7 @@
     <string name="InuAnnoyancesStories">Storie</string>
     <string name="InuAntiDeletion">Conservazione dei messaggi</string>
     <string name="InuAppFont">Font dell\'app</string>
+    <string name="InuFontResetAfterCrash">Carattere personalizzato disattivato: l\'app si è chiusa subito dopo averlo applicato</string>
     <string name="InuAppFontInfo">Solo i font personalizzati (importati) possono essere usati come font dell\'app.</string>
     <string name="InuAppFontStack">Pila di font</string>
     <string name="InuAppFontStackInfo">Il font in alto è quello principale; gli altri sono alternative per i caratteri mancanti (CJK ecc.). Trascina per riordinare.</string>

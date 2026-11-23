@@ -134,6 +134,7 @@
     <string name="InuAnnoyancesStories">استوری‌ها</string>
     <string name="InuAntiDeletion">نگهداری پیام‌ها</string>
     <string name="InuAppFont">فونت برنامه</string>
+    <string name="InuFontResetAfterCrash">فونت سفارشی خاموش شد: برنامه بلافاصله پس از اعمال آن از کار افتاد</string>
     <string name="InuAppFontInfo">فقط فونت‌های سفارشی (واردشده) را می‌توان به‌عنوان فونت برنامه تعیین کرد.</string>
     <string name="InuAppFontStack">زنجیره فونت</string>
     <string name="InuAppFontStackInfo">فونت بالا اصلی است؛ بقیه جایگزین نویسه‌های گمشده‌اند (CJK و غیره). برای تغییر ترتیب بکشید.</string>

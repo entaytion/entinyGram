@@ -134,6 +134,7 @@
     <string name="InuAnnoyancesStories">Скрыть в историях</string>
     <string name="InuAntiDeletion">Сохранение сообщений</string>
     <string name="InuAppFont">Шрифт приложения</string>
+    <string name="InuFontResetAfterCrash">Свой шрифт отключён: приложение упало сразу после его применения</string>
     <string name="InuAppFontInfo">Шрифтом приложения можно выбрать только импортированные шрифты.</string>
     <string name="InuAppFontStack">Стек шрифтов</string>
     <string name="InuAppFontStackInfo">Первый шрифт — основной, остальные используются для недостающих символов (CJK и др.). Перетащите для смены порядка.</string>

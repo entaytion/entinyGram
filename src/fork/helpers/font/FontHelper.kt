@@ -48,6 +48,7 @@ object FontHelper {
     private val typefaceSansSerifField = Typeface::class.java.getDeclaredField("SANS_SERIF")
 
     fun init(context: Context) {
+        FontBootGuard.begin(context)
         FontLibrary.loadStorage(context)
         validateActiveAppFont()
         validateMonoFont()

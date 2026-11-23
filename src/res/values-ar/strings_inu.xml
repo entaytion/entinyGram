@@ -134,6 +134,7 @@
     <string name="InuAnnoyancesStories">القصص</string>
     <string name="InuAntiDeletion">حفظ الرسائل</string>
     <string name="InuAppFont">خط التطبيق</string>
+    <string name="InuFontResetAfterCrash">تم إيقاف الخط المخصص: تعطل التطبيق مباشرة بعد تطبيقه</string>
     <string name="InuAppFontInfo">يمكن تعيين الخطوط المخصصة (المستوردة) فقط كخط للتطبيق.</string>
     <string name="InuAppFontStack">تسلسل الخطوط</string>
     <string name="InuAppFontStackInfo">الخط الأعلى هو الأساسي؛ والبقية بدائل للأحرف المفقودة (CJK وغيرها). اسحب لإعادة الترتيب.</string>

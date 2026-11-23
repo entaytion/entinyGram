@@ -135,6 +135,7 @@
     <string name="InuAnnoyancesStories">Hide in stories</string>
     <string name="InuAntiDeletion">Message preservation</string>
     <string name="InuAppFont">App font</string>
+    <string name="InuFontResetAfterCrash">Custom font turned off: the app crashed right after it was applied</string>
     <string name="InuAppFontInfo">Only custom (imported) fonts can be set as the app font.</string>
     <string name="InuAppFontStack">Font stack</string>
     <string name="InuAppFontStackInfo">Top font is primary; the rest are fallbacks for missing characters (CJK etc.). Drag to reorder.</string>

@@ -134,6 +134,7 @@
     <string name="InuAnnoyancesStories">Hikayeler</string>
     <string name="InuAntiDeletion">Mesajları saklama</string>
     <string name="InuAppFont">Uygulama yazı tipi</string>
+    <string name="InuFontResetAfterCrash">Özel yazı tipi kapatıldı: uygulama uygulandıktan hemen sonra çöktü</string>
     <string name="InuAppFontInfo">Uygulama arayüzü genelinde kullanılan yazı tipi. Uygulama yazı tipi olarak yalnızca Özel (içe aktarılmış) yazı tipleri seçilebilir.</string>
     <string name="InuAppFontStack">Yazı tipi yığını</string>
     <string name="InuAppFontStackInfo">En üstteki yazı tipi birincil arayüz yazı tipidir; alttakiler ise birincil yazı tipinde bulunmayan karakterler (Çince/Japonca/Korece vb.) için yedektir. Yeniden sıralamak için sürükleyin.</string>

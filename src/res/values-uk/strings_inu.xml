@@ -134,6 +134,7 @@
     <string name="InuAnnoyancesStories">Сховати в історіях</string>
     <string name="InuAntiDeletion">Збереження повідомлень</string>
     <string name="InuAppFont">Шрифт додатка</string>
+    <string name="InuFontResetAfterCrash">Власний шрифт вимкнено: застосунок впав одразу після його застосування</string>
     <string name="InuAppFontInfo">Як шрифт додатка можна встановити лише власні (імпортовані) шрифти.</string>
     <string name="InuAppFontStack">Стек шрифтів</string>
     <string name="InuAppFontStackInfo">Верхній шрифт — основний, решта — резервні для відсутніх символів (CJK тощо). Перетягуйте для зміни порядку.</string>

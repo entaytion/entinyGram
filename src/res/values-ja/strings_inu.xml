@@ -134,6 +134,7 @@
     <string name="InuAnnoyancesStories">ストーリー</string>
     <string name="InuAntiDeletion">メッセージの保存</string>
     <string name="InuAppFont">アプリのフォント</string>
+    <string name="InuFontResetAfterCrash">カスタムフォントをオフにしました。適用直後にアプリがクラッシュしました</string>
     <string name="InuAppFontInfo">アプリ全体のインターフェースで使用するフォントです。アプリのフォントに設定できるのはカスタム（インポートした）フォントのみです。</string>
     <string name="InuAppFontStack">フォントスタック</string>
     <string name="InuAppFontStackInfo">最上段が主要な UI フォントで、以下は主要フォントに無い文字（CJK など）のためのフォールバックです。ドラッグで並べ替え。</string>

@@ -135,6 +135,7 @@
     <string name="InuAnnoyancesStories">Historias</string>
     <string name="InuAntiDeletion">Conservación de mensajes</string>
     <string name="InuAppFont">Fuente de la app</string>
+    <string name="InuFontResetAfterCrash">Fuente personalizada desactivada: la app falló justo después de aplicarla</string>
     <string name="InuAppFontInfo">Solo las fuentes personalizadas (importadas) pueden usarse como fuente de la app.</string>
     <string name="InuAppFontStack">Pila de fuentes</string>
     <string name="InuAppFontStackInfo">La fuente superior es la principal; el resto son alternativas para caracteres que faltan (CJK, etc.). Arrastra para reordenar.</string>
