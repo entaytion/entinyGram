@@ -78,8 +78,7 @@ async function publishRich(post: PostInfo, files: string[]) {
   const sections = written
     ? richSections(notes.en, 'en', false)
     : [{ title: 'New', lines: notes.commits.length ? notes.commits : [`Update ${info.base}`] }]
-  const uk = written ? richSections(notes.uk, 'uk', true) : []
-  await tg.sendRichMessage(channelCI, { content: { type: 'markdown', content: richCiPost(post, sections, apks, undefined, uk), attachments }, uploadCache })
+  await tg.sendRichMessage(channelCI, { content: { type: 'markdown', content: richCiPost(post, sections, apks), attachments }, uploadCache })
 
   if (ciOnly || info.track === 'beta') {
     console.log('CI channel only: skipping the main channel post.')
