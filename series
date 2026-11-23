@@ -703,3 +703,4 @@ entiny/cache-cleanup.patch
 entiny/all-chats-long-tap.patch
 entiny/add-to-folder-in-chat.patch
 entiny/hide-system-account.patch
+entiny/message-time-size.patch

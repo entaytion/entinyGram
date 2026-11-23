@@ -414,6 +414,8 @@
     <string name="InuChatHeaderSettingsInfo">Aşağıdaki seçenekleri değiştirdikçe yukarıdaki önizleme anında güncellenir.</string>
     <string name="InuChatInputMaxLines">Sohbet girişi azami satır sayısı</string>
     <string name="InuChatInputTextSize">Giriş metni boyutu</string>
+    <string name="InuMessageTimeSize">Saat ve sayaç boyutu</string>
+    <string name="InuMessageTimeSizeInfo">Mesajlardaki saat, görüntülenme ve iletme sayısının boyutu. Sohbet yeniden açıldığında uygulanır.</string>
     <string name="InuChatList">Sohbet listesi</string>
     <string name="InuChatMenuItems">Ögeler</string>
     <string name="InuChatMenuOrder">Sohbet menüsü</string>

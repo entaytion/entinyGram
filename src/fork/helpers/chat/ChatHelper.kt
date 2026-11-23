@@ -286,6 +286,9 @@ object ChatHelper {
     private val timePrefixCache = WeakHashMap<MessageObject, CachedTimePrefix>()
 
     @JvmStatic
+    fun timeTextSizeDp(): Float = InuConfig.MESSAGE_TIME_SIZE.value.coerceIn(10, 18).toFloat()
+
+    @JvmStatic
     fun timePrefix(msg: MessageObject?, time: CharSequence?, edited: Boolean = false): CharSequence? {
         if (time == null || msg == null) return time
         val key = 31 * (31 * time.hashCode() + timeAdditionsHash(msg)) + (if (edited) 1 else 0)

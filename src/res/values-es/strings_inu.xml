@@ -417,6 +417,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuChatHeaderSettingsInfo">La vista previa en vivo arriba se actualiza al instante según cambias las opciones.</string>
     <string name="InuChatInputMaxLines">Líneas máximas de entrada de chat</string>
     <string name="InuChatInputTextSize">Tamaño de texto de entrada de chat</string>
+    <string name="InuMessageTimeSize">Tamaño de la hora y los contadores</string>
+    <string name="InuMessageTimeSizeInfo">Tamaño de la hora, las vistas y los reenvíos en los mensajes. Se aplica al volver a abrir el chat.</string>
     <string name="InuChatList">Lista de chats</string>
     <string name="InuChatMenuItems">Elementos</string>
     <string name="InuChatMenuOrder">Menú de chat</string>

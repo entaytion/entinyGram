@@ -414,6 +414,8 @@
     <string name="InuChatHeaderSettingsInfo">更改下方选项时，上方预览会即时更新。</string>
     <string name="InuChatInputMaxLines">输入框最大行数</string>
     <string name="InuChatInputTextSize">输入框文字大小</string>
+    <string name="InuMessageTimeSize">时间和计数的大小</string>
+    <string name="InuMessageTimeSizeInfo">消息中时间、浏览量和转发数的大小。重新打开聊天后生效。</string>
     <string name="InuChatList">聊天列表</string>
     <string name="InuChatMenuItems">项目</string>
     <string name="InuChatMenuOrder">聊天菜单</string>

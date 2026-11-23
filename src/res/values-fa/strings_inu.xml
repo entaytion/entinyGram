@@ -414,6 +414,8 @@
     <string name="InuChatHeaderSettingsInfo">پیش‌نمایش زنده بالا با تغییر گزینه‌های پایین بی‌درنگ به‌روز می‌شود.</string>
     <string name="InuChatInputMaxLines">حداکثر خطوط کادر گفتگو</string>
     <string name="InuChatInputTextSize">اندازه متن کادر گفتگو</string>
+    <string name="InuMessageTimeSize">اندازه زمان و شمارنده‌ها</string>
+    <string name="InuMessageTimeSizeInfo">اندازه زمان، بازدیدها و بازارسال‌ها در پیام‌ها. با باز کردن دوباره گفتگو اعمال می‌شود.</string>
     <string name="InuChatList">فهرست گفتگو</string>
     <string name="InuChatMenuItems">موارد</string>
     <string name="InuChatMenuOrder">منوی گفتگو</string>

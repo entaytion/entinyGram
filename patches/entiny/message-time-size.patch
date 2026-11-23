@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 23 Nov 2026 09:27:32 +0000
+Subject: Let the size of the time, views and forwards in message bubbles follow a setting instead of a fixed 12dp.
+
+---
+ .../src/main/java/org/telegram/ui/ActionBar/Theme.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -8614,7 +8614,7 @@ public class Theme {
+             chat_adminPaint.setTextSize(dp(smallerDp - 1));
+             chat_ephemeralPaint.setTextSize(dp(12));
+             float timeDp = 2 * (SharedConfig.fontSize - 16) / 3f + 12;
+-            chat_timePaint.setTextSize(dp(12));
++            chat_timePaint.setTextSize(dp(desu.inugram.helpers.chat.ChatHelper.timeTextSizeDp()));
+             chat_gamePaint.setTextSize(dp(13));
+             chat_shipmentPaint.setTextSize(dp(13));
+             chat_instantViewPaint.setTextSize(dp(13));

@@ -416,6 +416,8 @@
     <string name="InuChatHeaderSettingsInfo">المعاينة الحية أعلاه تتحدث فوراً عند تغيير الخيارات أدناه.</string>
     <string name="InuChatInputMaxLines">الحد الأقصى لأسطر حقل المحادثة</string>
     <string name="InuChatInputTextSize">حجم نص حقل المحادثة</string>
+    <string name="InuMessageTimeSize">حجم الوقت والعدادات</string>
+    <string name="InuMessageTimeSizeInfo">حجم الوقت وعدد المشاهدات وإعادة التوجيه في الرسائل. يُطبَّق عند إعادة فتح المحادثة.</string>
     <string name="InuChatList">قائمة المحادثات</string>
     <string name="InuChatMenuItems">العناصر</string>
     <string name="InuChatMenuOrder">قائمة المحادثة</string>

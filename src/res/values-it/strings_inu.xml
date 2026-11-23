@@ -417,6 +417,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuChatHeaderSettingsInfo">L\'anteprima dal vivo qui sopra si aggiorna subito quando cambi le opzioni sotto.</string>
     <string name="InuChatInputMaxLines">Righe massime del campo chat</string>
     <string name="InuChatInputTextSize">Dimensione del testo del campo chat</string>
+    <string name="InuMessageTimeSize">Dimensione di ora e contatori</string>
+    <string name="InuMessageTimeSizeInfo">Dimensione di ora, visualizzazioni e inoltri nei messaggi. Si applica alla riapertura della chat.</string>
     <string name="InuChatList">Elenco chat</string>
     <string name="InuChatMenuItems">Voci</string>
     <string name="InuChatMenuOrder">Menu della chat</string>

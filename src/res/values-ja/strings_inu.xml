@@ -414,6 +414,8 @@
     <string name="InuChatHeaderSettingsInfo">下の設定を変更すると、上のプレビューがすぐに更新されます。</string>
     <string name="InuChatInputMaxLines">入力欄の最大行数</string>
     <string name="InuChatInputTextSize">入力欄の文字サイズ</string>
+    <string name="InuMessageTimeSize">時刻とカウンターのサイズ</string>
+    <string name="InuMessageTimeSizeInfo">メッセージ内の時刻、閲覧数、転送数のサイズ。チャットを開き直すと反映されます。</string>
     <string name="InuChatList">チャットリスト</string>
     <string name="InuChatMenuItems">項目</string>
     <string name="InuChatMenuOrder">チャットメニュー</string>

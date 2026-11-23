@@ -420,6 +420,8 @@
     <string name="InuChatHeaderSettingsInfo">Live preview above updates instantly as you change the options below.</string>
     <string name="InuChatInputMaxLines">Chat input max lines</string>
     <string name="InuChatInputTextSize">Chat input text size</string>
+    <string name="InuMessageTimeSize">Time and counters size</string>
+    <string name="InuMessageTimeSizeInfo">Size of the time, views and forwards in message bubbles. Applies when a chat is opened again.</string>
     <string name="InuChatList">Chat list</string>
     <string name="InuChatMenuEntinyGram" translatable="false">entinyGram</string>
     <string name="InuChatMenuItems">Items</string>

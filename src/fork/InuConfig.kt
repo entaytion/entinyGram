@@ -1463,6 +1463,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val CHAT_INPUT_TEXT_SIZE = IntItem("chat_input_text_size", 18)
 
+    @JvmField
+    val MESSAGE_TIME_SIZE = IntItem("message_time_size", 12)
+
     val SYSTEM_MESSAGE_FONT_SCALE = BoolItem("system_message_font_scale", false)
 
     @JvmField

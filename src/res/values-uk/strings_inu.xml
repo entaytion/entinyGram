@@ -419,6 +419,8 @@
     <string name="InuChatHeaderSettingsInfo">Попередній перегляд вище оновлюється одразу, щойно ви змінюєте налаштування нижче.</string>
     <string name="InuChatInputMaxLines">Макс. рядків поля введення</string>
     <string name="InuChatInputTextSize">Розмір тексту поля введення</string>
+    <string name="InuMessageTimeSize">Розмір часу й лічильників</string>
+    <string name="InuMessageTimeSizeInfo">Розмір часу, переглядів і репостів у повідомленнях. Застосовується після повторного відкриття чату.</string>
     <string name="InuChatList">Список чатів</string>
     <string name="InuChatMenuItems">Пункти</string>
     <string name="InuChatMenuOrder">Меню чату</string>

@@ -25,6 +25,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
     private var stickerSizeSlider: SliderCell? = null
     private var reactionsInRowSlider: SliderCell? = null
     private var chatInputTextSizeSlider: SliderCell? = null
+    private var messageTimeSizeSlider: SliderCell? = null
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val context = context ?: return
@@ -214,6 +215,22 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatInputTextSize)))
         items.add(UItem.asCustom(chatInputTextSizeSlider))
         items.add(UItem.asShadow(null))
+
+        if (messageTimeSizeSlider == null) messageTimeSizeSlider = SliderCell(
+            context,
+            min = 10f,
+            max = 18f,
+            defaultValue = InuConfig.MESSAGE_TIME_SIZE.default.toFloat(),
+            initialValue = InuConfig.MESSAGE_TIME_SIZE.value.toFloat(),
+            step = 1f,
+            format = { it.toInt().toString() },
+            onChanged = {
+                InuConfig.MESSAGE_TIME_SIZE.value = it.toInt()
+            },
+        )
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMessageTimeSize)))
+        items.add(UItem.asCustom(messageTimeSizeSlider))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuMessageTimeSizeInfo)))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
