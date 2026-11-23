@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@android:color/transparent" />
-    <foreground>
-        <inset android:drawable="@drawable/icon_bg_concept_amethyst" android:inset="18%" />
-    </foreground>
-</adaptive-icon>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/inu_splash_art_amethyst"
+    android:inset="16.67%" />

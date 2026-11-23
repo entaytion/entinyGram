@@ -19,7 +19,7 @@ index 0000000..0000000 100644
      private boolean askingForPermissions;
      private int searchViewPagerIndex;
      @Nullable
-@@ -3159,6 +3160,25 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3164,6 +3165,25 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      @Override
      public ActionBar createActionBar(Context context) {
          ActionBar actionBar = new ActionBar(context, resourceProvider) {
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
  
              @Override
              public void setTranslationY(float translationY) {
-@@ -7032,6 +7052,24 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7045,6 +7065,24 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
      public MessagesController.DialogFilter inu_getCurrentFilter() {
          if (viewPages == null || viewPages.length == 0 || viewPages[0] == null) {
              return null;
-@@ -7047,13 +7085,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7060,13 +7098,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (filter == null) {
              return;
          }
@@ -89,7 +89,7 @@ index 0000000..0000000 100644
      }
  
      private void inu_applyDialogsTitle() {
-@@ -7152,10 +7194,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7165,10 +7207,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      selectWithStableId = true;
                  }
                  filterTabsView.removeTabs();
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
                          filterTabsView.inu_addTab(a, 0, LocaleController.getString(R.string.FilterAllChats), null, false, true, filters.get(a).locked, "\uD83D\uDCAC");
                      } else {
                          final MessagesController.DialogFilter filter = filters.get(a);
-@@ -7179,11 +7225,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7192,11 +7238,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          viewPages[0].selectedType = id;
                      }
                  }
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
                      if (snapped != viewPages[a].selectedType) {
                          viewPages[a].selectedType = snapped;
                          if (a == 0) updateCurrentTab = true;
-@@ -7202,6 +7250,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7215,6 +7263,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          } else {
