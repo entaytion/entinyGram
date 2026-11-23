@@ -1,6 +1,8 @@
 package desu.inugram.helpers.chat
 
+import android.content.ClipDescription
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import java.io.File
 import java.io.FileOutputStream
@@ -66,11 +68,19 @@ object StickerSendHelper {
         }
     }
 
-    private fun convert(path: String): File? {
+    @JvmStatic
+    fun isKeyboardSticker(description: ClipDescription): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && description.extras?.getBoolean("com.google.android.inputmethod.content.IS_STICKER") == true
+
+    @JvmStatic
+    fun convertKeyboardSticker(uri: Uri): File? = convert(null, uri)
+
+    private fun convert(path: String?, uri: Uri? = null): File? {
         var bitmap: Bitmap? = null
         var scaled: Bitmap? = null
+        var output: File? = null
         return try {
-            bitmap = ImageLoader.loadBitmap(path, null, STICKER_SIZE.toFloat(), STICKER_SIZE.toFloat(), true) ?: return null
+            bitmap = ImageLoader.loadBitmap(path, uri, STICKER_SIZE.toFloat(), STICKER_SIZE.toFloat(), true) ?: return null
             val scale = STICKER_SIZE / maxOf(bitmap.width, bitmap.height).toFloat()
             scaled = if (scale == 1f) bitmap else Bitmap.createScaledBitmap(
                 bitmap,
@@ -79,10 +89,14 @@ object StickerSendHelper {
                 true,
             )
             val out = File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), "${SharedConfig.getLastLocalId()}_inu_sticker.webp")
+            output = out
             val format = if (Build.VERSION.SDK_INT >= 30) Bitmap.CompressFormat.WEBP_LOSSLESS else Bitmap.CompressFormat.WEBP
-            FileOutputStream(out).use { scaled.compress(format, 100, it) }
-            out
+            if (FileOutputStream(out).use { scaled.compress(format, 100, it) }) out else {
+                out.delete()
+                null
+            }
         } catch (e: Throwable) {
+            output?.delete()
             FileLog.e(e)
             null
         } finally {

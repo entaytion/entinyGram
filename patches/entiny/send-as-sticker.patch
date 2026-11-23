@@ -4,16 +4,61 @@ Date: Wed, 21 Oct 2026 12:30:41 +0300
 Subject: send photo as sticker
 
 ---
- .../org/telegram/messenger/SendMessagesHelper.java   |  1 +
- .../org/telegram/ui/Components/ChatAttachAlert.java  | 12 ++++++++++++
- .../src/main/java/org/telegram/ui/PhotoViewer.java   |  4 ++++
- 3 files changed, 17 insertions(+)
+ .../messenger/SendMessagesHelper.java         | 21 +++++++++++++------
+ .../ui/Components/ChatActivityEnterView.java  | 19 ++++++++++-------
+ .../ui/Components/ChatAttachAlert.java        | 12 +++++++++++
+ .../java/org/telegram/ui/PhotoViewer.java     |  4 ++++
+ 4 files changed, 42 insertions(+), 14 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -10988,6 +10988,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -9518,7 +9518,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+     private final static int ERROR_TYPE_UNSUPPORTED = 1;
+     private final static int ERROR_TYPE_FILE_TOO_LARGE = 2;
+ 
+-    private static int prepareSendingDocumentInternal(AccountInstance accountInstance, String path, String originalPath, Uri uri, String mime, long dialogId, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, final ArrayList<TLRPC.MessageEntity> entities, final MessageObject editingMessageObject, long[] groupId, boolean isGroupFinal, CharSequence caption, boolean notify, int scheduleDate, int scheduleRepeatPeriod, Integer[] docType, boolean forceDocument, SendMessageChatArguments sendMessageChatArguments, long effectId, boolean invertMedia, long payStars, long monoForumPeerId, MessageSuggestionParams suggestionParams, PollSendParams pollSendParams, int pollIndex, boolean inu_mp4AsVideo) {
++    private static int prepareSendingDocumentInternal(AccountInstance accountInstance, String path, String originalPath, Uri uri, String mime, long dialogId, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, final ArrayList<TLRPC.MessageEntity> entities, final MessageObject editingMessageObject, long[] groupId, boolean isGroupFinal, CharSequence caption, boolean notify, int scheduleDate, int scheduleRepeatPeriod, Integer[] docType, boolean forceDocument, SendMessageChatArguments sendMessageChatArguments, long effectId, boolean invertMedia, long payStars, long monoForumPeerId, MessageSuggestionParams suggestionParams, PollSendParams pollSendParams, int pollIndex, boolean inu_mp4AsVideo, boolean inu_keyboardSticker) {
+         final long forcedPollGroupId = pollSendParams != null ? pollSendParams.groupId : 0;
+ 
+         if ((path == null || path.length() == 0) && uri == null) {
+@@ -9546,7 +9546,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             } else {
+                 hasExt = true;
+             }
+-            path = MediaController.copyFileToCache(uri, extension);
++            if (inu_keyboardSticker && !(MediaController.isWebp(uri) && shouldSendWebPAsSticker(null, uri))) {
++                File sticker = desu.inugram.helpers.chat.StickerSendHelper.convertKeyboardSticker(uri);
++                path = sticker != null ? sticker.getAbsolutePath() : null;
++            } else {
++                path = MediaController.copyFileToCache(uri, extension);
++            }
+             if (path == null) {
+                 return ERROR_TYPE_UNSUPPORTED;
+             }
+@@ -10251,7 +10256,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     mediaCount++;
+                     long prevGroupId = groupId[0];
+                     final boolean isGroupFinal = !forcedPollDoNotSendFinal && (pollSendParams == null && mediaCount == 10 || a == count - 1);
+-                    error = prepareSendingDocumentInternal(accountInstance, paths.get(a), originalPaths.get(a), null, mime, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, a == 0 ? captionEntities : null, editingMessageObject, groupId, isGroupFinal, captionFinal, notify, scheduleDate, scheduleRepeatPeriod, docType, inputContent == null, sendMessageChatArguments, first ? effectId : 0, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendIndexes!= null ? pollSendIndexes.get(a) : -1, true);
++                    error = prepareSendingDocumentInternal(accountInstance, paths.get(a), originalPaths.get(a), null, mime, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, a == 0 ? captionEntities : null, editingMessageObject, groupId, isGroupFinal, captionFinal, notify, scheduleDate, scheduleRepeatPeriod, docType, inputContent == null, sendMessageChatArguments, first ? effectId : 0, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendIndexes!= null ? pollSendIndexes.get(a) : -1, true, false);
+                     first = false;
+                     if (prevGroupId != groupId[0] || groupId[0] == -1) {
+                         mediaCount = 1;
+@@ -10281,7 +10286,10 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     mediaCount++;
+                     long prevGroupId = groupId[0];
+                     final boolean isGroupFinal = !forcedPollDoNotSendFinal && (pollSendParams == null && mediaCount == 10 || a == count - 1);
+-                    error = prepareSendingDocumentInternal(accountInstance, null, null, uris.get(a), mime, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, captionEntitiesFinal, editingMessageObject, groupId, isGroupFinal, captionFinal, notify, scheduleDate, scheduleRepeatPeriod, docType, inputContent == null, sendMessageChatArguments, first ? effectId : 0, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendUriIndexes != null ? pollSendUriIndexes.get(a) : -1, true);
++                    Uri uri = uris.get(a);
++                    boolean inu_keyboardSticker = inputContent != null && uri != null && uri.equals(inputContent.getContentUri())
++                            && "image/webp".equals(mime) && desu.inugram.helpers.chat.StickerSendHelper.isKeyboardSticker(inputContent.getDescription());
++                    error = prepareSendingDocumentInternal(accountInstance, null, null, uri, mime, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, captionEntitiesFinal, editingMessageObject, groupId, isGroupFinal, captionFinal, notify, scheduleDate, scheduleRepeatPeriod, docType, inputContent == null, sendMessageChatArguments, first ? effectId : 0, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendUriIndexes != null ? pollSendUriIndexes.get(a) : -1, true, inu_keyboardSticker);
+                     first = false;
+                     if (prevGroupId != groupId[0] || groupId[0] == -1) {
+                         mediaCount = 1;
+@@ -10988,6 +10996,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
  
      @UiThread
      public static void prepareSendingMedia(AccountInstance accountInstance, ArrayList<SendingMediaInfo> media, long dialogId, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, boolean forceDocument, boolean groupMedia, MessageObject editingMessageObject, TLRPC.TL_inputPollAnswer pollToAddOptionMessageObject, boolean notify, int scheduleDate, int scheduleRepeatPeriod, int mode, boolean updateStikcersOrder, InputContentInfoCompat inputContent, SendMessageChatArguments sendMessageChatArguments, long effectId, boolean invertMedia, long payStars, long monoForumPeerId, MessageSuggestionParams suggestionParams, PollSendParams pollSendParams, boolean forcedPollDoNotSendFinal) {
@@ -21,6 +66,67 @@ index 0000000..0000000 100644
          if (media.isEmpty()) {
              return;
          }
+@@ -11884,7 +11893,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                         mediaCount = 0;
+                     }
+                     mediaCount++;
+-                    int error = prepareSendingDocumentInternal(accountInstance, sendAsDocuments.get(a), sendAsDocumentsOriginal.get(a), sendAsDocumentsUri.get(a), extension, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, sendAsDocumentsEntities.get(a), editingMessageObject, groupId2, mediaCount == 10 || a == documentsCount - 1, sendAsDocumentsCaptions.get(a), notify, scheduleDate, 0, null, forceDocument, sendMessageChatArguments, effectId, invertMedia, payStars, monoForumPeerId, suggestionParams, null, -1, false);
++                    int error = prepareSendingDocumentInternal(accountInstance, sendAsDocuments.get(a), sendAsDocumentsOriginal.get(a), sendAsDocumentsUri.get(a), extension, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, sendAsDocumentsEntities.get(a), editingMessageObject, groupId2, mediaCount == 10 || a == documentsCount - 1, sendAsDocumentsCaptions.get(a), notify, scheduleDate, 0, null, forceDocument, sendMessageChatArguments, effectId, invertMedia, payStars, monoForumPeerId, suggestionParams, null, -1, false, false);
+                     handleError(error, accountInstance);
+                 }
+             }
+@@ -12430,7 +12439,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     }
+                 });
+             } else {
+-                prepareSendingDocumentInternal(accountInstance, videoPath, videoPath, null, null, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, entities, editingMessageObject, null, false, caption, notify, scheduleDate, scheduleRepeatPeriod, null, forceDocument, sendMessageChatArguments, 0, invertMedia, stars, monoForumPeerId, suggestionParams, null, -1, false);
++                prepareSendingDocumentInternal(accountInstance, videoPath, videoPath, null, null, dialogId, replyToMsg, replyToTopMsg, storyItem, quote, entities, editingMessageObject, null, false, caption, notify, scheduleDate, scheduleRepeatPeriod, null, forceDocument, sendMessageChatArguments, 0, invertMedia, stars, monoForumPeerId, suggestionParams, null, -1, false, false);
+             }
+         }).start();
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -5471,11 +5471,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 return;
+             }
+             ClipDescription description = inputContentInfo.getDescription();
+-            if (description.hasMimeType("image/gif")) {
+-                SendMessagesHelper.prepareSendingDocument(accountInstance, null, null, inputContentInfo.getContentUri(), null, "image/gif", dialog_id, replyingMessageObject, getThreadMessage(), null, replyingQuote, null, notify, 0, inputContentInfo, parentFragment != null ? parentFragment.getMessageChatSendParams() : null, false);
+-            } else {
+-                SendMessagesHelper.prepareSendingPhoto(accountInstance, null, inputContentInfo.getContentUri(), dialog_id, replyingMessageObject, getThreadMessage(), replyingQuote, null, null, null, inputContentInfo, 0, null, notify, 0, parentFragment == null ? 0 : parentFragment.getChatMode(), parentFragment != null ? parentFragment.getMessageChatSendParams() : null);
+-            }
++            ArrayList<Uri> uris = new ArrayList<>(1);
++            uris.add(inputContentInfo.getContentUri());
++            SendMessagesHelper.prepareSendingDocuments(accountInstance, null, null, uris, null, null,
++                description.hasMimeType("image/gif") ? "image/gif" : "image/webp", dialog_id, replyingMessageObject,
++                getThreadMessage(), null, replyingQuote, null, notify, scheduleDate, scheduleRepeatPeriod, inputContentInfo,
++                parentFragment != null ? parentFragment.getMessageChatSendParams() : null, 0, false, 0, 0, null);
+             if (delegate != null) {
+                 delegate.onMessageSend(null, true, scheduleDate, scheduleRepeatPeriod, 0);
+             }
+@@ -5504,15 +5505,17 @@ public class ChatActivityEnterView extends FrameLayout implements
+                             return false;
+                         }
+                     }
+-                    boolean isGboardSticker = inputContentInfo.getDescription().getExtras() != null && inputContentInfo.getDescription().getExtras().getBoolean("com.google.android.inputmethod.content.IS_STICKER");
+-                    if (inputContentInfo.getDescription().hasMimeType("image/gif") || isGboardSticker || (inputContentInfo.getDescription().hasMimeType("image/webp") && SendMessagesHelper.shouldSendWebPAsSticker(null, inputContentInfo.getContentUri()))) {
++                    ClipDescription description = inputContentInfo.getDescription();
++                    Uri uri = inputContentInfo.getContentUri();
++                    boolean isGboardSticker = desu.inugram.helpers.chat.StickerSendHelper.isKeyboardSticker(description);
++                    if (description.hasMimeType("image/gif") || isGboardSticker || (description.hasMimeType("image/webp") && MediaController.isWebp(uri) && SendMessagesHelper.shouldSendWebPAsSticker(null, uri))) {
+                         if (isInScheduleMode()) {
+                             AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate, scheduleRepeatPeriod) -> send(inputContentInfo, notify, scheduleDate, scheduleRepeatPeriod), resourcesProvider);
+                         } else {
+                             send(inputContentInfo, true, 0, 0);
+                         }
+                     } else {
+-                        editPhoto(inputContentInfo.getContentUri(), inputContentInfo.getDescription().getMimeType(0));
++                        editPhoto(uri, description.getMimeType(0));
+                     }
+                     return true;
+                 };
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
