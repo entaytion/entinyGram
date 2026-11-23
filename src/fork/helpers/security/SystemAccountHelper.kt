@@ -10,7 +10,7 @@ object SystemAccountHelper {
     private const val ACCOUNT_TYPE = "ua.entaytion.entinygram"
 
     @JvmStatic
-    fun isHidden(): Boolean = InuConfig.HIDE_SYSTEM_ACCOUNT.getValue()
+    fun isHidden(): Boolean = InuConfig.HIDE_SYSTEM_ACCOUNT.value
 
     // entiny: call on the global queue, removeAccount is async and checkAppAccount already runs there
     @JvmStatic
