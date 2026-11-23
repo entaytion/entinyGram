@@ -4,9 +4,25 @@ Date: Sat, 10 Oct 2026 11:09:09 +0300
 Subject: stop topics panel redraw storm
 
 ---
+ .../src/main/java/org/telegram/ui/ChatActivity.java        | 4 +++-
  .../java/org/telegram/ui/RightSlidingDialogContainer.java  | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -5056,7 +5056,9 @@ public class ChatActivity extends BaseFragment implements
+                 }
+                 final int action = e.getActionMasked();
+                 if (action == MotionEvent.ACTION_DOWN) {
+-                    topicsPanelMaybeSwipe = !inPreviewMode && !hasTextSelection() && e.getX() >= getMeasuredWidth() * 0.55f;
++                    final View pressed = getPressedChildView();
++                    final boolean onMessageBubble = pressed instanceof ChatMessageCell && ((ChatMessageCell) pressed).isInsideBackground(e.getX() - pressed.getX(), e.getY() - pressed.getY());
++                    topicsPanelMaybeSwipe = !onMessageBubble && !inPreviewMode && !hasTextSelection() && e.getX() >= getMeasuredWidth() * 0.55f;
+                     if (!topicsPanelMaybeSwipe) {
+                         topicsPanelSwiping = false;
+                         return false;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/RightSlidingDialogContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/RightSlidingDialogContainer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/RightSlidingDialogContainer.java
