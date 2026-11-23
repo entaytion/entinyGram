@@ -4,18 +4,23 @@ Date: Mon, 28 Sep 2026 00:39:21 +0300
 Subject: readable chat header colors on light wallpapers
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 46 +++++++-----
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 58 ++++++++-------
  .../telegram/ui/ActionBar/SimpleTextView.java |  2 +-
  .../java/org/telegram/ui/ChatActivity.java    | 45 ++++++------
  .../ui/Components/ChatAvatarContainer.java    | 71 ++++++++++++-------
  .../ui/Stories/DialogStoriesCell.java         | 15 ++--
- 5 files changed, 99 insertions(+), 80 deletions(-)
+ 5 files changed, 106 insertions(+), 85 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -234,7 +234,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -230,11 +230,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     private final FactorAnimator inu_animatorPillWidth = new FactorAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 320);
+ 
+     private static final int INU_PILL_TEXT_PADDING_DP = 22;
++    private static final int INU_COMPACT_AVATAR_TEXT_PADDING_DP = 8;
+     private static final int INU_PILL_MIN_WIDTH_DP = 120;
      // entiny: absorbs the Paint#measureText vs StaticLayout#getLineWidth gap so subtitles don't false-trigger the ellipsis fade.
      private static final int INU_PILL_TEXT_SLACK_DP = 4;
  
@@ -23,27 +28,37 @@ index 0000000..0000000 100644
      private int inu_pillAvatarRoom() {
          return chatAvatarContainer != null ? chatAvatarContainer.inu_getPillAvatarRoom() : 0;
      }
-@@ -254,8 +253,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-         if (room == 0) {
-             return dp(INU_PILL_TEXT_PADDING_DP);
-         }
+@@ -250,21 +250,20 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     }
+ 
+     public int inu_getPillTextInsetLeft() {
+-        final int room = inu_pillAvatarRoom();
+-        if (room == 0) {
+-            return dp(INU_PILL_TEXT_PADDING_DP);
+-        }
 -        final boolean symmetric = !desu.inugram.helpers.InuUtils.compactChatPill();
 -        return dp(INU_PILL_TEXT_PADDING_DP) + (symmetric || !inu_pillAvatarOnRight() ? room : 0);
-+        return dp(INU_PILL_TEXT_PADDING_DP) + (!inu_pillAvatarOnRight() ? room : 0);
++        return inu_getPillTextInset(false);
      }
  
      public int inu_getPillTextInsetRight() {
-@@ -263,8 +261,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-         if (room == 0) {
++        return inu_getPillTextInset(true);
++    }
++
++    private int inu_getPillTextInset(boolean right) {
+         final int room = inu_pillAvatarRoom();
+-        if (room == 0) {
++        if (room == 0 || inu_pillAvatarOnRight() != right) {
              return dp(INU_PILL_TEXT_PADDING_DP);
          }
 -        final boolean symmetric = !desu.inugram.helpers.InuUtils.compactChatPill();
 -        return dp(INU_PILL_TEXT_PADDING_DP) + (symmetric || inu_pillAvatarOnRight() ? room : 0);
-+        return dp(INU_PILL_TEXT_PADDING_DP) + (inu_pillAvatarOnRight() ? room : 0);
++        final boolean compact = desu.inugram.helpers.InuUtils.compactChatPill();
++        return room + dp(compact ? INU_COMPACT_AVATAR_TEXT_PADDING_DP : INU_PILL_TEXT_PADDING_DP);
      }
  
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
-@@ -792,15 +789,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -792,15 +791,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (titleTextView != null) {
              for (int a = 0; a < titleTextView.length; a++) {
                  if (titleTextView[a] != null) {
@@ -62,7 +77,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -2258,7 +2255,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2258,7 +2257,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                      contains |= glassDrawableMenu != null && glassDrawableMenu.getBounds().contains(x, y);
                  }
  
@@ -71,7 +86,7 @@ index 0000000..0000000 100644
                      return false;
                  }
              }
-@@ -2656,21 +2653,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2656,21 +2655,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              if (chatAvatarContainer.getTranslationX() != 0) {
                  chatAvatarContainer.setTranslationX(0);
              }
@@ -100,7 +115,7 @@ index 0000000..0000000 100644
              target = Math.min(target, roomRight - Math.max(roomLeft, leftLimit));
  
              // entiny: snap on the first pass so the header doesn't unfold from nothing on chat open; animate afterwards.
-@@ -2770,6 +2765,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2770,6 +2767,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
      }
  
@@ -115,7 +130,7 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          if (inu_needsUpdateGlassBounds()) {
-@@ -2818,7 +2821,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2818,7 +2823,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int t = getHeight() - extraHeight - (getCurrentActionBarHeight() + s) / 2 - p;
          final int b = t + s + p * 2;
  
@@ -168,7 +183,7 @@ index 0000000..0000000 100644
                  inu_updateMenuSlotAvatar();
              }
  
-@@ -18494,6 +18484,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -18496,6 +18486,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -178,7 +193,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -45077,22 +45070,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -45078,22 +45071,26 @@ public class ChatActivity extends BaseFragment implements
                      return compactColor;
                  }
              }
