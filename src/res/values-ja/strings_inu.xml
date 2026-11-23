@@ -981,6 +981,8 @@
     <string name="InuHideMessages">メッセージを非表示にする</string>
     <string name="InuHideMessageSummary">メッセージ要約ボタン</string>
     <string name="InuHideMyPhoneNumber">自分の電話番号を非表示</string>
+    <string name="InuHideSystemAccount">システムでアカウントを非表示</string>
+    <string name="InuHideSystemAccountInfo">システムのアカウント一覧から entinyGram を削除します。オンの間、連絡先は電話帳と同期されません。</string>
     <string name="InuHidePaidReactionUpsell">有料リアクションの宣伝を非表示</string>
     <string name="InuHidePinnedForever">このチャットでは常に</string>
     <string name="InuHidePinnedTitle">ピン留めメッセージを非表示</string>

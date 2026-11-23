@@ -30,6 +30,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **presence logger** — per-contact online and offline history with notifications
 - **force relay calls** — route calls through telegram servers to hide your ip
 - **sign-up privacy** — ask telegram not to tell contacts when you register a new number
+- **hide account in system** — removes entinyGram from android's system accounts list and stops creating it; contacts are not synced to the phone book while it is on. off by default - *inspired by Nagram*
 - **chat preview buttons** — open chat and close buttons in the press-and-hold chat preview menu
 - **adblock & content filtering** — hide sponsored messages, proxy sponsor chat and business bot banner
 - **regex filters** — regex rules spoiler or hide messages, including inline buttons, or cut matched fragments out of message text and captions (text cleaner), under "hide the clutter"; named rules with pattern validation and a live test on sample text; in hide mode the chat list preview shows the last unfiltered message instead of a blank one, and hidden posts no longer keep the chat unread

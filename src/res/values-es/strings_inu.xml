@@ -995,6 +995,8 @@ Toca para personalizar…</string>
     <string name="InuHideMessages">Ocultar mensajes</string>
     <string name="InuHideMessageSummary">Botón de resumen de mensaje</string>
     <string name="InuHideMyPhoneNumber">Ocultar mi número de teléfono</string>
+    <string name="InuHideSystemAccount">Ocultar la cuenta en el sistema</string>
+    <string name="InuHideSystemAccountInfo">Quita entinyGram de la lista de cuentas del sistema. Mientras esté activado, los contactos no se sincronizan con la agenda del teléfono.</string>
     <string name="InuHidePaidReactionUpsell">Ocultar promoción de reacciones de pago</string>
     <string name="InuHidePinnedForever">Siempre en este chat</string>
     <string name="InuHidePinnedTitle">Ocultar mensajes fijados</string>

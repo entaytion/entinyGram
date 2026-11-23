@@ -985,6 +985,8 @@
     <string name="InuHideMessages">إخفاء الرسائل</string>
     <string name="InuHideMessageSummary">زر ملخص الرسالة</string>
     <string name="InuHideMyPhoneNumber">إخفاء رقم هاتفي</string>
+    <string name="InuHideSystemAccount">إخفاء الحساب في النظام</string>
+    <string name="InuHideSystemAccountInfo">يزيل entinyGram من قائمة حسابات النظام. أثناء التفعيل لا تتم مزامنة جهات الاتصال مع دفتر الهاتف.</string>
     <string name="InuHidePaidReactionUpsell">إخفاء ترويج التفاعلات المدفوعة</string>
     <string name="InuHidePinnedForever">دائماً في هذه المحادثة</string>
     <string name="InuHidePinnedTitle">إخفاء الرسائل المثبتة</string>

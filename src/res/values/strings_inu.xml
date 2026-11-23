@@ -989,6 +989,8 @@
     <string name="InuHideMessages">Hide messages</string>
     <string name="InuHideMessageSummary">Message summary button</string>
     <string name="InuHideMyPhoneNumber">Hide my phone number</string>
+    <string name="InuHideSystemAccount">Hide account in system</string>
+    <string name="InuHideSystemAccountInfo">Removes entinyGram from the system Accounts list. Contacts are not synced to the phone book while this is on.</string>
     <string name="InuHidePaidReactionUpsell">Paid reaction upsell</string>
     <string name="InuHidePinnedForever">Always in this chat</string>
     <string name="InuHidePinnedTitle">Hide pinned messages</string>

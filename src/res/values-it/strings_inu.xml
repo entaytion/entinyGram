@@ -995,6 +995,8 @@ Tocca per personalizzare…</string>
     <string name="InuHideMessages">Nascondi messaggi</string>
     <string name="InuHideMessageSummary">Pulsante riassunto del messaggio</string>
     <string name="InuHideMyPhoneNumber">Nascondi il mio numero di telefono</string>
+    <string name="InuHideSystemAccount">Nascondi l\'account nel sistema</string>
+    <string name="InuHideSystemAccountInfo">Rimuove entinyGram dall\'elenco degli account di sistema. Finché è attivo, i contatti non vengono sincronizzati con la rubrica del telefono.</string>
     <string name="InuHidePaidReactionUpsell">Nascondi la promo delle reazioni a pagamento</string>
     <string name="InuHidePinnedForever">Sempre in questa chat</string>
     <string name="InuHidePinnedTitle">Nascondi i messaggi fissati</string>

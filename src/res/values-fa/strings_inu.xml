@@ -981,6 +981,8 @@
     <string name="InuHideMessages">پنهان کردن پیام‌ها</string>
     <string name="InuHideMessageSummary">دکمه خلاصه پیام</string>
     <string name="InuHideMyPhoneNumber">پنهان کردن شماره تلفن من</string>
+    <string name="InuHideSystemAccount">پنهان کردن حساب در سیستم</string>
+    <string name="InuHideSystemAccountInfo">entinyGram را از فهرست حساب‌های سیستم حذف می‌کند. تا زمانی که روشن است، مخاطبین با دفترچه تلفن همگام‌سازی نمی‌شوند.</string>
     <string name="InuHidePaidReactionUpsell">پنهان کردن تبلیغ واکنش پولی</string>
     <string name="InuHidePinnedForever">همیشه در این گفتگو</string>
     <string name="InuHidePinnedTitle">پنهان کردن پیام‌های سنجاق‌شده</string>

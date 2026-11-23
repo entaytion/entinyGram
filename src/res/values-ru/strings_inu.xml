@@ -986,6 +986,8 @@
     <string name="InuHideMessages">Скрыть сообщения</string>
     <string name="InuHideMessageSummary">Кнопка пересказа сообщения</string>
     <string name="InuHideMyPhoneNumber">Скрыть мой номер телефона</string>
+    <string name="InuHideSystemAccount">Скрыть аккаунт в системе</string>
+    <string name="InuHideSystemAccountInfo">Убирает entinyGram из системного списка аккаунтов. Пока включено, контакты не синхронизируются с телефонной книгой.</string>
     <string name="InuHidePaidReactionUpsell">Продвижение платных реакций</string>
     <string name="InuHidePinnedForever">Всегда в этом чате</string>
     <string name="InuHidePinnedTitle">Скрыть закреплённые сообщения</string>

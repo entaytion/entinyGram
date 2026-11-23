@@ -18,6 +18,7 @@ import desu.inugram.helpers.UrlCleanerHelper
 import desu.inugram.helpers.security.BiometricHelper
 import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.security.PasscodeHelper
+import desu.inugram.helpers.security.SystemAccountHelper
 import desu.inugram.helpers.chat.BlockedMessagesHelper
 import desu.inugram.helpers.chat.DoubleTapAction
 import desu.inugram.helpers.chat.DoubleTapActionHelper
@@ -514,6 +515,10 @@ object Schemas {
         }
         section(R.string.PrivacyTitle) {
             toggle(InuConfig.HIDE_MY_PHONE_NUMBER, R.string.InuHideMyPhoneNumber)
+            toggle(
+                InuConfig.HIDE_SYSTEM_ACCOUNT, R.string.InuHideSystemAccount, R.string.InuHideSystemAccountInfo,
+                onChange = { _, _ -> SystemAccountHelper.onToggled() },
+            )
             toggle(InuConfig.NO_JOINED_NOTIFICATIONS, R.string.InuNoJoinedNotifications, R.string.InuNoJoinedNotificationsInfo)
             toggle(InuConfig.DISABLE_DRAFT_UPLOAD, R.string.InuDisableDraftUpload, R.string.InuDisableDraftUploadInfo)
             toggle(InuConfig.DISABLE_SENSITIVE, R.string.InuDisableSensitive, R.string.InuDisableSensitiveInfo)

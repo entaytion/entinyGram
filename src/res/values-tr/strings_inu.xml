@@ -982,6 +982,8 @@
     <string name="InuHideMessages">Mesajları gizle</string>
     <string name="InuHideMessageSummary">Mesaj özeti düğmesi</string>
     <string name="InuHideMyPhoneNumber">Telefon numaramı gizle</string>
+    <string name="InuHideSystemAccount">Hesabı sistemde gizle</string>
+    <string name="InuHideSystemAccountInfo">entinyGram\'ı sistemin hesap listesinden kaldırır. Açıkken kişiler telefon rehberiyle eşitlenmez.</string>
     <string name="InuHidePaidReactionUpsell">Ücretli tepki teşvikini gizle</string>
     <string name="InuHidePinnedForever">Bu sohbette her zaman</string>
     <string name="InuHidePinnedTitle">Sabitlenmiş mesajları gizle</string>

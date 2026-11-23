@@ -981,6 +981,8 @@
     <string name="InuHideMessages">隐藏消息</string>
     <string name="InuHideMessageSummary">消息摘要按钮</string>
     <string name="InuHideMyPhoneNumber">隐藏我的手机号</string>
+    <string name="InuHideSystemAccount">在系统中隐藏账户</string>
+    <string name="InuHideSystemAccountInfo">从系统账户列表中移除 entinyGram。开启期间，联系人不会同步到手机通讯录。</string>
     <string name="InuHidePaidReactionUpsell">隐藏付费回应推销</string>
     <string name="InuHidePinnedForever">在此聊天中始终隐藏</string>
     <string name="InuHidePinnedTitle">隐藏置顶消息</string>

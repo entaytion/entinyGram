@@ -1,0 +1,66 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 23 Nov 2026 07:52:44 +0000
+Subject: Add a switch that hides entinyGram from the system accounts list. It removes the system account and stops creating it, so contacts are not synced to the phone book while it is on.
+
+---
+ .../org/telegram/messenger/ContactsController.java     | 10 +++++++---
+ TMessagesProj/src/main/res/xml/auth.xml                |  4 ++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
+@@ -390,6 +390,10 @@ public class ContactsController extends BaseController {
+         systemAccount = null;
+         Utilities.globalQueue.postRunnable(() -> {
+             AccountManager am = AccountManager.get(ApplicationLoader.applicationContext);
++            if (desu.inugram.helpers.security.SystemAccountHelper.purgeIfHidden()) {
++                if (getUserConfig().isClientActivated()) readContacts();
++                return;
++            }
+             try {
+                 Account[] accounts = am.getAccountsByType("ua.entaytion.entinygram");
+                 for (int a = 0; a < accounts.length; a++) {
+@@ -532,7 +536,7 @@ public class ContactsController extends BaseController {
+                     }
+                     try {
+                         systemAccount = new Account("" + getUserConfig().getClientUserId(), "ua.entaytion.entinygram");
+-                        am.addAccountExplicitly(systemAccount, "", null);
++                        if (desu.inugram.helpers.security.SystemAccountHelper.isHidden()) systemAccount = null; else am.addAccountExplicitly(systemAccount, "", null);
+                     } catch (Exception ignore) {
+ 
+                     }
+@@ -2953,7 +2957,7 @@ public class ContactsController extends BaseController {
+     }
+ 
+     public void createOrUpdateConnectionServiceContact(long id, String firstName, String lastName) {
+-        if (!hasContactsPermission()) {
++        if (!hasContactsPermission() || systemAccount == null) {
+             return;
+         }
+         try {
+@@ -3045,7 +3049,7 @@ public class ContactsController extends BaseController {
+     }
+ 
+     public void deleteConnectionServiceContact() {
+-        if (!hasContactsPermission())
++        if (!hasContactsPermission() || systemAccount == null)
+             return;
+         try {
+             ContentResolver resolver = ApplicationLoader.applicationContext.getContentResolver();
+diff --git a/TMessagesProj/src/main/res/xml/auth.xml b/TMessagesProj/src/main/res/xml/auth.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/xml/auth.xml
++++ b/TMessagesProj/src/main/res/xml/auth.xml
+@@ -2,7 +2,7 @@
+ 
+ <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+     android:accountType="ua.entaytion.entinygram"
+-    android:icon="@drawable/ic_launcher_dr"
+-    android:smallIcon="@drawable/ic_launcher_dr"
++    android:icon="@mipmap/ic_launcher"
++    android:smallIcon="@mipmap/ic_launcher"
+     android:label="@string/AppName"
+     android:accountPreferences="@xml/auth_menu"/>

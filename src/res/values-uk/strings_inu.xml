@@ -986,6 +986,8 @@
     <string name="InuHideMessages">Приховати повідомлення</string>
     <string name="InuHideMessageSummary">Кнопка AI-резюме повідомлення</string>
     <string name="InuHideMyPhoneNumber">Приховати мій номер телефону</string>
+    <string name="InuHideSystemAccount">Приховати акаунт у системі</string>
+    <string name="InuHideSystemAccountInfo">Прибирає entinyGram із системного списку акаунтів. Поки увімкнено, контакти не синхронізуються з телефонною книгою.</string>
     <string name="InuHidePaidReactionUpsell">Пропозиція платних реакцій</string>
     <string name="InuHidePinnedForever">Завжди в цьому чаті</string>
     <string name="InuHidePinnedTitle">Приховати закріплені повідомлення</string>
