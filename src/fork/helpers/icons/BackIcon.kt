@@ -29,8 +29,9 @@ class BackIcon private constructor(private val back: Drawable?, private val clos
         if (back == null) {
             draw(canvas, close, size, alpha, 1f, filter)
         } else {
-            draw(canvas, back, size, alpha * (1f - rotation), AndroidUtilities.lerp(1f, MIN_SCALE, rotation), filter)
-            draw(canvas, close, size, alpha * rotation, AndroidUtilities.lerp(MIN_SCALE, 1f, rotation), filter)
+            val progress = if (rotation.isFinite()) rotation.coerceIn(0f, 1f) else 0f
+            draw(canvas, back, size, alpha * (1f - progress), AndroidUtilities.lerp(1f, MIN_SCALE, progress), filter)
+            draw(canvas, close, size, alpha * progress, AndroidUtilities.lerp(MIN_SCALE, 1f, progress), filter)
         }
         canvas.restoreToCount(save)
     }
