@@ -28,10 +28,10 @@ object ArchiveMediaHelper {
     private val savedDirs = HashMap<Long, File>()
 
     // entiny: one hidden folder in Download; the app-private one is only the fallback when shared storage is not writable
-    fun getSavedMediaDir(account: Int): File {
+    private fun getSavedMediaDir(account: Int): File {
         val userId = UserConfig.getInstance(account).clientUserId
         synchronized(savedDirs) {
-            savedDirs[userId]?.let { return it }
+            savedDirs[userId]?.takeIf(File::isDirectory)?.let { return it }
             val dir = File(downloads, "$FOLDER/account_$userId").takeIf(::prepare) ?: File(privateRoot(), "account_$userId").also(::prepare)
             savedDirs[userId] = dir
             return dir
@@ -63,7 +63,6 @@ object ArchiveMediaHelper {
         synchronized(migratedAccounts) { if (!migratedAccounts.add(account)) return }
         mediaQueue.postRunnable({
             dropOldMirror()
-            val targetRoot = getSavedMediaDir(account).canonicalFile
             val storage = MessagesStorage.getInstance(account)
             storage.storageQueue.postRunnable {
                 val paths = ArrayList<String>()
@@ -82,7 +81,7 @@ object ArchiveMediaHelper {
                 }
                 storage.database?.let { DeletedMessagesHelper.resumePendingMedia(account, it) }
                 ArchiveQuota.schedule(account)
-                mediaQueue.postRunnable { migrateSavedMedia(account, targetRoot, paths) }
+                mediaQueue.postRunnable { migrateSavedMedia(account, paths) }
             }
         }, STARTUP_DELAY_MS)
     }
@@ -94,18 +93,19 @@ object ArchiveMediaHelper {
         index.delete()
     }
 
-    private fun migrateSavedMedia(account: Int, targetRoot: File, paths: List<String>) {
+    private fun migrateSavedMedia(account: Int, paths: List<String>) {
         val storage = MessagesStorage.getInstance(account)
         val legacy = (listOf(privateRoot()) + setOf("entinyGram", InuConfig.DOWNLOAD_DIRECTORY.value).map { File(downloads, "$it/media") })
             .mapNotNull { runCatching { it.canonicalFile.path + File.separator }.getOrNull() }
+        val targetRoot by lazy { getSavedMediaDir(account).canonicalFile }
         var moved = 0
         for (path in paths) {
             try {
                 val source = File(path).canonicalFile
                 if (!source.isFile || source.length() <= 0) continue
-                if (source.path.startsWith(targetRoot.path + File.separator)) continue
                 if (legacy.none { source.path.startsWith(it) }) continue
-                val copiedPath = runMediaCopy(PendingMediaCopy(source, File(targetRoot, source.name))) ?: continue
+                if (source.path.startsWith(targetRoot.path + File.separator)) continue
+                val copiedPath = runMediaCopy(account, PendingMediaCopy(source, source.name)) ?: continue
                 moved++
                 storage.storageQueue.postRunnable {
                     try {
@@ -128,7 +128,7 @@ object ArchiveMediaHelper {
         }
     }
 
-    internal class PendingMediaCopy(val source: File, val target: File) {
+    internal class PendingMediaCopy(val source: File, val fileName: String) {
         val size = source.length()
         private var pinned: java.io.InputStream? = null
 
@@ -183,7 +183,7 @@ object ArchiveMediaHelper {
             val source = candidates.filterNotNull().firstOrNull { isUsable(it, message) } ?: return null
             // entiny: the size limit is for copies; a deleted message's file kept in a telegram media folder costs no extra space
             val copies = kind == ArchiveScope.Kind.EDITED || !isTelegramMediaFile(source)
-            PendingMediaCopy(source, File(getSavedMediaDir(account), originalName(message, source))).takeIf { !copies || it.size <= maxBytes }
+            PendingMediaCopy(source, originalName(message, source)).takeIf { !copies || it.size <= maxBytes }
         } catch (e: Throwable) {
             android.util.Log.e(TAG, "planMediaCopy error", e)
             null
@@ -246,9 +246,14 @@ object ArchiveMediaHelper {
         } catch (e: Throwable) {
             android.util.Log.d(TAG, "saved media query failed", e)
         }
-        getSavedMediaDir(account).listFiles()
-            ?.filter { it.isFile && it.name != ".nomedia" && !it.name.endsWith(".partial") && it.length() > 0 }
-            ?.forEach { files.putIfAbsent(it.absolutePath, it) }
+        val userId = UserConfig.getInstance(account).clientUserId
+        for (root in archiveRoots()) {
+            File(root, "account_$userId").listFiles()?.forEach {
+                if (it.isFile && it.name != ".nomedia" && !it.name.endsWith(".partial") && it.length() > 0) {
+                    files.putIfAbsent(it.absolutePath, it)
+                }
+            }
+        }
         return files.values.toList()
     }
 
@@ -266,7 +271,7 @@ object ArchiveMediaHelper {
             }
         }
         mediaQueue.postRunnable {
-            val copied = runMediaCopy(plan)
+            val copied = runMediaCopy(account, plan)
             if (copied == null) {
                 synchronized(pendingCopies) { pendingCopies.remove(key) }
                 return@postRunnable
@@ -448,11 +453,11 @@ object ArchiveMediaHelper {
         candidate
     }
 
-    private fun runMediaCopy(plan: PendingMediaCopy): String? {
+    private fun runMediaCopy(account: Int, plan: PendingMediaCopy): String? {
         var temporary: File? = null
         return try {
             plan.open().use { input ->
-                val target = reserveTarget(plan.target)
+                val target = reserveTarget(File(getSavedMediaDir(account), plan.fileName))
                 val partial = File(target.parentFile, "${target.name}.partial").also { temporary = it }
                 partial.outputStream().use { input.copyTo(it) }
                 check(plan.size > 0 && partial.length() == plan.size)
