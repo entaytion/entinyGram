@@ -4,8 +4,8 @@ Date: Sat, 14 Nov 2026 13:05:09 +0200
 Subject: Add a separate switch that brings Copy back in the message menu and text selection of protected chats without allowing forwarding.
 
 ---
- .../main/java/org/telegram/ui/ChatActivity.java | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ .../src/main/java/org/telegram/ui/ChatActivity.java | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -20,15 +20,6 @@ index 0000000..0000000 100644
                  !DialogObject.isEncryptedDialog(chatActivity.getDialogId()) && chatActivity.isPeerNoForwards() ||
                  selectedView != null && selectedView.getMessageObject() != null && (selectedView.getMessageObject().messageOwner != null && desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(selectedView.getMessageObject().messageOwner))
              );
-@@ -11155,7 +11155,7 @@ public class ChatActivity extends BaseFragment implements
-         }
-         ChatActionsHelper.addActionModeItems(this, actionMode, edit);
-         actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
--        actionMode.setItemVisibility(copy, (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() || !isPeerNoForwards()) && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-+        actionMode.setItemVisibility(copy, (desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.copyAllowed() || !isPeerNoForwards()) && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-         actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-         actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
-         actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
 @@ -20594,7 +20594,7 @@ public class ChatActivity extends BaseFragment implements
              } else {
                  selectedMessagesIds[index].put(messageObject.getId(), messageObject);
@@ -38,15 +29,6 @@ index 0000000..0000000 100644
                          selectedMessagesCanCopyIds[index].put(messageObject.getId(), messageObject);
                      }
                      if (!messageObject.isAnimatedEmoji() && (messageObject.isSticker() || messageObject.isAnimatedSticker()) && MessageObject.isStickerHasSet(messageObject.getDocument())) {
-@@ -20701,7 +20701,7 @@ public class ChatActivity extends BaseFragment implements
-                 int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
-                 if (copyItem != null) {
-                     copyVisible = copyItem.getVisibility();
--                    copyItem.setVisibility((desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() || !noforwards) && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-+                    copyItem.setVisibility((desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.copyAllowed() || !noforwards) && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-                     newCopyVisible = copyItem.getVisibility();
-                 }
-                 if (starItem != null) {
 @@ -48404,6 +48404,7 @@ public class ChatActivity extends BaseFragment implements
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
          boolean noforwards = (isEphemeral && !desu.inugram.helpers.security.SelfDestructHelper.shouldBypassOneTimeGate(message.getDialogId())) || isPeerNoForwards() || desu.inugram.helpers.restrictions.RestrictedFeaturesHelper.noforwards(message.messageOwner) || getDialogId() == UserObject.VERIFY;

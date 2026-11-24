@@ -4,8 +4,8 @@ Date: Sun, 26 Jul 2026 01:27:04 +0300
 Subject: allow saving any story to gallery without premium requirement
 
 ---
- .../telegram/ui/Stories/PeerStoriesView.java  | 48 ++++++++-----------
- 1 file changed, 19 insertions(+), 29 deletions(-)
+ .../telegram/ui/Stories/PeerStoriesView.java  | 22 ++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
 index 0000000..0000000 100644
@@ -21,50 +21,18 @@ index 0000000..0000000 100644
                  }
  
                  float timeProgress = 0;
-@@ -2069,40 +2072,14 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -2069,8 +2072,8 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
                              createQualityItem(popupLayout);
                          }
  
 -                        if (!unsupported && allowShare && !currentStory.isLive) {
 -                            if (UserConfig.getInstance(currentAccount).isPremium()) {
-+                        if (!unsupported && !currentStory.isLive) {
-+                            if (desu.inugram.InuConfig.SAVE_ANY_STORY.getValue() || UserConfig.getInstance(currentAccount).isPremium()) {
++                        if (!unsupported && (allowShare || desu.inugram.InuConfig.SAVE_ANY_STORY.getValue()) && !currentStory.isLive) {
++                            if (UserConfig.getInstance(currentAccount).isPremium() || desu.inugram.InuConfig.SAVE_ANY_STORY.getValue()) {
                                  ActionBarMenuItem.addItem(popupLayout, R.drawable.msg_gallery, getString(R.string.SaveToGallery), false, resourcesProvider).setOnClickListener(v -> {
                                      saveToGallery();
                                      if (popupMenu != null) {
-                                         popupMenu.dismiss();
-                                     }
-                                 });
--                            } else if (!MessagesController.getInstance(currentAccount).premiumFeaturesBlocked()) {
--                                Drawable lockIcon = ContextCompat.getDrawable(context, R.drawable.msg_gallery_locked2);
--                                lockIcon.setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(Color.WHITE, Color.BLACK, 0.5f), PorterDuff.Mode.MULTIPLY));
--                                CombinedDrawable combinedDrawable = new CombinedDrawable(
--                                        ContextCompat.getDrawable(context, R.drawable.msg_gallery_locked1),
--                                        lockIcon
--                                ) {
--                                    @Override
--                                    public void setColorFilter(ColorFilter colorFilter) {
--
--                                    }
--                                };
--                                ActionBarMenuSubItem item = ActionBarMenuItem.addItem(popupLayout, R.drawable.msg_gallery, getString(R.string.SaveToGallery), false, resourcesProvider);
--                                item.setIcon(combinedDrawable);
--                                item.setOnClickListener(v -> {
--                                    item.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
--                                    BulletinFactory bulletinFactory = BulletinFactory.global();
--                                    if (bulletinFactory != null) {
--                                        bulletinFactory.createSimpleBulletin(R.raw.ic_save_to_gallery, AndroidUtilities.replaceSingleTag(
--                                                getString(R.string.SaveStoryToGalleryPremiumHint),
--                                                () -> {
--                                                    PremiumFeatureBottomSheet sheet = new PremiumFeatureBottomSheet(storyViewer.fragment, PremiumPreviewFragment.PREMIUM_FEATURE_STORIES, false);
--                                                    delegate.showDialog(sheet);
--                                                })).show();
--                                    }
--                                });
-                             }
-                         }
- 
-@@ -3748,6 +3725,15 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -3748,6 +3751,15 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
              MediaController.saveFile(f.toString(), getContext(), isVideo ? 1 : 0, null, null, uri -> {
                  BulletinFactory.createSaveToGalleryBulletin(storyContainer, isVideo, resourcesProvider).show();
              });
@@ -80,7 +48,7 @@ index 0000000..0000000 100644
          } else {
              showDownloadAlert();
          }
-@@ -7135,7 +7121,11 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -7135,7 +7147,11 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
              }
              if (storyItem != null) {
                  if (storyItem.media != null && storyItem.media.getDocument() != null) {

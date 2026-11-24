@@ -246,7 +246,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
-@@ -6261,6 +6261,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -6287,6 +6287,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
  
      public void setAccount(int currentAccount) {
          this.currentAccount = currentAccount;

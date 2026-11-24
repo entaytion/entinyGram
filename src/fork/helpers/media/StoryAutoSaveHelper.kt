@@ -12,6 +12,7 @@ object StoryAutoSaveHelper {
     private const val KEY_IDS = "ids"
     private const val MAX_REMEMBERED = 2000
     private const val RETRY_DELAY_MS = 1000L
+    private const val PENDING_TIMEOUT_MS = 10000L
     private const val MAX_ATTEMPTS = 3
 
     private val saved by lazy {
@@ -24,7 +25,9 @@ object StoryAutoSaveHelper {
     private var curStoryId = -1
     private var curDone = false
     private var attempts = 0
-    private var lastAttemptAt = 0L
+    private var lastCheckAt = 0L
+    private var pendingKey: String? = null
+    private var pendingAt = 0L
 
     // entiny: called from the story draw loop; only a confirmed save is remembered, so a failed or early attempt retries
     @JvmStatic
@@ -36,21 +39,25 @@ object StoryAutoSaveHelper {
             curStoryId = storyId
             curDone = saved.contains(keyOf(account, dialogId, storyId))
             attempts = 0
-            lastAttemptAt = 0L
+            lastCheckAt = 0L
         }
         if (curDone || attempts >= MAX_ATTEMPTS) return
-        val now = System.currentTimeMillis()
-        if (now - lastAttemptAt < RETRY_DELAY_MS) return
-        if (path == null || !path.exists()) return
-        lastAttemptAt = now
-        attempts++
         val key = keyOf(account, dialogId, storyId)
+        val now = System.currentTimeMillis()
+        if (pendingKey == key && now - pendingAt < PENDING_TIMEOUT_MS) return
+        if (now - lastCheckAt < RETRY_DELAY_MS) return
+        lastCheckAt = now
+        if (path == null || !path.exists()) return
+        attempts++
+        pendingKey = key
+        pendingAt = now
         MediaController.saveFile(path.toString(), context, if (isVideo) 1 else 0, null, null, Utilities.Callback { _ -> markSaved(key) }, false)
     }
 
     private fun keyOf(account: Int, dialogId: Long, storyId: Int) = "$account:$dialogId:$storyId"
 
     private fun markSaved(key: String) {
+        if (pendingKey == key) pendingKey = null
         saved.add(key)
         while (saved.size > MAX_REMEMBERED) saved.remove(saved.first())
         InuPrefs.of(PREFS).edit().putString(KEY_IDS, saved.joinToString(",")).apply()

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
-@@ -4747,6 +4747,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -4773,6 +4773,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
          NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.emojiLoaded);
      }
  
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
      @Override
      protected void onDetachedFromWindow() {
          super.onDetachedFromWindow();
-@@ -6334,6 +6335,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+@@ -6360,6 +6361,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
              // it registers itself in NotificationCenter in its constructor, only onDestroy() unregisters it
              chatActivityEnterView.onDestroy();
          }
