@@ -999,6 +999,7 @@
     <string name="InuHideProfileColorfulBackground">Кольоровий фон</string>
     <string name="InuHideProfileGiftButton">Кнопка подарунка</string>
     <string name="InuHideProfileGiftsTab">Вкладка «Подарунки»</string>
+    <string name="InuHideProfileStoriesTab">Вкладка сторіз</string>
     <string name="InuHideProfileIcons">Візерунок іконок</string>
     <string name="InuHideProfileLiveActionsButton">Кнопки трансляції та голосового чату</string>
     <string name="InuHideProfileMenuArchivedStories">«Архівні історії» у меню профілю</string>

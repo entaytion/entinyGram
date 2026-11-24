@@ -999,6 +999,7 @@
     <string name="InuHideProfileColorfulBackground">Цветной фон</string>
     <string name="InuHideProfileGiftButton">Кнопка подарка</string>
     <string name="InuHideProfileGiftsTab">Вкладка «Подарки»</string>
+    <string name="InuHideProfileStoriesTab">Вкладка историй</string>
     <string name="InuHideProfileIcons">Узорные иконки</string>
     <string name="InuHideProfileLiveActionsButton">Кнопки трансляции и голосового чата</string>
     <string name="InuHideProfileMenuArchivedStories">«Архив историй» в меню профиля</string>

@@ -994,6 +994,7 @@
     <string name="InuHideProfileColorfulBackground">پنهان کردن پس‌زمینه رنگی نمایه</string>
     <string name="InuHideProfileGiftButton">پنهان کردن دکمه هدیه</string>
     <string name="InuHideProfileGiftsTab">پنهان کردن زبانه هدیه‌ها</string>
+    <string name="InuHideProfileStoriesTab">تب استوری‌ها</string>
     <string name="InuHideProfileIcons">پنهان کردن نمادهای طرح نمایه</string>
     <string name="InuHideProfileLiveActionsButton">پنهان کردن دکمه‌های پخش زنده و گفتگوی صوتی</string>
     <string name="InuHideProfileMenuArchivedStories">پنهان کردن «استوری‌های بایگانی‌شده» در منوی نمایه</string>

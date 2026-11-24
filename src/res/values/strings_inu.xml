@@ -1002,6 +1002,7 @@
     <string name="InuHideProfileColorfulBackground">Colorful background</string>
     <string name="InuHideProfileGiftButton">Gift button</string>
     <string name="InuHideProfileGiftsTab">Gifts tab</string>
+    <string name="InuHideProfileStoriesTab">Stories tab</string>
     <string name="InuHideProfileIcons">Pattern icons</string>
     <string name="InuHideProfileLiveActionsButton">Live stream &amp; voice chat buttons</string>
     <string name="InuHideProfileMenuArchivedStories">\"Archived Stories\" in profile menu</string>

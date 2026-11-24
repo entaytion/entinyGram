@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 24 Nov 2026 23:40:30 +0200
+Subject: Hide the stories tab on profiles behind a toggle that is off by default.
+
+---
+ .../java/org/telegram/ui/Components/SharedMediaLayout.java    | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -1702,7 +1702,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+             this.initialTab = TAB_BOT_PREVIEWS;
+         } else if (userInfo != null && userInfo.bot_info != null && userInfo.bot_info.has_preview_medias) {
+             this.initialTab = TAB_STORIES;
+-        } else if (main_tab instanceof TLRPC.TL_profileTabPosts && (userInfo != null && userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(parent.getCurrentAccount(), userInfo.id) || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
++        } else if (main_tab instanceof TLRPC.TL_profileTabPosts && (isStoriesView() || !desu.inugram.InuConfig.HIDE_PROFILE_STORIES_TAB.getValue()) && (userInfo != null && userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(parent.getCurrentAccount(), userInfo.id) || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
+             this.initialTab = TAB_STORIES;
+         } else if (main_tab instanceof TLRPC.TL_profileTabGifts && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
+             this.initialTab = TAB_GIFTS;
+@@ -6850,7 +6850,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+         final TLRPC.User user = dialog_id <= 0 || profileActivity == null ? null : profileActivity.getMessagesController().getUser(dialog_id);
+         boolean hasEditBotPreviews = user != null && user.bot && user.bot_has_main_app && user.bot_can_edit;
+         boolean hasBotPreviews = user != null && user.bot && !user.bot_can_edit && (userInfo != null && userInfo.bot_info != null && userInfo.bot_info.has_preview_medias) && !hasEditBotPreviews;
+-        boolean hasStories = (DialogObject.isUserDialog(dialog_id) || DialogObject.isChatDialog(dialog_id)) && !DialogObject.isEncryptedDialog(dialog_id) && (userInfo != null && userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(profileActivity.getCurrentAccount(), userInfo.id) || info != null && info.stories_pinned_available || isStoriesView()) && includeStories();
++        boolean hasStories = (isStoriesView() || !desu.inugram.InuConfig.HIDE_PROFILE_STORIES_TAB.getValue()) && (DialogObject.isUserDialog(dialog_id) || DialogObject.isChatDialog(dialog_id)) && !DialogObject.isEncryptedDialog(dialog_id) && (userInfo != null && userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(profileActivity.getCurrentAccount(), userInfo.id) || info != null && info.stories_pinned_available || isStoriesView()) && includeStories();
+         boolean hasGifts = !desu.inugram.InuConfig.HIDE_PROFILE_GIFTS_TAB.getValue() && giftsContainer != null && (userInfo != null && userInfo.stargifts_count > 0 || info != null && info.stargifts_count > 0);
+         final TLRPC.ProfileTab main_tab = info != null ? info.main_tab : userInfo != null ? userInfo.main_tab : null;
+         int changed = 0;

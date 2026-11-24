@@ -998,6 +998,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val HIDE_PROFILE_GIFTS_TAB = BoolItem("hide_profile_gifts_tab", false)
 
     @JvmField
+    val HIDE_PROFILE_STORIES_TAB = BoolItem("hide_profile_stories_tab", false)
+
+    @JvmField
     val HIDE_SIMILAR_CHANNELS_TAB = BoolItem("hide_similar_channels_tab", false)
 
     @JvmField

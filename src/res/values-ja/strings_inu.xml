@@ -994,6 +994,7 @@
     <string name="InuHideProfileColorfulBackground">カラフルなプロフィール背景を非表示</string>
     <string name="InuHideProfileGiftButton">ギフトボタンを非表示</string>
     <string name="InuHideProfileGiftsTab">「ギフト」タブを非表示</string>
+    <string name="InuHideProfileStoriesTab">ストーリータブ</string>
     <string name="InuHideProfileIcons">プロフィールパターンのアイコンを非表示</string>
     <string name="InuHideProfileLiveActionsButton">ライブ配信・ボイスチャットボタンを非表示</string>
     <string name="InuHideProfileMenuArchivedStories">プロフィールメニューの「アーカイブされたストーリー」を非表示</string>

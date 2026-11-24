@@ -1008,6 +1008,7 @@ Toca para personalizar…</string>
     <string name="InuHideProfileColorfulBackground">Ocultar fondo colorido de perfil</string>
     <string name="InuHideProfileGiftButton">Ocultar botón de regalo</string>
     <string name="InuHideProfileGiftsTab">Ocultar pestaña de Regalos</string>
+    <string name="InuHideProfileStoriesTab">Pestaña de historias</string>
     <string name="InuHideProfileIcons">Ocultar iconos de patrón de perfil</string>
     <string name="InuHideProfileLiveActionsButton">Ocultar botones de transmisión en vivo y chat de voz</string>
     <string name="InuHideProfileMenuArchivedStories">Ocultar \"Historias archivadas\" en el menú de perfil</string>

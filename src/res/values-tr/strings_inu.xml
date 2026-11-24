@@ -995,6 +995,7 @@
     <string name="InuHideProfileColorfulBackground">Renkli profil arka planını gizle</string>
     <string name="InuHideProfileGiftButton">Hediye düğmesini gizle</string>
     <string name="InuHideProfileGiftsTab">\"Hediyeler\" sekmesini gizle</string>
+    <string name="InuHideProfileStoriesTab">Hikâyeler sekmesi</string>
     <string name="InuHideProfileIcons">Profil desen simgelerini gizle</string>
     <string name="InuHideProfileLiveActionsButton">Canlı yayın ve sesli sohbet düğmelerini gizle</string>
     <string name="InuHideProfileMenuArchivedStories">Profil menüsündeki \"Arşivlenmiş Hikayeler\" seçeneğini gizle</string>

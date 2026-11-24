@@ -998,6 +998,7 @@
     <string name="InuHideProfileColorfulBackground">إخفاء خلفية الملف الشخصي الملونة</string>
     <string name="InuHideProfileGiftButton">إخفاء زر الهدية</string>
     <string name="InuHideProfileGiftsTab">إخفاء تبويب الهدايا</string>
+    <string name="InuHideProfileStoriesTab">تبويب القصص</string>
     <string name="InuHideProfileIcons">إخفاء أيقونات نقش الملف الشخصي</string>
     <string name="InuHideProfileLiveActionsButton">إخفاء أزرار البث المباشر &amp; المحادثة الصوتية</string>
     <string name="InuHideProfileMenuArchivedStories">إخفاء \"القصص المؤرشفة\" في قائمة الملف الشخصي</string>

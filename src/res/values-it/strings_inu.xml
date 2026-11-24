@@ -1008,6 +1008,7 @@ Tocca per personalizzare…</string>
     <string name="InuHideProfileColorfulBackground">Nascondi lo sfondo colorato del profilo</string>
     <string name="InuHideProfileGiftButton">Nascondi il pulsante regalo</string>
     <string name="InuHideProfileGiftsTab">Nascondi la scheda Regali</string>
+    <string name="InuHideProfileStoriesTab">Scheda storie</string>
     <string name="InuHideProfileIcons">Nascondi le icone del motivo del profilo</string>
     <string name="InuHideProfileLiveActionsButton">Nascondi i pulsanti dirette e chat vocale</string>
     <string name="InuHideProfileMenuArchivedStories">Nascondi «Storie archiviate» nel menu del profilo</string>

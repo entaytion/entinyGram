@@ -994,6 +994,7 @@
     <string name="InuHideProfileColorfulBackground">隐藏彩色的个人资料背景</string>
     <string name="InuHideProfileGiftButton">隐藏礼物按钮</string>
     <string name="InuHideProfileGiftsTab">隐藏\"礼物\"标签页</string>
+    <string name="InuHideProfileStoriesTab">故事标签页</string>
     <string name="InuHideProfileIcons">隐藏个人资料图案图标</string>
     <string name="InuHideProfileLiveActionsButton">隐藏直播与语音聊天按钮</string>
     <string name="InuHideProfileMenuArchivedStories">隐藏个人资料菜单中的\"存档的故事\"</string>
