@@ -2204,6 +2204,7 @@
     <string name="InuTitleTextFolder">نام پوشه</string>
     <string name="InuTitleTextOverrideArchive">برای آرشیو هم اعمال شود</string>
     <string name="InuTitleTextOverrideArchiveInfo">همین متن عنوان در صفحه آرشیو هم به‌جای «گفتگوهای بایگانی‌شده» پیش‌فرض استفاده شود</string>
+    <string name="InuChatListAvatarSize">اندازه آواتار در فهرست گفتگو</string>
     <string name="InuTranslateAutoDetectLang">تشخیص زبان برای منوی پیام</string>
     <string name="InuTranslateAutoDetectLangInfo">تشخیص زبان روی دستگاه برای پیام‌هایی که تلگرام زبانشان را تشخیص نداده است. ممکن است منو را کمی کند کند.</string>
     <string name="InuTranslateAutoFallback">تغییر ارائه‌دهنده هنگام مسدود شدن</string>

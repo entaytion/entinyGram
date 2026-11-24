@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 24 Nov 2026 23:45:00 +0200
+Subject: Add a chat list avatar size slider that shrinks avatars inside their slot, default 100 percent.
+
+---
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java   | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -2566,7 +2566,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 avatarLeft = dp(avatarStart);
+                 thumbLeft = avatarLeft + dp(56 + 13);
+             }
+-            storyParams.originalAvatarRect.set(avatarLeft, avatarTop, avatarLeft + dp(56), avatarTop + dp(56));
++            final float inu_inset56 = desu.inugram.helpers.dialogs.ChatListAvatarHelper.inset(dp(56));
++            storyParams.originalAvatarRect.set(avatarLeft + inu_inset56, avatarTop + inu_inset56, avatarLeft + dp(56) - inu_inset56, avatarTop + dp(56) - inu_inset56);
+             for (int i = 0; i < thumbImage.length; ++i) {
+                 thumbImage[i].setImageCoords(thumbLeft + (thumbSize + 2) * i, avatarTop + dp(31) + (twoLinesForName ? dp(20) : 0) - (!(useForceThreeLines || SharedConfig.useThreeLinesLayout) && tags != null && !tags.isEmpty() ? dp(9) : 0), dp(18), dp(18));
+             }
+@@ -2589,7 +2590,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 avatarLeft = dp(avatarStart);
+                 thumbLeft = avatarLeft + dp(56 + 11);
+             }
+-            storyParams.originalAvatarRect.set(avatarLeft, avatarTop, avatarLeft + dp(52), avatarTop + dp(52));
++            final float inu_inset52 = desu.inugram.helpers.dialogs.ChatListAvatarHelper.inset(dp(52));
++            storyParams.originalAvatarRect.set(avatarLeft + inu_inset52, avatarTop + inu_inset52, avatarLeft + dp(52) - inu_inset52, avatarTop + dp(52) - inu_inset52);
+             for (int i = 0; i < thumbImage.length; ++i) {
+                 thumbImage[i].setImageCoords(thumbLeft + (thumbSize + 2) * i, avatarTop + dp(30) + (twoLinesForName ? dp(20) : 0) - (!(useForceThreeLines || SharedConfig.useThreeLinesLayout) && tags != null && !tags.isEmpty() ? dp(9) : 0), dp(thumbSize), dp(thumbSize));
+             }
+@@ -3865,7 +3867,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 avatarRadius = dp(28);
+             }
+ 
+-            avatarImage.setRoundRadius(avatarRadius);
++            avatarImage.setRoundRadius(desu.inugram.helpers.dialogs.ChatListAvatarHelper.radius(avatarRadius));
+         }
+         if (!isTopic && (getMeasuredWidth() != 0 || getMeasuredHeight() != 0)) {
+             rebuildLayout = true;

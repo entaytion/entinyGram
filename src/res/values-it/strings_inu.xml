@@ -2227,6 +2227,7 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuTitleTextFolder">Nome della cartella</string>
     <string name="InuTitleTextOverrideArchive">Applica anche all\'archivio</string>
     <string name="InuTitleTextOverrideArchiveInfo">Usa lo stesso testo del titolo nella schermata dell\'archivio invece di \"Chat archiviate\"</string>
+    <string name="InuChatListAvatarSize">Dimensione avatar nella lista chat</string>
     <string name="InuTranslateAutoDetectLang">Rileva la lingua per il menu dei messaggi</string>
     <string name="InuTranslateAutoDetectLangInfo">Rilevamento della lingua sul dispositivo per i messaggi che Telegram non ha identificato. Può rallentare leggermente il menu.</string>
     <string name="InuTranslateAutoFallback">Cambia fornitore se bloccato</string>

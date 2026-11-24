@@ -719,6 +719,7 @@ object Schemas {
                 click = { page, view -> DialogsSettingsHelper.showTitleText(page, view) },
             )
             toggle(InuConfig.DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE, R.string.InuTitleTextOverrideArchive, R.string.InuTitleTextOverrideArchiveInfo)
+            slider(InuConfig.CHAT_LIST_AVATAR_PERCENT, R.string.InuChatListAvatarSize, 60f, 100f, 5f, format = { "${it.toInt()}%" })
             toggle(InuConfig.OLD_MENTION_INDICATOR, R.string.InuOldMentionIndicator, onChange = { page, _ -> page.rebuildAll() })
             custom(
                 "pull-down-action", R.string.InuPullDownAction,

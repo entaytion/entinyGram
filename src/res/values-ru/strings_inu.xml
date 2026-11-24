@@ -2215,6 +2215,7 @@
     <string name="InuTitleTextFolder">Название папки</string>
     <string name="InuTitleTextOverrideArchive">Применить также к архиву</string>
     <string name="InuTitleTextOverrideArchiveInfo">Использовать тот же текст заголовка на экране архива вместо стандартного «Архивные чаты»</string>
+    <string name="InuChatListAvatarSize">Размер аватаров в списке чатов</string>
     <string name="InuTranslateAutoDetectLang">Учитывать DNT в меню сообщения</string>
     <string name="InuTranslateAutoDetectLangInfo">Определение языка на устройстве для сообщений, не распознанных Telegram. Может немного замедлить меню.</string>
     <string name="InuTranslateAutoFallback">Переключать провайдера при блокировке</string>

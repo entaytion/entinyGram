@@ -2205,6 +2205,7 @@
     <string name="InuTitleTextFolder">Klasör adı</string>
     <string name="InuTitleTextOverrideArchive">Arşive de uygula</string>
     <string name="InuTitleTextOverrideArchiveInfo">Arşiv ekranında varsayılan \"Arşivlenmiş Sohbetler\" yerine aynı başlık metnini kullan</string>
+    <string name="InuChatListAvatarSize">Sohbet listesinde avatar boyutu</string>
     <string name="InuTranslateAutoDetectLang">Mesaj menüsünde Çevirme listesine uy</string>
     <string name="InuTranslateAutoDetectLangInfo">Mesaj dili Çevirme (DNT) listesindeyse dili otomatik algılanır ve menü ögesi gizlenir.\nBu, menünün biraz daha yavaş açılmasına neden olabilir.</string>
     <string name="InuTranslateAutoFallback">Engellenince sağlayıcı değiştir</string>

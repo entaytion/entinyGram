@@ -2215,6 +2215,7 @@
     <string name="InuTitleTextFolder">اسم المجلد</string>
     <string name="InuTitleTextOverrideArchive">تطبيقه على الأرشيف أيضاً</string>
     <string name="InuTitleTextOverrideArchiveInfo">استخدام نص العنوان نفسه في شاشة الأرشيف بدلاً من \"المحادثات المؤرشفة\" الافتراضي</string>
+    <string name="InuChatListAvatarSize">حجم الصور الرمزية في قائمة الدردشات</string>
     <string name="InuTranslateAutoDetectLang">اكتشاف اللغة لقائمة الرسالة</string>
     <string name="InuTranslateAutoDetectLangInfo">اكتشاف اللغة على الجهاز للرسائل التي لم يحدد Telegram لغتها. قد يبطئ القائمة قليلاً.</string>
     <string name="InuTranslateAutoFallback">تبديل المزوّد عند الحظر</string>

@@ -227,6 +227,9 @@ object InuConfig {
     val AVATAR_CORNERS = FloatItem("avatar_corners", 28.0f)
 
     @JvmField
+    val CHAT_LIST_AVATAR_PERCENT = IntItem("chat_list_avatar_percent", 100)
+
+    @JvmField
     val UNIFIED_AVATAR_RADIUS = BoolItem("unified_avatar_radius", false)
 
     @JvmField

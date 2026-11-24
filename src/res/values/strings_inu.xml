@@ -2212,6 +2212,7 @@
     <string name="InuTitleTextFolder">Folder name</string>
     <string name="InuTitleTextOverrideArchive">Also apply to archive</string>
     <string name="InuTitleTextOverrideArchiveInfo">Use the same title text on the archive screen instead of the default \"Archived Chats\"</string>
+    <string name="InuChatListAvatarSize">Avatar size in chat list</string>
     <string name="InuTranslateAutoDetectLang">Detect language for the message menu</string>
     <string name="InuTranslateAutoDetectLangInfo">On-device language detection for messages Telegram hasn\'t identified. May slow the menu slightly.</string>
     <string name="InuTranslateAutoFallback">Switch provider when blocked</string>

@@ -2202,6 +2202,7 @@
     <string name="InuTitleTextFolder">フォルダ名</string>
     <string name="InuTitleTextOverrideArchive">アーカイブにも適用</string>
     <string name="InuTitleTextOverrideArchiveInfo">アーカイブ画面でも、デフォルトの「アーカイブ済みチャット」の代わりに同じタイトルテキストを使用します</string>
+    <string name="InuChatListAvatarSize">チャット一覧のアバターサイズ</string>
     <string name="InuTranslateAutoDetectLang">メッセージメニューで DNT を尊重</string>
     <string name="InuTranslateAutoDetectLangInfo">メッセージの言語が DNT リストに含まれる場合、その言語は自動検出され、メニュー項目は非表示になります。\nこれによりメニューを開く動作がやや遅くなることがあります。</string>
     <string name="InuTranslateAutoFallback">ブロック時にプロバイダーを切り替える</string>
