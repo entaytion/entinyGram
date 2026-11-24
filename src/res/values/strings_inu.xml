@@ -2327,6 +2327,8 @@
     <string name="InuVoiceMessages">Voice messages</string>
     <string name="InuVoiceSkipInSession">Next and previous for voice messages</string>
     <string name="InuVoiceSkipInSessionInfo">Show next and previous in the media session for voice messages, as for music</string>
+    <string name="InuVoiceEnhance">Voice enhance</string>
+    <string name="InuVoiceEnhanceInfo">Automatic gain on voice messages you record. Noise suppression is added when the RNNoise option is off</string>
     <string name="InuWalletKeyReplaced">Key replaced</string>
     <string name="InuWalletKeyReplacedInfo">Your address and the 12 new words now restore this wallet.</string>
     <string name="InuWalletPrivateKey">Private key</string>

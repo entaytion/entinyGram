@@ -2317,6 +2317,8 @@
     <string name="InuVoiceMessages">الرسائل الصوتية</string>
     <string name="InuVoiceSkipInSession">التالي والسابق للرسائل الصوتية</string>
     <string name="InuVoiceSkipInSessionInfo">إظهار التالي والسابق في جلسة الوسائط للرسائل الصوتية كما في الموسيقى</string>
+    <string name="InuVoiceEnhance">تحسين الصوت</string>
+    <string name="InuVoiceEnhanceInfo">تضخيم تلقائي للرسائل الصوتية التي تسجلها. يُضاف كتم الضوضاء عندما يكون خيار RNNoise متوقفاً</string>
     <string name="InuWalletKeyReplaced">تم استبدال المفتاح</string>
     <string name="InuWalletKeyReplacedInfo">يمكن الآن استعادة هذه المحفظة باستخدام عنوانك والكلمات الاثنتي عشرة الجديدة.</string>
     <string name="InuWalletPrivateKey">المفتاح الخاص</string>

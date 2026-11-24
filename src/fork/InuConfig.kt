@@ -721,6 +721,9 @@ object InuConfig {
     val CONFIRM_SEND_VOICE = BoolItem("confirm_send_voice", false)
 
     @JvmField
+    val VOICE_ENHANCE = BoolItem("voice_enhance", false)
+
+    @JvmField
     val CONFIRM_SEND_STICKER = BoolItem("confirm_send_sticker", false)
 
     @JvmField

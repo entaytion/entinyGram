@@ -107,6 +107,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **round videos** — send from the gallery, zoom slider with presets, pinch zoom, exposure with AE lock, up to 720p with 60 fps and video bitrate up to 2 Mbps or an auto mode that keeps a full minute under the round size limit. 512p stays round, 720p is sent as regular video
 - **send as sticker** — long-press send on photos to send 512 px stickers
 - **confirm before sending** voice, video messages, stickers and gifs, keep screen on while recording
+- **voice enhance** — automatic gain on recorded voice messages, with platform noise suppression when rnnoise is off
 - **typing status spoof** — fake typing, recording or uploading in any chat
 - **input actions** — link preview toggle, find & replace and attachment picker in the input menu
 - **link previews** — never generate or send them, or send the preview's media straight from its menu

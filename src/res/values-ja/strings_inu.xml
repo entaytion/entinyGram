@@ -2304,6 +2304,8 @@
     <string name="InuVoiceMessages">ボイスメッセージ</string>
     <string name="InuVoiceSkipInSession">ボイスメッセージの次へ・前へ</string>
     <string name="InuVoiceSkipInSessionInfo">音楽と同じように、メディアセッションでボイスメッセージにも次へ・前へを表示する</string>
+    <string name="InuVoiceEnhance">音声の強調</string>
+    <string name="InuVoiceEnhanceInfo">録音したボイスメッセージの音量を自動調整します。RNNoise がオフのとき、ノイズ抑制も追加されます</string>
     <string name="InuWalletKeyReplaced">鍵を置き換えました</string>
     <string name="InuWalletKeyReplacedInfo">今後はアドレスと新しい12単語でこのウォレットを復元できます。</string>
     <string name="InuWalletPrivateKey">秘密鍵</string>

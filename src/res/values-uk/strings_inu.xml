@@ -2330,6 +2330,8 @@
     <string name="InuVoiceMessages">Голосові повідомлення</string>
     <string name="InuVoiceSkipInSession">Далі й назад для голосових</string>
     <string name="InuVoiceSkipInSessionInfo">Показувати «наступне» і «попереднє» в медіасесії для голосових повідомлень, як для музики</string>
+    <string name="InuVoiceEnhance">Покращення голосу</string>
+    <string name="InuVoiceEnhanceInfo">Автоматичне підсилення голосових, які ви записуєте. Шумозаглушення додається, коли RNNoise вимкнено</string>
     <string name="InuWalletKeyReplaced">Ключ замінено</string>
     <string name="InuWalletKeyReplacedInfo">Вашу адресу та 12 нових слів тепер відновлюють цей гаманець.</string>
     <string name="InuWalletPrivateKey">Приватний ключ</string>

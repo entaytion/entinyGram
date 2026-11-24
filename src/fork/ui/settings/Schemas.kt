@@ -452,6 +452,7 @@ object Schemas {
             toggle(InuConfig.DISABLE_NEXT_VOICE_AUTOPLAY, R.string.InuDisableNextVoiceAutoplay, R.string.InuDisableNextVoiceAutoplayInfo)
             toggle(InuConfig.VOICE_SKIP_IN_SESSION, R.string.InuVoiceSkipInSession, R.string.InuVoiceSkipInSessionInfo)
             toggle(InuConfig.REMEMBER_SHORT_POSITION, R.string.InuRememberShortPosition, R.string.InuRememberShortPositionInfo)
+            toggle(InuConfig.VOICE_ENHANCE, R.string.InuVoiceEnhance, R.string.InuVoiceEnhanceInfo)
         }
         section(R.string.InuMediaSaving) {
             toggle(InuConfig.SAVE_SELECTED_FILES, R.string.InuSaveSelectedFiles, R.string.InuSaveSelectedFilesInfo)

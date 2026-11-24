@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 24 Nov 2026 23:32:05 +0200
+Subject: Add platform gain and noise suppression effects to the voice recorder behind a toggle.
+
+---
+ .../org/telegram/utils/recorder/audio/AudioCapture.java     | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/utils/recorder/audio/AudioCapture.java b/TMessagesProj/src/main/java/org/telegram/utils/recorder/audio/AudioCapture.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/utils/recorder/audio/AudioCapture.java
++++ b/TMessagesProj/src/main/java/org/telegram/utils/recorder/audio/AudioCapture.java
+@@ -67,6 +67,7 @@ final class AudioCapture {
+ 
+     // Capture thread.
+     private AudioRecord audioRecord;
++    private desu.inugram.helpers.media.VoiceEnhanceSession voiceEnhance;
+     private long capturedSamples;
+     private long lastProgressMs;
+ 
+@@ -153,6 +154,7 @@ final class AudioCapture {
+             if (audioRecord.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
+                 throw new IllegalStateException("Unable to start AudioRecord");
+             }
++            voiceEnhance = desu.inugram.helpers.media.VoiceEnhanceHelper.attach(audioRecord.getAudioSessionId(), noiseSuppression != AudioRecordingSession.NoiseSuppression.RNNOISE);
+             diagnostics.log("AudioRecord started: minBufferBytes=" + minimumBufferSize
+                     + ", bufferBytes=" + audioRecordBufferSize
+                     + ", sessionId=" + audioRecord.getAudioSessionId());
+@@ -209,6 +211,10 @@ final class AudioCapture {
+         if (failure != null) {
+             diagnostics.error("capture failed", failure);
+         }
++        if (voiceEnhance != null) {
++            voiceEnhance.release();
++            voiceEnhance = null;
++        }
+         if (audioRecord != null) {
+             try {
+                 if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {

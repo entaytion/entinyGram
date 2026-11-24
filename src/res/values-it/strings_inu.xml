@@ -2329,6 +2329,8 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuVoiceMessages">Messaggi vocali</string>
     <string name="InuVoiceSkipInSession">Avanti e indietro per i vocali</string>
     <string name="InuVoiceSkipInSessionInfo">Mostra successivo e precedente nella sessione multimediale per i messaggi vocali, come per la musica</string>
+    <string name="InuVoiceEnhance">Miglioramento voce</string>
+    <string name="InuVoiceEnhanceInfo">Guadagno automatico sui messaggi vocali che registri. La soppressione del rumore viene aggiunta quando RNNoise è disattivato</string>
     <string name="InuWalletKeyReplaced">Chiave sostituita</string>
     <string name="InuWalletKeyReplacedInfo">Ora puoi ripristinare questo portafoglio con il tuo indirizzo e le 12 nuove parole.</string>
     <string name="InuWalletPrivateKey">Chiave privata</string>

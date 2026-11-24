@@ -2306,6 +2306,8 @@
     <string name="InuVoiceMessages">پیام‌های صوتی</string>
     <string name="InuVoiceSkipInSession">بعدی و قبلی برای پیام‌های صوتی</string>
     <string name="InuVoiceSkipInSessionInfo">نمایش بعدی و قبلی در نشست رسانه برای پیام‌های صوتی مانند موسیقی</string>
+    <string name="InuVoiceEnhance">بهبود صدا</string>
+    <string name="InuVoiceEnhanceInfo">تقویت خودکار صدا برای پیام‌های صوتی که ضبط می‌کنید. کاهش نویز وقتی RNNoise خاموش است اضافه می‌شود</string>
     <string name="InuWalletKeyReplaced">کلید جایگزین شد</string>
     <string name="InuWalletKeyReplacedInfo">اکنون نشانی شما و ۱۲ واژه جدید این کیف پول را بازیابی می‌کنند.</string>
     <string name="InuWalletPrivateKey">کلید خصوصی</string>

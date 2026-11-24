@@ -2304,6 +2304,8 @@
     <string name="InuVoiceMessages">语音消息</string>
     <string name="InuVoiceSkipInSession">语音消息的上一条和下一条</string>
     <string name="InuVoiceSkipInSessionInfo">与音乐一样，在媒体会话中为语音消息显示上一条和下一条</string>
+    <string name="InuVoiceEnhance">语音增强</string>
+    <string name="InuVoiceEnhanceInfo">自动增益你录制的语音消息。关闭 RNNoise 选项时会同时启用降噪</string>
     <string name="InuWalletKeyReplaced">密钥已替换</string>
     <string name="InuWalletKeyReplacedInfo">现在可通过地址和新的 12 个助记词恢复此钱包。</string>
     <string name="InuWalletPrivateKey">私钥</string>

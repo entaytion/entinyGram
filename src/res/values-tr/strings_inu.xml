@@ -2307,6 +2307,8 @@
     <string name="InuVoiceMessages">Sesli mesajlar</string>
     <string name="InuVoiceSkipInSession">Sesli mesajlar için sonraki ve önceki</string>
     <string name="InuVoiceSkipInSessionInfo">Medya oturumunda sesli mesajlar için de müzikteki gibi sonraki ve önceki göster</string>
+    <string name="InuVoiceEnhance">Ses iyileştirme</string>
+    <string name="InuVoiceEnhanceInfo">Kaydettiğiniz sesli mesajlarda otomatik kazanç. RNNoise seçeneği kapalıyken gürültü bastırma da eklenir</string>
     <string name="InuWalletKeyReplaced">Anahtar değiştirildi</string>
     <string name="InuWalletKeyReplacedInfo">Bu cüzdan artık adresiniz ve 12 yeni kelimeyle geri yüklenir.</string>
     <string name="InuWalletPrivateKey">Özel anahtar</string>

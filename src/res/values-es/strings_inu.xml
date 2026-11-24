@@ -2328,6 +2328,8 @@ Aunque los concedas, un plugin todavía puede:</string>
     <string name="InuVoiceMessages">Mensajes de voz</string>
     <string name="InuVoiceSkipInSession">Siguiente y anterior en mensajes de voz</string>
     <string name="InuVoiceSkipInSessionInfo">Mostrar siguiente y anterior en la sesión multimedia para mensajes de voz, como en la música</string>
+    <string name="InuVoiceEnhance">Mejora de voz</string>
+    <string name="InuVoiceEnhanceInfo">Ganancia automática en los mensajes de voz que grabas. Se añade supresión de ruido cuando la opción RNNoise está desactivada</string>
     <string name="InuWalletKeyReplaced">Clave reemplazada</string>
     <string name="InuWalletKeyReplacedInfo">Tu dirección y las 12 palabras nuevas ahora permiten restaurar esta cartera.</string>
     <string name="InuWalletPrivateKey">Clave privada</string>
