@@ -61,6 +61,7 @@ object SettingsBackupHelper {
         }
         if (root.optInt("version", -1) != FORMAT_VERSION) return ParseResult.BadFormat
         val values = root.optJSONObject("values") ?: return ParseResult.BadFormat
+        migrateLegacyRestricted(values)
         val byKey = InuConfig.items.filter { it.exportable }.associateBy { it.key }
         var changed = 0
         for (key in values.keys()) {
@@ -135,11 +136,25 @@ object SettingsBackupHelper {
         return root.toString(2)
     }
 
+    // entiny: backups from before the protected chats slider carry the two old switches instead of the mode
+    private fun migrateLegacyRestricted(values: JSONObject) {
+        if (values.has(InuConfig.RESTRICTED_CONTENT_MODE.key)) return
+        if (!values.has(InuConfig.RestrictedContentModeItem.LEGACY_FORWARD) && !values.has(InuConfig.RestrictedContentModeItem.LEGACY_COPY)) return
+        values.put(
+            InuConfig.RESTRICTED_CONTENT_MODE.key,
+            InuConfig.RestrictedContentModeItem.legacyMode(
+                values.optBoolean(InuConfig.RestrictedContentModeItem.LEGACY_FORWARD, false),
+                values.optBoolean(InuConfig.RestrictedContentModeItem.LEGACY_COPY, false),
+            ),
+        )
+    }
+
     fun apply(parsed: ParseResult.Ok, replace: Boolean = false): Int {
         CloudSettingsHelper.restoring = true
         try {
             val root = parsed.root
             val values = root.optJSONObject("values") ?: return 0
+            migrateLegacyRestricted(values)
             // replace: wipe to defaults first, so keys missing from the file end up default instead of kept
             if (replace) resetToDefaults()
 

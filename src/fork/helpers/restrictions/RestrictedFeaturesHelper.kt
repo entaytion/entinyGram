@@ -231,6 +231,8 @@ object RestrictedFeaturesHelper {
         val loader = FileLoader.getInstance(account)
         val resolved = HashMap<MessageObject, File>()
         var pending = LinkedHashMap<String, MessageObject>()
+        // entiny: posts that share one file download it once and all get the result
+        val siblings = HashMap<String, MutableList<MessageObject>>()
 
         for (msg in messages) {
             if (!needsMediaReupload(msg)) continue
@@ -240,7 +242,8 @@ object RestrictedFeaturesHelper {
                 continue
             }
             val key = downloadKey(msg) ?: continue
-            pending[key] = msg
+            siblings.getOrPut(key) { ArrayList() }.add(msg)
+            pending.putIfAbsent(key, msg)
         }
         if (pending.isEmpty()) return resolved
 
@@ -258,7 +261,7 @@ object RestrictedFeaturesHelper {
                     // entiny: path DB lags behind fileLoaded, so fall back to the file the notification delivered
                     val file = localMediaFile(loader, msg) ?: loadedNow[key]
                     val usable = file?.let { forwardableMediaFile(it, temporaryFiles) }
-                    if (usable != null) resolved[msg] = usable else failed[key] = msg
+                    if (usable != null) siblings[key].orEmpty().forEach { resolved[it] = usable } else failed[key] = msg
                 }
                 pending = failed
             }

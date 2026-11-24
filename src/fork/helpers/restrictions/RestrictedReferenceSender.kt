@@ -20,6 +20,12 @@ internal object RestrictedReferenceSender {
     private const val REFRESH_TIMEOUT_MS = 30_000L
     private const val REJECT_TTL_MS = 10 * 60 * 1000L
     private const val MAX_ALBUM = 10
+    private const val TIMEOUT_ERROR = "TIMEOUT"
+    private const val NO_RESPONSE_ERROR = "NO_RESPONSE"
+    private val DESTINATION_ERRORS = setOf(
+        "CHAT_WRITE_FORBIDDEN", "CHAT_SEND_MEDIA_FORBIDDEN", "CHAT_RESTRICTED", "CHAT_ADMIN_REQUIRED",
+        "USER_BANNED_IN_CHANNEL", "PEER_ID_INVALID", "TOPIC_CLOSED",
+    )
 
     private val rejectedSources = ConcurrentHashMap<String, Long>()
     private val failedMessages = ConcurrentHashMap.newKeySet<String>()
@@ -201,14 +207,22 @@ internal object RestrictedReferenceSender {
             if (refreshReferences(account, unit, inputs)) outcome = send(account, request)
         }
         if (outcome.sent) return true
+        // entiny: timeouts and empty responses may still have landed, so a resend would duplicate the post
+        if (outcome.errorText == TIMEOUT_ERROR || outcome.errorText == NO_RESPONSE_ERROR) return true
         Log.d(TAG, "reference send refused: ${outcome.errorText}")
         if (outcome.errorText != null && FileRefController.isFileRefError(outcome.errorText)) {
             unit.forEach { failedMessages.add(messageKey(account, it)) }
-        } else {
-            // entiny: any other refusal usually means the whole source chat is protected, so stop trying it for a while
+        } else if (isSourceRefusal(outcome.errorText)) {
+            // entiny: a refusal about the source usually means the whole chat is protected, so stop trying it for a while
             rejectedSources[sourceKey(account, unit[0])] = SystemClock.uptimeMillis()
         }
         return false
+    }
+
+    // entiny: destination rights, rate limits and lost responses say nothing about the source chat
+    private fun isSourceRefusal(text: String?): Boolean {
+        if (text == null || text == NO_RESPONSE_ERROR) return false
+        return !text.startsWith("FLOOD_WAIT") && text !in DESTINATION_ERRORS
     }
 
     private fun send(account: Int, request: TLObject): Outcome {
@@ -220,11 +234,11 @@ internal object RestrictedReferenceSender {
                 MessagesController.getInstance(account).processUpdates(response, false)
                 sent = true
             } else {
-                errorText = error?.text ?: "NO_RESPONSE"
+                errorText = error?.text ?: NO_RESPONSE_ERROR
             }
             latch.countDown()
         }
-        if (!latch.await(REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS)) return Outcome(false, "TIMEOUT")
+        if (!latch.await(REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS)) return Outcome(false, TIMEOUT_ERROR)
         return Outcome(sent, errorText)
     }
 

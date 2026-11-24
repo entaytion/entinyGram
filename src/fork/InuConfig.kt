@@ -1792,10 +1792,27 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
                 super.value = v
             }
 
+        // entiny: the two old switches become one mode once, then their keys are removed
+        override fun read(prefs: SharedPreferences): Int {
+            if (prefs.contains(key)) return prefs.getInt(key, default)
+            if (!prefs.contains(LEGACY_FORWARD) && !prefs.contains(LEGACY_COPY)) return default
+            val migrated = legacyMode(prefs.getBoolean(LEGACY_FORWARD, false), prefs.getBoolean(LEGACY_COPY, false))
+            prefs.edit(commit = false) {
+                putInt(key, migrated)
+                remove(LEGACY_FORWARD)
+                remove(LEGACY_COPY)
+            }
+            return migrated
+        }
+
         companion object {
             const val OFF = 0
             const val COPY = 1
             const val FULL = 2
+            const val LEGACY_FORWARD = "allow_forward_restricted"
+            const val LEGACY_COPY = "allow_copy_restricted"
+
+            fun legacyMode(forward: Boolean, copy: Boolean): Int = if (forward) FULL else if (copy) COPY else OFF
         }
     }
 
