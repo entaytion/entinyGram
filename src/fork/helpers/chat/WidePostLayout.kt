@@ -36,7 +36,7 @@ object WidePostLayout {
     }
 
     private fun compute(m: MessageObject): Byte {
-        if (!InuConfig.WIDE_CHANNEL_POSTS.value) return STATE_NARROW
+        if (!InuConfig.WIDE_CHANNEL_POSTS.value && !(m.searchType == 4 && InuConfig.FEED_WIDE_POSTS.value)) return STATE_NARROW
         val owner = m.messageOwner ?: return STATE_NARROW
         val peer = owner.peer_id ?: return STATE_NARROW
         if (peer.channel_id == 0L || owner.action != null || m.eventId != 0L || m.preview || m.sendPreview

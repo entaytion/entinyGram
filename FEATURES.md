@@ -78,7 +78,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **system folders** — administrator, bots, unread, groups and channels tabs in the folder bar, each switchable on this device
 - **pill stack** — interactive status pills in the chats search bar
 - **recent chats** — popup, side panel or full page with tabs, search and a history limit
-- **feed** — all subscribed channels in one chat-style timeline with folder filter, newest on top, off by default
+- **feed** — all subscribed channels in one chat-style timeline with folder filter, custom per-account categories, optional wide posts and unread tab counter, newest on top, off by default - *categories and feed controls inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
 - **material 3 music player** — full-screen player with cover-based colors, wavy seek bar, queue, synced lyrics and mini player
 - **online dots** — hide, color-code, or show on sender avatars in groups
 - **clown avatars** — blocked users show 🤡 (or 💩 / 💀). users who blocked you are guessed from a missing photo and last seen, so it can be wrong

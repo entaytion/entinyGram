@@ -2362,6 +2362,15 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     @JvmField
     val FEED_MARK_READ_ON_SCROLL = BoolItem("feed_mark_read_on_scroll", true)
 
+    @JvmField
+    val FEED_WIDE_POSTS = BoolItem("feed_wide_posts", false)
+
+    @JvmField
+    val FEED_UNREAD_COUNTER = BoolItem("feed_unread_counter", false)
+
+    @JvmField
+    val FEED_CATEGORIES = StringItem("feed_categories", "{}")
+
     // entiny: Pill Stack, ported from exteraGram/exteraless -- see src/kotlin/helpers/pillstack/.
     @JvmField
     val PILL_STACK_ENABLED = BoolItem("pill_stack_enabled", false)

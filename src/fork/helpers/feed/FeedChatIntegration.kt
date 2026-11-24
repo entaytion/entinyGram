@@ -26,6 +26,7 @@ class FeedChatIntegration(
     private var initialScrollApplied = false
     private var pagedownShownByScroll = false
     private var pendingDividerScroll = false
+    private var pendingHideCategoryId: String? = null
     private var pendingHideDialogId = 0L
     private var pendingInitialScrollRestore: ScrollAnchor? = null
     private var reactionsRefreshScheduled = false
@@ -375,7 +376,13 @@ class FeedChatIntegration(
         }
         pendingHideDialogId = 0L
         val feedController = FeedController.getInstance(currentAccount)
-        FeedConfig.getInstance(currentAccount).setExcluded(dialogId, false)
+        val config = FeedConfig.getInstance(currentAccount)
+        val categoryId = pendingHideCategoryId
+        pendingHideCategoryId = null
+        if (categoryId == null) config.setExcluded(dialogId, false)
+        else config.categories.categories.firstOrNull { it.id == categoryId }?.let {
+            config.categories.save(it.copy(channels = it.channels + dialogId))
+        }
         feedController.markConfigApplied()
         feedController.store.setHidden(dialogId, false)
         reconcileWithStore()
@@ -475,7 +482,10 @@ class FeedChatIntegration(
     fun hideChannelWithUndo(dialogId: Long, title: CharSequence?) {
         val feedConfig = FeedConfig.getInstance(currentAccount)
         val feedController = FeedController.getInstance(currentAccount)
-        feedConfig.setExcluded(dialogId, true)
+        val category = feedConfig.categories.selected
+        pendingHideCategoryId = category?.id
+        if (category == null) feedConfig.setExcluded(dialogId, true)
+        else feedConfig.categories.save(category.copy(channels = category.channels - dialogId))
         feedController.markConfigApplied()
         feedController.store.setHidden(dialogId, true)
         pendingHideDialogId = dialogId
@@ -564,6 +574,21 @@ class FeedChatIntegration(
         }
         rows.removeAt(dividerIndex)
         host.notifyMessageRemoved(dividerIndex)
+    }
+
+    fun onLoadFailed(loadIndex: Int, newer: Boolean) {
+        consumePreserveScrollLoad(loadIndex)
+        if (destroyed || host.getFragment().isPaused()) return
+        host.showEmptyFeedState()
+        BulletinFactory.of(host.getFragment()).createSimpleBulletin(
+            R.raw.error, LocaleController.getString(R.string.ErrorOccurred), LocaleController.getString(R.string.Retry)
+        ) {
+            if (!destroyed) {
+                if (!hasMaterializedPostRows()) host.reloadFeed()
+                else if (newer) host.requestNewerFeedPage()
+                else host.requestOlderFeedPage()
+            }
+        }.show()
     }
 
     fun onMessagesLoaded() {

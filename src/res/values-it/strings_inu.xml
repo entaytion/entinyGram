@@ -2383,4 +2383,13 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuPinLimitEnable">Attiva</string>
     <string name="InuLocalReactions">Reazioni locali</string>
     <string name="InuLocalReactionsInfo">Permette di mettere fino a 3 reazioni a un messaggio senza Premium. Telegram ne accetta solo una, quindi le altre restano su questo dispositivo e nessun altro le vede.</string>
+    <string name="InuFeedWidePosts">Post larghi nel feed</string>
+    <string name="InuFeedWidePostsInfo">Allarga i post nel feed senza modificare le chat dei canali. Rimane valido anche il parametro globale per i post larghi.</string>
+    <string name="InuFeedUnreadCounter">Contatore dei non letti nella scheda del feed</string>
+    <string name="InuFeedCategories">Categorie del feed</string>
+    <string name="InuFeedCategoryCreate">Crea categoria</string>
+    <string name="InuFeedCategoryName">Nome della categoria</string>
+    <string name="InuFeedCategoryHidden">Nascondi categoria dal selettore</string>
+    <string name="InuFeedCategoriesInfo">Scegli i canali di ogni categoria indipendentemente dal feed principale. Trascina le categorie per riordinarle.</string>
+    <string name="InuFeedCategoryDeleteConfirm">Eliminare questa categoria? Le iscrizioni ai suoi canali rimarranno.</string>
 </resources>

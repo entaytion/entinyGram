@@ -86,7 +86,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -24858,7 +24858,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24866,7 +24866,7 @@ public class ChatActivity extends BaseFragment implements
                  if (!isFeedSearch() && filteredMessagesDict != null) {
                      MessageObject messageObject = filteredMessagesDict.get(msgId);
                      if (messageObject != null) {
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                          messageObject.forceUpdate = true;
                          messageObject.reactionsChanged = true;
                      }
-@@ -24868,7 +24868,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24876,7 +24876,7 @@ public class ChatActivity extends BaseFragment implements
                      FileLog.d("InuRx[" + classGuid + "] apply reactions did=" + did + " mid=" + msgId + " found=" + (messageObject != null) + " old=" + (messageObject == null ? null : desu.inugram.helpers.chat.ReactionDebugHelper.describe(messageObject.messageOwner.reactions)) + " new=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe((TLRPC.TL_messageReactions) args[2]));
                  }
                  if (messageObject != null) {
@@ -104,7 +104,7 @@ index 0000000..0000000 100644
                      updateChangedMessageObject(messageObject, true);
                      invalidateMessagesVisiblePart();
                      if (did == dialog_id) {
-@@ -34844,7 +34844,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34852,7 +34852,7 @@ public class ChatActivity extends BaseFragment implements
      Runnable updateReactionRunnable;
  
      private void showMultipleReactionsPromo(View cell, ReactionsLayoutInBubble.VisibleReaction visibleReaction, int currentChosenReactions) {

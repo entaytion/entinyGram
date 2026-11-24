@@ -2,6 +2,9 @@ package desu.inugram.ui.settings
 
 import android.content.Context
 import android.view.View
+import desu.inugram.helpers.feed.FeedCategories
+import desu.inugram.helpers.chat.WidePostLayout
+import desu.inugram.ui.showInputDialog
 import desu.inugram.helpers.feed.FeedConfig
 import desu.inugram.helpers.feed.FeedController
 import desu.inugram.InuConfig
@@ -59,8 +62,18 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
             it.addSubItem(MENU_SELECT_ALL, R.drawable.msg_select, LocaleController.getString(R.string.SelectAll))
             it.addSubItem(MENU_DESELECT_ALL, R.drawable.msg_cancel, LocaleController.getString(R.string.DeselectAll))
         }
+        listView.allowReorder(true)
+        listView.listenReorder { _, items ->
+            val ids = items.mapNotNull { (it.`object` as? FeedCategories.Category)?.id }
+            if (ids.isNotEmpty()) FeedConfig.getInstance(currentAccount).categories.reorder(ids)
+        }
         reloadChannels()
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        listView?.adapter?.update(true)
     }
 
     override fun onFragmentCreate(): Boolean {
@@ -113,10 +126,23 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
             if (!FeedHelper.isEnabled()) {
                 return
             }
+            items.add(mkTwoLineCheckItem(TOGGLE_WIDE_POSTS, R.string.InuFeedWidePosts, R.string.InuFeedWidePostsInfo, InuConfig.FEED_WIDE_POSTS.value))
+            items.add(UItem.asCheck(TOGGLE_UNREAD_COUNTER, LocaleController.getString(R.string.InuFeedUnreadCounter)).setChecked(InuConfig.FEED_UNREAD_COUNTER.value))
             items.add(UItem.asCheck(TOGGLE_INCLUDE_ARCHIVED, LocaleController.getString(R.string.InuFeedIncludeArchived)).setChecked(InuConfig.FEED_INCLUDE_ARCHIVED.value))
             items.add(mkTwoLineCheckItem(TOGGLE_NEWEST_ON_TOP, R.string.InuFeedNewestOnTop, R.string.InuFeedNewestOnTopInfo, InuConfig.FEED_NEWEST_ON_TOP.value))
             items.add(mkTwoLineCheckItem(TOGGLE_MARK_READ_ON_SCROLL, R.string.InuFeedMarkReadOnScroll, R.string.InuFeedMarkReadOnScrollInfo, InuConfig.FEED_MARK_READ_ON_SCROLL.value))
             items.add(UItem.asShadow(null))
+            items.add(UItem.asHeader(LocaleController.getString(R.string.InuFeedCategories)))
+            adapter.reorderSectionStart()
+            for ((index, category) in config.categories.categories.withIndex()) {
+                val item = UItem.asButton(CATEGORY_BASE + index, R.drawable.msg_folders, category.title,
+                    if (category.hidden) LocaleController.getString(R.string.InuFeedCategoryHidden) else "")
+                item.`object` = category
+                items.add(item)
+            }
+            adapter.reorderSectionEnd()
+            items.add(UItem.asButton(CREATE_CATEGORY, R.drawable.msg_add, LocaleController.getString(R.string.InuFeedCategoryCreate)))
+            items.add(UItem.asShadow(LocaleController.getString(R.string.InuFeedCategoriesInfo)))
         } else if (!FeedHelper.isEnabled()) {
             return
         }
@@ -145,8 +171,28 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        val category = item.`object` as? FeedCategories.Category
+        if (category != null) {
+            presentFragment(FeedCategoryEditActivity(category.id))
+            return
+        }
         val chat = item.`object` as? TLRPC.Chat
         when {
+            item.id == CREATE_CATEGORY -> showInputDialog(this, LocaleController.getString(R.string.InuFeedCategoryName)) { title ->
+                if (title.isBlank()) return@showInputDialog false
+                val created = FeedConfig.getInstance(currentAccount).categories.create(title)
+                presentFragment(FeedCategoryEditActivity(created.id))
+                true
+            }
+            item.id == TOGGLE_WIDE_POSTS -> {
+                InuConfig.FEED_WIDE_POSTS.value = !InuConfig.FEED_WIDE_POSTS.value
+                WidePostLayout.invalidate()
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+            }
+            item.id == TOGGLE_UNREAD_COUNTER -> {
+                InuConfig.FEED_UNREAD_COUNTER.value = !InuConfig.FEED_UNREAD_COUNTER.value
+                NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateInterfaces, 0)
+            }
             item.id == TOGGLE_FEED_ENABLED -> {
                 val new = !FeedHelper.isEnabled()
                 FeedHelper.setEnabled(new)
@@ -185,6 +231,10 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
     }
 
     companion object {
+        private const val CATEGORY_BASE = 200_000
+        private val CREATE_CATEGORY = InuUtils.generateId()
+        private val TOGGLE_WIDE_POSTS = InuUtils.generateId()
+        private val TOGGLE_UNREAD_COUNTER = InuUtils.generateId()
         private const val CHANNEL_BASE = 100_000
         private const val MENU_SEARCH = 0
         private const val MENU_SELECT_ALL = 1
@@ -203,6 +253,9 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
             iconRes = R.drawable.msg_channel,
             factory = ::FeedExcludedChannelsSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("feed-wide-posts", R.string.InuFeedWidePosts, TOGGLE_WIDE_POSTS),
+                SearchRegistry.Entry("feed-unread-counter", R.string.InuFeedUnreadCounter, TOGGLE_UNREAD_COUNTER),
+                SearchRegistry.Entry("feed-categories", R.string.InuFeedCategories, CREATE_CATEGORY),
                 SearchRegistry.Entry("feed-toggle", R.string.InuFeed, TOGGLE_FEED_ENABLED),
                 SearchRegistry.Entry("feed-include-archived", R.string.InuFeedIncludeArchived, TOGGLE_INCLUDE_ARCHIVED),
                 SearchRegistry.Entry("feed-newest-on-top", R.string.InuFeedNewestOnTop, TOGGLE_NEWEST_ON_TOP),

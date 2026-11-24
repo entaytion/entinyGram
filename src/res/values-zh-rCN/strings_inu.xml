@@ -2358,4 +2358,13 @@
     <string name="InuPinLimitEnable">开启</string>
     <string name="InuLocalReactions">本地回应</string>
     <string name="InuLocalReactionsInfo">没有 Premium 也能给一条消息添加最多 3 个回应。Telegram 只接受一个，其余的只保存在本设备上，其他人看不到。</string>
+    <string name="InuFeedWidePosts">动态中的宽幅帖子</string>
+    <string name="InuFeedWidePostsInfo">加宽动态中的帖子，不影响频道聊天。全局宽幅帖子设置仍然生效。</string>
+    <string name="InuFeedUnreadCounter">动态标签页未读计数</string>
+    <string name="InuFeedCategories">动态分类</string>
+    <string name="InuFeedCategoryCreate">创建分类</string>
+    <string name="InuFeedCategoryName">分类名称</string>
+    <string name="InuFeedCategoryHidden">在选择列表中隐藏分类</string>
+    <string name="InuFeedCategoriesInfo">独立于主动态，为每个分类选择频道。拖动分类可调整顺序。</string>
+    <string name="InuFeedCategoryDeleteConfirm">删除此分类？已订阅的频道将保留。</string>
 </resources>

@@ -2361,4 +2361,13 @@
     <string name="InuPinLimitEnable">Aç</string>
     <string name="InuLocalReactions">Yerel tepkiler</string>
     <string name="InuLocalReactionsInfo">Premium olmadan bir mesaja en fazla 3 tepki koymanı sağlar. Telegram yalnızca birini kabul eder, fazlası bu cihazda kalır ve kimse görmez.</string>
+    <string name="InuFeedWidePosts">Akışta geniş gönderiler</string>
+    <string name="InuFeedWidePostsInfo">Kanal sohbetlerini değiştirmeden akıştaki gönderileri genişletir. Genel geniş gönderi ayarı da geçerlidir.</string>
+    <string name="InuFeedUnreadCounter">Akış sekmesinde okunmamış sayacı</string>
+    <string name="InuFeedCategories">Akış kategorileri</string>
+    <string name="InuFeedCategoryCreate">Kategori oluştur</string>
+    <string name="InuFeedCategoryName">Kategori adı</string>
+    <string name="InuFeedCategoryHidden">Kategoriyi seçim listesinden gizle</string>
+    <string name="InuFeedCategoriesInfo">Her kategorinin kanallarını ana akıştan bağımsız seçin. Sıralamak için kategorileri sürükleyin.</string>
+    <string name="InuFeedCategoryDeleteConfirm">Bu kategori silinsin mi? Kanallarına olan abonelikleriniz korunacak.</string>
 </resources>

@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -33159,10 +33159,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -33167,10 +33167,11 @@ public class ChatActivity extends BaseFragment implements
  
              updateScrimSourceBitmap();
  
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
  
              boolean addGap = false;
  
-@@ -34342,6 +34343,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -34350,6 +34351,7 @@ public class ChatActivity extends BaseFragment implements
                      ? desu.inugram.helpers.chat.MessageMenuPreviewHelper.create(contentView.getContext(), (ChatMessageCell) v, scrimPopupContainerLayout, reactionsLayout, chatListView.getWidth(), inu_menuBottom - inu_menuTop, this::closeMenu)
                      : null;
              if (inu_column != null) {

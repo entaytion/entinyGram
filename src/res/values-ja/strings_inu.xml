@@ -2358,4 +2358,13 @@
     <string name="InuPinLimitEnable">有効にする</string>
     <string name="InuLocalReactions">ローカルリアクション</string>
     <string name="InuLocalReactionsInfo">Premiumなしでも1つのメッセージに最大3つのリアクションを付けられます。Telegramが受け付けるのは1つだけなので、残りはこの端末にのみ保存され、他の人には見えません。</string>
+    <string name="InuFeedWidePosts">フィード内の投稿を広く表示</string>
+    <string name="InuFeedWidePostsInfo">チャンネルのチャットを変更せず、フィードの投稿を広く表示します。全体の投稿幅設定も適用されます。</string>
+    <string name="InuFeedUnreadCounter">フィードタブの未読件数</string>
+    <string name="InuFeedCategories">フィードのカテゴリ</string>
+    <string name="InuFeedCategoryCreate">カテゴリを作成</string>
+    <string name="InuFeedCategoryName">カテゴリ名</string>
+    <string name="InuFeedCategoryHidden">選択一覧からカテゴリを隠す</string>
+    <string name="InuFeedCategoriesInfo">メインフィードとは別に、各カテゴリのチャンネルを選択できます。カテゴリをドラッグして並べ替えます。</string>
+    <string name="InuFeedCategoryDeleteConfirm">このカテゴリを削除しますか？チャンネルの登録は維持されます。</string>
 </resources>

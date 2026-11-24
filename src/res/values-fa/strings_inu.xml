@@ -2360,4 +2360,13 @@
     <string name="InuPinLimitEnable">روشن کردن</string>
     <string name="InuLocalReactions">واکنش‌های محلی</string>
     <string name="InuLocalReactionsInfo">بدون Premium تا ۳ واکنش روی یک پیام می‌گذارید. تلگرام فقط یکی را می‌پذیرد، پس بقیه روی همین دستگاه می‌مانند و کسی آن‌ها را نمی‌بیند.</string>
+    <string name="InuFeedWidePosts">پست‌های عریض در خوراک</string>
+    <string name="InuFeedWidePostsInfo">پست‌های خوراک را بدون تغییر گفت‌وگوهای کانال‌ها عریض می‌کند. تنظیم عمومی پست‌های عریض نیز اعمال می‌شود.</string>
+    <string name="InuFeedUnreadCounter">شمارنده خوانده‌نشده‌ها در زبانه خوراک</string>
+    <string name="InuFeedCategories">دسته‌های خوراک</string>
+    <string name="InuFeedCategoryCreate">ساخت دسته</string>
+    <string name="InuFeedCategoryName">نام دسته</string>
+    <string name="InuFeedCategoryHidden">پنهان کردن دسته از فهرست انتخاب</string>
+    <string name="InuFeedCategoriesInfo">کانال‌های هر دسته را مستقل از خوراک اصلی انتخاب کنید. برای تغییر ترتیب، دسته‌ها را بکشید.</string>
+    <string name="InuFeedCategoryDeleteConfirm">این دسته حذف شود؟ اشتراک کانال‌های آن حفظ می‌شود.</string>
 </resources>

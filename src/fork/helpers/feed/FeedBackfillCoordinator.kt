@@ -7,41 +7,32 @@ import org.telegram.tgnet.TLRPC
 
 internal class FeedBackfillCoordinator(
     private val currentAccount: Int,
-    private val onRoundFinished: Runnable,
+    private val onRoundFinished: (Boolean) -> Unit,
 ) {
-    private val guid = ConnectionsManager.generateClassGuid()
+    private var guid = 0
     private val pending = HashSet<Long>()
     private val exhausted = HashSet<Long>()
-
     private var loadIndex = 0
-    private var roundId = 0
-    private var running = false
+    private var failed = false
+    private var timeout: Runnable? = null
 
-    private fun finishRound() {
-        running = false
-        roundId++
+    fun cancel() {
+        timeout?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+        timeout = null
+        val cancelledGuid = guid
+        guid = 0
         pending.clear()
-        onRoundFinished.run()
+        if (cancelledGuid != 0) ConnectionsManager.getInstance(currentAccount).cancelRequestsForGuid(cancelledGuid)
     }
 
-    private fun onRoundTimeout(startedRoundId: Int) {
-        if (startedRoundId == roundId && running) {
-            exhausted.addAll(pending)
-            finishRound()
-        }
+    private fun finishRound(success: Boolean) {
+        cancel()
+        onRoundFinished(success)
     }
 
     private fun onResult(dialogId: Long) {
-        if (running && pending.remove(dialogId) && pending.isEmpty()) {
-            finishRound()
-        }
-    }
-
-    fun cancel() {
-        running = false
-        roundId++
-        pending.clear()
-        ConnectionsManager.getInstance(currentAccount).cancelRequestsForGuid(guid)
+        pending.remove(dialogId)
+        if (pending.isEmpty()) finishRound(!failed)
     }
 
     fun clearExhausted() {
@@ -51,56 +42,45 @@ internal class FeedBackfillCoordinator(
     fun getExhaustedSnapshot(): HashSet<Long> = HashSet(exhausted)
 
     fun onLoadingMessagesFailed(args: Array<out Any?>) {
-        if (args[0] as Int != guid) {
-            return
-        }
-        var dialogId = 0L
-        val request = args[1]
-        if (request is TLRPC.TL_messages_getHistory) {
-            val peer = request.peer
-            if (peer != null) {
-                val peerId = if (peer.channel_id != 0L) peer.channel_id else peer.chat_id
-                dialogId = -peerId
-            }
-        }
-        if (dialogId != 0L) {
-            exhausted.add(dialogId)
-        }
+        if (guid == 0 || args.getOrNull(0) != guid) return
+        val request = args.getOrNull(1) as? TLRPC.TL_messages_getHistory ?: return
+        val peer = request.peer ?: return
+        val dialogId = -(if (peer.channel_id != 0L) peer.channel_id else peer.chat_id)
+        if (dialogId !in pending) return
+        failed = true
         onResult(dialogId)
     }
 
     fun onMessagesDidLoad(args: Array<out Any?>) {
-        if (args[10] as Int != guid) {
-            return
-        }
-        val dialogId = args[0] as Long
-        if ((args[2] as ArrayList<*>).size < MESSAGES_PER_CHANNEL) {
-            exhausted.add(dialogId)
-        }
+        if (guid == 0 || args.getOrNull(10) != guid) return
+        val dialogId = args.getOrNull(0) as? Long ?: return
+        if (dialogId !in pending) return
+        val messages = args.getOrNull(2) as? ArrayList<*> ?: return
+        if (messages.size < MESSAGES_PER_CHANNEL) exhausted.add(dialogId)
         onResult(dialogId)
     }
 
     fun startRound(candidates: ArrayList<LongArray>) {
-        running = true
-        val startedRoundId = ++roundId
-        pending.clear()
-
-        val channelCount = minOf(MAX_CHANNELS_PER_ROUND, candidates.size)
-        for (i in 0 until channelCount) {
-            pending.add(candidates[i][0])
+        cancel()
+        failed = false
+        guid = ConnectionsManager.generateClassGuid()
+        val startedGuid = guid
+        val batch = candidates.distinctBy { it[0] }.take(MAX_CHANNELS_PER_ROUND)
+        pending.addAll(batch.map { it[0] })
+        if (pending.isEmpty()) {
+            finishRound(true)
+            return
         }
-
+        timeout = Runnable {
+            if (guid == startedGuid) finishRound(false)
+        }.also { AndroidUtilities.runOnUIThread(it, ROUND_TIMEOUT_MS) }
         val messagesController = MessagesController.getInstance(currentAccount)
-        for (i in 0 until channelCount) {
-            val dialogId = candidates[i][0]
-            val maxId = candidates[i][1].toInt()
+        for (candidate in batch) {
             messagesController.loadMessages(
-                dialogId, 0L, false, MESSAGES_PER_CHANNEL, maxId, 0, false, 0,
-                guid, 0, 0, 0, 0L, 0, loadIndex++, false
+                candidate[0], 0L, false, MESSAGES_PER_CHANNEL, candidate[1].toInt(), 0, false, 0,
+                startedGuid, 0, 0, 0, 0L, 0, loadIndex++, false
             )
         }
-
-        AndroidUtilities.runOnUIThread({ onRoundTimeout(startedRoundId) }, ROUND_TIMEOUT_MS)
     }
 
     companion object {

@@ -10,6 +10,9 @@ import org.telegram.tgnet.TLRPC
 
 internal class FeedTimelineLoader(private val currentAccount: Int) {
 
+    @Volatile
+    private var channelCacheEpoch = 0
+    @Volatile
     private var channelSetCache: ChannelSet? = null
 
     private enum class Direction(val operator: String) {
@@ -17,13 +20,15 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
         NEWER(">"),
     }
 
-    class ChannelEnumeration {
+    class ChannelEnumeration(val configGeneration: Int, val cacheEpoch: Int) {
+        var failed = false
         var hasChannels = false
         val included = ArrayList<ChannelSnapshot>()
         val channels = ArrayList<TLRPC.Chat>()
     }
 
     class ChannelSet(val sessionGen: Int, val configGen: Int) {
+        var failed = false
         var hasChannels = false
         val includedRows = ArrayList<LongArray>()
         val channels = ArrayList<TLRPC.Chat>()
@@ -54,6 +59,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
     }
 
     class NewerPage {
+        var failed = false
         var hasMore = false
         val messages = ArrayList<TLRPC.Message>()
         val users = ArrayList<TLRPC.User>()
@@ -62,6 +68,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
     }
 
     class OlderPage {
+        var failed = false
         var hasIncomplete = false
         var hasMoreNewer = false
         var lastChunkRowCount = 0
@@ -74,13 +81,14 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
     }
 
     class WindowPage {
+        var failed = false
         var truncated = false
         val messages = ArrayList<TLRPC.Message>()
         val users = ArrayList<TLRPC.User>()
         val chats = ArrayList<TLRPC.Chat>()
     }
 
-    private fun buildChannelSet(feedConfig: FeedConfig, sessionGen: Int, configGen: Int): ChannelSet {
+    private fun buildChannelSet(feedConfig: FeedConfig.Snapshot, sessionGen: Int, configGen: Int): ChannelSet {
         val channelSet = ChannelSet(sessionGen, configGen)
         try {
             val messagesStorage = MessagesStorage.getInstance(currentAccount)
@@ -123,12 +131,11 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
                 }
                 channelSet.hasChannels = true
                 channelSet.channels.add(chat!!)
-                if (!feedConfig.isHidden(currentAccount, row[0])) {
-                    channelSet.includedRows.add(row)
-                }
+                channelSet.includedRows.add(row)
             }
         } catch (e: Exception) {
             FileLog.e(e)
+            channelSet.failed = true
         }
         return channelSet
     }
@@ -264,13 +271,13 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
 
     private fun readMessage(sqlCursor: SQLiteCursor): TLRPC.Message? {
         val data = sqlCursor.byteBufferValue(0) ?: return null
-        val message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false)
-        if (message == null) {
+        val message = try {
+            TLRPC.Message.TLdeserialize(data, data.readInt32(false), false)?.also {
+                it.readAttachPath(data, UserConfig.getInstance(currentAccount).clientUserId)
+            }
+        } finally {
             data.reuse()
-            return null
-        }
-        message.readAttachPath(data, UserConfig.getInstance(currentAccount).clientUserId)
-        data.reuse()
+        } ?: return null
         if (message is TLRPC.TL_messageEmpty || message.action != null) {
             return null
         }
@@ -280,24 +287,37 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
         return message
     }
 
-    fun enumerateChannels(feedConfig: FeedConfig, sessionGen: Int, forceRefresh: Boolean): ChannelEnumeration {
-        var channelSet = channelSetCache
+    fun enumerateChannels(feedConfig: FeedConfig.Snapshot, sessionGen: Int, forceRefresh: Boolean): ChannelEnumeration {
+        val epoch = channelCacheEpoch
+        val cached = channelSetCache
         val configGen = feedConfig.generation
-        if (forceRefresh || channelSet == null || channelSet.sessionGen != sessionGen || channelSet.configGen != configGen) {
-            channelSet = buildChannelSet(feedConfig, sessionGen, configGen)
-            channelSetCache = channelSet
-        }
-        val enumeration = ChannelEnumeration()
+        val channelSet = if (forceRefresh || cached == null || cached.sessionGen != sessionGen || cached.configGen != configGen) {
+            buildChannelSet(feedConfig, sessionGen, configGen).also { built ->
+                synchronized(this) {
+                    if (!built.failed && epoch == channelCacheEpoch) channelSetCache = built
+                }
+            }
+        } else cached
+        val enumeration = ChannelEnumeration(configGen, epoch)
+        enumeration.failed = channelSet.failed
         enumeration.hasChannels = channelSet.hasChannels
         enumeration.channels.addAll(channelSet.channels)
         for (i in channelSet.includedRows.indices) {
             val row = channelSet.includedRows[i]
-            enumeration.included.add(ChannelSnapshot(row[0], row[1].toInt(), row[2].toInt(), row[3].toInt()))
+            if (!feedConfig.isHidden(row[0])) {
+                enumeration.included.add(ChannelSnapshot(row[0], row[1].toInt(), row[2].toInt(), row[3].toInt()))
+            }
         }
         return enumeration
     }
 
+    fun isEnumerationCurrent(enumeration: ChannelEnumeration): Boolean =
+        enumeration.cacheEpoch == channelCacheEpoch &&
+            enumeration.configGeneration == FeedConfig.getInstance(currentAccount).generation
+
+    @Synchronized
     fun invalidateChannelCache() {
+        channelCacheEpoch++
         channelSetCache = null
     }
 
@@ -344,6 +364,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
             }
         } catch (e: Exception) {
             FileLog.e(e)
+            page.failed = true
         }
         clusterGroupedMessages(page.messages)
         return page
@@ -391,6 +412,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
             }
         } catch (e: Exception) {
             FileLog.e(e)
+            page.failed = true
         }
         clusterGroupedMessages(page.messages)
         return page
@@ -423,6 +445,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
             if (chats.isNotEmpty()) storage.getChatsInternal(chats.joinToString(","), page.chats)
 
             val newer = loadNewerPage(channels, anchor)
+            if (newer.failed) return null
             page.messages.addAll(0, newer.messages.asReversed())
             page.users.addAll(newer.users)
             page.chats.addAll(newer.chats)
@@ -451,7 +474,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
 
             val holeEnds = HashMap<Long, Int>()
             val sqlCursor = messagesStorage.getDatabase().queryFinalized(
-                "SELECT uid, max(end) FROM messages_holes WHERE uid IN ($dialogIdsSql) GROUP BY uid"
+                "SELECT uid, max(end) FROM messages_holes WHERE uid IN ($dialogIdsSql) AND NOT (start = 1 AND end = 1) GROUP BY uid"
             )
             try {
                 while (sqlCursor.next()) {
@@ -519,6 +542,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
             }
         } catch (e: Exception) {
             FileLog.e(e)
+            page.failed = true
         }
         clusterGroupedMessages(page.messages)
         return page
@@ -557,15 +581,16 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
             if (messages.size < 3) {
                 return
             }
-            val albums = HashMap<Long, ArrayList<TLRPC.Message>>()
+            val albums = HashMap<Pair<Long, Long>, ArrayList<TLRPC.Message>>()
             var hasAlbums = false
             for (i in messages.indices) {
                 val groupedId = messages[i].grouped_id
+                val albumKey = messages[i].dialog_id to groupedId
                 if (groupedId != 0L) {
-                    var album = albums[groupedId]
+                    var album = albums[albumKey]
                     if (album == null) {
                         album = ArrayList()
-                        albums[groupedId] = album
+                        albums[albumKey] = album
                     } else {
                         hasAlbums = true
                     }
@@ -576,14 +601,15 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
                 return
             }
             val clustered = ArrayList<TLRPC.Message>(messages.size)
-            val appended = HashSet<Long>()
+            val appended = HashSet<Pair<Long, Long>>()
             for (i in messages.indices) {
                 val message = messages[i]
                 val groupedId = message.grouped_id
+                val albumKey = message.dialog_id to groupedId
                 if (groupedId == 0L) {
                     clustered.add(message)
-                } else if (appended.add(groupedId)) {
-                    clustered.addAll(albums[groupedId]!!)
+                } else if (appended.add(albumKey)) {
+                    clustered.addAll(albums[albumKey]!!)
                 }
             }
             messages.clear()

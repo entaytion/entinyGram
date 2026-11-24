@@ -1,11 +1,13 @@
 package desu.inugram.helpers.feed
 
 import desu.inugram.InuConfig
-import android.os.SystemClock
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.UserConfig
 
-class FeedConfig private constructor() {
+class FeedConfig private constructor(account: Int) {
+
+    val categories = FeedCategories(account)
 
     val includeArchived: Boolean
         get() = InuConfig.FEED_INCLUDE_ARCHIVED.value
@@ -32,30 +34,56 @@ class FeedConfig private constructor() {
     var folderFilterId: Int = 0
         private set
 
-    private val folderMembership = HashMap<Long, Boolean>()
-    private var folderMembershipAt = 0L
-
     fun setFolder(filterId: Int) {
-        synchronized(folderMembership) { folderMembership.clear() }
+        categories.select("")
+        if (folderFilterId == filterId) return
         folderFilterId = filterId
         FeedChannelSet.invalidate()
     }
 
-    fun isHidden(account: Int, dialogId: Long): Boolean = isExcluded(dialogId) || !inFolder(account, dialogId)
+    fun selectCategory(id: String) {
+        categories.select(id)
+        folderFilterId = 0
+    }
+
+    val selectionKey: String
+        get() = categories.selected?.let { "category_${it.id}" } ?: "folder_$folderFilterId"
+
+    fun isHidden(account: Int, dialogId: Long): Boolean =
+        categories.selected?.let { dialogId !in it.channels } ?: (isExcluded(dialogId) || !inFolder(account, dialogId))
 
     private fun inFolder(account: Int, dialogId: Long): Boolean {
         val filterId = folderFilterId
         if (filterId == 0) return true
         val filter = MessagesController.getInstance(account).dialogFilters?.firstOrNull { it.id == filterId } ?: return true
         if (filter.isDefault) return true
-        synchronized(folderMembership) {
-            val now = SystemClock.elapsedRealtime()
-            if (now - folderMembershipAt > MEMBERSHIP_TTL_MS) {
-                folderMembership.clear()
-                folderMembershipAt = now
+        return filter.includesDialog(AccountInstance.getInstance(account), dialogId)
+    }
+
+    class Snapshot(
+        val generation: Int,
+        val includeArchived: Boolean,
+        private val excluded: Set<Long>,
+        private val folderDialogs: Set<Long>?,
+    ) {
+        fun isHidden(dialogId: Long): Boolean = dialogId in excluded || folderDialogs?.contains(dialogId) == false
+    }
+
+    fun snapshot(account: Int): Snapshot {
+        val category = categories.selected
+        if (category != null) return Snapshot(generation, includeArchived, emptySet(), category.channels)
+        val controller = MessagesController.getInstance(account)
+        val filter = controller.dialogFilters?.firstOrNull { it.id == folderFilterId && !it.isDefault }
+        val folderDialogs = filter?.let {
+            val included = HashSet<Long>()
+            val dialogs = controller.dialogs_dict
+            for (index in 0 until dialogs.size()) {
+                val dialogId = dialogs.keyAt(index)
+                if (it.includesDialog(AccountInstance.getInstance(account), dialogId)) included.add(dialogId)
             }
-            return folderMembership.getOrPut(dialogId) { filter.includesDialog(AccountInstance.getInstance(account), dialogId) }
+            included
         }
+        return Snapshot(generation, includeArchived, excludedSnapshot, folderDialogs)
     }
 
     fun setExcluded(dialogId: Long, excluded: Boolean) {
@@ -94,10 +122,9 @@ class FeedConfig private constructor() {
     }
 
     companion object {
-        private const val MEMBERSHIP_TTL_MS = 5_000L
-        private val instance = FeedConfig()
+        private val instances = Array(UserConfig.MAX_ACCOUNT_COUNT) { FeedConfig(it) }
 
         @JvmStatic
-        fun getInstance(account: Int): FeedConfig = instance
+        fun getInstance(account: Int): FeedConfig = instances[account]
     }
 }

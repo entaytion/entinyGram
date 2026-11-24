@@ -2371,4 +2371,13 @@
     <string name="InuPinLimitEnable">تفعيل</string>
     <string name="InuLocalReactions">تفاعلات محلية</string>
     <string name="InuLocalReactionsInfo">يتيح لك وضع حتى 3 تفاعلات على الرسالة دون Premium. يقبل Telegram تفاعلاً واحدًا فقط، لذا تُحفظ البقية على هذا الجهاز ولا يراها أحد غيرك.</string>
+    <string name="InuFeedWidePosts">منشورات عريضة في الخلاصة</string>
+    <string name="InuFeedWidePostsInfo">توسيع المنشورات في الخلاصة دون تغيير محادثات القنوات. يظل الإعداد العام للمنشورات العريضة ساريًا.</string>
+    <string name="InuFeedUnreadCounter">عداد غير المقروء في تبويب الخلاصة</string>
+    <string name="InuFeedCategories">فئات الخلاصة</string>
+    <string name="InuFeedCategoryCreate">إنشاء فئة</string>
+    <string name="InuFeedCategoryName">اسم الفئة</string>
+    <string name="InuFeedCategoryHidden">إخفاء الفئة من قائمة الاختيار</string>
+    <string name="InuFeedCategoriesInfo">اختر قنوات كل فئة بشكل مستقل عن الخلاصة الرئيسية. اسحب الفئات لتغيير ترتيبها.</string>
+    <string name="InuFeedCategoryDeleteConfirm">حذف هذه الفئة؟ ستبقى اشتراكاتك في قنواتها.</string>
 </resources>

@@ -24,16 +24,19 @@ class FeedController private constructor(
     val store = FeedStore()
     private val unreadTracker = FeedUnreadTracker(currentAccount, store.getMessages())
     private val loader = FeedTimelineLoader(currentAccount)
-    private val backfill = FeedBackfillCoordinator(currentAccount) { onBackfillRoundFinished() }
+    private val backfill = FeedBackfillCoordinator(currentAccount) { onBackfillRoundFinished(it) }
 
     private val initialLoadWaiters = ArrayList<IntArray>()
     private val closedRefreshGuid = ConnectionsManager.generateClassGuid()
     private val closedRefreshRunnable = Runnable { runClosedRefresh() }
     private var closedRefreshScheduled = false
 
+    private var staleOlderRetries = 0
+    private var staleNewerRetries = 0
     private var attemptRounds = 0
     private var cachedIncludedChannelCount = 0
     private var configGeneration = 0
+    private var activeSelectionKey = FeedConfig.getInstance(currentAccount).selectionKey
     private var sessionGeneration = 0
     private var heldGuid = 0
     private var heldLoadIndex = 0
@@ -74,6 +77,7 @@ class FeedController private constructor(
 
     private fun subscribe(account: Int) {
         val notificationCenter = NotificationCenter.getInstance(account)
+        notificationCenter.addObserver(this, NotificationCenter.dialogFiltersUpdated)
         notificationCenter.addObserver(this, NotificationCenter.messagesDidLoad)
         notificationCenter.addObserver(this, NotificationCenter.loadingMessagesFailed)
         notificationCenter.addObserver(this, NotificationCenter.messagesDeleted)
@@ -85,6 +89,7 @@ class FeedController private constructor(
     private fun isUiActive(): Boolean = uiActiveClients > 0
 
     private fun applyEnumeration(enumeration: FeedTimelineLoader.ChannelEnumeration) {
+        if (enumeration.failed || !loader.isEnumerationCurrent(enumeration)) return
         hasChannels = enumeration.hasChannels
         hasIncludedChannels = enumeration.included.isNotEmpty()
         cachedIncludedChannelCount = enumeration.included.size
@@ -123,6 +128,10 @@ class FeedController private constructor(
     }
 
     private fun ensureCurrentConfig() {
+        if (activeSelectionKey != FeedConfig.getInstance(currentAccount).selectionKey) {
+            clear()
+            return
+        }
         if (configGeneration != FeedConfig.getInstance(currentAccount).generation) {
             applyConfigChange { postNeedReload(it) }
         }
@@ -145,10 +154,36 @@ class FeedController private constructor(
         }
     }
 
-    private fun onBackfillRoundFinished() {
-        if (loading) {
-            runAttempt()
+    private fun onBackfillRoundFinished(success: Boolean) {
+        if (!loading) return
+        if (success) runAttempt() else failOlderLoad(heldGuid, heldLoadIndex)
+    }
+
+    private fun failOlderLoad(classGuid: Int, loadIndex: Int) {
+        loading = false
+        postFeedResults(classGuid, loadIndex, ArrayList(), LOAD_TYPE_OLDER, failed = true)
+        val waiters = ArrayList(initialLoadWaiters)
+        initialLoadWaiters.clear()
+        for (waiter in waiters) {
+            postFeedResults(waiter[0], waiter[1], ArrayList(), LOAD_TYPE_OLDER, failed = true)
         }
+    }
+
+    private fun failNewerLoad(classGuid: Int, loadIndex: Int) {
+        loadingNewer = false
+        postFeedResults(classGuid, loadIndex, ArrayList(), LOAD_TYPE_NEWER, failed = true)
+    }
+
+    private fun acceptOlderEnumeration(enumeration: FeedTimelineLoader.ChannelEnumeration, classGuid: Int, loadIndex: Int): Boolean {
+        if (loader.isEnumerationCurrent(enumeration)) return true
+        if (staleOlderRetries++ < 2) runAttempt() else failOlderLoad(classGuid, loadIndex)
+        return false
+    }
+
+    private fun acceptNewerEnumeration(enumeration: FeedTimelineLoader.ChannelEnumeration, classGuid: Int, loadIndex: Int): Boolean {
+        if (loader.isEnumerationCurrent(enumeration)) return true
+        if (staleNewerRetries++ < 2) runLoadNewer(classGuid, loadIndex) else failNewerLoad(classGuid, loadIndex)
+        return false
     }
 
     private fun onFeedChannelsChanged(added: HashSet<Long>, removed: HashSet<Long>) {
@@ -185,11 +220,12 @@ class FeedController private constructor(
         messages: ArrayList<MessageObject>,
         loadType: Int,
         hasMore: Boolean = false,
+        failed: Boolean = false,
     ) {
         NotificationCenter.getInstance(currentAccount).postNotificationName(
             NotificationCenter.messagesDidLoad,
             0L, messages.size, messages, false, 0, 0, 0, 0, loadType, true,
-            classGuid, loadIndex, 0, 0, ChatActivity.MODE_SEARCH, hasMore
+            classGuid, loadIndex, 0, 0, ChatActivity.MODE_SEARCH, hasMore, failed
         )
     }
 
@@ -223,7 +259,7 @@ class FeedController private constructor(
 
     private fun reconcileChannelSet(callback: Utilities.Callback<Boolean>?) {
         val generation = sessionGeneration
-        val config = FeedConfig.getInstance(currentAccount)
+        val config = FeedConfig.getInstance(currentAccount).snapshot(currentAccount)
         if (store.isEmpty()) {
             loadChannels { _, _ -> callback?.run(false) }
             return
@@ -263,6 +299,10 @@ class FeedController private constructor(
             callback?.run(false)
             return
         }
+        if (enumeration.failed || !loader.isEnumerationCurrent(enumeration) || page?.failed == true) {
+            callback?.run(false)
+            return
+        }
         applyEnumeration(enumeration)
         val includedDialogIds = HashSet<Long>()
         for (snapshot in enumeration.included) {
@@ -297,9 +337,15 @@ class FeedController private constructor(
         val oldest = FeedTimelineLoader.Cursor()
         oldest.set(store.getOldestCursor().date, store.getOldestCursor().uid, store.getOldestCursor().mid)
         val exhausted = backfill.getExhaustedSnapshot()
-        val config = FeedConfig.getInstance(currentAccount)
+        val config = FeedConfig.getInstance(currentAccount).snapshot(currentAccount)
         MessagesStorage.getInstance(currentAccount).getStorageQueue().postRunnable {
             val enumeration = loader.enumerateChannels(config, generation, false)
+            if (enumeration.failed) {
+                AndroidUtilities.runOnUIThread {
+                    if (generation == sessionGeneration) failOlderLoad(classGuid, loadIndex)
+                }
+                return@postRunnable
+            }
             if (enumeration.included.isEmpty()) {
                 AndroidUtilities.runOnUIThread { applyEmptyOlderPage(generation, enumeration, classGuid, loadIndex) }
                 return@postRunnable
@@ -322,6 +368,7 @@ class FeedController private constructor(
         if (generation != sessionGeneration) {
             return
         }
+        if (!acceptOlderEnumeration(enumeration, classGuid, loadIndex)) return
         applyEnumeration(enumeration)
         olderPagingBoundsDirty = false
         unreadTracker.clear()
@@ -342,6 +389,11 @@ class FeedController private constructor(
         loadIndex: Int,
     ) {
         if (generation != sessionGeneration) {
+            return
+        }
+        if (!acceptOlderEnumeration(enumeration, classGuid, loadIndex)) return
+        if (page.failed) {
+            failOlderLoad(classGuid, loadIndex)
             return
         }
         if (olderPagingBoundsDirty) {
@@ -382,11 +434,21 @@ class FeedController private constructor(
         val generation = sessionGeneration
         val newest = FeedTimelineLoader.Cursor()
         newest.set(store.getNewestCursor().date, store.getNewestCursor().uid, store.getNewestCursor().mid)
-        val config = FeedConfig.getInstance(currentAccount)
+        val config = FeedConfig.getInstance(currentAccount).snapshot(currentAccount)
         MessagesStorage.getInstance(currentAccount).getStorageQueue().postRunnable {
             val enumeration = loader.enumerateChannels(config, generation, false)
+            if (enumeration.failed) {
+                AndroidUtilities.runOnUIThread {
+                    if (generation == sessionGeneration) failNewerLoad(classGuid, loadIndex)
+                }
+                return@postRunnable
+            }
             if (enumeration.included.isEmpty()) {
-                AndroidUtilities.runOnUIThread { applyEmptyNewerPage(generation, classGuid, loadIndex) }
+                AndroidUtilities.runOnUIThread {
+                    if (generation == sessionGeneration) {
+                        if (acceptNewerEnumeration(enumeration, classGuid, loadIndex)) applyEmptyNewerPage(generation, classGuid, loadIndex)
+                    }
+                }
                 return@postRunnable
             }
             val page = loader.loadNewerPage(enumeration.included, newest)
@@ -417,6 +479,11 @@ class FeedController private constructor(
         messageObjects: ArrayList<MessageObject>,
     ) {
         if (generation != sessionGeneration) {
+            return
+        }
+        if (!acceptNewerEnumeration(enumeration, classGuid, loadIndex)) return
+        if (page.failed) {
+            failNewerLoad(classGuid, loadIndex)
             return
         }
         if (newerPagingBoundsDirty) {
@@ -535,7 +602,14 @@ class FeedController private constructor(
     }
 
     fun applyConfigChange(callback: Utilities.Callback<Boolean>?) {
+        if (activeSelectionKey != FeedConfig.getInstance(currentAccount).selectionKey) {
+            clear()
+            callback?.run(true)
+            return
+        }
         configGeneration = FeedConfig.getInstance(currentAccount).generation
+        loader.invalidateChannelCache()
+        backfill.clearExhausted()
         reconcileChannelSet(callback)
     }
 
@@ -552,6 +626,7 @@ class FeedController private constructor(
 
     fun clear() {
         sessionGeneration++
+        activeSelectionKey = FeedConfig.getInstance(currentAccount).selectionKey
         configGeneration = FeedConfig.getInstance(currentAccount).generation
         unreadTracker.clear()
         store.clear()
@@ -599,7 +674,12 @@ class FeedController private constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
-        if (id == NotificationCenter.messagesDidLoad) {
+        if (id == NotificationCenter.dialogFiltersUpdated) {
+            if (FeedConfig.getInstance(currentAccount).folderFilterId != 0) {
+                FeedChannelSet.invalidate()
+                applyConfigChange { postNeedReload(it) }
+            }
+        } else if (id == NotificationCenter.messagesDidLoad) {
             backfill.onMessagesDidLoad(args)
         } else if (id == NotificationCenter.loadingMessagesFailed) {
             backfill.onLoadingMessagesFailed(args)
@@ -661,7 +741,7 @@ class FeedController private constructor(
     }
 
     fun loadChannels(callback: ChannelsCallback?) {
-        val config = FeedConfig.getInstance(currentAccount)
+        val config = FeedConfig.getInstance(currentAccount).snapshot(currentAccount)
         val generation = sessionGeneration
         MessagesStorage.getInstance(currentAccount).getStorageQueue().postRunnable {
             val enumeration = loader.enumerateChannels(config, generation, false)
@@ -669,6 +749,7 @@ class FeedController private constructor(
                 if (generation != sessionGeneration) {
                     return@runOnUIThread
                 }
+                if (enumeration.failed || !loader.isEnumerationCurrent(enumeration)) return@runOnUIThread
                 applyEnumeration(enumeration)
                 MessagesController.getInstance(currentAccount).putChats(enumeration.channels, true)
                 callback?.onChannels(enumeration.channels, enumeration.included.size)
@@ -702,12 +783,17 @@ class FeedController private constructor(
             return false
         }
         val generation = sessionGeneration
-        val config = FeedConfig.getInstance(currentAccount)
+        val config = FeedConfig.getInstance(currentAccount).snapshot(currentAccount)
         MessagesStorage.getInstance(currentAccount).getStorageQueue().postRunnable {
             val enumeration = loader.enumerateChannels(config, generation, true)
             AndroidUtilities.runOnUIThread {
+                if (generation != sessionGeneration) return@runOnUIThread
+                if (enumeration.failed || !loader.isEnumerationCurrent(enumeration)) {
+                    postFeedResults(classGuid, loadIndex, ArrayList(), LOAD_TYPE_OLDER, failed = true)
+                    return@runOnUIThread
+                }
                 applyEnumeration(enumeration)
-                postFeedResults(classGuid, loadIndex, visibleMessages, 0)
+                postFeedResults(classGuid, loadIndex, store.getVisibleMessages(), 0)
                 postFeedCount(classGuid)
             }
         }
@@ -720,6 +806,7 @@ class FeedController private constructor(
             return false
         }
         loading = true
+        staleOlderRetries = 0
         heldGuid = classGuid
         heldLoadIndex = loadIndex
         attemptRounds = 0
@@ -733,6 +820,7 @@ class FeedController private constructor(
             return false
         }
         loadingNewer = true
+        staleNewerRetries = 0
         runLoadNewer(classGuid, loadIndex)
         return true
     }
@@ -753,7 +841,7 @@ class FeedController private constructor(
 
     fun refreshReadState(callback: Runnable?) {
         val generation = sessionGeneration
-        val config = FeedConfig.getInstance(currentAccount)
+        val config = FeedConfig.getInstance(currentAccount).snapshot(currentAccount)
         MessagesStorage.getInstance(currentAccount).getStorageQueue().postRunnable {
             val enumeration = loader.enumerateChannels(config, generation, true)
             AndroidUtilities.runOnUIThread {
@@ -775,8 +863,11 @@ class FeedController private constructor(
     fun resolveRealMessageId(dialogId: Long, syntheticMessageId: Int): Int =
         store.resolveRealMessageId(dialogId, syntheticMessageId)
 
-    private fun scrollPositionKey(): String =
-        "inu_feed_scroll_${UserConfig.getInstance(currentAccount).clientUserId}_${FeedConfig.getInstance(currentAccount).folderFilterId}"
+    private fun scrollPositionKey(): String {
+        val config = FeedConfig.getInstance(currentAccount)
+        val scope = config.categories.selected?.let { "category_${it.id}" } ?: config.folderFilterId.toString()
+        return "inu_feed_scroll_${UserConfig.getInstance(currentAccount).clientUserId}_$scope"
+    }
 
     fun saveScrollPosition(dialogId: Long, messageId: Int, offsetTop: Int) {
         if (dialogId == 0L || messageId <= 0) {

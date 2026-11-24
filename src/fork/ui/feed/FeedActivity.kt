@@ -42,6 +42,7 @@ class FeedActivity @JvmOverloads constructor(
 
     private var chatContainer: ChatActivityContainer? = null
     private var embeddedChatCreated = false
+    private var lastSelectionKey = ""
     private var lastConfigGeneration = 0
     private var lastWindowInsets: WindowInsetsCompat? = null
     private var parentTabsGlassInvalidationCallback: Runnable? = null
@@ -61,6 +62,7 @@ class FeedActivity @JvmOverloads constructor(
         val nc = NotificationCenter.getInstance(currentAccount)
         nc.addObserver(this, NotificationCenter.didReceiveNewMessages)
         nc.addObserver(this, NotificationCenter.feedNeedReload)
+        lastSelectionKey = FeedConfig.getInstance(currentAccount).selectionKey
         lastConfigGeneration = FeedConfig.getInstance(currentAccount).generation
         return super.onFragmentCreate()
     }
@@ -233,7 +235,9 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     private fun currentFolderName(): String? {
-        val filterId = FeedConfig.getInstance(currentAccount).folderFilterId
+        val config = FeedConfig.getInstance(currentAccount)
+        config.categories.selected?.let { return it.title }
+        val filterId = config.folderFilterId
         if (filterId == 0) return null
         val filter = MessagesController.getInstance(currentAccount).dialogFilters?.firstOrNull { it.id == filterId } ?: return null
         if (filter.isDefault) return null
@@ -245,31 +249,56 @@ class FeedActivity @JvmOverloads constructor(
 
     private fun showFolderPicker(anchor: View) {
         val folders = pickableFolders()
-        if (folders.isEmpty()) {
+        val config = FeedConfig.getInstance(currentAccount)
+        val categories = config.categories.categories.filterNot { it.hidden }
+        if (folders.isEmpty() && categories.isEmpty()) {
             presentFragment(FeedExcludedChannelsSettingsActivity())
             return
         }
-        val current = FeedConfig.getInstance(currentAccount).folderFilterId
+        val current = config.folderFilterId
+        val selectedCategory = config.categories.selected?.id
         val options = ItemOptions.makeOptions(this, anchor)
         options.setGravity(Gravity.LEFT)
-        if (current != 0) {
+        if (current != 0 || selectedCategory != null) {
             options.add(R.drawable.msg_channel, LocaleController.getString(R.string.InuFeedAllChannels)) { selectFolder(0) }
         }
+        for (category in categories) {
+            if (category.id == selectedCategory) continue
+            options.add(R.drawable.msg_folders, category.title) { selectCategory(category.id) }
+        }
         for (filter in folders) {
-            if (filter.id == current) continue
+            if (selectedCategory == null && filter.id == current) continue
             val info = FolderHelper.getTabInfo(filter)
             val name = info.first.takeIf { it.isNotEmpty() } ?: continue
             options.add(FolderHelper.getTabIcon(info.second), name) { selectFolder(filter.id) }
         }
+        options.add(R.drawable.msg_settings, LocaleController.getString(R.string.InuFeedManageChannels)) {
+            presentFragment(FeedExcludedChannelsSettingsActivity())
+        }
         options.show()
+    }
+
+    private fun selectCategory(id: String) {
+        chat?.saveFeedScrollPosition()
+        FeedConfig.getInstance(currentAccount).selectCategory(id)
+        reloadSelection()
+    }
+
+    private fun reloadSelection() {
+        val config = FeedConfig.getInstance(currentAccount)
+        lastSelectionKey = config.selectionKey
+        lastConfigGeneration = config.generation
+        chat?.clearSelectionMode()
+        chat?.reloadFeed()
+        updateFeedSubtitle()
+        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateInterfaces, 0)
     }
 
     private fun selectFolder(filterId: Int) {
         val config = FeedConfig.getInstance(currentAccount)
+        chat?.saveFeedScrollPosition()
         config.setFolder(filterId)
-        lastConfigGeneration = config.generation
-        chat?.applyFeedConfigChange()
-        updateFeedSubtitle()
+        reloadSelection()
     }
 
     private fun showMarkAllReadDialog() {
@@ -295,7 +324,9 @@ class FeedActivity @JvmOverloads constructor(
     private fun destroyEmbeddedChat() {
         val chatActivity = chat
         if (chatActivity != null) {
-            if (!hasMainTabs && embeddedChatCreated) chatActivity.saveFeedScrollPosition()
+            if (!hasMainTabs && embeddedChatCreated && lastSelectionKey == FeedConfig.getInstance(currentAccount).selectionKey) {
+                chatActivity.saveFeedScrollPosition()
+            }
             chatActivity.setFeedChannelsChangedCallback(null)
             chatActivity.setGlassSourceInvalidationCallback(null)
             if (embeddedChatCreated) chatActivity.onFragmentDestroy()
@@ -350,7 +381,9 @@ class FeedActivity @JvmOverloads constructor(
         invalidateEmbeddedActionBar()
 
         val generation = FeedConfig.getInstance(currentAccount).generation
-        if (generation != lastConfigGeneration) {
+        if (lastSelectionKey != FeedConfig.getInstance(currentAccount).selectionKey) {
+            reloadSelection()
+        } else if (generation != lastConfigGeneration) {
             lastConfigGeneration = generation
             chat?.applyFeedConfigChange()
         } else if (resumedOnce) {
@@ -365,6 +398,7 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     override fun onPause() {
+        chat?.saveFeedScrollPosition()
         super.onPause()
         chatContainer?.let {
             updateFeedViewportActive(false)

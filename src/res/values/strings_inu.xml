@@ -2381,4 +2381,13 @@
     <string name="InuPinLimitEnable">Enable</string>
     <string name="InuLocalReactions">Local reactions</string>
     <string name="InuLocalReactionsInfo">Lets you put up to 3 reactions on a message without Premium. Telegram only accepts one, so the extra ones are kept on this device and nobody else sees them.</string>
+    <string name="InuFeedWidePosts">Wide posts in feed</string>
+    <string name="InuFeedWidePostsInfo">Widen posts in the feed without changing channel chats. The global wide-post setting still applies.</string>
+    <string name="InuFeedUnreadCounter">Unread counter on the feed tab</string>
+    <string name="InuFeedCategories">Feed categories</string>
+    <string name="InuFeedCategoryCreate">Create category</string>
+    <string name="InuFeedCategoryName">Category name</string>
+    <string name="InuFeedCategoryHidden">Hide category from the picker</string>
+    <string name="InuFeedCategoriesInfo">Choose channels for each category independently of the main feed. Drag categories to reorder them.</string>
+    <string name="InuFeedCategoryDeleteConfirm">Delete this category? Its channels will remain subscribed.</string>
 </resources>

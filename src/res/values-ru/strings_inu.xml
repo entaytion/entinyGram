@@ -2384,4 +2384,13 @@
     <string name="InuPinLimitEnable">Включить</string>
     <string name="InuLocalReactions">Локальные реакции</string>
     <string name="InuLocalReactionsInfo">Позволяет поставить до 3 реакций на сообщение без Premium. Telegram принимает только одну, поэтому остальные хранятся на этом устройстве, и никто другой их не видит.</string>
+    <string name="InuFeedWidePosts">Широкие посты в ленте</string>
+    <string name="InuFeedWidePostsInfo">Расширяет посты в ленте, не меняя чаты каналов. Общее правило широких постов также действует.</string>
+    <string name="InuFeedUnreadCounter">Счётчик непрочитанного на вкладке ленты</string>
+    <string name="InuFeedCategories">Категории ленты</string>
+    <string name="InuFeedCategoryCreate">Создать категорию</string>
+    <string name="InuFeedCategoryName">Название категории</string>
+    <string name="InuFeedCategoryHidden">Скрыть категорию из списка выбора</string>
+    <string name="InuFeedCategoriesInfo">Выбирайте каналы каждой категории независимо от основной ленты. Перетаскивайте категории для изменения порядка.</string>
+    <string name="InuFeedCategoryDeleteConfirm">Удалить эту категорию? Подписки на её каналы сохранятся.</string>
 </resources>
