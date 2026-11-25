@@ -331,7 +331,16 @@
     <string name="InuBottomTabsSeparateSearch">Отдельная кнопка поиска</string>
     <string name="InuBottomTabsSeparateSearchInfo">Показывать поиск круглой кнопкой рядом с нижней панелью</string>
     <string name="InuBottomTabsV2">Стиль плавающей пилюли</string>
-    <string name="InuBottomTabsV2Info">Активная вкладка растягивается в пилюлю с иконкой и подписью в одну строку, остальные показывают только иконки. Заменяет вид Material 3, iOS и компактной панели, перетаскивание вкладок отключено</string>
+    <string name="InuBottomTabsHideBadges">Скрыть счётчики непрочитанного</string>
+    <string name="InuBottomTabsHideFade">Убрать затемнение снизу</string>
+    <string name="InuBottomTabsHideProfileAvatar">Показывать значок вместо аватара профиля</string>
+    <string name="InuBottomTabsOrder">Порядок вкладок</string>
+    <string name="InuBottomTabsOrderInfo">Перетаскивайте вкладки за ручки. Вкладка «Чаты» всегда доступна.</string>
+    <string name="InuBottomTabsPreviewEmpty">Здесь появятся ваши чаты</string>
+    <string name="InuBottomTabsStyle">Стиль нижней панели</string>
+    <string name="InuBottomTabsWidth">Ширина капсулы</string>
+    <string name="InuBottomTabsWidthStandard">Стандартная</string>
+    <string name="InuBottomTabsWidthWide">Широкая</string>
     <string name="InuBubbles">Пузыри</string>
     <string name="InuBubbleTails">Хвостики у сообщений</string>
     <string name="InuBusinessBot">Бизнес-бот</string>
@@ -1259,7 +1268,6 @@
     <string name="InuMaskServerAppNameInfo">Скрывает название entinyGram в списке сеансов и показывает стандартное название клиента</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Avatars">Аватары</string>
-    <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
     <string name="InuMaterial3Fabs">Плавающие кнопки</string>
     <string name="InuMaterial3HeadersInCard">Названия секций в карточке</string>
     <string name="InuMaterial3NavigationAnimation">Анимация навигации</string>

@@ -57,7 +57,8 @@ object MainTabsV2Helper {
             if (layout.isViewVisible(layout.getChildAt(a))) visible.add(a) else widths[a] = 0f
         }
         if (visible.isEmpty()) return
-        val limit = min(available, AndroidUtilities.displaySize.x - dp(SCREEN_SIDE_RESERVE))
+        val customWidth = layout.inu_widthMode != 0
+        val limit = (if (customWidth) available else min(available, AndroidUtilities.displaySize.x - dp(SCREEN_SIDE_RESERVE))).coerceAtLeast(0)
         var inactive = dpf2(INACTIVE_WIDTH)
         val others = (visible.size - 1).coerceAtLeast(0)
         val selectedIndex = visible.firstOrNull { (layout.getChildAt(it) as? GlassTabView)?.isTabSelected == true }
@@ -66,10 +67,21 @@ object MainTabsV2Helper {
             val label = (layout.getChildAt(selectedIndex) as GlassTabView).measureTextWidth()
             active = max(inactive, pillWidth(label))
         }
-        if (selectedIndex == null) {
+        if (customWidth) {
+            val equal = limit.toFloat() / visible.size
+            if (others > 0 && selectedIndex != null) {
+                val minimum = min(dpf2(MIN_INACTIVE_WIDTH), equal)
+                active = active.coerceIn(equal, (limit - minimum * others).coerceAtLeast(equal))
+                inactive = (limit - active) / others
+            } else {
+                active = equal
+                inactive = equal
+            }
+        } else if (selectedIndex == null) {
             if (inactive * visible.size > limit) inactive = limit.toFloat() / visible.size
         } else if (active + inactive * others > limit) {
-            inactive = max(dpf2(MIN_INACTIVE_WIDTH), (limit - active) / max(1, others))
+            val minimum = min(dpf2(MIN_INACTIVE_WIDTH), limit.toFloat() / visible.size)
+            inactive = max(minimum, (limit - active) / max(1, others))
             active = max(inactive, min(active, limit - inactive * others))
         }
         for (a in visible) widths[a] = if (a == selectedIndex) active else inactive

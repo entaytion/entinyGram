@@ -1,261 +1,300 @@
 package desu.inugram.ui.settings
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.view.Gravity
 import android.view.MotionEvent
-import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.view.View
+import android.widget.ScrollView
+import android.widget.TextView
+import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.MainTabsHelper
-import desu.inugram.helpers.menu.MainTabsMenuConfig
-import org.telegram.messenger.AndroidUtilities
+import desu.inugram.helpers.feed.FeedHelper
+import desu.inugram.helpers.menu.MainTabsMenuConfig.Item
+import desu.inugram.helpers.theme.M3MainTabsHelper
+import desu.inugram.helpers.theme.MainTabsV2Helper
 import org.telegram.messenger.AndroidUtilities.dp
+import org.telegram.messenger.LocaleController.getString
+import org.telegram.messenger.MessagesController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
-import org.telegram.messenger.UserConfig
+import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Cells.DialogCell
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
+import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
+import org.telegram.ui.Components.chat.ViewPositionWatcher
 import org.telegram.ui.Components.glass.GlassTabView
-import kotlin.math.abs
+import org.telegram.ui.DialogsActivity
+import org.telegram.ui.MainTabsLayout
+import org.telegram.utils.glass.source.GlassSourceColor
+import org.telegram.utils.glass.source.GlassSourceRenderNode
 
-@SuppressLint("ViewConstructor", "ClickableViewAccessibility")
-class MainTabsPreviewCell(
+internal class MainTabsPreviewCell(
     context: Context,
-    private val onToggle: (MainTabsMenuConfig.Item) -> Unit,
-    private val onReorder: (List<MainTabsMenuConfig.Item>) -> Unit,
-) : FrameLayout(context) {
-
-    private val group = LinearLayout(context).apply {
-        orientation = LinearLayout.HORIZONTAL
-        gravity = Gravity.CENTER_VERTICAL
+    private val account: Int,
+    private val provider: Theme.ResourcesProvider?,
+) : FrameLayout(context), NotificationCenter.NotificationCenterDelegate {
+    private val scene = FrameLayout(context)
+    private val chats = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
     }
-    private val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
-    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    private val scroll = object : ScrollView(context) {
+        override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> if (canScrollVertically(1) || canScrollVertically(-1)) {
+                    parent.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> parent.requestDisallowInterceptTouchEvent(false)
+            }
+            return super.dispatchTouchEvent(event)
+        }
 
-    private var order = emptyList<MainTabsMenuConfig.Item>()
-    private var enabledItems = emptySet<MainTabsMenuConfig.Item>()
-    private var separateSearch = false
-    private var searchChip: SearchBubble? = null
-    private var chipWidthDp = MainTabsHelper.tabWidth
-    private var draggedItem: MainTabsMenuConfig.Item? = null
-    private var dragStartRawX = 0f
-    private var dragging = false
-    private var dragStartOrder = emptyList<MainTabsMenuConfig.Item>()
-    private var dragStartIndex = -1
+        override fun onScrollChanged(left: Int, top: Int, oldLeft: Int, oldTop: Int) {
+            super.onScrollChanged(left, top, oldLeft, oldTop)
+            if (MainTabsHelper.isHideOnScroll && top != oldTop) {
+                setBarHiddenByScroll(top > oldTop)
+            }
+            invalidateScene()
+        }
+    }.apply {
+        isVerticalScrollBarEnabled = false
+        overScrollMode = OVER_SCROLL_NEVER
+        addView(chats, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat()))
+    }
+    private val empty = TextView(context).apply {
+        gravity = Gravity.CENTER
+        text = getString(R.string.InuBottomTabsPreviewEmpty)
+        setTextSize(14f)
+    }
+    private val fade = View(context)
+    private val bar = object : LinearLayout(context) {
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            val current = state
+            if (current != null && !current.material) {
+                val separateWidth = if (current.separateSearch) dp(56f) else 0
+                val availableWidth = (MeasureSpec.getSize(widthMeasureSpec) - dp(12f) - separateWidth).coerceAtLeast(1)
+                val tabCount = current.order.size - if (current.separateSearch) 1 else 0
+                val normalWidth = dp((tabCount * MainTabsHelper.tabWidth + 2 * (MainTabsHelper.mainTabsMargin + MainTabsHelper.TAB_PADDING)).toFloat())
+                val width = if (MainTabsHelper.hasCustomWidth) availableWidth else minOf(availableWidth, normalWidth)
+                layout?.setMaxWidth(width)
+            }
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        }
+    }.apply {
+        gravity = Gravity.CENTER_VERTICAL
+        clipChildren = false
+        clipToPadding = false
+    }
+    private val fallback = GlassSourceColor()
+    private val source = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) GlassSourceRenderNode(fallback) else null
+    private val glass = BlurredBackgroundDrawableViewFactory(source ?: fallback, source ?: fallback, fallback).apply {
+        setSourceRootView(ViewPositionWatcher(scene), scene)
+        setLiquidGlassEffectAllowed(true)
+    }
+    private var sceneDirty = true
+    private var state: BarState? = null
+    private var selection = Item.CHATS
+    private var layout: MainTabsLayout? = null
+    private var updateGlassColors: (() -> Unit)? = null
+    private val notifications = NotificationCenter.getInstance(account)
+    private val events = intArrayOf(NotificationCenter.dialogsNeedReload, NotificationCenter.updateInterfaces)
+    private var startTab = InuConfig.START_TAB.value
+
+    private data class BarState(
+        val order: List<Item>,
+        val material: Boolean,
+        val ios: Boolean,
+        val floating: Boolean,
+        val compact: Boolean,
+        val titles: Boolean,
+        val avatar: Boolean,
+        val separateSearch: Boolean,
+        val width: Int,
+    )
 
     init {
-        setWillNotDraw(false)
-        row.setPadding(dp(ROW_PADDING_DP.toFloat()), dp(ROW_PADDING_DP.toFloat()), dp(ROW_PADDING_DP.toFloat()), dp(ROW_PADDING_DP.toFloat()))
-        row.background = Theme.createRoundRectDrawable(dp(MainTabsHelper.mainTabsHeight / 2f), Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText), 0.14f))
-        group.addView(row, LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
-        addView(group, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
+        scene.clipToOutline = true
+        scene.addView(scroll, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat()))
+        scene.addView(empty, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat()))
+        scene.addView(fade, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 76, Gravity.BOTTOM))
+        scene.addView(bar, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL))
+        addView(scene, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat(), Gravity.FILL, 16f, 8f, 16f, 8f))
     }
 
-    fun setState(order: List<MainTabsMenuConfig.Item>, enabledItems: Set<MainTabsMenuConfig.Item>, separateSearch: Boolean) {
-        this.order = order.distinct()
-        this.enabledItems = enabledItems
-        this.separateSearch = separateSearch
-        render()
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        events.forEach { notifications.addObserver(this, it) }
+        refreshChats()
+        refresh()
     }
 
-    private fun render() {
-        val verticalPadding = if (MainTabsHelper.isMaterial) 0 else ROW_PADDING_DP
-        row.setPadding(dp(ROW_PADDING_DP.toFloat()), dp(verticalPadding.toFloat()), dp(ROW_PADDING_DP.toFloat()), dp(verticalPadding.toFloat()))
-        row.removeAllViews()
-        searchChip?.let { group.removeView(it) }
-        searchChip = null
-        visibleOrder().forEach { item -> addTab(item, item in enabledItems) }
-        if (separateSearch) {
-            val search = SearchBubble(context).apply {
-                bind(MainTabsMenuConfig.Item.SEARCH in enabledItems)
-                isClickable = true
-                setOnClickListener { onToggle(MainTabsMenuConfig.Item.SEARCH) }
+    override fun onDetachedFromWindow() {
+        events.forEach { notifications.removeObserver(this, it) }
+        super.onDetachedFromWindow()
+    }
+
+    override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
+        if (id == NotificationCenter.dialogsNeedReload) refreshChats()
+        if (id == NotificationCenter.updateInterfaces) {
+            val mask = args.firstOrNull() as? Int ?: 0
+            for (index in 0 until chats.childCount) (chats.getChildAt(index) as DialogCell).update(mask)
+            invalidateScene()
+        }
+        refreshBadges()
+    }
+
+    private fun refreshChats() {
+        chats.removeAllViews()
+        MessagesController.getInstance(account).getDialogs(0).asSequence()
+            .filterNot { it is TLRPC.TL_dialogFolder }
+            .take(10)
+            .forEach { dialog ->
+                val cell = DialogCell(null, context, false, false, account, provider)
+                cell.setDialog(dialog, DialogsActivity.DIALOGS_TYPE_DEFAULT, 0)
+                cell.useSeparator = true
+                chats.addView(cell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
             }
-            searchChip = search
-            group.addView(search, LayoutHelper.createLinear(SEARCH_BUTTON_SIZE_DP, SEARCH_BUTTON_SIZE_DP, 0f, (SEARCH_ZONE_WIDTH_DP - SEARCH_BUTTON_SIZE_DP) / 2, 0, 0, 0, 0))
-        }
-        requestLayout()
+        empty.visibility = if (chats.childCount == 0) VISIBLE else GONE
+        invalidateScene()
     }
 
-    // entiny: the real bottom bar's own tab view, built the way MainTabsActivity builds it, so the preview cannot drift from it
-    private fun createTab(item: MainTabsMenuConfig.Item, enabled: Boolean): GlassTabView {
-        val tab = if (item == MainTabsMenuConfig.Item.PROFILE) {
-            GlassTabView.createAvatar(context, null, UserConfig.selectedAccount, item.labelRes)
-        } else {
-            GlassTabView.createMainTab(context, null, animationOf(item), item.labelRes)
-        }
-        if (MainTabsHelper.isMaterial) tab.inu_setMaterialTabs()
-        tab.setMainTabsCompact(!MainTabsHelper.showTitles)
-        tab.setSelected(item == MainTabsMenuConfig.Item.CHATS, false)
-        tab.alpha = if (enabled) 1f else DISABLED_ALPHA
-        return tab
-    }
+    fun refresh() {
+        val color = color(Theme.key_windowBackgroundWhite)
+        scene.background = Theme.createRoundRectDrawable(dp(14f), color)
+        fallback.setColor(color)
+        empty.setTextColor(color(Theme.key_windowBackgroundWhiteGrayText))
+        fade.background = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(Color.TRANSPARENT, color))
 
-    private fun animationOf(item: MainTabsMenuConfig.Item): GlassTabView.TabAnimation = when (item) {
-        MainTabsMenuConfig.Item.CONTACTS -> GlassTabView.TabAnimation.CONTACTS
-        MainTabsMenuConfig.Item.SETTINGS -> GlassTabView.TabAnimation.SETTINGS
-        MainTabsMenuConfig.Item.CALLS -> GlassTabView.TabAnimation.CALLS
-        MainTabsMenuConfig.Item.FEED -> GlassTabView.TabAnimation.INU_FEED
-        MainTabsMenuConfig.Item.SEARCH -> GlassTabView.TabAnimation.INU_SEARCH
-        else -> GlassTabView.TabAnimation.CHATS
-    }
-
-    private fun addTab(item: MainTabsMenuConfig.Item, enabled: Boolean) {
-        val tab = createTab(item, enabled).apply {
-            tag = item
-            isClickable = true
-            setOnTouchListener { _, event -> handleTouch(item, event) }
-        }
-        row.addView(tab, tabLayoutParams())
-    }
-
-    private fun handleTouch(item: MainTabsMenuConfig.Item, event: MotionEvent): Boolean {
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                draggedItem = item
-                dragStartRawX = event.rawX
-                dragging = false
-                dragStartOrder = visibleOrder()
-                dragStartIndex = dragStartOrder.indexOf(item)
-                parent?.requestDisallowInterceptTouchEvent(true)
-            }
-            MotionEvent.ACTION_MOVE -> {
-                if (draggedItem == item && dragStartIndex >= 0) {
-                    if (!dragging && abs(event.rawX - dragStartRawX) > touchSlop) {
-                        dragging = true
-                        parent?.requestDisallowInterceptTouchEvent(true)
-                    }
-                    if (dragging) updateDrag(item, event.rawX)
-                }
-            }
-            MotionEvent.ACTION_UP -> {
-                if (draggedItem != item) return true
-                if (dragging) {
-                    updateDrag(item, event.rawX)
-                    val newOrder = orderFromPointer(item, event.rawX)
-                    resetDragViews()
-                    dragging = false
-                    draggedItem = null
-                    parent?.requestDisallowInterceptTouchEvent(false)
-                    if (newOrder != visibleOrder()) onReorder(newOrder)
-                } else {
-                    draggedItem = null
-                    parent?.requestDisallowInterceptTouchEvent(false)
-                    if (dragStartIndex >= 0 && item != MainTabsMenuConfig.Item.CHATS) onToggle(item)
-                }
-            }
-            MotionEvent.ACTION_CANCEL -> {
-                resetDragViews()
-                dragging = false
-                draggedItem = null
-                parent?.requestDisallowInterceptTouchEvent(false)
-            }
-        }
-        return true
-    }
-
-    private fun orderFromPointer(item: MainTabsMenuConfig.Item, rawX: Float): List<MainTabsMenuConfig.Item> {
-        val result = dragStartOrder.toMutableList()
-        if (dragStartIndex < 0) return result
-
-        val location = IntArray(2)
-        row.getLocationOnScreen(location)
-        var target = 0
-        for (index in 0 until dragStartOrder.size) {
-            val view = row.getChildAt(index) ?: continue
-            val center = location[0] + view.left + view.width / 2f
-            if (rawX >= center) target = index
-        }
-        target = target.coerceIn(0, result.lastIndex)
-        if (dragStartIndex != target) result.add(target, result.removeAt(dragStartIndex))
-        return result
-    }
-
-    private fun updateDrag(item: MainTabsMenuConfig.Item, rawX: Float) {
-        val chip = row.findViewWithTag<View>(item) ?: return
-        chip.translationX = rawX - dragStartRawX
-        val targetOrder = orderFromPointer(item, rawX)
-        val step = dp((chipWidthDp + CHIP_GAP_DP).toFloat()).toFloat()
-        targetOrder.forEachIndexed { index, targetItem ->
-            val neighbor = row.findViewWithTag<View>(targetItem) ?: return@forEachIndexed
-            if (neighbor !== chip) {
-                val originalIndex = dragStartOrder.indexOf(targetItem)
-                neighbor.translationX = (index - originalIndex) * step
-            }
-        }
-    }
-
-    private fun resetDragViews() {
-        for (index in 0 until row.childCount) {
-            row.getChildAt(index).translationX = 0f
-        }
-    }
-
-    private fun visibleOrder(): List<MainTabsMenuConfig.Item> =
-        if (separateSearch) order.filterNot { it == MainTabsMenuConfig.Item.SEARCH } else order
-
-    // entiny: material tabs lay their label out inside the whole bar height, so shrinking them by the floating bar's padding clips the titles
-    private fun tabLayoutParams() =
-        LayoutHelper.createLinear(
-            chipWidthDp,
-            if (MainTabsHelper.isMaterial) MainTabsHelper.mainTabsHeight else MainTabsHelper.mainTabsBarHeight - 2 * MainTabsHelper.tabsInnerPaddingVertical,
-            0f, 2, 0, 2, 0,
+        val order = if (MainTabsHelper.isHidden) emptyList() else MainTabsHelper.configuredOrder()
+        val next = BarState(
+            order, MainTabsHelper.isMaterial, MainTabsHelper.isIos, MainTabsHelper.isV2, MainTabsHelper.isCompact,
+            MainTabsHelper.showTitles, !InuConfig.BOTTOM_TABS_HIDE_PROFILE_AVATAR.value,
+            Item.SEARCH in order && InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value && !MainTabsHelper.isMaterial,
+            InuConfig.BOTTOM_TABS_WIDTH.value,
         )
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight - dp(SIDE_INSET_DP * 2f)
-        val chipCount = row.childCount
-        if (chipCount > 0 && availableWidth > 0) {
-            val separateWidth = if (separateSearch) dp(SEARCH_ZONE_WIDTH_DP.toFloat()) else 0
-            val fitWidthDp = (availableWidth - separateWidth - dp(ROW_PADDING_DP * 2f)) / AndroidUtilities.density / chipCount - CHIP_GAP_DP
-            val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, MainTabsHelper.tabWidth)
-            if (newChipWidthDp != chipWidthDp) {
-                chipWidthDp = newChipWidthDp
-                for (index in 0 until row.childCount) {
-                    row.getChildAt(index).layoutParams = tabLayoutParams()
-                }
+        val nextStartTab = InuConfig.START_TAB.value
+        if (state != next || startTab != nextStartTab) {
+            val previous = state
+            state = next
+            if (previous == null || startTab != nextStartTab || selection !in order || (next.separateSearch && selection == Item.SEARCH)) {
+                selection = order.firstOrNull { !it.isShortcut && it.index == nextStartTab } ?: Item.CHATS
             }
+            startTab = nextStartTab
+            renderBar(next)
         }
-        super.onMeasure(
-            MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(dp(HEIGHT_DP.toFloat()), MeasureSpec.EXACTLY),
-        )
+        setBarHiddenByScroll(false)
+        val lp = bar.layoutParams as LayoutParams
+        lp.width = if (next.material) LayoutHelper.MATCH_PARENT else LayoutHelper.WRAP_CONTENT
+        lp.height = dp(MainTabsHelper.mainTabsBarHeight.toFloat())
+        lp.bottomMargin = dp(MainTabsHelper.bottomLiftDp.toFloat())
+        bar.layoutParams = lp
+        updateGlassColors?.invoke()
+        refreshBadges()
+        invalidateScene()
     }
 
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        canvas.drawLine(0f, (measuredHeight - 1).toFloat(), measuredWidth.toFloat(), (measuredHeight - 1).toFloat(), Theme.dividerPaint)
-    }
-
-    private class SearchBubble(context: Context) : FrameLayout(context) {
-        init {
-            background = Theme.createRoundRectDrawable(dp(SEARCH_BUTTON_SIZE_DP / 2f), Theme.getColor(Theme.key_chats_actionBackground))
-            val icon = ImageView(context).apply {
+    private fun renderBar(state: BarState) {
+        for (index in 0 until bar.childCount) glass.unsubscribe(bar.getChildAt(index))
+        bar.removeAllViews()
+        layout = null
+        updateGlassColors = null
+        if (state.order.isEmpty()) return
+        val tabs = MainTabsLayout(context, provider)
+        layout = tabs
+        val margin = MainTabsHelper.mainTabsMargin
+        val vertical = dp(MainTabsHelper.tabsInnerPaddingVertical.toFloat())
+        val horizontal = dp((margin + MainTabsHelper.TAB_PADDING).toFloat())
+        tabs.setPadding(horizontal, vertical, horizontal, vertical)
+        M3MainTabsHelper.applyTabsLayout(tabs)
+        MainTabsHelper.applyIosTabsLayout(tabs)
+        MainTabsV2Helper.applyTabsLayout(tabs)
+        MainTabsHelper.applyWidth(tabs)
+        val background = glass.create(tabs, BlurredBackgroundProviderImpl.inu_mainTabs(provider, state.ios)).apply {
+            setRadius(dp(MainTabsHelper.mainTabsHeight / 2f).toFloat())
+            setPadding(dp(margin - 0.334f))
+        }
+        M3MainTabsHelper.applyTabsBackground(background)
+        tabs.background = background
+        state.order.filterNot { state.separateSearch && it == Item.SEARCH }.forEach { item ->
+            val tab = MainTabsHelper.createTab(context, provider, account, item)
+            tab.tag = item
+            tab.contentDescription = getString(item.labelRes)
+            tab.setSelected(item == selection, false)
+            tab.setOnClickListener {
+                selection = item
+                tabs.setTabSelected(tab, true)
+                tabs.requestLayout()
+            }
+            tabs.addView(tab)
+        }
+        M3MainTabsHelper.applyTabsBar(bar)
+        bar.addView(tabs, M3MainTabsHelper.tabsLayoutParams(LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT)))
+        val searchBackground = if (state.separateSearch) {
+            val search = ImageView(context).apply {
                 scaleType = ImageView.ScaleType.CENTER
                 setImageResource(R.drawable.outline_header_search)
-                colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY)
+                setColorFilter(color(Theme.key_glass_tabUnselected))
+                contentDescription = getString(R.string.Search)
             }
-            addView(icon, LayoutHelper.createFrame(28, 28, Gravity.CENTER))
-        }
-
-        fun bind(enabled: Boolean) {
-            alpha = if (enabled) 1f else DISABLED_ALPHA
+            val drawable = glass.create(search, BlurredBackgroundProviderImpl.inu_mainTabs(provider, state.ios)).apply {
+                setRadius(dp(26f).toFloat())
+            }
+            search.background = drawable
+            bar.addView(search, LinearLayout.LayoutParams(dp(52f), dp(52f)).apply { marginStart = dp(4f) })
+            drawable
+        } else null
+        updateGlassColors = {
+            background.updateColors()
+            searchBackground?.updateColors()
         }
     }
 
+    private fun refreshBadges() {
+        layout?.findViewWithTag<GlassTabView>(Item.CHATS)
+            ?.setCounter(MainTabsHelper.chatsBadge(account), false, false)
+        layout?.findViewWithTag<GlassTabView>(Item.FEED)
+            ?.setCounter(FeedHelper.unreadBadge(account), false, false)
+    }
+
+    private fun setBarHiddenByScroll(hidden: Boolean) {
+        val show = !MainTabsHelper.isHidden && !hidden
+        bar.visibility = if (show) VISIBLE else GONE
+        fade.visibility = if (show && !MainTabsHelper.hideFade) VISIBLE else GONE
+    }
+
+    private fun invalidateScene() {
+        sceneDirty = true
+        invalidate()
+    }
+
+    override fun dispatchDraw(canvas: Canvas) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && source != null && canvas.isHardwareAccelerated &&
+            scene.width > 0 && scene.height > 0 && (sceneDirty || source.needUpdateDisplayList(scene.width, scene.height))
+        ) {
+            val capture = source.beginRecording(scene.width, scene.height)
+            capture.drawColor(color(Theme.key_windowBackgroundWhite))
+            scroll.draw(capture)
+            source.endRecording()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                source.setBlur(dp(18f).toFloat() * InuConfig.LIQUID_GLASS_BLUR.value.coerceIn(10, 200) / 100f)
+            }
+            source.invalidateDisplayListForDrawables()
+            sceneDirty = false
+        }
+        super.dispatchDraw(canvas)
+    }
+
+    private fun color(key: Int) = Theme.getColor(key, provider)
+
     companion object {
-        private const val DISABLED_ALPHA = 0.4f
-        private const val ROW_PADDING_DP = 4
-        private const val SIDE_INSET_DP = 12
-        private const val CHIP_GAP_DP = 4
-        private const val MIN_CHIP_WIDTH_DP = 40
-        private const val SEARCH_BUTTON_SIZE_DP = 52
-        private const val SEARCH_ZONE_WIDTH_DP = 64
-        private const val HEIGHT_DP = 78
+        const val HEIGHT_DP = 224
     }
 }

@@ -328,7 +328,16 @@
     <string name="InuBottomTabsSeparateSearch">زر بحث منفصل</string>
     <string name="InuBottomTabsSeparateSearchInfo">إظهار البحث كزر دائري بجانب علامات التبويب السفلية</string>
     <string name="InuBottomTabsV2">نمط الحبة العائمة</string>
-    <string name="InuBottomTabsV2Info">يتمدد التبويب النشط إلى حبة تعرض الأيقونة والعنوان في سطر واحد، وتعرض بقية التبويبات الأيقونات فقط. يستبدل مظهر Material 3 وiOS والمضغوط، وسحب التبويبات متوقف</string>
+    <string name="InuBottomTabsHideBadges">إخفاء عدادات غير المقروء</string>
+    <string name="InuBottomTabsHideFade">إزالة التدرج السفلي</string>
+    <string name="InuBottomTabsHideProfileAvatar">استخدام أيقونة بدلاً من صورة الملف الشخصي</string>
+    <string name="InuBottomTabsOrder">ترتيب علامات التبويب</string>
+    <string name="InuBottomTabsOrderInfo">اسحب المقابض لتغيير الترتيب. تبقى علامة تبويب المحادثات متاحة دائمًا.</string>
+    <string name="InuBottomTabsPreviewEmpty">ستظهر محادثاتك هنا</string>
+    <string name="InuBottomTabsStyle">نمط شريط التنقل</string>
+    <string name="InuBottomTabsWidth">عرض الشريط العائم</string>
+    <string name="InuBottomTabsWidthStandard">قياسي</string>
+    <string name="InuBottomTabsWidthWide">عريض</string>
     <string name="InuBubbles">الفقاعات</string>
     <string name="InuBubbleTails">ذيول الفقاعات</string>
     <string name="InuBusinessBot">بوت الأعمال</string>
@@ -1260,7 +1269,6 @@
     <string name="InuMaskServerAppNameInfo">يخفي اسم entinyGram في قائمة الجلسات ويعرض اسم العميل الرسمي بدلًا منه</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Avatars">الصور الرمزية</string>
-    <string name="InuMaterial3BottomTabs">علامات التبويب السفلية</string>
     <string name="InuMaterial3Fabs">الأزرار العائمة</string>
     <string name="InuMaterial3HeadersInCard">عناوين الأقسام داخل البطاقة</string>
     <string name="InuMaterial3NavigationAnimation">حركة التنقل</string>

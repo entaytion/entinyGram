@@ -66,6 +66,7 @@ object SearchRegistry {
             FontsSettingsActivity.PAGE,
             FontStackActivity.PAGE,
             Schemas.DIALOGS.page,
+            Schemas.BOTTOM_TABS.page,
             Schemas.CHATS.page,
             Schemas.MEDIA.page,
             Schemas.PRIVACY.page,

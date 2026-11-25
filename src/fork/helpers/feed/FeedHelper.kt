@@ -15,8 +15,13 @@ object FeedHelper {
     fun updateUnreadCounter(account: Int, tab: GlassTabView?, animated: Boolean) {
         if (tab == null) return
         counterTab = WeakReference(tab)
-        val count = if (isEnabled() && InuConfig.FEED_UNREAD_COUNTER.value) FeedController.getInstance(account).getUnreadCount() else 0
-        tab.setCounter(if (count > 0) LocaleController.formatNumber(count.toLong(), ',') else null, false, animated)
+        tab.setCounter(unreadBadge(account), false, animated)
+    }
+
+    fun unreadBadge(account: Int): String? {
+        if (!isEnabled() || !InuConfig.FEED_UNREAD_COUNTER.value || InuConfig.BOTTOM_TABS_HIDE_BADGES.value) return null
+        val count = FeedController.getInstance(account).getUnreadCount()
+        return if (count > 0) LocaleController.formatNumber(count.toLong(), ',') else null
     }
 
     // entiny: called after feed reads are applied, the main tabs only redraw the badge on their own events

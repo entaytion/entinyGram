@@ -326,7 +326,16 @@
     <string name="InuBottomTabsSeparateSearch">検索ボタンを分離</string>
     <string name="InuBottomTabsSeparateSearchInfo">検索を下部タブの横に丸いボタンとして表示します</string>
     <string name="InuBottomTabsV2">フローティングピル スタイル</string>
-    <string name="InuBottomTabsV2Info">選択中のタブはアイコンとラベルを1行に並べたピルに広がり、他はアイコンのみ表示されます。Material 3、iOS、コンパクトの表示を置き換え、タブのドラッグは無効です</string>
+    <string name="InuBottomTabsHideBadges">未読バッジを非表示</string>
+    <string name="InuBottomTabsHideFade">下部のグラデーションを非表示</string>
+    <string name="InuBottomTabsHideProfileAvatar">プロフィール画像の代わりにアイコンを表示</string>
+    <string name="InuBottomTabsOrder">タブの並び順</string>
+    <string name="InuBottomTabsOrderInfo">ハンドルをドラッグして並べ替えます。チャットタブは常に表示されます。</string>
+    <string name="InuBottomTabsPreviewEmpty">ここにチャットが表示されます</string>
+    <string name="InuBottomTabsStyle">ナビゲーションバーのスタイル</string>
+    <string name="InuBottomTabsWidth">カプセルの幅</string>
+    <string name="InuBottomTabsWidthStandard">標準</string>
+    <string name="InuBottomTabsWidthWide">広い</string>
     <string name="InuBubbles">バブル</string>
     <string name="InuBubbleTails">吹き出しのしっぽ</string>
     <string name="InuBusinessBot">ビジネスボット</string>
@@ -1251,7 +1260,6 @@
     <string name="InuMaskServerAppNameInfo">セッション一覧でentinyGramの名前を隠し、公式クライアント名を表示します</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Avatars">アバター</string>
-    <string name="InuMaterial3BottomTabs">下部タブ</string>
     <string name="InuMaterial3Fabs">フローティングボタン</string>
     <string name="InuMaterial3HeadersInCard">カード内にセクション名を表示</string>
     <string name="InuMaterial3NavigationAnimation">ナビゲーションアニメーション</string>

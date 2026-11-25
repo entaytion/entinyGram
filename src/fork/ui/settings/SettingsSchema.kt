@@ -1,5 +1,6 @@
 package desu.inugram.ui.settings
 
+import android.content.Context
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
@@ -63,6 +64,13 @@ sealed class Row {
         val clickAt: ((SchemaPageActivity, View, Float) -> Unit)? = null,
     ) : Row()
 
+    class Reorder(
+        val slug: String,
+        val titleRes: Int,
+        val build: (SchemaPageActivity) -> List<UItem>,
+        val save: (SchemaPageActivity, List<UItem>) -> Unit,
+    ) : Row()
+
     class Slider(
         val item: InuConfig.Item<Int>,
         val titleRes: Int,
@@ -104,6 +112,7 @@ class Schema(val slug: String, val titleRes: Int, val iconRes: Int, val sections
                     is Row.Choice -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
                     is Row.Group -> entry(r.slug, r.titleRes, r.id)
                     is Row.Custom -> if (r.slug.isEmpty()) null else entry(r.slug, r.titleRes, r.id)
+                    is Row.Reorder -> entry(r.slug, r.titleRes, r.id)
                     is Row.Slider -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
                     is Row.Link -> if (r.slug.isEmpty()) null else entry(r.slug, r.titleRes, r.id)
                 }
@@ -175,6 +184,15 @@ class SectionBuilder {
     ) {
         rows.add(Row.Slider(item, titleRes, min, max, step, format, onReleased, onChanged).also { it.visible = visible })
     }
+
+    fun reorder(
+        slug: String,
+        titleRes: Int,
+        build: (SchemaPageActivity) -> List<UItem>,
+        save: (SchemaPageActivity, List<UItem>) -> Unit,
+    ) {
+        rows.add(Row.Reorder(slug, titleRes, build, save))
+    }
 }
 
 class SchemaBuilder {
@@ -198,6 +216,7 @@ fun schema(slug: String, titleRes: Int, iconRes: Int, build: SchemaBuilder.() ->
     Schema(slug, titleRes, iconRes, SchemaBuilder().apply(build).sections)
 
 class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActivity() {
+    private val reorderSections = mutableListOf<Row.Reorder>()
     private val groups = HashMap<Int, ExpandableBoolGroup>().also { map ->
         schema.rows.filterIsInstance<Row.Group>().forEach { map[it.id] = it.create(it.id) }
     }
@@ -207,6 +226,14 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
     override val expandableGroups: List<ExpandableBoolGroup> get() = groups.values.toList()
 
     override fun getTitle(): CharSequence = LocaleController.getString(schema.titleRes)
+
+    override fun createView(context: Context): View = super.createView(context).also {
+        if (schema.rows.any { it is Row.Reorder }) {
+            listView.allowReorder(true)
+            listView.setReorderLongPressEnabled(true)
+            listView.listenReorder { index, items -> reorderSections.getOrNull(index)?.save?.invoke(this, items) }
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -249,6 +276,7 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
     fun <T : Any> remember(key: Int, create: () -> T): T = remembered.getOrPut(key, create) as T
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        reorderSections.clear()
         for (section in schema.sections) {
             if (section.visible?.invoke() == false) continue
             val rows = section.rows.filter { it.visible?.invoke() != false }
@@ -256,13 +284,13 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
             if (section.headerRes != 0) {
                 items.add(UItem.asHeader(section.id, LocaleController.getString(section.headerRes)))
             }
-            for (row in rows) addRow(items, row)
+            for (row in rows) addRow(items, adapter, row)
             val footer = if (section.footerRes != 0) LocaleController.getString(section.footerRes) else null
             items.add(UItem.asShadow(footer))
         }
     }
 
-    private fun addRow(items: ArrayList<UItem>, row: Row) {
+    private fun addRow(items: ArrayList<UItem>, adapter: UniversalAdapter, row: Row) {
         when (row) {
             is Row.Toggle -> items.add(
                 if (row.infoRes != 0 || row.experimental) {
@@ -304,6 +332,16 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
                 refresh()
             }
             is Row.Custom -> items.add(row.build(this, row.id))
+            is Row.Reorder -> {
+                items.add(UItem.asHeader(row.id, LocaleController.getString(row.titleRes)))
+                val entries = row.build(this)
+                if (entries.isNotEmpty()) {
+                    reorderSections.add(row)
+                    adapter.reorderSectionStart()
+                    items.addAll(entries)
+                    adapter.reorderSectionEnd()
+                }
+            }
             is Row.Slider -> {
                 val cell = sliders.getOrPut(row.id) {
                     SliderCell(
@@ -364,6 +402,7 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
             is Row.Custom -> if (row.clickAt != null) row.clickAt.invoke(this, view, x) else row.click(this, view)
             is Row.Slider -> Unit
             is Row.Group -> Unit
+            is Row.Reorder -> Unit
         }
     }
 }

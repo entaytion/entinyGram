@@ -6,10 +6,6 @@ import android.widget.LinearLayout
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.dialogs.DialogsFabHelper
-import desu.inugram.helpers.dialogs.MainTabsHelper
-import desu.inugram.helpers.feed.FeedHelper
-import desu.inugram.helpers.menu.MainTabsMenuConfig
-import desu.inugram.helpers.menu.MenuOrderEntry
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesStorage
@@ -22,24 +18,6 @@ import org.telegram.ui.Components.UItem
 
 object DialogsSettingsHelper {
     private val KEY_FILTER_PREVIEW = InuUtils.generateId()
-    private val KEY_TABS_STATE = InuUtils.generateId()
-
-    class TabsState(var entries: MutableList<MenuOrderEntry<MainTabsMenuConfig.Item>>) {
-        var preview: MainTabsPreviewCell? = null
-    }
-
-    private fun tabsState(page: SchemaPageActivity): TabsState =
-        page.remember(KEY_TABS_STATE) { TabsState(InuConfig.BOTTOM_TABS_ORDER.value.toMutableList()) }
-
-    fun onSeparateSearchChanged(page: SchemaPageActivity, separate: Boolean) {
-        val search = MainTabsMenuConfig.Item.SEARCH
-        if (separate && tabsState(page).entries.any { it.item == search && !it.enabled }) {
-            toggleMainTab(page, search)
-            return
-        }
-        refreshMainTabsPreview(page)
-        page.showRestart()
-    }
 
     fun filterPreview(page: SchemaPageActivity): FilterTabsPreviewCell? = page.peek(KEY_FILTER_PREVIEW)
 
@@ -48,74 +26,6 @@ object DialogsSettingsHelper {
         val cell = existing ?: page.remember(KEY_FILTER_PREVIEW) { FilterTabsPreviewCell(page.context) }
         if (existing != null) cell.refresh()
         return UItem.asCustom(id, cell)
-    }
-
-    fun mainTabsPreviewItem(page: SchemaPageActivity, id: Int): UItem {
-        val state = tabsState(page)
-        val preview = state.preview ?: MainTabsPreviewCell(
-            page.context,
-            onToggle = { item -> toggleMainTab(page, item) },
-            onReorder = { newOrder -> reorderMainTabs(page, newOrder) },
-        ).also { state.preview = it }
-        refreshMainTabsPreview(page)
-        return UItem.asCustom(id, preview)
-    }
-
-    fun refreshMainTabsPreview(page: SchemaPageActivity) {
-        val state = tabsState(page)
-        val cell = state.preview ?: return
-        val shown = state.entries.filter { it.item != MainTabsMenuConfig.Item.FEED || FeedHelper.isEnabled() }
-        cell.setState(
-            shown.map { it.item },
-            shown.filter { it.enabled || it.item == MainTabsMenuConfig.Item.CHATS }.map { it.item }.toSet(),
-            InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value && !MainTabsHelper.isMaterial,
-        )
-    }
-
-    private fun toggleMainTab(page: SchemaPageActivity, item: MainTabsMenuConfig.Item) {
-        if (item == MainTabsMenuConfig.Item.CHATS) return
-        val state = tabsState(page)
-        val idx = state.entries.indexOfFirst { it.item == item }
-        if (idx < 0) return
-        state.entries[idx] = state.entries[idx].copy(enabled = !state.entries[idx].enabled)
-        InuConfig.BOTTOM_TABS_ORDER.value = state.entries
-        refreshMainTabsPreview(page)
-        page.refresh()
-        page.showRestart()
-    }
-
-    private fun reorderMainTabs(page: SchemaPageActivity, newOrder: List<MainTabsMenuConfig.Item>) {
-        val state = tabsState(page)
-        val byItem = state.entries.associateBy { it.item }
-        val moved = newOrder.distinct().mapNotNull { byItem[it] }
-        val movedItems = moved.mapTo(HashSet()) { it.item }
-        // entiny: emit moved entries once at the first moved slot so filtered-out entries keep their position
-        val result = ArrayList<MenuOrderEntry<MainTabsMenuConfig.Item>>(state.entries.size)
-        var movedEmitted = false
-        for (entry in state.entries) {
-            if (entry.item in movedItems) {
-                if (!movedEmitted) {
-                    result.addAll(moved)
-                    movedEmitted = true
-                }
-            } else {
-                result.add(entry)
-            }
-        }
-        if (!movedEmitted) result.addAll(moved)
-        state.entries = result
-        InuConfig.BOTTOM_TABS_ORDER.value = state.entries
-        refreshMainTabsPreview(page)
-        page.showRestart()
-    }
-
-    fun resetMainTabs(page: SchemaPageActivity) {
-        val state = tabsState(page)
-        InuConfig.BOTTOM_TABS_ORDER.resetToDefault()
-        state.entries = InuConfig.BOTTOM_TABS_ORDER.default.toMutableList()
-        refreshMainTabsPreview(page)
-        page.refresh()
-        page.showRestart()
     }
 
     fun resetUnreadCounters() {
@@ -298,30 +208,6 @@ object DialogsSettingsHelper {
                     InuConfig.COMMUNITY_DISPLAY_MODE.value = newValue
                     page.refresh()
                     page.rebuildAll()
-                }.create()
-        )
-    }
-
-    private fun startTabItems(page: SchemaPageActivity) = tabsState(page).entries
-        .filter { it.item != MainTabsMenuConfig.Item.SEARCH && (it.enabled || it.item == MainTabsMenuConfig.Item.CHATS) }
-        .map { it.item }
-
-    fun startTabLabel(page: SchemaPageActivity): String {
-        val current = startTabItems(page).firstOrNull { it.index == InuConfig.START_TAB.value } ?: MainTabsMenuConfig.Item.CHATS
-        return LocaleController.getString(current.labelRes)
-    }
-
-    fun showStartTab(page: SchemaPageActivity) {
-        val context = page.context ?: return
-        val items = startTabItems(page)
-        val current = items.indexOfFirst { it.index == InuConfig.START_TAB.value }.coerceAtLeast(0)
-        page.showDialog(
-            RadioDialogBuilder(context, page.resourceProvider)
-                .setTitle(LocaleController.getString(R.string.InuStartTab))
-                .setItems(items.map { RadioDialogBuilder.Item(LocaleController.getString(it.labelRes)) }, current) { _, which ->
-                    InuConfig.START_TAB.value = items[which].index
-                    page.refresh()
-                    page.showRestart()
                 }.create()
         )
     }

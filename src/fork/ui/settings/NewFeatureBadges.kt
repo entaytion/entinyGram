@@ -12,6 +12,7 @@ object NewFeatureBadges {
         "hide-profile-stories-tab",
         "chat-list-avatar-percent",
         "voice-enhance",
+        "bottom-tabs-open",
     )
 
     val active: Boolean get() = SLUGS.isNotEmpty()

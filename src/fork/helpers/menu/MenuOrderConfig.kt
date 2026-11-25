@@ -4,8 +4,10 @@ import android.content.SharedPreferences
 import desu.inugram.InuConfig
 import desu.inugram.helpers.chat.ChatActionsHelper
 import desu.inugram.helpers.chat.ChatHelper
+import desu.inugram.helpers.feed.FeedHelper
 import org.json.JSONArray
 import org.json.JSONObject
+import org.telegram.messenger.BuildConfig
 import org.telegram.messenger.R
 import org.telegram.ui.ChatActivity
 
@@ -261,7 +263,20 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
         CALLS("calls", 3, R.string.MainTabsCalls, R.drawable.msg_calls),
         PROFILE("profile", 4, R.string.MainTabsProfile, R.drawable.msg_openprofile),
         FEED("feed", 5, R.string.InuFeed, R.drawable.msg_channel),
-        SEARCH("search", 6, R.string.Search, R.drawable.msg_search);
+        SEARCH("search", 6, R.string.Search, R.drawable.msg_search),
+        SAVED("saved", 7, R.string.SavedMessages, R.drawable.msg_saved),
+        ARCHIVE("archive", 8, R.string.ArchivedChats, R.drawable.msg_archive),
+        PLUGINS("plugins", 9, R.string.InuPlugins, R.drawable.entiny_plugins);
+
+        override val isFeatureOn: Boolean
+            get() = when (this) {
+                FEED -> FeedHelper.isEnabled()
+                PLUGINS -> !BuildConfig.INU_PLUGINLESS
+                else -> true
+            }
+
+        val isShortcut: Boolean
+            get() = this == SEARCH || this == SAVED || this == ARCHIVE
 
         companion object {
             private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
@@ -283,7 +298,7 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
     }
 
     companion object {
-        private val OFF_BY_DEFAULT = setOf(Item.CALLS, Item.FEED, Item.SEARCH)
+        private val OFF_BY_DEFAULT = setOf(Item.CALLS, Item.FEED, Item.SEARCH, Item.SAVED, Item.ARCHIVE, Item.PLUGINS)
     }
 }
 

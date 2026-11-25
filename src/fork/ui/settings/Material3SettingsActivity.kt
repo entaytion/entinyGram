@@ -29,7 +29,6 @@ class Material3SettingsActivity : SettingsPageActivity() {
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sections, InuConfig.M3_SECTIONS_STYLE, TOGGLE_M3_SECTIONS_STYLE),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Avatars, InuConfig.MATERIAL3_AVATARS, TOGGLE_MATERIAL3_AVATARS),
-                ExpandableBoolGroup.Option(R.string.InuMaterial3BottomTabs, InuConfig.M3_BOTTOM_TABS, TOGGLE_M3_BOTTOM_TABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterialProfileActions, InuConfig.MATERIAL_PROFILE_ACTIONS, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3NavigationAnimation, InuConfig.M3_NAVIGATION_ANIMATION, TOGGLE_M3_NAVIGATION_ANIMATION),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Player, InuConfig.MD3_PLAYER, TOGGLE_MD3_PLAYER),
@@ -58,10 +57,6 @@ class Material3SettingsActivity : SettingsPageActivity() {
         }
 
         m3Group.addTo(items) { changed ->
-            if (changed.any { it.id == TOGGLE_M3_BOTTOM_TABS } && InuConfig.M3_BOTTOM_TABS.value && InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
-                InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
-                showRestartBulletin()
-            }
             if (changed.any { it.id == TOGGLE_M3_SECTIONS_STYLE }) rebuildAll()
             invalidateVisibleRows()
             softRebuild()
@@ -75,6 +70,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
                 ).setChecked(InuConfig.M3_HEADERS_IN_CARD.value)
             )
         }
+        items.add(UItem.asButton(BUTTON_BOTTOM_TABS, R.drawable.entiny_dock_bottom, LocaleController.getString(R.string.InuBottomTabs)))
         items.add(UItem.asShadow(null))
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDialogsSections)))
         items.add(
@@ -120,21 +116,15 @@ class Material3SettingsActivity : SettingsPageActivity() {
             when (changed?.id) {
                 TOGGLE_MATERIAL3_SWITCHES -> invalidateVisibleRows()
                 TOGGLE_M3_SECTIONS_STYLE -> rebuildAll()
-                TOGGLE_M3_BOTTOM_TABS -> {
-                    if (InuConfig.M3_BOTTOM_TABS.value && InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
-                        InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
-                        invalidateVisibleRows()
-                        showRestartBulletin()
-                    }
-                }
             }
-            if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_BOTTOM_TABS, TOGGLE_MATERIAL_PROFILE_ACTIONS)) {
+            if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_MATERIAL_PROFILE_ACTIONS)) {
                 softRebuild()
             }
             listView.adapter.update(true)
         }) return
 
         when (item.id) {
+            BUTTON_BOTTOM_TABS -> presentFragment(SchemaPageActivity(Schemas.BOTTOM_TABS))
             TOGGLE_DIALOGS_SECTIONS -> {
                 (view as? TextCheckCell)?.isChecked = InuConfig.DIALOGS_M3_SECTIONS.toggle()
                 DialogsM3SectionsHelper.refresh()
@@ -212,6 +202,7 @@ class Material3SettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val BUTTON_BOTTOM_TABS = InuUtils.generateId()
         private val BUTTON_MONET_THEME = InuUtils.generateId()
         private val BUTTON_MONET_STYLE = InuUtils.generateId()
         private val SECTION_MATERIAL3 = InuUtils.generateId()
@@ -225,7 +216,6 @@ class Material3SettingsActivity : SettingsPageActivity() {
         private val BUTTON_DIALOGS_MARGIN = InuUtils.generateId()
         private val TOGGLE_DIALOGS_SEPARATE_PINNED = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
-        private val TOGGLE_M3_BOTTOM_TABS = InuUtils.generateId()
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
         private val TOGGLE_MD3_PLAYER = InuUtils.generateId()
@@ -262,7 +252,6 @@ class Material3SettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("forum-m3-sections", R.string.InuForumSectionsCards, TOGGLE_FORUM_SECTIONS),
                 SearchRegistry.Entry("dialogs-m3-sections", R.string.InuDialogsSectionsCards, TOGGLE_DIALOGS_SECTIONS),
                 SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),
-                SearchRegistry.Entry("m3-bottom-tabs", R.string.InuMaterial3BottomTabs, TOGGLE_M3_BOTTOM_TABS),
                 SearchRegistry.Entry("material-profile-actions", R.string.InuMaterialProfileActions, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
             ),

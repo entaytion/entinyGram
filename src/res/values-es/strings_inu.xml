@@ -329,7 +329,16 @@ Esta acción no se puede deshacer.</string>
     <string name="InuBottomTabsSeparateSearch">Botón de búsqueda separado</string>
     <string name="InuBottomTabsSeparateSearchInfo">Muestra la búsqueda como un botón redondo junto a las pestañas inferiores</string>
     <string name="InuBottomTabsV2">Estilo de píldora flotante</string>
-    <string name="InuBottomTabsV2Info">La pestaña activa se estira en una píldora con icono y texto en una fila; las demás solo muestran iconos. Sustituye el aspecto de Material 3, iOS y compacto; arrastrar pestañas está desactivado</string>
+    <string name="InuBottomTabsHideBadges">Ocultar contadores de no leídos</string>
+    <string name="InuBottomTabsHideFade">Quitar el degradado inferior</string>
+    <string name="InuBottomTabsHideProfileAvatar">Usar un icono en lugar de la foto de perfil</string>
+    <string name="InuBottomTabsOrder">Orden de las pestañas</string>
+    <string name="InuBottomTabsOrderInfo">Arrastra los controles para cambiar el orden. La pestaña Chats siempre está disponible.</string>
+    <string name="InuBottomTabsPreviewEmpty">Tus chats aparecerán aquí</string>
+    <string name="InuBottomTabsStyle">Estilo de la barra de navegación</string>
+    <string name="InuBottomTabsWidth">Ancho de la cápsula</string>
+    <string name="InuBottomTabsWidthStandard">Estándar</string>
+    <string name="InuBottomTabsWidthWide">Ancha</string>
     <string name="InuBubbles">Burbujas</string>
     <string name="InuBubbleTails">Colas de las burbujas</string>
     <string name="InuBusinessBot">Bot de empresa</string>
@@ -1266,7 +1275,6 @@ Toca para personalizar…</string>
     <string name="InuMaskServerAppNameInfo">Oculta el nombre de entinyGram en la lista de sesiones y muestra el del cliente oficial</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Avatars">Avatares</string>
-    <string name="InuMaterial3BottomTabs">Pestañas inferiores</string>
     <string name="InuMaterial3Fabs">Botones flotantes (FAB)</string>
     <string name="InuMaterial3HeadersInCard">Títulos de sección dentro de la tarjeta</string>
     <string name="InuMaterial3NavigationAnimation">Animación de navegación</string>

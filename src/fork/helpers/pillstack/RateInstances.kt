@@ -131,7 +131,7 @@ object RateInstances {
     fun getBaseLabel(code: String): String = if (code == "XAU") "Gold" else code
 
     fun getBaseIcon(code: String): Int = when (code) {
-        "XAU" -> R.drawable.entiny_dollar_coin
+        "XAU" -> R.drawable.entiny_coins_stack
         "BTC" -> R.drawable.entiny_bitcoin
         "ETH" -> R.drawable.entiny_ethereum
         "TON" -> R.drawable.mini_gram_16

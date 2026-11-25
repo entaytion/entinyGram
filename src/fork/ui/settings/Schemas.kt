@@ -79,6 +79,8 @@ object Schemas {
         "hide-archive-from-chat-list" to listOf("hide-archive"),
         "dialogs-title-text" to listOf("title-text"),
         "dialogs-title-text-override-archive" to listOf("title-text-override-archive"),
+        "bottom-tabs-style" to listOf("bottom-tabs-v2", "m3-bottom-tabs", "ios-bottom-bar", "ios-bottom-navigation-bar"),
+        "ios-chats-tab-returns-to-first-folder" to listOf("ios-chats-tab-first-folder"),
         "bottom-tabs-hide-compact-mode" to listOf("compact-mode"),
         "bottom-tabs-show-titles" to listOf("show-tab-titles"),
         "bottom-tabs-search-separate" to listOf("separate-search-tab"),
@@ -766,82 +768,8 @@ object Schemas {
                 onChange = { _, _ -> DialogPreviewHelper.refresh() },
             )
         }
-        section(R.string.InuBottomTabs) {
-            toggle(
-                InuConfig.BOTTOM_TABS_HIDE, R.string.InuBottomTabsHide, R.string.InuBottomTabsHideInfo,
-                onChange = { page, _ ->
-                    page.refresh()
-                    page.rebuildAll()
-                },
-            )
-            toggle(
-                InuConfig.BOTTOM_TABS_COMPACT_MODE, R.string.InuCompactMode, R.string.InuCompactModeInfo,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
-                onChange = { page, _ ->
-                    page.refresh()
-                    page.rebuildAll()
-                    DialogsSettingsHelper.refreshMainTabsPreview(page)
-                    page.showRestart()
-                },
-            )
-            toggle(
-                InuConfig.BOTTOM_TABS_V2, R.string.InuBottomTabsV2, R.string.InuBottomTabsV2Info,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
-                onChange = { page, _ ->
-                    page.refresh()
-                    page.rebuildAll()
-                    DialogsSettingsHelper.refreshMainTabsPreview(page)
-                    page.showRestart()
-                },
-            )
-            slider(
-                InuConfig.BOTTOM_TABS_LIFT, R.string.InuBottomTabsLift, 0f, 48f,
-                format = { "${it.toInt()} dp" },
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value && InuConfig.BOTTOM_TABS_COMPACT_MODE.value && !MainTabsHelper.isMaterial },
-                onReleased = { page -> page.showRestart() },
-            )
-            toggle(
-                InuConfig.BOTTOM_TABS_SHOW_TITLES, R.string.InuShowTabTitles,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value && !InuConfig.BOTTOM_TABS_COMPACT_MODE.value && !InuConfig.BOTTOM_TABS_V2.value },
-                onChange = { page, _ ->
-                    DialogsSettingsHelper.refreshMainTabsPreview(page)
-                    page.showRestart()
-                },
-            )
-            custom(
-                "bottom-tabs-preview", R.string.InuBottomTabs,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
-                build = { page, id -> DialogsSettingsHelper.mainTabsPreviewItem(page, id) },
-            )
-            toggle(
-                InuConfig.BOTTOM_TABS_SEARCH_SEPARATE, R.string.InuBottomTabsSeparateSearch, R.string.InuBottomTabsSeparateSearchInfo,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value && !MainTabsHelper.isMaterial },
-                onChange = DialogsSettingsHelper::onSeparateSearchChanged,
-            )
-            toggle(
-                InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL, R.string.InuBottomTabsHideOnScroll, R.string.InuBottomTabsHideOnScrollInfo,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
-            )
-            toggle(
-                InuConfig.BOTTOM_TABS_DISABLE_PROFILE_SWIPE, R.string.InuBottomTabsDisableProfileSwipe, R.string.InuBottomTabsDisableProfileSwipeInfo,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
-            )
-            custom(
-                "start-tab", R.string.InuStartTab,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
-                build = { page, id -> UItem.asButton(id, LocaleController.getString(R.string.InuStartTab), DialogsSettingsHelper.startTabLabel(page)) },
-                click = { page, _ -> DialogsSettingsHelper.showStartTab(page) },
-            )
-            custom(
-                "bottom-tabs-reset", R.string.InuMainTabsCustomizeReset,
-                visible = { !InuConfig.BOTTOM_TABS_HIDE.value },
-                build = { _, id -> UItem.asButton(id, R.drawable.entiny_backup_reset, LocaleController.getString(R.string.InuMainTabsCustomizeReset)) },
-                click = { page, _ -> DialogsSettingsHelper.resetMainTabs(page) },
-            )
-            toggle(
-                InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH, R.string.InuBottomTabsHideTopSearch, R.string.InuBottomTabsHideTopSearchInfo,
-                onChange = { page, _ -> page.showRestart() },
-            )
+        section {
+            link(R.string.InuBottomTabs, R.drawable.entiny_dock_bottom) { SchemaPageActivity(BOTTOM_TABS) }
         }
         section(R.string.InuDialogsFab) {
             toggle(InuConfig.DIALOGS_FAB_HIDE, R.string.InuDialogsFabHide, onChange = { page, _ -> page.rebuildAll() })
@@ -877,12 +805,125 @@ object Schemas {
         }
     }
 
+    val BOTTOM_TABS = schema("bottom-tabs", R.string.InuBottomTabs, R.drawable.entiny_dock_bottom) {
+        section {
+            custom(
+                "", R.string.InuBottomTabs,
+                build = BottomTabsSettings::previewItem,
+            )
+            toggle(
+                InuConfig.BOTTOM_TABS_HIDE, R.string.InuBottomTabsHide, R.string.InuBottomTabsHideInfo,
+                onChange = { page, _ ->
+                    page.refresh()
+                    page.rebuildAll()
+                },
+            )
+        }
+        section(visible = { !InuConfig.BOTTOM_TABS_HIDE.value }) {
+            custom(
+                "bottom-tabs-style", R.string.InuBottomTabsStyle,
+                build = { _, id -> UItem.asButton(id, LocaleController.getString(R.string.InuBottomTabsStyle), BottomTabsSettings.styleLabel()) },
+                click = BottomTabsSettings::showStyle,
+            )
+        }
+        section(footerRes = R.string.InuBottomTabsOrderInfo, visible = { !InuConfig.BOTTOM_TABS_HIDE.value }) {
+            reorder(
+                "bottom-tabs-preview", R.string.InuBottomTabsOrder,
+                build = { BottomTabsSettings.orderRows(it).build() },
+                save = { page, entries -> BottomTabsSettings.orderRows(page).save(entries) },
+            )
+        }
+        section(R.string.InuCategoryAppearance, visible = { !InuConfig.BOTTOM_TABS_HIDE.value }) {
+            toggle(
+                InuConfig.BOTTOM_TABS_COMPACT_MODE, R.string.InuCompactMode, R.string.InuCompactModeInfo,
+                visible = { !MainTabsHelper.isV2 },
+                onChange = { page, _ -> BottomTabsSettings.changed(page) },
+            )
+            slider(
+                InuConfig.BOTTOM_TABS_LIFT, R.string.InuBottomTabsLift, 0f, 48f,
+                format = { "${it.toInt()} dp" },
+                visible = { MainTabsHelper.isCompact && !MainTabsHelper.isMaterial },
+                onChanged = BottomTabsSettings::refreshPreview,
+                onReleased = { page -> page.showRestart() },
+            )
+            toggle(
+                InuConfig.BOTTOM_TABS_SHOW_TITLES, R.string.InuShowTabTitles,
+                visible = { !MainTabsHelper.isCompact },
+                onChange = { page, _ ->
+                    BottomTabsSettings.refreshPreview(page)
+                    page.showRestart()
+                },
+            )
+            choice(
+                InuConfig.BOTTOM_TABS_WIDTH, R.string.InuBottomTabsWidth,
+                listOf(R.string.InuMonetThemeAuto, R.string.InuForwardHeaderModeCompact, R.string.InuBottomTabsWidthStandard, R.string.InuBottomTabsWidthWide),
+                visible = { !MainTabsHelper.isMaterial },
+                onChange = { page -> BottomTabsSettings.changed(page) },
+            )
+            toggle(
+                InuConfig.BOTTOM_TABS_HIDE_BADGES, R.string.InuBottomTabsHideBadges,
+                onChange = { page, _ -> BottomTabsSettings.changed(page) },
+            )
+            toggle(
+                InuConfig.BOTTOM_TABS_HIDE_PROFILE_AVATAR, R.string.InuBottomTabsHideProfileAvatar,
+                onChange = { page, _ -> BottomTabsSettings.changed(page) },
+            )
+            toggle(
+                InuConfig.BOTTOM_TABS_HIDE_FADE, R.string.InuBottomTabsHideFade,
+                onChange = { page, _ -> BottomTabsSettings.changed(page) },
+            )
+            slider(
+                InuConfig.IOS_BOTTOM_BAR_TRANSPARENCY, R.string.InuIosBottomBarTransparency,
+                0f, InuConfig.IOS_BOTTOM_BAR_MAX_TRANSPARENCY.toFloat(),
+                format = { "${it.toInt()}%" },
+                visible = { MainTabsHelper.isIos },
+                onChanged = BottomTabsSettings::refreshPreview,
+                onReleased = { desu.inugram.helpers.theme.GlassGlareHelper.invalidateLiquidGlass() },
+            )
+        }
+        section(visible = { !InuConfig.BOTTOM_TABS_HIDE.value }) {
+            toggle(
+                InuConfig.BOTTOM_TABS_SEARCH_SEPARATE, R.string.InuBottomTabsSeparateSearch, R.string.InuBottomTabsSeparateSearchInfo,
+                visible = { !MainTabsHelper.isMaterial },
+                onChange = BottomTabsSettings::onSeparateSearchChanged,
+            )
+            toggle(
+                InuConfig.BOTTOM_TABS_HIDE_ON_SCROLL, R.string.InuBottomTabsHideOnScroll, R.string.InuBottomTabsHideOnScrollInfo,
+                onChange = { page, _ -> BottomTabsSettings.refreshPreview(page) },
+            )
+            toggle(
+                InuConfig.BOTTOM_TABS_DISABLE_PROFILE_SWIPE, R.string.InuBottomTabsDisableProfileSwipe, R.string.InuBottomTabsDisableProfileSwipeInfo,
+            )
+            custom(
+                "start-tab", R.string.InuStartTab,
+                build = { _, id -> UItem.asButton(id, LocaleController.getString(R.string.InuStartTab), BottomTabsSettings.startTabLabel()) },
+                click = { page, _ -> BottomTabsSettings.showStartTab(page) },
+            )
+            toggle(
+                InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH, R.string.InuBottomTabsHideTopSearch, R.string.InuBottomTabsHideTopSearchInfo,
+                onChange = { page, _ -> page.showRestart() },
+            )
+            toggle(
+                InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER, R.string.InuIosChatsTabFirstFolder, R.string.InuIosChatsTabFirstFolderInfo,
+                visible = { MainTabsHelper.isIos },
+            )
+        }
+        section(visible = { !InuConfig.BOTTOM_TABS_HIDE.value }) {
+            custom(
+                "bottom-tabs-reset", R.string.InuMainTabsCustomizeReset,
+                build = { _, id -> UItem.asButton(id, R.drawable.entiny_backup_reset, LocaleController.getString(R.string.InuMainTabsCustomizeReset)) },
+                click = { page, _ -> BottomTabsSettings.resetMainTabs(page) },
+            )
+        }
+    }
+
     val HOME = schema("home", R.string.InuHomeAndChatList, R.drawable.entiny_home) {
         section {
             link(R.string.InuChatList, R.drawable.entiny_chat_list) { SchemaPageActivity(DIALOGS) }
             link(R.string.InuPillStack, R.drawable.entiny_layers, slug = "pill-stack-open") { PillStackSettingsActivity() }
             link(R.string.InuBookmarks, R.drawable.entiny_bookmarks, slug = "bookmarks-open") { BookmarksManagerActivity() }
             link(R.string.InuFeed, R.drawable.entiny_feed, slug = "feed-open") { FeedExcludedChannelsSettingsActivity() }
+            link(R.string.InuBottomTabs, R.drawable.entiny_dock_bottom, slug = "bottom-tabs-open") { SchemaPageActivity(BOTTOM_TABS) }
         }
         section(R.string.InuMenus) {
             link(R.string.InuSideMenu, R.drawable.entiny_side_menu) { DrawerMenuOrderActivity() }

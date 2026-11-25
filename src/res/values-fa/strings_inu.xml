@@ -326,7 +326,16 @@
     <string name="InuBottomTabsSeparateSearch">دکمه جستجوی جداگانه</string>
     <string name="InuBottomTabsSeparateSearchInfo">جستجو را به‌صورت دکمه‌ای گرد کنار زبانه‌های پایین نشان بده</string>
     <string name="InuBottomTabsV2">سبک قرص شناور</string>
-    <string name="InuBottomTabsV2Info">زبانه فعال به شکل قرصی با نماد و عنوان در یک خط کشیده می‌شود و بقیه فقط نماد نشان می‌دهند. ظاهر Material 3، iOS و فشرده را جایگزین می‌کند و کشیدن زبانه‌ها خاموش است</string>
+    <string name="InuBottomTabsHideBadges">پنهان کردن شمارنده‌های خوانده‌نشده</string>
+    <string name="InuBottomTabsHideFade">حذف محوشدگی پایین</string>
+    <string name="InuBottomTabsHideProfileAvatar">استفاده از نماد به جای تصویر نمایه</string>
+    <string name="InuBottomTabsOrder">ترتیب زبانه‌ها</string>
+    <string name="InuBottomTabsOrderInfo">دستگیره‌ها را بکشید تا ترتیب تغییر کند. زبانهٔ گفتگوها همیشه در دسترس است.</string>
+    <string name="InuBottomTabsPreviewEmpty">گفتگوهای شما اینجا نمایش داده می‌شوند</string>
+    <string name="InuBottomTabsStyle">سبک نوار پیمایش</string>
+    <string name="InuBottomTabsWidth">پهنای نوار شناور</string>
+    <string name="InuBottomTabsWidthStandard">استاندارد</string>
+    <string name="InuBottomTabsWidthWide">پهن</string>
     <string name="InuBubbles">حباب‌ها</string>
     <string name="InuBubbleTails">دنباله حباب‌ها</string>
     <string name="InuBusinessBot">ربات کسب‌وکار</string>
@@ -1252,7 +1261,6 @@
     <string name="InuMaskServerAppNameInfo">نام entinyGram را در فهرست نشست‌ها پنهان می‌کند و نام کلاینت رسمی را نشان می‌دهد</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Avatars">آواتارها</string>
-    <string name="InuMaterial3BottomTabs">زبانه‌های پایین</string>
     <string name="InuMaterial3Fabs">دکمه‌های شناور</string>
     <string name="InuMaterial3HeadersInCard">عنوان بخش‌ها در کارت</string>
     <string name="InuMaterial3NavigationAnimation">انیمیشن ناوبری</string>

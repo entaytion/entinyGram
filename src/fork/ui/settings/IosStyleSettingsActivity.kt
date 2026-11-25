@@ -24,7 +24,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
         LocaleController.getString(R.string.InuIosStyle),
         listOf(
             ExpandableBoolGroup.Option(R.string.InuIosChatHeader, InuConfig.IOS_CHAT_HEADER, TOGGLE_IOS_CHAT_HEADER),
-            ExpandableBoolGroup.Option(R.string.InuIosBottomBar, InuConfig.IOS_BOTTOM_NAVIGATION_BAR, TOGGLE_IOS_BOTTOM_BAR),
             ExpandableBoolGroup.Option(R.string.InuIosChatList, InuConfig.IOS_CHAT_LIST, TOGGLE_IOS_CHAT_LIST),
             ExpandableBoolGroup.Option(R.string.InuIosMessageMenu, InuConfig.IOS_MESSAGE_MENU, TOGGLE_IOS_MESSAGE_MENU),
             ExpandableBoolGroup.Option(R.string.InuIosButtonPlacement, InuConfig.IOS_INPUT_BUTTON_PLACEMENT, TOGGLE_IOS_BUTTON_PLACEMENT),
@@ -39,16 +38,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val context = context ?: return
         iosGroup.addTo(items) { onIosOptionsChanged(it) }
-        if (InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER,
-                    R.string.InuIosChatsTabFirstFolder,
-                    R.string.InuIosChatsTabFirstFolderInfo,
-                    InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.value,
-                )
-            )
-        }
+        items.add(UItem.asButton(BUTTON_BOTTOM_TABS, R.drawable.entiny_dock_bottom, LocaleController.getString(R.string.InuBottomTabs)))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMessageInput)))
@@ -94,7 +84,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             glassSliders.clear()
         }
         items.add(UItem.asCustom(glassPreview))
-        addGlassSlider(items, SLIDER_BOTTOM_BAR_TRANSPARENCY, R.string.InuIosBottomBarTransparency, InuConfig.IOS_BOTTOM_BAR_TRANSPARENCY, 0..InuConfig.IOS_BOTTOM_BAR_MAX_TRANSPARENCY)
         items.add(
             UItem.asButton(
                 BUTTON_GLASS_GLARE,
@@ -147,13 +136,6 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
     }
 
     private fun onIosOptionsChanged(changed: List<ExpandableBoolGroup.Option>) {
-        if (changed.any { it.id == TOGGLE_IOS_BOTTOM_BAR }) {
-            if (InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value && InuConfig.M3_BOTTOM_TABS.value) {
-                InuConfig.M3_BOTTOM_TABS.value = false
-            }
-            softRebuild()
-            showRestartBulletin()
-        }
         if (changed.any { it.id == TOGGLE_IOS_CHAT_HEADER } && InuConfig.IOS_CHAT_HEADER.value) {
             InuConfig.CENTER_TITLE_CHATS.value = true
         }
@@ -178,10 +160,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
         }
         when (item.id) {
 
-            TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER -> {
-                val new = InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
+            BUTTON_BOTTOM_TABS -> presentFragment(SchemaPageActivity(Schemas.BOTTOM_TABS))
 
             TOGGLE_COMPACT_INPUT_SIZE -> {
                 val new = InuConfig.COMPACT_INPUT_SIZE.toggle()
@@ -247,6 +226,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
         val blurChanged = InuConfig.LIQUID_GLASS_BLUR.value != InuConfig.LIQUID_GLASS_BLUR.default
         InuConfig.prefs.edit {
             for (setting in glassSliders.keys) setting.unsafeSet(setting.default, this)
+            InuConfig.IOS_BOTTOM_BAR_TRANSPARENCY.unsafeSet(InuConfig.IOS_BOTTOM_BAR_TRANSPARENCY.default, this)
             InuConfig.DISABLE_GLASS_GLARE.unsafeSet(InuConfig.DISABLE_GLASS_GLARE.default, this)
             InuConfig.GLASS_GLARE_SOLID.unsafeSet(InuConfig.GLASS_GLARE_SOLID.default, this)
         }
@@ -258,19 +238,17 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val BUTTON_BOTTOM_TABS = InuUtils.generateId()
         private val BUTTON_GLASS_GLARE = InuUtils.generateId()
         private val BUTTON_RESET_GLASS = InuUtils.generateId()
         private val SLIDER_GLASS_ANGLE = InuUtils.generateId()
         private val SLIDER_GLASS_INTENSITY = InuUtils.generateId()
         private val SLIDER_GLASS_TINT = InuUtils.generateId()
         private val SLIDER_GLASS_BLUR = InuUtils.generateId()
-        private val SLIDER_BOTTOM_BAR_TRANSPARENCY = InuUtils.generateId()
         private val GLASS_GLARE_MODES = intArrayOf(R.string.Disable, R.string.Default, R.string.InuGlassGlareSolid)
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
-        private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_LIST = InuUtils.generateId()
         private val TOGGLE_IOS_MESSAGE_MENU = InuUtils.generateId()
-        private val TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER = InuUtils.generateId()
         private val TOGGLE_IOS_BUTTON_PLACEMENT = InuUtils.generateId()
         private val TOGGLE_IOS_INPUT_APPEARANCE = InuUtils.generateId()
         private val TOGGLE_COMPACT_INPUT_SIZE = InuUtils.generateId()
@@ -286,12 +264,9 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("disable-glass-glare", R.string.InuGlassGlare, BUTTON_GLASS_GLARE),
                 SearchRegistry.Entry("liquid-glass-reset", R.string.InuLiquidGlassReset, BUTTON_RESET_GLASS),
-                SearchRegistry.Entry("ios-bottom-bar-transparency", R.string.InuIosBottomBarTransparency, SLIDER_BOTTOM_BAR_TRANSPARENCY),
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
-                SearchRegistry.Entry("ios-bottom-bar", R.string.InuIosBottomBar, TOGGLE_IOS_BOTTOM_BAR),
                 SearchRegistry.Entry("ios-chat-list", R.string.InuIosChatList, TOGGLE_IOS_CHAT_LIST),
                 SearchRegistry.Entry("ios-message-menu", R.string.InuIosMessageMenu, TOGGLE_IOS_MESSAGE_MENU),
-                SearchRegistry.Entry("ios-chats-tab-first-folder", R.string.InuIosChatsTabFirstFolder, TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER),
                 SearchRegistry.Entry("ios-button-placement", R.string.InuIosButtonPlacement, TOGGLE_IOS_BUTTON_PLACEMENT),
                 SearchRegistry.Entry("ios-input-appearance", R.string.InuIosInputAppearance, TOGGLE_IOS_INPUT_APPEARANCE),
                 SearchRegistry.Entry("compact-input-size", R.string.InuCompactInputSize, TOGGLE_COMPACT_INPUT_SIZE),

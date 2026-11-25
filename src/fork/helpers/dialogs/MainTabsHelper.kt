@@ -13,6 +13,8 @@ import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.MessagesStorage
+import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.BaseFragment
@@ -24,12 +26,17 @@ import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.MainTabsActivity
+import org.telegram.ui.MainTabsLayout
+import org.telegram.ui.Components.glass.GlassTabView
 import desu.inugram.helpers.icons.ScaledIconDrawable
-import desu.inugram.helpers.feed.FeedHelper
+import desu.inugram.helpers.chat.ChatHelper
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.security.PasscodeHelper
 import desu.inugram.helpers.theme.M3MainTabsHelper
 import desu.inugram.helpers.theme.MainTabsV2Helper
+// #if PLUGINS
+import desu.inugram.ui.settings.PluginsActivity
+// #endif
 
 
 object MainTabsHelper {
@@ -95,12 +102,13 @@ object MainTabsHelper {
 
     @JvmStatic
     val showTitles: Boolean
-        get() = isV2 || (!isCompact && InuConfig.BOTTOM_TABS_SHOW_TITLES.value)
+        get() = !isCompact && InuConfig.BOTTOM_TABS_SHOW_TITLES.value
 
     // entiny: snapshot order for process lifetime so mid-session toggle preview does not desync ViewPager and crash
-    private val cachedEnabledOrder: List<MainTabsMenuConfig.Item> by lazy {
-        InuConfig.BOTTOM_TABS_ORDER.value.filter { (it.enabled || it.item == MainTabsMenuConfig.Item.CHATS) && (it.item != MainTabsMenuConfig.Item.FEED || FeedHelper.isEnabled()) }.map { it.item }.distinct()
-    }
+    fun configuredOrder(): List<MainTabsMenuConfig.Item> =
+        InuConfig.BOTTOM_TABS_ORDER.value.filter { it.item.isFeatureOn && (it.enabled || it.item == MainTabsMenuConfig.Item.CHATS) }.map { it.item }.distinct()
+
+    private val cachedEnabledOrder: List<MainTabsMenuConfig.Item> by lazy { configuredOrder() }
 
     @JvmStatic
     fun enabledOrder(): List<MainTabsMenuConfig.Item> = cachedEnabledOrder
@@ -137,14 +145,14 @@ object MainTabsHelper {
     @JvmStatic
     fun indexToPosition(index: Int): Int {
         val type = MainTabsMenuConfig.Item.forIndex(index) ?: return -1
-        if (type == MainTabsMenuConfig.Item.SEARCH) return -1
-        val pos = enabledOrder().filterNot { it == MainTabsMenuConfig.Item.SEARCH }.indexOf(type)
+        if (type.isShortcut) return -1
+        val pos = enabledOrder().filterNot { it.isShortcut }.indexOf(type)
         return pos
     }
 
     @JvmStatic
     fun indexAtPosition(position: Int): Int {
-        val order = enabledOrder().filterNot { it == MainTabsMenuConfig.Item.SEARCH }
+        val order = enabledOrder().filterNot { it.isShortcut }
         return if (position in order.indices) order[position].index else -1
     }
 
@@ -197,7 +205,7 @@ object MainTabsHelper {
 
     @JvmStatic
     val fragmentsCount: Int
-        get() = enabledOrder().count { it != MainTabsMenuConfig.Item.SEARCH }
+        get() = enabledOrder().count { !it.isShortcut }
 
     @JvmStatic
     val tabWidth: Int
@@ -205,7 +213,75 @@ object MainTabsHelper {
 
     @JvmStatic
     val tabsViewWidth: Int
-        get() = tabWidth * (fragmentsCount + if (hasSearchTab() && !isSearchTabSeparate()) 1 else 0) + (mainTabsMargin + TAB_PADDING) * 2
+        get() = tabWidth * (enabledOrder().size - if (isSearchTabSeparate()) 1 else 0) + (mainTabsMargin + TAB_PADDING) * 2
+
+    @JvmStatic
+    val hasCustomWidth: Boolean
+        get() = !isMaterial && InuConfig.BOTTOM_TABS_WIDTH.value in 1..3
+
+    @JvmStatic
+    val hideFade: Boolean
+        get() = InuConfig.BOTTOM_TABS_HIDE_FADE.value || ChatHelper.shouldHideFadeView()
+
+    @JvmStatic
+    fun applyWidth(layout: MainTabsLayout) {
+        layout.inu_widthMode = if (hasCustomWidth) InuConfig.BOTTOM_TABS_WIDTH.value else 0
+        if (hasCustomWidth) layout.setMaxWidth(0)
+    }
+
+    @JvmStatic
+    fun createTab(context: Context, provider: Theme.ResourcesProvider?, account: Int, item: MainTabsMenuConfig.Item): GlassTabView {
+        val animation = when (item) {
+            MainTabsMenuConfig.Item.CHATS -> GlassTabView.TabAnimation.CHATS
+            MainTabsMenuConfig.Item.CONTACTS -> GlassTabView.TabAnimation.CONTACTS
+            MainTabsMenuConfig.Item.SETTINGS -> GlassTabView.TabAnimation.SETTINGS
+            MainTabsMenuConfig.Item.CALLS -> GlassTabView.TabAnimation.CALLS
+            MainTabsMenuConfig.Item.PROFILE -> GlassTabView.TabAnimation.INU_PROFILE
+            MainTabsMenuConfig.Item.FEED -> GlassTabView.TabAnimation.INU_FEED
+            MainTabsMenuConfig.Item.SEARCH -> GlassTabView.TabAnimation.INU_SEARCH
+            MainTabsMenuConfig.Item.SAVED -> GlassTabView.TabAnimation.INU_SAVED
+            MainTabsMenuConfig.Item.ARCHIVE -> GlassTabView.TabAnimation.INU_ARCHIVE
+            MainTabsMenuConfig.Item.PLUGINS -> GlassTabView.TabAnimation.INU_PLUGINS
+        }
+        val label = if (item == MainTabsMenuConfig.Item.CHATS) R.string.MainTabsChats else item.labelRes
+        val tab = if (item == MainTabsMenuConfig.Item.PROFILE && !InuConfig.BOTTOM_TABS_HIDE_PROFILE_AVATAR.value) {
+            GlassTabView.createAvatar(context, provider, account, label)
+        } else {
+            GlassTabView.createMainTab(context, provider, animation, label)
+        }
+        if (isMaterial) tab.inu_setMaterialTabs()
+        if (isV2) tab.inu_setV2()
+        tab.setMainTabsCompact(!showTitles)
+        return tab
+    }
+
+    @JvmStatic
+    fun chatsBadge(account: Int): String? {
+        if (InuConfig.BOTTOM_TABS_HIDE_BADGES.value || InuConfig.FOLDERS_UNREAD_COUNTER_MODE.value == InuConfig.FoldersUnreadCounterModeItem.HIDE) return null
+        val count = MessagesStorage.getInstance(account).mainUnreadCount
+        return if (count > 0) LocaleController.formatNumber(count, ',') else null
+    }
+
+    @JvmStatic
+    fun openShortcut(fragment: BaseFragment, index: Int): Boolean {
+        when (MainTabsMenuConfig.Item.forIndex(index)) {
+            MainTabsMenuConfig.Item.SAVED -> fragment.presentFragment(ChatActivity(Bundle().apply {
+                putLong("user_id", UserConfig.getInstance(fragment.currentAccount).clientUserId)
+            }))
+            MainTabsMenuConfig.Item.ARCHIVE -> fragment.presentFragment(DialogsActivity(Bundle().apply { putInt("folderId", 1) }))
+            else -> return false
+        }
+        return true
+    }
+
+    @JvmStatic
+    fun createPluginsTab(): BaseFragment? {
+        // #if PLUGINS
+        return PluginsActivity(hasMainTabs = true)
+        // #else
+        return null
+        // #endif
+    }
 
 
     private const val MENU_ICON_SIZE_DP = 28
@@ -237,16 +313,8 @@ object MainTabsHelper {
         }
 
         o.addGap()
-        o.add(R.drawable.msg_saved, getString(R.string.SavedMessages)) {
-            val args = Bundle()
-            args.putLong("user_id", UserConfig.getInstance(fragment.currentAccount).clientUserId)
-            fragment.presentFragment(ChatActivity(args))
-        }
-        o.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) {
-            val args = Bundle()
-            args.putInt("folderId", 1)
-            fragment.presentFragment(DialogsActivity(args))
-        }
+        o.add(R.drawable.msg_saved, getString(R.string.SavedMessages)) { openShortcut(fragment, MainTabsMenuConfig.Item.SAVED.index) }
+        o.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) { openShortcut(fragment, MainTabsMenuConfig.Item.ARCHIVE.index) }
 
         o.setBlur(true)
         o.translate(0f, -dp(4f).toFloat())

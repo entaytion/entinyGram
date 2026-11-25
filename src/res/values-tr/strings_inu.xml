@@ -326,7 +326,16 @@
     <string name="InuBottomTabsSeparateSearch">Ayrı arama düğmesi</string>
     <string name="InuBottomTabsSeparateSearchInfo">Aramayı alt gezinme çubuğunun yanında yuvarlak bir düğme olarak göster</string>
     <string name="InuBottomTabsV2">Yüzen hap stili</string>
-    <string name="InuBottomTabsV2Info">Etkin sekme, simge ve etiketi tek satırda gösteren bir hap haline gelir, diğerleri yalnızca simge gösterir. Material 3, iOS ve kompakt görünümün yerini alır, sekme sürükleme kapalıdır</string>
+    <string name="InuBottomTabsHideBadges">Okunmamış rozetlerini gizle</string>
+    <string name="InuBottomTabsHideFade">Alttaki renk geçişini kaldır</string>
+    <string name="InuBottomTabsHideProfileAvatar">Profil fotoğrafı yerine simge kullan</string>
+    <string name="InuBottomTabsOrder">Sekme sırası</string>
+    <string name="InuBottomTabsOrderInfo">Sıralamak için tutamaçları sürükleyin. Sohbetler sekmesi her zaman kullanılabilir.</string>
+    <string name="InuBottomTabsPreviewEmpty">Sohbetleriniz burada görünür</string>
+    <string name="InuBottomTabsStyle">Gezinme çubuğu stili</string>
+    <string name="InuBottomTabsWidth">Kapsül genişliği</string>
+    <string name="InuBottomTabsWidthStandard">Normal</string>
+    <string name="InuBottomTabsWidthWide">Geniş</string>
     <string name="InuBubbles">Balonlar</string>
     <string name="InuBubbleTails">Baloncuk kuyrukları</string>
     <string name="InuBusinessBot">İş botu</string>
@@ -1253,7 +1262,6 @@
     <string name="InuMaskServerAppNameInfo">Oturum listesinde entinyGram adını gizler ve resmi istemcinin adını gösterir</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Avatars">Profil resimleri</string>
-    <string name="InuMaterial3BottomTabs">Alt sekmeler</string>
     <string name="InuMaterial3Fabs">Yüzen düğmeler</string>
     <string name="InuMaterial3HeadersInCard">Bölüm başlıklarını kartın içinde göster</string>
     <string name="InuMaterial3NavigationAnimation">Gezinme animasyonu</string>

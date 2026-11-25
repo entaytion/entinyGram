@@ -8,7 +8,7 @@
         "@fuman/utils": "^0.0.19",
         "@inugram/plugin-types": "workspace:*",
         "@mtcute/node": "^0.31.0",
-        "entiny-icons": "github:lezneve/entiny-icons#v0.4.0",
+        "entiny-icons": "github:lezneve/entiny-icons#v1.1.0",
         "tinyglobby": "^0.2.16",
         "zx": "^8.8.4",
       },
@@ -323,7 +323,7 @@
 
     "end-of-stream": ["end-of-stream@1.4.5", "", { "dependencies": { "once": "1.4.0" } }, "sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg=="],
 
-    "entiny-icons": ["entiny-icons@github:lezneve/entiny-icons#6c2e005", {}, "lezneve-entiny-icons-6c2e005", "sha512-iEDfwE1TDnNSoO+cRrMLLF7l5UZlB6IHJra/0iJ119wtxVMR6K7f8pYKpzO/djcwgmQNroDYRg1FH/ufeY034A=="],
+    "entiny-icons": ["entiny-icons@github:lezneve/entiny-icons#3381505", {}, "lezneve-entiny-icons-3381505", "sha512-MBdqQxKsquPX1CDSRNp7CXOywF688a8X7OyE3PkT3zCfeubCLtjtyOuDKUKtWTzNx1fHOYDdm4PxV7QgVIC/8g=="],
 
     "entities": ["entities@7.0.1", "", {}, "sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA=="],
 

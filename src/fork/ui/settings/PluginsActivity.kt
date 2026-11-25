@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import desu.inugram.InuConfig
+import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.plugins.BootGuard
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.plugins.Plugin
@@ -36,6 +37,7 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.BackupImageView
+import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LinkSpanDrawable
@@ -43,8 +45,10 @@ import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.Switch
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
+import org.telegram.ui.MainTabsActivity
+import org.telegram.utils.glass.source.GlassSourceRenderNode
 
-class PluginsActivity : SettingsPageActivity() {
+class PluginsActivity(private val hasMainTabs: Boolean = false) : SettingsPageActivity(), MainTabsActivity.TabFragmentDelegate {
     override fun onFragmentCreate(): Boolean {
         desu.inugram.helpers.plugins.PluginDefaultRepo.seed(currentAccount)
         return super.onFragmentCreate()
@@ -83,6 +87,7 @@ class PluginsActivity : SettingsPageActivity() {
         safeModeBanner = null
         devBanner = null
         val view = super.createView(context)
+        if (hasMainTabs) simpleActionBar.setBackButtonDrawable(null)
         listView.allowReorder(true)
         listView.setReorderLongPressEnabled(false)
         listView.listenReorder { id, items -> if (id == reorderSectionId) applyReorder(items) }
@@ -109,7 +114,7 @@ class PluginsActivity : SettingsPageActivity() {
         simpleActionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
             override fun onItemClick(id: Int) {
                 when (id) {
-                    -1 -> finishFragment()
+                    -1 -> if (!hasMainTabs) finishFragment()
                     MENU_COMPACT -> toggleCompactList()
                     MENU_REVIEW -> confirmReview()
                     MENU_REMOVE_ALL -> confirmRemoveAll()
@@ -118,6 +123,37 @@ class PluginsActivity : SettingsPageActivity() {
         })
         return view
     }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+        if (hasMainTabs) {
+            updateListPadding()
+            Bulletin.addDelegate(this, object : Bulletin.Delegate {
+                override fun getBottomOffset(tag: Int): Int = getListExtraBottomPadding()
+            })
+        }
+    }
+
+    override fun onFragmentDestroy() {
+        if (hasMainTabs) Bulletin.removeDelegate(this)
+        super.onFragmentDestroy()
+    }
+
+    override fun drawEdgeNavigationBar(): Boolean = !hasMainTabs && super.drawEdgeNavigationBar()
+
+    override fun getListExtraBottomPadding(): Int = super.getListExtraBottomPadding() +
+        if (hasMainTabs && !MainTabsHelper.isHidden) AndroidUtilities.dp(MainTabsHelper.mainTabsHeightWithMargins.toFloat()) else 0
+
+    override fun canParentTabsSlide(ev: MotionEvent, forward: Boolean): Boolean =
+        hasMainTabs && listView?.isReordering != true
+
+    override fun onParentScrollToTop() {
+        listView?.smoothScrollToPosition(0)
+    }
+
+    override fun getGlassSource(): GlassSourceRenderNode? = getBaseSimpleGlass().glassSource
+
+    override fun getFrostedGlassSource(): GlassSourceRenderNode? = getBaseSimpleGlass().frostedGlassSource
 
     private fun toggleCompactList() {
         InuConfig.PLUGINS_COMPACT_LIST.toggle()

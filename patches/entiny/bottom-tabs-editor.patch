@@ -1,0 +1,254 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 25 Nov 2026 18:21:40 +0200
+Subject: Connect the bottom navigation editor and Plugins tab to the main tabs.
+
+---
+ .../ui/Components/glass/GlassTabView.java     | 19 +++++--
+ .../org/telegram/ui/MainTabsActivity.java     | 51 ++++++++++---------
+ .../java/org/telegram/ui/MainTabsLayout.java  |  5 +-
+ 3 files changed, 46 insertions(+), 29 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+@@ -164,7 +164,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+ 
+     private void checkVisualWidth() {
+         if (inu_v2) {
+-            MainTabsV2Helper.layoutContent(backupImageView != null ? backupImageView : imageView, textView, hasVisualWidth ? visualWidth : getMeasuredWidth(), isSelectedAnimator.getFloatValue(), measureTextWidth());
++            MainTabsV2Helper.layoutContent(backupImageView != null ? backupImageView : imageView, textView, hasVisualWidth ? visualWidth : getMeasuredWidth(), isSelectedAnimator.getFloatValue(), inu_v2LabelWidth());
+             return;
+         }
+         if (hasVisualWidth) {
+@@ -237,7 +237,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             canvas.save();
+ 
+             final float gap = dpf2(1.33f);
+-            final float cx = inu_v2 ? MainTabsV2Helper.badgeCenterX(viewWidth, selectedFactor, measureTextWidth()) : viewWidth / 2f + dpf2(inu_materialTabs ? M3MainTabsHelper.BADGE_CENTER_X_OFFSET : 11);
++            final float cx = inu_v2 ? MainTabsV2Helper.badgeCenterX(viewWidth, selectedFactor, inu_v2LabelWidth()) : viewWidth / 2f + dpf2(inu_materialTabs ? M3MainTabsHelper.BADGE_CENTER_X_OFFSET : 11);
+             final float cy = inu_v2 ? MainTabsV2Helper.badgeCenterY(getHeight()) : dpf2(inu_materialTabs ? M3MainTabsHelper.getBadgeCenterY() : 10);
+             final float height = dpf2(16);
+             final float width = Math.max(height, counter.getCurrentWidth() + dp(8));
+@@ -514,6 +514,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     }
+ 
+     public void updateUserAvatar(int currentAccount) {
++        if (backupImageView == null) return;
+         TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(UserConfig.getInstance(currentAccount).getClientUserId());
+         AvatarDrawable avatarDrawable = new AvatarDrawable(user);
+         backupImageView.setForUserOrChat(user, avatarDrawable);
+@@ -587,6 +588,10 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+ 
+     @Override
+     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
++        if (inu_v2 && textView.getVisibility() == VISIBLE) {
++            final int available = MeasureSpec.getSize(widthMeasureSpec) - dp(MainTabsV2Helper.ICON_SIZE + MainTabsV2Helper.LABEL_GAP + 8);
++            textView.getLayoutParams().width = Math.max(0, Math.min((int) Math.ceil(measureTextWidth()) + dp(2), available));
++        }
+         if (selfMeasure) {
+             final int width = (int) (measureAttachTabWidth()) + additionalWidth;
+             super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), heightMeasureSpec);
+@@ -595,6 +600,10 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         }
+     }
+ 
++    private float inu_v2LabelWidth() {
++        return Math.min(measureTextWidth(), textView.getMeasuredWidth());
++    }
++
+     @Override
+     public float measureTextWidth() {
+         if (textView.getVisibility() != VISIBLE) {
+@@ -656,6 +665,10 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         INU_CAMERA(TabAnimationType.STATIC, R.drawable.outline_attach_camera_24),
+         INU_FEED(TabAnimationType.STATIC, R.drawable.msg_channel),
+         INU_SEARCH(TabAnimationType.STATIC, R.drawable.msg_search),
++        INU_PROFILE(TabAnimationType.STATIC, R.drawable.msg_openprofile),
++        INU_SAVED(TabAnimationType.STATIC, R.drawable.msg_saved),
++        INU_ARCHIVE(TabAnimationType.STATIC, R.drawable.msg_archive),
++        INU_PLUGINS(TabAnimationType.STATIC, R.drawable.entiny_plugins),
+         ARTICLE(R.raw.tab_article, R.raw.tab_article_reverse),
+         GRAM(R.raw.gram, R.raw.gram_reverse),
+ 
+@@ -809,7 +822,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         icon.setLayoutParams(LayoutHelper.createFrame(iconSize, iconSize, Gravity.LEFT | Gravity.CENTER_VERTICAL));
+         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, MainTabsV2Helper.LABEL_TEXT_SIZE);
+         defaultTextPaint.setTextSize(dp(MainTabsV2Helper.LABEL_TEXT_SIZE));
+-        textView.setEllipsize(null);
++        textView.setEllipsize(TextUtils.TruncateAt.END);
+         textView.setLayoutParams(new FrameLayout.LayoutParams((int) Math.ceil(measureTextWidth()) + dp(2), LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL));
+         checkVisualWidth();
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -8,6 +8,7 @@ import static org.telegram.ui.Components.Premium.LimitReachedBottomSheet.TYPE_AC
+ import org.telegram.messenger.FileLog;
+ import android.animation.Animator;
+ import android.content.Context;
++import android.content.Intent;
+ import android.content.res.Configuration;
+ import android.graphics.Canvas;
+ import android.graphics.Paint;
+@@ -109,6 +110,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     private static final int INDEX_PROFILE = 4;
+     private static final int inu_INDEX_FEED = 5;
+     private static final int INDEX_SEARCH = 6;
++    private static final int inu_INDEX_PLUGINS = desu.inugram.helpers.menu.MainTabsMenuConfig.Item.PLUGINS.getIndex();
+ 
+     private static int indexToPosition(int index) {
+         return MainTabsHelper.indexToPosition(index);
+@@ -342,7 +344,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabletLayout = false;
+         searchTabContainer = null;
+ 
+-        final boolean compact = MainTabsHelper.isCompact();
+         final boolean separateSearchTab = MainTabsHelper.isSearchTabSeparate();
+         final int mainTabsMargin = MainTabsHelper.getMainTabsMargin();
+         final int tabsViewWidth = MainTabsHelper.getTabsViewWidth();
+@@ -357,14 +358,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         MainTabsHelper.applyIosTabsLayout(tabsView);
+         desu.inugram.helpers.theme.MainTabsV2Helper.applyTabsLayout(tabsView);
+ 
+-        tabs = new GlassTabView[7];
+-        tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
+-        tabs[INDEX_CONTACTS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CONTACTS, R.string.MainTabsContacts);
+-        tabs[INDEX_SETTINGS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.SETTINGS, R.string.Settings);
+-        tabs[INDEX_CALLS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CALLS, R.string.MainTabsCalls);
+-        tabs[INDEX_PROFILE] = GlassTabView.createAvatar(context, resourceProvider, currentAccount, R.string.MainTabsProfile);
+-        tabs[inu_INDEX_FEED] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.INU_FEED, R.string.InuFeed);
+-        tabs[INDEX_SEARCH] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.INU_SEARCH, R.string.Search);
++        final desu.inugram.helpers.menu.MainTabsMenuConfig.Item[] inu_items = desu.inugram.helpers.menu.MainTabsMenuConfig.Item.values();
++        tabs = new GlassTabView[inu_items.length];
++        for (desu.inugram.helpers.menu.MainTabsMenuConfig.Item item : inu_items) {
++            tabs[item.getIndex()] = MainTabsHelper.createTab(context, resourceProvider, currentAccount, item);
++        }
++        MainTabsHelper.applyWidth(tabsView);
+         final boolean[] searchLongPressHandled = {false};
+         tabs[INDEX_SEARCH].setOnTouchListener((v, event) -> {
+             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+@@ -388,11 +387,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsView.addTabToIgnoreClick(tabs[INDEX_CONTACTS]);
+         tabsView.addTabToIgnoreClick(tabs[INDEX_PROFILE]);
+         tabsView.addTabToIgnoreClick(tabs[INDEX_CALLS]);
+-        for (GlassTabView tab : tabs) {
+-            if (MainTabsHelper.isMaterial()) tab.inu_setMaterialTabs();
+-            if (MainTabsHelper.isV2()) tab.inu_setV2();
+-            tab.setMainTabsCompact(compact || !MainTabsHelper.getShowTitles());
+-        }
+ 
+         final int[] inu_visualOrder = MainTabsHelper.visualOrder();
+         for (int inu_oi = 0; inu_oi < inu_visualOrder.length; inu_oi++) {
+@@ -409,6 +403,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+                     return;
+                 }
+ 
++                if (MainTabsHelper.openShortcut(this, tabIndex)) return;
++
+                 if (tabIndex == INDEX_SEARCH) {
+                     if (searchLongPressHandled[0]) {
+                         searchLongPressHandled[0] = false;
+@@ -501,7 +497,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsViewWrapper = new FrameLayout(context) {
+             @Override
+             public boolean onTouchEvent(android.view.MotionEvent event) {
+-                if (desu.inugram.helpers.chat.ChatHelper.shouldHideFadeView()) return false;
++                if (MainTabsHelper.getHideFade()) return false;
+                 return super.onTouchEvent(event);
+             }
+         };
+@@ -513,7 +509,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsBarContainer.setClipToPadding(false);
+         tabsBarContainer.setPadding(dp(2), 0, dp(2), 0);
+         M3MainTabsHelper.applyTabsBar(tabsBarContainer);
+-        tabsBarContainer.addView(tabsView, desu.inugram.helpers.theme.MainTabsV2Helper.tabsLayoutParams(M3MainTabsHelper.tabsLayoutParams(new LinearLayout.LayoutParams(dp(tabsViewWidth), LayoutHelper.MATCH_PARENT))));
++        tabsBarContainer.addView(tabsView, desu.inugram.helpers.theme.MainTabsV2Helper.tabsLayoutParams(M3MainTabsHelper.tabsLayoutParams(new LinearLayout.LayoutParams(MainTabsHelper.getHasCustomWidth() ? LayoutHelper.WRAP_CONTENT : dp(tabsViewWidth), LayoutHelper.MATCH_PARENT))));
+         if (searchTabContainer != null) {
+             LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(52), dp(52));
+             searchParams.setMarginStart(-dp(Math.max(0, mainTabsMargin - 4)));
+@@ -547,13 +543,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         }
+ 
+         desu.inugram.helpers.feed.FeedHelper.updateUnreadCounter(currentAccount, tabs[inu_INDEX_FEED], animated);
+-        final int unreadCount = desu.inugram.InuConfig.FOLDERS_UNREAD_COUNTER_MODE.getValue() == desu.inugram.InuConfig.FoldersUnreadCounterModeItem.HIDE ? 0 : MessagesStorage.getInstance(currentAccount).getMainUnreadCount();
+-        if (unreadCount > 0) {
+-            final String unreadCountFmt = LocaleController.formatNumber(unreadCount, ',');
+-            tabs[INDEX_CHATS].setCounter(unreadCountFmt, false, animated);
+-        } else {
+-            tabs[INDEX_CHATS].setCounter(null, false, animated);
+-        }
++        tabs[INDEX_CHATS].setCounter(MainTabsHelper.chatsBadge(currentAccount), false, animated);
+     }
+ 
+     public boolean openContactsSelector(View anchor) {
+@@ -949,6 +939,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             return dialogsActivity;
+         } else if (index == inu_INDEX_FEED) {
+             return prepareTabFragment(new desu.inugram.ui.feed.FeedActivity(desu.inugram.helpers.feed.FeedScope.Global.INSTANCE, true));
++        } else if (index == inu_INDEX_PLUGINS) {
++            return prepareTabFragment(MainTabsHelper.createPluginsTab());
+         } else if (index == INDEX_PROFILE) {
+             Bundle args = new Bundle();
+             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
+@@ -964,6 +956,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         return dialogsActivity;
+     }
+ 
++    @Override
++    public void onActivityResultFragment(int requestCode, int resultCode, Intent data) {
++        super.onActivityResultFragment(requestCode, resultCode, data);
++        final BaseFragment fragment = getCurrentVisibleFragment();
++        if (fragment != null && MainTabsHelper.indexAtPosition(viewPager.getCurrentPosition()) == inu_INDEX_PLUGINS) {
++            fragment.onActivityResultFragment(requestCode, resultCode, data);
++        }
++    }
++
+     /* */
+ 
+     public GlassTabView[] tabs;
+@@ -1256,7 +1257,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         if (viewPager == null || fadeView == null || MainTabsHelper.isHidden()) {
+             return;
+         }
+-        if (desu.inugram.helpers.chat.ChatHelper.shouldHideFadeView()) {
++        if (MainTabsHelper.getHideFade()) {
+             fadeView.setVisibility(View.GONE);
+             return;
+         }
+@@ -1321,7 +1322,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         final int containerPadding = tabsBarContainer.getPaddingLeft() + tabsBarContainer.getPaddingRight();
+         final int outerInset = dp(Math.min(DialogsActivity.MAIN_TABS_MARGIN, 6));
+         final int availableWidth = Math.max(0, wrapperWidth - containerPadding - searchWidth - searchStartMargin - searchEndMargin - outerInset * 2);
+-        final int tabsWidth = Math.min(dp(MainTabsHelper.getTabsViewWidth()), availableWidth);
++        final int tabsWidth = tabsView.inu_widthMode != 0 ? availableWidth : Math.min(dp(MainTabsHelper.getTabsViewWidth()), availableWidth);
+         if (tabsLp.width != tabsWidth) {
+             tabsLp.width = tabsWidth;
+             tabsView.setLayoutParams(tabsLp);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
+@@ -49,6 +49,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+     private int maxWidthPx;
+     public boolean inu_materialTabs;
+     public boolean inu_v2Tabs;
++    public int inu_widthMode;
+ 
+     public void setMaxWidth(int maxWidthPx) {
+         if (this.maxWidthPx != maxWidthPx) {
+@@ -66,9 +67,11 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+         if (maxWidthPx > 0 && width > maxWidthPx) {
+             width = maxWidthPx;
+         }
++        if (inu_widthMode == 1) width = Math.round(width * 0.78f);
++        if (inu_widthMode == 2) width = Math.round(width * 0.90f);
+ 
+         final int maxTotalWidthForTabs = width - getPaddingLeft() - getPaddingRight();
+-        final int minTotalWidthForTabs = Math.min(dp(320), maxTotalWidthForTabs);
++        final int minTotalWidthForTabs = inu_widthMode == 0 ? Math.min(dp(320), maxTotalWidthForTabs) : maxTotalWidthForTabs;
+ 
+         int chosenPass = PASS_TEXT_SIZES_DP.length - 1;
+         float lastMeasuredTextSize = -1;
