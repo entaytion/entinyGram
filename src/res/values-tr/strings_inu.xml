@@ -272,6 +272,8 @@
     <string name="InuBackupSettings">Yedekle ve sıfırla</string>
     <string name="InuBanUserConfirm">%1$s bu gruptan yasaklansın mı?</string>
     <string name="InuBetaPill">beta</string>
+    <string name="InuWhatsNew">Yenilikler</string>
+    <string name="InuNewBadge">yeni</string>
     <string name="InuBiometricAllowDeviceCredential">Cihaz PIN/desenine izin ver</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Biyometrik veri kayıtlı olmadığında cihaz PIN\'ine, desenine veya parolasına başvurur.</string>
     <string name="InuBiometricConfirm">Biyometrik doğrulama</string>

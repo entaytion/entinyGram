@@ -272,6 +272,8 @@
     <string name="InuBackupSettings">バックアップとリセット</string>
     <string name="InuBanUserConfirm">%1$s をこのグループから BAN しますか？</string>
     <string name="InuBetaPill">ベータ</string>
+    <string name="InuWhatsNew">新機能</string>
+    <string name="InuNewBadge">NEW</string>
     <string name="InuBiometricAllowDeviceCredential">デバイスの PIN/パターンを許可</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">生体認証が登録されていない場合、デバイスの PIN、パターン、またはパスワードにフォールバックします。</string>
     <string name="InuBiometricConfirm">生体認証による確認</string>

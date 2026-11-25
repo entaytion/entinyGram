@@ -266,9 +266,9 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
         when (row) {
             is Row.Toggle -> items.add(
                 if (row.infoRes != 0 || row.experimental) {
-                    mkTwoLineCheckItem(row.id, row.titleRes, row.infoRes, row.item.value, row.experimental)
+                    mkTwoLineCheckItem(row.id, row.titleRes, row.infoRes, row.item.value, row.experimental, slug = row.item.key.replace('_', '-'))
                 } else {
-                    UItem.asCheck(row.id, LocaleController.getString(row.titleRes)).setChecked(row.item.value)
+                    UItem.asCheck(row.id, NewFeatureBadges.forSlug(row.item.key.replace('_', '-'), LocaleController.getString(row.titleRes))).setChecked(row.item.value)
                 }
             )
 
@@ -283,7 +283,7 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
             is Row.Link -> items.add(
                 when {
                     row.icon != 0 -> {
-                        val title = LocaleController.getString(row.titleRes)
+                        val title = NewFeatureBadges.forSlug(row.slug, LocaleController.getString(row.titleRes))
                         val value = row.value?.invoke()
                         if (value != null) mkTwoLineEntry(row.id, row.icon, title, value) else mkSubPageButton(row.id, row.icon, title)
                     }
@@ -292,7 +292,7 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
                         val badge = row.badge?.invoke()
                         mkSubPageButton(
                             row.id,
-                            if (badge.isNullOrEmpty()) title else withBadge(title, badge),
+                            NewFeatureBadges.forSlug(row.slug, if (badge.isNullOrEmpty()) title else withBadge(title, badge)),
                             row.value?.invoke(),
                         )
                     }
@@ -313,7 +313,7 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
                         defaultValue = row.item.default.toFloat(),
                         initialValue = row.item.value.toFloat(),
                         step = row.step,
-                        title = LocaleController.getString(row.titleRes),
+                        title = NewFeatureBadges.forSlug(row.item.key.replace('_', '-'), LocaleController.getString(row.titleRes)),
                         format = row.format,
                         onChanged = {
                             row.item.value = it.toInt()

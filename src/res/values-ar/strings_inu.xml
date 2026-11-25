@@ -274,6 +274,8 @@
     <string name="InuBackupSettings">النسخ الاحتياطي &amp; إعادة التعيين</string>
     <string name="InuBanUserConfirm">حظر %1$s من هذه المجموعة؟</string>
     <string name="InuBetaPill">تجريبي</string>
+    <string name="InuWhatsNew">ما الجديد</string>
+    <string name="InuNewBadge">جديد</string>
     <string name="InuBiometricAllowDeviceCredential">السماح برمز PIN/نمط الجهاز</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">الرجوع إلى رمز PIN أو النمط أو كلمة مرور الجهاز عند عدم تسجيل أي بيانات بيومترية.</string>
     <string name="InuBiometricConfirm">التأكيد البيومتري</string>

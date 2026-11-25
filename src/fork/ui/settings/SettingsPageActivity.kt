@@ -243,9 +243,10 @@ abstract class SettingsPageActivity : UniversalFragment() {
         checked: Boolean,
         experimental: Boolean = false,
         split: Boolean = false,
+        slug: String = "",
     ): UItem {
         val rawText = LocaleController.getString(textRes)
-        val text = if (experimental) addExperimentalSpan(rawText) else rawText
+        val text = NewFeatureBadges.forSlug(slug, if (experimental) addExperimentalSpan(rawText) else rawText)
         val subtext = if (infoRes == 0) null else LocaleController.getString(infoRes)
         return UItem.asButtonCheck(id, text, subtext).also {
             it.checked = checked

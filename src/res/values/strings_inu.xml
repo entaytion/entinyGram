@@ -278,6 +278,8 @@
     <string name="InuBackupSettings">Backup &amp; reset</string>
     <string name="InuBanUserConfirm">Ban %1$s from this group?</string>
     <string name="InuBetaPill">beta</string>
+    <string name="InuWhatsNew">What\'s new</string>
+    <string name="InuNewBadge">new</string>
     <string name="InuBiometricAllowDeviceCredential">Allow device PIN/pattern</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Fall back to the device PIN, pattern or password when no biometric is enrolled.</string>
     <string name="InuBiometricConfirm">Biometric confirmation</string>

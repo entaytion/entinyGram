@@ -277,6 +277,8 @@
     <string name="InuBackupSettings">Резервная копия и сброс</string>
     <string name="InuBanUserConfirm">Заблокировать %1$s в этой группе?</string>
     <string name="InuBetaPill">бета</string>
+    <string name="InuWhatsNew">Что нового</string>
+    <string name="InuNewBadge">новое</string>
     <string name="InuBiometricAllowDeviceCredential">Разрешить PIN/графический ключ устройства</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Использовать PIN, графический ключ или пароль устройства, если биометрия не настроена.</string>
     <string name="InuBiometricConfirm">Биометрическое подтверждение</string>

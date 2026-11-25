@@ -32,6 +32,8 @@ write under both `## uk` and `## en`, under `## entinyGram additions` in the mat
 
 ## release
 
+new settings badges follow the release cycle: the `new` pill is a hard-coded slug set in `src/fork/ui/settings/NewFeatureBadges.kt`, not read from the changelog. keep existing slugs through commits and beta builds, add slugs for new `### new` settings as they appear, and before a release review the draft changelog, remove slugs from the previous release, and keep slugs for features introduced in the current cycle. viewing a setting or the changelog never clears a badge. the set is also what makes the root `What's new` row show its pill; an empty set hides it.
+
 1. check the draft: both languages, no russian, no wip bullet that should ship.
 2. run `bun run changelog:release` (`assets/release/changelog.ts`). it moves the draft into `changelogs/<YYYYMMDD>.md`, appends to that file on a second release the same day, and resets the draft.
 3. commit and push that file to `main` before the build workflow. CI and the in-app updater read the file by date. without it, CI falls back to commit subjects.

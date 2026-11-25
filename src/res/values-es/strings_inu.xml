@@ -275,6 +275,8 @@ Esta acción no se puede deshacer.</string>
     <string name="InuBackupSettings">Copia y restablecimiento</string>
     <string name="InuBanUserConfirm">¿Expulsar a %1$s de este grupo?</string>
     <string name="InuBetaPill">beta</string>
+    <string name="InuWhatsNew">Novedades</string>
+    <string name="InuNewBadge">nuevo</string>
     <string name="InuBiometricAllowDeviceCredential">Permitir PIN/patrón del dispositivo</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Recurrir al PIN o patrón del dispositivo si no hay biométrica registrada.</string>
     <string name="InuBiometricConfirm">Confirmación biométrica</string>

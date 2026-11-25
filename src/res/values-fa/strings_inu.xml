@@ -272,6 +272,8 @@
     <string name="InuBackupSettings">پشتیبان‌گیری و بازنشانی</string>
     <string name="InuBanUserConfirm">%1$s از این گروه مسدود شود؟</string>
     <string name="InuBetaPill">بتا</string>
+    <string name="InuWhatsNew">تازه‌ها</string>
+    <string name="InuNewBadge">جدید</string>
     <string name="InuBiometricAllowDeviceCredential">اجازه PIN/الگوی دستگاه</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">وقتی هیچ ویژگی بیومتریکی ثبت نشده، به PIN، الگو یا رمز دستگاه برگرد.</string>
     <string name="InuBiometricConfirm">تأیید بیومتریک</string>

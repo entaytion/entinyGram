@@ -272,6 +272,8 @@
     <string name="InuBackupSettings">备份与重置</string>
     <string name="InuBanUserConfirm">将 %1$s 从本群封禁？</string>
     <string name="InuBetaPill">测试版</string>
+    <string name="InuWhatsNew">新功能</string>
+    <string name="InuNewBadge">新</string>
     <string name="InuBiometricAllowDeviceCredential">允许设备 PIN/图案</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">当未录入生物识别时，回退使用设备 PIN、图案或密码。</string>
     <string name="InuBiometricConfirm">生物识别确认</string>

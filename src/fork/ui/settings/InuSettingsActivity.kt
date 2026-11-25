@@ -72,6 +72,10 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asCustomShadow(createHeaderView()))
         items.add(UItem.asShadow(null))
 
+        val whatsNewTitle = LocaleController.getString(R.string.InuWhatsNew)
+        items.add(mkSubPageButton(BUTTON_WHATS_NEW, R.drawable.entiny_sparkles, if (NewFeatureBadges.active) NewFeatureBadges.pill(whatsNewTitle) else whatsNewTitle))
+        items.add(UItem.asShadow(null))
+
         items.add(mkSubPageButton(CAT_APPEARANCE, R.drawable.entiny_appearance, LocaleController.getString(R.string.InuCategoryAppearance)))
         items.add(mkSubPageButton(CAT_HOME, R.drawable.entiny_home, LocaleController.getString(R.string.InuHomeAndChatList)))
         items.add(mkSubPageButton(CAT_CHATS, R.drawable.entiny_message_menu, LocaleController.getString(R.string.InuChatsAndMessages)))
@@ -116,6 +120,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             CAT_PROXY -> presentFragment(SchemaPageActivity(Schemas.PROXY))
             CAT_ANNOYANCES -> presentFragment(SchemaPageActivity(Schemas.ANNOYANCES))
             CAT_SYSTEM -> presentFragment(SchemaPageActivity(Schemas.SYSTEM))
+            BUTTON_WHATS_NEW -> presentFragment(WhatsNewActivity())
             CAT_ABOUT -> presentFragment(AdditionalSettingsActivity())
             // #if PLUGINS
             BUTTON_PLUGINS -> presentFragment(PluginsActivity())
@@ -138,6 +143,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val CAT_SYSTEM = InuUtils.generateId()
         private val BUTTON_PLUGINS = InuUtils.generateId()
         private val CAT_ABOUT = InuUtils.generateId()
+        private val BUTTON_WHATS_NEW = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -146,6 +152,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.icon_settings_inu,
             factory = ::InuSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("whats-new", R.string.InuWhatsNew, BUTTON_WHATS_NEW),
             ),
         )
     }

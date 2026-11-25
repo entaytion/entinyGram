@@ -193,6 +193,7 @@ internal class FeedUnreadTracker(
             messagesController.markDialogAsRead(dialogId, maxReadId, 0, currentTime, false, 0L, countDiff, true, 0)
         }
         pendingMaxReadId.clear()
+        FeedHelper.refreshUnreadCounter(currentAccount)
     }
 
     private fun getEffectiveReadInboxMax(dialogId: Long): Int =

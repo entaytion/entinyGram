@@ -275,6 +275,8 @@ Questa azione non può essere annullata.</string>
     <string name="InuBackupSettings">Backup e ripristino</string>
     <string name="InuBanUserConfirm">Bannare %1$s da questo gruppo?</string>
     <string name="InuBetaPill">beta</string>
+    <string name="InuWhatsNew">Novità</string>
+    <string name="InuNewBadge">nuovo</string>
     <string name="InuBiometricAllowDeviceCredential">Consenti PIN/sequenza del dispositivo</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Usa il PIN, la sequenza o la password del dispositivo quando non è registrato alcun dato biometrico.</string>
     <string name="InuBiometricConfirm">Conferma biometrica</string>

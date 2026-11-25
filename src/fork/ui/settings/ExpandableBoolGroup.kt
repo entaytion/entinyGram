@@ -32,9 +32,10 @@ class ExpandableBoolGroup(
     fun addTo(items: ArrayList<UItem>, info: UItem? = null, onChange: (options: List<Option>) -> Unit) {
         val checkedCount = options.count { it.config.value }
         val isChecked = checkedCount > 0
+        val hasNew = options.any { NewFeatureBadges.isNew(it.config.key.replace('_', '-')) }
         items.add(
             // entiny: stock cell does toString() on the subtitle and its AnimatedTextView ignores spans, so the pill rides in the title; " " keeps the arrow
-            UItem.asExpandableSwitch(sectionId, SpannableStringBuilder(title).append("  ").append(SettingsBadge.state(checkedCount)), " ")
+            UItem.asExpandableSwitch(sectionId, SpannableStringBuilder(if (hasNew) NewFeatureBadges.pill(title) else title).append("  ").append(SettingsBadge.state(checkedCount)), " ")
                 .setChecked(isChecked)
                 .setCollapsed(!expanded)
                 .setClickCallback {
@@ -66,7 +67,8 @@ class ExpandableBoolGroup(
         if (expanded) {
             info?.let { items.add(it) }
             for (opt in options) {
-                items.add(WrapCheckCell.Factory.of(opt.id, LocaleController.getString(opt.labelRes), opt.config.value, enabled))
+                val label = NewFeatureBadges.forSlug(opt.config.key.replace('_', '-'), LocaleController.getString(opt.labelRes))
+                items.add(WrapCheckCell.Factory.of(opt.id, label, opt.config.value, enabled))
             }
         }
     }

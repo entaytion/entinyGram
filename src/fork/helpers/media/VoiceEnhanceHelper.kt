@@ -1,8 +1,8 @@
 package desu.inugram.helpers.media
 
-import android.media.AudioEffect
-import android.media.AutomaticGainControl
-import android.media.NoiseSuppressor
+import android.media.audiofx.AudioEffect
+import android.media.audiofx.AutomaticGainControl
+import android.media.audiofx.NoiseSuppressor
 import desu.inugram.InuConfig
 
 object VoiceEnhanceHelper {
