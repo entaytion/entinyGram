@@ -141,7 +141,8 @@ object PasscodeHelper {
 
             else -> return false
         }
-        if (host != "inusettings" || key.isNullOrEmpty() || key != getSettingsKey()) return false
+        if (!host.equals("entinySettings", ignoreCase = true) && !host.equals("inusettings", ignoreCase = true)) return false
+        if (key.isNullOrEmpty() || key != getSettingsKey()) return false
         activity.actionBarLayout.presentFragment(PasscodeSettingsActivity())
         return true
     }
