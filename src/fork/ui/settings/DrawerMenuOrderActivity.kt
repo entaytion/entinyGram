@@ -73,6 +73,7 @@ class DrawerMenuOrderActivity : MenuOrderActivity<DrawerMenuConfig.Item>() {
             iconRes = R.drawable.entiny_side_menu,
             factory = ::DrawerMenuOrderActivity,
             entries = listOf(
+                SearchRegistry.Entry("drawer-add-divider", R.string.InuDrawerMenuAddDivider, BUTTON_ADD_DIVIDER),
                 // entiny: legacy slug of the former standalone drawer toggle
                 SearchRegistry.Entry("drawer-recent-chats", R.string.InuRecentChats),
             ),

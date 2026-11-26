@@ -241,6 +241,14 @@ class Material3SettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.entiny_grid,
             factory = ::Material3SettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("material3-bottom-tabs-open", R.string.InuBottomTabs, BUTTON_BOTTOM_TABS),
+                SearchRegistry.Entry("dialogs-m3-margin", R.string.InuDialogsSectionsMargin, BUTTON_DIALOGS_MARGIN,
+                    visible = { InuConfig.DIALOGS_M3_SECTIONS.value },
+                ),
+                SearchRegistry.Entry("dialogs-m3-separate-pinned", R.string.InuDialogsSectionsSeparatePinned, TOGGLE_DIALOGS_SEPARATE_PINNED,
+                    visible = { InuConfig.DIALOGS_M3_SECTIONS.value },
+                ),
+                SearchRegistry.Entry("md3-player", R.string.InuMaterial3Player, TOGGLE_MD3_PLAYER),
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("monet-style", R.string.InuMonetStyle, BUTTON_MONET_STYLE),

@@ -459,6 +459,9 @@ class BackupSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.entiny_cloud,
             factory = ::BackupSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("cloud-sync-now", R.string.InuCloudSyncNow, BUTTON_SYNC_NOW),
+                SearchRegistry.Entry("cloud-restore", R.string.InuCloudRestore, BUTTON_RESTORE),
+                SearchRegistry.Entry("cloud-delete", R.string.InuCloudDelete, BUTTON_DELETE),
                 SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
                 SearchRegistry.Entry("backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
                 SearchRegistry.Entry("backup-reset", R.string.InuBackupReset, BUTTON_RESET),

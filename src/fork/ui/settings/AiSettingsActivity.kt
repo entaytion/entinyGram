@@ -114,6 +114,7 @@ class AiSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.entiny_ai_translation,
             factory = ::AiSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("ai-roles-open", R.string.InuAiRoles, BUTTON_ROLE),
                 SearchRegistry.Entry("ai-providers", R.string.InuAiProvidersTitle, BUTTON_PROVIDERS),
                 SearchRegistry.Entry("ai-feature-voice", R.string.InuAiTranscribe, ENTRY_VOICE),
                 SearchRegistry.Entry("ai-feature-editor", R.string.InuAiEditorTitle, ENTRY_EDITOR),

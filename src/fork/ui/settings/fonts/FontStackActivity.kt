@@ -415,6 +415,7 @@ class FontStackActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_text_outlined,
             factory = ::FontStackActivity,
             entries = listOf(
+                SearchRegistry.Entry("font-stack-mono", R.string.InuMonoFont, BUTTON_MONO),
                 SearchRegistry.Entry("add-fallback", R.string.InuFontStackAdd, BUTTON_ADD),
             ),
         )

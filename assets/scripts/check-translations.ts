@@ -5,7 +5,7 @@ import { rootDir } from './config.js'
 /**
  * Compares src/res/values/strings_inu.xml with every values-<iso>/strings_inu.xml and prints one line per problem.
  *   missing      key is in the base, not in the locale
- *   same as en   the value is a copy of the base text (skipped when every locale shares it, like brand names)
+ *   same as en   the value matches the base and is not a known shared term or spelling
  *   extra        key is in the locale, not in the base
  *   placeholders %s / %1$d differ from the base
  *   broken       the file has unbalanced <string> tags
@@ -18,6 +18,43 @@ const only = new Set(process.argv.slice(2))
 
 const PLURAL = /_(zero|one|two|few|many|other)$/
 const stem = (key: string) => key.replace(PLURAL, '')
+
+const sharedTerms = new Set([
+  'InuAppIconAurora', 'InuAppIconAvatar', 'InuAppIconBlush', 'InuAppIconLunar',
+  'InuAppIconMono', 'InuAppIconNothing', 'InuAppIconRadar', 'InuChatExportMb',
+  'InuDeletedMessageIdFormat', 'InuDialogsFab', 'InuForwardPro', 'InuLiquidGlass',
+  'InuMapProviderGoogle', 'InuMessageDesignForwardSender', 'InuMsgDetailFps',
+  'InuPillStack', 'InuPillStackDcPingValue', 'InuPillStackProxyPing', 'InuPillStackRam',
+  'InuProfileId', 'InuProfileIdModeBotApi', 'InuProfileIdModeTelegram',
+  'InuTranslateProviderGoogle', 'InuTranslateProviderTelegram', 'InuVersion',
+])
+
+const sameSpelling: Partial<Record<string, ReadonlySet<string>>> = {
+  es: new Set([
+    'InuAiProviderTagChat', 'InuAiRoleDefaultEditor', 'InuAiRoles', 'InuBetaPill',
+    'InuChats', 'InuClownAvatarEmoji', 'InuCommunityDisplayModeInvisible', 'InuContactFieldBio',
+    'InuGhostPresenceModeNormal', 'InuLocalNameWas', 'InuMarketTagChat', 'InuMd3PlayerInstrumental',
+    'InuMsgDetailMono', 'InuNo', 'InuParanoiaCount', 'InuPillStackProxy',
+    'InuPillStackRateBase', 'InuPluginsDevChip', 'InuSystemFolderBots', 'InuTextSpoilerModeSimple',
+    'InuTypingSpoofChats', 'InuVersionBetaSuffix',
+  ]),
+  it: new Set([
+    'InuAiProviderTagChat', 'InuAiRoleDefaultEditor', 'InuBetaPill', 'InuChatExportMediaProgress',
+    'InuChatExportSectionMedia', 'InuClownAvatarEmoji', 'InuClownAvatarEmojiClown', 'InuContactFieldBio',
+    'InuEditFieldMedia', 'InuEditFieldTimer', 'InuLayout', 'InuLogs', 'InuMarketTagMedia',
+    'InuMarketTagPrivacy', 'InuMsgDetailBitrate', 'InuMsgDetailMono', 'InuMsgDetailStereo',
+    'InuMsgDetailVideoStandard', 'InuNo', 'InuPillStackProxy', 'InuPillStackRateBase',
+    'InuPluginAssetsCount_one', 'InuPluginGrantSqlite', 'InuPluginsDevChip',
+    'InuRoundAudioSourceStandard', 'InuUnifiedPushGateway', 'InuVersionBetaSuffix',
+  ]),
+  ru: new Set(['InuPluginsDevChip']),
+  tr: new Set([
+    'InuAiTranscribeModel', 'InuBetaPill', 'InuClownAvatarEmoji', 'InuEditFieldSpoiler',
+    'InuFontScriptLatin', 'InuGhostPresenceModeNormal', 'InuMsgDetailMono', 'InuMsgDetailStereo',
+    'InuMsgDetailVideoStandard', 'InuPillStackProxy', 'InuTranslateLlmModel', 'InuVersionBetaSuffix',
+  ]),
+  uk: new Set(['InuPluginsDevChip']),
+}
 
 interface Strings {
   values: Map<string, string>
@@ -44,17 +81,17 @@ const base = await parse(join(resDir, 'values/strings_inu.xml'))
 const locales = new Map<string, Strings>()
 for (const e of await fs.readdir(resDir, { withFileTypes: true })) {
   const iso = e.name.match(/^values-(.+)$/)?.[1]
-  if (!iso || !e.isDirectory() || (only.size && !only.has(iso))) continue
+  if (!iso || !e.isDirectory()) continue
   try {
     locales.set(iso, await parse(join(resDir, e.name, 'strings_inu.xml')))
   } catch {}
 }
-if (!locales.size) {
+const isoList = [...locales.keys()].filter(iso => !only.size || only.has(iso)).sort()
+if (!isoList.length) {
   console.error('check-translations: no locales found')
   process.exit(1)
 }
 
-const isoList = [...locales.keys()].sort()
 const keys = [...base.values.keys()].filter(k => !base.brand.has(k))
 const baseStems = new Set(keys.map(stem))
 
@@ -75,7 +112,9 @@ for (const iso of isoList) {
       continue
     }
     const en = base.values.get(key)!
-    if (value === en && !sharedEverywhere(key)) lines.push(`same as en   ${key}`)
+    if (value === en && !sharedTerms.has(key) && !sameSpelling[iso]?.has(key) && !sharedEverywhere(key)) {
+      lines.push(`same as en   ${key}`)
+    }
     // entiny: plural forms other than `other` may spell the number out, so only `other` is compared
     const checkable = !PLURAL.test(key) || key.endsWith('_other')
     if (checkable && placeholders(value) !== placeholders(en)) lines.push(`placeholders ${key}: "${placeholders(en)}" in en, "${placeholders(value)}" here`)

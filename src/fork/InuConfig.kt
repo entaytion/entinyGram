@@ -597,9 +597,6 @@ object InuConfig {
     val DIALOGS_FAB_HIDE_ON_SCROLL = BoolItem("dialogs_fab_hide_on_scroll", true)
 
     @JvmField
-    val DIALOGS_FAB_OFFSET_FOR_BOTTOM_BAR = BoolItem("dialogs_fab_offset_for_bottom_bar", true)
-
-    @JvmField
     val HIDE_DIALOG_PREVIEW = BoolItem("hide_dialog_preview", false)
 
     @JvmField
@@ -1353,12 +1350,6 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
 
     @JvmField
     val ROUND_RECORDER_EV_SLIDER_RIGHT = BoolItem("round_recorder_ev_slider_right", false)
-
-    @JvmField
-    val ROUND_RECORDER_EXPOSURE_FRONT = FloatItem("round_recorder_exposure_front", 0f)
-
-    @JvmField
-    val ROUND_RECORDER_EXPOSURE_BACK = FloatItem("round_recorder_exposure_back", 0f)
 
     @JvmField
     val ROUND_AUDIO_BITRATE = IntItem("round_audio_bitrate", 0)

@@ -631,8 +631,6 @@
     <string name="InuDialogsFabHideOnScroll">Приховувати при скролінгу</string>
     <string name="InuDialogsFabLeftSide">Перемістити ліворуч</string>
     <string name="InuDialogsFabMainAction">Основна дія</string>
-    <string name="InuDialogsFabOffsetForBottomBar">Відступ для нижньої панелі</string>
-    <string name="InuDialogsFabOffsetForBottomBarInfo">Вимкнення може виглядати некоректно на деяких екранах</string>
     <string name="InuDialogsFabSecondaryAction">Вторинна дія</string>
     <string name="InuDialogsMenuItems">Пункти</string>
     <string name="InuDialogsMenuOrder">Меню опцій</string>
@@ -1208,7 +1206,7 @@
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapProvider">Провайдер карт</string>
     <string name="InuMapProviderGoogle">Карти Google</string>
-    <string name="InuMapProviderOsmLite">OpenStreetMap (lite)</string>
+    <string name="InuMapProviderOsmLite">OpenStreetMap (полегшена версія)</string>
     <string name="InuMapsHeader">Карти</string>
     <string name="InuMarkChatAsRead">Позначити прочитаним</string>
     <string name="InuMarkChatAsReadDone">Чат позначено прочитаним</string>

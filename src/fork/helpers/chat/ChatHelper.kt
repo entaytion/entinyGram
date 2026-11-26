@@ -230,9 +230,8 @@ object ChatHelper {
     fun timeAdditionsHash(msg: MessageObject?): Int {
         if (msg == null) return 0
         var hash = 0
-        if (TranslateHelper.hasTimeAddition(msg)) {
-            hash = hash * 31 + 1
-            hash = hash * 31 + TranslateHelper.timeAdditionsHash(msg)
+        TranslateHelper.timeAdditionsHash(msg)?.let { translationHash ->
+            hash = (hash * 31 + 1) * 31 + translationHash
         }
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             hash = hash * 31 + 2
@@ -257,10 +256,7 @@ object ChatHelper {
 
     @JvmStatic
     fun extraTimeWidth(msg: MessageObject?, edited: Boolean = false): Int {
-        var width = 0
-        if (msg != null && TranslateHelper.hasTimeAddition(msg)) {
-            width += TranslateHelper.extraTimeWidth(msg)
-        }
+        var width = TranslateHelper.extraTimeWidth(msg)
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             width += AndroidUtilities.dp(11f)
         }

@@ -1,6 +1,5 @@
 package desu.inugram.ui.settings
 
-import android.text.SpannableStringBuilder
 import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
@@ -35,7 +34,7 @@ class ExpandableBoolGroup(
         val hasNew = options.any { NewFeatureBadges.isNew(it.config.key.replace('_', '-')) }
         items.add(
             // entiny: stock cell does toString() on the subtitle and its AnimatedTextView ignores spans, so the pill rides in the title; " " keeps the arrow
-            UItem.asExpandableSwitch(sectionId, SpannableStringBuilder(if (hasNew) NewFeatureBadges.pill(title) else title).append("  ").append(SettingsBadge.state(checkedCount)), " ")
+            UItem.asExpandableSwitch(sectionId, SettingsBadge.title(title, isNew = hasNew, enabledCount = checkedCount), " ")
                 .setChecked(isChecked)
                 .setCollapsed(!expanded)
                 .setClickCallback {
@@ -67,7 +66,7 @@ class ExpandableBoolGroup(
         if (expanded) {
             info?.let { items.add(it) }
             for (opt in options) {
-                val label = NewFeatureBadges.forSlug(opt.config.key.replace('_', '-'), LocaleController.getString(opt.labelRes))
+                val label = SettingsBadge.title(LocaleController.getString(opt.labelRes), slug = opt.config.key.replace('_', '-'))
                 items.add(WrapCheckCell.Factory.of(opt.id, label, opt.config.value, enabled))
             }
         }

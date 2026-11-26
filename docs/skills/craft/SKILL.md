@@ -12,6 +12,7 @@ context bloat is the main risk: stock telegram android has 50k-line files. searc
 | rule | meaning |
 | --- | --- |
 | src/fork first | check `src/fork/InuConfig.kt`, `InuHooks.kt`, `helpers/` before `worktree/`. the hook often exists already |
+| reuse existing behavior | before editing, use `rg` on the feature's config keys, resources, and call sites to find implementations under other names. check local code first, then inugram. reuse a matching helper or move the shared behavior into it, checking existing callers before changing its contract. add new logic only for gaps in the existing implementation |
 | no generic grep in worktree | never `rg` words like padding, margin, title, avatar, button, draw. search only exact symbols, `R.string.*` / `R.drawable.*` keys, or `inu_` / `InuConfig.` hooks |
 | scope every rg | `rg -n "symbol" worktree/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java` |
 | 2-stall stop | two snippets read and still no cause: stop reading. use one adb check, one `Log.d`, or ask one question |

@@ -631,8 +631,6 @@
     <string name="InuDialogsFabHideOnScroll">Скрывать при прокрутке</string>
     <string name="InuDialogsFabLeftSide">Переместить влево</string>
     <string name="InuDialogsFabMainAction">Основное действие</string>
-    <string name="InuDialogsFabOffsetForBottomBar">Отступ для нижней панели</string>
-    <string name="InuDialogsFabOffsetForBottomBarInfo">Отключение может работать некорректно на некоторых размерах экрана</string>
     <string name="InuDialogsFabSecondaryAction">Дополнительное действие</string>
     <string name="InuDialogsMenuItems">Пункты</string>
     <string name="InuDialogsMenuOrder">Меню опций</string>
@@ -1208,7 +1206,7 @@
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapProvider">Источник карт</string>
     <string name="InuMapProviderGoogle">Google Карты</string>
-    <string name="InuMapProviderOsmLite">OpenStreetMap (lite)</string>
+    <string name="InuMapProviderOsmLite">OpenStreetMap (облегчённая версия)</string>
     <string name="InuMapsHeader">Карты</string>
     <string name="InuMarkChatAsRead">Пометить как прочитанное</string>
     <string name="InuMarkChatAsReadDone">Чат помечен как прочитанный</string>

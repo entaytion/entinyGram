@@ -235,6 +235,9 @@ class ParanoiaActivity : SettingsPageActivity() {
             iconRes = R.drawable.entiny_paranoia,
             factory = ::ParanoiaActivity,
             entries = listOf(
+                SearchRegistry.Entry("paranoia-hide-stars", R.string.InuParanoiaHideStars, TOGGLE_HIDE_STARS),
+                SearchRegistry.Entry("paranoia-hide-gram", R.string.InuParanoiaHideGram, TOGGLE_HIDE_GRAM),
+                SearchRegistry.Entry("paranoia-hide-settings", R.string.InuHideInugramSettings, TOGGLE_HIDE_SETTINGS),
                 SearchRegistry.Entry("paranoia-whitelist", R.string.InuParanoiaWhitelist, TOGGLE_WHITELIST),
                 SearchRegistry.Entry("paranoia-launcher-shortcut", R.string.InuParanoiaLauncherShortcut, TOGGLE_LAUNCHER_SHORTCUT),
                 SearchRegistry.Entry("paranoia-disguise", R.string.InuParanoiaDisguise, TOGGLE_DISGUISE),

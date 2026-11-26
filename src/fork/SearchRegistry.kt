@@ -39,7 +39,13 @@ import org.telegram.ui.ProfileActivity
 
 object SearchRegistry {
     // entiny: aliases are retired slugs that still resolve to this target, so old tg://entinySettings links keep working
-    data class Entry(val slug: String, val titleRes: Int = 0, val itemId: Int = -1, val aliases: List<String> = emptyList(), val titleText: CharSequence? = null)
+    data class Entry(
+        val slug: String,
+        val titleRes: Int = 0,
+        val itemId: Int = -1,
+        val aliases: List<String> = emptyList(),
+        val visible: (() -> Boolean)? = null,
+    )
 
     data class Page(
         val slug: String,
@@ -100,6 +106,7 @@ object SearchRegistry {
         buildMap {
             for (page in pages) {
                 fun add(slug: String, target: Target) {
+                    require(slug.isNotBlank()) { "SearchRegistry: empty slug for '${page.slug}'" }
                     require(put(slug, target) == null) { "SearchRegistry: duplicate slug '$slug'" }
                 }
                 add(page.slug, Target(page, null))
@@ -151,11 +158,11 @@ object SearchRegistry {
                 ) { f.presentFragment(page.factory()) }.withLink("tg://entinySettings/${page.slug}")
             )
             for (entry in page.entries) {
-                val title = entry.titleText?.toString() ?: LocaleController.getString(entry.titleRes)
+                if (entry.visible?.invoke() == false) continue
                 extra.add(
                     ProfileActivity.SearchAdapter.SearchResult(
                         guidFor(entry.slug),
-                        title,
+                        LocaleController.getString(entry.titleRes),
                         parent,
                         page.iconRes,
                     ) {
@@ -165,19 +172,20 @@ object SearchRegistry {
             }
             if (page.autoCollect) {
                 val collected = try {
-                    (page.factory() as? SettingsPageActivity)?.collectSearchEntries() ?: emptyList()
+                    page.factory().collectSearchEntries()
                 } catch (t: Throwable) {
                     emptyList<UItem>()
                 }
-                val existingIds = page.entries.map { it.itemId }.toSet()
+                val seenIds = page.entries.mapTo(HashSet()) { it.itemId }
                 for (item in collected) {
                     val id = item.id
-                    if (id <= 0 || id in existingIds) continue
+                    if (id <= 0 || id in seenIds) continue
                     val text = item.text?.toString()?.trim().orEmpty()
                     if (text.isEmpty()) continue
                     val slug = "${page.slug}--$id"
-                    if (targetBySlug.containsKey(slug) || collectedTargets.containsKey(slug)) continue
-                    val synthetic = Entry(slug, titleText = text, itemId = id)
+                    if (targetBySlug.containsKey(slug)) continue
+                    seenIds.add(id)
+                    val synthetic = Entry(slug, itemId = id)
                     collectedTargets[slug] = Target(page, synthetic)
                     collectedItemIdToSlug[id] = slug
                     extra.add(
@@ -220,7 +228,7 @@ object SearchRegistry {
             else -> return false
         }
         val target = targetBySlug[segs.last()] ?: collectedTargets[segs.last()]
-        if (target == null) {
+        if (target == null || target.entry?.visible?.invoke() == false) {
             BulletinFactory.global().createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuSettingNotFound)).show()
             return true
         }

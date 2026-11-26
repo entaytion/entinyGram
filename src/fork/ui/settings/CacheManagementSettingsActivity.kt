@@ -337,6 +337,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.entiny_trash,
             factory = ::CacheManagementSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("cache-clear-all", R.string.InuCacheClearAll, BUTTON_CLEAR_ALL),
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_MESSAGES_TTL),
                 SearchRegistry.Entry("presence-logs-ttl", R.string.InuPresenceLogsTtl, BUTTON_LOGS_TTL),
                 SearchRegistry.Entry("clear-deleted-cache", R.string.InuClearDeletedCache, ROW_IDS.getValue(Kind.DELETED)),

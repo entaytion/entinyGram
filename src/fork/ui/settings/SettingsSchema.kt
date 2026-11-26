@@ -57,7 +57,7 @@ sealed class Row {
     }
 
     class Custom(
-        val slug: String,
+        val slug: String?,
         val titleRes: Int,
         val build: (SchemaPageActivity, Int) -> UItem,
         val click: (SchemaPageActivity, View) -> Unit,
@@ -96,8 +96,8 @@ class Section(
 class Schema(val slug: String, val titleRes: Int, val iconRes: Int, val sections: List<Section>) {
     val rows: List<Row> get() = sections.flatMap { it.rows }
 
-    private fun entry(slug: String, titleRes: Int, id: Int) =
-        SearchRegistry.Entry(slug, titleRes, id, Schemas.LEGACY_ENTRY_SLUGS[slug].orEmpty())
+    private fun entry(slug: String, titleRes: Int, id: Int, visible: (() -> Boolean)? = null) =
+        SearchRegistry.Entry(slug, titleRes, id, Schemas.LEGACY_ENTRY_SLUGS[slug].orEmpty(), visible)
 
     val page: SearchRegistry.Page by lazy {
         SearchRegistry.Page(
@@ -106,15 +106,16 @@ class Schema(val slug: String, val titleRes: Int, val iconRes: Int, val sections
             iconRes = iconRes,
             factory = { SchemaPageActivity(this) },
             aliases = Schemas.LEGACY_PAGE_SLUGS[slug].orEmpty(),
+            autoCollect = false,
             entries = rows.mapNotNull { r ->
                 when (r) {
                     is Row.Toggle -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
                     is Row.Choice -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
                     is Row.Group -> entry(r.slug, r.titleRes, r.id)
-                    is Row.Custom -> if (r.slug.isEmpty()) null else entry(r.slug, r.titleRes, r.id)
+                    is Row.Custom -> r.slug?.let { entry(it, r.titleRes, r.id) }
                     is Row.Reorder -> entry(r.slug, r.titleRes, r.id)
                     is Row.Slider -> entry(r.item.key.replace('_', '-'), r.titleRes, r.id)
-                    is Row.Link -> if (r.slug.isEmpty()) null else entry(r.slug, r.titleRes, r.id)
+                    is Row.Link -> entry(r.slug, r.titleRes, r.id, r.visible)
                 }
             },
         )
@@ -146,7 +147,15 @@ class SectionBuilder {
         rows.add(Row.Choice(item, titleRes, options, values, onChange).also { it.visible = visible })
     }
 
-    fun link(titleRes: Int, icon: Int = 0, value: (() -> CharSequence?)? = null, badge: (() -> CharSequence?)? = null, visible: (() -> Boolean)? = null, slug: String = "", create: () -> SettingsPageActivity) {
+    fun link(
+        titleRes: Int,
+        icon: Int = 0,
+        value: (() -> CharSequence?)? = null,
+        badge: (() -> CharSequence?)? = null,
+        visible: (() -> Boolean)? = null,
+        slug: String,
+        create: () -> SettingsPageActivity,
+    ) {
         rows.add(Row.Link(slug, titleRes, icon, value, badge, create).also { it.visible = visible })
     }
 
@@ -161,7 +170,7 @@ class SectionBuilder {
     }
 
     fun custom(
-        slug: String,
+        slug: String?,
         titleRes: Int,
         visible: (() -> Boolean)? = null,
         build: (SchemaPageActivity, Int) -> UItem,
@@ -296,7 +305,7 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
                 if (row.infoRes != 0 || row.experimental) {
                     mkTwoLineCheckItem(row.id, row.titleRes, row.infoRes, row.item.value, row.experimental, slug = row.item.key.replace('_', '-'))
                 } else {
-                    UItem.asCheck(row.id, NewFeatureBadges.forSlug(row.item.key.replace('_', '-'), LocaleController.getString(row.titleRes))).setChecked(row.item.value)
+                    UItem.asCheck(row.id, SettingsBadge.title(LocaleController.getString(row.titleRes), slug = row.item.key.replace('_', '-'))).setChecked(row.item.value)
                 }
             )
 
@@ -311,16 +320,15 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
             is Row.Link -> items.add(
                 when {
                     row.icon != 0 -> {
-                        val title = NewFeatureBadges.forSlug(row.slug, LocaleController.getString(row.titleRes))
+                        val title = SettingsBadge.title(LocaleController.getString(row.titleRes), slug = row.slug)
                         val value = row.value?.invoke()
                         if (value != null) mkTwoLineEntry(row.id, row.icon, title, value) else mkSubPageButton(row.id, row.icon, title)
                     }
                     else -> {
-                        val title = LocaleController.getString(row.titleRes)
-                        val badge = row.badge?.invoke()
+                        val title = SettingsBadge.title(LocaleController.getString(row.titleRes), slug = row.slug, detail = row.badge?.invoke())
                         mkSubPageButton(
                             row.id,
-                            NewFeatureBadges.forSlug(row.slug, if (badge.isNullOrEmpty()) title else withBadge(title, badge)),
+                            title,
                             row.value?.invoke(),
                         )
                     }
@@ -351,7 +359,7 @@ class SchemaPageActivity(val schema: Schema = Schemas.CHATS) : SettingsPageActiv
                         defaultValue = row.item.default.toFloat(),
                         initialValue = row.item.value.toFloat(),
                         step = row.step,
-                        title = NewFeatureBadges.forSlug(row.item.key.replace('_', '-'), LocaleController.getString(row.titleRes)),
+                        title = SettingsBadge.title(LocaleController.getString(row.titleRes), slug = row.item.key.replace('_', '-')),
                         format = row.format,
                         onChanged = {
                             row.item.value = it.toInt()

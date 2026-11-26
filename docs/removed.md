@@ -14,6 +14,7 @@ what entinygram used to have and no longer ships, and why. one row per feature, 
 | custom edited and deleted marks | your own text for the "edited" and "deleted" labels on messages | too narrow for the core app. it lives in the [custom marks](https://github.com/entinyGram/plugins/tree/main/plugins/features/custom-marks) plugin instead |
 | drawer material 3 sections | grouped side drawer rows into rounded cards | inugram shipped its own material 3 drawer redesign, kept as the base after the merge so the two styles do not stack |
 | raise fab buttons | a toggle that lifted the chat-list buttons a few dp | it had no effect: the code that read it was never called |
+| offset for bottom bar | a toggle for how far the chat-list buttons sit above the bottom bar | it had no effect: the code that read it was never called. `tg://entinySettings/dialogs-fab-offset-for-bottom-bar` now opens the hide on scroll row |
 | thicken bold text | a fonts toggle that faked a bold weight for custom fonts without one | it only touched non-variable fonts lacking a bold face and needed a restart, so it did almost nothing. the fake bold stays always on. `tg://entinySettings/thicken-bold-text` now opens the fonts page |
 
 ## how to add a row

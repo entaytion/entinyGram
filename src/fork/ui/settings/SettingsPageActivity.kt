@@ -16,7 +16,6 @@ import android.view.WindowManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
-import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.AndroidUtilities
@@ -39,7 +38,6 @@ import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.UItem
-import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Components.UniversalFragment
 import org.telegram.ui.Components.UniversalRecyclerView
 import org.telegram.ui.LaunchActivity
@@ -66,12 +64,8 @@ abstract class SettingsPageActivity : UniversalFragment() {
     // entiny: best-effort auto-collection of searchable items for settings search
     fun collectSearchEntries(): List<UItem> {
         val items = ArrayList<UItem>()
-        return try {
-            fillItems(items, null)
-            items
-        } catch (t: Throwable) {
-            emptyList()
-        }
+        fillItems(items, null)
+        return items
     }
 
     @Suppress("DEPRECATION")
@@ -245,8 +239,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
         split: Boolean = false,
         slug: String = "",
     ): UItem {
-        val rawText = LocaleController.getString(textRes)
-        val text = NewFeatureBadges.forSlug(slug, if (experimental) addExperimentalSpan(rawText) else rawText)
+        val text = SettingsBadge.title(LocaleController.getString(textRes), slug = slug, experimental = experimental)
         val subtext = if (infoRes == 0) null else LocaleController.getString(infoRes)
         return UItem.asButtonCheck(id, text, subtext).also {
             it.checked = checked
@@ -255,39 +248,6 @@ abstract class SettingsPageActivity : UniversalFragment() {
                 if (view !is NotificationsCheckCell) return@Callback
                 view.setTextAndValueAndCheck(text, subtext, it.checked, 0, subtext != null, view.needDivider)
                 view.setDrawLine(split)
-            }
-        }
-    }
-
-    // entiny: like mkTwoLineCheckItem, but with a leading icon
-    protected fun mkIconCheckItem(
-        id: Int,
-        iconRes: Int,
-        textRes: Int,
-        infoRes: Int,
-        checked: Boolean,
-        experimental: Boolean = false
-    ): UItem {
-        val rawText = LocaleController.getString(textRes)
-        val text = if (experimental) addExperimentalSpan(rawText) else rawText
-        val subtext = if (infoRes == 0) null else LocaleController.getString(infoRes)
-        return UItem(UniversalAdapter.VIEW_TYPE_ICON_TEXT_CHECK, false).also {
-            it.id = id
-            it.text = text
-            it.subtext = subtext
-            it.iconResId = iconRes
-            it.checked = checked
-            it.bind = Utilities.Callback { view ->
-                (view as? NotificationsCheckCell)?.setTextAndValueAndIconAndCheck(
-                    text,
-                    subtext,
-                    iconRes,
-                    it.checked,
-                    0,
-                    subtext != null,
-                    !InuConfig.M3_SECTIONS_STYLE.value,
-                )
-                (view as? NotificationsCheckCell)?.setDrawLine(false)
             }
         }
     }
@@ -347,14 +307,6 @@ abstract class SettingsPageActivity : UniversalFragment() {
         checked: Boolean,
     ): UItem = mkTwoLineCheckItem(id, textRes, infoRes, checked, split = true)
 
-
-    protected fun addExperimentalSpan(string: CharSequence): CharSequence {
-        val pill = SettingsBadge.pill(LocaleController.getString(R.string.InuBetaPill), Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader))
-        return SpannableStringBuilder().append(pill).append("  ").append(string)
-    }
-
-    protected fun withBadge(title: CharSequence, badge: CharSequence, tint: Int = Theme.getColor(Theme.key_featuredStickers_addButton)): CharSequence =
-        SpannableStringBuilder().append(title).append(" ").append(SettingsBadge.pill(badge, tint))
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean {
         val opts = ItemOptions.makeOptions(this, view).setLongPressSelectionEnabled(false)

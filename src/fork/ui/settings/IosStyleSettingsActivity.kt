@@ -262,6 +262,11 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_newphone,
             factory = ::IosStyleSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("ios-bottom-tabs-open", R.string.InuBottomTabs, BUTTON_BOTTOM_TABS),
+                SearchRegistry.Entry("liquid-glass-angle", R.string.InuLiquidGlassAngle, SLIDER_GLASS_ANGLE),
+                SearchRegistry.Entry("liquid-glass-intensity", R.string.InuLiquidGlassIntensity, SLIDER_GLASS_INTENSITY),
+                SearchRegistry.Entry("liquid-glass-tint", R.string.InuLiquidGlassTint, SLIDER_GLASS_TINT),
+                SearchRegistry.Entry("liquid-glass-blur", R.string.InuLiquidGlassBlur, SLIDER_GLASS_BLUR),
                 SearchRegistry.Entry("disable-glass-glare", R.string.InuGlassGlare, BUTTON_GLASS_GLARE),
                 SearchRegistry.Entry("liquid-glass-reset", R.string.InuLiquidGlassReset, BUTTON_RESET_GLASS),
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving

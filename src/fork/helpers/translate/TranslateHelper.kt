@@ -564,30 +564,27 @@ object TranslateHelper {
         return list.distinct()
     }
 
-    @JvmStatic
-    fun hasTimeAddition(msg: MessageObject?): Boolean {
-        if (msg == null) return false
-        return bodyTranslated(msg) || hasTranslatedWebPage(msg)
-    }
+    private fun hasTimeAddition(msg: MessageObject): Boolean =
+        bodyTranslated(msg) || hasTranslatedWebPage(msg)
 
     @JvmStatic
-    fun timeAdditionsHash(msg: MessageObject?): Int {
-        if (!hasTimeAddition(msg)) return 0
-        return translatedPairs(msg!!).hashCode()
+    fun timeAdditionsHash(msg: MessageObject): Int? {
+        if (!hasTimeAddition(msg)) return null
+        return translatedPairs(msg).hashCode()
     }
 
     @JvmStatic
     fun extraTimeWidth(msg: MessageObject?): Int {
-        if (!hasTimeAddition(msg)) return 0
-        val pairs = translatedPairs(msg!!)
+        if (msg == null || !hasTimeAddition(msg)) return 0
+        val pairs = translatedPairs(msg)
         if (pairs.isEmpty()) return AndroidUtilities.dp(11f)
         return pairs.distinctBy { it.second }.size * (arrowDrawable?.intrinsicWidth ?: 0)
     }
 
     @JvmStatic
     fun appendTimePrefix(sb: SpannableStringBuilder, msg: MessageObject?) {
-        if (!hasTimeAddition(msg)) return
-        val pairs = translatedPairs(msg!!)
+        if (msg == null || !hasTimeAddition(msg)) return
+        val pairs = translatedPairs(msg)
         if (pairs.isEmpty()) {
             ChatHelper.appendTimeIcon(sb, R.drawable.msg_translate, sizeDp = 11f, translateYDp = 1f)
             sb.append(" ")

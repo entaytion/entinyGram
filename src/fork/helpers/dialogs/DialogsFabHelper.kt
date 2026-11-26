@@ -49,9 +49,6 @@ object DialogsFabHelper {
     fun hideOnScroll(): Boolean = InuConfig.DIALOGS_FAB_HIDE_ON_SCROLL.value
 
     @JvmStatic
-    fun offsetForBottomBar(): Boolean = InuConfig.DIALOGS_FAB_OFFSET_FOR_BOTTOM_BAR.value
-
-    @JvmStatic
     fun leftSide(): Boolean = InuConfig.DIALOGS_FAB_LEFT_SIDE.value
 
     @JvmStatic

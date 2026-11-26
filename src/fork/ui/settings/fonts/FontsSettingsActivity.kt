@@ -333,6 +333,7 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             factory = ::FontsSettingsActivity,
             aliases = listOf("thicken-bold-text"),
             entries = listOf(
+                SearchRegistry.Entry("font-reset-order", R.string.InuFontResetOrder, BUTTON_RESET),
                 SearchRegistry.Entry("app-font", R.string.InuAppFont, BUTTON_APP_FONT),
                 SearchRegistry.Entry("include-system-fonts", R.string.InuFontIncludeSystem, BUTTON_INCLUDE_SYSTEM),
                 SearchRegistry.Entry("add-font", R.string.InuFontAdd, BUTTON_ADD),

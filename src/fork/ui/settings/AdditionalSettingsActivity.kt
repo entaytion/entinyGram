@@ -471,6 +471,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             iconRes = R.drawable.entiny_about,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("copy-system-info", R.string.InuLogsCopySystemInfo, BUTTON_COPY_SYSINFO),
                 SearchRegistry.Entry("channel", R.string.InuAboutChannel, BUTTON_CHANNEL_LINK),
                 SearchRegistry.Entry("github", R.string.InuAboutGitHub, BUTTON_GITHUB),
                 SearchRegistry.Entry("logs-enabled", R.string.InuLogsEnabled, TOGGLE_LOGS_ENABLED),

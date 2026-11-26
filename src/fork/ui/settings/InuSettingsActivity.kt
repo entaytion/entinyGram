@@ -73,7 +73,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         val whatsNewTitle = LocaleController.getString(R.string.InuWhatsNew)
-        items.add(mkSubPageButton(BUTTON_WHATS_NEW, R.drawable.entiny_sparkles, if (NewFeatureBadges.active) NewFeatureBadges.pill(whatsNewTitle) else whatsNewTitle))
+        items.add(mkSubPageButton(BUTTON_WHATS_NEW, R.drawable.entiny_sparkles, SettingsBadge.title(whatsNewTitle, isNew = NewFeatureBadges.active)))
         items.add(UItem.asShadow(null))
 
         items.add(mkSubPageButton(CAT_APPEARANCE, R.drawable.entiny_appearance, LocaleController.getString(R.string.InuCategoryAppearance)))
@@ -85,13 +85,13 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_RESTRICTED, R.drawable.entiny_ghost, LocaleController.getString(R.string.InuRestrictedFeatures)))
         items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.entiny_hide_clutter, LocaleController.getString(R.string.InuAnnoyances)))
         items.add(mkSubPageButton(CAT_NETWORK, R.drawable.entiny_network_notifications, LocaleController.getString(R.string.InuNetworkAndNotifications)))
-        items.add(mkSubPageButton(CAT_PROXY, R.drawable.entiny_proxy, addExperimentalSpan(LocaleController.getString(R.string.InuProxyPage))))
+        items.add(mkSubPageButton(CAT_PROXY, R.drawable.entiny_proxy, SettingsBadge.title(LocaleController.getString(R.string.InuProxyPage), experimental = true)))
         items.add(mkSubPageButton(BUTTON_AI, R.drawable.entiny_ai_translation, LocaleController.getString(R.string.InuAiAndTranslator)))
         items.add(UItem.asShadow(null))
 
         items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.entiny_app_controls, LocaleController.getString(R.string.InuRootSystem)))
         // #if PLUGINS
-        items.add(mkSubPageButton(BUTTON_PLUGINS, R.drawable.entiny_plugins, addExperimentalSpan(LocaleController.getString(R.string.InuPlugins))))
+        items.add(mkSubPageButton(BUTTON_PLUGINS, R.drawable.entiny_plugins, SettingsBadge.title(LocaleController.getString(R.string.InuPlugins), experimental = true)))
         // #endif
         items.add(mkSubPageButton(CAT_ABOUT, R.drawable.entiny_about, LocaleController.getString(R.string.InuAbout)))
         items.add(UItem.asShadow(null))
@@ -152,6 +152,8 @@ class InuSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.icon_settings_inu,
             factory = ::InuSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("ai-settings-open", R.string.InuAiAndTranslator, BUTTON_AI),
+                SearchRegistry.Entry("plugins-open", R.string.InuPlugins, BUTTON_PLUGINS),
                 SearchRegistry.Entry("whats-new", R.string.InuWhatsNew, BUTTON_WHATS_NEW),
             ),
         )
