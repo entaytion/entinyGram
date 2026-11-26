@@ -372,6 +372,10 @@ object RoundRecorderHelper {
     @JvmStatic
     fun attachExposureButtons(parent: FrameLayout, onLevel: Utilities.Callback<Float>): ExposureLevelButtonsView? {
         if (!InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.value) return null
+        return addExposureButtons(parent, onLevel, 150f)
+    }
+
+    fun addExposureButtons(parent: FrameLayout, onLevel: Utilities.Callback<Float>, bottomMargin: Float): ExposureLevelButtonsView {
         val view = ExposureLevelButtonsView(parent.context)
         view.alpha = 0f
         view.visibility = View.GONE
@@ -381,7 +385,7 @@ object RoundRecorderHelper {
             LayoutHelper.createFrame(
                 LayoutHelper.WRAP_CONTENT, 30f,
                 Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM,
-                24f, 0f, 24f, 150f,
+                24f, 0f, 24f, bottomMargin,
             ),
         )
         return view
@@ -456,19 +460,4 @@ object RoundRecorderHelper {
         if (button == null) return
         updateAeButtonIcon(button, isAeLocked(session))
     }
-
-    @JvmStatic
-    fun syncExposureButtons(buttons: ExposureLevelButtonsView?, session: RoundVideoSession?) {
-        if (buttons == null) return
-        if (session == null) {
-            buttons.setLevels(emptyList())
-            return
-        }
-        session.setExposureEv(exposureItem(session).value)
-        buttons.setLevels(exposureLevelsFor(session.getExposureCompensationRange(), session.getExposureCompensationStep()))
-        buttons.setActiveLevel(session.getExposureEv())
-    }
-
-    private fun exposureItem(session: RoundVideoSession) =
-        if (session.isFrontFacing()) InuConfig.ROUND_RECORDER_EXPOSURE_FRONT else InuConfig.ROUND_RECORDER_EXPOSURE_BACK
 }

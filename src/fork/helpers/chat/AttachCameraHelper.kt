@@ -13,7 +13,6 @@ import android.hardware.Camera
 import android.util.Log
 import android.util.Range
 import android.util.Rational
-import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -38,7 +37,6 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.ChatAttachAlert
 import org.telegram.ui.Components.ChatAttachAlertPhotoLayout
-import org.telegram.ui.Components.LayoutHelper
 import java.io.File
 import java.io.FileOutputStream
 import java.lang.ref.WeakReference
@@ -159,19 +157,7 @@ object AttachCameraHelper {
     @JvmStatic
     fun attachExposureButtons(parent: FrameLayout, onLevel: Utilities.Callback<Float>): ExposureLevelButtonsView? {
         if (!InuConfig.ATTACH_CAMERA_EXPOSURE_LEVELS.value) return null
-        val view = ExposureLevelButtonsView(parent.context)
-        view.alpha = 0f
-        view.visibility = View.GONE
-        view.setDelegate(onLevel)
-        parent.addView(
-            view,
-            LayoutHelper.createFrame(
-                LayoutHelper.WRAP_CONTENT, 30f,
-                Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM,
-                24f, 0f, 24f, 134f,
-            ),
-        )
-        return view
+        return RoundRecorderHelper.addExposureButtons(parent, onLevel, 134f)
     }
 
     @JvmStatic
