@@ -167,6 +167,7 @@ internal class MarketPluginActivity(
 @SuppressLint("ViewConstructor")
 internal class MarketHeroCell(context: Context) : LinearLayout(context) {
     private val icon = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(20f)) }
+    private val placeholder = PluginManifestIcons.createPlaceholder(context)
     private val name = TextView(context).apply {
         textSize = 22f
         typeface = AndroidUtilities.bold()
@@ -197,7 +198,7 @@ internal class MarketHeroCell(context: Context) : LinearLayout(context) {
     }
 
     fun bind(entry: MarketEntry, action: MarketAction, onClick: () -> Unit) {
-        PluginManifestIcons.bindIcon(icon, entry.manifest.icon, PluginManifestIcons.createPlaceholder(context))
+        PluginManifestIcons.bindIcon(icon, entry.manifest.icon, placeholder)
         name.text = entry.name
         meta.text = listOfNotNull(entry.manifest.author?.takeIf { it.isNotEmpty() }, entry.manifest.version?.let { "v$it" }).joinToString(" · ")
         tags.bind(entry.tags)

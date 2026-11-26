@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.InsetDrawable
 import android.text.TextUtils
 import android.view.Gravity
@@ -162,8 +163,12 @@ internal class MarketBannerCell(context: Context) : LinearLayout(context) {
     }
 }
 
-private fun bindMarketIcon(view: BackupImageView, entry: MarketEntry) {
-    PluginManifestIcons.bindIcon(view, entry.manifest.icon, PluginManifestIcons.createPlaceholder(view.context))
+private fun bindMarketIcon(
+    view: BackupImageView,
+    entry: MarketEntry,
+    placeholder: Drawable? = PluginManifestIcons.createPlaceholder(view.context),
+) {
+    PluginManifestIcons.bindIcon(view, entry.manifest.icon, placeholder)
 }
 
 internal class MarketTagPills(context: Context) : HorizontalScrollView(context) {
@@ -306,6 +311,7 @@ internal class MarketFeaturedCell(context: Context) : LinearLayout(context) {
 @SuppressLint("ViewConstructor")
 internal class MarketRow(context: Context) : LinearLayout(context) {
     private val icon = BackupImageView(context).apply { setRoundRadius(AndroidUtilities.dp(10f)) }
+    private val placeholder = PluginManifestIcons.createPlaceholder(context)
     private val title = TextView(context).apply {
         textSize = 15f
         typeface = AndroidUtilities.bold()
@@ -364,7 +370,7 @@ internal class MarketRow(context: Context) : LinearLayout(context) {
     }
 
     fun bind(entry: MarketEntry, action: MarketAction, onOpen: () -> Unit, onAction: () -> Unit) {
-        bindMarketIcon(icon, entry)
+        bindMarketIcon(icon, entry, placeholder)
         title.text = entry.name
         val version = entry.manifest.version?.takeIf { it.isNotBlank() }
         pill.text = version?.let { "v$it" }
