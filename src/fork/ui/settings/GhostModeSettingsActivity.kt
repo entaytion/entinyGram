@@ -22,6 +22,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             ExpandableBoolGroup.Option(R.string.InuGhostHideRead, InuConfig.GHOST_HIDE_READ, TOGGLE_HIDE_READ),
             ExpandableBoolGroup.Option(R.string.InuGhostHideVoiceRead, InuConfig.GHOST_HIDE_VOICE_READ, TOGGLE_HIDE_VOICE_READ),
             ExpandableBoolGroup.Option(R.string.InuGhostHideStoryRead, InuConfig.GHOST_HIDE_STORY_READ, TOGGLE_HIDE_STORY_READ),
+            ExpandableBoolGroup.Option(R.string.InuGhostHidePostViews, InuConfig.GHOST_HIDE_POST_VIEWS, TOGGLE_HIDE_POST_VIEWS),
             ExpandableBoolGroup.Option(R.string.InuGhostHideTyping, InuConfig.GHOST_HIDE_TYPING, TOGGLE_HIDE_TYPING),
         ),
         sectionId = SECTION_GHOST_MODE,
@@ -177,6 +178,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_SEEN_MENTIONS = InuUtils.generateId()
         private val TOGGLE_HIDE_VOICE_READ = InuUtils.generateId()
         private val TOGGLE_HIDE_STORY_READ = InuUtils.generateId()
+        private val TOGGLE_HIDE_POST_VIEWS = InuUtils.generateId()
         private val TOGGLE_HIDE_TYPING = InuUtils.generateId()
         private val BUTTON_PRESENCE_MODE = InuUtils.generateId()
         private val TOGGLE_HIDE_APP_BAR_ICON = InuUtils.generateId()
@@ -201,6 +203,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-hide-seen-mentions", R.string.InuGhostHideSeenMentions, TOGGLE_HIDE_SEEN_MENTIONS),
                 SearchRegistry.Entry("ghost-hide-voice-read", R.string.InuGhostHideVoiceRead, TOGGLE_HIDE_VOICE_READ),
                 SearchRegistry.Entry("ghost-hide-story-read", R.string.InuGhostHideStoryRead, TOGGLE_HIDE_STORY_READ),
+                SearchRegistry.Entry("ghost-hide-post-views", R.string.InuGhostHidePostViews, TOGGLE_HIDE_POST_VIEWS),
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
                 SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostPresenceModeDelayed, BUTTON_PRESENCE_MODE),

@@ -896,6 +896,7 @@
     <string name="InuGhostHideSeenMentions">Hide seen mentions</string>
     <string name="InuGhostHideSeenMentionsInfo">Hide the mention badge and the jump button in chats you already opened locally in Ghost Mode.</string>
     <string name="InuGhostHideStoryRead">Do not send story views</string>
+    <string name="InuGhostHidePostViews">Do not send post views</string>
     <string name="InuGhostHideTyping">Hide typing and upload progress</string>
     <string name="InuGhostHideVoiceRead">Do not mark voice and video messages as played</string>
     <string name="InuGhostMarkReadLocally">Mark as read locally</string>

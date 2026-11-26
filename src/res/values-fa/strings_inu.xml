@@ -887,6 +887,7 @@
     <string name="InuGhostHideSeenMentions">پنهان کردن اشاره‌های دیده‌شده</string>
     <string name="InuGhostHideSeenMentionsInfo">نشان اشاره و دکمه رفتن به آن را در گفتگوهایی که در حالت روح به‌صورت محلی باز کرده‌اید پنهان می‌کند.</string>
     <string name="InuGhostHideStoryRead">ارسال نکردن بازدید استوری</string>
+    <string name="InuGhostHidePostViews">ارسال نکردن بازدید پست</string>
     <string name="InuGhostHideTyping">پنهان کردن تایپ و پیشرفت بارگذاری</string>
     <string name="InuGhostHideVoiceRead">پیام‌های صوتی و تصویری را پخش‌شده علامت نزن</string>
     <string name="InuGhostMarkReadLocally">علامت خوانده‌شده به‌صورت محلی</string>

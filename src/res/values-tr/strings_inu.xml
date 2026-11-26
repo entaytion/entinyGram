@@ -888,6 +888,7 @@
     <string name="InuGhostHideSeenMentions">Görülen bahsetmeleri gizle</string>
     <string name="InuGhostHideSeenMentionsInfo">Hayalet modunda yerel olarak açtığınız sohbetlerde bahsetme rozetini ve gitme düğmesini gizler.</string>
     <string name="InuGhostHideStoryRead">Hikaye görüntülemelerini gönderme</string>
+    <string name="InuGhostHidePostViews">Gönderi görüntülemelerini gönderme</string>
     <string name="InuGhostHideTyping">Yazıyor ve yükleme durumunu gizle</string>
     <string name="InuGhostHideVoiceRead">Sesli ve görüntülü mesajları dinlendi olarak işaretleme</string>
     <string name="InuGhostMarkReadLocally">Yerel olarak okundu işaretle</string>

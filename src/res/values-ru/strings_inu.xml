@@ -892,6 +892,7 @@
     <string name="InuGhostHideSeenMentions">Скрывать просмотренные упоминания</string>
     <string name="InuGhostHideSeenMentionsInfo">Скрывать значок упоминаний и кнопку перехода в чатах, которые вы уже открыли локально в режиме призрака.</string>
     <string name="InuGhostHideStoryRead">Не отправлять просмотры историй</string>
+    <string name="InuGhostHidePostViews">Не отправлять просмотры постов</string>
     <string name="InuGhostHideTyping">Скрывать набор текста и загрузку</string>
     <string name="InuGhostHideVoiceRead">Не помечать голосовые и видео как прослушанные</string>
     <string name="InuGhostMarkReadLocally">Отмечать прочитанным локально</string>

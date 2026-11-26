@@ -892,6 +892,7 @@
     <string name="InuGhostHideSeenMentions">Ховати переглянуті згадки</string>
     <string name="InuGhostHideSeenMentionsInfo">Ховати значок згадок і кнопку переходу в чатах, які ви вже відкрили локально в режимі примари.</string>
     <string name="InuGhostHideStoryRead">Не надсилати перегляди сторіс</string>
+    <string name="InuGhostHidePostViews">Не надсилати перегляди постів</string>
     <string name="InuGhostHideTyping">Приховати набір тексту та прогрес завантаження</string>
     <string name="InuGhostHideVoiceRead">Не позначати голосові та відеоповідомлення прослуханими</string>
     <string name="InuGhostMarkReadLocally">Позначати прочитаним локально</string>

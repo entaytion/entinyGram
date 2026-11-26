@@ -891,6 +891,7 @@
     <string name="InuGhostHideSeenMentions">إخفاء الإشارات المقروءة</string>
     <string name="InuGhostHideSeenMentionsInfo">إخفاء شارة الإشارة وزر الانتقال في المحادثات التي فتحتها محليًا بوضع التخفي.</string>
     <string name="InuGhostHideStoryRead">عدم إرسال مشاهدات القصص</string>
+    <string name="InuGhostHidePostViews">عدم إرسال مشاهدات المنشورات</string>
     <string name="InuGhostHideTyping">إخفاء الكتابة وتقدم الرفع</string>
     <string name="InuGhostHideVoiceRead">عدم تحديد الرسائل الصوتية والمرئية كمشغَّلة</string>
     <string name="InuGhostMarkReadLocally">تحديد كمقروء محلياً</string>

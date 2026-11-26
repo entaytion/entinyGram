@@ -887,6 +887,7 @@
     <string name="InuGhostHideSeenMentions">隐藏已查看的提及</string>
     <string name="InuGhostHideSeenMentionsInfo">隐藏在隐身模式下已于本地打开的聊天中的提及角标和跳转按钮。</string>
     <string name="InuGhostHideStoryRead">不发送故事浏览记录</string>
+    <string name="InuGhostHidePostViews">不发送帖子浏览记录</string>
     <string name="InuGhostHideTyping">隐藏正在输入和上传进度</string>
     <string name="InuGhostHideVoiceRead">不将语音和视频消息标记为已播放</string>
     <string name="InuGhostMarkReadLocally">本地标记为已读</string>

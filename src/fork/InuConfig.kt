@@ -2298,6 +2298,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val GHOST_HIDE_STORY_READ = BoolItem("ghost_hide_story_read", false)
 
     @JvmField
+    val GHOST_HIDE_POST_VIEWS = BoolItem("ghost_hide_post_views", false)
+
+    @JvmField
     val GHOST_HIDE_TYPING = BoolItem("ghost_hide_typing", false)
 
     class GhostPresenceModeItem : IntItem("ghost_presence_mode", NORMAL) {

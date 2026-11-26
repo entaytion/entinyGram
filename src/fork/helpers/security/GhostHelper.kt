@@ -42,6 +42,7 @@ enum class SuppressKind {
     ONLINE,
     VOICE_READ,
     STORY_READ,
+    POST_VIEW,
 }
 
 object GhostHelper {
@@ -219,7 +220,7 @@ object GhostHelper {
         val chatOverride = when (kind) {
             SuppressKind.READ, SuppressKind.VOICE_READ -> o.read
             SuppressKind.TYPING -> o.typing
-            SuppressKind.ONLINE, SuppressKind.STORY_READ -> OVERRIDE_DEFAULT
+            SuppressKind.ONLINE, SuppressKind.STORY_READ, SuppressKind.POST_VIEW -> OVERRIDE_DEFAULT
         }
         if (chatOverride == OVERRIDE_NEVER) return false
         if (dialogId != 0L && temporarilyAllowedDialogs.contains(dialogId)) return false
@@ -233,12 +234,14 @@ object GhostHelper {
             SuppressKind.ONLINE -> InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.HIDDEN
             SuppressKind.VOICE_READ -> InuConfig.GHOST_HIDE_VOICE_READ.value || InuConfig.GHOST_HIDE_READ.value
             SuppressKind.STORY_READ -> InuConfig.GHOST_HIDE_STORY_READ.value
+            SuppressKind.POST_VIEW -> InuConfig.GHOST_HIDE_POST_VIEWS.value
         }
         if (suppress && org.telegram.messenger.BuildVars.LOGS_ENABLED) {
             android.util.Log.d(
                 "GhostMode",
                 "suppress dialogId=$dialogId kind=$kind override=${o.read}/${o.typing} read=${InuConfig.GHOST_HIDE_READ.value} " +
                     "voiceRead=${InuConfig.GHOST_HIDE_VOICE_READ.value} storyRead=${InuConfig.GHOST_HIDE_STORY_READ.value} " +
+                    "postViews=${InuConfig.GHOST_HIDE_POST_VIEWS.value} " +
                     "typing=${InuConfig.GHOST_HIDE_TYPING.value} presence=${InuConfig.GHOST_PRESENCE_MODE.value}"
             )
         }
@@ -480,6 +483,10 @@ object GhostHelper {
             is TL_stories.TL_stories_incrementStoryViews -> {
                 shouldSuppress(dialogId, SuppressKind.STORY_READ)
             }
+            is TLRPC.TL_messages_getMessagesViews -> {
+                if (shouldSuppress(dialogId, SuppressKind.POST_VIEW)) request.increment = false
+                false
+            }
             is TL_account.updateStatus -> {
                 if (shouldSuppress(0L, SuppressKind.ONLINE)) {
                     request.offline = true
@@ -557,6 +564,7 @@ object GhostHelper {
             is TLRPC.TL_messages_setEncryptedTyping -> request.peer?.chat_id?.toLong() ?: 0L
             is TLRPC.TL_messages_readHistory -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
             is TLRPC.TL_messages_readDiscussion -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_getMessagesViews -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
             is TLRPC.TL_channels_readHistory -> {
                 val channelId = request.channel?.channel_id ?: 0L
                 if (channelId != 0L) -channelId else 0L

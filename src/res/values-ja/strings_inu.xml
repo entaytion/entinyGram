@@ -887,6 +887,7 @@
     <string name="InuGhostHideSeenMentions">確認済みのメンションを隠す</string>
     <string name="InuGhostHideSeenMentionsInfo">ゴーストモードで端末上ですでに開いたチャットのメンションバッジと移動ボタンを隠します。</string>
     <string name="InuGhostHideStoryRead">ストーリーの閲覧履歴を送信しない</string>
+    <string name="InuGhostHidePostViews">投稿の閲覧履歴を送信しない</string>
     <string name="InuGhostHideTyping">入力中・アップロード中を隠す</string>
     <string name="InuGhostHideVoiceRead">音声・動画メッセージを再生済みにしない</string>
     <string name="InuGhostMarkReadLocally">ローカルで既読にする</string>

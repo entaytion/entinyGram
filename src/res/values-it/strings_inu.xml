@@ -901,6 +901,7 @@ Tocca per personalizzare…</string>
     <string name="InuGhostHideSeenMentions">Nascondi menzioni visualizzate</string>
     <string name="InuGhostHideSeenMentionsInfo">Nasconde il badge delle menzioni e il pulsante di salto nelle chat già aperte localmente in modalità fantasma.</string>
     <string name="InuGhostHideStoryRead">Non inviare le visualizzazioni delle storie</string>
+    <string name="InuGhostHidePostViews">Non inviare le visualizzazioni dei post</string>
     <string name="InuGhostHideTyping">Nascondi digitazione e avanzamento del caricamento</string>
     <string name="InuGhostHideVoiceRead">Non segnare i messaggi vocali e video come riprodotti</string>
     <string name="InuGhostMarkReadLocally">Segna come letto localmente</string>
