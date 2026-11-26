@@ -4,8 +4,9 @@ Date: Thu, 26 Nov 2026 09:54:07 +0200
 Subject: Restore missing dialogs for channels the account has joined.
 
 ---
- .../org/telegram/messenger/MessagesController.java    | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../org/telegram/messenger/MessagesController.java   | 12 ++++++++++++
+ .../java/org/telegram/messenger/MessagesStorage.java | 12 ++++++++++++
+ 2 files changed, 24 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -24,10 +25,10 @@ index 0000000..0000000 100644
          getNotificationsController().deleteAllNotificationChannels();
      }
  
-+    private void inu_loadMissingJoinedChannelDialog(long channelId) {
++    public void inu_loadMissingJoinedChannelDialog(long channelId) {
 +        TLRPC.Chat chat = getChat(channelId);
 +        if (dialogs_dict.get(-channelId) == null && chat instanceof TLRPC.TL_channel &&
-+                !chat.min && chat.access_hash != 0 && !ChatObject.isNotInChat(chat)) {
++                !chat.min && chat.access_hash != 0 && !ChatObject.isNotInChat(chat) && !ChatObject.isMonoForum(chat)) {
 +            loadUnknownDialog(getInputPeer(-channelId), 0);
 +        }
 +    }
@@ -43,3 +44,34 @@ index 0000000..0000000 100644
                      NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.onReceivedChannelDifference, channelId);
                  });
                  return;
+@@ -18283,6 +18294,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         pushMessages.add(obj);
+ 
+         getMessagesStorage().putMessages(messagesArr, true, true, false, 0, 0, 0);
++        getMessagesStorage().inu_listJoinedChannelDialog(-chatId);
+ 
+         AndroidUtilities.runOnUIThread(() -> {
+             updateInterfaceWithMessages(-chatId, pushMessages, 0);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -17852,6 +17852,18 @@ public class MessagesStorage extends BaseController {
+         });
+     }
+ 
++    // entiny: a channel previewed before joining is stored with folder_id -1, which the local join message never changes
++    public void inu_listJoinedChannelDialog(long dialogId) {
++        storageQueue.postRunnable(() -> {
++            try {
++                database.executeFast("UPDATE dialogs SET folder_id = 0 WHERE folder_id = -1 AND did = " + dialogId).stepThis().dispose();
++                unknownDialogsIds.remove(dialogId);
++            } catch (Exception e) {
++                checkSQLException(e);
++            }
++        });
++    }
++
+     public void updateDialogData(TLRPC.Dialog dialog) {
+         if (dialog == null) {
+             return;

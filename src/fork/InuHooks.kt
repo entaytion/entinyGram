@@ -140,6 +140,7 @@ object InuHooks {
         MapsHelper.syncMapProvider(messagesController)
         desu.inugram.helpers.dialogs.PinHelper.load(account)
         desu.inugram.helpers.dialogs.HiddenDialogsHelper.load(account)
+        desu.inugram.helpers.dialogs.JoinedChannelRepair.run(account)
         desu.inugram.helpers.dialogs.FolderMembershipHelper.load(account)
         desu.inugram.helpers.dialogs.RecentChatsHelper.load(account)
         desu.inugram.helpers.chat.BookmarksHelper.load(account)
