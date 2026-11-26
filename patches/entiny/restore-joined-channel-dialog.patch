@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 26 Nov 2026 09:54:07 +0200
+Subject: Restore missing dialogs for channels the account has joined.
+
+---
+ .../org/telegram/messenger/MessagesController.java    | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -7789,6 +7789,8 @@ public class MessagesController extends BaseController implements NotificationCe
+                             dialog.view_forum_as_messages = res.full_chat.view_forum_as_messages;
+                             getMessagesStorage().setDialogViewThreadAsMessages(dialogId, res.full_chat.view_forum_as_messages);
+                         }
++                    } else {
++                        inu_loadMissingJoinedChannelDialog(chatId);
+                     }
+                 });
+             } else {
+@@ -12885,6 +12887,14 @@ public class MessagesController extends BaseController implements NotificationCe
+         getNotificationsController().deleteAllNotificationChannels();
+     }
+ 
++    private void inu_loadMissingJoinedChannelDialog(long channelId) {
++        TLRPC.Chat chat = getChat(channelId);
++        if (dialogs_dict.get(-channelId) == null && chat instanceof TLRPC.TL_channel &&
++                !chat.min && chat.access_hash != 0 && !ChatObject.isNotInChat(chat)) {
++            loadUnknownDialog(getInputPeer(-channelId), 0);
++        }
++    }
++
+     protected void loadUnknownDialog(final TLRPC.InputPeer peer, long taskId) {
+         if (peer == null) {
+             return;
+@@ -17270,6 +17280,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             channelPts = channelsPts.get(channelId);
+             if (channelPts != 0) {
+                 AndroidUtilities.runOnUIThread(() -> {
++                    inu_loadMissingJoinedChannelDialog(channelId);
+                     NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.onReceivedChannelDifference, channelId);
+                 });
+                 return;
