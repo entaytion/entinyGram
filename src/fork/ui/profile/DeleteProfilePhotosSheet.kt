@@ -3,9 +3,7 @@ package desu.inugram.ui.profile
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -16,6 +14,7 @@ import android.widget.TextView
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import desu.inugram.ui.settings.createSheetButton
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.FileLog
@@ -160,7 +159,7 @@ class DeleteProfilePhotosSheet(
             setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(4f), AndroidUtilities.dp(16f), AndroidUtilities.dp(8f))
         }
 
-        deleteSelectedBtn = makeButton(
+        deleteSelectedBtn = createSheetButton(
             context = context,
             text = LocaleController.formatString(R.string.InuDeleteSelectedProfilePhotos, 0),
             background = Theme.createSimpleSelectorRoundRectDrawable(
@@ -175,7 +174,7 @@ class DeleteProfilePhotosSheet(
         }
         buttonsLayout.addView(deleteSelectedBtn, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 46, 0f, 0f, 0f, 6f))
 
-        deleteAllBtn = makeButton(
+        deleteAllBtn = createSheetButton(
             context = context,
             text = LocaleController.getString(R.string.InuDeleteAllProfilePhotos),
             background = Theme.createSimpleSelectorRoundRectDrawable(
@@ -399,26 +398,6 @@ class DeleteProfilePhotosSheet(
                 }
             }
         }
-    }
-
-    private fun makeButton(
-        context: Context,
-        text: CharSequence,
-        background: Drawable,
-        textColor: Int,
-        bold: Boolean,
-        onClick: () -> Unit,
-    ): TextView = TextView(context).apply {
-        this.text = text
-        isAllCaps = false
-        isSingleLine = true
-        ellipsize = TextUtils.TruncateAt.END
-        gravity = Gravity.CENTER
-        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
-        setTextColor(textColor)
-        if (bold) typeface = AndroidUtilities.bold()
-        this.background = background
-        setOnClickListener { onClick() }
     }
 
     private inner class PhotosAdapter : RecyclerListView.SelectionAdapter() {

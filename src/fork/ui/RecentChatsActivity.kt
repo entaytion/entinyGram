@@ -12,7 +12,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.ui.ActionBar.Theme
-import android.widget.EditText
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.dialogs.RecentChatsHelper
 import desu.inugram.ui.settings.SettingsPageActivity
@@ -23,7 +22,6 @@ import org.telegram.messenger.R
 import org.telegram.messenger.UserObject
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
-import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.UItem
@@ -42,16 +40,11 @@ class RecentChatsActivity : SettingsPageActivity() {
 
     override fun createView(context: Context): View {
         return super.createView(context).also {
-            val menu = simpleActionBar.createMenu()
-            val searchItem = menu.addItem(MENU_SEARCH, R.drawable.outline_header_search).setIsSearchField(true)
-            searchItem.setSearchFieldHint(getString(R.string.Search))
-            searchItem.setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
-                override fun onTextChanged(searchField: EditText) {
-                    query = searchField.text.toString().trim().lowercase(Locale.getDefault())
-                    listView?.adapter?.update(false)
-                }
-            })
-            menu.addItem(MENU_CLEAR, R.drawable.msg_delete)
+            addSearch(MENU_SEARCH, trim = true) { text ->
+                query = text
+                listView?.adapter?.update(false)
+            }
+            simpleActionBar.createMenu().addItem(MENU_CLEAR, R.drawable.msg_delete)
             simpleActionBar.setActionBarMenuOnItemClick(object : org.telegram.ui.ActionBar.ActionBar.ActionBarMenuOnItemClick() {
                 override fun onItemClick(id: Int) {
                     when (id) {

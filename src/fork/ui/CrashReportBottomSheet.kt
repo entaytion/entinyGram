@@ -2,10 +2,8 @@ package desu.inugram.ui
 
 import android.content.Context
 import android.graphics.Typeface
-import android.graphics.drawable.Drawable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.TypedValue
@@ -14,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.widget.NestedScrollView
 import desu.inugram.helpers.CrashReporter
+import desu.inugram.ui.settings.createSheetButton
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -92,8 +91,8 @@ class CrashReportBottomSheet(context: Context) : BottomSheet(context, false) {
             container.addView(pluginHooks, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 28, 0, 28, 16))
         }
 
-        fun secondaryButton(textRes: Int, onClick: () -> Unit) = makeButton(
-            context, textRes,
+        fun secondaryButton(textRes: Int, onClick: () -> Unit) = createSheetButton(
+            context, LocaleController.getString(textRes),
             background = Theme.createSimpleSelectorRoundRectDrawable(
                 AndroidUtilities.dp(21f), 0, Theme.getColor(Theme.key_dialogButtonSelector),
             ),
@@ -102,8 +101,8 @@ class CrashReportBottomSheet(context: Context) : BottomSheet(context, false) {
             onClick = onClick,
         )
 
-        fun primaryButton(textRes: Int, onClick: () -> Unit) = makeButton(
-            context, textRes,
+        fun primaryButton(textRes: Int, onClick: () -> Unit) = createSheetButton(
+            context, LocaleController.getString(textRes),
             background = Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 21f),
             textColor = Theme.getColor(Theme.key_featuredStickers_buttonText),
             bold = true,
@@ -168,25 +167,5 @@ class CrashReportBottomSheet(context: Context) : BottomSheet(context, false) {
         }
 
         setCustomView(NestedScrollView(context).apply { addView(container) })
-    }
-
-    private fun makeButton(
-        context: Context,
-        textRes: Int,
-        background: Drawable,
-        textColor: Int,
-        bold: Boolean,
-        onClick: () -> Unit,
-    ): TextView = TextView(context).apply {
-        text = LocaleController.getString(textRes)
-        isAllCaps = false
-        isSingleLine = true
-        ellipsize = TextUtils.TruncateAt.END
-        gravity = Gravity.CENTER
-        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
-        setTextColor(textColor)
-        if (bold) typeface = AndroidUtilities.bold()
-        this.background = background
-        setOnClickListener { onClick() }
     }
 }
