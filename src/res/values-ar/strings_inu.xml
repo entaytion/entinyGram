@@ -1353,9 +1353,12 @@
     <string name="InuMessageMenuQuickActionsPlacement">الموضع</string>
     <string name="InuMessageMenuReset">إعادة إلى الافتراضي</string>
     <string name="InuMinimize">تصغير</string>
-    <string name="InuMiscPreviewEditedMessage">كلاهما الأفضل، قاعدة الكلب 🐶⚡</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">هاو! entinyGram أم inuGram؟ 🐶</string>
+    <string name="InuMessageDesignTextAndTime">النص والوقت</string>
+    <string name="InuMessageDesignForwardSender">ألينا</string>
+    <string name="InuMessageDesignStickerSender">أوليكسي</string>
+    <string name="InuMiscPreviewEditedMessage">أوليكسي، أكلت الكومِتات مرة ثانية؟</string>
+    <string name="InuMiscPreviewForwardedFrom">Inugram CI</string>
+    <string name="InuMiscPreviewForwardedMessage">فشل البناء: سرقوا الكود قبل ما يخلص تجميعه</string>
     <string name="InuMonetStyle">نمط Monet</string>
     <string name="InuMonetStyleClassic">كلاسيكي</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
@@ -2164,7 +2167,6 @@
     <string name="InuStickerShapeMessage">مثل الرسالة</string>
     <string name="InuStickerShapeRounded">مستدير</string>
     <string name="InuStickerSize">حجم الملصق</string>
-    <string name="InuStickerSizeDialogMessage">أحب الهوائيات!</string>
     <string name="InuStickerTimeMode">تراكب وقت الملصق</string>
     <string name="InuStickerTimeModeHideCompletely">إخفاء كلياً</string>
     <string name="InuStickerTimeModeHideIncoming">إخفاء للواردة فقط</string>

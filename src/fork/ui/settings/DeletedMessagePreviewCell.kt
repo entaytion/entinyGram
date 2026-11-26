@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import desu.inugram.helpers.archive.DeletedMessagesHelper
-import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
@@ -35,22 +34,9 @@ class DeletedMessagePreviewCell(context: Context?, fragment: BaseFragment) :
         invalidate()
     }
 
-    // entiny: the avatar of a cell is drawn by its host list, here the preview is the host
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-        for (i in 0 until childCount) {
-            val child = getChildAt(i) as? ChatMessageCell ?: continue
-            if (!child.isAvatarVisible) continue
-            val receiver = child.avatarImage ?: continue
-            val top = child.top + child.paddingTop
-            var y = top + child.layoutHeight
-            if (y > child.bottom) y = child.bottom
-            if (y - AndroidUtilities.dp(48f) < top) y = top + AndroidUtilities.dp(48f)
-            receiver.setImageY((y - AndroidUtilities.dp(44f)).toFloat())
-            receiver.setAlpha(1f)
-            receiver.setVisible(true, false)
-            receiver.draw(canvas)
-        }
+        drawMessageAvatars(canvas)
     }
 
     companion object {

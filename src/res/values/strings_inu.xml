@@ -1354,9 +1354,12 @@
     <string name="InuMessageMenuQuickActionsPlacement">Placement</string>
     <string name="InuMessageMenuReset">Reset to default</string>
     <string name="InuMinimize">Minimize</string>
-    <string name="InuMiscPreviewEditedMessage">both are the best, doggo base 🐶⚡</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">woof! entinyGram or inuGram? 🐶</string>
+    <string name="InuMessageDesignTextAndTime">Text and time</string>
+    <string name="InuMessageDesignForwardSender">Alina</string>
+    <string name="InuMessageDesignStickerSender">Oleksii</string>
+    <string name="InuMiscPreviewEditedMessage">Oleksii, did you eat the commits again?</string>
+    <string name="InuMiscPreviewForwardedFrom">Inugram CI</string>
+    <string name="InuMiscPreviewForwardedMessage">Build failed: somebody jacked the code before it even compiled</string>
     <string name="InuMonetStyle">Monet style</string>
     <string name="InuMonetStyleClassic">Classic</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
@@ -2162,7 +2165,6 @@
     <string name="InuStickerShapeMessage">Message</string>
     <string name="InuStickerShapeRounded">Rounded</string>
     <string name="InuStickerSize">Sticker size</string>
-    <string name="InuStickerSizeDialogMessage">i love antennas!</string>
     <string name="InuStickerTimeMode">Sticker time overlay</string>
     <string name="InuStickerTimeModeHideCompletely">Hide completely</string>
     <string name="InuStickerTimeModeHideIncoming">Hide only for incoming</string>

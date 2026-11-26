@@ -1344,9 +1344,12 @@
     <string name="InuMessageMenuQuickActionsPlacement">位置</string>
     <string name="InuMessageMenuReset">重置为默认</string>
     <string name="InuMinimize">最小化</string>
-    <string name="InuMiscPreviewEditedMessage">汪美无缺，再没有错别字</string>
-    <string name="InuMiscPreviewForwardedFrom">狗狗</string>
-    <string name="InuMiscPreviewForwardedMessage">汪!! 你看到这个了吗?</string>
+    <string name="InuMessageDesignTextAndTime">文字与时间</string>
+    <string name="InuMessageDesignForwardSender">阿丽娜</string>
+    <string name="InuMessageDesignStickerSender">奥列克西</string>
+    <string name="InuMiscPreviewEditedMessage">奥列克西，你又把提交吃了？</string>
+    <string name="InuMiscPreviewForwardedFrom">Inugram CI</string>
+    <string name="InuMiscPreviewForwardedMessage">构建挂了：代码还没编译完就被人顺走了</string>
     <string name="InuMonetStyle">Monet 样式</string>
     <string name="InuMonetStyleClassic">经典</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
@@ -2151,7 +2154,6 @@
     <string name="InuStickerShapeMessage">消息样式</string>
     <string name="InuStickerShapeRounded">圆角</string>
     <string name="InuStickerSize">贴纸尺寸</string>
-    <string name="InuStickerSizeDialogMessage">我喜欢天线！</string>
     <string name="InuStickerTimeMode">贴纸上的时间显示</string>
     <string name="InuStickerTimeModeHideCompletely">完全隐藏</string>
     <string name="InuStickerTimeModeHideIncoming">仅隐藏收到的</string>

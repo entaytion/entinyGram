@@ -1352,9 +1352,12 @@
     <string name="InuMessageMenuQuickActionsPlacement">Розміщення</string>
     <string name="InuMessageMenuReset">Скинути за замовчуванням</string>
     <string name="InuMinimize">Згорнути</string>
-    <string name="InuMiscPreviewEditedMessage">обидва найкращі, собача база 🐶⚡</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">гав! entinyGram чи inuGram? 🐶</string>
+    <string name="InuMessageDesignTextAndTime">Текст і час</string>
+    <string name="InuMessageDesignForwardSender">аліна</string>
+    <string name="InuMessageDesignStickerSender">олексій</string>
+    <string name="InuMiscPreviewEditedMessage">олексій, знову коміти їв?</string>
+    <string name="InuMiscPreviewForwardedFrom">Inugram CI</string>
+    <string name="InuMiscPreviewForwardedMessage">збірка впала: код спиздили раніше, ніж він скомпілювався</string>
     <string name="InuMonetStyle">Стиль Monet</string>
     <string name="InuMonetStyleClassic">Класичний</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
@@ -2164,7 +2167,6 @@
     <string name="InuStickerShapeMessage">Як повідомлення</string>
     <string name="InuStickerShapeRounded">Закруглена</string>
     <string name="InuStickerSize">Розмір наліпок</string>
-    <string name="InuStickerSizeDialogMessage">я люблю антени!</string>
     <string name="InuStickerTimeMode">Відображення часу на наліпках</string>
     <string name="InuStickerTimeModeHideCompletely">Приховати повністю</string>
     <string name="InuStickerTimeModeHideIncoming">Приховати лише для вхідних</string>

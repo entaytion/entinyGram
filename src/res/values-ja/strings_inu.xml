@@ -1344,9 +1344,12 @@
     <string name="InuMessageMenuQuickActionsPlacement">配置</string>
     <string name="InuMessageMenuReset">デフォルトに戻す</string>
     <string name="InuMinimize">最小化</string>
-    <string name="InuMiscPreviewEditedMessage">誤字はもうワンつもないよ</string>
-    <string name="InuMiscPreviewForwardedFrom">わんこ</string>
-    <string name="InuMiscPreviewForwardedMessage">わんっ!! これ見た?</string>
+    <string name="InuMessageDesignTextAndTime">文字と時刻</string>
+    <string name="InuMessageDesignForwardSender">アリナ</string>
+    <string name="InuMessageDesignStickerSender">オレクシー</string>
+    <string name="InuMiscPreviewEditedMessage">オレクシー、またコミット食べたの？</string>
+    <string name="InuMiscPreviewForwardedFrom">Inugram CI</string>
+    <string name="InuMiscPreviewForwardedMessage">ビルド失敗：コンパイルが終わる前にコードをパクられた</string>
     <string name="InuMonetStyle">Monet スタイル</string>
     <string name="InuMonetStyleClassic">クラシック</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
@@ -2151,7 +2154,6 @@
     <string name="InuStickerShapeMessage">メッセージ風</string>
     <string name="InuStickerShapeRounded">角丸</string>
     <string name="InuStickerSize">スタンプのサイズ</string>
-    <string name="InuStickerSizeDialogMessage">アンテナ大好き！</string>
     <string name="InuStickerTimeMode">スタンプ上の時刻表示</string>
     <string name="InuStickerTimeModeHideCompletely">完全に非表示</string>
     <string name="InuStickerTimeModeHideIncoming">受信のみ非表示</string>

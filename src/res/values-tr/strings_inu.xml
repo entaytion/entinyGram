@@ -1346,9 +1346,12 @@
     <string name="InuMessageMenuQuickActionsPlacement">Yerleşim</string>
     <string name="InuMessageMenuReset">Varsayılana sıfırla</string>
     <string name="InuMinimize">Küçült</string>
-    <string name="InuMiscPreviewEditedMessage">kesinlikle, artık yazım hatası yok</string>
-    <string name="InuMiscPreviewForwardedFrom">köpekçik</string>
-    <string name="InuMiscPreviewForwardedMessage">hav!! bunu gördün mü?</string>
+    <string name="InuMessageDesignTextAndTime">Metin ve saat</string>
+    <string name="InuMessageDesignForwardSender">Alina</string>
+    <string name="InuMessageDesignStickerSender">Oleksiy</string>
+    <string name="InuMiscPreviewEditedMessage">Oleksiy, yine commitleri mi yedin?</string>
+    <string name="InuMiscPreviewForwardedFrom">Inugram CI</string>
+    <string name="InuMiscPreviewForwardedMessage">Derleme çöktü: kod daha derlenmeden çalındı</string>
     <string name="InuMonetStyle">Monet stili</string>
     <string name="InuMonetStyleClassic">Klasik</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
@@ -2154,7 +2157,6 @@
     <string name="InuStickerShapeMessage">Mesaj gibi</string>
     <string name="InuStickerShapeRounded">Yuvarlak</string>
     <string name="InuStickerSize">Çıkartma boyutu</string>
-    <string name="InuStickerSizeDialogMessage">antenleri severim!</string>
     <string name="InuStickerTimeMode">Çıkartma saat katmanı</string>
     <string name="InuStickerTimeModeHideCompletely">Tamamen gizle</string>
     <string name="InuStickerTimeModeHideIncoming">Sadece gelenler için gizle</string>

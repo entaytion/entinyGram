@@ -1345,9 +1345,12 @@
     <string name="InuMessageMenuQuickActionsPlacement">جایگاه</string>
     <string name="InuMessageMenuReset">بازنشانی به پیش‌فرض</string>
     <string name="InuMinimize">کوچک کردن</string>
-    <string name="InuMiscPreviewEditedMessage">هر دو عالی‌اند، پایه سگی 🐶⚡</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">هاپ! entinyGram یا inuGram؟ 🐶</string>
+    <string name="InuMessageDesignTextAndTime">متن و زمان</string>
+    <string name="InuMessageDesignForwardSender">آلینا</string>
+    <string name="InuMessageDesignStickerSender">اولکسی</string>
+    <string name="InuMiscPreviewEditedMessage">اولکسی، باز کامیت‌ها رو خوردی؟</string>
+    <string name="InuMiscPreviewForwardedFrom">Inugram CI</string>
+    <string name="InuMiscPreviewForwardedMessage">بیلد ترکید: کد رو قبل از اینکه کامپایل بشه دزدیدن</string>
     <string name="InuMonetStyle">سبک Monet</string>
     <string name="InuMonetStyleClassic">کلاسیک</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
@@ -2153,7 +2156,6 @@
     <string name="InuStickerShapeMessage">مثل پیام</string>
     <string name="InuStickerShapeRounded">گرد</string>
     <string name="InuStickerSize">اندازه استیکر</string>
-    <string name="InuStickerSizeDialogMessage">من عاشق آنتن‌ها هستم!</string>
     <string name="InuStickerTimeMode">نمایش ساعت روی استیکر</string>
     <string name="InuStickerTimeModeHideCompletely">پنهان کامل</string>
     <string name="InuStickerTimeModeHideIncoming">پنهان فقط برای دریافتی</string>

@@ -1,36 +1,134 @@
 package desu.inugram.ui.settings
 
+import android.content.Context
+import android.text.TextUtils
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.TextView
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.WidePostLayout
+import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
+import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
+import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
 class MessageDesignSettingsActivity : SettingsPageActivity() {
 
+    private enum class Tab(val title: Int) {
+        BUBBLES(R.string.InuBubbles),
+        STICKERS(R.string.InuStickers),
+        TEXT(R.string.InuMessageDesignTextAndTime),
+    }
+
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMessageDesign)
 
-    private var stickerSizePreview: StickerSizePreviewMessagesCell? = null
+    private var messagePreview: MessageDesignPreviewCell? = null
     private var stickerShapeCell: StickerShapeCell? = null
-    private var miscPreview: MiscPreviewMessagesCell? = null
     private var widePostsPreview: WideChannelPostsPreviewCell? = null
     private var widePostsInsetSlider: SliderCell? = null
     private var stickerSizeSlider: SliderCell? = null
     private var reactionsInRowSlider: SliderCell? = null
     private var chatInputTextSizeSlider: SliderCell? = null
     private var messageTimeSizeSlider: SliderCell? = null
+    private var selectedTab = Tab.TEXT
+    private var tabs: FrameLayout? = null
+    private var textDivider: View? = null
+
+    override fun withHighlight(itemId: Int): SettingsPageActivity {
+        selectedTab = when (itemId) {
+            BUTTON_STICKER_TIME_MODE, SLIDER_STICKER_SIZE, STICKER_SHAPE -> Tab.STICKERS
+            TOGGLE_BUBBLE_TAILS, TOGGLE_DISABLE_CHAT_BUBBLES, TOGGLE_COMPACT_EDITED,
+            BUTTON_EDITED_MESSAGE_DATE_MODE, TOGGLE_SHOW_FORWARD_TIME, BUTTON_FORWARD_HEADER_MODE,
+            TOGGLE_SHOW_FORWARDS_COUNT, TOGGLE_SHOW_MEDIA_SIZE, TOGGLE_SMALL_GIFS -> Tab.BUBBLES
+            else -> Tab.TEXT
+        }
+        return super.withHighlight(itemId)
+    }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val context = context ?: return
 
-        if (stickerSizePreview == null) stickerSizePreview = StickerSizePreviewMessagesCell(context, this)
+        if (messagePreview == null) messagePreview = MessageDesignPreviewCell(context, this)
+        items.add(UItem.asCustom(messagePreview))
+        items.add(UItem.asCustomShadow(createTabs(context)))
+
+        when (selectedTab) {
+            Tab.BUBBLES -> addBubbleControls(items)
+            Tab.STICKERS -> addStickerControls(context, items)
+            Tab.TEXT -> addTextControls(context, items)
+        }
+        addAdditionalControls(context, items)
+    }
+
+    private fun createTabs(context: Context): View {
+        val existing = tabs
+        if (existing != null) {
+            updateTabs(existing.getChildAt(0) as LinearLayout)
+            return existing
+        }
+        val row = LinearLayout(context).apply {
+            setPadding(dp(3f), dp(3f), dp(3f), dp(3f))
+            layoutDirection = if (LocaleController.isRTL) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
+            for (tab in Tab.entries) {
+                val button = TextView(context).apply {
+                    text = LocaleController.getString(tab.title)
+                    textSize = 14f
+                    typeface = AndroidUtilities.bold()
+                    gravity = Gravity.CENTER
+                    minHeight = dp(44f)
+                    maxLines = 2
+                    ellipsize = TextUtils.TruncateAt.END
+                    setPadding(dp(4f), dp(4f), dp(4f), dp(4f))
+                    isFocusable = true
+                    setOnClickListener {
+                        if (selectedTab != tab) {
+                            selectedTab = tab
+                            listView.adapter.update(false)
+                        }
+                    }
+                }
+                addView(button, LayoutHelper.createLinear(0, LayoutHelper.MATCH_PARENT, 1f))
+            }
+        }
+        updateTabs(row)
+        return FrameLayout(context).apply {
+            addView(
+                row,
+                LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat(), Gravity.TOP, 12f, 8f, 12f, 8f)
+            )
+        }.also { tabs = it }
+    }
+
+    private fun updateTabs(row: LinearLayout) {
+        val provider = resourceProvider
+        val surface = Theme.getColor(Theme.key_windowBackgroundWhite, provider)
+        val ripple = Theme.getColor(Theme.key_listSelector, provider)
+        val track = Theme.blendOver(surface, ripple)
+        row.background = Theme.createRoundRectDrawable(dp(14f), track)
+        Tab.entries.forEachIndexed { index, tab ->
+            val button = row.getChildAt(index) as TextView
+            val selected = tab == selectedTab
+            button.isSelected = selected
+            button.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, provider))
+            val backgroundColor = if (selected) surface else track
+            button.background = Theme.createSimpleSelectorRoundRectDrawable(
+                dp(11f), backgroundColor, Theme.blendOver(backgroundColor, ripple)
+            )
+        }
+    }
+
+    private fun addStickerControls(context: Context, items: ArrayList<UItem>) {
         if (stickerSizeSlider == null) {
             stickerSizeSlider = SliderCell(
                 context,
@@ -42,20 +140,17 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
                 format = { "%.1f".format(it) },
                 onChanged = {
                     InuConfig.STICKER_SIZE.value = it
-                    stickerSizePreview?.invalidate()
+                    messagePreview?.invalidate()
                 },
             )
         } else {
             stickerSizeSlider?.updateColors()
         }
         if (stickerShapeCell == null) stickerShapeCell = StickerShapeCell(context) {
-            stickerSizePreview?.invalidate()
+            messagePreview?.invalidate()
             reloadChats()
         }
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStickers)))
-        items.add(UItem.asCustom(stickerSizePreview))
-        items.add(UItem.asCustom(stickerSizeSlider))
-        items.add(UItem.asShadow(null))
+        items.add(UItem.asCustom(SLIDER_STICKER_SIZE, stickerSizeSlider))
         items.add(
             UItem.asButton(
                 BUTTON_STICKER_TIME_MODE,
@@ -68,14 +163,12 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
                 }
             )
         )
-        items.add(UItem.asShadow(null))
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuStickerShape)))
-        items.add(UItem.asCustom(stickerShapeCell))
+        items.add(UItem.asCustom(STICKER_SHAPE, stickerShapeCell))
         items.add(UItem.asShadow(null))
+    }
 
-        if (miscPreview == null) miscPreview = MiscPreviewMessagesCell(context, this)
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuBubbles)))
-        items.add(UItem.asCustom(miscPreview))
+    private fun addBubbleControls(items: ArrayList<UItem>) {
         items.add(
             UItem.asCheck(
                 TOGGLE_BUBBLE_TAILS,
@@ -133,7 +226,9 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.SMALL_GIFS.value)
         )
         items.add(UItem.asShadow(null))
+    }
 
+    private fun addAdditionalControls(context: Context, items: ArrayList<UItem>) {
         if (widePostsPreview == null) widePostsPreview = WideChannelPostsPreviewCell(context, this)
         if (widePostsInsetSlider == null) {
             widePostsInsetSlider = SliderCell(
@@ -199,7 +294,9 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(UItem.asShadow(null))
+    }
 
+    private fun addTextControls(context: Context, items: ArrayList<UItem>) {
         if (chatInputTextSizeSlider == null) chatInputTextSizeSlider = SliderCell(
             context,
             min = 12f,
@@ -207,14 +304,18 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             defaultValue = InuConfig.CHAT_INPUT_TEXT_SIZE.default.toFloat(),
             initialValue = InuConfig.CHAT_INPUT_TEXT_SIZE.value.toFloat(),
             step = 1f,
+            title = LocaleController.getString(R.string.InuChatInputTextSize),
             format = { it.toInt().toString() },
             onChanged = {
                 InuConfig.CHAT_INPUT_TEXT_SIZE.value = it.toInt()
+                messagePreview?.updateInputTextSize()
             },
         )
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatInputTextSize)))
-        items.add(UItem.asCustom(chatInputTextSizeSlider))
-        items.add(UItem.asShadow(null))
+        chatInputTextSizeSlider?.updateColors()
+        items.add(UItem.asCustom(SLIDER_CHAT_INPUT_TEXT_SIZE, chatInputTextSizeSlider))
+        if (textDivider == null) textDivider = View(context)
+        textDivider?.setBackgroundColor(Theme.getColor(Theme.key_divider, resourceProvider))
+        items.add(UItem.asCustom(textDivider, 1))
 
         if (messageTimeSizeSlider == null) messageTimeSizeSlider = SliderCell(
             context,
@@ -223,13 +324,15 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             defaultValue = InuConfig.MESSAGE_TIME_SIZE.default.toFloat(),
             initialValue = InuConfig.MESSAGE_TIME_SIZE.value.toFloat(),
             step = 1f,
+            title = LocaleController.getString(R.string.InuMessageTimeSize),
             format = { it.toInt().toString() },
             onChanged = {
                 InuConfig.MESSAGE_TIME_SIZE.value = it.toInt()
+                messagePreview?.invalidate()
             },
         )
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMessageTimeSize)))
-        items.add(UItem.asCustom(messageTimeSizeSlider))
+        messageTimeSizeSlider?.updateColors()
+        items.add(UItem.asCustom(SLIDER_MESSAGE_TIME_SIZE, messageTimeSizeSlider))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuMessageTimeSizeInfo)))
     }
 
@@ -246,7 +349,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
                 InuConfig.STICKER_TIME_MODE.value - 1,
             ) { which ->
                 InuConfig.STICKER_TIME_MODE.value = which + 1
-                stickerSizePreview?.invalidate()
+                messagePreview?.invalidate()
             }
 
             TOGGLE_REACTION_BAR_BELOW -> {
@@ -262,7 +365,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             TOGGLE_SHOW_FORWARD_TIME -> {
                 val new = InuConfig.SHOW_FORWARD_TIME.toggle()
                 (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
+                messagePreview?.invalidate()
             }
 
             BUTTON_FORWARD_HEADER_MODE -> RadioItemOptions.show(
@@ -276,14 +379,14 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             ) { which ->
                 if (InuConfig.FORWARD_HEADER_MODE.value == which) return@show
                 InuConfig.FORWARD_HEADER_MODE.value = which
-                miscPreview?.invalidate()
+                messagePreview?.invalidate()
                 listView.adapter.update(false)
             }
 
             TOGGLE_SHOW_FORWARDS_COUNT -> {
                 val new = InuConfig.SHOW_FORWARDS_COUNT.toggle()
                 (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
+                messagePreview?.invalidate()
             }
 
             TOGGLE_SHOW_MEDIA_SIZE -> {
@@ -299,7 +402,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             TOGGLE_COMPACT_EDITED -> {
                 val new = InuConfig.COMPACT_EDITED.toggle()
                 (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
+                messagePreview?.invalidate()
             }
 
             BUTTON_EDITED_MESSAGE_DATE_MODE -> RadioItemOptions.show(
@@ -313,14 +416,14 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             ) { which ->
                 if (InuConfig.EDITED_MESSAGE_DATE_MODE.value == which) return@show
                 InuConfig.EDITED_MESSAGE_DATE_MODE.value = which
-                miscPreview?.invalidate()
+                messagePreview?.invalidate()
                 listView.adapter.update(false)
             }
 
             TOGGLE_BUBBLE_TAILS -> {
                 val new = InuConfig.BUBBLE_TAILS.toggle()
                 (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
+                messagePreview?.invalidate()
             }
 
             TOGGLE_SMALL_GIFS -> {
@@ -345,6 +448,10 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val SLIDER_STICKER_SIZE = InuUtils.generateId()
+        private val STICKER_SHAPE = InuUtils.generateId()
+        private val SLIDER_CHAT_INPUT_TEXT_SIZE = InuUtils.generateId()
+        private val SLIDER_MESSAGE_TIME_SIZE = InuUtils.generateId()
         private val BUTTON_STICKER_TIME_MODE = InuUtils.generateId()
         private val TOGGLE_REACTION_BAR_BELOW = InuUtils.generateId()
         private val TOGGLE_CHAT_VIEWS_BOTTOM = InuUtils.generateId()
@@ -380,6 +487,10 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 // entiny: slugs kept verbatim from MessagesSettingsActivity / CategoryChatsSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("sticker-time-mode", R.string.InuStickerTimeMode, BUTTON_STICKER_TIME_MODE),
+                SearchRegistry.Entry("sticker-size", R.string.InuStickerSize, SLIDER_STICKER_SIZE),
+                SearchRegistry.Entry("sticker-shape", R.string.InuStickerShape, STICKER_SHAPE),
+                SearchRegistry.Entry("chat-input-text-size", R.string.InuChatInputTextSize, SLIDER_CHAT_INPUT_TEXT_SIZE),
+                SearchRegistry.Entry("message-time-size", R.string.InuMessageTimeSize, SLIDER_MESSAGE_TIME_SIZE),
                 SearchRegistry.Entry("reaction-bar-below", R.string.InuReactionBarBelow, TOGGLE_REACTION_BAR_BELOW),
                 SearchRegistry.Entry("chat-views-bottom", R.string.InuChatViewsBottom, TOGGLE_CHAT_VIEWS_BOTTOM),
                 SearchRegistry.Entry("show-forward-time", R.string.InuShowForwardTime, TOGGLE_SHOW_FORWARD_TIME),

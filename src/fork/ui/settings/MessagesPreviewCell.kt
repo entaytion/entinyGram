@@ -28,11 +28,13 @@ open class MessagesPreviewCell(
     context: Context?,
     fragment: BaseFragment,
     private val messageObjects: Array<MessageObject>,
+    private val isGroupPreview: Boolean = false,
 ) : LinearLayout(context) {
     private var backgroundGradientDisposable: BackgroundGradientDrawable.Disposable? = null
 
     private val cells: Array<ChatMessageCell>
     private val shadowDrawable: Drawable
+    private var previewWidth = 0
 
     init {
         val resourcesProvider = fragment.getResourceProvider()
@@ -48,7 +50,14 @@ open class MessagesPreviewCell(
         )
 
         cells = Array(messageObjects.size) { i ->
-            ChatMessageCell(context, org.telegram.messenger.UserConfig.selectedAccount, false, null, resourcesProvider).apply {
+            val cell = if (isGroupPreview) {
+                object : ChatMessageCell(context, org.telegram.messenger.UserConfig.selectedAccount, false, null, resourcesProvider) {
+                    override fun getParentWidth(): Int = if (previewWidth > 0) previewWidth else super.getParentWidth()
+                }
+            } else {
+                ChatMessageCell(context, org.telegram.messenger.UserConfig.selectedAccount, false, null, resourcesProvider)
+            }
+            cell.apply {
                 delegate = object : ChatMessageCell.ChatMessageCellDelegate {
                     override fun canPerformActions() = true
 
@@ -58,13 +67,22 @@ open class MessagesPreviewCell(
                             .show()
                     }
                 }
-                isChat = false
+                isChat = isGroupPreview
                 setFullyDraw(true)
                 setMessageObject(messageObjects[i], null, false, false, false)
             }.also {
                 addView(it, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
             }
         }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        if (isGroupPreview && width > 0 && width != previewWidth) {
+            previewWidth = width
+            cells.forEach { it.forceResetMessageObject() }
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun invalidate() {
@@ -115,6 +133,21 @@ open class MessagesPreviewCell(
         }
         shadowDrawable.setBounds(0, 0, measuredWidth, measuredHeight)
         shadowDrawable.draw(canvas)
+    }
+
+    protected fun drawMessageAvatars(canvas: Canvas) {
+        for (i in 0 until childCount) {
+            val cell = getChildAt(i) as? ChatMessageCell ?: continue
+            if (!cell.isAvatarVisible) continue
+            val receiver = cell.avatarImage ?: continue
+            val top = cell.top + cell.paddingTop
+            val bottom = minOf(top + cell.layoutHeight, cell.bottom)
+            val y = maxOf(bottom, top + AndroidUtilities.dp(48f))
+            receiver.setImageY((y - AndroidUtilities.dp(44f)).toFloat())
+            receiver.setAlpha(1f)
+            receiver.setVisible(true, false)
+            receiver.draw(canvas)
+        }
     }
 
     override fun onDetachedFromWindow() {

@@ -1359,9 +1359,12 @@ Tocca per personalizzare…</string>
     <string name="InuMessageMenuQuickActionsPlacement">Posizione</string>
     <string name="InuMessageMenuReset">Ripristina predefiniti</string>
     <string name="InuMinimize">Riduci a icona</string>
-    <string name="InuMiscPreviewEditedMessage">sono entrambi i migliori, base canina 🐶⚡</string>
-    <string name="InuMiscPreviewForwardedFrom">inu</string>
-    <string name="InuMiscPreviewForwardedMessage">bau! entinyGram o inuGram? 🐶</string>
+    <string name="InuMessageDesignTextAndTime">Testo e ora</string>
+    <string name="InuMessageDesignForwardSender">Alina</string>
+    <string name="InuMessageDesignStickerSender">Oleksij</string>
+    <string name="InuMiscPreviewEditedMessage">Oleksij, ti sei mangiato di nuovo i commit?</string>
+    <string name="InuMiscPreviewForwardedFrom">Inugram CI</string>
+    <string name="InuMiscPreviewForwardedMessage">Build fallita: hanno fregato il codice prima ancora che compilasse</string>
     <string name="InuMonetStyle">Stile Monet</string>
     <string name="InuMonetStyleClassic">Classico</string>
     <string name="InuMonetStyleMaterial3">Material 3</string>
@@ -2176,7 +2179,6 @@ Anche concedendoli, un plugin può comunque:</string>
     <string name="InuStickerShapeMessage">Come messaggio</string>
     <string name="InuStickerShapeRounded">Arrotondata</string>
     <string name="InuStickerSize">Dimensione degli sticker</string>
-    <string name="InuStickerSizeDialogMessage">adoro le antenne!</string>
     <string name="InuStickerTimeMode">Orario sugli sticker</string>
     <string name="InuStickerTimeModeHideCompletely">Nascondi completamente</string>
     <string name="InuStickerTimeModeHideIncoming">Nascondi solo nei ricevuti</string>
