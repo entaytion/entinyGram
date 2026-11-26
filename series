@@ -710,3 +710,4 @@ entiny/chat-list-avatar-size.patch
 entiny/bottom-tabs-editor.patch
 entiny/restore-joined-channel-dialog.patch
 entiny/settings-title-lifecycle.patch
+entiny/cast-button-crash.patch

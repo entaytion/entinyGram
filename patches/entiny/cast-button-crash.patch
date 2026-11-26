@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 26 Nov 2026 14:22:44 +0200
+Subject: Fix a crash when opening a video on devices where AppCompat fails its vector drawable check.
+
+---
+ .../java/org/telegram/ui/Components/CastMediaRouteButton.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/CastMediaRouteButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/CastMediaRouteButton.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/CastMediaRouteButton.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/CastMediaRouteButton.java
+@@ -28,7 +28,7 @@ import org.telegram.ui.ActionBar.Theme;
+ public class CastMediaRouteButton extends MediaRouteButton {
+ 
+     public CastMediaRouteButton(@NonNull Context context) {
+-        super(context);
++        super(context, null, 0); // entiny: loading the never-drawn indicator crashes when appcompat's vector check fails
+ //        setDialogFactory(new MediaRouteDialogFactory() {
+ //            @NonNull
+ //            @Override
