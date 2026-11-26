@@ -48,6 +48,8 @@ class WhatsNewActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
     }
 
+    override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) = Unit
+
     private fun buildBody(context: Context, lines: List<String>): View =
         TextView(context).apply {
             text = lines.joinToString("\n") { "• $it" }
