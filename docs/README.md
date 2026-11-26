@@ -11,7 +11,7 @@ everything entinygram adds lives in **settings → entinygram**, grouped into pa
 - [protected content](../FEATURES.md#unlocks--restrictions): copy, save, and forward content from protected chats, including stories and view-once media.
 - [translation and ai](../FEATURES.md#translation--ai): translate chats and messages, transcribe voice, and connect your own ai providers.
 - [local names and identities](../FEATURES.md#unlocks--restrictions): set names and profile details that only you see.
-- [forward pro](../FEATURES.md#messages--sending): compose forwards with grouped albums, formatted comments, and a live bubble preview.
+- [local chat folders](../FEATURES.md#chat-list--folders): create more folders after reaching telegram's limit.
 - [custom interface](../FEATURES.md#appearance--customization): tune themes, tabs, chat layout, message menus, and other parts of the app.
 - [channel feed](../FEATURES.md#appearance--customization): read subscribed channels in one chat-style timeline.
 - [plugin system](../FEATURES.md#proxy-plugins--performance): extend the client with plugins from the catalog or build your own with the sdk.

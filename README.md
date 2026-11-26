@@ -14,7 +14,7 @@ everything entinygram adds lives in **settings → entinygram**, grouped into pa
 - [kept deleted messages](FEATURES.md#privacy--protection): keep deleted messages and browse the edit history.
 - [protected content](FEATURES.md#unlocks--restrictions): copy, save and forward from protected chats.
 - [translation & ai](FEATURES.md#translation--ai): translate chats, transcribe voice, use your own ai providers.
-- [forward pro](FEATURES.md#messages--sending): forwards with grouped albums, comments and a live preview.
+- [local chat folders](FEATURES.md#chat-list--folders): create more folders after reaching telegram's limit.
 - [custom interface](FEATURES.md#appearance--customization): themes, tabs, chat layout and message menus.
 - [plugin system](FEATURES.md#proxy-plugins--performance): plugins from the catalog or your own with the sdk.
 
