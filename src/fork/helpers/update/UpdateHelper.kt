@@ -2,6 +2,7 @@ package desu.inugram.helpers.update
 
 import android.os.Build
 import desu.inugram.InuConfig
+import desu.inugram.helpers.Http
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.security.ParanoiaHelper
 import org.telegram.messenger.AndroidUtilities
@@ -23,8 +24,6 @@ import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_iv
 import java.io.File
-import java.net.HttpURLConnection
-import java.net.URL
 import kotlin.math.max
 import kotlin.math.min
 
@@ -607,15 +606,10 @@ object UpdateHelper {
         Utilities.globalQueue.postRunnable {
             var fetchedText: String? = null
             try {
-                val conn = (URL("$CHANGELOG_URL${info.verCode / 100}.md").openConnection() as HttpURLConnection).apply {
-                    connectTimeout = 3500
-                    readTimeout = 3500
-                    requestMethod = "GET"
+                val response = Http.request("$CHANGELOG_URL${info.verCode / 100}.md", connectTimeout = 3500, readTimeout = 3500)
+                if (response.code == 200) {
+                    fetchedText = parseChangelog(response.body)
                 }
-                if (conn.responseCode == 200) {
-                    fetchedText = parseChangelog(conn.inputStream.bufferedReader().use { it.readText() })
-                }
-                conn.disconnect()
             } catch (_: Throwable) {
             }
             AndroidUtilities.runOnUIThread {
