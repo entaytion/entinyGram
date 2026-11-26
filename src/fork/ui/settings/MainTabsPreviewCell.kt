@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.Gravity
 import android.view.MotionEvent
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -234,6 +235,7 @@ internal class MainTabsPreviewCell(
                 tabs.requestLayout()
             }
             tabs.addView(tab)
+            tabs.setViewVisible(tab, true, false)
         }
         M3MainTabsHelper.applyTabsBar(bar)
         bar.addView(tabs, M3MainTabsHelper.tabsLayoutParams(LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT)))

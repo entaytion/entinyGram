@@ -259,7 +259,7 @@ object MainTabsHelper {
     fun chatsBadge(account: Int): String? {
         if (InuConfig.BOTTOM_TABS_HIDE_BADGES.value || InuConfig.FOLDERS_UNREAD_COUNTER_MODE.value == InuConfig.FoldersUnreadCounterModeItem.HIDE) return null
         val count = MessagesStorage.getInstance(account).mainUnreadCount
-        return if (count > 0) LocaleController.formatNumber(count, ',') else null
+        return if (count > 0) LocaleController.formatNumber(count.toLong(), ',') else null
     }
 
     @JvmStatic
