@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 26 Nov 2026 09:54:50 +0200
+Subject: Cancel the settings title animation when its views are cleared.
+
+---
+ .../src/main/java/org/telegram/ui/SettingsActivity.java     | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -229,6 +229,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+     @Override
+     public void clearViews() {
+         if (ignoreClearViews) return;
++        if (actionBarVisibleAnimator != null) {
++            actionBarVisibleAnimator.cancel();
++            actionBarVisibleAnimator = null;
++        }
+         super.clearViews();
+     }
+ 
+@@ -596,6 +600,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+         updateActionBarVisible(false, true);
+     }
+     private void updateActionBarVisible(boolean force, boolean animated) {
++        if (simpleActionBar == null) return;
+         final boolean visible;
+         if (searchItem.isSearchFieldVisible2()) {
+             visible = true;
+@@ -638,6 +643,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+     }
+ 
+     private void setActionBarVisibilityFactor(float factor) {
++        if (simpleActionBar == null) return;
+         simpleActionBar.setTitlesAlpha(factor);
+         if (actionBarFadeView != null) {
+             actionBarFadeView.setAlpha(factor);
