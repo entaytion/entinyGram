@@ -29,7 +29,7 @@ import kotlin.math.min
 
 object UpdateHelper {
     const val USERNAME = "entinyGramCI"
-    private const val CHANGELOG_URL = "https://raw.githubusercontent.com/entaytion/entinyGram/main/changelogs/"
+    private const val CHANGELOG_URL = "https://raw.githubusercontent.com/entinyGram/android/main/changelogs/"
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
     private const val RESOLVE_BACKOFF_MS = 30L * 60 * 1000

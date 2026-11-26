@@ -267,7 +267,7 @@ object Md3OnlineLyrics {
         httpJson(
             url,
             headers = mapOf(
-                "User-Agent" to "entinyGram/" + BuildVars.BUILD_VERSION_STRING + " (https://github.com/entaytion/entinyGram)",
+                "User-Agent" to "entinyGram/" + BuildVars.BUILD_VERSION_STRING + " (https://github.com/entinyGram/android)",
                 "Accept" to "application/json",
             ),
         )

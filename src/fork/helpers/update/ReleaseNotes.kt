@@ -7,8 +7,8 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.Utilities
 
 object ReleaseNotes {
-    private const val LIST_URL = "https://api.github.com/repos/entaytion/entinyGram/contents/changelogs"
-    private const val RAW_URL = "https://raw.githubusercontent.com/entaytion/entinyGram/main/changelogs/"
+    private const val LIST_URL = "https://api.github.com/repos/entinyGram/android/contents/changelogs"
+    private const val RAW_URL = "https://raw.githubusercontent.com/entinyGram/android/main/changelogs/"
     private const val LIMIT = 12
     private const val TIMEOUT_MS = 6000
     private const val TTL_MS = 10L * 60 * 1000
