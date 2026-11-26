@@ -65,8 +65,6 @@ class AppIconHeroView(context: Context, private val resourcesProvider: Theme.Res
 
     fun setTint(tint: Int) = mock.setTint(tint)
 
-    fun previewCenterY(): Float = top + mock.top + mock.height / 2f
-
     private inner class MockView(context: Context) : FrameLayout(context) {
         val preview = IconPreviewView(context, 0)
         private val label = TextView(context)
