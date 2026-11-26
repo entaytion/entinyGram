@@ -6,6 +6,8 @@
 
 an independent StGit patchset on top of official Telegram and Inugram.
 
+[download](https://github.com/entinyGram/android/releases) · [website](https://entaytion.is-a.dev/entinygram) · [channel](https://t.me/entinyGram) · [donate](https://entaytion.is-a.dev/donate)
+
 ## highlights
 
 everything entinygram adds lives in **settings → entinygram**, grouped into pages. the full list is in [FEATURES.md](FEATURES.md).
@@ -24,16 +26,16 @@ everything entinygram adds lives in **settings → entinygram**, grouped into pa
 | --- | --- |
 | [all features](FEATURES.md) | every entinygram feature |
 | [removed features](docs/removed.md) | what was removed and why |
-| [build guide](https://entinygram.vercel.app/build) | prerequisites, setup and signing |
+| [build guide](https://entaytion.is-a.dev/entinygram/build) | prerequisites, setup and signing |
 | [plugin sdk](sdk/docs/README.md) | plugin api and authoring |
 | [docs index](docs/README.md) | contributor guides and skills |
 
 ## quick start
 
-signed apks are on the [releases](https://github.com/entaytion/entinyGram/releases) page.
+signed apks are on the [releases](https://github.com/entinyGram/android/releases) page.
 
 ```sh
-git clone https://github.com/entaytion/entinyGram.git
+git clone https://github.com/entinyGram/android.git entinyGram
 cd entinyGram
 bun install
 bun run setup

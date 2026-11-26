@@ -38,7 +38,7 @@ state lives in repo variables, written by the last step of `apk.yml`:
 | `INU_DAY_STATE` | `YYYYMMDD:N` |
 | `INU_TRACK_STATE` | `<base> beta:N release:N`, for example `13.2.1 beta:4 release:1` |
 
-check with `gh variable list --repo entaytion/entinyGram`. an empty `INU_TRACK_STATE` starts both counters at 0.
+check with `gh variable list --repo entinyGram/android`. an empty `INU_TRACK_STATE` starts both counters at 0.
 
 ## posts
 

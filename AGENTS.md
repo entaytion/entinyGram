@@ -27,10 +27,10 @@ entinyGram is an independent power-user fork of inugram (`teidesu/inugram`), bui
    - intermediate commits may use `SKIP_PATCH_CHECK=1`. the final commit before a push runs the full `lint-patches`.
 4. **the worktree is shared.** other agents leave unstaged edits in `worktree/`. never run bare `stg refresh` or `stg new -r`. stage only your own paths. see the `patches` skill.
 5. **zero upstream pollution.**
-   - all work belongs to `entaytion/entinyGram`.
+   - all work belongs to `entinyGram/android`.
    - never open PRs or issues to `teidesu/inugram` or to Telegram.
-   - every `gh` command passes `--repo entaytion/entinyGram`.
-   - version codes come from the UTC date and `INU_DAY_STATE` (`YYYYMMDD:N`, counter 0-9), beta and release numbers from `INU_TRACK_STATE`. check with `gh variable list --repo entaytion/entinyGram`. see the `release` skill.
+   - every `gh` command passes `--repo entinyGram/android`.
+   - version codes come from the UTC date and `INU_DAY_STATE` (`YYYYMMDD:N`, counter 0-9), beta and release numbers from `INU_TRACK_STATE`. check with `gh variable list --repo entinyGram/android`. see the `release` skill.
 6. **no local builds, no device changes.**
    - never run `./gradlew` or compile locally. code written is not code done.
    - never `adb install`, `adb push`, or launch the app.

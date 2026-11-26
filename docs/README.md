@@ -22,7 +22,7 @@ everything entinygram adds lives in **settings → entinygram**, grouped into pa
 | --- | --- |
 | [all features](../FEATURES.md) | every entinyGram feature |
 | [removed features](removed.md) | what was removed and why |
-| [build guide](https://entinygram.vercel.app/build) | prerequisites, setup, and signing |
+| [build guide](https://entaytion.is-a.dev/entinygram/build) | prerequisites, setup, and signing |
 | [plugin sdk](../sdk/docs/README.md) | plugin api and authoring |
 | [translation](skills/translation/SKILL.md) | audit locale strings and add a language |
 | [craft](skills/craft/SKILL.md) | bugfixes and small features |
