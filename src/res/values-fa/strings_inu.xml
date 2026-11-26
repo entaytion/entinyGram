@@ -225,6 +225,10 @@
     <string name="InuArchiveScopeSecret">گفتگوهای محرمانه</string>
     <string name="InuArchiveTitle">حذف‌شده و ویرایش‌شده</string>
     <string name="InuAttachCamera">دوربین</string>
+    <string name="InuAttachHideMenu">پنهان کردن در منوی پیوست</string>
+    <string name="InuAttachHideMenuInfo">انتخاب کنید کدام بخش‌های منوی پیوست پنهان بمانند</string>
+    <string name="InuAttachHidePreview">پیش‌نمایش دوربین</string>
+    <string name="InuAttachHideRecord">دکمه ضبط</string>
     <string name="InuAttachCameraExposureLevels">دکمه‌های سطح اکسپوژر</string>
     <string name="InuAttachCameraExposureLevelsInfo">هنگام باز بودن دوربین، دکمه‌های EV را برای روشن‌تر یا تاریک‌تر شدن تصویر نشان بده.</string>
     <string name="InuAttachCameraMirrorFront">قرینه کردن دوربین جلو</string>

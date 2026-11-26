@@ -225,6 +225,10 @@
     <string name="InuArchiveScopeSecret">秘密のチャット</string>
     <string name="InuArchiveTitle">削除・編集済み</string>
     <string name="InuAttachCamera">カメラ</string>
+    <string name="InuAttachHideMenu">添付メニューで非表示</string>
+    <string name="InuAttachHideMenuInfo">添付メニューで非表示にする項目を選択</string>
+    <string name="InuAttachHidePreview">カメラのプレビュー</string>
+    <string name="InuAttachHideRecord">録画ボタン</string>
     <string name="InuAttachCameraExposureLevels">露出レベルボタン</string>
     <string name="InuAttachCameraExposureLevelsInfo">カメラが開いている間、撮影を明るくまたは暗くするEVボタンを表示します。</string>
     <string name="InuAttachCameraMirrorFront">フロントカメラを反転</string>

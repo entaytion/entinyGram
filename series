@@ -711,3 +711,4 @@ entiny/bottom-tabs-editor.patch
 entiny/restore-joined-channel-dialog.patch
 entiny/settings-title-lifecycle.patch
 entiny/cast-button-crash.patch
+entiny/attach-menu-hide.patch

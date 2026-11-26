@@ -225,6 +225,10 @@
     <string name="InuArchiveScopeSecret">Секретные чаты</string>
     <string name="InuArchiveTitle">Удалённые и изменённые</string>
     <string name="InuAttachCamera">Камера</string>
+    <string name="InuAttachHideMenu">Скрыть в меню вложений</string>
+    <string name="InuAttachHideMenuInfo">Выберите, какие элементы меню вложений скрыть</string>
+    <string name="InuAttachHidePreview">Превью камеры</string>
+    <string name="InuAttachHideRecord">Кнопка записи</string>
     <string name="InuAttachCameraExposureLevels">Кнопки уровней экспозиции</string>
     <string name="InuAttachCameraExposureLevelsInfo">Показывать кнопки EV, чтобы сделать кадр светлее или темнее, пока открыта камера.</string>
     <string name="InuAttachCameraMirrorFront">Зеркалить фронтальную камеру</string>

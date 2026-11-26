@@ -226,6 +226,10 @@
     <string name="InuArchiveScopeSecret">Chat segrete</string>
     <string name="InuArchiveTitle">Eliminati e modificati</string>
     <string name="InuAttachCamera">Fotocamera</string>
+    <string name="InuAttachHideMenu">Nascondi nel menu allegati</string>
+    <string name="InuAttachHideMenuInfo">Scegli quali elementi del menu allegati nascondere</string>
+    <string name="InuAttachHidePreview">Anteprima fotocamera</string>
+    <string name="InuAttachHideRecord">Pulsante di registrazione</string>
     <string name="InuAttachCameraExposureLevels">Pulsanti dei livelli di esposizione</string>
     <string name="InuAttachCameraExposureLevelsInfo">Mostra i pulsanti EV per schiarire o scurire lo scatto mentre la fotocamera è aperta.</string>
     <string name="InuAttachCameraMirrorFront">Specchia fotocamera frontale</string>

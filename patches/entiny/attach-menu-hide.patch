@@ -1,0 +1,157 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 26 Nov 2026 20:27:47 +0200
+Subject: Hides the camera preview, record button and attach tabs from the attach menu.
+
+---
+ .../ui/Components/ChatAttachAlert.java        | 64 ++++++++++---------
+ .../ChatAttachAlertPhotoLayout.java           |  3 +-
+ 2 files changed, 36 insertions(+), 31 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+@@ -6730,6 +6730,10 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+         private int linksButton;
+         private int richButton;
+         private int buttonsCount;
++        private int inu_nextButton(String key) {
++            return desu.inugram.helpers.chat.AttachHideHelper.isHidden(key) ? -1 : buttonsCount++;
++        }
++
+ 
+         public ButtonsAdapter(Context context) {
+             mContext = context;
+@@ -6875,80 +6879,80 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+             moneyButton = -1;
+ 
+             if (isPollAttach) {
+-                galleryButton = buttonsCount++;
+-                if (desu.inugram.helpers.chat.AttachCameraHelper.hasCameraTab(ChatAttachAlert.this)) inu_cameraButton = buttonsCount++;
++                galleryButton = inu_nextButton("gallery");
++                if (desu.inugram.helpers.chat.AttachCameraHelper.hasCameraTab(ChatAttachAlert.this)) inu_cameraButton = inu_nextButton("camera");
+                 if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_DOCUMENTS)) {
+-                    documentButton = buttonsCount++;
++                    documentButton = inu_nextButton("document");
+                 }
+                 if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_STICKERS)) {
+-                    stickerButton = buttonsCount++;
++                    stickerButton = inu_nextButton("sticker");
+                 }
+                 if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_EMOJI)) {
+-                    emojiButton = buttonsCount++;
++                    emojiButton = inu_nextButton("emoji");
+                 }
+                 if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_MUSIC)) {
+-                    musicButton = buttonsCount++;
++                    musicButton = inu_nextButton("music");
+                 }
+                 if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_LOCATION)) {
+-                    locationButton = buttonsCount++;
++                    locationButton = inu_nextButton("location");
+                 }
+                 if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_LINK)) {
+-                    linksButton = buttonsCount++;
++                    linksButton = inu_nextButton("links");
+                 }
+             } else if (!(baseFragment instanceof ChatActivity)) {
+-                galleryButton = buttonsCount++;
+-                documentButton = buttonsCount++;
++                galleryButton = inu_nextButton("gallery");
++                documentButton = inu_nextButton("document");
+                 if (allowEnterCaption) {
+-                    musicButton = buttonsCount++;
++                    musicButton = inu_nextButton("music");
+                 }
+             } else if (editingMessageObject != null) {
+                 if (editType == EDITMEDIA_TYPE_ANY) {
+-                    galleryButton = buttonsCount++;
+-                    if (desu.inugram.helpers.chat.AttachCameraHelper.hasCameraTab(ChatAttachAlert.this)) inu_cameraButton = buttonsCount++;
+-                    documentButton = buttonsCount++;
+-                    musicButton = buttonsCount++;
++                    galleryButton = inu_nextButton("gallery");
++                    if (desu.inugram.helpers.chat.AttachCameraHelper.hasCameraTab(ChatAttachAlert.this)) inu_cameraButton = inu_nextButton("camera");
++                    documentButton = inu_nextButton("document");
++                    musicButton = inu_nextButton("music");
+                 } else {
+                     if (editType == EDITMEDIA_TYPE_PHOTOVIDEO) {
+-                        galleryButton = buttonsCount++;
+-                        if (desu.inugram.helpers.chat.AttachCameraHelper.hasCameraTab(ChatAttachAlert.this)) inu_cameraButton = buttonsCount++;
++                        galleryButton = inu_nextButton("gallery");
++                        if (desu.inugram.helpers.chat.AttachCameraHelper.hasCameraTab(ChatAttachAlert.this)) inu_cameraButton = inu_nextButton("camera");
+                     }
+                     if (editType == EDITMEDIA_TYPE_FILE) {
+-                        documentButton = buttonsCount++;
++                        documentButton = inu_nextButton("document");
+                     }
+                     if (editType == EDITMEDIA_TYPE_MUSIC) {
+-                        musicButton = buttonsCount++;
++                        musicButton = inu_nextButton("music");
+                     }
+                 }
+             } else {
+                 TLRPC.User user = baseFragment instanceof ChatActivity ? ((ChatActivity) baseFragment).getCurrentUser() : null;
+                 TLRPC.Chat chat = baseFragment instanceof ChatActivity ? ((ChatActivity) baseFragment).getCurrentChat() : null;
+                 final boolean paidUser = user != null && ((ChatActivity) baseFragment).getMessagesController().getSendPaidMessagesStars(user.id) > 0;
+-                galleryButton = buttonsCount++;
+-                if (desu.inugram.helpers.chat.AttachCameraHelper.hasCameraTab(ChatAttachAlert.this)) inu_cameraButton = buttonsCount++;
+-                documentButton = buttonsCount++;
++                galleryButton = inu_nextButton("gallery");
++                if (desu.inugram.helpers.chat.AttachCameraHelper.hasCameraTab(ChatAttachAlert.this)) inu_cameraButton = inu_nextButton("camera");
++                documentButton = inu_nextButton("document");
+                 if (MessagesController.getInstance(currentAccount).config.walletAvailable.get() && ((ChatActivity) baseFragment).getChatMode() == ChatActivity.MODE_DEFAULT && isMoneyTabRecipient(user)) {
+-                    moneyButton = buttonsCount++;
++                    moneyButton = inu_nextButton("money");
+                 }
+ 
+                 if (plainTextEnabled) {
+-                    locationButton = buttonsCount++;
++                    locationButton = inu_nextButton("location");
+                 }
+                 if (plainTextEnabled && MessagesController.getInstance(currentAccount).richEditorAvailable()) {
+-                    richButton = buttonsCount++;
++                    richButton = inu_nextButton("rich");
+                 }
+ 
+                 if (pollsEnabled) {
+-                    pollButton = buttonsCount++;
++                    pollButton = inu_nextButton("poll");
+                 }
+                 if (plainTextEnabled) {
+-                    contactButton = buttonsCount++;
++                    contactButton = inu_nextButton("contact");
+                 }
+-                musicButton = buttonsCount++;
++                musicButton = inu_nextButton("music");
+                 if (todoEnabled) {
+-                    todoButton = buttonsCount++;
++                    todoButton = inu_nextButton("todo");
+                 }
+                 if (baseFragment instanceof ChatActivity && ((ChatActivity) baseFragment).getChatMode() == 0 && user != null && !paidUser && !user.bot && QuickRepliesController.getInstance(currentAccount).hasReplies()) {
+-                    quickRepliesButton = buttonsCount++;
++                    quickRepliesButton = inu_nextButton("quick_replies");
+                 }
+ 
+                 if ((photosEnabled || videosEnabled) && !paidUser && (chat == null || !ChatObject.isMonoForum(chat))) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+@@ -835,7 +835,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         gridView.getFastScroll().setAlpha(0f);
+         gridView.getFastScroll().usePadding = false;
+         gridView.getFastScroll().topOffset = ActionBar.getCurrentActionBarHeight(); // + AndroidUtilities.statusBarHeight;
+-        gridView.setAdapter(adapter = new PhotoAttachAdapter(context, needCamera && !inu_cameraOutsideGrid));
++        gridView.setAdapter(adapter = new PhotoAttachAdapter(context, needCamera && !inu_cameraOutsideGrid && !desu.inugram.helpers.chat.AttachHideHelper.isHidden("preview")));
+         gridView.addItemDecoration(cameraViewItemDecoration = new CameraViewItemDecoration(gridView));
+         adapter.createCache();
+         gridView.setClipToPadding(false);
+@@ -1269,6 +1269,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+ 
+         shutterButton = new ShutterButton(context);
+         cameraPanel.addView(shutterButton, LayoutHelper.createFrame(84, 84, Gravity.CENTER));
++        if (desu.inugram.helpers.chat.AttachHideHelper.isHidden("record")) shutterButton.setVisibility(View.GONE);
+         shutterButton.setDelegate(new ShutterButton.ShutterButtonDelegate() {
+ 
+             private File outputFile;

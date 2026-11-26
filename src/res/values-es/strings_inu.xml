@@ -226,6 +226,10 @@
     <string name="InuArchiveScopeSecret">Chats secretos</string>
     <string name="InuArchiveTitle">Eliminados y editados</string>
     <string name="InuAttachCamera">Cámara</string>
+    <string name="InuAttachHideMenu">Ocultar en el menú de adjuntos</string>
+    <string name="InuAttachHideMenuInfo">Elige qué elementos del menú de adjuntos se ocultan</string>
+    <string name="InuAttachHidePreview">Vista previa de la cámara</string>
+    <string name="InuAttachHideRecord">Botón de grabar</string>
     <string name="InuAttachCameraExposureLevels">Botones de niveles de exposición</string>
     <string name="InuAttachCameraExposureLevelsInfo">Muestra botones EV para aclarar u oscurecer la toma mientras la cámara está abierta.</string>
     <string name="InuAttachCameraMirrorFront">Reflejar cámara frontal</string>

@@ -226,6 +226,10 @@
     <string name="InuArchiveScopeSecret">Secret chats</string>
     <string name="InuArchiveTitle">Deleted and edited</string>
     <string name="InuAttachCamera">Camera</string>
+    <string name="InuAttachHideMenu">Hide in attach menu</string>
+    <string name="InuAttachHideMenuInfo">Choose which elements of the attach menu stay hidden</string>
+    <string name="InuAttachHidePreview">Camera preview</string>
+    <string name="InuAttachHideRecord">Record button</string>
     <string name="InuAttachCameraExposureLevels">Exposure level buttons</string>
     <string name="InuAttachCameraExposureLevelsInfo">Show EV buttons to brighten or darken the shot while the camera is open.</string>
     <string name="InuAttachCameraMirrorFront">Mirror front camera</string>

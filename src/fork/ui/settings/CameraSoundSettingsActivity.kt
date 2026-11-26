@@ -195,6 +195,13 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
                 InuConfig.ATTACH_CAMERA_EXPOSURE_LEVELS.value,
             )
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_ATTACH_HIDE_MENU,
+                LocaleController.getString(R.string.InuAttachHideMenu),
+                LocaleController.getString(R.string.InuAttachHideMenuInfo),
+            )
+        )
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuVoiceMessages)))
         items.add(
             mkTwoLineCheckItem(
@@ -247,6 +254,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
             TOGGLE_CONFIRM_SEND_VOICE -> (view as? TextCheckCell)?.isChecked = InuConfig.CONFIRM_SEND_VOICE.toggle()
             TOGGLE_ATTACH_CAMERA_SQUARE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_SQUARE.toggle()
             TOGGLE_ATTACH_CAMERA_MIRROR_FRONT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_MIRROR_FRONT.toggle()
+            BUTTON_ATTACH_HIDE_MENU -> presentFragment(AttachMenuHideSettingsActivity())
             BUTTON_ATTACH_CAMERA_RESOLUTION -> RadioItemOptions.show(
                 this, view,
                 listOf(LocaleController.getString(R.string.InuRoundBitrateDefault), "720p", "1080p"),
@@ -359,6 +367,7 @@ class CameraSoundSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ATTACH_CAMERA_SQUARE = InuUtils.generateId()
         private val TOGGLE_ATTACH_CAMERA_MIRROR_FRONT = InuUtils.generateId()
         private val BUTTON_ATTACH_CAMERA_RESOLUTION = InuUtils.generateId()
+        private val BUTTON_ATTACH_HIDE_MENU = InuUtils.generateId()
         private val TOGGLE_ATTACH_CAMERA_EXPOSURE_LEVELS = InuUtils.generateId()
         private val BUTTON_ROUND_DEFAULT_CAMERA = InuUtils.generateId()
         private val TOGGLE_ROUND_NEW_RECORDER = InuUtils.generateId()

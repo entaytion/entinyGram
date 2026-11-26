@@ -225,6 +225,10 @@
     <string name="InuArchiveScopeSecret">المحادثات السرية</string>
     <string name="InuArchiveTitle">المحذوفة والمعدّلة</string>
     <string name="InuAttachCamera">الكاميرا</string>
+    <string name="InuAttachHideMenu">إخفاء في قائمة المرفقات</string>
+    <string name="InuAttachHideMenuInfo">اختر العناصر التي تبقى مخفية في قائمة المرفقات</string>
+    <string name="InuAttachHidePreview">معاينة الكاميرا</string>
+    <string name="InuAttachHideRecord">زر التسجيل</string>
     <string name="InuAttachCameraExposureLevels">أزرار مستويات التعريض</string>
     <string name="InuAttachCameraExposureLevelsInfo">إظهار أزرار EV لتفتيح اللقطة أو تغميقها أثناء فتح الكاميرا.</string>
     <string name="InuAttachCameraMirrorFront">عكس الكاميرا الأمامية</string>

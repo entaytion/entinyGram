@@ -225,6 +225,10 @@
     <string name="InuArchiveScopeSecret">私密聊天</string>
     <string name="InuArchiveTitle">已删除和已编辑</string>
     <string name="InuAttachCamera">相机</string>
+    <string name="InuAttachHideMenu">在附件菜单中隐藏</string>
+    <string name="InuAttachHideMenuInfo">选择附件菜单中要隐藏的元素</string>
+    <string name="InuAttachHidePreview">相机预览</string>
+    <string name="InuAttachHideRecord">录制按钮</string>
     <string name="InuAttachCameraExposureLevels">曝光级别按钮</string>
     <string name="InuAttachCameraExposureLevelsInfo">相机打开时显示用于调亮或调暗画面的 EV 按钮。</string>
     <string name="InuAttachCameraMirrorFront">镜像前置摄像头</string>

@@ -225,6 +225,10 @@
     <string name="InuArchiveScopeSecret">Gizli sohbetler</string>
     <string name="InuArchiveTitle">Silinenler ve düzenlenenler</string>
     <string name="InuAttachCamera">Kamera</string>
+    <string name="InuAttachHideMenu">Ek menüde gizle</string>
+    <string name="InuAttachHideMenuInfo">Ek menüde hangi öğelerin gizli kalacağını seçin</string>
+    <string name="InuAttachHidePreview">Kamera önizlemesi</string>
+    <string name="InuAttachHideRecord">Kayıt düğmesi</string>
     <string name="InuAttachCameraExposureLevels">Pozlama düzeyi düğmeleri</string>
     <string name="InuAttachCameraExposureLevelsInfo">Kamera açıkken çekimi aydınlatmak veya karartmak için EV düğmelerini göster.</string>
     <string name="InuAttachCameraMirrorFront">Ön kamerayı aynala</string>

@@ -132,6 +132,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - outgoing media shows conversion percentage while processing and byte progress during upload - *inspired by NagramXTurbo (@temporaryna)*
 - **photos, gifs & stickers** — hd photos at q87 without double compression, small gifs in bubbles, whole sticker or emoji pack as zip
 - **square camera tile** — the attach gallery camera takes one cell
+- **attach menu hiding** — hide the camera preview tile, the record button or any attach tab (gallery, camera, files, poll, location and more) from the attach menu, chosen in camera and sound settings
 - **camera, player & gestures** — mirrored front camera, original-quality video playback, tap-to-fullscreen gifs, music sleep timer, halved swipe distances, no pull-down-to-stories
 
 ### chat list & folders

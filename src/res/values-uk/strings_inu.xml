@@ -225,6 +225,10 @@
     <string name="InuArchiveScopeSecret">Секретні чати</string>
     <string name="InuArchiveTitle">Видалені та змінені</string>
     <string name="InuAttachCamera">Камера</string>
+    <string name="InuAttachHideMenu">Приховати в меню вкладень</string>
+    <string name="InuAttachHideMenuInfo">Оберіть, які елементи меню вкладень приховати</string>
+    <string name="InuAttachHidePreview">Превʼю камери</string>
+    <string name="InuAttachHideRecord">Кнопка запису</string>
     <string name="InuAttachCameraExposureLevels">Кнопки рівнів експозиції</string>
     <string name="InuAttachCameraExposureLevelsInfo">Показувати кнопки EV, щоб зробити кадр світлішим або темнішим, поки камера відкрита.</string>
     <string name="InuAttachCameraMirrorFront">Дзеркалити фронтальну камеру</string>
