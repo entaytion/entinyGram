@@ -979,6 +979,8 @@
     <string name="InuHideCustomWallpaper">Hide custom wallpaper</string>
     <string name="InuHideDevBadges">Disable entinyGram badges</string>
     <string name="InuHideDevBadgesInfo">They don\'t mean anything, don\'t give any advantage — just a thank-you from the developer</string>
+    <string name="InuSettingsWebLinks">Convenient link copying</string>
+    <string name="InuSettingsWebLinksInfo">Copy links to settings as https://t.me/entinySettings/…</string>
     <string name="InuHideDialogPreview">Hide last message preview</string>
     <string name="InuHideDialogPreviewInfo">Show the last message in the chat list under a spoiler</string>
     <string name="InuHideDividers">Disable dividers</string>

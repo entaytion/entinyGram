@@ -975,6 +975,8 @@
     <string name="InuHideCustomWallpaper">Приховати власні шпалери</string>
     <string name="InuHideDevBadges">Вимкнути бейджі entinyGram</string>
     <string name="InuHideDevBadgesInfo">Вони нічого не означають і не дають жодних переваг — просто подяка від розробника</string>
+    <string name="InuSettingsWebLinks">Зручне копіювання посилань</string>
+    <string name="InuSettingsWebLinksInfo">Копіювати посилання на налаштування у вигляді https://t.me/entinySettings/…</string>
     <string name="InuHideDialogPreview">Ховати прев’ю останнього повідомлення</string>
     <string name="InuHideDialogPreviewInfo">Показувати останнє повідомлення в списку чатів під спойлером</string>
     <string name="InuHideDividers">Вимкнути роздільники</string>

@@ -2,6 +2,7 @@ package desu.inugram
 
 import android.content.Intent
 import desu.inugram.helpers.security.ParanoiaHelper
+import desu.inugram.helpers.security.PasscodeHelper
 import desu.inugram.ui.settings.AdditionalSettingsActivity
 import desu.inugram.ui.settings.AiEditorSettingsActivity
 import desu.inugram.ui.settings.AiSettingsActivity
@@ -36,6 +37,7 @@ import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.ProfileActivity
+import java.lang.ref.WeakReference
 
 object SearchRegistry {
     // entiny: aliases are retired slugs that still resolve to this target, so old tg://entinySettings links keep working
@@ -136,7 +138,20 @@ object SearchRegistry {
     private val collectedItemIdToSlug: MutableMap<Int, String> = mutableMapOf()
 
     fun deepLinkForItemId(itemId: Int): String? =
-        (slugByItemId[itemId] ?: collectedItemIdToSlug[itemId])?.let { "tg://entinySettings/$it" }
+        (slugByItemId[itemId] ?: collectedItemIdToSlug[itemId])?.let { linkFor(it) }
+
+    private fun linkFor(slug: String): String =
+        if (InuConfig.SETTINGS_WEB_LINKS.value) "https://t.me/entinySettings/$slug" else "tg://entinySettings/$slug"
+
+    private val builtResults = ArrayList<WeakReference<ProfileActivity.SearchAdapter.SearchResult>>()
+
+    // entiny: open settings screens keep their search results, so rewrite the links when the toggle changes
+    fun refreshLinks() {
+        for (ref in builtResults) {
+            val result = ref.get() ?: continue
+            result.link = linkFor(result.link.substringAfter("entinySettings/"))
+        }
+    }
 
     @JvmStatic
     fun extendSearchArray(
@@ -155,7 +170,7 @@ object SearchRegistry {
                     pageTitle,
                     LocaleController.getString(R.string.InuSettings),
                     page.iconRes,
-                ) { f.presentFragment(page.factory()) }.withLink("tg://entinySettings/${page.slug}")
+                ) { f.presentFragment(page.factory()) }.withLink(linkFor(page.slug))
             )
             for (entry in page.entries) {
                 if (entry.visible?.invoke() == false) continue
@@ -167,7 +182,7 @@ object SearchRegistry {
                         page.iconRes,
                     ) {
                         f.presentFragment(page.factory().withHighlight(entry.itemId))
-                    }.withLink("tg://entinySettings/${entry.slug}")
+                    }.withLink(linkFor(entry.slug))
                 )
             }
             if (page.autoCollect) {
@@ -196,11 +211,13 @@ object SearchRegistry {
                             page.iconRes,
                         ) {
                             f.presentFragment(page.factory().withHighlight(id))
-                        }.withLink("tg://entinySettings/$slug")
+                        }.withLink(linkFor(slug))
                     )
                 }
             }
         }
+        builtResults.removeAll { it.get() == null }
+        extra.mapTo(builtResults) { WeakReference(it) }
         return stock + extra.toTypedArray()
     }
 
@@ -208,9 +225,18 @@ object SearchRegistry {
     fun tryHandleDeepLink(activity: LaunchActivity, intent: Intent?): Boolean {
         if (ParanoiaHelper.shouldHideSettings()) return false
         val uri = intent?.data ?: return false
-        if (uri.scheme != "tg") return false
+        val web = uri.scheme == "https" || uri.scheme == "http"
+        if (!web && uri.scheme != "tg") return false
         // entiny: match host and legacy {inu,entiny} segments case-insensitively while preserving trailing slug
         val segs = when {
+            web -> {
+                if (uri.host != "t.me" && uri.host != "telegram.me") return false
+                val path = uri.pathSegments
+                if (!path.firstOrNull().equals("entinySettings", ignoreCase = true)) return false
+                // entiny: a bare number is a post of the @entinySettings channel, leave it to telegram
+                path.drop(1).takeIf { it.lastOrNull()?.all(Char::isDigit) == false } ?: return false
+            }
+
             uri.host.equals("entinySettings", ignoreCase = true) || uri.host.equals("settings", ignoreCase = true) -> uri.pathSegments
             uri.host == null -> uri.schemeSpecificPart?.removePrefix("//")?.let { ssp ->
                 when {
@@ -228,6 +254,8 @@ object SearchRegistry {
             else -> return false
         }
         val target = targetBySlug[segs.last()] ?: collectedTargets[segs.last()]
+        // entiny: the passcode link is refused while the app is locked, stock keeps it and replays it after unlock
+        if (target == null && segs.last() == PasscodeHelper.getSettingsKey()) return false
         if (target == null || target.entry?.visible?.invoke() == false) {
             BulletinFactory.global().createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuSettingNotFound)).show()
             return true

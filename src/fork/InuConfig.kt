@@ -2346,6 +2346,9 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val HIDE_DEV_BADGES = BoolItem("hide_dev_badges", false)
 
     @JvmField
+    val SETTINGS_WEB_LINKS = BoolItem("settings_web_links", false)
+
+    @JvmField
     val DELETED_MESSAGES_TRANSPARENT = BoolItem("deleted_messages_transparent", false)
 
     @JvmField

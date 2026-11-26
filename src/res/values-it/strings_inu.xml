@@ -989,6 +989,8 @@ Tocca per personalizzare…</string>
     <string name="InuHideCustomWallpaper">Nascondi lo sfondo personalizzato</string>
     <string name="InuHideDevBadges">Disattiva i badge di entinyGram</string>
     <string name="InuHideDevBadgesInfo">Non significano nulla e non danno alcun vantaggio: sono solo un ringraziamento dallo sviluppatore</string>
+    <string name="InuSettingsWebLinks">Copia comoda dei link</string>
+    <string name="InuSettingsWebLinksInfo">Copia i link alle impostazioni come https://t.me/entinySettings/…</string>
     <string name="InuHideDialogPreview">Nascondi l\'anteprima dell\'ultimo messaggio</string>
     <string name="InuHideDialogPreviewInfo">Mostra l\'ultimo messaggio nell\'elenco chat sotto uno spoiler</string>
     <string name="InuHideDividers">Disattiva separatori</string>

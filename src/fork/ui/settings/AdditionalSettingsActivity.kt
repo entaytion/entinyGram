@@ -123,6 +123,16 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
         items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.entiny_about, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
         items.add(UItem.asShadow(null))
+
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SETTINGS_WEB_LINKS,
+                R.string.InuSettingsWebLinks,
+                R.string.InuSettingsWebLinksInfo,
+                InuConfig.SETTINGS_WEB_LINKS.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
     }
 
     override fun createView(context: Context): View {
@@ -173,6 +183,11 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             }
 
             TOGGLE_LOGS_REDACT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.LOGS_REDACT.toggle()
+
+            TOGGLE_SETTINGS_WEB_LINKS -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.SETTINGS_WEB_LINKS.toggle()
+                SearchRegistry.refreshLinks()
+            }
 
             TOGGLE_LOGS_ENABLED -> {
                 if (LogsHelper.isEnabled()) {
@@ -462,6 +477,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
         private val BUTTON_GITHUB = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
+        private val TOGGLE_SETTINGS_WEB_LINKS = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -480,6 +496,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("auto-update-check", R.string.InuAutoUpdateCheck, TOGGLE_AUTO_UPDATE_CHECK),
                 SearchRegistry.Entry("updates-include-beta", R.string.InuUpdatesIncludeBeta, TOGGLE_UPDATES_INCLUDE_BETA),
+                SearchRegistry.Entry("settings-web-links", R.string.InuSettingsWebLinks, TOGGLE_SETTINGS_WEB_LINKS),
             ),
         )
     }

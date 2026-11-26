@@ -92,6 +92,7 @@ entinygram is built on top of [inugram](https://github.com/teidesu/inugram). for
 - **sticker shape** — crop stickers in chat to default, rounded or message-bubble corners
 - **message appearance preview** — one sample chat updates as you tune bubbles, stickers, input text, and time counters from three tabs
 - **message time size** — slider for the size of the time, views and forwards in message bubbles, 10 to 18, default 12
+- **convenient link copying** — copy links to settings as `t.me/entinySettings` links that are easy to share, off by default
 
 ### profile & identity
 

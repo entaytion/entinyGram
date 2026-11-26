@@ -979,6 +979,8 @@
     <string name="InuHideCustomWallpaper">إخفاء الخلفية المخصصة</string>
     <string name="InuHideDevBadges">تعطيل شارات entinyGram</string>
     <string name="InuHideDevBadgesInfo">لا تعني شيئاً ولا تمنح أي ميزة — مجرد شكر من المطوّر</string>
+    <string name="InuSettingsWebLinks">نسخ الروابط بسهولة</string>
+    <string name="InuSettingsWebLinksInfo">نسخ روابط الإعدادات بصيغة https://t.me/entinySettings/…</string>
     <string name="InuHideDialogPreview">إخفاء معاينة آخر رسالة</string>
     <string name="InuHideDialogPreviewInfo">عرض آخر رسالة في قائمة المحادثات تحت ساتر</string>
     <string name="InuHideDividers">تعطيل الفواصل</string>

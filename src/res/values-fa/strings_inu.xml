@@ -975,6 +975,8 @@
     <string name="InuHideCustomWallpaper">پنهان کردن تصویر زمینه سفارشی</string>
     <string name="InuHideDevBadges">غیرفعال کردن نشان‌های entinyGram</string>
     <string name="InuHideDevBadgesInfo">معنایی ندارند و هیچ برتری‌ای نمی‌دهند — فقط یک تشکر از طرف توسعه‌دهنده</string>
+    <string name="InuSettingsWebLinks">کپی آسان پیوندها</string>
+    <string name="InuSettingsWebLinksInfo">پیوند تنظیمات به شکل https://t.me/entinySettings/… کپی شود</string>
     <string name="InuHideDialogPreview">پنهان‌کردن پیش‌نمایش آخرین پیام</string>
     <string name="InuHideDialogPreviewInfo">نمایش آخرین پیام در فهرست گفتگو زیر اسپویلر</string>
     <string name="InuHideDividers">غیرفعال کردن جداکننده‌ها</string>

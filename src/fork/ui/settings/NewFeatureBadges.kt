@@ -8,6 +8,7 @@ object NewFeatureBadges {
         "chat-list-avatar-percent",
         "voice-enhance",
         "bottom-tabs-open",
+        "settings-web-links",
     )
 
     val active: Boolean get() = SLUGS.isNotEmpty()

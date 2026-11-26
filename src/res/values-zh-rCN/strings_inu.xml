@@ -975,6 +975,8 @@
     <string name="InuHideCustomWallpaper">隐藏自定义壁纸</string>
     <string name="InuHideDevBadges">禁用 entinyGram 徽章</string>
     <string name="InuHideDevBadgesInfo">它们没有任何含义，也不提供任何优势——只是开发者的一份感谢</string>
+    <string name="InuSettingsWebLinks">便捷复制链接</string>
+    <string name="InuSettingsWebLinksInfo">以 https://t.me/entinySettings/… 的形式复制设置链接</string>
     <string name="InuHideDialogPreview">隐藏最后一条消息预览</string>
     <string name="InuHideDialogPreviewInfo">在聊天列表中将最后一条消息显示在剧透下</string>
     <string name="InuHideDividers">禁用分隔线</string>

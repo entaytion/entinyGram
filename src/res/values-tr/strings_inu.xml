@@ -976,6 +976,8 @@
     <string name="InuHideCustomWallpaper">Özel duvar kağıdını gizle</string>
     <string name="InuHideDevBadges">entinyGram rozetlerini devre dışı bırak</string>
     <string name="InuHideDevBadgesInfo">Hiçbir anlamı yoktur, herhangi bir ayrıcalık sağlamaz — sadece geliştiriciden bir teşekkürdür</string>
+    <string name="InuSettingsWebLinks">Kolay bağlantı kopyalama</string>
+    <string name="InuSettingsWebLinksInfo">Ayar bağlantılarını https://t.me/entinySettings/… biçiminde kopyala</string>
     <string name="InuHideDialogPreview">Son mesaj önizlemesini gizle</string>
     <string name="InuHideDialogPreviewInfo">Sohbet listesinde son mesajı spoiler altında göster</string>
     <string name="InuHideDividers">Ayırıcıları kapat</string>

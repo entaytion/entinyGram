@@ -975,6 +975,8 @@
     <string name="InuHideCustomWallpaper">カスタム壁紙を非表示</string>
     <string name="InuHideDevBadges">entinyGramバッジを無効化</string>
     <string name="InuHideDevBadgesInfo">これらには特別な意味も特典もありません。単なる開発者からの感謝の印です</string>
+    <string name="InuSettingsWebLinks">便利なリンクコピー</string>
+    <string name="InuSettingsWebLinksInfo">設定へのリンクを https://t.me/entinySettings/… の形式でコピーします</string>
     <string name="InuHideDialogPreview">最後のメッセージのプレビューを隠す</string>
     <string name="InuHideDialogPreviewInfo">チャットリストの最後のメッセージをスポイラーで隠して表示します</string>
     <string name="InuHideDividers">区切り線を無効化</string>
