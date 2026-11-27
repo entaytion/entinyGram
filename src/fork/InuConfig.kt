@@ -34,6 +34,7 @@ object InuConfig {
         ConfigSanitizer.loadAll(prefs, _items)
         migrateDialogsFab()
         migrateCenterTitleDialogs()
+        migrateIosProfile()
         desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
     }
 
@@ -49,6 +50,32 @@ object InuConfig {
     private fun migrateCenterTitleDialogs() {
         if (!prefs.contains(CENTER_TITLE_DIALOGS.key)) CENTER_TITLE_DIALOGS.value = CENTER_TITLE_CHATS.value
         if (IOS_CHAT_HEADER.value && !CENTER_TITLE_CHATS.value) CENTER_TITLE_CHATS.value = true
+    }
+
+    private const val IOS_PROFILE_MIGRATION_KEY = "ios_profile_migrated_v1"
+
+    private fun migrateIosProfile() {
+        if (prefs.getBoolean(IOS_PROFILE_MIGRATION_KEY, false)) return
+
+        prefs.edit {
+            IOS_BOTTOM_NAVIGATION_BAR.unsafeSet(true, this)
+            BOTTOM_TABS_V2.unsafeSet(false, this)
+            M3_BOTTOM_TABS.unsafeSet(false, this)
+
+            IOS_CHAT_HEADER.unsafeSet(true, this)
+            IOS_CHAT_LIST.unsafeSet(true, this)
+            IOS_MESSAGE_MENU.unsafeSet(true, this)
+
+            CENTER_TITLE_CHATS.unsafeSet(true, this)
+            CENTER_TITLE_DIALOGS.unsafeSet(true, this)
+
+            IOS_INPUT_BUTTON_PLACEMENT.unsafeSet(true, this)
+            IOS_INPUT_APPEARANCE.unsafeSet(true, this)
+            IOS_INPUT_COMMANDS_NEAR_STICKERS.unsafeSet(true, this)
+            NON_ISLAND_CHAT_ELEMENTS.unsafeSet(false, this)
+
+            putBoolean(IOS_PROFILE_MIGRATION_KEY, true)
+        }
     }
 
     enum class PrefType { BOOL, INT, LONG, FLOAT, STRING }
@@ -1476,16 +1503,16 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val SYSTEM_MESSAGE_FONT_SCALE = BoolItem("system_message_font_scale", false)
 
     @JvmField
-    val IOS_INPUT_BUTTON_PLACEMENT = BoolItem("ios_button_placement", false)
+    val IOS_INPUT_BUTTON_PLACEMENT = BoolItem("ios_button_placement", true)
 
     @JvmField
-    val IOS_INPUT_APPEARANCE = BoolItem("ios_input_appearance", false)
+    val IOS_INPUT_APPEARANCE = BoolItem("ios_input_appearance", true)
 
     @JvmField
     val COMPACT_INPUT_SIZE = BoolItem("compact_input_size", false)
 
     @JvmField
-    val IOS_INPUT_COMMANDS_NEAR_STICKERS = BoolItem("ios_input_commands_near_stickers", false)
+    val IOS_INPUT_COMMANDS_NEAR_STICKERS = BoolItem("ios_input_commands_near_stickers", true)
 
     @JvmField
     val ACTION_BUTTON_STYLE = IntItem("action_button_style", 0)
@@ -1666,10 +1693,10 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val ICON_PACKS_ORDER = StringItem("icon_packs_order", "")
 
     @JvmField
-    val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
+    val CENTER_TITLE_CHATS = BoolItem("center_title_chats", true)
 
     @JvmField
-    val CENTER_TITLE_DIALOGS = BoolItem("center_title_dialogs", false)
+    val CENTER_TITLE_DIALOGS = BoolItem("center_title_dialogs", true)
 
     @JvmField
     val CENTER_TITLE_PAGES = BoolItem("center_title_pages", true)
@@ -1678,7 +1705,7 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
 
     @JvmField
-    val IOS_BOTTOM_NAVIGATION_BAR = BoolItem("ios_bottom_navigation_bar", false)
+    val IOS_BOTTOM_NAVIGATION_BAR = BoolItem("ios_bottom_navigation_bar", true)
 
     @JvmField
     val IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER = BoolItem("ios_chats_tab_returns_to_first_folder", false)
@@ -1693,13 +1720,13 @@ val MEMORY_TRIM = BoolItem("memory_trim", true)
     val HIDE_DOWNLOADS_BUTTON = BoolItem("hide_downloads_button", false)
 
     @JvmField
-    val IOS_CHAT_HEADER = BoolItem("ios_chat_header", false)
+    val IOS_CHAT_HEADER = BoolItem("ios_chat_header", true)
 
     @JvmField
-    val IOS_CHAT_LIST = BoolItem("ios_chat_list", false)
+    val IOS_CHAT_LIST = BoolItem("ios_chat_list", true)
 
     @JvmField
-    val IOS_MESSAGE_MENU = BoolItem("ios_message_menu", false)
+    val IOS_MESSAGE_MENU = BoolItem("ios_message_menu", true)
 
     @JvmField
     val HIDE_CHAT_AVATAR = BoolItem("hide_chat_avatar", false)
